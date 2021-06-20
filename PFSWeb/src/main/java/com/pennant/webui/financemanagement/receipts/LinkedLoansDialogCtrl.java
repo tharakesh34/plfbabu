@@ -164,8 +164,7 @@ public class LinkedLoansDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						lc.setParent(item);
 
 						//Original Amount
-						BigDecimal finAmount = finMain.getFinCurrAssetValue().add(finMain.getFeeChargeAmt())
-								.add(finMain.getInsuranceAmt());
+						BigDecimal finAmount = finMain.getFinCurrAssetValue().add(finMain.getFeeChargeAmt());
 						lc = new Listcell(PennantAppUtil.amountFormate(finAmount, format));
 						lc.setStyle("text-align:right");
 						lc.setParent(item);

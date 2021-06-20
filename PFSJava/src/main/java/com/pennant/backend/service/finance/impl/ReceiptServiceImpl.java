@@ -443,11 +443,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), false, "_AView"));
 		}
 
-		// Finance Agreement Details
-		// =======================================
-		financeDetail.setAggrementList(
-				agreementDetailService.getAggrementDetailList(financeType.getFinType(), procEdtEvent, userRole));
-
 		// Finance Check List Details
 		// =======================================
 		checkListDetailService.setFinanceCheckListDetails(receiptData.getFinanceDetail(), financeType.getFinType(),
@@ -516,7 +511,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			financeDetail.setFinanceCollaterals(finCollateralService.getFinCollateralsByRef(finReference, "_View"));
 		}
 
-		financeDetail.setJountAccountDetailList(jointAccountDetailService.getJoinAccountDetail(finReference, "_AView"));
+		financeDetail.setJointAccountDetailList(jointAccountDetailService.getJoinAccountDetail(finReference, "_AView"));
 
 		financeDetail.setGurantorsDetailList(guarantorDetailService.getGuarantorDetail(finReference, "_AView"));
 
@@ -5988,7 +5983,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		returnStatus.setReturnText(errorDetail.getError());
 		financeDetail.setFinScheduleData(null);
 		financeDetail.setDocumentDetailsList(null);
-		financeDetail.setJountAccountDetailList(null);
+		financeDetail.setJointAccountDetailList(null);
 		financeDetail.setGurantorsDetailList(null);
 		financeDetail.setCollateralAssignmentList(null);
 		financeDetail.setReturnDataSetList(null);
@@ -6218,11 +6213,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				break;
 			}
 
-			// Insurance
-			if ((curSchd.getInsSchd().subtract(curSchd.getSchdInsPaid())).compareTo(BigDecimal.ZERO) > 0) {
-				fullyPaid = false;
-				break;
-			}
 		}
 
 		// Check Penalty Paid Fully or not

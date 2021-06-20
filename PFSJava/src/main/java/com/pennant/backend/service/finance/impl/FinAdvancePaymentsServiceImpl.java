@@ -1017,13 +1017,11 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 				if (disbDate.compareTo(financeMain.getFinStartDate()) == 0 && disbursement.getDisbSeq() == 1) {
 					singletDisbursment = singletDisbursment.subtract(financeMain.getDownPayment());
 					singletDisbursment = singletDisbursment.subtract(financeMain.getDeductFeeDisb());
-					singletDisbursment = singletDisbursment.subtract(financeMain.getDeductInsDisb());
 					if (FinanceConstants.BPI_DISBURSMENT.equals(financeMain.getBpiTreatment())) {
 						singletDisbursment = singletDisbursment.subtract(financeMain.getBpiAmount());
 					}
 				} else if (disbursement.getDisbSeq() > 1) {
 					singletDisbursment = singletDisbursment.subtract(disbursement.getDeductFeeDisb());
-					singletDisbursment = singletDisbursment.subtract(disbursement.getDeductInsDisb());
 
 				}
 				int key = disbursement.getDisbSeq();
@@ -1074,13 +1072,11 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 						&& financeDisbursement.getDisbSeq() == 1) {
 					totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
 					totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
-					totdisbAmt = totdisbAmt.subtract(main.getDeductInsDisb());
 					if (StringUtils.trimToEmpty(main.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
 						totdisbAmt = totdisbAmt.subtract(main.getBpiAmount());
 					}
 				} else if (financeDisbursement.getDisbSeq() > 1) {
 					totdisbAmt = totdisbAmt.subtract(financeDisbursement.getDeductFeeDisb());
-					totdisbAmt = totdisbAmt.subtract(financeDisbursement.getDeductInsDisb());
 
 				}
 				totdisbAmt = totdisbAmt.add(financeDisbursement.getDisbAmount());

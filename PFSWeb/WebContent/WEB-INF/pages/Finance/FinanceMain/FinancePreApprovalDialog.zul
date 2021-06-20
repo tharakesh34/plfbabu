@@ -147,8 +147,6 @@
 												<row id="row_RolloverPayment" visible="false">
 													<label id="label_PreApproveFinanceMainDialog_CustPaymentAmount" value="${c:l('label_PreApproveFinanceMainDialog_CustPaymentAmount.value')}" />
 													<currencyBox id="custPaymentAmount" />
-													<label id="label_PreApproveFinanceMainDialog_CustPayAccId" value="${c:l('label_PreApproveFinanceMainDialog_CustPayAccId.value')}" />
-													<accountSelectionBox id="custPayAccId" />
 												</row>
 												<row visible="false">
 													<label id="label_PreApproveFinanceMainDialog_LatePayAmount" value="${c:l('label_PreApproveFinanceMainDialog_LatePayAmount.value')}" />
@@ -161,18 +159,6 @@
 													<currencyBox id="finAssetValue" />
 												</row>
 												<row>
-													<label id="label_PreApproveFinanceMainDialog_DisbAcctId" value="${c:l('label_PreApproveFinanceMainDialog_DisbAcctId.value')}" />
-													<accountSelectionBox id="disbAcctId" />
-													<label id="label_PreApproveFinanceMainDialog_RepayAcctId" value="${c:l('label_PreApproveFinanceMainDialog_RepayAcctId.value')}" />
-													<accountSelectionBox id="repayAcctId" />
-												</row>
-
-												<row>
-													<label id="label_PreApproveFinanceMainDialog_SecondaryAccount" value="${c:l('label_PreApproveFinanceMainDialog_SecondaryAccount.value')}" />
-													<hbox>
-														<space spacing="2px" />
-														<button id="btnAddSecondaryAccounts" label="${c:l('label_Add')}" sclass="z-toolbarbutton" />
-													</hbox>
 													<label id="label_PreApproveFinanceMainDialog_TDSApplicable" value="${c:l('label_PreApproveFinanceMainDialog_TDSApplicable.value')}" />
 													<hbox id="hbox_tdsApplicable">
 														<space spacing="2px" />
@@ -182,8 +168,6 @@
 												<row id="row_downPayBank" visible="false">
 													<label id="label_PreApproveFinanceMainDialog_DownPayBank" value="${c:l('label_PreApproveFinanceMainDialog_DownPayBank.value')}" />
 													<currencyBox id="downPayBank" />
-													<label id="label_PreApproveFinanceMainDialog_DownPayAccount" value="${c:l('label_PreApproveFinanceMainDialog_DownPayAccount.value')}" />
-													<accountSelectionBox id="downPayAccount" />
 												</row>
 												<row id="row_downPaySupl" visible="false">
 													<label id="label_PreApproveFinanceMainDialog_DownPaySupl" value="${c:l('label_PreApproveFinanceMainDialog_DownPaySupl.value')}" />
@@ -195,10 +179,6 @@
 														<space spacing="2px" />
 														<label id="downPayPercentage" style="font-weight: bold;" />
 													</hbox>
-												</row>
-												<row id="row_securityDeposit" visible="false">
-													<label id="label_PreApproveFinanceMainDialog_SecurityDeposit" value="${c:l('label_PreApproveFinanceMainDialog_SecurityDeposit.value')}" />
-													<currencyBox id="securityDeposit" />
 												</row>
 												<row id="defermentsRow">
 													<label id="label_PreApproveFinanceMainDialog_Defferments" value="${c:l('label_PreApproveFinanceMainDialog_Defferments.value')}" />
@@ -227,9 +207,6 @@
 														<space spacing="2px" sclass="mandatory" />
 														<combobox id="finRepayMethod" width="200px" />
 													</hbox>
-													<label id="label_PreApproveFinanceMainDialog_DepriFrq" value="${c:l('label_PreApproveFinanceMainDialog_DepriFrq.value')}"
-														visible="false" />
-													<frequencybox id="depreciationFrq" visible="false" />
 												</row>
 												<row visible="false">
 													<label id="label_PreApproveFinanceMainDialog_FinIsActive" value="${c:l('label_PreApproveFinanceMainDialog_FinIsActive.value')}"

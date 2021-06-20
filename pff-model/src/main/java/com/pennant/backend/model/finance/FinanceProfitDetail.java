@@ -83,7 +83,6 @@ public class FinanceProfitDetail implements Serializable {
 	private int NOInst = 0;
 	private int NOPaidInst = 0;
 	private int NOODInst = 0;
-	private String DisbActCcy;
 	private String FinCommitmentRef;
 	private boolean FinIsActive;
 	private Date firstRepayDate;
@@ -286,7 +285,6 @@ public class FinanceProfitDetail implements Serializable {
 		entity.setNOInst(this.NOInst);
 		entity.setNOPaidInst(this.NOPaidInst);
 		entity.setNOODInst(this.NOODInst);
-		entity.setDisbActCcy(this.DisbActCcy);
 		entity.setFinCommitmentRef(this.FinCommitmentRef);
 		entity.setFinIsActive(this.FinIsActive);
 		entity.setFirstRepayDate(this.firstRepayDate);
@@ -861,14 +859,6 @@ public class FinanceProfitDetail implements Serializable {
 
 	public void setNOODInst(int nOODInst) {
 		NOODInst = nOODInst;
-	}
-
-	public String getDisbActCcy() {
-		return DisbActCcy;
-	}
-
-	public void setDisbActCcy(String disbActCcy) {
-		DisbActCcy = disbActCcy;
 	}
 
 	public String getFinCommitmentRef() {
@@ -1649,7 +1639,6 @@ public class FinanceProfitDetail implements Serializable {
 		map.put("fpt_NOInst", this.NOInst);
 		map.put("fpt_NOPaidInst", this.NOPaidInst);
 		map.put("fpt_NOODInst", this.NOODInst);
-		map.put("fpt_DisbActCcy", this.DisbActCcy);
 		map.put("fpt_FinCommitmentRef", this.FinCommitmentRef);
 		map.put("fpt_FinIsActive", this.FinIsActive);
 		map.put("fpt_firstRepayDate", this.firstRepayDate);

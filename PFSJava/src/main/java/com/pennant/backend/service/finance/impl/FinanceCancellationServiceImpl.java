@@ -177,11 +177,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 					.getCustomerDetailsById(scheduleData.getFinanceMain().getCustID(), true, "_View"));
 		}
 
-		//Finance Agreement Details	
-		//=======================================
 		String finType = scheduleData.getFinanceType().getFinType();
-		financeDetail
-				.setAggrementList(getAgreementDetailService().getAggrementDetailList(finType, procEdtEvent, userRole));
 
 		// Finance Check List Details 
 		//=======================================
@@ -197,7 +193,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 		//Finance Joint Account Details
 		financeDetail
-				.setJountAccountDetailList(getJointAccountDetailService().getJoinAccountDetail(finReference, "_View"));
+				.setJointAccountDetailList(getJointAccountDetailService().getJoinAccountDetail(finReference, "_View"));
 
 		//Finance Overdue Penalty Rate Details
 		scheduleData.setFinODPenaltyRate(getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(finReference, type));

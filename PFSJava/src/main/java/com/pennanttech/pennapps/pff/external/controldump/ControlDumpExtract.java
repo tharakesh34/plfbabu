@@ -1166,7 +1166,6 @@ public class ControlDumpExtract extends DatabaseDataEngine implements ControlDum
 				item.getMigAdvEmiBilledIntcomp(), item.getMigAdvEmiUnbilledPrincomp(),
 				item.getMigAdvEmiUnbilledIntcomp(), item.getEmiInAdvBilledPrincomp(), item.getEmiInAdvBilledIntcomp(),
 				item.getEmiInAdvUnbilledPrincomp(), item.getEmiInAdvUnbilledIntcomp(), item.getClosCanAdvEmiPrincomp(),
-				item.getClosCanAdvEmiIntcomp(), item.getSecurityDeposit(), item.getSecurityDepositAdjusted(),
 				item.getRoundingDiffReceivable(), item.getRoundingDiffReceived(), item.getMigDifferenceReceivable(),
 				item.getMigDifferenceReceived(), item.getMigDifferencePayable(), item.getMigDifferencePaid(),
 				item.getWriteoffDue(), item.getWriteoffReceived(), item.getSoldSeizeReceivable(),
@@ -1237,8 +1236,6 @@ public class ControlDumpExtract extends DatabaseDataEngine implements ControlDum
 		item.setEmiInAdvUnbilledIntcomp(item.getEmiInAdvUnbilledIntcomp().divide(units, scale, HALF_DOWN));
 		item.setClosCanAdvEmiPrincomp(item.getClosCanAdvEmiPrincomp().divide(units, scale, HALF_DOWN));
 		item.setClosCanAdvEmiIntcomp(item.getClosCanAdvEmiIntcomp().divide(units, scale, HALF_DOWN));
-		item.setSecurityDeposit(item.getSecurityDeposit().divide(units, scale, HALF_DOWN));
-		item.setSecurityDepositAdjusted(item.getSecurityDepositAdjusted().divide(units, scale, HALF_DOWN));
 		item.setRoundingDiffReceivable(item.getRoundingDiffReceivable().divide(units, scale, HALF_DOWN));
 		item.setRoundingDiffReceived(item.getRoundingDiffReceived().divide(units, scale, HALF_DOWN));
 		item.setMigDifferenceReceivable(item.getMigDifferenceReceivable().divide(units, scale, HALF_DOWN));

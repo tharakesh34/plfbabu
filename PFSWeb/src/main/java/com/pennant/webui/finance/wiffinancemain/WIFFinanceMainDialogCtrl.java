@@ -199,8 +199,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Intbox planDeferCount;
 	protected Label label_FinanceMainDialog_PlanDeferCount;
 	protected Hbox hbox_PlanDeferCount;
-	protected FrequencyBox depreciationFrq;
-	protected Label label_FinanceMainDialog_DepriFrq;
 	protected Checkbox finIsActive;
 	protected Checkbox tDSApplicable;
 
@@ -381,7 +379,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient BigDecimal oldVar_downPaySupl;
 	private transient int oldVar_defferments;
 	private transient int oldVar_planDeferCount;
-	private transient String oldVar_depreciationFrq;
 	private transient boolean oldVar_finIsActive;
 	private transient boolean oldVar_tDSApplicable;
 
@@ -683,7 +680,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.repayPftFrq.setMandatoryStyle(true);
 		this.repayPftFrq.setAlwFrqDays(financeType.getFrequencyDays());
-		this.depreciationFrq.setMandatoryStyle(true);
 		this.gracePftFrq.setMandatoryStyle(true);
 		this.gracePftFrq.setAlwFrqDays(financeType.getFrequencyDays());
 		this.gracePftRvwFrq.setMandatoryStyle(true);
@@ -950,16 +946,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.finAssetValue.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAssetValue(), format));
 		this.finCurrentAssetValue.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinCurrAssetValue(), format));
-
-		if (aFinanceDetail.getFinScheduleData().getFinanceType().isFinDepreciationReq()) {
-			this.depreciationFrq.setVisible(true);
-			this.label_FinanceMainDialog_DepriFrq.setVisible(true);
-			this.depreciationFrq.setValue(aFinanceMain.getDepreciationFrq());
-		} else {
-			this.label_FinanceMainDialog_DepriFrq.setVisible(false);
-			this.depreciationFrq.setMandatoryStyle(false);
-			this.depreciationFrq.setDisabled(true);
-		}
 
 		this.finIsActive.setChecked(aFinanceMain.isFinIsActive());
 		this.tDSApplicable.setChecked(aFinanceMain.isTDSApplicable());
@@ -1477,30 +1463,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		try {
-			if (this.depreciationFrq.isValidComboValue()) {
-				aFinanceMain.setDepreciationFrq(
-						this.depreciationFrq.getValue() == null ? "" : this.depreciationFrq.getValue());
-				if (StringUtils.isNotEmpty(this.depreciationFrq.getValue())
-						&& FrequencyUtil.validateFrequency(this.depreciationFrq.getValue()) == null) {
-					aFinanceMain.setNextDepDate(
-							FrequencyUtil
-									.getNextDate(this.depreciationFrq.getValue(), 1, this.finStartDate.getValue(),
-											HolidayHandlerTypes.MOVE_NONE, false,
-											aFinanceSchData.getFinanceType().getFddLockPeriod())
-									.getNextFrequencyDate());
-				}
-			}
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
 			aFinanceMain.setFinStartDate(this.finStartDate.getValue());
 			aFinanceMain.setLastRepayDate(this.finStartDate.getValue());
 			aFinanceMain.setLastRepayPftDate(this.finStartDate.getValue());
 			aFinanceMain.setLastRepayRvwDate(this.finStartDate.getValue());
 			aFinanceMain.setLastRepayCpzDate(this.finStartDate.getValue());
-			aFinanceMain.setLastDepDate(this.finStartDate.getValue());
 			aFinanceMain.setTDSApplicable(this.tDSApplicable.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -2431,7 +2398,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			disbursementDetails.setDisbDate(aFinanceMain.getFinStartDate());
 			disbursementDetails.setDisbAmount(aFinanceMain.getFinAmount());
 			disbursementDetails.setFeeChargeAmt(aFinanceSchData.getFinanceMain().getFeeChargeAmt());
-			disbursementDetails.setDisbAccountId("");
 			aFinanceSchData.getDisbursementDetails().add(disbursementDetails);
 		}
 
@@ -2778,7 +2744,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.oldVar_downPaySupl = this.downPaySupl.getActualValue();
 		this.oldVar_defferments = this.defferments.intValue();
 		this.oldVar_planDeferCount = this.planDeferCount.intValue();
-		this.oldVar_depreciationFrq = this.depreciationFrq.getValue();
 		this.oldVar_finIsActive = this.finIsActive.isChecked();
 		this.oldVar_tDSApplicable = this.tDSApplicable.isChecked();
 
@@ -2883,7 +2848,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.finRepaymentAmount.setValue(this.oldVar_finRepaymentAmount);
 		this.defferments.setValue(this.oldVar_defferments);
 		this.planDeferCount.setValue(this.oldVar_planDeferCount);
-		this.depreciationFrq.setValue(this.oldVar_depreciationFrq);
 		this.finIsActive.setChecked(this.oldVar_finIsActive);
 		this.tDSApplicable.setChecked(this.oldVar_tDSApplicable);
 
@@ -2972,9 +2936,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (this.oldVar_profitDaysBasis != this.cbProfitDaysBasis.getSelectedIndex()) {
-			return true;
-		}
-		if (this.oldVar_depreciationFrq != this.depreciationFrq.getValue()) {
 			return true;
 		}
 		if (DateUtility.compare(this.oldVar_finStartDate, this.finStartDate.getValue()) != 0) {
@@ -3544,7 +3505,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.downPaySupl.setErrorMessage("");
 		this.defferments.setErrorMessage("");
 		this.planDeferCount.setErrorMessage("");
-		this.depreciationFrq.setErrorMessage("");
 
 		this.stepPolicy.setErrorMessage("");
 		this.noOfSteps.setErrorMessage("");
@@ -3692,8 +3652,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.defferments.setReadonly(isReadOnly("WIFFinanceMainDialog_defferments"));
 		this.planDeferCount.setReadonly(isReadOnly("WIFFinanceMainDialog_frqDefferments"));
-
-		this.depreciationFrq.setDisabled(isReadOnly("WIFFinanceMainDialog_depreciationFrq"));
 
 		this.stepFinance.setDisabled(isReadOnly("WIFFinanceMainDialog_stepFinance"));
 		this.stepPolicy.setReadonly(isReadOnly("WIFFinanceMainDialog_stepPolicy"));
@@ -3878,7 +3836,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.downPaySupl.setValue("");
 		this.defferments.setText("");
 		this.planDeferCount.setText("");
-		this.depreciationFrq.setValue("");
 
 		//FinanceMain Details Tab ---> 2. Grace Period Details
 
@@ -5063,9 +5020,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (finStartDate.getValue() == null) {
 			this.finStartDate.setValue(appStartDate);
 		}
-		if (StringUtils.isNotBlank(this.depreciationFrq.getValue())) {
-			processFrqChange(this.depreciationFrq);
-		}
 		if (StringUtils.isNotBlank(this.gracePftFrq.getValue())) {
 			processFrqChange(this.gracePftFrq);
 		}
@@ -5154,13 +5108,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.repayCpzFrq.resetFrqDay(selectedIndex);
 			this.nextRepayCpzDate.setText("");
 		}
-	}
-
-	// Default Frequency Code comboBox change
-	public void onSelectCode$depreciationFrq(Event event) {
-		logger.debug("Entering" + event.toString());
-		processFrqChange(this.depreciationFrq);
-		logger.debug("Leaving" + event.toString());
 	}
 
 	//FinanceMain Details Tab ---> 2. Grace Period Details

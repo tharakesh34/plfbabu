@@ -79,9 +79,6 @@ public class RepayMain implements java.io.Serializable {
 	private Date dateNextPaymentDue;
 	private BigDecimal accrued = BigDecimal.ZERO;
 	private BigDecimal downpayment = BigDecimal.ZERO;
-	private String repayAccountId;
-	private String finAccount;
-	private String finCustPftAccount;
 	private BigDecimal repayAmountNow = BigDecimal.ZERO;
 	private BigDecimal principalPayNow = BigDecimal.ZERO;
 	private BigDecimal profitPayNow = BigDecimal.ZERO;
@@ -93,7 +90,6 @@ public class RepayMain implements java.io.Serializable {
 	private String earlyPayEffectOn;
 	private boolean earlyPay;
 	private BigDecimal earlyPayAmount = BigDecimal.ZERO;
-	private BigDecimal insRefund = BigDecimal.ZERO;
 	private FinanceScheduleDetail earlyRepayNewSchd;
 	private Date earlyPayOnSchDate;
 	private Date earlyPayNextSchDate;
@@ -139,9 +135,6 @@ public class RepayMain implements java.io.Serializable {
 		entity.setDateNextPaymentDue(this.dateNextPaymentDue);
 		entity.setAccrued(this.accrued);
 		entity.setDownpayment(this.downpayment);
-		entity.setRepayAccountId(this.repayAccountId);
-		entity.setFinAccount(this.finAccount);
-		entity.setFinCustPftAccount(this.finCustPftAccount);
 		entity.setRepayAmountNow(this.repayAmountNow);
 		entity.setPrincipalPayNow(this.principalPayNow);
 		entity.setProfitPayNow(this.profitPayNow);
@@ -152,7 +145,6 @@ public class RepayMain implements java.io.Serializable {
 		entity.setEarlyPayEffectOn(this.earlyPayEffectOn);
 		entity.setEarlyPay(this.earlyPay);
 		entity.setEarlyPayAmount(this.earlyPayAmount);
-		entity.setInsRefund(this.insRefund);
 		entity.setEarlyRepayNewSchd(this.earlyRepayNewSchd == null ? null : this.earlyRepayNewSchd.copyEntity());
 		entity.setEarlyPayOnSchDate(this.earlyPayOnSchDate);
 		entity.setEarlyPayNextSchDate(this.earlyPayNextSchDate);
@@ -407,30 +399,6 @@ public class RepayMain implements java.io.Serializable {
 		this.downpayment = downpayment;
 	}
 
-	public String getRepayAccountId() {
-		return repayAccountId;
-	}
-
-	public void setRepayAccountId(String repayAccountId) {
-		this.repayAccountId = repayAccountId;
-	}
-
-	public String getFinAccount() {
-		return finAccount;
-	}
-
-	public void setFinAccount(String finAccount) {
-		this.finAccount = finAccount;
-	}
-
-	public String getFinCustPftAccount() {
-		return finCustPftAccount;
-	}
-
-	public void setFinCustPftAccount(String finCustPftAccount) {
-		this.finCustPftAccount = finCustPftAccount;
-	}
-
 	public BigDecimal getRepayAmountNow() {
 		return repayAmountNow;
 	}
@@ -533,14 +501,6 @@ public class RepayMain implements java.io.Serializable {
 
 	public String getEarlyPayEffectOn() {
 		return earlyPayEffectOn;
-	}
-
-	public void setInsRefund(BigDecimal insRefund) {
-		this.insRefund = insRefund;
-	}
-
-	public BigDecimal getInsRefund() {
-		return insRefund;
 	}
 
 	public void setRefundCalStartDate(Date refundCalStartDate) {

@@ -112,9 +112,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	protected Listbox listBoxGurantorsDetail;
 	protected Button btnAddGurantorDetails;
 	protected Button btnAddJointDetails;
-	protected Listbox listBoxJountAccountDetails; // autoWired
-	private List<JointAccountDetail> jountAccountDetailList = new ArrayList<JointAccountDetail>();
-	private List<JointAccountDetail> oldVar_JountAccountDetailList = new ArrayList<JointAccountDetail>();
+	protected Listbox listBoxJointAccountDetails; // autoWired
+	private List<JointAccountDetail> jointAccountDetailList = new ArrayList<JointAccountDetail>();
+	private List<JointAccountDetail> oldVar_JointAccountDetailList = new ArrayList<JointAccountDetail>();
 	private List<GuarantorDetail> guarantorDetailList = new ArrayList<GuarantorDetail>();
 	private List<GuarantorDetail> oldVar_GuarantorDetailList = new ArrayList<GuarantorDetail>();
 	int ccDecimal = 0;
@@ -223,10 +223,10 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		} else {
 			this.finBasicdetails.setZclass("null");
 		}
-		if (financeDetail != null && CollectionUtils.isNotEmpty(financeDetail.getJountAccountDetailList())
+		if (financeDetail != null && CollectionUtils.isNotEmpty(financeDetail.getJointAccountDetailList())
 				&& tempJointAccountDetailList == null) {
 			tempJointAccountDetailList = new ArrayList<>(1);
-			List<JointAccountDetail> jointAccountList = financeDetail.getJountAccountDetailList();
+			List<JointAccountDetail> jointAccountList = financeDetail.getJointAccountDetailList();
 			for (JointAccountDetail jointAccountDetail : jointAccountList) {
 				JointAccountDetail befImage = new JointAccountDetail();
 				BeanUtils.copyProperties(jointAccountDetail, befImage);
@@ -298,7 +298,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			//this.finBasicdetails.setVisible(false);
 		} else {
 			// Rendering Joint Account Details
-			List<JointAccountDetail> jointAcctDetailList = financeDetail.getJountAccountDetailList();
+			List<JointAccountDetail> jointAcctDetailList = financeDetail.getJointAccountDetailList();
 			if (jointAcctDetailList != null && !jointAcctDetailList.isEmpty()) {
 				doFillJointDetails(jointAcctDetailList);
 			}
@@ -320,7 +320,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 		getBorderLayoutHeight();
 		this.window_JointAccountDetailDialog.setHeight(borderLayoutHeight - 4 + "px");
-		this.listBoxJountAccountDetails.setHeight(((this.borderLayoutHeight - 250 - 50) / 2) + "px");// 425px
+		this.listBoxJointAccountDetails.setHeight(((this.borderLayoutHeight - 250 - 50) / 2) + "px");// 425px
 		this.listBoxGurantorsDetail.setHeight(((this.borderLayoutHeight - 250 - 40) / 2) + "px");// 425px
 		logger.debug("Leaving");
 	}
@@ -332,7 +332,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		logger.debug("Entering");
 		// If include JointAccount is checked then JointAccountList should not
 		// be empty
-		if (this.jountAccountDetailList.size() < 1) {
+		if (this.jointAccountDetailList.size() < 1) {
 			MessageUtil.showError("Please enter JointAccount Details in JointAccount tab");
 		}
 		logger.debug("Leaving");
@@ -368,8 +368,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 */
 	public void doSave_JointAccountDetail(FinanceDetail aFinanceDetail, boolean isSaveRecord) {
 		logger.debug("Entering ");
-		if (jountAccountDetailList != null && !this.jountAccountDetailList.isEmpty()) {
-			for (JointAccountDetail details : jountAccountDetailList) {
+		if (jointAccountDetailList != null && !this.jointAccountDetailList.isEmpty()) {
+			for (JointAccountDetail details : jointAccountDetailList) {
 				details.setFinReference(aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference());
 				details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 				details.setUserDetails(getUserWorkspace().getLoggedInUser());
@@ -379,7 +379,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				}
 			}
 			Cloner cloner = new Cloner();
-			aFinanceDetail.setJountAccountDetailList(cloner.deepClone(jountAccountDetailList));
+			aFinanceDetail.setJointAccountDetailList(cloner.deepClone(jointAccountDetailList));
 		}
 		logger.debug("Leaving ");
 	}
@@ -392,16 +392,16 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			MessageUtil.showError("Please Select The Customer");
 			return;
 		}
-		JointAccountDetail jountAccountDetail = new JointAccountDetail();
+		JointAccountDetail jointAccountDetail = new JointAccountDetail();
 		FinanceMain financeMain = null;
 		if (getFinanceDetail() != null && getFinanceDetail().getFinScheduleData().getFinanceMain() != null) {
 			financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		}
-		jountAccountDetail.setNewRecord(true);
-		jountAccountDetail.setWorkflowId(0);
-		jountAccountDetail.setFinReference(finreference);
+		jointAccountDetail.setNewRecord(true);
+		jointAccountDetail.setWorkflowId(0);
+		jointAccountDetail.setFinReference(finreference);
 		final Map<String, Object> map = new HashMap<String, Object>();
-		map.put("jountAccountDetail", jountAccountDetail);
+		map.put("jointAccountDetail", jointAccountDetail);
 		map.put("finJointAccountCtrl", this);
 		map.put("newRecord", "true");
 		map.put("roleCode", roleCode);
@@ -428,10 +428,10 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void doFillJointDetails(List<JointAccountDetail> jountAccountDetails) {
+	public void doFillJointDetails(List<JointAccountDetail> jointAccountDetails) {
 		logger.debug("Entering");
-		this.listBoxJountAccountDetails.getItems().clear();
-		setJountAccountDetailList(jountAccountDetails);
+		this.listBoxJointAccountDetails.getItems().clear();
+		setJointAccountDetailList(jointAccountDetails);
 		int count = 0;
 		//### 10-05-2018 Development Item 82
 		rules.put("Total_Co_Applicants_Income", BigDecimal.ZERO);
@@ -439,66 +439,66 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		rules.put("Co_Applicants_Obligation_Internal", BigDecimal.ZERO);
 		rules.put("Co_Applicants_Obligation_External", BigDecimal.ZERO);
 
-		for (JointAccountDetail jountAccountDetail : jountAccountDetails) {
+		for (JointAccountDetail jointAccountDetail : jointAccountDetails) {
 			Listitem listitem = new Listitem();
 			Listcell listcell;
-			listcell = new Listcell(jountAccountDetail.getCustCIF());
+			listcell = new Listcell(jointAccountDetail.getCustCIF());
 			listitem.appendChild(listcell);
-			listcell = new Listcell(jountAccountDetail.getLovDescCIFName());
+			listcell = new Listcell(jointAccountDetail.getLovDescCIFName());
 			listitem.appendChild(listcell);
 			listcell = new Listcell();
 			Checkbox c = new Checkbox();
-			c.setChecked(jountAccountDetail.isAuthoritySignatory());
+			c.setChecked(jointAccountDetail.isAuthoritySignatory());
 			c.setDisabled(enquiry);
 			c.setParent(listcell);
 			listitem.appendChild(listcell);
 			listcell = new Listcell(PennantApplicationUtil.amountFormate(new BigDecimal(
-					jountAccountDetail.getPrimaryExposure() != null ? jountAccountDetail.getPrimaryExposure() : "0"),
+					jointAccountDetail.getPrimaryExposure() != null ? jointAccountDetail.getPrimaryExposure() : "0"),
 					ccDecimal));
 			listcell.setStyle("text-align:right");
 			listitem.appendChild(listcell);
 			listcell = new Listcell(PennantApplicationUtil
-					.amountFormate(new BigDecimal(jountAccountDetail.getSecondaryExposure() != null
-							? jountAccountDetail.getSecondaryExposure() : "0"), ccDecimal));
+					.amountFormate(new BigDecimal(jointAccountDetail.getSecondaryExposure() != null
+							? jointAccountDetail.getSecondaryExposure() : "0"), ccDecimal));
 			listcell.setStyle("text-align:right");
 			listitem.appendChild(listcell);
 			listcell = new Listcell(PennantApplicationUtil
-					.amountFormate(new BigDecimal(jountAccountDetail.getGuarantorExposure() != null
-							? jountAccountDetail.getGuarantorExposure() : "0"), ccDecimal));
+					.amountFormate(new BigDecimal(jointAccountDetail.getGuarantorExposure() != null
+							? jointAccountDetail.getGuarantorExposure() : "0"), ccDecimal));
 			listcell.setStyle("text-align:right");
 			listitem.appendChild(listcell);
-			listcell = new Listcell(jountAccountDetail.getRecordType());
+			listcell = new Listcell(jointAccountDetail.getRecordType());
 			listitem.appendChild(listcell);
-			listcell = new Listcell(jountAccountDetail.getWorstStatus());
+			listcell = new Listcell(jointAccountDetail.getWorstStatus());
 			listitem.appendChild(listcell);
-			listitem.setAttribute("data", jountAccountDetail);
+			listitem.setAttribute("data", jointAccountDetail);
 			ComponentsCtrl.applyForward(listitem, "onDoubleClick=onFinJointItemDoubleClicked");
 
-			if (jountAccountDetail.isIncludeIncome()) {
-				setRuleIncomes(jountAccountDetail);
+			if (jointAccountDetail.isIncludeIncome()) {
+				setRuleIncomes(jointAccountDetail);
 			}
-			if (!PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(jountAccountDetail.getRecordType())
-					&& !PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(jountAccountDetail.getRecordType())) {
+			if (!PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(jointAccountDetail.getRecordType())
+					&& !PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(jointAccountDetail.getRecordType())) {
 				count++;
 			}
-			this.listBoxJountAccountDetails.appendChild(listitem);
+			this.listBoxJointAccountDetails.appendChild(listitem);
 		}
 
 		rules.put("Co_Applicants_Count", count);
 
 		if (fieldVerificationDialogCtrl != null) {
-			fieldVerificationDialogCtrl.addCoApplicantAddresses(jountAccountDetails, true);
+			fieldVerificationDialogCtrl.addCoApplicantAddresses(jointAccountDetails, true);
 		}
 		if (pdVerificationDialogCtrl != null) {
-			pdVerificationDialogCtrl.addCoApplicantAddresses(jountAccountDetails, true);
+			pdVerificationDialogCtrl.addCoApplicantAddresses(jointAccountDetails, true);
 		}
 		if (getFinVasRecordingDialogCtrl() != null) {
-			getFinVasRecordingDialogCtrl().addCoApplicants(jountAccountDetails);
+			getFinVasRecordingDialogCtrl().addCoApplicants(jointAccountDetails);
 		}
 		logger.debug("Leaving");
 	}
 
-	private void setRuleIncomes(JointAccountDetail jountAccountDetail) {
+	private void setRuleIncomes(JointAccountDetail jointAccountDetail) {
 		logger.debug(Literal.ENTERING);
 
 		BigDecimal totIncome = BigDecimal.ZERO;
@@ -506,25 +506,25 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		BigDecimal obligation_Internal = BigDecimal.ZERO;
 		BigDecimal obligation_external = BigDecimal.ZERO;
 
-		if (!PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(jountAccountDetail.getRecordType())
-				&& !PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(jountAccountDetail.getRecordType())) {
+		if (!PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(jointAccountDetail.getRecordType())
+				&& !PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(jointAccountDetail.getRecordType())) {
 
-			if (CollectionUtils.isNotEmpty(jountAccountDetail.getCustomerExtLiabilityList())) {
-				for (CustomerExtLiability liability : jountAccountDetail.getCustomerExtLiabilityList()) {
+			if (CollectionUtils.isNotEmpty(jointAccountDetail.getCustomerExtLiabilityList())) {
+				for (CustomerExtLiability liability : jointAccountDetail.getCustomerExtLiabilityList()) {
 					obligation_external = obligation_external.add(liability.getInstalmentAmount());
 				}
 			}
 
-			if (CollectionUtils.isNotEmpty(jountAccountDetail.getCustFinanceExposureList())) {
-				for (FinanceEnquiry enquiry : jountAccountDetail.getCustFinanceExposureList()) {
+			if (CollectionUtils.isNotEmpty(jointAccountDetail.getCustFinanceExposureList())) {
+				for (FinanceEnquiry enquiry : jointAccountDetail.getCustFinanceExposureList()) {
 					obligation_Internal = obligation_Internal.add(enquiry.getMaxInstAmount());
 				}
 			}
 
 			// 1 Currency Conversion Required
 			// 2 Un Formate should be based on the Customer Base Currency. 
-			if (CollectionUtils.isNotEmpty(jountAccountDetail.getCustomerIncomeList())) {
-				for (CustomerIncome income : jountAccountDetail.getCustomerIncomeList()) {
+			if (CollectionUtils.isNotEmpty(jointAccountDetail.getCustomerIncomeList())) {
+				for (CustomerIncome income : jointAccountDetail.getCustomerIncomeList()) {
 					if (income.getIncomeExpense().equals(PennantConstants.INCOME)) {
 						totIncome = totIncome.add(income.getCalculatedAmount());
 					} else {
@@ -561,17 +561,17 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	public void onFinJointItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		// get the selected invoiceHeader object
-		final Listitem item = this.listBoxJountAccountDetails.getSelectedItem();
+		final Listitem item = this.listBoxJointAccountDetails.getSelectedItem();
 		if (item != null) {
 			int index = item.getIndex();
 			// CAST AND STORE THE SELECTED OBJECT
-			final JointAccountDetail jountAccountDetail = (JointAccountDetail) item.getAttribute("data");
-			if (PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(jountAccountDetail.getRecordType())
-					|| PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(jountAccountDetail.getRecordType())) {
+			final JointAccountDetail jointAccountDetail = (JointAccountDetail) item.getAttribute("data");
+			if (PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(jointAccountDetail.getRecordType())
+					|| PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(jointAccountDetail.getRecordType())) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
 				final Map<String, Object> map = new HashMap<String, Object>();
-				map.put("jountAccountDetail", jountAccountDetail);
+				map.put("jointAccountDetail", jointAccountDetail);
 				map.put("finJointAccountCtrl", this);
 				map.put("roleCode", roleCode);
 				map.put("moduleType", "");
@@ -893,10 +893,10 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	}
 
 	private String[] getGurantorFilter() {
-		if (this.jountAccountDetailList != null && jountAccountDetailList.size() > 0) {
-			String cif[] = new String[jountAccountDetailList.size()];
-			for (int i = 0; i < jountAccountDetailList.size(); i++) {
-				cif[i] = jountAccountDetailList.get(i).getCustCIF();
+		if (this.jointAccountDetailList != null && jointAccountDetailList.size() > 0) {
+			String cif[] = new String[jointAccountDetailList.size()];
+			for (int i = 0; i < jointAccountDetailList.size(); i++) {
+				cif[i] = jointAccountDetailList.get(i).getCustCIF();
 			}
 			//cif[cif.length-1]=custCIF;
 			return cif;
@@ -941,7 +941,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		logger.debug("Entering");
 
 		List<Customer> customersList = new ArrayList<Customer>();
-		List<Listitem> listItems = this.listBoxJountAccountDetails.getItems();
+		List<Listitem> listItems = this.listBoxJointAccountDetails.getItems();
 
 		JointAccountDetail jointAccount = null;
 		Customer customer = null;
@@ -997,8 +997,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		List<String> listCIF = new ArrayList<>();
 		List<FinanceExposure> exposures = new ArrayList<>();
 
-		if (CollectionUtils.isNotEmpty(jountAccountDetailList)) {
-			for (JointAccountDetail joAccountDetail : jountAccountDetailList) {
+		if (CollectionUtils.isNotEmpty(jointAccountDetailList)) {
+			for (JointAccountDetail joAccountDetail : jointAccountDetailList) {
 				listCIF.add(joAccountDetail.getCustCIF());
 			}
 			exposures = getJointAccountDetailService().getJointExposureList(listCIF);
@@ -1032,20 +1032,20 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		return overideMap;
 	}
 
-	public List<JointAccountDetail> getOldVar_JountAccountDetailList() {
-		return oldVar_JountAccountDetailList;
+	public List<JointAccountDetail> getOldVar_JointAccountDetailList() {
+		return oldVar_JointAccountDetailList;
 	}
 
-	public void setOldVar_JountAccountDetailList(List<JointAccountDetail> oldVarJountAccountDetailList) {
-		this.oldVar_JountAccountDetailList = oldVarJountAccountDetailList;
+	public void setOldVar_JointAccountDetailList(List<JointAccountDetail> oldVarJointAccountDetailList) {
+		this.oldVar_JointAccountDetailList = oldVarJointAccountDetailList;
 	}
 
-	public List<JointAccountDetail> getJountAccountDetailList() {
-		return jountAccountDetailList;
+	public List<JointAccountDetail> getJointAccountDetailList() {
+		return jointAccountDetailList;
 	}
 
-	public void setJountAccountDetailList(List<JointAccountDetail> jountAccountDetailList) {
-		this.jountAccountDetailList = jountAccountDetailList;
+	public void setJointAccountDetailList(List<JointAccountDetail> jointAccountDetailList) {
+		this.jointAccountDetailList = jointAccountDetailList;
 	}
 
 	public List<GuarantorDetail> getGuarantorDetailList() {

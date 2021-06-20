@@ -61,8 +61,6 @@ public class ControlDump implements Serializable {
 	private BigDecimal emiInAdvUnbilledIntcomp = BigDecimal.ZERO;
 	private BigDecimal closCanAdvEmiPrincomp = BigDecimal.ZERO;
 	private BigDecimal closCanAdvEmiIntcomp = BigDecimal.ZERO;
-	private BigDecimal securityDeposit = BigDecimal.ZERO;
-	private BigDecimal securityDepositAdjusted = BigDecimal.ZERO;
 	private BigDecimal roundingDiffReceivable = BigDecimal.ZERO;
 	private BigDecimal roundingDiffReceived = BigDecimal.ZERO;
 	private BigDecimal migDifferenceReceivable = BigDecimal.ZERO;
@@ -541,22 +539,6 @@ public class ControlDump implements Serializable {
 
 	public void setClosCanAdvEmiIntcomp(BigDecimal closCanAdvEmiIntcomp) {
 		this.closCanAdvEmiIntcomp = closCanAdvEmiIntcomp;
-	}
-
-	public BigDecimal getSecurityDeposit() {
-		return securityDeposit;
-	}
-
-	public void setSecurityDeposit(BigDecimal securityDeposit) {
-		this.securityDeposit = securityDeposit;
-	}
-
-	public BigDecimal getSecurityDepositAdjusted() {
-		return securityDepositAdjusted;
-	}
-
-	public void setSecurityDepositAdjusted(BigDecimal securityDepositAdjusted) {
-		this.securityDepositAdjusted = securityDepositAdjusted;
 	}
 
 	public BigDecimal getRoundingDiffReceivable() {

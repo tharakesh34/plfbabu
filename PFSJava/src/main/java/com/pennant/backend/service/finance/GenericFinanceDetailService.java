@@ -115,7 +115,6 @@ import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
-import com.pennant.backend.dao.finance.SecondaryAccountDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantsDAO;
 import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
@@ -268,7 +267,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	protected EligibilityDetailService eligibilityDetailService;
 	protected GuarantorDetailService guarantorDetailService;
 	protected JointAccountDetailService jointAccountDetailService;
-	protected AgreementDetailService agreementDetailService;
 	protected ScoringDetailService scoringDetailService;
 	protected CheckListDetailService checkListDetailService;
 	protected CustomerDetailsService customerDetailsService;
@@ -277,7 +275,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	protected FinFeeDetailService finFeeDetailService;
 	protected FinCovenantTypeService finCovenantTypeService;
 	protected RepaymentPostingsUtil repayPostingUtil;
-	protected SecondaryAccountDAO secondaryAccountDAO;
 	protected FinFlagDetailsDAO finFlagDetailsDAO;
 	protected FinServiceInstrutionDAO finServiceInstructionDAO;
 	protected CollateralAssignmentValidation collateralAssignmentValidation;
@@ -319,7 +316,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		List<JointAccountDetail> jointAccountDetails = financeDetail.getJountAccountDetailList();
+		List<JointAccountDetail> jointAccountDetails = financeDetail.getJointAccountDetailList();
 		List<GuarantorDetail> guarantorDetails = financeDetail.getGurantorsDetailList();
 
 		if (jointAccountDetails != null && !jointAccountDetails.isEmpty()) {
@@ -2452,45 +2449,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	}
 
 	/**
-	 * Method for saving List of Secondary Account Details
-	 * 
-	 * @param finDetail
-	 * @param tableType
-	 */
-
-	public void saveSecondaryAccountList(FinScheduleData finScheduleData, String moduleDefiner, boolean isWIF,
-			String tableType) {
-		logger.debug("Entering");
-		if (finScheduleData.getFinanceMain().getSecondaryAccount() != null
-				&& finScheduleData.getFinanceMain().getSecondaryAccount().size() > 0) {
-
-			for (int i = 0; i < finScheduleData.getFinanceMain().getSecondaryAccount().size(); i++) {
-				finScheduleData.getFinanceMain().getSecondaryAccount().get(i)
-						.setFinReference(finScheduleData.getFinReference());
-				finScheduleData.getFinanceMain().getSecondaryAccount().get(i).setFinEvent(moduleDefiner);
-			}
-
-			if (getSecondaryAccountDAO().getSecondaryAccountsByFinRef(
-					finScheduleData.getFinanceMain().getFinReference(), "_View") != null) {
-
-				getSecondaryAccountDAO().delete(finScheduleData.getFinanceMain().getFinReference(), "_temp");
-				getSecondaryAccountDAO().save(finScheduleData.getFinanceMain().getSecondaryAccount(), moduleDefiner,
-						tableType);
-
-			} else {
-				getSecondaryAccountDAO().save(finScheduleData.getFinanceMain().getSecondaryAccount(), moduleDefiner,
-						tableType);
-
-			}
-
-		} else {
-			getSecondaryAccountDAO().delete(finScheduleData.getFinanceMain().getFinReference(), "_temp");
-		}
-
-		logger.debug("Leaving");
-	}
-
-	/**
 	 * Method for saving List of Fee Charge details
 	 * 
 	 * @param finDetail
@@ -2977,14 +2935,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.jointAccountDetailService = jointAccountDetailService;
 	}
 
-	public AgreementDetailService getAgreementDetailService() {
-		return agreementDetailService;
-	}
-
-	public void setAgreementDetailService(AgreementDetailService agreementDetailService) {
-		this.agreementDetailService = agreementDetailService;
-	}
-
 	public ScoringDetailService getScoringDetailService() {
 		return scoringDetailService;
 	}
@@ -3271,14 +3221,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public void setRepayPostingUtil(RepaymentPostingsUtil repayPostingUtil) {
 		this.repayPostingUtil = repayPostingUtil;
-	}
-
-	public SecondaryAccountDAO getSecondaryAccountDAO() {
-		return secondaryAccountDAO;
-	}
-
-	public void setSecondaryAccountDAO(SecondaryAccountDAO secondaryAccountDAO) {
-		this.secondaryAccountDAO = secondaryAccountDAO;
 	}
 
 	public ExtTablesDAO getExtTablesDAO() {

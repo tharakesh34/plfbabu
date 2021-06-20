@@ -50,10 +50,6 @@ public class EarlySettlementReportData implements java.io.Serializable {
 	private String outStandingPft;
 	private String discountPerc;
 	private String discountAmount;
-	private String insuranceFee;
-	private String periodCoverage;
-	private String periodCoverageAmt;
-	private String returnInsAmount;
 	private String totCustPaidAmount;
 
 	public EarlySettlementReportData() {
@@ -190,38 +186,6 @@ public class EarlySettlementReportData implements java.io.Serializable {
 
 	public void setDiscountAmount(String discountAmount) {
 		this.discountAmount = discountAmount;
-	}
-
-	public String getInsuranceFee() {
-		return insuranceFee;
-	}
-
-	public void setInsuranceFee(String insuranceFee) {
-		this.insuranceFee = insuranceFee;
-	}
-
-	public String getPeriodCoverage() {
-		return periodCoverage;
-	}
-
-	public void setPeriodCoverage(String periodCoverage) {
-		this.periodCoverage = periodCoverage;
-	}
-
-	public String getPeriodCoverageAmt() {
-		return periodCoverageAmt;
-	}
-
-	public void setPeriodCoverageAmt(String periodCoverageAmt) {
-		this.periodCoverageAmt = periodCoverageAmt;
-	}
-
-	public String getReturnInsAmount() {
-		return returnInsAmount;
-	}
-
-	public void setReturnInsAmount(String returnInsAmount) {
-		this.returnInsAmount = returnInsAmount;
 	}
 
 	public String getTotCustPaidAmount() {

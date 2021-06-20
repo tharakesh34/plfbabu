@@ -261,7 +261,7 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				lc = new Listcell(finEnquiry.getFinReference());
 				lc.setParent(item);
 				BigDecimal totAmt = finEnquiry.getFinAmount().subtract(finEnquiry.getDownPayment()
-						.add(finEnquiry.getFeeChargeAmt().add(finEnquiry.getInsuranceAmt())));
+						.add(finEnquiry.getFeeChargeAmt()));
 				lc = new Listcell(PennantAppUtil.amountFormate(totAmt, CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);

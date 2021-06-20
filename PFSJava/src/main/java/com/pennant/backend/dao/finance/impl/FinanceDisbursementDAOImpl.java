@@ -231,7 +231,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 		}
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(
-				" (FinReference, DisbDate, DisbSeq, DisbDesc, DisbAccountId, DisbAmount, DisbReqDate, FeeChargeAmt,InsuranceAmt,");
+				" (FinReference, DisbDate, DisbSeq, DisbDesc, DisbAmount, DisbReqDate, FeeChargeAmt,");
 		if (!isWIF) {
 			insertSql.append(" DisbStatus, DisbType, AutoDisb,");
 			insertSql.append(" instructionUID,InstCalReq,LinkedDisbId,");
@@ -239,7 +239,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 		insertSql.append(" DisbIsActive, DisbRemarks, Version , LastMntBy, LastMntOn, RecordStatus,");
 		insertSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(
-				" Values(:FinReference, :DisbDate, :DisbSeq, :DisbDesc, :DisbAccountId, :DisbAmount,:DisbReqDate, :FeeChargeAmt,:InsuranceAmt,");
+				" Values(:FinReference, :DisbDate, :DisbSeq, :DisbDesc, :DisbAmount,:DisbReqDate, :FeeChargeAmt,");
 		if (!isWIF) {
 			insertSql.append(" :DisbStatus, :DisbType, :AutoDisb,");
 			insertSql.append(" :instructionUID, :InstCalReq, :LinkedDisbId,");
@@ -282,7 +282,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 		}
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(
-				" (FinReference, DisbDate, DisbSeq, DisbDesc, DisbAccountId, DisbAmount, DisbReqDate, FeeChargeAmt,InsuranceAmt,");
+				" (FinReference, DisbDate, DisbSeq, DisbDesc, DisbAmount, DisbReqDate, FeeChargeAmt,");
 		if (!isWIF) {
 			insertSql.append(" DisbStatus, QuickDisb, DisbType, AutoDisb,");
 			insertSql.append(" LinkedTranId, instructionUID,InstCalReq,LinkedDisbId, ");
@@ -293,7 +293,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 		insertSql.append(" DisbIsActive, DisbRemarks, Version , LastMntBy, LastMntOn, RecordStatus,");
 		insertSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(
-				" Values(:FinReference, :DisbDate, :DisbSeq, :DisbDesc, :DisbAccountId, :DisbAmount,:DisbReqDate, :FeeChargeAmt,:InsuranceAmt,");
+				" Values(:FinReference, :DisbDate, :DisbSeq, :DisbDesc, :DisbAmount,:DisbReqDate, :FeeChargeAmt,");
 		if (!isWIF) {
 			insertSql.append(" :DisbStatus, :QuickDisb, :DisbType, :AutoDisb, ");
 			insertSql.append(" :LinkedTranId, :instructionUID,:InstCalReq,:LinkedDisbId, ");
@@ -337,7 +337,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 		}
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(
-				" Set DisbDesc = :DisbDesc,DisbAccountId = :DisbAccountId, DisbAmount = :DisbAmount, FeeChargeAmt=:FeeChargeAmt,InsuranceAmt=:InsuranceAmt, ");
+				" Set DisbDesc = :DisbDesc, DisbAmount = :DisbAmount, FeeChargeAmt=:FeeChargeAmt, ");
 		if (!isWIF) {
 			updateSql.append(" DisbStatus=:DisbStatus, DisbType=:DisbType, AutoDisb=:AutoDisb,");
 			updateSql.append(" instructionUID=:instructionUID, InstCalReq=:InstCalReq, LinkedDisbId=:LinkedDisbId,");
@@ -446,7 +446,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 
 	private StringBuilder getSqlQuery(String type, boolean isWIF) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, DisbDate, DisbSeq, DisbDesc, FeeChargeAmt, InsuranceAmt, DisbAccountId");
+		sql.append(" FinReference, DisbDate, DisbSeq, DisbDesc, FeeChargeAmt ");
 		sql.append(", DisbAmount, DisbReqDate, DisbIsActive, DisbRemarks");
 
 		if (!isWIF) {
@@ -509,7 +509,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 	@Override
 	public List<FinanceDisbursement> getDisbursementToday(String finRefernce, Date disbDate) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, DisbDate, DisbSeq, FeeChargeAmt, InsuranceAmt, DisbAmount, DisbDate");
+		sql.append(" FinReference, DisbDate, DisbSeq, FeeChargeAmt, DisbAmount, DisbDate");
 		sql.append(" From FinDisbursementDetails");
 		sql.append(" Where FinReference = ? and DisbDate = ?");
 		sql.append(" and (DisbStatus is null or DisbStatus != ?)");
@@ -530,7 +530,6 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 				fd.setDisbDate(rs.getTimestamp("DisbDate"));
 				fd.setDisbSeq(rs.getInt("DisbSeq"));
 				fd.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
-				fd.setInsuranceAmt(rs.getBigDecimal("InsuranceAmt"));
 				fd.setDisbAmount(rs.getBigDecimal("DisbAmount"));
 
 				return fd;
@@ -548,7 +547,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, DisbDate, DisbSeq, DisbDesc, FeeChargeAmt, InsuranceAmt, DisbAmount");
+		sql.append(" FinReference, DisbDate, DisbSeq, DisbDesc, FeeChargeAmt, DisbAmount");
 		sql.append(", DisbReqDate, DisbIsActive, DisbRemarks, DisbStatus, AutoDisb");
 		sql.append(", LastMntBy, LastMntOn, QuickDisb");
 		sql.append(" from FinDisbursementDetails");
@@ -575,7 +574,6 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 					finDisb.setDisbSeq(rs.getInt("DisbSeq"));
 					finDisb.setDisbDesc(rs.getString("DisbDesc"));
 					finDisb.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
-					finDisb.setInsuranceAmt(rs.getBigDecimal("InsuranceAmt"));
 					finDisb.setDisbAmount(rs.getBigDecimal("DisbAmount"));
 					finDisb.setDisbReqDate(rs.getTimestamp("DisbReqDate"));
 					finDisb.setDisbIsActive(rs.getBoolean("DisbIsActive"));
@@ -668,12 +666,10 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 			finDisb.setDisbDate(rs.getTimestamp("DisbDate"));
 			finDisb.setDisbSeq(rs.getInt("DisbSeq"));
 			finDisb.setDisbDesc(rs.getString("DisbDesc"));
-			finDisb.setDisbAccountId(rs.getString("DisbAccountId"));
 			finDisb.setDisbAmount(rs.getBigDecimal("DisbAmount"));
 			finDisb.setDisbReqDate(rs.getTimestamp("DisbReqDate"));
 			finDisb.setDisbIsActive(rs.getBoolean("DisbIsActive"));
 			finDisb.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
-			finDisb.setInsuranceAmt(rs.getBigDecimal("InsuranceAmt"));
 			finDisb.setDisbRemarks(rs.getString("DisbRemarks"));
 			finDisb.setVersion(rs.getInt("Version"));
 			finDisb.setLastMntBy(rs.getLong("LastMntBy"));

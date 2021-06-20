@@ -1318,7 +1318,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 
 		// co-applicant details
-		for (JointAccountDetail jointAccDetail : financeDetail.getJountAccountDetailList()) {
+		for (JointAccountDetail jointAccDetail : financeDetail.getJointAccountDetailList()) {
 			jointAccDetail.setFinReference(financeMain.getFinReference());
 			jointAccDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			if (!moveLoanStage) {
@@ -1594,9 +1594,6 @@ public class CreateFinanceController extends SummaryDetailService {
 				disbursementDetails.setDisbSeq(1);
 				disbursementDetails.setDisbReqDate(DateUtility.getAppDate());
 				disbursementDetails.setFeeChargeAmt(financeMain.getFeeChargeAmt());
-				disbursementDetails.setInsuranceAmt(financeMain.getInsuranceAmt());
-				disbursementDetails
-						.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(financeMain.getDisbAccountId()));
 				finScheduleData.getDisbursementDetails().add(disbursementDetails);
 			}
 		}
@@ -2419,7 +2416,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		response.setFinScheduleData(finScheduleData);
 
-		response.setJountAccountDetailList(null);
+		response.setJointAccountDetailList(null);
 		response.setGurantorsDetailList(null);
 		response.setDocumentDetailsList(null);
 		response.setFinanceCollaterals(null);
@@ -2718,7 +2715,6 @@ public class CreateFinanceController extends SummaryDetailService {
 				FinInquiryDetail finInquiryDetail = new FinInquiryDetail();
 				BigDecimal paidTotal = BigDecimal.ZERO;
 				BigDecimal schdFeePaid = BigDecimal.ZERO;
-				BigDecimal schdInsPaid = BigDecimal.ZERO;
 				BigDecimal schdPftPaid = BigDecimal.ZERO;
 				BigDecimal schdPriPaid = BigDecimal.ZERO;
 				BigDecimal principalSchd = BigDecimal.ZERO;
@@ -2730,7 +2726,6 @@ public class CreateFinanceController extends SummaryDetailService {
 				if (finSchduleList != null) {
 					for (FinanceScheduleDetail financeScheduleDetail : finSchduleList) {
 						schdFeePaid = schdFeePaid.add(financeScheduleDetail.getSchdFeePaid());
-						schdInsPaid = schdInsPaid.add(financeScheduleDetail.getSchdInsPaid());
 						schdPftPaid = schdPftPaid.add(financeScheduleDetail.getSchdPftPaid());
 						schdPriPaid = schdPriPaid.add(financeScheduleDetail.getSchdPriPaid());
 						principalSchd = principalSchd.add(financeScheduleDetail.getPrincipalSchd());
@@ -2756,7 +2751,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				finInquiryDetail.setLoanTenor(DateUtility.getMonthsBetween(financeMain.getFinStartDate(),
 						financeMain.getMaturityDate(), true));
 				finInquiryDetail.setMaturityDate(financeMain.getMaturityDate());
-				paidTotal = schdPriPaid.add(schdPftPaid).add(schdFeePaid).add(schdInsPaid);
+				paidTotal = schdPriPaid.add(schdPftPaid).add(schdFeePaid);
 				finInquiryDetail.setPaidTotal(paidTotal);
 				finInquiryDetail.setPaidPri(schdPriPaid);
 				finInquiryDetail.setPaidPft(schdPftPaid);
@@ -2775,9 +2770,9 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 
 				// fetch co-applicant details
-				List<JointAccountDetail> jountAccountDetailList = jointAccountDetailService
+				List<JointAccountDetail> jointAccountDetailList = jointAccountDetailService
 						.getJoinAccountDetail(financeMain.getFinReference(), "_View");
-				finInquiryDetail.setJountAccountDetailList(jountAccountDetailList);
+				finInquiryDetail.setJointAccountDetailList(jointAccountDetailList);
 
 				// fetch disbursement details
 				List<FinanceDisbursement> disbList = getFinanceDisbursementDAO()
@@ -2853,8 +2848,8 @@ public class CreateFinanceController extends SummaryDetailService {
 				updatedFinanceDocuments(financeDetail);
 			}
 			// save or update coApplicants details
-			if (financeDetail.getJountAccountDetailList() != null
-					&& !financeDetail.getJountAccountDetailList().isEmpty()) {
+			if (financeDetail.getJointAccountDetailList() != null
+					&& !financeDetail.getJointAccountDetailList().isEmpty()) {
 				updatedCoApplicants(financeDetail);
 			}
 		} catch (Exception e) {
@@ -2949,7 +2944,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		logger.debug(Literal.ENTERING);
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		AuditHeader auditHeader = null;
-		for (JointAccountDetail detail : financeDetail.getJountAccountDetailList()) {
+		for (JointAccountDetail detail : financeDetail.getJointAccountDetailList()) {
 			detail.setNewRecord(true);
 			detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			detail.setVersion(1);
@@ -2958,7 +2953,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			// set update properties if exists
 			String finReference = financeMain.getFinReference();
 			String type = TableType.TEMP_TAB.getSuffix();
-			JointAccountDetail extDetail = jointAccountDetailService.getJountAccountDetailByRef(finReference,
+			JointAccountDetail extDetail = jointAccountDetailService.getJointAccountDetailByRef(finReference,
 					detail.getCustCIF(), type);
 			if (extDetail != null) {
 				detail.setJointAccountId(extDetail.getJointAccountId());
@@ -3257,7 +3252,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private void doEmptyResponseObject(FinanceDetail detail) {
 		detail.setFinScheduleData(null);
 		detail.setDocumentDetailsList(null);
-		detail.setJountAccountDetailList(null);
+		detail.setJointAccountDetailList(null);
 		detail.setGurantorsDetailList(null);
 		detail.setCollateralAssignmentList(null);
 		detail.setFinFlagsDetails(null);
@@ -3911,9 +3906,9 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 
 			// setting the values for the co_applicant
-			List<JointAccountDetail> jountAccountDetailList = finDetail.getJountAccountDetailList();
+			List<JointAccountDetail> jointAccountDetailList = finDetail.getJointAccountDetailList();
 
-			for (JointAccountDetail detail : jountAccountDetailList) {
+			for (JointAccountDetail detail : jointAccountDetailList) {
 				detail.setFinReference(finReference);
 				detail.setId(Long.MIN_VALUE);
 				detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -4185,9 +4180,6 @@ public class CreateFinanceController extends SummaryDetailService {
 				disbursementDetails.setDisbSeq(1);
 				disbursementDetails.setDisbReqDate(SysParamUtil.getAppDate());
 				disbursementDetails.setFeeChargeAmt(finMain.getFeeChargeAmt());
-				disbursementDetails.setInsuranceAmt(finMain.getInsuranceAmt());
-				disbursementDetails
-						.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(finMain.getDisbAccountId()));
 				finScheduleData.getDisbursementDetails().add(disbursementDetails);
 			}
 		}

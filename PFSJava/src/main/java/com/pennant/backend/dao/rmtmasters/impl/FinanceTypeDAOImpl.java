@@ -105,7 +105,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", FinIsRateRvwAtGrcEnd, FinSchCalCodeOnRvw, FinAssetType");
 		sql.append(", FinIsActive, PftPayAcType, FinIsOpenPftPayAcc");
 		sql.append(", FinGrcSchdMthd, FinIsAlwGrcRepay, FinMargin, FinGrcMargin, FinScheduleOn, FinGrcScheduleOn");
-		sql.append(", FinCommitmentReq, FinCollateralReq, FinDepreciationReq, FinDepreciationFrq, AllowRIAInvestment");
+		sql.append(", FinCommitmentReq, FinCollateralReq, AllowRIAInvestment");
 		sql.append(", OverrideLimit, LimitRequired, FinCommitmentOvrride, FinCollateralOvrride, FinRepayPftOnFrq");
 		sql.append(", FinPftUnChanged, ManualSchedule, ApplyODPenalty, ODIncGrcDays, ODChargeType");
 		sql.append(", ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc");
@@ -225,8 +225,6 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				ft.setFinGrcScheduleOn(rs.getString("FinGrcScheduleOn"));
 				ft.setFinCommitmentReq(rs.getBoolean("FinCommitmentReq"));
 				ft.setFinCollateralReq(rs.getBoolean("FinCollateralReq"));
-				ft.setFinDepreciationReq(rs.getBoolean("FinDepreciationReq"));
-				ft.setFinDepreciationFrq(rs.getString("FinDepreciationFrq"));
 				ft.setAllowRIAInvestment(rs.getBoolean("AllowRIAInvestment"));
 				ft.setOverrideLimit(rs.getBoolean("OverrideLimit"));
 				ft.setLimitRequired(rs.getBoolean("LimitRequired"));
@@ -414,7 +412,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", FinRvwRateApplFor, FinAlwRateChangeAnyDate, FinIsIntCpzAtGrcEnd, FinSchCalCodeOnRvw");
 		sql.append(", AlwPlanDeferment, FinIsRateRvwAtGrcEnd, PlanDeferCount, PftPayAcType, FinIsOpenPftPayAcc");
 		sql.append(", FinIsAlwGrcRepay, FinGrcSchdMthd, FinGrcMargin, FinMargin, FinCommitmentReq");
-		sql.append(", FinCollateralReq, FinDepreciationReq, FinDepreciationFrq, FinBankContingentAcType");
+		sql.append(", FinCollateralReq, FinBankContingentAcType");
 		sql.append(", FinProvisionAcType, AllowRIAInvestment, OverrideLimit, LimitRequired, FinCommitmentOvrride");
 		sql.append(", FinCollateralOvrride, FinRepayPftOnFrq, FinPftUnChanged, ApplyODPenalty, ODIncGrcDays");
 		sql.append(", ODChargeType, ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc");
@@ -525,8 +523,6 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 							ft.setFinMargin(rs.getBigDecimal("FinMargin"));
 							ft.setFinCommitmentReq(rs.getBoolean("FinCommitmentReq"));
 							ft.setFinCollateralReq(rs.getBoolean("FinCollateralReq"));
-							ft.setFinDepreciationReq(rs.getBoolean("FinDepreciationReq"));
-							ft.setFinDepreciationFrq(rs.getString("FinDepreciationFrq"));
 							ft.setFinBankContingentAcType(rs.getString("FinBankContingentAcType"));
 							ft.setFinProvisionAcType(rs.getString("FinProvisionAcType"));
 							ft.setAllowRIAInvestment(rs.getBoolean("AllowRIAInvestment"));
@@ -810,7 +806,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				" FinIsActive, PftPayAcType,FinIsOpenPftPayAcc	,Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
 		sql.append(" NextTaskId, RecordType, WorkflowId ,FinGrcSchdMthd,FinIsAlwGrcRepay,");
-		sql.append("	FinCommitmentReq,FinCollateralReq,FinDepreciationReq,FinDepreciationFrq,");
+		sql.append("	FinCommitmentReq,FinCollateralReq,");
 		sql.append(" FinMargin,FinGrcMargin,FinScheduleOn,FinGrcScheduleOn, ");
 		sql.append(" FinPftUnChanged ,ManualSchedule,");
 		sql.append(
@@ -860,7 +856,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				" :FinIsActive, :PftPayAcType,:FinIsOpenPftPayAcc ,:Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, ");
 		sql.append(" :NextTaskId, :RecordType, :WorkflowId ,:FinGrcSchdMthd,:FinIsAlwGrcRepay,");
-		sql.append(" :FinCommitmentReq,:FinCollateralReq,:FinDepreciationReq,:FinDepreciationFrq,");
+		sql.append(" :FinCommitmentReq,:FinCollateralReq,");
 		sql.append(" :FinMargin,:FinGrcMargin,:FinScheduleOn,:FinGrcScheduleOn, ");
 		sql.append(" :FinPftUnChanged ,:ManualSchedule,");
 		sql.append(
@@ -965,8 +961,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				" FinIsAlwGrcRepay=:FinIsAlwGrcRepay,FinScheduleOn=:FinScheduleOn,FinGrcScheduleOn=:FinGrcScheduleOn,");
 		sql.append(" FinMargin=:FinMargin,FinGrcMargin=:FinGrcMargin,");
 		sql.append(
-				" FinCommitmentReq=:FinCommitmentReq ,FinCollateralReq=:FinCollateralReq ,FinDepreciationReq=:FinDepreciationReq,");
-		sql.append(" FinDepreciationFrq=:FinDepreciationFrq ,");
+				" FinCommitmentReq=:FinCommitmentReq ,FinCollateralReq=:FinCollateralReq ,");
 		sql.append(" FinPftUnChanged=:FinPftUnChanged ,ManualSchedule = :ManualSchedule,");
 		sql.append(" AllowRIAInvestment =:AllowRIAInvestment , OverrideLimit=:OverrideLimit, ");
 		sql.append(

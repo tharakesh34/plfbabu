@@ -56,7 +56,7 @@ public class FinInquiryDetail {
 	private String disbStatus;
 	@XmlElementWrapper(name = "coApplicants")
 	@XmlElement(name = "coApplicant")
-	private List<JointAccountDetail> jountAccountDetailList = new ArrayList<JointAccountDetail>(1);
+	private List<JointAccountDetail> jointAccountDetailList = new ArrayList<JointAccountDetail>(1);
 	@XmlElement
 	private Date finApprovedDate;
 	@XmlElement
@@ -222,12 +222,12 @@ public class FinInquiryDetail {
 		this.disbStatus = disbStatus;
 	}
 
-	public List<JointAccountDetail> getJountAccountDetailList() {
-		return jountAccountDetailList;
+	public List<JointAccountDetail> getJointAccountDetailList() {
+		return jointAccountDetailList;
 	}
 
-	public void setJountAccountDetailList(List<JointAccountDetail> jountAccountDetailList) {
-		this.jountAccountDetailList = jountAccountDetailList;
+	public void setJointAccountDetailList(List<JointAccountDetail> jointAccountDetailList) {
+		this.jointAccountDetailList = jointAccountDetailList;
 	}
 
 	public Date getFinApprovedDate() {

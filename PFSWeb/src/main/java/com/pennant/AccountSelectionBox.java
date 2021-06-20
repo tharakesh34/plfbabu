@@ -62,7 +62,6 @@ import org.zkoss.zul.Space;
 import com.pennant.Interface.model.IAccounts;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.backend.model.rmtmasters.FinTypeAccount;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.component.Uppercasebox;
@@ -158,31 +157,6 @@ public class AccountSelectionBox extends Hbox {
 		this.appendChild(decimalbox);
 
 		logger.trace(Literal.LEAVING);
-	}
-
-	/**
-	 * Method to set Account Selection box Properties with defined definition on Finance Type Configuration
-	 * 
-	 * @param finType
-	 * @param accEvent
-	 * @param finCcy
-	 */
-	public void setAccountDetails(String finType, String accEvent, String finCcy) {
-		FinTypeAccount finTypeAc = PennantAppUtil.getFinanceAccounts(finType, accEvent, finCcy);
-		if (finTypeAc != null) {
-			alwManualInput = finTypeAc.isAlwManualEntry();
-			accReceivables = finTypeAc.getAccountReceivable();
-			accTypes = finTypeAc.getCustAccountTypes();
-		}
-
-		currency = finCcy;
-		this.button.setSclass("cssBtnSearch");
-		this.button.setDisabled(false);
-		if (alwManualInput) {
-			this.textbox.setReadonly(false);
-		} else {
-			this.textbox.setReadonly(true);
-		}
 	}
 
 	/**

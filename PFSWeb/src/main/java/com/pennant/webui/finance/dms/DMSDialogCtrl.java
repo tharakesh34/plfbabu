@@ -421,8 +421,8 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 					}
 
 					//CoApplicant Documents
-					if (CollectionUtils.isNotEmpty(financeDetail.getJountAccountDetailList())) {
-						for (JointAccountDetail coApplicant : financeDetail.getJountAccountDetailList()) {
+					if (CollectionUtils.isNotEmpty(financeDetail.getJointAccountDetailList())) {
+						for (JointAccountDetail coApplicant : financeDetail.getJointAccountDetailList()) {
 							List<CustomerDocument> coApplicantDocs = coApplicant.getCustomerDetails()
 									.getCustomerDocumentsList();
 

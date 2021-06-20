@@ -37,8 +37,6 @@
 										<listheader id="listheader_LimitChange" hflex="min" align="right" visible="false" />
 										<listheader id="listheader_AvailableLimit" hflex="min" align="right" visible="false" />
 										<listheader id="listheader_ODLimit" hflex="min" align="right" visible="false" />
-										<listheader id="listHeader_cashFlowEffect" label="${c:l('listheader_CashFlowEffect.label')}" hflex="min" />
-										<listheader id="listHeader_vSProfit" label="${c:l('listheader_VsProfit.label')}" hflex="min" />
 										<listheader id="listHeader_orgPrincipalDue" label="${c:l('listheader_OrgPrincipalDue.label')}"
 											hflex="min" />
 									</listhead>

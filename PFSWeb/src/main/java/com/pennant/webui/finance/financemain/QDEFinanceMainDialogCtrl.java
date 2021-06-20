@@ -136,13 +136,11 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	// Finance Main Details Tab---> 1. Key Details
 	protected CurrencyBox downPaySupl; // autoWired
-	protected Row row_downPaySupl; // autoWired
 
 	protected Label label_QDEFinanceMainDialog_FinType; // autoWired
 	protected Label label_QDEFinanceMainDialog_ScheduleMethod; // autoWired
 	protected Label label_QDEFinanceMainDialog_FinRepayPftOnFrq; // autoWired
 	protected Label label_QDEFinanceMainDialog_CommitRef; // autoWired
-	protected Label label_QDEFinanceMainDialog_DepriFrq; // autoWired
 	protected Label label_QDEFinanceMainDialog_PlanDeferCount; // autoWired
 	protected Label label_QDEFinanceMainDialog_AlwGrace; // autoWired
 	protected Label label_QDEFinanceMainDialog_StepPolicy; // autoWired
@@ -272,7 +270,6 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		setMainWindow(window_QDEFinanceMainDialog);
 		setLabel_FinanceMainDialog_FinType(label_QDEFinanceMainDialog_FinType);
 		setLabel_FinanceMainDialog_CommitRef(label_QDEFinanceMainDialog_CommitRef);
-		setLabel_FinanceMainDialog_DepriFrq(label_QDEFinanceMainDialog_DepriFrq);
 		setLabel_FinanceMainDialog_FinRepayPftOnFrq(label_QDEFinanceMainDialog_FinRepayPftOnFrq);
 		setLabel_FinanceMainDialog_PlanDeferCount(label_QDEFinanceMainDialog_PlanDeferCount);
 		setLabel_FinanceMainDialog_AlwGrace(label_QDEFinanceMainDialog_AlwGrace);
@@ -990,7 +987,6 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.custID.setValue(this.oldVar_custID);
 		this.finBranch.setValue(this.oldVar_finBranch);
 		this.finBranch.setDescription(this.oldVar_lovDescFinBranchName);
-		this.downPayAccount.setValue(this.oldVar_downPayAccount);
 
 		this.phoneCountryCode.setValue(this.oldVar_phoneCountryCode);
 		this.phoneAreaCode.setValue(this.oldVar_phoneAreaCode);
@@ -1479,12 +1475,12 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					&& getJointAccountDetailDialogCtrl().getGuarantorDetailList().size() > 0) {
 				getJointAccountDetailDialogCtrl().doSave_GuarantorDetail(aFinanceDetail, true);
 			}
-			if (getJointAccountDetailDialogCtrl().getJountAccountDetailList() != null
-					&& getJointAccountDetailDialogCtrl().getJountAccountDetailList().size() > 0) {
+			if (getJointAccountDetailDialogCtrl().getJointAccountDetailList() != null
+					&& getJointAccountDetailDialogCtrl().getJointAccountDetailList().size() > 0) {
 				getJointAccountDetailDialogCtrl().doSave_JointAccountDetail(aFinanceDetail, true);
 			}
 		} else {
-			aFinanceDetail.setJountAccountDetailList(null);
+			aFinanceDetail.setJointAccountDetailList(null);
 			aFinanceDetail.setGurantorsDetailList(null);
 		}
 
@@ -2041,9 +2037,6 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		} else {
 			Currency details = (Currency) dataObject;
 			if (details != null) {
-
-				this.disbAcctId.setValue("");
-				this.repayAcctId.setValue("");
 				this.finCcy.setValue(details.getCcyCode(), details.getCcyDesc());
 
 				// To Format Amount based on the currency
@@ -2352,11 +2345,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @param event
 	 */
 	public void onFulfill$finBranch(Event event) {
-		logger.debug("Entering");
-		this.disbAcctId.setBranchCode(this.finBranch.getValue());
-		this.repayAcctId.setBranchCode(this.finBranch.getValue());
-		this.downPayAccount.setBranchCode(this.finBranch.getValue());
-		logger.debug("Leaving");
+		
 	}
 
 	/**
@@ -2473,7 +2462,6 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public void onFulfill$downPayBank(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering " + event.toString());
 		setDownpayAmount();
-		setDownPayAcMand();
 		logger.debug("Leaving " + event.toString());
 	}
 
@@ -2491,20 +2479,11 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		}
 		setDownpayAmount();
-		setDownPayAcMand();
 		logger.debug("Leaving " + event.toString());
 	}
 
 	private void setDownpayAmount() {
 		this.downPayBank.clearErrorMessage();
-	}
-
-	private void setDownPayAcMand() {
-		if (this.downPayBank.getActualValue().compareTo(BigDecimal.ZERO) > 0) {
-			this.downPayAccount.setMandatoryStyle(!isReadOnly("FinanceMainDialog_MandownPaymentAcc"));
-		} else {
-			this.downPayAccount.setMandatoryStyle(false);
-		}
 	}
 
 	/**
@@ -2689,12 +2668,12 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					&& getJointAccountDetailDialogCtrl().getGuarantorDetailList().size() > 0) {
 				getJointAccountDetailDialogCtrl().doSave_GuarantorDetail(aFinanceDetail, false);
 			}
-			if (getJointAccountDetailDialogCtrl().getJountAccountDetailList() != null
-					&& getJointAccountDetailDialogCtrl().getJountAccountDetailList().size() > 0) {
+			if (getJointAccountDetailDialogCtrl().getJointAccountDetailList() != null
+					&& getJointAccountDetailDialogCtrl().getJointAccountDetailList().size() > 0) {
 				getJointAccountDetailDialogCtrl().doSave_JointAccountDetail(aFinanceDetail, false);
 			}
 		} else {
-			aFinanceDetail.setJountAccountDetailList(null);
+			aFinanceDetail.setJointAccountDetailList(null);
 			aFinanceDetail.setGurantorsDetailList(null);
 		}
 		aFinanceDetail.getFinScheduleData().setFinanceMain(aFinanceMain);

@@ -224,10 +224,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Textbox finBranch1;
 	protected Textbox lovDescFinBranchName1;
 	protected CurrencyBox rpyAmount;
-	protected AccountSelectionBox repayAccount;
 	protected Decimalbox priPayment;
 	protected Decimalbox pftPayment;
-	protected Decimalbox insPayment;
 	protected Decimalbox schdFeeAmount;
 	protected Decimalbox crInsAmount;
 	protected Row row_InsFee;
@@ -237,10 +235,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Decimalbox totRefundAmt;
 	protected BigDecimal oldVar_totRefundAmt;
 	protected Decimalbox totWaivedAmt;
-	protected Label label_PaymentDialog_InsRefundAmt;
-	protected Hbox hbox_insRefundAmt;
-	protected Decimalbox insRefundAmt;
-	protected Decimalbox actInsRefundAmt;
 	protected Row row_paidByCustomer;
 	protected Decimalbox paidByCustomer;
 	protected Row row_payApportionment;
@@ -248,7 +242,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Decimalbox unEarnedAmount;
 
 	// List Header Details on payent Details
-	protected Listheader listheader_InsPayment;
 	protected Listheader listheader_SchdFee;
 
 	//Effective Schedule Tab Details
@@ -261,8 +254,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Label effectiveRateOfReturn;
 
 	//Early Settlement Inquiry Fields
-	protected Label label_PaymentDialog_RepayAccount;
-	protected Hbox hbox_repayAccount;
 	protected Row row_EarlyRepayEffectOnSchd;
 	protected Row row_EarlySettleDate;
 	protected Datebox earlySettlementDate;
@@ -525,25 +516,10 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.rpyAmount.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.rpyAmount.setScale(formatter);
 
-		this.repayAccount.setAccountDetails(financeMain.getFinType(), AccountConstants.FinanceAccount_REPY,
-				financeMain.getFinCcy());
-		this.repayAccount.setFormatter(formatter);
-		this.repayAccount.setBranchCode(financeMain.getFinBranch());
-		this.repayAccount.setCustCIF(financeMain.getLovDescCustCIF());
-		this.repayAccount.setMandatoryStyle(true);
-		if (!ImplementationConstants.ACCOUNTS_APPLICABLE
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
-			this.label_PaymentDialog_RepayAccount.setVisible(false);
-			this.repayAccount.setMandatoryStyle(false);
-			this.hbox_repayAccount.setVisible(false);
-		}
-
 		this.priPayment.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.pftPayment.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.totPenaltyAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.totRefundAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-		this.insRefundAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-		this.actInsRefundAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.paidByCustomer.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.unEarnedAmount.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.totWaivedAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
@@ -568,7 +544,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 */
 	private void doEdit(boolean isChgRpy) {
 		logger.debug("Entering");
-		this.repayAccount.setReadonly(isReadOnly("ManualPaymentDialog_RepayAccount"));
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)
 				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY)) {
 			this.rpyAmount.setDisabled(isReadOnly("ManualPaymentDialog_RepayAmount"));
@@ -581,11 +556,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.rpyAmount.setDisabled(true);
 		}
 
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
-			this.insRefundAmt.setDisabled(isReadOnly("ManualPaymentDialog_insRefund"));
-		} else {
-			this.insRefundAmt.setDisabled(true);
-		}
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)
 				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
 			this.totRefundAmt.setDisabled(isReadOnly("ManualPaymentDialog_refundPft"));
@@ -686,11 +656,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			accTypeEvent = AccountConstants.FinanceAccount_REPY;
 		}
 
-		this.repayAccount.setAccountDetails(aFinanceMain.getFinType(), accTypeEvent, aFinanceMain.getFinCcy());
-		this.repayAccount.setCustCIF(aFinanceMain.getLovDescCustCIF());
-		this.repayAccount.setFormatter(CurrencyUtil.getFormat(aFinanceMain.getFinCcy()));
-		this.repayAccount.setBranchCode(aFinanceMain.getFinBranch());
-
 		repayData.setAccruedTillLBD(aFinanceMain.getLovDescAccruedTillLBD());
 		repayData.setFinanceDetail(getFinanceDetail());
 		setRepayData(getRepayCalculator().initiateRepay(repayData, aFinanceMain, financeScheduleDetails, "", null,
@@ -744,7 +709,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				.setValue(getRepayMain().getFinBranch() + "-" + getRepayMain().getLovDescFinBranchName());
 		if (!isChgRpy) {
 			this.rpyAmount.setValue(PennantAppUtil.formateAmount(getRepayMain().getRepayAmountNow(), finformatter));
-			this.repayAccount.setValue(getRepayMain().getRepayAccountId());
 		}
 		this.priPayment.setValue(PennantAppUtil.formateAmount(getRepayMain().getPrincipalPayNow(), finformatter));
 		this.pftPayment.setValue(PennantAppUtil.formateAmount(getRepayMain().getProfitPayNow(), finformatter));
@@ -777,7 +741,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				if (getRepaySchdList() == null || getRepaySchdList().isEmpty()) {
 
-					if (!isChgRpy || StringUtils.isNotBlank(this.repayAccount.getValue())) {
+					if (!isChgRpy) {
 
 						Events.sendEvent("onClick$btnCalcRepayments", this.window_ManualPaymentDialog, isChgRpy);
 						this.btnCalcRepayments.setVisible(false);
@@ -795,8 +759,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					if (this.earlySettlementDate.getValue() == null) {
 						this.earlySettlementDate.setValue(curBussDate);
 					}
-					this.hbox_insRefundAmt.setVisible(false);
-					this.label_PaymentDialog_InsRefundAmt.setVisible(false);
 
 					doFillRepaySchedules(getRepaySchdList());
 				}
@@ -807,9 +769,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				Events.sendEvent("onClick$btnCalcRepayments", this.window_ManualPaymentDialog, isChgRpy);
 
 				this.earlySettlementBal.setVisible(true);
-				this.label_PaymentDialog_RepayAccount
-						.setValue(Labels.getLabel("label_PaymentDialog_EarlySettleAmount.value"));
-				this.repayAccount.setVisible(false);
 				this.label_PaymentDialog_EarlySettlementTillDate.setVisible(true);
 				this.hbox_esTilllDate.setVisible(true);
 				this.earlySettlementBal.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, finformatter));
@@ -817,7 +776,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				this.btnCalcRepayments.setVisible(true);
 				this.btnChangeRepay.setVisible(false);
 				this.btnPay.setVisible(false);
-				this.actInsRefundAmt.setVisible(true);
 			}
 
 		} else {
@@ -1122,8 +1080,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 
 			BigDecimal refundVal = totRefundAmt.getValue() == null ? BigDecimal.ZERO : totRefundAmt.getValue();
-			this.paidByCustomer.setValue(this.rpyAmount.getActualValue().subtract(refundVal)
-					.subtract(this.insRefundAmt.getValue() == null ? BigDecimal.ZERO : this.insRefundAmt.getValue()));
+			this.paidByCustomer.setValue(this.rpyAmount.getActualValue().subtract(refundVal));
 			this.unEarnedAmount.setValue(this.totPftDue.getValue().subtract(this.accruedPft.getValue()));
 		}
 
@@ -1441,8 +1398,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 							insAmount.getWaiverAmount() == null ? BigDecimal.ZERO : insAmount.getWaiverAmount());
 					subHeadRule.setPAIDFEE(
 							insAmount.getPaidAmount() == null ? BigDecimal.ZERO : insAmount.getPaidAmount());
-					getRepayData().setActInsRefundAmt(subHeadRule.getCALFEE().subtract(subHeadRule.getWAVFEE())
-							.subtract(subHeadRule.getPAIDFEE()));
 				}
 
 			} catch (IllegalAccessException e) {
@@ -1460,28 +1415,12 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		//Calculation for Insurance Refund
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)
 				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
-			this.hbox_insRefundAmt.setVisible(false);
-			this.label_PaymentDialog_InsRefundAmt.setVisible(false);
 			int months = DateUtility
 					.getMonthsBetween(
 							financeMain.getMaturityDate(), repayData.getRepayMain().getRefundCalStartDate() == null
 									? financeMain.getMaturityDate() : repayData.getRepayMain().getRefundCalStartDate(),
 							true);
 			subHeadRule.setRemTenure(months);
-
-			Rule insRefundRule = getRuleService().getApprovedRuleById("INSREFND", RuleConstants.MODULE_REFUND,
-					RuleConstants.EVENT_REFUND);
-			if (insRefundRule != null) {
-
-				BigDecimal refundResult = (BigDecimal) RuleExecutionUtil.executeRule(insRefundRule.getSQLRule(),
-						subHeadRule.getDeclaredFieldValues(), financeMain.getFinCcy(), RuleReturnType.DECIMAL);
-				repayData.getRepayMain().setInsRefund(refundResult);
-				this.insRefundAmt.setValue(PennantApplicationUtil.formateAmount(refundResult,
-						repayData.getRepayMain().getLovDescFinFormatter()));
-			} else {
-				this.insRefundAmt.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO,
-						repayData.getRepayMain().getLovDescFinFormatter()));
-			}
 		}
 
 		setRepayData(repayData);
@@ -1503,7 +1442,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.btnPay.setDisabled(!getUserWorkspace().isAllowed("button_ManualPaymentDialog_btnPay"));
 		this.btnChangeRepay.setDisabled(!getUserWorkspace().isAllowed("button_ManualPaymentDialog_btnChangeRepay"));
 		this.rpyAmount.setDisabled(true);
-		this.repayAccount.setReadonly(isReadOnly("ManualPaymentDialog_RepayAccount"));
 		if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
 			this.btnCalcRepayments.setDisabled(true);
 		} else {
@@ -1513,15 +1451,12 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					.subtract(paidNow);
 			this.earlySettlementBal
 					.setValue(PennantAppUtil.formateAmount(settlementBal, getRepayMain().getLovDescFinFormatter()));
-			this.actInsRefundAmt.setValue(PennantAppUtil.formateAmount(getRepayData().getActInsRefundAmt(),
-					getRepayMain().getLovDescFinFormatter()));
 		}
 
 		//Total Outstanding Paid Amount By customer
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)
 				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
-			this.paidByCustomer.setValue(this.rpyAmount.getActualValue().subtract(this.totRefundAmt.getValue())
-					.subtract(this.insRefundAmt.getValue()));
+			this.paidByCustomer.setValue(this.rpyAmount.getActualValue().subtract(this.totRefundAmt.getValue()));
 			this.unEarnedAmount.setValue(this.totPftDue.getValue().subtract(this.accruedPft.getValue()));
 		}
 
@@ -1546,7 +1481,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.btnChangeRepay.setDisabled(true);
 		this.btnCalcRepayments.setDisabled(!getUserWorkspace().isAllowed("button_ManualPaymentDialog_btnCalRepay"));
 		this.rpyAmount.setDisabled(isReadOnly("ManualPaymentDialog_RepayAmount"));
-		this.repayAccount.setReadonly(isReadOnly("ManualPaymentDialog_RepayAccount"));
 		this.repaymentDetailsTab.setSelected(true);
 		this.rpyAmount.setFocus(true);
 		this.effectiveScheduleTab.setVisible(false);
@@ -1618,7 +1552,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 								getFinanceDetail().getFinScheduleData().getRepayInstructions(), true);
 					} else {
 
-						if (isChgRpy && ImplementationConstants.ACCOUNTS_APPLICABLE) {
+						if (isChgRpy) {
 							// Check Available Funding Account Balance
 							boolean accountTypeFound = false;
 							if (getFinanceType() != null) {
@@ -1639,9 +1573,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 								if (PennantAppUtil
 										.unFormateAmount(
-												this.rpyAmount.getActualValue().subtract(this.totRefundAmt.getValue())
-														.subtract(insRefundAmt.getValue() == null ? BigDecimal.ZERO
-																: insRefundAmt.getValue()),
+												this.rpyAmount.getActualValue().subtract(this.totRefundAmt.getValue()),
 												getRepayData().getRepayMain().getLovDescFinFormatter())
 										.compareTo(iAccount.getAcAvailableBal()) > 0) {
 									MessageUtil.showError(Labels.getLabel("label_InsufficientBalance"));
@@ -1651,7 +1583,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 								}
 							}
 						}
-						//financeMain.setRepayAccountId(PennantApplicationUtil.unFormatAccountNumber(repayAccount.getValue()));
 						processRepayScheduleList(getFinanceDetail().getFinScheduleData().getFinanceMain(),
 								getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), null, false);
 					}
@@ -1854,9 +1785,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.pftPayment.setValue(PennantApplicationUtil.formateAmount(header.getPftAmount(), finFormatter));
 			this.totWaivedAmt.setValue(PennantApplicationUtil.formateAmount(header.getTotalWaiver(), finFormatter));
 			this.totRefundAmt.setValue(PennantApplicationUtil.formateAmount(header.getTotalRefund(), finFormatter));
-			this.repayAccount.setValue(header.getRepayAccountId());
-			this.insRefundAmt.setValue(PennantApplicationUtil.formateAmount(header.getInsRefund(), finFormatter));
-			this.insPayment.setValue(PennantApplicationUtil.formateAmount(header.getTotalIns(), finFormatter));
 			this.schdFeeAmount.setValue(PennantApplicationUtil.formateAmount(header.getTotalSchdFee(), finFormatter));
 			fillComboBox(earlyRpyEffectOnSchd, header.getEarlyPayEffMtd(), earlyRpyEffectList, "");
 			fillComboBox(this.paymentApportionment, header.getPayApportionment(), payApprtnList, "");
@@ -1869,8 +1797,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		//Total Outstanding Paid Amount By customer
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)
 				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
-			this.paidByCustomer.setValue(this.rpyAmount.getActualValue().subtract(this.totRefundAmt.getValue())
-					.subtract(this.insRefundAmt.getValue()));
+			this.paidByCustomer.setValue(this.rpyAmount.getActualValue().subtract(this.totRefundAmt.getValue()));
 			this.unEarnedAmount.setValue(this.totPftDue.getValue().subtract(this.accruedPft.getValue()));
 		}
 
@@ -1952,9 +1879,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		header.setPftAmount(PennantApplicationUtil.unFormateAmount(this.pftPayment.getValue(), finFormatter));
 		header.setTotalRefund(PennantApplicationUtil.unFormateAmount(this.totRefundAmt.getValue(), finFormatter));
 		header.setTotalWaiver(PennantApplicationUtil.unFormateAmount(this.totWaivedAmt.getValue(), finFormatter));
-		header.setRepayAccountId(PennantApplicationUtil.unFormatAccountNumber(this.repayAccount.getValue()));
-		header.setInsRefund(PennantApplicationUtil.unFormateAmount(this.insRefundAmt.getValue(), finFormatter));
-		header.setTotalIns(PennantApplicationUtil.unFormateAmount(this.insPayment.getValue(), finFormatter));
 		header.setTotalSchdFee(PennantApplicationUtil.unFormateAmount(this.schdFeeAmount.getValue(), finFormatter));
 		header.setEarlyPayEffMtd(this.earlyRpyEffectOnSchd.getSelectedItem().getValue().toString());
 		header.setEarlyPayDate(this.earlySettlementDate.getValue());
@@ -2042,8 +1966,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(finMain.getFinReference());
 		Date dateValueDate = DateUtility.getAppValueDate();
 
-		finMain.setRepayAccountId(PennantApplicationUtil.unFormatAccountNumber(repayAccount.getValue()));
-
 		Date curBDay = DateUtility.getAppDate();
 		aeEvent = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(),
 				profitDetail, eventCode, curBDay, dateValueDate);
@@ -2055,8 +1977,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		amountCodes.setRpPft(PennantApplicationUtil.unFormateAmount(this.pftPayment.getValue(), format));
 		amountCodes.setRpPri(PennantApplicationUtil.unFormateAmount(this.priPayment.getValue(), format));
 		amountCodes.setRefund(PennantApplicationUtil.unFormateAmount(this.totRefundAmt.getValue(), format));
-		amountCodes.setInsRefund(PennantApplicationUtil.unFormateAmount(this.insRefundAmt.getValue(), format));
-		amountCodes.setInsPay(PennantApplicationUtil.unFormateAmount(this.insPayment.getValue(), format));
 		amountCodes.setSchFeePay(PennantApplicationUtil.unFormateAmount(this.schdFeeAmount.getValue(), format));
 
 		Map<String, Object> dataMap = aeEvent.getDataMap();
@@ -2418,7 +2338,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		BigDecimal totalPri = BigDecimal.ZERO;
 		BigDecimal totalCharge = BigDecimal.ZERO;
 
-		BigDecimal totInsPaid = BigDecimal.ZERO;
 		BigDecimal totSchdFeePaid = BigDecimal.ZERO;
 
 		Listcell lc;
@@ -2505,17 +2424,13 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				lc.setParent(item);
 
 				//Fee Details
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getSchdInsPayNow(), finFormatter));
-				lc.setStyle("text-align:right;");
-				totInsPaid = totInsPaid.add(repaySchd.getSchdInsPayNow());
-				lc.setParent(item);
 				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getSchdFeePayNow(), finFormatter));
 				lc.setStyle("text-align:right;");
 				totSchdFeePaid = totSchdFeePaid.add(repaySchd.getSchdFeePayNow());
 				lc.setParent(item);
 
 				BigDecimal netPay = repaySchd.getProfitSchdPayNow().add(repaySchd.getPrincipalSchdPayNow())
-						.add(repaySchd.getSchdInsPayNow()).add(repaySchd.getSchdFeePayNow()).subtract(refundPft);
+						.add(repaySchd.getSchdFeePayNow()).subtract(refundPft);
 				lc = new Listcell(PennantAppUtil.amountFormate(netPay, finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
@@ -2535,7 +2450,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.totPenaltyAmt.setValue(PennantAppUtil.formateAmount(totalCharge, finFormatter));
 
 			// Fee Details
-			this.insPayment.setValue(PennantAppUtil.formateAmount(totInsPaid, finFormatter));
 			this.schdFeeAmount.setValue(PennantAppUtil.formateAmount(totSchdFeePaid, finFormatter));
 
 			//Summary Details
@@ -2545,7 +2459,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			paymentMap.put("totalPft", totalPft);
 			paymentMap.put("totalPri", totalPri);
 
-			paymentMap.put("insPaid", totInsPaid);
 			paymentMap.put("schdFeePaid", totSchdFeePaid);
 
 			doFillSummaryDetails(paymentMap);
@@ -2584,11 +2497,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		totalSchAmount = totalSchAmount.add(paymentMap.get("totalPft"));
 		totalSchAmount = totalSchAmount.add(paymentMap.get("totalPri"));
 
-		if (paymentMap.get("insPaid").compareTo(BigDecimal.ZERO) > 0) {
-			totalSchAmount = totalSchAmount.add(paymentMap.get("insPaid"));
-			this.listheader_InsPayment.setVisible(true);
-			fillListItem(Labels.getLabel("listcell_insFeePayNow.label"), paymentMap.get("insPaid"));
-		}
 		if (paymentMap.get("schdFeePaid").compareTo(BigDecimal.ZERO) > 0) {
 			totalSchAmount = totalSchAmount.add(paymentMap.get("schdFeePaid"));
 			this.listheader_SchdFee.setVisible(true);
@@ -2745,12 +2653,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 
-		if (isChgRpy && StringUtils.isBlank(this.repayAccount.getValue())
-				&& ImplementationConstants.ACCOUNTS_APPLICABLE) {
-			String validationMsg = "Please Enter " + Labels.getLabel("label_PaymentDialog_RepayAccount.value");
-			MessageUtil.showError(validationMsg);
-			return false;
-		} else if (!rpyAmount.isDisabled() && this.rpyAmount.getActualValue().compareTo(BigDecimal.ZERO) == 0) {
+		if (!rpyAmount.isDisabled() && this.rpyAmount.getActualValue().compareTo(BigDecimal.ZERO) == 0) {
 			String validationMsg = "Please Enter " + Labels.getLabel("label_PaymentDialog_RpyAmount.value");
 			MessageUtil.showError(validationMsg);
 			return false;
@@ -2777,8 +2680,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 					if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
 							|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0
-							|| curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0
-							|| curSchd.getSchdInsPaid().compareTo(BigDecimal.ZERO) > 0) {
+							|| curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0) {
 
 						futureInstPaid = true;
 						break;
@@ -2814,40 +2716,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 
-			if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE) && isChgRpy) {
-
-				if (StringUtils.isNotBlank(this.repayAccount.getValue())) {
-
-					// Check Available Funding Account Balance
-					boolean accountTypeFound = false;
-					if (getFinanceType() != null) {
-						//Account Type Check
-						String acType = SysParamUtil.getValueAsString("ALWFULLPAY_NONTSR_ACTYPE");
-						String[] acTypeList = acType.split(",");
-						for (int i = 0; i < acTypeList.length; i++) {
-							if (StringUtils.equals(iAccount.getAcType(), acTypeList[i].trim())) {
-								accountTypeFound = true;
-								break;
-							}
-						}
-					}
-
-					if (!accountTypeFound) {
-
-						if (PennantAppUtil
-								.unFormateAmount(
-										this.rpyAmount.getValidateValue().subtract(this.totRefundAmt.getValue())
-												.subtract(insRefundAmt.getValue() == null ? BigDecimal.ZERO
-														: insRefundAmt.getValue()),
-										getRepayData().getRepayMain().getLovDescFinFormatter())
-								.compareTo(iAccount.getAcAvailableBal()) > 0) {
-							MessageUtil.showError(Labels.getLabel("label_InsufficientBalance"));
-							return false;
-						}
-					}
-				}
-			}
-
 		}
 		if (getRepayMain().getRepayAmountExcess().compareTo(BigDecimal.ZERO) > 0) {
 			MessageUtil.showError("Entered amount is more than required ...");
@@ -2861,22 +2729,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				&& !isRefundAmtValidated()) {
 			setRefundAmtValidated(true);
 			return false;
-		}
-
-		//Insurance Refund rule Process Check
-		if (isSaveProcess && !this.insRefundAmt.isDisabled()) {
-			if (this.insRefundAmt.getValue() == null) {
-				this.insRefundAmt.setValue(BigDecimal.ZERO);
-			}
-			if (this.actInsRefundAmt.getValue() == null) {
-				this.actInsRefundAmt.setValue(BigDecimal.ZERO);
-			}
-			if (this.insRefundAmt.getValue().compareTo(this.actInsRefundAmt.getValue()) > 0) {
-				String amount = PennantApplicationUtil.amountFormate(
-						PennantApplicationUtil.unFormateAmount(this.actInsRefundAmt.getValue(), formatter), formatter);
-				MessageUtil.showError("Insurance Amount must not be greater than value: " + amount);
-				return false;
-			}
 		}
 
 		// Payment Apportionment Validation
@@ -3159,8 +3011,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (profitDetail != null) {
 			BigDecimal financeAmount = financeMain.getFinAmount()
 					.add(financeMain.getFeeChargeAmt() != null ? financeMain.getFeeChargeAmt() : BigDecimal.ZERO)
-					.subtract(financeMain.getDownPayment())
-					.add(financeMain.getInsuranceAmt() != null ? financeMain.getInsuranceAmt() : BigDecimal.ZERO);
+					.subtract(financeMain.getDownPayment());
 			earlySettlement.setTotalPaidAmount(
 					financeMain.getFinCcy() + " " + PennantApplicationUtil.amountFormate(financeAmount, formatter));
 			earlySettlement.setTotalTerms(String.valueOf(profitDetail.getNOInst()));
@@ -3188,8 +3039,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				insAmount = feeRule.getFeeAmount().subtract(feeRule.getWaiverAmount())
 						.subtract(feeRule.getPaidAmount());
 			}
-			earlySettlement.setInsuranceFee(
-					financeMain.getFinCcy() + " " + PennantApplicationUtil.amountFormate(insAmount, formatter));
 
 			int remMonths = DateUtility
 					.getMonthsBetween(
@@ -3199,16 +3048,10 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			int totalMonths = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate(),
 					false);
 
-			earlySettlement.setPeriodCoverage(String.valueOf(totalMonths - remMonths));
-			BigDecimal insRefnd = PennantApplicationUtil.unFormateAmount(this.insRefundAmt.getValue(), formatter);
-			earlySettlement.setPeriodCoverageAmt(financeMain.getFinCcy() + " "
-					+ PennantApplicationUtil.amountFormate(insAmount.subtract(insRefnd), formatter));
-			earlySettlement.setReturnInsAmount(
-					financeMain.getFinCcy() + " " + PennantApplicationUtil.amountFormate(insRefnd, formatter));
 			earlySettlement
 					.setTotCustPaidAmount(financeMain.getFinCcy() + " "
 							+ PennantApplicationUtil.amountFormate(profitDetail.getTotalPriBal()
-									.add(profitDetail.getTotalPftBal()).subtract(insRefnd).subtract(totalRefund),
+									.add(profitDetail.getTotalPftBal()).subtract(totalRefund),
 									formatter));
 		}
 

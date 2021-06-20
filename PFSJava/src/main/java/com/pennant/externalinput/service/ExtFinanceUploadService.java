@@ -431,16 +431,6 @@ public class ExtFinanceUploadService {
 			extFinData.setGrcPftRate(finType.getFinGrcIntRate());
 		}
 
-		// Disbursement Account Id
-		if ("AED".equals(extFinData.getFinCcy())) {
-			extFinData.setDisbAccountId(extFinData.getLovDescCustCIF().concat("00001"));
-		} else {
-			extFinData.setDisbAccountId(extFinData.getLovDescCustCIF().concat("00002"));
-		}
-
-		// Repayments Account Id
-		extFinData.setRepayAccountId(extFinData.getDisbAccountId());
-
 		// Source ID
 		extFinData.setFinSourceID("EXT");
 
@@ -539,12 +529,9 @@ public class ExtFinanceUploadService {
 		financeMain.setFinStartDate(extFinData.getFinStartDate());
 		financeMain.setFinContractDate(extFinData.getFinStartDate());
 		financeMain.setFinAmount(extFinData.getFinAmount());
-		financeMain.setDisbAccountId(extFinData.getDisbAccountId());
-		financeMain.setRepayAccountId(extFinData.getRepayAccountId());
 		financeMain.setDownPayment(extFinData.getDownPayment());
 		financeMain.setDownPayBank(extFinData.getDpToBank());
 		financeMain.setDownPaySupl(extFinData.getDpToSupplier());
-		financeMain.setDownPayAccount(financeMain.getRepayAccountId());
 		financeMain.setDefferments(finType.getFinDftTerms());
 
 		if (finType.isAlwPlanDeferment()) {
@@ -554,15 +541,6 @@ public class ExtFinanceUploadService {
 		// Collateral Reference
 		financeMain.setFinCommitmentRef(
 				StringUtils.isBlank(extFinData.getFinCommitmentRef()) ? "" : extFinData.getFinCommitmentRef());
-
-		// Depreciation Frequency
-		if (finType.isFinDepreciationReq()) {
-			financeMain.setDepreciationFrq(finType.getFinDepreciationFrq());
-			financeMain.setNextDepDate(FrequencyUtil.getNextDate(financeMain.getDepreciationFrq(), 1,
-					financeMain.getFinStartDate(), "A", false, finType.getFddLockPeriod()).getNextFrequencyDate());
-			financeMain.setNextDepDate(
-					DateUtility.getDate(DateUtility.format(financeMain.getNextDepDate(), PennantConstants.dateFormat)));
-		}
 
 		financeMain.setFinIsActive(true);
 
@@ -679,7 +657,6 @@ public class ExtFinanceUploadService {
 		financeMain.setLastRepayPftDate(financeMain.getFinStartDate());
 		financeMain.setLastRepayCpzDate(financeMain.getFinStartDate());
 		financeMain.setLastRepayRvwDate(financeMain.getFinStartDate());
-		financeMain.setLastDepDate(financeMain.getFinStartDate());
 
 		// FINANCE ASSET VALUE
 		financeMain.setFinAssetValue(financeMain.getFinAmount());
@@ -992,12 +969,9 @@ public class ExtFinanceUploadService {
 		financeMain.setFinStartDate(extFinData.getFinStartDate());
 		financeMain.setFinContractDate(extFinData.getFinStartDate());
 		financeMain.setFinAmount(extFinData.getFinAmount());
-		financeMain.setDisbAccountId(extFinData.getDisbAccountId());
-		financeMain.setRepayAccountId(extFinData.getRepayAccountId());
 		financeMain.setDownPayment(extFinData.getDownPayment());
 		financeMain.setDownPayBank(extFinData.getDpToBank());
 		financeMain.setDownPaySupl(extFinData.getDpToSupplier());
-		financeMain.setDownPayAccount(financeMain.getRepayAccountId());
 		financeMain.setDefferments(finType.getFinDftTerms());
 
 		if (finType.isAlwPlanDeferment()) {
@@ -1007,15 +981,6 @@ public class ExtFinanceUploadService {
 		// Collateral Reference
 		financeMain.setFinCommitmentRef(
 				StringUtils.isBlank(extFinData.getFinCommitmentRef()) ? "" : extFinData.getFinCommitmentRef());
-
-		// Depreciation Frequency
-		if (finType.isFinDepreciationReq()) {
-			financeMain.setDepreciationFrq(finType.getFinDepreciationFrq());
-			financeMain.setNextDepDate(FrequencyUtil.getNextDate(financeMain.getDepreciationFrq(), 1,
-					financeMain.getFinStartDate(), "A", false, finType.getFddLockPeriod()).getNextFrequencyDate());
-			financeMain.setNextDepDate(
-					DateUtility.getDate(DateUtility.format(financeMain.getNextDepDate(), PennantConstants.dateFormat)));
-		}
 
 		financeMain.setFinIsActive(true);
 
@@ -1140,7 +1105,6 @@ public class ExtFinanceUploadService {
 		financeMain.setLastRepayPftDate(financeMain.getFinStartDate());
 		financeMain.setLastRepayCpzDate(financeMain.getFinStartDate());
 		financeMain.setLastRepayRvwDate(financeMain.getFinStartDate());
-		financeMain.setLastDepDate(financeMain.getFinStartDate());
 
 		// FINANCE ASSET VALUE
 		financeMain.setFinAssetValue(financeMain.getFinAmount());

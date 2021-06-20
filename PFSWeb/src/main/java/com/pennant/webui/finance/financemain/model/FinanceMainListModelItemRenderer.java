@@ -114,8 +114,7 @@ public class FinanceMainListModelItemRenderer implements ListitemRenderer<Financ
 		lc = new Listcell(PennantAppUtil.amountFormate(financeMain.getFinAmount(), format));
 		lc.setParent(item);
 		lc.setStyle("text-align:right;");
-		BigDecimal finAmount = financeMain.getFinCurrAssetValue().add(financeMain.getFeeChargeAmt())
-				.add(financeMain.getInsuranceAmt());
+		BigDecimal finAmount = financeMain.getFinCurrAssetValue().add(financeMain.getFeeChargeAmt());
 		if (financeMain.getFinAssetValue().compareTo(BigDecimal.ZERO) == 0) {
 			lc = new Listcell(PennantAppUtil.amountFormate(finAmount, format));
 			lc.setParent(item);

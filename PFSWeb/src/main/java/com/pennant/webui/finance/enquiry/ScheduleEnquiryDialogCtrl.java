@@ -122,8 +122,6 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 	// Step Finance Fields
 	protected Listheader listheader_SchFee;
 	protected Listheader listheader_SchTax;
-	protected Listheader listHeader_cashFlowEffect;
-	protected Listheader listHeader_vSProfit;
 	protected Listheader listHeader_orgPrincipalDue;
 	protected Listheader listheader_Total;
 	protected Listheader listheader_TDSAmount;
@@ -205,15 +203,7 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 			this.listheader_SchTax.setVisible(false);
 		}
 
-		this.listHeader_cashFlowEffect.setVisible(false);
-		this.listHeader_vSProfit.setVisible(false);
 		this.listHeader_orgPrincipalDue.setVisible(false);
-		if (getFinScheduleData().getFinanceMain().isStepFinance()) {
-			if (getFinScheduleData().getFinanceMain().isAlwManualSteps()) {
-				this.listHeader_cashFlowEffect.setLabel(Labels.getLabel("listheader_sellingPricePft.label"));
-				this.listHeader_vSProfit.setLabel(Labels.getLabel("listheader_rebateBucket.label"));
-			}
-		}
 
 		this.listheader_TDSAmount.setVisible(TDSCalculator.isTDSApplicable(getFinScheduleData().getFinanceMain()));
 

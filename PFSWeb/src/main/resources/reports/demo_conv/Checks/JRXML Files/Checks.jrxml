@@ -10,7 +10,6 @@
 	<field name="custName" class="java.lang.String"/>
 	<field name="finBranchName" class="java.lang.String"/>
 	<field name="finReference" class="java.lang.String"/>
-	<field name="disbAccountId" class="java.lang.String"/>
 	<field name="repayAmount" class="java.lang.String"/>
 	<field name="appDate" class="java.lang.String"/>
 	<field name="repayAmountinWords" class="java.lang.String"/>
@@ -30,11 +29,6 @@
 				<reportElement uuid="44370082-ebdc-46d2-a67e-7284c5a0a4d9" x="0" y="135" width="226" height="18"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$F{custName}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement uuid="f9878e5a-73f8-4771-81da-63155dac50b2" x="0" y="152" width="226" height="15"/>
-				<textElement/>
-				<textFieldExpression><![CDATA[$F{disbAccountId}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="4576166d-9051-46f9-a1e4-3cd3733542f1" x="0" y="167" width="226" height="15"/>

@@ -131,12 +131,8 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	protected Row fromDateRow;
 	protected Row tillDateRow;
 	protected Row numOfTermsRow;
-	protected Row disbursementAccount;
 	protected Row row_assetUtilization;
 	protected Checkbox alwAssetUtilize;
-	protected Textbox disbAcctId;
-	protected Space space_disbAcctId;
-	protected Button btnSearchDisbAcctId;
 	protected Label label_AddDisbursementDialog_TillDate;
 	protected Label label_AddDisbursementDialog_TillFromDate;
 	protected Row reCalTypeRow;
@@ -206,7 +202,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 			if (arguments.containsKey("isWIF")) {
 				isWIF = (boolean) arguments.get("isWIF");
-				this.disbursementAccount.setVisible(false);
 			}
 			if (arguments.containsKey("moduleDefiner")) {
 				moduleDefiner = (String) arguments.get("moduleDefiner");
@@ -252,7 +247,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.disbAmount.setMandatory(true);
 		this.disbAmount.setFormat(PennantApplicationUtil.getAmountFormate(format));
 		this.disbAmount.setScale(format);
-		this.disbAcctId.setMaxlength(20);
 		this.fromDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.adjTerms.setMaxlength(2);
 		this.serviceReqNo.setMaxlength(20);
@@ -407,8 +401,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			} else {
 				fillSchDates(this.cbFromDate, aFinSchData, null);
 			}
-			this.disbAcctId.setValue(
-					PennantApplicationUtil.formatAccountNumber(aFinSchData.getFinanceMain().getDisbAccountId()));
 			changeRecalType();
 		}
 
@@ -912,16 +904,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 		}
 
-		try {
-			//CHECK IF MULTI DISBURSE ADDED IN SAME DATE
-			/*
-			 * if(StringUtils.trimToEmpty(this.disbAcctId.getValue()).equals("")){
-			 * getFinScheduleData().getFinanceMain().setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(this.
-			 * disbAcctId.getValue())); }
-			 */
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
 
 		try {
 			if (this.alwAssetUtilize.isChecked()) {
@@ -1175,10 +1157,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.disbAmount.setConstraint(new PTDecimalValidator(
 					Labels.getLabel("label_AddDisbursementDialog_Amount.value"), 0, true, false));
 		}
-		if (this.disbursementAccount.isVisible()) {
-			this.disbAcctId.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_AddDisbursementDialog_DisbAcctId.value"), null, true));
-		}
 		logger.debug("Leaving");
 	}
 
@@ -1251,7 +1229,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		setValidationOn(false);
 		this.disbAmount.setErrorMessage("");
 		this.fromDate.setErrorMessage("");
-		this.disbAcctId.setErrorMessage("");
 		this.cbReCalType.setErrorMessage("");
 		this.adjTerms.setErrorMessage("");
 		this.serviceReqNo.setErrorMessage("");
@@ -1266,7 +1243,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Entering");
 		this.disbAmount.setConstraint("");
 		this.fromDate.setConstraint("");
-		this.disbAcctId.setConstraint("");
 		this.cbReCalType.setConstraint("");
 		this.adjTerms.setConstraint("");
 		logger.debug("Leaving");
@@ -1543,48 +1519,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 		}
 		logger.debug("Leaving");
-	}
-
-	/**
-	 * when clicks on button "btnSearchDisbAcctId"
-	 * 
-	 * @param event
-	 * @throws InterruptedException
-	 * @throws AccountNotFoundException
-	 */
-	public void onClick$btnSearchDisbAcctId(Event event) throws InterruptedException {
-		logger.debug("Entering " + event.toString());
-
-		this.disbAcctId.clearErrorMessage();
-
-		if (StringUtils.isNotBlank(getFinScheduleData().getFinanceMain().getLovDescCustCIF())) {
-			Object dataObject;
-
-			IAccounts iAccount = new IAccounts();
-			iAccount.setAcCcy(getFinScheduleData().getFinanceMain().getFinCcy());
-			iAccount.setAcType("");
-			iAccount.setDivision(getFinScheduleData().getFinanceType().getFinDivision());
-			iAccount.setAcCustCIF(getFinScheduleData().getFinanceMain().getLovDescCustCIF());
-
-			try {
-
-				dataObject = ExtendedSearchListBox.show(this.window_AddDisbursementDialog, "Accounts");
-				if (dataObject instanceof String) {
-					this.disbAcctId.setValue(dataObject.toString());
-				} else {
-					IAccounts details = (IAccounts) dataObject;
-
-					if (details != null) {
-						this.disbAcctId.setValue(PennantApplicationUtil.formatAccountNumber(details.getAccountId()));
-					}
-				}
-			} catch (Exception e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showError("Account Details not Found!!!");
-			}
-		}
-
-		logger.debug("Leaving " + event.toString());
 	}
 
 	/*

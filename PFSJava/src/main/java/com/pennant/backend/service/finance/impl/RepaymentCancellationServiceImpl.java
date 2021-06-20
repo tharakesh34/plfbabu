@@ -689,7 +689,6 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 
 		//Fee Details
 		schedule.setSchdFeePaid(schedule.getSchdFeePaid().subtract(repayment.getSchdFeePaid()));
-		schedule.setSchdInsPaid(schedule.getSchdInsPaid().subtract(repayment.getSchdInsPaid()));
 
 		// Finance Schedule Profit Balance Check
 		schedule.setSchPriPaid(false);

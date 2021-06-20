@@ -962,19 +962,6 @@ public class SelectCDSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 				}
 
-				//Interface Core Banking System call
-				if (customer == null) {
-					if (ImplementationConstants.ACCOUNTS_APPLICABLE) {
-						customerDetails.setNewRecord(true);
-						customerDetails = this.customerInterfaceService.getCustomerInfoByInterface(cif, "");
-						if (customerDetails == null) {
-							throw new InterfaceException("9999", "Customer Not found.");
-						}
-					} else {
-						throw new InterfaceException("----", "Customer Not found.");
-					}
-				}
-
 			} else if (this.newCust.isChecked()) {
 				customerDetails = getNewCustomerDetail(customerDetails);
 			}

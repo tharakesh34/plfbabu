@@ -137,8 +137,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean finCommitmentReq;
 	private boolean finCollateralReq;
 	private String collateralType;
-	private boolean finDepreciationReq;
-	private String finDepreciationFrq;
 	private boolean allowRIAInvestment;
 	private boolean overrideLimit;
 	private boolean limitRequired;
@@ -291,7 +289,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 	// only used for API
 	private boolean promotionType = false;
 
-	private List<FinTypeAccount> finTypeAccounts = new ArrayList<FinTypeAccount>();
 	private List<FinTypeAccounting> finTypeAccountingList = new ArrayList<FinTypeAccounting>();
 	private Map<String, Long> finTypeAccountingMap = new HashMap<String, Long>();
 	private List<FinTypeFees> finTypeFeesList = new ArrayList<FinTypeFees>();
@@ -451,8 +448,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 		entity.setFinCommitmentReq(this.finCommitmentReq);
 		entity.setFinCollateralReq(this.finCollateralReq);
 		entity.setCollateralType(this.collateralType);
-		entity.setFinDepreciationReq(this.finDepreciationReq);
-		entity.setFinDepreciationFrq(this.finDepreciationFrq);
 		entity.setAllowRIAInvestment(this.allowRIAInvestment);
 		entity.setOverrideLimit(this.overrideLimit);
 		entity.setLimitRequired(this.limitRequired);
@@ -585,7 +580,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 		entity.setLovDescPromoFinTypeDesc(this.lovDescPromoFinTypeDesc);
 		entity.setProductCategory(this.productCategory);
 		entity.setPromotionType(this.promotionType);
-		this.finTypeAccounts.stream().forEach(e -> entity.getFinTypeAccounts().add(e == null ? null : e.copyEntity()));
 		this.finTypeAccountingList.stream()
 				.forEach(e -> entity.getFinTypeAccountingList().add(e == null ? null : e.copyEntity()));
 		this.finTypeAccountingMap.entrySet().stream()
@@ -1487,22 +1481,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 		this.collateralType = collateralType;
 	}
 
-	public void setFinDepreciationReq(boolean finDepreciationReq) {
-		this.finDepreciationReq = finDepreciationReq;
-	}
-
-	public boolean isFinDepreciationReq() {
-		return finDepreciationReq;
-	}
-
-	public void setFinDepreciationFrq(String finDepreciationFrq) {
-		this.finDepreciationFrq = finDepreciationFrq;
-	}
-
-	public String getFinDepreciationFrq() {
-		return finDepreciationFrq;
-	}
-
 	public void setLovDescAERule(Map<String, AccountingSet> lovDescAERule) {
 		this.lovDescAERule = lovDescAERule;
 	}
@@ -1633,14 +1611,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setODMinCapAmount(BigDecimal oDMinCapAmount) {
 		this.oDMinCapAmount = oDMinCapAmount;
-	}
-
-	public List<FinTypeAccount> getFinTypeAccounts() {
-		return finTypeAccounts;
-	}
-
-	public void setFinTypeAccounts(List<FinTypeAccount> finTypeAccounts) {
-		this.finTypeAccounts = finTypeAccounts;
 	}
 
 	public List<FinTypeFees> getFinTypeFeesList() {

@@ -91,7 +91,7 @@ public class DedupValidation implements Serializable {
 				return false;
 			}
 			if (ImplementationConstants.DEDUP_BLACKLIST_COAPP) {
-				List<JointAccountDetail> details = aFinanceDetail.getJountAccountDetailList();
+				List<JointAccountDetail> details = aFinanceDetail.getJointAccountDetailList();
 				String finType = aFinanceDetail.getFinScheduleData().getFinanceMain().getFinType();
 				if (CollectionUtils.isNotEmpty(details)) {
 					for (JointAccountDetail coapplicant : details) {

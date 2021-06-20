@@ -62,7 +62,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>FinanceDisbursement table</b>.<br>
  *
  */
-@XmlType(propOrder = { "disbAccountId", "disbType", "disbDate", "feeChargeAmt", "disbAmount" })
+@XmlType(propOrder = { "disbType", "disbDate", "feeChargeAmt", "disbAmount" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceDisbursement extends AbstractWorkflowEntity {
 
@@ -78,13 +78,10 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 	private String disbDesc;
 	private boolean autoDisb;
 	@XmlElement
-	private String disbAccountId;
-	@XmlElement
 	private BigDecimal disbAmount = BigDecimal.ZERO;
 	private Date disbReqDate = null;
 	@XmlElement
 	private BigDecimal feeChargeAmt = BigDecimal.ZERO;
-	private BigDecimal insuranceAmt = BigDecimal.ZERO;
 	private boolean disbIsActive;
 	private String disbStatus;
 	private String disbRemarks;
@@ -98,7 +95,6 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 	private boolean posted = false;
 	private long instructionUID = Long.MIN_VALUE;
 	private BigDecimal deductFeeDisb = BigDecimal.ZERO;
-	private BigDecimal deductInsDisb = BigDecimal.ZERO;
 	private transient List<SubventionScheduleDetail> subventionSchedules = null;
 	private BigDecimal subventionAmount = BigDecimal.ZERO;
 
@@ -137,11 +133,9 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 		entity.setDisbType(this.disbType);
 		entity.setDisbDesc(this.disbDesc);
 		entity.setAutoDisb(this.autoDisb);
-		entity.setDisbAccountId(this.disbAccountId);
 		entity.setDisbAmount(this.disbAmount);
 		entity.setDisbReqDate(this.disbReqDate);
 		entity.setFeeChargeAmt(this.feeChargeAmt);
-		entity.setInsuranceAmt(this.insuranceAmt);
 		entity.setDisbIsActive(this.disbIsActive);
 		entity.setDisbStatus(this.disbStatus);
 		entity.setDisbRemarks(this.disbRemarks);
@@ -154,7 +148,6 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 		entity.setPosted(this.posted);
 		entity.setInstructionUID(this.instructionUID);
 		entity.setDeductFeeDisb(this.deductFeeDisb);
-		entity.setDeductInsDisb(this.deductInsDisb);
 		if (subventionSchedules != null) {
 			entity.setSubventionSchedules(new ArrayList<SubventionScheduleDetail>());
 			this.subventionSchedules.stream()
@@ -203,14 +196,6 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 
 	public void setDisbDate(Date disbDate) {
 		this.disbDate = disbDate;
-	}
-
-	public String getDisbAccountId() {
-		return disbAccountId;
-	}
-
-	public void setDisbAccountId(String disbAccountId) {
-		this.disbAccountId = disbAccountId;
 	}
 
 	public String getDisbType() {
@@ -349,14 +334,6 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 		this.quickDisb = quickDisb;
 	}
 
-	public BigDecimal getInsuranceAmt() {
-		return insuranceAmt;
-	}
-
-	public void setInsuranceAmt(BigDecimal insuranceAmt) {
-		this.insuranceAmt = insuranceAmt;
-	}
-
 	public String getDisbStatus() {
 		return disbStatus;
 	}
@@ -403,14 +380,6 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 
 	public void setDeductFeeDisb(BigDecimal deductFeeDisb) {
 		this.deductFeeDisb = deductFeeDisb;
-	}
-
-	public BigDecimal getDeductInsDisb() {
-		return deductInsDisb;
-	}
-
-	public void setDeductInsDisb(BigDecimal deductInsDisb) {
-		this.deductInsDisb = deductInsDisb;
 	}
 
 	public long getLinkedDisbId() {

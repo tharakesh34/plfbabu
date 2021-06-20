@@ -45,18 +45,12 @@ public class ExtFinanceData implements java.io.Serializable {
 	private Date finStartDate;
 	private BigDecimal finAmount = BigDecimal.ZERO;
 	private BigDecimal finAssetValue = BigDecimal.ZERO;
-	private String disbAccountId;
-	private String repayAccountId;
-	private String finAccount;
-	private String finCustPftAccount;
 	private String finSourceID = null;
 	private int numberOfTerms = 0;
 	private String lovDescCustCIF;
 	private int defferments;
 	private int frqDefferments;
 	private String finCommitmentRef;
-	private String depreciationFrq;
-	private Date nextDepDate;
 	private Date finContractDate;
 	private String grcRateBasis;
 	private Date grcPeriodEndDate;
@@ -198,38 +192,6 @@ public class ExtFinanceData implements java.io.Serializable {
 		this.finAssetValue = finAssetValue;
 	}
 
-	public String getDisbAccountId() {
-		return disbAccountId;
-	}
-
-	public void setDisbAccountId(String disbAccountId) {
-		this.disbAccountId = disbAccountId;
-	}
-
-	public String getRepayAccountId() {
-		return repayAccountId;
-	}
-
-	public void setRepayAccountId(String repayAccountId) {
-		this.repayAccountId = repayAccountId;
-	}
-
-	public String getFinAccount() {
-		return finAccount;
-	}
-
-	public void setFinAccount(String finAccount) {
-		this.finAccount = finAccount;
-	}
-
-	public String getFinCustPftAccount() {
-		return finCustPftAccount;
-	}
-
-	public void setFinCustPftAccount(String finCustPftAccount) {
-		this.finCustPftAccount = finCustPftAccount;
-	}
-
 	public String getFinSourceID() {
 		return finSourceID;
 	}
@@ -276,22 +238,6 @@ public class ExtFinanceData implements java.io.Serializable {
 
 	public void setFinCommitmentRef(String finCommitmentRef) {
 		this.finCommitmentRef = finCommitmentRef;
-	}
-
-	public String getDepreciationFrq() {
-		return depreciationFrq;
-	}
-
-	public void setDepreciationFrq(String depreciationFrq) {
-		this.depreciationFrq = depreciationFrq;
-	}
-
-	public Date getNextDepDate() {
-		return nextDepDate;
-	}
-
-	public void setNextDepDate(Date nextDepDate) {
-		this.nextDepDate = nextDepDate;
 	}
 
 	public Date getFinContractDate() {

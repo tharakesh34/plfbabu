@@ -76,7 +76,6 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
-import com.pennant.backend.dao.finance.SecondaryAccountDAO;
 import com.pennant.backend.dao.finance.SubventionDetailDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
@@ -94,7 +93,6 @@ import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennant.backend.model.finance.SecondaryAccount;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
@@ -130,7 +128,6 @@ abstract public class ServiceHelper implements Serializable {
 	private FinContributorDetailDAO finContributorDetailDAO;
 	private FinTypeAccountingDAO finTypeAccountingDAO;
 	private PostingsDAO postingsDAO;
-	private SecondaryAccountDAO secondaryAccountDAO;
 	private AccountProcessUtil accountProcessUtil;
 	protected PostingsPreparationUtil postingsPreparationUtil;
 	//over due
@@ -247,44 +244,6 @@ abstract public class ServiceHelper implements Serializable {
 
 	}
 
-	/**
-	 * @param finReference
-	 * @return
-	 */
-	public final String getSecondaryAccountsAsString(String finReference) {
-		return getSecordayAccounts(getSecondaryAccounts(finReference));
-	}
-
-	/**
-	 * @param finReference
-	 * @return
-	 */
-	public final List<SecondaryAccount> getSecondaryAccounts(String finReference) {
-		return secondaryAccountDAO.getSecondaryAccountsByFinRef(finReference, "");
-	}
-
-	/**
-	 * @param listSecondary
-	 * @return
-	 */
-	public final String getSecordayAccounts(List<SecondaryAccount> listSecondary) {
-
-		StringBuilder secordayAccounts = new StringBuilder(0);
-		if (listSecondary != null && !listSecondary.isEmpty()) {
-			for (SecondaryAccount secondaryAccount : listSecondary) {
-				if (secordayAccounts.length() == 0) {
-					secordayAccounts.append(secondaryAccount.getAccountNumber());
-				} else {
-					secordayAccounts.append(';');
-					secordayAccounts.append(secondaryAccount.getAccountNumber());
-				}
-			}
-		}
-
-		return secordayAccounts.toString();
-
-	}
-
 	public void loadEODConfig() {
 		try {
 			List<EODConfig> list = eodConfigDAO.getEODConfig();
@@ -323,10 +282,6 @@ abstract public class ServiceHelper implements Serializable {
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
-	}
-
-	public void setSecondaryAccountDAO(SecondaryAccountDAO secondaryAccountDAO) {
-		this.secondaryAccountDAO = secondaryAccountDAO;
 	}
 
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {

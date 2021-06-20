@@ -518,7 +518,6 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.searchObj.addField("finAmount");
 		this.searchObj.addField("FinCurrAssetValue");
 		this.searchObj.addField("FeeChargeAmt");
-		this.searchObj.addField("InsuranceAmt");
 		this.searchObj.addField("recordStatus");
 		this.searchObj.addField("recordType");
 		this.searchObj.addField("AdvEMITerms");

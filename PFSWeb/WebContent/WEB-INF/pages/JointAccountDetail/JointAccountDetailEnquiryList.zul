@@ -6,7 +6,7 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
 		<window id="window_JointAccountDetailList" apply="${jointAccountDetailListCtrl}" border="none" width="100%"
-			title="${c:l('panel_jountAccountDetailEnquiryList.title')}">
+			title="${c:l('panel_jointAccountDetailEnquiryList.title')}">
 			<div sclass="z-toolbar" style="padding:0px" height="28px">
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
 
@@ -14,28 +14,28 @@
 					<label value="" />
 					<!-- SEARCH AREA -->
 					<toolbar align="center" sclass="toolbar-center">
-						<button id="button_JountAccountDetailList_NewJountAccountDetail" image="/images/icons/addnew.png" visible="false"
+						<button id="button_JointAccountDetailList_NewJointAccountDetail" image="/images/icons/addnew.png" visible="false"
 							sclass="z-toolbarbutton" />
-						<button id="button_JountAccountDetailList_JountAccountDetailSearch" image="/images/icons/search.png"
-							autodisable="button_JountAccountDetailList_JountAccountDetailSearch,button_JountAccountDetailList_PrintList,button_JountAccountDetailList_NewJountAccountDetail,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_JountAccountDetailList_JountAccountDetailSearch.tooltiptext')}" sclass="z-toolbarbutton" />
-						<button id="button_JountAccountDetailList_PrintList" image="/images/icons/print.png" visible="false"
-							autodisable="button_JountAccountDetailList_JountAccountDetailSearch,button_JountAccountDetailList_PrintList,button_JountAccountDetailList_NewJountAccountDetail,btnRefresh,btnHelp"
-							tooltiptext="${c:l('button_JountAccountDetailList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
+						<button id="button_JointAccountDetailList_JointAccountDetailSearch" image="/images/icons/search.png"
+							autodisable="button_JointAccountDetailList_JointAccountDetailSearch,button_JointAccountDetailList_PrintList,button_JointAccountDetailList_NewJointAccountDetail,btnRefresh,btnHelp"
+							tooltiptext="${c:l('button_JointAccountDetailList_JointAccountDetailSearch.tooltiptext')}" sclass="z-toolbarbutton" />
+						<button id="button_JointAccountDetailList_PrintList" image="/images/icons/print.png" visible="false"
+							autodisable="button_JointAccountDetailList_JointAccountDetailSearch,button_JointAccountDetailList_PrintList,button_JointAccountDetailList_NewJointAccountDetail,btnRefresh,btnHelp"
+							tooltiptext="${c:l('button_JointAccountDetailList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" sclass="toolbar-end">
 						<button id="btnRefresh" image="/images/icons/reload.png"
-							autodisable="button_JountAccountDetailList_JountAccountDetailSearch,button_JountAccountDetailList_PrintList,button_JountAccountDetailList_NewJountAccountDetail,btnRefresh,btnHelp"
+							autodisable="button_JointAccountDetailList_JointAccountDetailSearch,button_JointAccountDetailList_PrintList,button_JointAccountDetailList_NewJointAccountDetail,btnRefresh,btnHelp"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnHelp" visible="false" image="/images/icons/help.png"
-							autodisable="button_JountAccountDetailList_JountAccountDetailSearch,button_JountAccountDetailList_PrintList,button_JountAccountDetailList_NewJountAccountDetail,btnRefresh,btnHelp"
+							autodisable="button_JointAccountDetailList_JointAccountDetailSearch,button_JointAccountDetailList_PrintList,button_JointAccountDetailList_NewJointAccountDetail,btnRefresh,btnHelp"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>
-			<borderlayout id="borderLayout_JountAccountDetailList">
+			<borderlayout id="borderLayout_JointAccountDetailList">
 				<north border="none">
 					<textbox id="moduleType" value="ENQ" visible="false" />
 				</north>
@@ -53,10 +53,10 @@
 							</columns>
 							<rows>
 								<row>
-									<label id="label_JountAccountDetailList_RecordStatus" value="${c:l('label_JountAccountDetailList_RecordStatus.value')}" />
+									<label id="label_JointAccountDetailList_RecordStatus" value="${c:l('label_JointAccountDetailList_RecordStatus.value')}" />
 									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
 									<textbox id="recordStatus" width="100px" maxlength="50" />
-									<label id="label_JountAccountDetailList_RecordType" value="${c:l('label_JountAccountDetailList_RecordType.value')}" />
+									<label id="label_JointAccountDetailList_RecordType" value="${c:l('label_JointAccountDetailList_RecordType.value')}" />
 									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
 									<listbox id="recordType" width="100px" mold="select" />
 								</row>
@@ -71,7 +71,7 @@
 								</row>
 							</rows>
 						</grid>
-						<listbox id="listBoxJountAccountDetail" fixedLayout="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}"
+						<listbox id="listBoxJointAccountDetail" fixedLayout="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}"
 							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
 							<listhead sizable="true">
 								<listheader id="listheader_CustCIF" label="${c:l('listheader_CustCIF.label')}" sort="auto" hflex="min" />
@@ -87,7 +87,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingJountAccountDetailList" />
+					<paging id="pagingJointAccountDetailList" />
 				</south>
 
 			</borderlayout>

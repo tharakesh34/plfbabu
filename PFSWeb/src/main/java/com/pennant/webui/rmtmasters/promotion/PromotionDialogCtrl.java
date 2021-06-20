@@ -868,36 +868,6 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
 	 * 
 	 */
-	protected void appendInsuranceDetailsTab() {
-		logger.debug("Entering");
-
-		try {
-			createTab(AssetConstants.UNIQUE_ID_INSURANCES, true);
-
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_INSURANCES));
-			map.put("roleCode", getRole());
-			map.put("finType", this.promotionCode.getValue());
-			map.put("moduleId", FinanceConstants.MODULEID_PROMOTION);
-			map.put("finTypeDesc", this.promotionDesc.getValue());
-			map.put("finCcy", this.finCcy);
-			map.put("mainController", this);
-			map.put("isCompReadonly", this.isCompReadonly);
-
-			insuranceDetailWindow = Executions.createComponents(
-					"/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeInsuranceList.zul",
-					getTabpanel(AssetConstants.UNIQUE_ID_INSURANCES), map);
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
-
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
-	 * 
-	 */
 	protected void appendAccountingDetailsTab() {
 		logger.debug("Entering");
 

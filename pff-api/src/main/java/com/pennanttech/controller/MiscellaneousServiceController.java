@@ -996,7 +996,7 @@ public class MiscellaneousServiceController extends ExtendedTestClass {
 				false, FinanceConstants.FINSER_EVENT_ORG, false, "", "");
 		FinanceMain financeMain = finDetils.getFinScheduleData().getFinanceMain();
 		CustomerDetails customerDetails = finDetils.getCustomerDetails();
-		List<JointAccountDetail> jointAccountDetailList = finDetils.getJountAccountDetailList();
+		List<JointAccountDetail> jointAccountDetailList = finDetils.getJointAccountDetailList();
 		int activeLoanFinType = financeMainDAO.getActiveCount(financeMain.getFinType(), financeMain.getCustID());
 		int totalLoanFinType = financeMainDAO.getODLoanCount(financeMain.getFinType(), financeMain.getCustID());
 
@@ -1019,10 +1019,10 @@ public class MiscellaneousServiceController extends ExtendedTestClass {
 		}
 
 		// getting co-applicant details
-		if (jointAccountDetailList == null || finDetils.getJountAccountDetailList().isEmpty()) {
+		if (jointAccountDetailList == null || finDetils.getJointAccountDetailList().isEmpty()) {
 			jointAccountDetailList = jointAccountDetailService
-					.getJountAccountDetailByFinRef(financeMain.getFinReference(), "_View");
-			finDetils.setJountAccountDetailList(jointAccountDetailList);
+					.getJointAccountDetailByFinRef(financeMain.getFinReference(), "_View");
+			finDetils.setJointAccountDetailList(jointAccountDetailList);
 		}
 
 		finDetils = financeDataValidation.prepareCustElgDetail(false, finDetils);

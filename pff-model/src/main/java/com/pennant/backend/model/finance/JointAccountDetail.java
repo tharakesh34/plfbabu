@@ -14,7 +14,7 @@
  ******************************************************************************************** 
  * FILE HEADER *
  ******************************************************************************************** 
- * * FileName : JountAccountDetail.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 10-09-2013 * * Modified
+ * * FileName : JointAccountDetail.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 10-09-2013 * * Modified
  * Date : 10-09-2013 * * Description : * *
  ******************************************************************************************** 
  * Date Author Version Comments *
@@ -42,7 +42,7 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
- * Model class for the <b>JountAccountDetail table</b>.<br>
+ * Model class for the <b>JointAccountDetail table</b>.<br>
  * 
  */
 @XmlType(propOrder = { "custCIF", "lovDescCIFName", "includeRepay", "repayAccountId", "authoritySignatory",

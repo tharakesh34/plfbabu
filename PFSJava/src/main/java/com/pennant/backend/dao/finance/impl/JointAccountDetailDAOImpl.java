@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  JountAccountDetailDAOImpl.java                                                   * 	  
+ * FileName    		:  JointAccountDetailDAOImpl.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -64,7 +64,7 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
-import com.pennant.backend.dao.finance.JountAccountDetailDAO;
+import com.pennant.backend.dao.finance.JointAccountDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.JointAccountDetail;
@@ -75,66 +75,66 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
- * DAO methods implementation for the <b>JountAccountDetail model</b> class.<br>
+ * DAO methods implementation for the <b>JointAccountDetail model</b> class.<br>
  * 
  */
 
-public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> implements JountAccountDetailDAO {
-	private static Logger logger = LogManager.getLogger(JountAccountDetailDAOImpl.class);
+public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> implements JointAccountDetailDAO {
+	private static Logger logger = LogManager.getLogger(JointAccountDetailDAOImpl.class);
 
-	public JountAccountDetailDAOImpl() {
+	public JointAccountDetailDAOImpl() {
 		super();
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the new JountAccountDetail
+	 * This method set the Work Flow id based on the module name and return the new JointAccountDetail
 	 * 
-	 * @return JountAccountDetail
+	 * @return JointAccountDetail
 	 */
 
 	@Override
-	public JointAccountDetail getJountAccountDetail() {
+	public JointAccountDetail getJointAccountDetail() {
 		logger.debug("Entering");
-		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("JountAccountDetail");
-		JointAccountDetail jountAccountDetail = new JointAccountDetail();
+		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("JointAccountDetail");
+		JointAccountDetail jointAccountDetail = new JointAccountDetail();
 		if (workFlowDetails != null) {
-			jountAccountDetail.setWorkflowId(workFlowDetails.getWorkFlowId());
+			jointAccountDetail.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		logger.debug("Leaving");
-		return jountAccountDetail;
+		return jointAccountDetail;
 	}
 
 	/**
-	 * This method get the module from method getJountAccountDetail() and set the new record flag as true and return
-	 * JountAccountDetail()
+	 * This method get the module from method getJointAccountDetail() and set the new record flag as true and return
+	 * JointAccountDetail()
 	 * 
-	 * @return JountAccountDetail
+	 * @return JointAccountDetail
 	 */
 
 	@Override
-	public JointAccountDetail getNewJountAccountDetail() {
+	public JointAccountDetail getNewJointAccountDetail() {
 		logger.debug("Entering");
-		JointAccountDetail jountAccountDetail = getJountAccountDetail();
-		jountAccountDetail.setNewRecord(true);
+		JointAccountDetail jointAccountDetail = getJointAccountDetail();
+		jointAccountDetail.setNewRecord(true);
 		logger.debug("Leaving");
-		return jountAccountDetail;
+		return jointAccountDetail;
 	}
 
 	/**
-	 * Fetch the Record Jount Account Details details by key field
+	 * Fetch the Record Joint Account Details details by key field
 	 * 
 	 * @param id
 	 *            (int)
 	 * @param type
 	 *            (String) ""/_Temp/_View
-	 * @return JountAccountDetail
+	 * @return JointAccountDetail
 	 */
 	@Override
-	public JointAccountDetail getJountAccountDetailById(final long id, String type) {
+	public JointAccountDetail getJointAccountDetailById(final long id, String type) {
 		logger.debug("Entering");
-		JointAccountDetail jountAccountDetail = new JointAccountDetail();
+		JointAccountDetail jointAccountDetail = new JointAccountDetail();
 
-		jountAccountDetail.setId(id);
+		jointAccountDetail.setId(id);
 
 		StringBuilder selectSql = new StringBuilder(
 				"Select JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId,CatOfcoApplicant, AuthoritySignatory, Sequence, IncludeIncome");
@@ -148,25 +148,25 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		selectSql.append(" Where JointAccountId =:JointAccountId");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jountAccountDetail);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jointAccountDetail);
 		RowMapper<JointAccountDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(JointAccountDetail.class);
 
 		try {
-			jountAccountDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			jointAccountDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
-			jountAccountDetail = null;
+			jointAccountDetail = null;
 		}
 		logger.debug("Leaving");
-		return jountAccountDetail;
+		return jointAccountDetail;
 	}
 
 	/**
 	 * This method Deletes the Record from the FinJointAccountDetails or FinJointAccountDetails_Temp. if Record not
-	 * deleted then throws DataAccessException with error 41003. delete Jount Account Details by key JointAccountId
+	 * deleted then throws DataAccessException with error 41003. delete Joint Account Details by key JointAccountId
 	 * 
-	 * @param Jount
-	 *            Account Details (jountAccountDetail)
+	 * @param Joint
+	 *            Account Details (jointAccountDetail)
 	 * @param type
 	 *            (String) ""/_Temp/_View
 	 * @return void
@@ -174,7 +174,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 	 * 
 	 */
 	@Override
-	public void delete(JointAccountDetail jountAccountDetail, String type) {
+	public void delete(JointAccountDetail jointAccountDetail, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
 
@@ -183,7 +183,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		deleteSql.append(" Where JointAccountId =:JointAccountId");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jountAccountDetail);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jointAccountDetail);
 		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
@@ -199,10 +199,10 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 	 * This method insert new Records into FinJointAccountDetails or FinJointAccountDetails_Temp. it fetches the
 	 * available Sequence form SeqFinJointAccountDetails by using getNextidviewDAO().getNextId() method.
 	 *
-	 * save Jount Account Details
+	 * save Joint Account Details
 	 * 
-	 * @param Jount
-	 *            Account Details (jountAccountDetail)
+	 * @param Joint
+	 *            Account Details (jointAccountDetail)
 	 * @param type
 	 *            (String) ""/_Temp/_View
 	 * @return void
@@ -211,11 +211,11 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 	 */
 
 	@Override
-	public long save(JointAccountDetail jountAccountDetail, String type) {
+	public long save(JointAccountDetail jointAccountDetail, String type) {
 		logger.debug("Entering");
-		if (jountAccountDetail.getId() == Long.MIN_VALUE) {
-			jountAccountDetail.setId(getNextValue("SeqFinJointAccountDetails"));
-			logger.debug("get NextID:" + jountAccountDetail.getId());
+		if (jointAccountDetail.getId() == Long.MIN_VALUE) {
+			jointAccountDetail.setId(getNextValue("SeqFinJointAccountDetails"));
+			logger.debug("get NextID:" + jointAccountDetail.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into FinJointAccountDetails");
@@ -231,18 +231,18 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		logger.debug("insertSql: " + insertSql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jountAccountDetail);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jointAccountDetail);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
-		return jountAccountDetail.getId();
+		return jointAccountDetail.getId();
 	}
 
 	/**
 	 * This method updates the Record FinJointAccountDetails or FinJointAccountDetails_Temp. if Record not updated then
-	 * throws DataAccessException with error 41004. update Jount Account Details by key JointAccountId and Version
+	 * throws DataAccessException with error 41004. update Joint Account Details by key JointAccountId and Version
 	 * 
-	 * @param Jount
-	 *            Account Details (jountAccountDetail)
+	 * @param Joint
+	 *            Account Details (jointAccountDetail)
 	 * @param type
 	 *            (String) ""/_Temp/_View
 	 * @return void
@@ -251,7 +251,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 	 */
 
 	@Override
-	public void update(JointAccountDetail jountAccountDetail, String type) {
+	public void update(JointAccountDetail jointAccountDetail, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update FinJointAccountDetails");
@@ -270,7 +270,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		logger.debug("updateSql: " + updateSql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jountAccountDetail);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jointAccountDetail);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
@@ -280,12 +280,12 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 	}
 
 	@Override
-	public JointAccountDetail getJountAccountDetailByRefId(String finReference, long jointAccountId, String type) {
+	public JointAccountDetail getJointAccountDetailByRefId(String finReference, long jointAccountId, String type) {
 		logger.debug("Entering");
-		JointAccountDetail jountAccountDetail = new JointAccountDetail();
+		JointAccountDetail jointAccountDetail = new JointAccountDetail();
 
-		jountAccountDetail.setFinReference(finReference);
-		jountAccountDetail.setJointAccountId(jointAccountId);
+		jointAccountDetail.setFinReference(finReference);
+		jointAccountDetail.setJointAccountId(jointAccountId);
 
 		StringBuilder selectSql = new StringBuilder(
 				"Select JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId, CatOfcoApplicant, AuthoritySignatory, Sequence, IncludeIncome");
@@ -299,32 +299,32 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		selectSql.append(" Where FinReference = :FinReference and JointAccountId = :JointAccountId ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jountAccountDetail);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jointAccountDetail);
 		RowMapper<JointAccountDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(JointAccountDetail.class);
 
 		try {
-			jountAccountDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			jointAccountDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
-			jountAccountDetail = null;
+			jointAccountDetail = null;
 		}
 		logger.debug("Leaving");
-		return jountAccountDetail;
+		return jointAccountDetail;
 	}
 
 	@Override
 	public void deleteByFinRef(String finReference, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
-		JointAccountDetail jountAccountDetail = new JointAccountDetail();
-		jountAccountDetail.setFinReference(finReference);
+		JointAccountDetail jointAccountDetail = new JointAccountDetail();
+		jointAccountDetail.setFinReference(finReference);
 
 		StringBuilder deleteSql = new StringBuilder("Delete From FinJointAccountDetails");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where FinReference = :FinReference");
 		logger.debug("deleteSql: " + deleteSql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jountAccountDetail);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jointAccountDetail);
 		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
@@ -337,7 +337,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 	}
 
 	@Override
-	public List<JointAccountDetail> getJountAccountDetailByFinnRef(String finReference) {
+	public List<JointAccountDetail> getJointAccountDetailByFinRef(String finReference) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" JointAccountId, FinReference, CustCIF");
 		sql.append(" from FinJointAccountDetails");
@@ -360,7 +360,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 	}
 
 	@Override
-	public List<JointAccountDetail> getJountAccountDetailByFinRef(String finReference, String type) {
+	public List<JointAccountDetail> getJointAccountDetailByFinRef(String finReference, String type) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
@@ -664,12 +664,12 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		return exposure;
 	}
 
-	public JointAccountDetail getJountAccountDetailByRef(String finReference, String custCIF, String type) {
+	public JointAccountDetail getJointAccountDetailByRef(String finReference, String custCIF, String type) {
 		logger.debug("Entering");
-		JointAccountDetail jountAccountDetail = new JointAccountDetail();
+		JointAccountDetail jointAccountDetail = new JointAccountDetail();
 
-		jountAccountDetail.setFinReference(finReference);
-		jountAccountDetail.setCustCIF(custCIF);
+		jointAccountDetail.setFinReference(finReference);
+		jointAccountDetail.setCustCIF(custCIF);
 
 		StringBuilder selectSql = new StringBuilder(
 				"Select JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId, CatOfcoApplicant,AuthoritySignatory, Sequence, IncludeIncome");
@@ -683,17 +683,17 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		selectSql.append(" Where FinReference = :FinReference and CustCIF = :CustCIF ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jountAccountDetail);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jointAccountDetail);
 		RowMapper<JointAccountDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(JointAccountDetail.class);
 
 		try {
-			jountAccountDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			jointAccountDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
-			jountAccountDetail = null;
+			jointAccountDetail = null;
 		}
 		logger.debug("Leaving");
-		return jountAccountDetail;
+		return jointAccountDetail;
 	}
 
 	@Override

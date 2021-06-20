@@ -160,8 +160,8 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 			fm.setRepayProfitRate(BigDecimal.ZERO);
 		}
 
-		if (screenData.containsKey("JountAccountDetails")) {
-			crd.setExtLiabilitiesjointAccDetails((List<JointAccountDetail>) screenData.get("JountAccountDetails"));
+		if (screenData.containsKey("JointAccountDetails")) {
+			crd.setExtLiabilitiesjointAccDetails((List<JointAccountDetail>) screenData.get("JointAccountDetails"));
 		}
 
 		map.put("financeDetail", fd);
@@ -183,8 +183,8 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 
 		incomeMap.put("appincomes", applicantIncomes);
 
-		if (CollectionUtils.isNotEmpty(fd.getJountAccountDetailList())) {
-			for (JointAccountDetail jointAccountDetails : fd.getJountAccountDetailList()) {
+		if (CollectionUtils.isNotEmpty(fd.getJointAccountDetailList())) {
+			for (JointAccountDetail jointAccountDetails : fd.getJointAccountDetailList()) {
 				if (CollectionUtils.isNotEmpty(jointAccountDetails.getCustomerIncomeList())) {
 					incomeMap.put("coAppincomes".concat(String.valueOf(i)),
 							jointAccountDetails.getCustomerIncomeList());
@@ -529,8 +529,8 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 			}
 		}
 
-		if (fd.getJountAccountDetailList() != null && !fd.getJountAccountDetailList().isEmpty()) {
-			for (JointAccountDetail accountDetail : fd.getJountAccountDetailList()) {
+		if (fd.getJointAccountDetailList() != null && !fd.getJointAccountDetailList().isEmpty()) {
+			for (JointAccountDetail accountDetail : fd.getJointAccountDetailList()) {
 				List<FinCreditReviewDetails> coAppidList = dataAccess
 						.getFinCreditRevDetailIds(accountDetail.getCustID());
 				String coApp1MaxAuditYear = dataAccess.getMaxAuditYearByCustomerId(accountDetail.getCustID(), "_VIEW");
@@ -568,13 +568,13 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 
 	private void setCoApplicantData(FinanceDetail financeDetail, Map<String, Object> dataMap, SpreadSheet spreadSheet) {
 
-		if (CollectionUtils.isEmpty(financeDetail.getJountAccountDetailList())) {
+		if (CollectionUtils.isEmpty(financeDetail.getJointAccountDetailList())) {
 			return;
 		}
 
 		FinanceMain fm = financeDetail.getFinScheduleData().getFinanceMain();
-		if (financeDetail.getJountAccountDetailList().get(0) != null) {
-			String custCIF = financeDetail.getJountAccountDetailList().get(0).getCustCIF();
+		if (financeDetail.getJointAccountDetailList().get(0) != null) {
+			String custCIF = financeDetail.getJointAccountDetailList().get(0).getCustCIF();
 			spreadSheet.setCu1(dataAccess.getCustomerDetailForFinancials(custCIF, "_View"));
 			Customer customer = spreadSheet.getCu1();
 			setCustomerName(customer);
@@ -584,9 +584,9 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 
 		}
 
-		if (financeDetail.getJountAccountDetailList().size() > 1
-				&& financeDetail.getJountAccountDetailList().get(1) != null) {
-			String custCIF = financeDetail.getJountAccountDetailList().get(1).getCustCIF();
+		if (financeDetail.getJointAccountDetailList().size() > 1
+				&& financeDetail.getJointAccountDetailList().get(1) != null) {
+			String custCIF = financeDetail.getJointAccountDetailList().get(1).getCustCIF();
 			spreadSheet.setCu2(dataAccess.getCustomerDetailForFinancials(custCIF, "_View"));
 			Customer customer = spreadSheet.getCu2();
 			setCustomerName(customer);
@@ -596,9 +596,9 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 
 		}
 
-		if (financeDetail.getJountAccountDetailList().size() > 2
-				&& financeDetail.getJountAccountDetailList().get(2) != null) {
-			String custCIF = financeDetail.getJountAccountDetailList().get(2).getCustCIF();
+		if (financeDetail.getJointAccountDetailList().size() > 2
+				&& financeDetail.getJointAccountDetailList().get(2) != null) {
+			String custCIF = financeDetail.getJointAccountDetailList().get(2).getCustCIF();
 			spreadSheet.setCu3(dataAccess.getCustomerDetailForFinancials(custCIF, "_View"));
 			Customer customer = spreadSheet.getCu3();
 			setCustomerName(customer);
@@ -608,9 +608,9 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 
 		}
 
-		if (financeDetail.getJountAccountDetailList().size() > 3
-				&& financeDetail.getJountAccountDetailList().get(3) != null) {
-			String custCIF = financeDetail.getJountAccountDetailList().get(3).getCustCIF();
+		if (financeDetail.getJointAccountDetailList().size() > 3
+				&& financeDetail.getJointAccountDetailList().get(3) != null) {
+			String custCIF = financeDetail.getJointAccountDetailList().get(3).getCustCIF();
 
 			spreadSheet.setCu4(dataAccess.getCustomerDetailForFinancials(custCIF, "_View"));
 			Customer customer = spreadSheet.getCu4();
@@ -621,9 +621,9 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 
 		}
 
-		if (financeDetail.getJountAccountDetailList().size() > 4
-				&& financeDetail.getJountAccountDetailList().get(4) != null) {
-			String custCIF = financeDetail.getJountAccountDetailList().get(4).getCustCIF();
+		if (financeDetail.getJointAccountDetailList().size() > 4
+				&& financeDetail.getJointAccountDetailList().get(4) != null) {
+			String custCIF = financeDetail.getJointAccountDetailList().get(4).getCustCIF();
 
 			spreadSheet.setCu5(dataAccess.getCustomerDetailForFinancials(custCIF, "_View"));
 			Customer customer = spreadSheet.getCu5();
@@ -646,11 +646,11 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 	}
 
 	private void setCoApplicantExtendedData(SpreadSheet spreadSheet, FinanceDetail fd, Map<String, Object> dataMap) {
-		for (int i = 0; i < fd.getJountAccountDetailList().size(); i++) {
+		for (int i = 0; i < fd.getJointAccountDetailList().size(); i++) {
 			// FIXME: Table Name should come from Module and SubModule
 			List<Map<String, Object>> extendedMapValues = dataAccess.getExtendedFieldMap(
-					String.valueOf(fd.getJountAccountDetailList().get(i).getCustCIF()), "Customer_Sme_Ed", "_view");
-			CustomerDetails cu = fd.getJountAccountDetailList().get(i).getCustomerDetails();
+					String.valueOf(fd.getJointAccountDetailList().get(i).getCustCIF()), "Customer_Sme_Ed", "_view");
+			CustomerDetails cu = fd.getJointAccountDetailList().get(i).getCustomerDetails();
 			if (CollectionUtils.isNotEmpty(extendedMapValues) && i == 0) {
 				spreadSheet.setAddlVar1(getExtFieldDesc("clix_natureofbusiness",
 						extendedMapValues.get(0).get("natureofbusiness").toString()));
@@ -663,7 +663,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 				//industry margin
 				spreadSheet.setAddlVar5(getExtFieldIndustryMargin("clix_industrymargin", spreadSheet.getAddlVar1(),
 						spreadSheet.getAddlVar2(), spreadSheet.getAddlVar3(), spreadSheet.getAddlVar4()));
-				setCoApplicantFiStatus(fd, cu, fd.getJountAccountDetailList().get(i).getCustCIF(), i, dataMap);
+				setCoApplicantFiStatus(fd, cu, fd.getJointAccountDetailList().get(i).getCustCIF(), i, dataMap);
 			}
 			if (CollectionUtils.isNotEmpty(extendedMapValues) && i == 1) {
 				spreadSheet.setAddlVar6(getExtFieldDesc("clix_natureofbusiness",
@@ -677,7 +677,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 				//industry margin
 				spreadSheet.setAddlVar10(getExtFieldIndustryMargin("clix_industrymargin", spreadSheet.getAddlVar1(),
 						spreadSheet.getAddlVar2(), spreadSheet.getAddlVar3(), spreadSheet.getAddlVar4()));
-				setCoApplicantFiStatus(fd, cu, fd.getJountAccountDetailList().get(i).getCustCIF(), i, dataMap);
+				setCoApplicantFiStatus(fd, cu, fd.getJointAccountDetailList().get(i).getCustCIF(), i, dataMap);
 			}
 
 		}

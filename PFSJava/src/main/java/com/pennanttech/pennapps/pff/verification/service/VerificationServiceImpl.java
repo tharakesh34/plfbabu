@@ -603,7 +603,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		List<CustomerDetails> customerDetails = new ArrayList<>();
 		customerDetails.add(financeDetail.getCustomerDetails());
 
-		List<JointAccountDetail> jointAccounts = financeDetail.getJountAccountDetailList();
+		List<JointAccountDetail> jointAccounts = financeDetail.getJointAccountDetailList();
 
 		if (jointAccounts == null) {
 			jointAccounts = new ArrayList<>();
@@ -646,8 +646,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		List<CustomerDetails> customerDetails = new ArrayList<>();
 		customerDetails.add(financeDetail.getCustomerDetails());
 
-		if (CollectionUtils.isNotEmpty(financeDetail.getJountAccountDetailList())) {
-			for (JointAccountDetail jointAccountDetail : financeDetail.getJountAccountDetailList()) {
+		if (CollectionUtils.isNotEmpty(financeDetail.getJointAccountDetailList())) {
+			for (JointAccountDetail jointAccountDetail : financeDetail.getJointAccountDetailList()) {
 				customerDetails.add(customerDetailsService.getApprovedCustomerById(jointAccountDetail.getCustID()));
 			}
 		}
@@ -888,7 +888,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 	private void setRCUDocumentDetails(FinanceDetail financeDetail, Verification item) {
 		List<CustomerDocument> customerDocuemnts = financeDetail.getCustomerDetails().getCustomerDocumentsList();
-		List<JointAccountDetail> coApplicants = financeDetail.getJountAccountDetailList();
+		List<JointAccountDetail> coApplicants = financeDetail.getJointAccountDetailList();
 		Map<Long, Map<String, CustomerDocument>> map = new HashMap<>();
 		if (CollectionUtils.isNotEmpty(coApplicants)) {
 			for (JointAccountDetail jointAccountDetail : coApplicants) {
@@ -1311,7 +1311,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	private void setVerificationData(FinanceDetail financeDetail, Verification verification,
 			VerificationType verificationType) {
 		Customer customer = financeDetail.getCustomerDetails().getCustomer();
-		List<JointAccountDetail> jointaccountdetails = financeDetail.getJountAccountDetailList();
+		List<JointAccountDetail> jointaccountdetails = financeDetail.getJointAccountDetailList();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		verification.setModule(Module.LOAN.getKey());
 		verification.setCreatedOn(SysParamUtil.getAppDate());

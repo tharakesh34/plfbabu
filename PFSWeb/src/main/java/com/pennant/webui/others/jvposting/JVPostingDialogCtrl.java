@@ -1879,14 +1879,10 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 				this.listBoxJVPostingEntry.appendChild(item);
 			}
 		}
-		if (baseCCy.getValue().equals(SysParamUtil.getAppCurrency())
-				|| baseCCy.getValue().equals(AccountConstants.CURRENCY_KWD)) {
-			creditAmount = creditAmount.setScale(3, RoundingMode.HALF_DOWN);//FIXME--CHECK: SET BASED ON CURRENCY SELECTION
-			debitAmount = debitAmount.setScale(3, RoundingMode.HALF_DOWN);
-		} else {
-			creditAmount = creditAmount.setScale(2, RoundingMode.HALF_DOWN);
-			debitAmount = debitAmount.setScale(2, RoundingMode.HALF_DOWN);
-		}
+
+		creditAmount = creditAmount.setScale(2, RoundingMode.HALF_DOWN);
+		debitAmount = debitAmount.setScale(2, RoundingMode.HALF_DOWN);
+		
 		this.totCreditsByBatchCcy.setValue(
 				PennantAppUtil.formateAmount(creditAmount, CurrencyUtil.getFormat(getJVPosting().getCurrency())));
 		this.creditsCount.setValue(creditCount);

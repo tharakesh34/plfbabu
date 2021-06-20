@@ -225,7 +225,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		List<CustomerDocument> customerDocumentList = financeDetail.getCustomerDetails().getCustomerDocumentsList();
 		List<DocumentDetails> loanDocumentList = financeDetail.getDocumentDetailsList();
 		List<CollateralAssignment> collaterls = financeDetail.getCollateralAssignmentList();
-		List<JointAccountDetail> jointAccountDetails = financeDetail.getJountAccountDetailList();
+		List<JointAccountDetail> jointAccountDetails = financeDetail.getJointAccountDetailList();
 
 		if (customerDocumentList != null) {
 			for (CustomerDocument customerDocument : customerDocumentList) {

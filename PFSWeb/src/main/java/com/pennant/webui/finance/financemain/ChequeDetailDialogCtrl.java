@@ -2671,7 +2671,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		// This for Cheque Details Maintanance
 		if (financeDetail != null) {
 			custCIFs.add(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
-			for (JointAccountDetail jointAccountDetail : financeDetail.getJountAccountDetailList()) {
+			for (JointAccountDetail jointAccountDetail : financeDetail.getJointAccountDetailList()) {
 				custCIFs.add(jointAccountDetail.getCustCIF());
 			}
 		}

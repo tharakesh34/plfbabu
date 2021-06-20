@@ -14,7 +14,7 @@
  ******************************************************************************************** 
  * FILE HEADER *
  ******************************************************************************************** 
- * * FileName : JountAccountDetailDAO.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 10-09-2013 * *
+ * * FileName : JointAccountDetailDAO.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 10-09-2013 * *
  * Modified Date : 10-09-2013 * * Description : * *
  ******************************************************************************************** 
  * Date Author Version Comments *
@@ -31,27 +31,27 @@ import java.util.Map;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.JointAccountDetail;
 
-public interface JountAccountDetailDAO {
+public interface JointAccountDetailDAO {
 
-	JointAccountDetail getJountAccountDetail();
+	JointAccountDetail getJointAccountDetail();
 
-	JointAccountDetail getNewJountAccountDetail();
+	JointAccountDetail getNewJointAccountDetail();
 
-	JointAccountDetail getJountAccountDetailById(long id, String type);
+	JointAccountDetail getJointAccountDetailById(long id, String type);
 
-	void update(JointAccountDetail jountAccountDetail, String type);
+	void update(JointAccountDetail jointAccountDetail, String type);
 
-	void delete(JointAccountDetail jountAccountDetail, String type);
+	void delete(JointAccountDetail jointAccountDetail, String type);
 
-	long save(JointAccountDetail jountAccountDetail, String type);
+	long save(JointAccountDetail jointAccountDetail, String type);
 
-	JointAccountDetail getJountAccountDetailByRefId(String finReference, long jointAccountId, String type);
+	JointAccountDetail getJointAccountDetailByRefId(String finReference, long jointAccountId, String type);
 
 	void deleteByFinRef(String finReference, String type);
 
-	List<JointAccountDetail> getJountAccountDetailByFinnRef(String finReference);
+	List<JointAccountDetail> getJointAccountDetailByFinRef(String finReference);
 
-	List<JointAccountDetail> getJountAccountDetailByFinRef(String finReference, String type);
+	List<JointAccountDetail> getJointAccountDetailByFinRef(String finReference, String type);
 
 	List<FinanceExposure> getPrimaryExposureList(JointAccountDetail jointAccountDetail);
 
@@ -61,7 +61,7 @@ public interface JountAccountDetailDAO {
 
 	FinanceExposure getOverDueDetails(FinanceExposure exposure);
 
-	JointAccountDetail getJountAccountDetailByRef(String finReference, String custCIF, String type);
+	JointAccountDetail getJointAccountDetailByRef(String finReference, String custCIF, String type);
 
 	List<FinanceExposure> getPrimaryExposureList(List<String> listCIF);
 

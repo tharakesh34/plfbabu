@@ -51,23 +51,14 @@ public class AccountConstants {
 	// Account Types using in Account Selection box.
 	// For multiple Types add with comma separated.
 	public static final String ACTYPES_DELAER = "DI";
-	public static final String ACTYPES_TAKAFULPROVIDER = "T9";
 	public static final String ACTYPES_COMMITMENT = "YY";
 	public static final String ACTYPES_COMMITCHARGE = "EA";
-	public static final String ACTYPES_JVPOSTINGS = "EA,CA,JK";
-	public static final String ACTYPES_COREBANK = "YS";
-	public static final String ACTYPES_ERP = "YS";
 
 	// Finance Type Definition Account Types
 	public static final String FinanceAccount_DISB = "DISB";
 	public static final String FinanceAccount_REPY = "REPAY";
 	public static final String FinanceAccount_DWNP = "DWNP";
 	public static final String FinanceAccount_ERLS = "ERLS";
-	public static final String FinanceAccount_ISCONTADV = "CONTADV";
-	public static final String FinanceAccount_ISBILLACCT = "BILLACCT";
-	public static final String FinanceAccount_ISCNSLTACCT = "CNSLTFEE";
-	public static final String FinanceAccount_ISEXPACCT = "EXPENSE";
-	public static final String FinanceAccount_SECONDARYACCT = "SECONDRY";
 
 	// Transaction Entry Accounts
 	public static final String TRANACC_DISB = "DISB";
@@ -104,7 +95,6 @@ public class AccountConstants {
 
 	// Commitment Details process
 	public static final String CURRENCY_USD = "USD";
-	public static final String CURRENCY_KWD = "KWD";
 	public static final int CURRENCY_USD_FORMATTER = 2;
 
 	// Transaction Types

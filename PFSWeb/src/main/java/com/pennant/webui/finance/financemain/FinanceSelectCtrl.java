@@ -1118,7 +1118,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				whereClause.append(" AND MaturityDate < '" + appDate + "'");
 			}
 			whereClause.append(
-					" AND ((fincurrassetvalue+feechargeamt+insuranceamt + TotalCpz) - finRepaymentAmount) > 0 ");
+					" AND ((fincurrassetvalue+feechargeamt+ TotalCpz) - finRepaymentAmount) > 0 ");
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
 		}
@@ -1501,8 +1501,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 					if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
 							|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0
-							|| curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0
-							|| curSchd.getSchdInsPaid().compareTo(BigDecimal.ZERO) > 0) {
+							|| curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0) {
 
 						validFrom = curSchd.getSchDate();
 						continue;

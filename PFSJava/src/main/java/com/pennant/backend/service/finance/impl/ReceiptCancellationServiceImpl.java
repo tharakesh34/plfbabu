@@ -1436,7 +1436,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						curRpySchd.setLatePftSchdPayNow(
 								curRpySchd.getLatePftSchdPayNow().add(rpySchd.getLatePftSchdPayNow()));
 						curRpySchd.setSchdFeePayNow(curRpySchd.getSchdFeePayNow().add(rpySchd.getSchdFeePayNow()));
-						curRpySchd.setSchdInsPayNow(curRpySchd.getSchdInsPayNow().add(rpySchd.getSchdInsPayNow()));
 						curRpySchd.setPenaltyPayNow(curRpySchd.getPenaltyPayNow().add(rpySchd.getPenaltyPayNow()));
 						rpySchdMap.remove(rpySchd.getSchDate());
 					} else {
@@ -1505,12 +1504,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 							// Fee Detail Payment
 							if (rpySchd.getSchdFeePayNow().compareTo(BigDecimal.ZERO) > 0) {
 								curSchd.setSchdFeePaid(curSchd.getSchdFeePaid().subtract(rpySchd.getSchdFeePayNow()));
-								schdUpdated = true;
-							}
-
-							// Insurance Detail Payment
-							if (rpySchd.getSchdInsPayNow().compareTo(BigDecimal.ZERO) > 0) {
-								curSchd.setSchdInsPaid(curSchd.getSchdInsPaid().subtract(rpySchd.getSchdInsPayNow()));
 								schdUpdated = true;
 							}
 

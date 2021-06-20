@@ -59,8 +59,8 @@ public class FetchBlackListDetails {
 			if (detail.getFinScheduleData().getFinanceMain().isBlacklisted()
 					&& detail.getFinScheduleData().getFinanceMain().isBlacklistOverride()
 					|| !detail.getFinScheduleData().getFinanceMain().isBlacklisted()) {
-				if (CollectionUtils.isNotEmpty(detail.getJountAccountDetailList())) {
-					for (JointAccountDetail coapplicant : detail.getJountAccountDetailList()) {
+				if (CollectionUtils.isNotEmpty(detail.getJointAccountDetailList())) {
+					for (JointAccountDetail coapplicant : detail.getJointAccountDetailList()) {
 						CustomerDetails customerDetails = coapplicant.getCustomerDetails();
 						detail = new FetchBlackListDetails(userRole, tFinanceDetail, parent, curLoginUser,
 								customerDetails).getFinanceDetail();

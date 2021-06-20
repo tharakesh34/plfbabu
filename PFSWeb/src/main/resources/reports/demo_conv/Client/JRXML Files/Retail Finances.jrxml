@@ -33,7 +33,6 @@
 	<field name="TotalPrincipal" class="java.math.BigDecimal"/>
 	<field name="TotalProfit" class="java.math.BigDecimal"/>
 	<field name="TotalAdminFee" class="java.math.BigDecimal"/>
-	<field name="TotalInsurance" class="java.math.BigDecimal"/>
 	<field name="TotalAmount" class="java.math.BigDecimal"/>
 	<field name="FinisActive" class="java.lang.String"/>
 	<field name="FinDivision" class="java.lang.String"/>
@@ -49,9 +48,6 @@
 	<variable name="BranchTotalAdminFee" class="java.math.BigDecimal" resetType="Group" resetGroup="BranchCode" calculation="Sum">
 		<variableExpression><![CDATA[$F{TotalAdminFee}]]></variableExpression>
 	</variable>
-	<variable name="BranchTotalInsurance" class="java.math.BigDecimal" resetType="Group" resetGroup="BranchCode" calculation="Sum">
-		<variableExpression><![CDATA[$F{TotalInsurance}]]></variableExpression>
-	</variable>
 	<variable name="BranchTotalAmount" class="java.math.BigDecimal" resetType="Group" resetGroup="BranchCode" calculation="Sum">
 		<variableExpression><![CDATA[$F{TotalAmount}]]></variableExpression>
 	</variable>
@@ -66,9 +62,6 @@
 	</variable>
 	<variable name="ProductcodeTotalAdminFee" class="java.math.BigDecimal" resetType="Group" resetGroup="Productcode" calculation="Sum">
 		<variableExpression><![CDATA[$F{TotalAdminFee}]]></variableExpression>
-	</variable>
-	<variable name="ProductcodeTotalInsurance" class="java.math.BigDecimal" resetType="Group" resetGroup="Productcode" calculation="Sum">
-		<variableExpression><![CDATA[$F{TotalInsurance}]]></variableExpression>
 	</variable>
 	<variable name="ProductcodeTotalAmount" class="java.math.BigDecimal" resetType="Group" resetGroup="Productcode" calculation="Sum">
 		<variableExpression><![CDATA[$F{TotalAmount}]]></variableExpression>
@@ -218,7 +211,6 @@ $P{appccyEditField}==4 ?"#,##0.0000":"#,##0.00000"]]></patternExpression>
 							<font isPdfEmbedded="true"/>
 							<paragraph rightIndent="2"/>
 						</textElement>
-						<textFieldExpression><![CDATA[$F{BranchCode}!=null?$V{BranchTotalInsurance}:" "]]></textFieldExpression>
 						<patternExpression><![CDATA[$P{appccyEditField}==0 ?"#,##0":
 $P{appccyEditField}==1 ?"#,##0.0":
 $P{appccyEditField}==2 ?"#,##0.00":
@@ -297,7 +289,6 @@ $P{appccyEditField}==4 ?"#,##0.0000":"#,##0.00000"]]></patternExpression>
 							<font isPdfEmbedded="true"/>
 							<paragraph rightIndent="2"/>
 						</textElement>
-						<textFieldExpression><![CDATA[$F{BranchCode}!=null?$V{ProductcodeTotalInsurance}:" "]]></textFieldExpression>
 						<patternExpression><![CDATA[$P{appccyEditField}==0 ?"#,##0":
 $P{appccyEditField}==1 ?"#,##0.0":
 $P{appccyEditField}==2 ?"#,##0.00":
@@ -618,7 +609,6 @@ $P{appccyEditField}==4 ?"#,##0.0000":"#,##0.00000"]]></patternExpression>
 					<textElement textAlignment="Right">
 						<paragraph rightIndent="3"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{TotalInsurance}]]></textFieldExpression>
 					<patternExpression><![CDATA[$P{appccyEditField}==0 ?"#,##0":
 $P{appccyEditField}==1 ?"#,##0.0":
 $P{appccyEditField}==2 ?"#,##0.00":

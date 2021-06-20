@@ -238,8 +238,6 @@
 												<row id="row_downPayBank" visible="false">
 													<label id="label_MurabahaFinanceMainDialog_DownPayBank" value="${c:l('label_MurabahaFinanceMainDialog_DownPayBank.value')}" />
 													<currencyBox id="downPayBank" />
-													<label id="label_MurabahaFinanceMainDialog_DownPayAccount" value="${c:l('label_MurabahaFinanceMainDialog_DownPayAccount.value')}" />
-													<accountSelectionBox id="downPayAccount" />
 												</row>
 											</rows>
 										</grid>

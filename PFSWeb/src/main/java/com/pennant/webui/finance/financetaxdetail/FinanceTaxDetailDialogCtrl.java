@@ -225,7 +225,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 
 			if (arguments.containsKey("financeDetail")) {
 				this.financeDetail = (FinanceDetail) (arguments.get("financeDetail"));
-				this.setJointAccountDetailList(financeDetail.getJountAccountDetailList());
+				this.setJointAccountDetailList(financeDetail.getJointAccountDetailList());
 				this.setGurantorsDetailList(financeDetail.getGurantorsDetailList());
 				this.isTaxMand = this.financeDetail.getFinScheduleData().getFinanceType().isTaxNoMand();
 			}
@@ -461,7 +461,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 			if (financeMain != null) {
 				String finRef = financeMain.getFinReference();
 				this.finReference.setValue(finRef, "");
-				setJointAccountDetailList(this.financeTaxDetailService.getJountAccountDetailByFinRef(finRef, "_AView"));
+				setJointAccountDetailList(this.financeTaxDetailService.getJointAccountDetailByFinRef(finRef, "_AView"));
 				setGurantorsDetailList(this.financeTaxDetailService.getGuarantorDetailByFinRef(finRef, "_AView"));
 				this.taxCustId = financeMain.getCustID();
 			}
@@ -1173,7 +1173,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		if (!fromLoan) {
 			this.recordStatus.setValue(aFinanceTaxDetail.getRecordStatus());
 			if (!aFinanceTaxDetail.isNewRecord()) {
-				setJointAccountDetailList(this.financeTaxDetailService.getJountAccountDetailByFinRef(finRef, "_AView"));
+				setJointAccountDetailList(this.financeTaxDetailService.getJointAccountDetailByFinRef(finRef, "_AView"));
 				setGurantorsDetailList(this.financeTaxDetailService.getGuarantorDetailByFinRef(finRef, "_AView"));
 			}
 		}

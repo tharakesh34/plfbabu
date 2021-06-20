@@ -70,7 +70,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.applicationmaster.IRRFinanceType;
-import com.pennant.backend.model.rmtmasters.FinTypeAccount;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinTypeExpense;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
@@ -312,23 +311,6 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 			aFinanceType.setNewRecord(true);
 			aFinanceType.setRecordStatus("");
 			isCopyProcess = true;
-			List<FinTypeAccount> list = sourceFin.getFinTypeAccounts();
-			if (list != null && !list.isEmpty()) {
-				aFinanceType.setFinTypeAccounts(new ArrayList<FinTypeAccount>());
-				for (FinTypeAccount finTypeAccount : list) {
-					FinTypeAccount aFinTypeAccount = financeTypeService.getNewFinTypeAccount();
-					aFinTypeAccount.setFinType(finTypeAccount.getFinType());
-					aFinTypeAccount.setFinCcy(finTypeAccount.getFinCcy());
-					aFinTypeAccount.setEvent(finTypeAccount.getEvent());
-					aFinTypeAccount.setAlwManualEntry(finTypeAccount.isAlwManualEntry());
-					aFinTypeAccount.setAlwCustomerAccount(finTypeAccount.isAlwCustomerAccount());
-					aFinTypeAccount.setAccountReceivable(finTypeAccount.getAccountReceivable());
-					aFinTypeAccount.setCustAccountTypes(finTypeAccount.getCustAccountTypes());
-					aFinTypeAccount.setVersion(1);
-					aFinTypeAccount.setRecordType(PennantConstants.RCD_ADD);
-					aFinanceType.getFinTypeAccounts().add(aFinTypeAccount);
-				}
-			}
 
 			List<IRRFinanceType> irrFinTypes = sourceFin.getIrrFinanceTypeList();
 			if (irrFinTypes != null && !irrFinTypes.isEmpty()) {

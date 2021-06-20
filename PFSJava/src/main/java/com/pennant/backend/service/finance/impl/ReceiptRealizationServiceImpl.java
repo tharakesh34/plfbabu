@@ -360,12 +360,6 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 				fullyPaid = false;
 				break;
 			}
-
-			// Insurance
-			if ((curSchd.getInsSchd().subtract(curSchd.getSchdInsPaid())).compareTo(BigDecimal.ZERO) > 0) {
-				fullyPaid = false;
-				break;
-			}
 		}
 
 		// Check Penalty Paid Fully or not

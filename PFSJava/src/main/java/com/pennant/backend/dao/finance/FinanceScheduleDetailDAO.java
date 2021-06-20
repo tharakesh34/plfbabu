@@ -101,15 +101,9 @@ public interface FinanceScheduleDetailDAO {
 	List<ScheduleMapDetails> getRecalCulateFinSchdDetailTermByDates(List<String> finReferences, Date schdFromdate,
 			Date schdTodate);
 
-	List<AccountHoldStatus> getFutureInstAmtByRepayAc(Date dateValueDate, Date futureDate);
-
 	FinanceScheduleDetail getFinSchduleDetails(String finReference, Date schdDate, boolean isWIF);
 
 	List<FinanceScheduleDetail> getFinSchdDetailsForBatch(String finReference);
-
-	List<FinanceScheduleDetail> getFinSchDetlsByPrimary(String accountId);
-
-	List<FinanceScheduleDetail> getFinSchDetlsBySecondary(String accountId);
 
 	FinanceScheduleDetail getTotals(String finReference);
 

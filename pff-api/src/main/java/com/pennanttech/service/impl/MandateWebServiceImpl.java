@@ -348,8 +348,7 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 				if (DateUtility.compare(curSchd.getSchDate(), DateUtility.getAppDate()) >= 0
 						&& curSchd.isRepayOnSchDate()) {
-					repayAmt = curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()).add(curSchd.getFeeSchd())
-							.add(curSchd.getInsSchd());
+					repayAmt = curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()).add(curSchd.getFeeSchd());
 					break;
 				}
 			}
@@ -482,8 +481,7 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 					FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 					if (DateUtility.compare(curSchd.getSchDate(), DateUtility.getAppDate()) >= 0
 							&& curSchd.isRepayOnSchDate()) {
-						repayAmt = curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()).add(curSchd.getFeeSchd())
-								.add(curSchd.getInsSchd());
+						repayAmt = curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()).add(curSchd.getFeeSchd());
 						break;
 					}
 				}

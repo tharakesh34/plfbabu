@@ -142,12 +142,6 @@
 													<label id="label_FinanceMainDialog_FinCurrentAssetValue" />
 													<currencyBox id="finCurrentAssetValue" />
 												</row>
-												<row id="row_DisbAccId">
-													<label id="label_FinanceMainDialog_DisbAcctId" value="${c:l('label_FinanceMainDialog_DisbAcctId.value')}" />
-													<accountSelectionBox id="disbAcctId" />
-													<label id="label_FinanceMainDialog_RepayAcctId" value="${c:l('label_FinanceMainDialog_RepayAcctId.value')}" />
-													<accountSelectionBox id="repayAcctId" />
-												</row>
 												<row visible="true">
 													<label id="label_FinanceMainDialog_FinRepayMethod" value="${c:l('label_FinanceMainDialog_FinRepayMethod.value')}" />
 													<hbox>
@@ -171,8 +165,6 @@
 												<row id="row_downPayBank" visible="false">
 													<label id="label_FinanceMainDialog_DownPayBank" value="${c:l('label_FinanceMainDialog_DownPayBank.value')}" />
 													<currencyBox id="downPayBank" />
-													<label id="label_FinanceMainDialog_DownPayAccount" value="${c:l('label_FinanceMainDialog_DownPayAccount.value')}" />
-													<accountSelectionBox id="downPayAccount" />
 												</row>
 												<row id="row_downPaySupl" visible="false">
 													<label id="label_FinanceMainDialog_DownPaySupl" value="${c:l('label_FinanceMainDialog_DownPaySupl.value')}" />
@@ -208,9 +200,6 @@
 												<row id="rowLimitRef" visible="false">
 													<label id="label_FinanceMainDialog_FinLimitRef" value="${c:l('label_FinanceMainDialog_FinLimitRef.value')}" />
 													<extendedcombobox id="finLimitRef" />
-													<label id="label_FinanceMainDialog_DepriFrq" value="${c:l('label_FinanceMainDialog_DepriFrq.value')}"
-														visible="false" />
-													<frequencybox id="depreciationFrq" visible="false" />
 												</row>
 												<row visible="false">
 													<label id="label_FinanceMainDialog_FinIsActive" value="${c:l('label_FinanceMainDialog_FinIsActive.value')}"
@@ -299,8 +288,6 @@
 												<row id="row_finWriteoff" visible="false">
 													<label id="label_FinanceMainDialog_finWriteoffPayAmount" value="${c:l('label_FinanceMainDialog_finWriteoffPayAmount.value')}" />
 													<currencyBox id="finWriteoffPayAmount" />
-													<label id="label_FinanceMainDialog_finWriteoffPayAccount" value="${c:l('label_FinanceMainDialog_finWriteoffPayAccount.value')}" />
-													<accountSelectionBox id="finWriteoffPayAccount" />
 												</row>
 												<row id="row_pftServicingODLimit" visible="false">
 													<label id="label_FinanceMainDialog_InterestServicingODLimit" value="${c:l('label_FinanceMainDialog_InterestServicingODLimit.value')}" />

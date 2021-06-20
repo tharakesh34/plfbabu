@@ -437,8 +437,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			agreement.setFinOcrRequired("");
 		}
 
-		if (CollectionUtils.isNotEmpty(detail.getJountAccountDetailList())) {
-			for (JointAccountDetail jointAccount : detail.getJountAccountDetailList()) {
+		if (CollectionUtils.isNotEmpty(detail.getJointAccountDetailList())) {
+			for (JointAccountDetail jointAccount : detail.getJointAccountDetailList()) {
 				agreement.setPrimaryCoApplicant(jointAccount.getLovDescCIFName());
 				break;
 			}
@@ -1097,8 +1097,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				}
 			}
 
-			if (detail.getJountAccountDetailList() != null && !detail.getJountAccountDetailList().isEmpty()) {
-				for (JointAccountDetail jointAccountDetail : detail.getJountAccountDetailList()) {
+			if (detail.getJointAccountDetailList() != null && !detail.getJointAccountDetailList().isEmpty()) {
+				for (JointAccountDetail jointAccountDetail : detail.getJointAccountDetailList()) {
 					CustomerDetails custdetails = customerDetailsService
 							.getCustomerDetailsById(jointAccountDetail.getCustID(), true, "_AView");
 					if (aggModuleDetails.contains(PennantConstants.AGG_INCOMDE) && null != custdetails
@@ -1406,7 +1406,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				agreement.getDirectorDetails().add(agreement.new DirectorDetail());
 			}
 
-			if (CollectionUtils.isNotEmpty(detail.getJountAccountDetailList())) {
+			if (CollectionUtils.isNotEmpty(detail.getJointAccountDetailList())) {
 				getCoAppDirectorDetails(agreement, detail, formatter);
 			}
 
@@ -2259,7 +2259,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 	private void getCoAppDirectorDetails(AgreementDetail agreement, FinanceDetail detail, int formatter) {
 
-		List<JointAccountDetail> JointAccountDetailList = detail.getJountAccountDetailList();
+		List<JointAccountDetail> JointAccountDetailList = detail.getJointAccountDetailList();
 		for (JointAccountDetail jointAccountDetail : JointAccountDetailList) {
 			CustomerDetails customerDetails = jointAccountDetail.getCustomerDetails();
 			if (customerDetails != null) {
@@ -3989,9 +3989,9 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 	private void setCoapplicantDetails(FinanceDetail detail, AgreementDetail agreement, String aggModuleDetails) {
 		agreement.setCoApplicants(new ArrayList<>());
 
-		if (aggModuleDetails.contains(PennantConstants.AGG_COAPPDT) && detail.getJountAccountDetailList() != null
-				&& !detail.getJountAccountDetailList().isEmpty()) {
-			for (JointAccountDetail jointAccountDetail : detail.getJountAccountDetailList()) {
+		if (aggModuleDetails.contains(PennantConstants.AGG_COAPPDT) && detail.getJointAccountDetailList() != null
+				&& !detail.getJointAccountDetailList().isEmpty()) {
+			for (JointAccountDetail jointAccountDetail : detail.getJointAccountDetailList()) {
 				CustomerDetails custdetails = customerDetailsService
 						.getCustomerDetailsById(jointAccountDetail.getCustID(), true, "_AView");
 				CoApplicant coapplicant = agreement.new CoApplicant();
@@ -4229,7 +4229,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			} else {
 				scheduleData.setSchdSeqNo(String.valueOf(seqNo++));
 			}
-			scheduleData.setInsSchd(CurrencyUtil.format(finSchDetail.getInsSchd(), formatter));
 			defDates = defDates.concat(DateUtil.formatToLongDate(finSchDetail.getDefSchdDate()) + ",");
 			agreement.getScheduleData().add(scheduleData);
 			if (finSchDetail.isRepayOnSchDate() && !isSchdPftFirstInst) {
@@ -4561,13 +4560,9 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			agreement.setFinAssetValueInWords(strFinAssetValue == null ? "" : WordUtils.capitalize(strFinAssetValue));
 			agreement.setFinAssetValue(CurrencyUtil.format(fm.getFinAssetValue(), formatter));
 			agreement.setFeeChargeAmt(CurrencyUtil.format(fm.getFeeChargeAmt(), formatter));
-			agreement.setInsuranceAmt(CurrencyUtil.format(fm.getInsuranceAmt(), formatter));
 			agreement.setDownPayment(CurrencyUtil.format(fm.getDownPayment(), formatter));
 			agreement.setDownPayBank(CurrencyUtil.format(fm.getDownPayBank(), formatter));
 			agreement.setDownPaySupl(CurrencyUtil.format(fm.getDownPaySupl(), formatter));
-			agreement.setDisbAccount(PennantApplicationUtil.formatAccountNumber(fm.getDisbAccountId()));
-			agreement.setRepayAccount(PennantApplicationUtil.formatAccountNumber(fm.getRepayAccountId()));
-			agreement.setDownpayAc(PennantApplicationUtil.formatAccountNumber(fm.getDownPayAccount()));
 			agreement.setFinPurpose(fm.getLovDescFinPurposeName());
 			agreement.setFinRpyMethod(fm.getFinRepayMethod());
 			agreement.setSourChannelCategory(StringUtils.trimToEmpty(fm.getSourChannelCategory()));
@@ -4636,7 +4631,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			agreement.setPurchasePrice(
 					PennantApplicationUtil.amountFormate(fm.getFinAmount().subtract(fm.getDownPayment()), formatter));
 			agreement.setRepayMargin(PennantApplicationUtil.formatRate(fm.getRepayMargin().doubleValue(), 2));
-			agreement.setSecDeposit(CurrencyUtil.format(fm.getSecurityDeposit(), formatter));
 			agreement.setSharePerc(CurrencyUtil.format((fm.getFinAmount().subtract(fm.getDownPayment()))
 					.divide(fm.getFinAmount().multiply(new BigDecimal(100)), RoundingMode.HALF_DOWN), formatter));
 			agreement.setTotalPrice(CurrencyUtil.format(fm.getFinAmount().add(fm.getTotalProfit()), formatter));

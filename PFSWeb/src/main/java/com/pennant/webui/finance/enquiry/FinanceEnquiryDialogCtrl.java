@@ -85,12 +85,10 @@ import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.AccountSelectionBox;
 import com.pennant.ChartType;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
-import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
@@ -195,7 +193,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Intbox frqDefferments;
 	protected Intbox utilisedFrqDef;
 	protected Textbox finPurpose;
-	protected Textbox disbAcctId;
 	protected Uppercasebox applicationNo;
 	protected ExtendedCombobox referralId;
 	protected ExtendedCombobox dmaCode;
@@ -207,19 +204,10 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	protected Row row_ReferralId;
 	protected Label label_FinanceMainDialog_SalesDepartment;
-	protected Row row_disbAcctId;
-	protected Row row_FinAcctId;
 	protected Row row_commitment;
 	protected Row row_PlannedEMIH;
 
-	// protected Label disbAcctBal;
-	protected Textbox repayAcctId;
-	// protected Label repayAcctBal;
-	protected Textbox finAcctId;
-	protected Textbox unEarnAcctId;
-	// protected Label finAcctBal;
 	protected Textbox collateralRef;
-	protected FrequencyBox depreciationFrq;
 	protected Decimalbox finAssetValue;
 	// protected Decimalbox finCurAssetValue;
 	protected Combobox finRepayMethod;
@@ -366,7 +354,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Checkbox oDAllowWaiver;
 	protected Decimalbox oDMaxWaiverPerc;
 
-	protected Space space_DepriFrq;
 	// Graph Details
 	protected Textbox finReference_graph;
 	protected Textbox finStatus_graph;
@@ -467,8 +454,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Hbox hbox_Defferments;
 	protected Hbox hbox_FrqDefferments;
 
-	protected Label label_FinanceMainDialog_DepriFrq;
-
 	protected Row row_RepayRvwFrq;
 	protected Row row_RepayCpzFrq;
 
@@ -489,8 +474,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Label netFinAmount;
 	protected CurrencyBox downPaySupl; // autoWired
 	protected CurrencyBox downPayBank;
-	protected Row row_downPayBank;
-	protected AccountSelectionBox downPayAccount;
 	protected Hbox hbox_tdsApplicable;
 	protected Checkbox tDSApplicable;
 	protected Label label_FinanceMainDialog_TDSApplicable;
@@ -514,7 +497,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private CustomerService customerService;
 	private FinFlagDetailsDAO finFlagDetailsDAO;
 	private List<FinFlagsDetail> finFlagsDetailList = null;
-	protected Label label_FinanceMainDialog_DownPayAccount;
 	protected String finDivision = "";
 	protected String selectMethodName = "onSelectTab";
 	private boolean enquiry = false;
@@ -820,12 +802,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.eligibilityMethod.setDescColumn("ValueDesc");
 			this.eligibilityMethod.setValidateColumns(new String[] { "FieldCodeId" });
 
-			this.downPayAccount.setAccountDetails(getFinScheduleData().getFinanceMain().getFinType(),
-					AccountConstants.FinanceAccount_DWNP, getFinScheduleData().getFinanceType().getFinCcy());
-			this.downPayAccount.setFormatter(formatter);
-			this.downPayAccount
-					.setBranchCode(StringUtils.trimToEmpty(getFinScheduleData().getFinanceMain().getFinBranch()));
-
 			this.downPayBank.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 			this.downPayBank.setScale(formatter);
 			this.downPayBank.setTextBoxWidth(200);
@@ -974,13 +950,12 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			if (ImplementationConstants.ALW_DOWNPAY_IN_LOANENQ_AND_SOA) {
 				curFinAmountValue = aFinanceMain.getFinCurrAssetValue().add(aFinanceMain.getFeeChargeAmt())
-						.add(aFinanceMain.getTotalCpz()).add(aFinanceMain.getInsuranceAmt())
-						.subtract(aFinanceMain.getFinRepaymentAmount()).subtract(aFinanceMain.getSvAmount());
+						.add(aFinanceMain.getTotalCpz()).subtract(aFinanceMain.getFinRepaymentAmount())
+						.subtract(aFinanceMain.getSvAmount());
 			} else {
 				curFinAmountValue = aFinanceMain.getFinCurrAssetValue().add(aFinanceMain.getFeeChargeAmt())
-						.add(aFinanceMain.getTotalCpz()).add(aFinanceMain.getInsuranceAmt())
-						.subtract(aFinanceMain.getDownPayment()).subtract(aFinanceMain.getFinRepaymentAmount())
-						.subtract(aFinanceMain.getSvAmount());
+						.add(aFinanceMain.getTotalCpz()).subtract(aFinanceMain.getDownPayment())
+						.subtract(aFinanceMain.getFinRepaymentAmount()).subtract(aFinanceMain.getSvAmount());
 			}
 			this.curFinAmountValue.setValue(PennantApplicationUtil.formateAmount(curFinAmountValue, formatter));
 
@@ -1021,21 +996,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			this.collateralRef.setValue(aFinanceMain.getFinCommitmentRef());
 
-			if (StringUtils.trimToEmpty(aFinanceMain.getDepreciationFrq()).length() == 5) {
-				this.depreciationFrq.setValue(aFinanceMain.getDepreciationFrq());
-				this.depreciationFrq.setDisabled(true);
-			} else {
-				this.label_FinanceMainDialog_DepriFrq.setVisible(false);
-				this.depreciationFrq.setVisible(false);
-			}
-
-			this.disbAcctId.setValue(PennantApplicationUtil.formatAccountNumber(aFinanceMain.getDisbAccountId()));
-			this.repayAcctId.setValue(PennantApplicationUtil.formatAccountNumber(aFinanceMain.getRepayAccountId()));
-			this.finAcctId.setValue(PennantApplicationUtil.formatAccountNumber(aFinanceMain.getFinAccount()));
-			this.unEarnAcctId.setValue(PennantApplicationUtil.formatAccountNumber(aFinanceMain.getFinCustPftAccount()));
-			// this.disbAcctBal.setValue(getAcBalance(aFinanceMain.getDisbAccountId()));
-			// this.repayAcctBal.setValue(getAcBalance(aFinanceMain.getRepayAccountId()));
-			// this.finAcctBal.setValue(getAcBalance(aFinanceMain.getFinAccount()));
 			fillComboBox(this.finRepayMethod, aFinanceMain.getFinRepayMethod(), PennantStaticListUtil.getRepayMethods(),
 					"");
 
@@ -1257,12 +1217,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// Accounts should be displayed only to the Banks
-		if (!ImplementationConstants.ACCOUNTS_APPLICABLE) {
-			this.row_disbAcctId.setVisible(false);
-			this.row_FinAcctId.setVisible(false);
-			this.downPayAccount.setVisible(false);
-			this.label_FinanceMainDialog_DownPayAccount.setVisible(false);
-		}
 		if (ImplementationConstants.ALLOW_BPI_TREATMENT) {
 				this.row_BpiTreatment.setVisible(true);
 				this.alwBpiTreatment.setChecked(aFinanceMain.isAlwBPI());
@@ -1610,21 +1564,9 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (aFinanceMain.getDownPayment().compareTo(BigDecimal.ZERO) > 0
 				|| aFinanceMain.getDownPaySupl().compareTo(BigDecimal.ZERO) > 0) {
-			this.row_downPayBank.setVisible(true);
-			this.downPayAccount.setMandatoryStyle(false);
 			this.downPayBank.setMandatory(false);
-			this.downPayAccount.setValue(aFinanceMain.getDownPayAccount());
 			this.downPayBank.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPayBank(), formatter));
 			this.downPaySupl.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPaySupl(), formatter));
-			if (aFinanceMain.isNewRecord()) {
-				this.downPayAccount.setValue("");
-			} else {
-				this.downPayAccount.setValue(aFinanceMain.getDownPayAccount());
-			}
-
-		} else {
-			this.downPayAccount.setMandatoryStyle(false);
-			this.row_downPayBank.setVisible(false);
 		}
 
 		if (aFinanceMain.isTDSApplicable() && ImplementationConstants.ALLOW_TDS_ON_FEE) {
@@ -2406,7 +2348,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		readOnlyComponent(true, this.employeeName);
 		this.downPayBank.setReadonly(true);
 		this.downPaySupl.setReadonly(true);
-		this.downPayAccount.setReadonly(true);
 		this.allowRevolving.setDisabled(true);
 		this.odTDSApplicable.setDisabled(true);
 		readOnlyComponent(true, this.allowGrcRepay);

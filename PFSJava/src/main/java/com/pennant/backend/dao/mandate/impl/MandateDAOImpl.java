@@ -433,7 +433,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, FinType, FinStatus, FinStartDate, FinAmount, DownPayment, FeeChargeAmt");
-		sql.append(", InsuranceAmt, NumberOfTerms, LovDescFinTypeName, MaxInstAmount, FinRepaymentAmount");
+		sql.append(", NumberOfTerms, LovDescFinTypeName, MaxInstAmount, FinRepaymentAmount");
 		sql.append(", FinCurrAssetValue");
 		sql.append(" from MandateEnquiry_view");
 		sql.append(" Where MandateID = ?");
@@ -459,7 +459,6 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 					mndts.setFinAmount(rs.getBigDecimal("FinAmount"));
 					mndts.setDownPayment(rs.getBigDecimal("DownPayment"));
 					mndts.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
-					mndts.setInsuranceAmt(rs.getBigDecimal("InsuranceAmt"));
 					mndts.setNumberOfTerms(rs.getInt("NumberOfTerms"));
 					mndts.setLovDescFinTypeName(rs.getString("LovDescFinTypeName"));
 					mndts.setMaxInstAmount(rs.getBigDecimal("MaxInstAmount"));

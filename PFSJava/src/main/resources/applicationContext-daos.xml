@@ -3252,7 +3252,6 @@
 		<property name="dedupParmService" ref="dedupParmService" />
 		<property name="payOrderIssueHeaderDAO" ref="payOrderIssueHeaderDAO" />
 		<property name="tatDetailDAO" ref="tatDetailDAO" />
-		<property name="secondaryAccountDAO" ref="secondaryAccountDAO" />
 		<property name="dMSService" ref="dMSService" />
 		<property name="extTablesDAO" ref="extTablesDAO" />
 		<property name="overdraftScheduleDetailDAO" ref="overdraftScheduleDetailDAO" />
@@ -3278,7 +3277,7 @@
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="irrScheduleDetailDAO" ref="irrScheduleDetailDAO" />
 		<property name="pmayService" ref="pmayService" />
-		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
+		<property name="jointAccountDetailDAO" ref="jointAccountDetailDAO" />
 
 		<!-- Services -->
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />
@@ -3409,7 +3408,7 @@
 
 	<!-- Joint Account Details -->
 	<bean name="finJointAccountDetailService" class="com.pennant.backend.service.finance.impl.JointAccountDetailServiceImpl">
-		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
+		<property name="jointAccountDetailDAO" ref="jointAccountDetailDAO" />
 		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 		<property name="customerIncomeDAO" ref="customerIncomeDAO" />
 		<property name="customerDAO" ref="customerDAO" />
@@ -4194,7 +4193,7 @@
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
 		<property name="partnerBankService" ref="partnerBankService" />
 		<property name="paymentsProcessService" ref="paymentsProcessService" />
-		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
+		<property name="jointAccountDetailDAO" ref="jointAccountDetailDAO" />
 		<property name="dMSService" ref="dMSService" />
 	</bean>
 
@@ -4752,7 +4751,7 @@
 		<property name="finCollateralService" ref="finCollateralService" />
 		<property name="financeWriteoffDAO" ref="financeWriteoffDAO" />
 		<property name="guarantorDetailDAO" ref="guarantorDetailDAO" />
-		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
+		<property name="jointAccountDetailDAO" ref="jointAccountDetailDAO" />
 		<property name="dMSService" ref="dMSService" />
 		<property name="finCollateralsDAO" ref="finCollateralsDAO" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
@@ -5236,7 +5235,7 @@
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="finTypeFeesDAO" ref="finTypeFeesDAO" />
-		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
+		<property name="jointAccountDetailDAO" ref="jointAccountDetailDAO" />
 	</bean>
 
 	<!--============ Receipt Calculator Util ============== -->
@@ -5371,8 +5370,8 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
-	<!-- Jount Account Details -->
-	<bean id="jountAccountDetailDAO" class="com.pennant.backend.dao.finance.impl.JountAccountDetailDAOImpl" parent="sequenceDao" />
+	<!-- Joint Account Details -->
+	<bean id="jointAccountDetailDAO" class="com.pennant.backend.dao.finance.impl.JointAccountDetailDAOImpl" parent="sequenceDao" />
 
 	<bean id="jointAccountDetailService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
@@ -5393,7 +5392,7 @@
 	</bean>
 
 	<bean name="jointAccountDetailServiceTarget" class="com.pennant.backend.service.finance.impl.JointAccountDetailServiceImpl">
-		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
+		<property name="jointAccountDetailDAO" ref="jointAccountDetailDAO" />
 		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 		<property name="customerIncomeDAO" ref="customerIncomeDAO" />
 		<property name="customerDAO" ref="customerDAO" />
@@ -5827,9 +5826,6 @@
 
 	<!--============ TAT Detail ============== -->
 	<bean id="tatDetailDAO" class="com.pennant.backend.dao.impl.TATDetailDAOImpl" parent="sequenceDao" />
-
-	<!--============ Secondary Account Detail ============== -->
-	<bean id="secondaryAccountDAO" class="com.pennant.backend.dao.finance.impl.SecondaryAccountDAOImpl" parent="basicDao" />
 
 	<!--============ LIMIT DETAILS ============== -->
 
@@ -6548,7 +6544,7 @@
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="guarantorDetailDAO" ref="guarantorDetailDAO" />
-		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
+		<property name="jointAccountDetailDAO" ref="jointAccountDetailDAO" />
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="provinceDAO" ref="provinceDAO" />
@@ -7206,7 +7202,6 @@
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
-		<property name="secondaryAccountDAO" ref="secondaryAccountDAO" />
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="provisionDAO" ref="provisionDAO" />
@@ -8320,7 +8315,7 @@
 		<property name="customerCardSalesInfoDAO" ref="customerCardSalesInfoDAO" />
 		<property name="customerExtLiabilityDAO" ref="customerExtLiabilityDAO" />
 		<property name="customerAddresDAO" ref="customerAddresDAO" />
-		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
+		<property name="jointAccountDetailDAO" ref="jointAccountDetailDAO" />
 	</bean>
 
 	<bean id="finChequeHeaderService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -10449,7 +10444,6 @@
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="finCovenantTypeService" ref="finCovenantTypeService" />
 		<property name="repayPostingUtil" ref="repayPostingUtil" />
-		<property name="secondaryAccountDAO" ref="secondaryAccountDAO" />
 		<property name="finFlagDetailsDAO" ref="finFlagDetailsDAO" />
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
@@ -11040,7 +11034,7 @@
 		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
 		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
-		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
+		<property name="jointAccountDetailDAO" ref="jointAccountDetailDAO" />
 		<property name="collateralSetupDAO" ref="collateralSetupDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>

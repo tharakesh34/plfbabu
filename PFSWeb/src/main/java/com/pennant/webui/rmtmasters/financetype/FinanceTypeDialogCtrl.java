@@ -126,7 +126,6 @@ import com.pennant.backend.model.financemanagement.FinTypeReceiptModes;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.rmtmasters.AccountType;
-import com.pennant.backend.model.rmtmasters.FinTypeAccount;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.systemmasters.DivisionDetail;
@@ -210,7 +209,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Checkbox finIsGenRef; // autoWired
 	protected Checkbox fInIsAlwGrace; // autoWired
 	protected Checkbox finIsAlwMD; // autoWired
-	protected Checkbox finDepreciationReq; // autoWired
 	protected Checkbox finCommitmentReq; // autoWired
 	protected Checkbox finCommitmentOvrride; // autoWired
 	protected Checkbox limitRequired; // autoWired
@@ -272,10 +270,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected ExtendedCombobox grcPricingMethod;
 	protected Row row_ApplyGracePricingPolicy;
 	protected Row row_ApplyPricingPolicy;
-
-	protected Row row_finDepreciation; // autoWired
-	protected Label label_FinanceTypeDialog_FinDepreciationReq;// autoWired
-	protected Hbox hbox_FinDepreciationReq;// autoWired
 
 	// Repay Schedule Details Tab'
 	protected Space space_cbfinRateType;
@@ -350,7 +344,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Combobox pftDueSchOn;
 	protected Checkbox alwPlannedEmiHoliday;
 	protected Checkbox alwPlannedEmiInGrc;
-	protected Label label_FinanceTypeDialog_FinDepreciationFrq;
 	protected Row row_planEmi;
 	protected Space space_planEmiMethod;
 	protected Combobox planEmiMethod;
@@ -490,7 +483,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected FrequencyBox finDftStmtFrq; // autoWired
 	protected Intbox finHistRetension; // autoWired
 	protected Checkbox finCollateralReq; // autoWired
-	protected FrequencyBox finDepreciationFrq; // autoWired
 	protected Checkbox finCollateralOvrride; // autoWired
 	protected Combobox cbFinGrcScheduleOn; // autoWired
 	protected Checkbox finAlwRateChangeAnyDate; // autoWired
@@ -537,11 +529,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	// private Tab accountingEvent; // autoWired
 	private Tab finTypeAccountDetails; // autoWired
 	private Tab extendedDetails; // autoWired
-
-	// Customer Accounts
-	protected Button btnNew_FinTypeAccount;
-	protected Listbox listBoxFinTypeAccounts;
-	private List<FinTypeAccount> finTypeAccountList = new ArrayList<FinTypeAccount>();
 
 	private boolean isCompReadonly = false;
 	protected boolean alwCopyOption = false;
@@ -733,7 +720,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			if (!isOverdraft && !consumerDurable) {
 				this.extDetailsDiv.setHeight(this.borderLayoutHeight - 100 + "px");// 425px
 			}
-			this.listBoxFinTypeAccounts.setHeight(this.borderLayoutHeight - 145 + "px");
 
 			this.isCompReadonly = !isMaintainable();
 
@@ -902,8 +888,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finDftIntFrq.setMandatoryStyle(true);
 		this.finRpyFrq.setMandatoryStyle(true);
 
-		this.finDepreciationFrq.setMandatoryStyle(true);
-
 		this.finMaxAmount.setMandatory(false);
 		this.finMaxAmount.setFormat(PennantApplicationUtil.getAmountFormate(format));
 		this.finMaxAmount.setScale(format);
@@ -1047,14 +1031,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		Filter[] filter = new Filter[1];
 		filter[0] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.product.setFilters(filter);
-		if (!this.isOverdraft && !consumerDurable) {
-			row_finDepreciation.setVisible(ImplementationConstants.ALLOW_DEPRECIATION);
-		}
-		label_FinanceTypeDialog_FinDepreciationReq.setVisible(ImplementationConstants.ALLOW_DEPRECIATION);
-		hbox_FinDepreciationReq.setVisible(ImplementationConstants.ALLOW_DEPRECIATION);
-
-		finDepreciationFrq.setVisible(ImplementationConstants.ALLOW_DEPRECIATION);
-		label_FinanceTypeDialog_FinDepreciationFrq.setVisible(ImplementationConstants.ALLOW_DEPRECIATION);
 
 		this.hbox_IRRDetails.setVisible(ImplementationConstants.ALLOW_IRRCODES);
 		this.label_FinanceTypeDialog_AlwIRRDetails.setVisible(ImplementationConstants.ALLOW_IRRCODES);
@@ -1249,7 +1225,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.finIsAlwMD.setChecked(isAlwMultiDisb);
 		setMultiDisbCheckReqFlag(false);
-		this.finDepreciationReq.setChecked(aFinanceType.isFinDepreciationReq());
 		this.finCommitmentReq.setChecked(aFinanceType.isFinCommitmentReq());
 		this.finCommitmentOvrride.setChecked(aFinanceType.isFinCommitmentOvrride());
 		doCheckBoxChecked(this.finCommitmentReq.isChecked(), this.finCommitmentOvrride);
@@ -1675,7 +1650,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		doCheckBoxChecked(this.finCollateralReq.isChecked(), this.finCollateralOvrride);
 		this.finIsAlwEarlyRpy.setChecked(aFinanceType.isFinIsAlwEarlyRpy());
 		this.finIsAlwEarlySettle.setChecked(aFinanceType.isFinIsAlwEarlySettle());
-		this.finDepreciationFrq.setValue(aFinanceType.getFinDepreciationFrq());
 		this.finHistRetension.setValue(aFinanceType.getFinHistRetension());
 
 		this.alwLoanSplit.setChecked(aFinanceType.isAlwLoanSplit());
@@ -1692,8 +1666,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			setRateLabels(aFinanceType);
 		}
 		doStoreEventDetails();
-		// ======== Tab5
-		doFillCustAccountTypes(aFinanceType.getFinTypeAccounts());
 
 		String suspTrigger = aFinanceType.getFinSuspTrigger();
 		if (aFinanceType.isNewRecord() && !isCopyProcess) {
@@ -2177,11 +2149,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		try {
 			aFinanceType.setFinIsAlwMD(this.finIsAlwMD.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aFinanceType.setFinDepreciationReq(this.finDepreciationReq.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -3097,44 +3064,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		try {
-			if (this.finDepreciationReq.isChecked() && "#".equals(this.finDepreciationFrq.getFrqCodeValue())) {
-				throw new WrongValueException(this.finDepreciationFrq.getFrqCodeCombobox(), Labels.getLabel(
-						"STATIC_INVALID",
-						new String[] { Labels.getLabel("label_FinanceTypeDialog_FinDepreciationFrqCode.value") }));
-			}
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			// to Check frequency code and frequency month
-			if (!"#".equals(this.finDepreciationFrq.getFrqCodeValue())
-					&& "#".equals(this.finDepreciationFrq.getFrqMonthValue())) {
-				throw new WrongValueException(this.finDepreciationFrq.getFrqMonthCombobox(), Labels.getLabel(
-						"STATIC_INVALID",
-						new String[] { Labels.getLabel("label_FinanceTypeDialog_FinDepreciationFrqMonth.value") }));
-			}
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			// to Check frequency month and frequency day
-			if (!"#".equals(this.finDepreciationFrq.getFrqMonthValue())
-					&& "#".equals(this.finDepreciationFrq.getFrqDayValue())
-					&& !this.finDftStmtFrq.getFrqDayCombobox().isDisabled()) {
-				throw new WrongValueException(this.finDepreciationFrq.getFrqDayCombobox(), Labels.getLabel(
-						"STATIC_INVALID",
-						new String[] { Labels.getLabel("label_FinanceTypeDialog_FinDepreciationFrqDay.value") }));
-			}
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aFinanceType.setFinDepreciationFrq(
-					this.finDepreciationFrq.getValue() == null ? "" : this.finDepreciationFrq.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
+
 		try {
 			if (!consumerDurable && !isOverdraft && this.finDftIntFrq.isValidComboValue()) {
 				aFinanceType.setFinDftIntFrq(this.finDftIntFrq.getValue() == null ? "" : this.finDftIntFrq.getValue());
@@ -3830,8 +3760,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 		}
 
-		aFinanceType.setFinTypeAccounts(getFinTypeAccountList());
-
 		// ****************End of Tab 6********************//
 
 		aFinanceType.setRecordStatus(this.recordStatus.getValue());
@@ -3927,7 +3855,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				visibilityFieldsForCalcOfSteps(aFinanceType.getCalcOfSteps(), aFinanceType.isAlwManualSteps());
 			}
 			dodisableGracePeriod();
-			doDisableDepreciationDFrq(aFinanceType.isFinDepreciationReq(), isCompReadonly);
 			if (isPromotion) {
 				this.dialogTitle.setValue(Labels.getLabel("window_PromotionDialog.title"));
 				this.label_FinanceTypeDialog_FinType
@@ -4633,7 +4560,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.btnSearchAlwEarlyMethod.setDisabled(isTrue);
 
 		this.finIsOpenPftPayAcc.setDisabled(isTrue);
-		this.finDepreciationReq.setDisabled(isTrue);
 		this.finCollateralReq.setDisabled(isTrue);
 		this.alwLoanSplit.setDisabled(isTrue);
 		this.finIsAlwMD.setDisabled(isTrue);
@@ -4795,7 +4721,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.remarks.setReadonly(isTrue);
 		this.finSuspTrigger.setDisabled(isTrue);
 		this.finSuspRemarks.setReadonly(isTrue);
-		this.btnNew_FinTypeAccount.setVisible(!isTrue);
 
 		if (!isOverdraft && !consumerDurable) {
 			this.putCallRequired.setDisabled(isTrue);
@@ -4852,7 +4777,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.finRpyFrq.setMandatoryStyle(false);
 			this.finCpzFrq.setMandatoryStyle(false);
 			this.finRvwFrq.setMandatoryStyle(false);
-			this.finDepreciationFrq.setMandatoryStyle(false);
 			this.product.setMandatoryStyle(false);
 			this.downPayRule.setMandatoryStyle(false);
 			this.finDftStmtFrq.setMandatoryStyle(false);
@@ -5451,27 +5375,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				sourceFin.setNewRecord(true);
 				sourceFin.setWorkflowId(this.financeType.getWorkflowId());
 				setFinanceType(sourceFin);
-				List<FinTypeAccount> list = sourceFin.getFinTypeAccounts();
-				if (list != null && !list.isEmpty()) {
-					getFinanceType().setFinTypeAccounts(new ArrayList<FinTypeAccount>());
-					for (FinTypeAccount finTypeAccount : list) {
-						FinTypeAccount aFinTypeAccount = getFinanceTypeService().getNewFinTypeAccount();
-						aFinTypeAccount.setFinType(finTypeAccount.getFinType());
-						aFinTypeAccount.setFinCcy(finTypeAccount.getFinCcy());
-						aFinTypeAccount.setEvent(finTypeAccount.getEvent());
-						aFinTypeAccount.setAlwManualEntry(finTypeAccount.isAlwManualEntry());
-						aFinTypeAccount.setAlwCustomerAccount(finTypeAccount.isAlwCustomerAccount());
-						aFinTypeAccount.setAccountReceivable(finTypeAccount.getAccountReceivable());
-						aFinTypeAccount.setCustAccountTypes(finTypeAccount.getCustAccountTypes());
-						aFinTypeAccount.setVersion(1);
-						aFinTypeAccount.setRecordType(PennantConstants.RCD_ADD);
-						getFinanceType().getFinTypeAccounts().add(aFinTypeAccount);
-					}
-				}
 				doWriteBeanToComponents(getFinanceType());
 				setSteppingFieldsVisibility(getFinanceType().isStepFinance());
 				dodisableGracePeriod();
-				doDisableDepreciationDFrq(getFinanceType().isFinDepreciationReq(), isCompReadonly);
 			}
 		}
 		logger.debug(Literal.LEAVING + event.toString());
@@ -6018,8 +5924,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					allowRIAInvestmentFlag);
 			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_SCDCHG,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_DPRCIATE,
-					allowRIAInvestmentFlag);
 			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_DEFFRQ,
 					allowRIAInvestmentFlag);
 			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_DEFRPY,
@@ -6031,8 +5935,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_WRITEBK,
 					allowRIAInvestmentFlag);
 			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_MATURITY,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_PRGCLAIM,
 					allowRIAInvestmentFlag);
 			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_EARLYSTL,
 					allowRIAInvestmentFlag);
@@ -6125,9 +6027,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			doCheckRIA(productCtg.toString());
 
 			this.fInIsAlwGrace.setDisabled(isCompReadonly);
-			if (getFinTypeAccountingListCtrl() != null) {
-				getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountEventConstants.ACCEVENT_PRGCLAIM, false);
-			}
 		}
 
 		logger.debug(Literal.LEAVING + event.toString());
@@ -6348,14 +6247,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		logger.debug("Leaving ");
 		return 0;
-	}
-
-	private void doDisableDepreciationDFrq(boolean isChecked, boolean isallowed) {
-		if (isChecked && !isallowed) {
-			this.finDepreciationFrq.setDisabled(false);
-		} else {
-			this.finDepreciationFrq.setDisabled(true);
-		}
 	}
 
 	private void doCheckRIA(String productCtg) {
@@ -7574,8 +7465,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finCollateralReq.setValue(false);
 		this.alwLoanSplit.setValue(false);
 		this.finCollateralOvrride.setValue(false);
-		this.finDepreciationFrq.setValue("M0031");
-		finType.setFinDepreciationFrq("M0031");
 		this.fInGrcMinRate.setValue(BigDecimal.ZERO);
 		this.finGrcMaxRate.setValue(BigDecimal.ZERO);
 		this.cbFinGrcScheduleOn.setSelectedIndex(2);
@@ -7754,65 +7643,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.label_FinanceTypeDialog_FinTypeSuspRemarks.setVisible(false);
 			this.finSuspRemarks.setVisible(false);
 			this.finSuspRemarks.setValue("");
-		}
-	}
-
-	public void onClick$btnNew_FinTypeAccount(Event event) throws InterruptedException {
-		logger.debug(Literal.ENTERING);
-
-		Clients.clearWrongValue(this.listBoxFinTypeAccounts);
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	public void onFinTypeAccountItemDoubleClicked(ForwardEvent event) throws InterruptedException {
-		logger.debug(Literal.ENTERING);
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	public void doFillCustAccountTypes(List<FinTypeAccount> finTypeAccount) {
-		logger.debug(Literal.ENTERING);
-		try {
-			if (finTypeAccount != null) {
-				setFinTypeAccountList(finTypeAccount);
-				fillCustAccountTypes(finTypeAccount);
-			}
-		} catch (Exception e) {
-			logger.debug(e);
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
-	private void fillCustAccountTypes(List<FinTypeAccount> finTypeAccounts) {
-		this.listBoxFinTypeAccounts.getItems().clear();
-		for (FinTypeAccount finTypeAccount : finTypeAccounts) {
-			Listitem item = new Listitem();
-			Listcell lc;
-			lc = new Listcell(finTypeAccount.getFinCcy());
-			lc.setParent(item);
-			lc = new Listcell(PennantStaticListUtil.getlabelDesc(finTypeAccount.getEvent(),
-					PennantStaticListUtil.getAccountEventsList()));
-			lc.setParent(item);
-			lc = new Listcell();
-			Checkbox checkbox = new Checkbox();
-			checkbox.setChecked(finTypeAccount.isAlwManualEntry());
-			checkbox.setDisabled(true);
-			checkbox.setParent(lc);
-			lc.setParent(item);
-			lc = new Listcell();
-			Checkbox isAlwCustAcc = new Checkbox();
-			isAlwCustAcc.setChecked(finTypeAccount.isAlwCustomerAccount());
-			isAlwCustAcc.setDisabled(true);
-			isAlwCustAcc.setParent(lc);
-			lc.setParent(item);
-			lc = new Listcell(finTypeAccount.getRecordStatus());
-			lc.setParent(item);
-			lc = new Listcell(finTypeAccount.getRecordType());
-			lc.setParent(item);
-			item.setAttribute("data", finTypeAccount);
-			ComponentsCtrl.applyForward(item, "onDoubleClick=onFinTypeAccountItemDoubleClicked");
-			this.listBoxFinTypeAccounts.appendChild(item);
 		}
 	}
 
@@ -8085,19 +7915,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.hbox_pastduePftMargin.setVisible(false);
 			this.pastduePftMargin.setValue(BigDecimal.ZERO);
 		}
-	}
-
-	public void onCheck$finDepreciationReq(Event event) {
-		logger.debug("Entering : " + event.toString());
-
-		boolean finDepreciationReqFlag = this.finDepreciationReq.isChecked();
-
-		if (getFinTypeAccountingListCtrl() != null) {
-			getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountEventConstants.ACCEVENT_DPRCIATE,
-					finDepreciationReqFlag);
-		}
-
-		logger.debug("Leaving : " + event.toString());
 	}
 
 	private boolean isMaintainable() {
@@ -8790,10 +8607,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public List<FinTypeAccount> getFinTypeAccountList() {
-		return finTypeAccountList;
-	}
-
 	/**
 	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
 	 * 
@@ -9019,10 +8832,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.allowManualSteps.setChecked(alwManualStep);
 			this.allowManualSteps.setDisabled(false);
 		}
-	}
-
-	public void setFinTypeAccountList(List<FinTypeAccount> finTypeAccountList) {
-		this.finTypeAccountList = finTypeAccountList;
 	}
 
 	public List<FinTypeVASProducts> getFinTypeVASProductsList() {

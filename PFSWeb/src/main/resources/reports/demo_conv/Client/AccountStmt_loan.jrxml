@@ -16,7 +16,7 @@
 		<![CDATA[select * from (
 Select FinReference,FinBranch,TotalpriSchd,DownPayment,FinStartDate,FirstRepayDate,MaturityDate,
 	NSchdDate,(NSchdPri+NSchdPft) NSchdPri,NSchdPft,
-	noinst,NOPaidInst,NOODInst,RepayAccountId from FinPftDetails )T   $P!{whereCondition}]]>
+	noinst,NOPaidInst,NOODInst from FinPftDetails )T   $P!{whereCondition}]]>
 	</queryString>
 	<field name="FinReference" class="java.lang.String"/>
 	<field name="FinBranch" class="java.lang.String"/>
@@ -31,7 +31,6 @@ Select FinReference,FinBranch,TotalpriSchd,DownPayment,FinStartDate,FirstRepayDa
 	<field name="noinst" class="java.lang.Long"/>
 	<field name="NOPaidInst" class="java.lang.Long"/>
 	<field name="NOODInst" class="java.lang.Long"/>
-	<field name="RepayAccountId" class="java.lang.String"/>
 	<columnHeader>
 		<band height="184">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
@@ -298,48 +297,6 @@ Select FinReference,FinBranch,TotalpriSchd,DownPayment,FinStartDate,FirstRepayDa
 						<paragraph leftIndent="2"/>
 					</textElement>
 					<text><![CDATA[Next Inst. Amount]]></text>
-				</staticText>
-			</frame>
-			<frame>
-				<reportElement uuid="f930b91c-2d2d-437b-8e81-f0372802483b" positionType="Float" stretchType="RelativeToBandHeight" x="0" y="139" width="265" height="15"/>
-				<staticText>
-					<reportElement uuid="615a708f-e8e0-411b-91e2-018c5d8d2a75" style="Detail Header" x="109" y="0" width="11" height="15"/>
-					<box>
-						<topPen lineWidth="0.0" lineColor="#666666"/>
-						<leftPen lineWidth="0.0" lineColor="#666666"/>
-						<bottomPen lineWidth="0.0" lineColor="#666666"/>
-						<rightPen lineColor="#666666"/>
-					</box>
-					<textElement>
-						<paragraph leftIndent="2"/>
-					</textElement>
-					<text><![CDATA[:]]></text>
-				</staticText>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement uuid="8e60470e-4c21-4775-8a83-9fb63d2095f6" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="120" y="0" width="145" height="15"/>
-					<box>
-						<topPen lineWidth="0.0" lineColor="#666666"/>
-						<leftPen lineWidth="0.0" lineColor="#666666"/>
-						<bottomPen lineWidth="0.0" lineColor="#666666"/>
-						<rightPen lineColor="#666666"/>
-					</box>
-					<textElement>
-						<paragraph leftIndent="3" rightIndent="7"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{RepayAccountId}]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement uuid="615a708f-e8e0-411b-91e2-018c5d8d2a75" style="Detail Value" x="0" y="0" width="109" height="15"/>
-					<box>
-						<topPen lineWidth="0.0" lineColor="#666666"/>
-						<leftPen lineWidth="0.0" lineColor="#666666"/>
-						<bottomPen lineWidth="0.0" lineColor="#666666"/>
-						<rightPen lineColor="#666666"/>
-					</box>
-					<textElement>
-						<paragraph leftIndent="2"/>
-					</textElement>
-					<text><![CDATA[Repay Account]]></text>
 				</staticText>
 			</frame>
 			<frame>

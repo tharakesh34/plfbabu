@@ -133,8 +133,6 @@
 													<row id="row_RolloverPayment" visible="false">
 														<label id="label_FinanceMainDialog_CustPaymentAmount" value="${c:l('label_FinanceMainDialog_CustPaymentAmount.value')}" />
 														<currencyBox id="custPaymentAmount" />
-														<label id="label_FinanceMainDialog_CustPayAccId" value="${c:l('label_FinanceMainDialog_CustPayAccId.value')}" />
-														<accountSelectionBox id="custPayAccId" />
 													</row>
 													<row visible="false">
 														<label id="label_FinanceMainDialog_LatePayAmount" value="${c:l('label_FinanceMainDialog_LatePayAmount.value')}" />
@@ -147,12 +145,6 @@
 														<currencyBox id="finAssetValue" />
 														<label id="label_FinanceMainDialog_FinCurrentAssetValue" />
 														<currencyBox id="finCurrentAssetValue" />
-													</row>
-													<row>
-														<label id="label_FinanceMainDialog_DisbAcctId" value="${c:l('label_FinanceMainDialog_DisbAcctId.value')}" />
-														<accountSelectionBox id="disbAcctId" />
-														<label id="label_FinanceMainDialog_RepayAcctId" value="${c:l('label_FinanceMainDialog_RepayAcctId.value')}" />
-														<accountSelectionBox id="repayAcctId" />
 													</row>
 													<row>
 														<label id="label_FinanceMainDialog_TDSApplicable" value="${c:l('label_FinanceMainDialog_TDSApplicable.value')}" />
@@ -191,8 +183,6 @@
 													<row id="row_downPayBank" visible="false">
 														<label id="label_FinanceMainDialog_DownPayBank" value="${c:l('label_FinanceMainDialog_DownPayBank.value')}" />
 														<currencyBox id="downPayBank" />
-														<label id="label_FinanceMainDialog_DownPayAccount" value="${c:l('label_FinanceMainDialog_DownPayAccount.value')}" />
-														<accountSelectionBox id="downPayAccount" />
 													</row>
 													<row id="row_downPaySupl" visible="false">
 														<label id="label_FinanceMainDialog_DownPaySupl" value="${c:l('label_FinanceMainDialog_DownPaySupl.value')}" />
@@ -204,10 +194,6 @@
 															<space spacing="2px" />
 															<label id="downPayPercentage" style="font-weight: bold;" />
 														</hbox>
-													</row>
-													<row id="row_securityDeposit" visible="false">
-														<label id="label_FinanceMainDialog_SecurityDeposit" value="${c:l('label_FinanceMainDialog_SecurityDeposit.value')}" />
-														<currencyBox id="securityDeposit" />
 													</row>
 													<row id="defermentsRow">
 														<label id="label_FinanceMainDialog_Defferments" value="${c:l('label_FinanceMainDialog_Defferments.value')}" />
@@ -296,8 +282,6 @@
 															<space spacing="2px" sclass="mandatory" />
 															<combobox id="finRepayMethod" width="200px" />
 														</hbox>
-														<label id="label_FinanceMainDialog_DepriFrq" value="${c:l('label_FinanceMainDialog_DepriFrq.value')}" visible="false" />
-														<frequencybox id="depreciationFrq" visible="false" />
 													</row>
 													<row visible="false">
 														<label id="label_FinanceMainDialog_FinIsActive" value="${c:l('label_FinanceMainDialog_FinIsActive.value')}" visible="false" />

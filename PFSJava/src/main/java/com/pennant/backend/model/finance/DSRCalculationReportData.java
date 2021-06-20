@@ -657,8 +657,6 @@ public class DSRCalculationReportData implements Serializable {
 						financeMain.getFinAmount()
 								.add(financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO
 										: financeMain.getFeeChargeAmt())
-								.add(financeMain.getInsuranceAmt() == null ? BigDecimal.ZERO
-										: financeMain.getInsuranceAmt())
 								.subtract(financeMain.getDownPayment()),
 						format));
 		reportData.setTotalGrcPft(PennantApplicationUtil.amountFormate(financeMain.getTotalGracePft(), format));
@@ -668,8 +666,6 @@ public class DSRCalculationReportData implements Serializable {
 		reportData.setTotRepayAmount(PennantApplicationUtil.amountFormate(financeMain.getTotalProfit()
 				.add(financeMain.getFinAmount()
 						.add(financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO : financeMain.getFeeChargeAmt())
-						.add(financeMain.getInsuranceAmt() == null ? BigDecimal.ZERO
-								: financeMain.getInsuranceAmt())
 						.subtract(financeMain.getDownPayment())),
 				format));
 		reportData.setNumberOfTerms((financeMain.getNumberOfTerms() + financeMain.getGraceTerms()) + " Payments");
@@ -691,8 +687,7 @@ public class DSRCalculationReportData implements Serializable {
 
 			BigDecimal totalFinAmt = financeMain.getFinAmount()
 					.add(financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO : financeMain.getFeeChargeAmt())
-					.subtract(financeMain.getDownPayment())
-					.add(financeMain.getInsuranceAmt() == null ? BigDecimal.ZERO : financeMain.getInsuranceAmt());
+					.subtract(financeMain.getDownPayment());
 			BigDecimal totalPft = financeMain.getTotalProfit();
 			BigDecimal totalDays = new BigDecimal(
 					DateUtility.getDaysBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate()));

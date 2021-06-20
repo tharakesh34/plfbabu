@@ -546,7 +546,7 @@ public class FinanceValidationService {
 	 * - FinScheduleData.<br>
 	 * - documentDetailsList.<br>
 	 * - gurantorsDetailList.<br>
-	 * - jountAccountDetailList.<br>
+	 * - jointAccountDetailList.<br>
 	 * - financeCollaterals.<br>
 	 * 
 	 * @param financeDetail
@@ -832,9 +832,9 @@ public class FinanceValidationService {
 			}
 
 			// validate co-applicant details
-			List<JointAccountDetail> jountAccountDetails = financeDetail.getJountAccountDetailList();
-			if (jountAccountDetails != null) {
-				for (JointAccountDetail jointAccDetail : jountAccountDetails) {
+			List<JointAccountDetail> jointAccountDetails = financeDetail.getJointAccountDetailList();
+			if (jointAccountDetails != null) {
+				for (JointAccountDetail jointAccDetail : jointAccountDetails) {
 					Customer coApplicant = customerDetailsService.getCustomerByCIF(jointAccDetail.getCustCIF());
 					if (coApplicant == null) {
 						String[] valueParm = new String[1];

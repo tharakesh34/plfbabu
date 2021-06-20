@@ -77,7 +77,6 @@ public class ReturnDataSet implements Serializable {
 	private String finPurpose;
 	private String postingGroupBy;
 
-	private String secondaryAccounts;//multiple accounts with ";" separated
 	private String finRpyFor;
 	private String userBranch;
 	private long oldLinkedTranId = 0;
@@ -138,7 +137,6 @@ public class ReturnDataSet implements Serializable {
 		entity.setFormatter(this.formatter);
 		entity.setFinPurpose(this.finPurpose);
 		entity.setPostingGroupBy(this.postingGroupBy);
-		entity.setSecondaryAccounts(this.secondaryAccounts);
 		entity.setFinRpyFor(this.finRpyFor);
 		entity.setUserBranch(this.userBranch);
 		entity.setOldLinkedTranId(this.oldLinkedTranId);
@@ -434,14 +432,6 @@ public class ReturnDataSet implements Serializable {
 
 	public void setPostBranch(String postBranch) {
 		this.postBranch = postBranch;
-	}
-
-	public String getSecondaryAccounts() {
-		return secondaryAccounts;
-	}
-
-	public void setSecondaryAccounts(String secondaryAccounts) {
-		this.secondaryAccounts = secondaryAccounts;
 	}
 
 	public BigDecimal getExchangeRate() {

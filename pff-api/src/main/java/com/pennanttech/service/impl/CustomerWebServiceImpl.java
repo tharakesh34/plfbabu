@@ -28,7 +28,7 @@ import com.pennant.backend.dao.customermasters.FinCreditRevSubCategoryDAO;
 import com.pennant.backend.dao.dedup.DedupFieldsDAO;
 import com.pennant.backend.dao.dedup.DedupParmDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
-import com.pennant.backend.dao.finance.JountAccountDetailDAO;
+import com.pennant.backend.dao.finance.JointAccountDetailDAO;
 import com.pennant.backend.model.BuilderTable;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -154,7 +154,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 	private FinanceMainService financeMainService;
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
 	private ApprovalStatusEnquiryDAO approvalStatusEnquiryDAO;
-	private JountAccountDetailDAO jountAccountDetailDAO;
+	private JointAccountDetailDAO jointAccountDetailDAO;
 	private LimitDetailService limitDetailService;
 
 	/**
@@ -3618,8 +3618,8 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 				}
 				if (CollectionUtils.isNotEmpty(response.getCustomerFinanceDetailList())) {
 					response.getCustomerFinanceDetailList().forEach(customerFinDetail -> {
-						List<JointAccountDetail> jointAccountDetailList = jountAccountDetailDAO
-								.getJountAccountDetailByFinRef(customerFinDetail.getFinReference(), "_View");
+						List<JointAccountDetail> jointAccountDetailList = jointAccountDetailDAO
+								.getJointAccountDetailByFinRef(customerFinDetail.getFinReference(), "_View");
 						customerFinDetail.setJointAccountDetails(jointAccountDetailList);
 					});
 
@@ -4188,8 +4188,8 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 	}
 
 	@Autowired
-	public void setJountAccountDetailDAO(JountAccountDetailDAO jountAccountDetailDAO) {
-		this.jountAccountDetailDAO = jountAccountDetailDAO;
+	public void setJointAccountDetailDAO(JointAccountDetailDAO jointAccountDetailDAO) {
+		this.jointAccountDetailDAO = jointAccountDetailDAO;
 	}
 
 	@Autowired

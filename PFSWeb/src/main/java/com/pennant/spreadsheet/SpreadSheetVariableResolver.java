@@ -56,42 +56,42 @@ public class SpreadSheetVariableResolver implements VariableResolver {
 	}
 
 	private void setCoApplicantData(SpreadSheet spreadSheet, FinanceDetail financeDetail) {
-		if (CollectionUtils.isNotEmpty(financeDetail.getJountAccountDetailList())) {
-			if (financeDetail.getJountAccountDetailList().get(0) != null) {
+		if (CollectionUtils.isNotEmpty(financeDetail.getJointAccountDetailList())) {
+			if (financeDetail.getJointAccountDetailList().get(0) != null) {
 				spreadSheet.setCu1(getCustomerService().getCustomerDetailForFinancials(
-						financeDetail.getJountAccountDetailList().get(0).getCustCIF(), "_View"));
+						financeDetail.getJointAccountDetailList().get(0).getCustCIF(), "_View"));
 				setCustomerName(spreadSheet, spreadSheet.getCu1());
 
 			}
 
-			if (financeDetail.getJountAccountDetailList().size() > 1
-					&& financeDetail.getJountAccountDetailList().get(1) != null) {
+			if (financeDetail.getJointAccountDetailList().size() > 1
+					&& financeDetail.getJointAccountDetailList().get(1) != null) {
 				spreadSheet.setCu2(getCustomerService().getCustomerDetailForFinancials(
-						financeDetail.getJountAccountDetailList().get(1).getCustCIF(), "_View"));
+						financeDetail.getJointAccountDetailList().get(1).getCustCIF(), "_View"));
 				setCustomerName(spreadSheet, spreadSheet.getCu2());
 
 			}
 
-			if (financeDetail.getJountAccountDetailList().size() > 2
-					&& financeDetail.getJountAccountDetailList().get(2) != null) {
+			if (financeDetail.getJointAccountDetailList().size() > 2
+					&& financeDetail.getJointAccountDetailList().get(2) != null) {
 				spreadSheet.setCu3(getCustomerService().getCustomerDetailForFinancials(
-						financeDetail.getJountAccountDetailList().get(2).getCustCIF(), "_View"));
+						financeDetail.getJointAccountDetailList().get(2).getCustCIF(), "_View"));
 				setCustomerName(spreadSheet, spreadSheet.getCu3());
 
 			}
 
-			if (financeDetail.getJountAccountDetailList().size() > 3
-					&& financeDetail.getJountAccountDetailList().get(3) != null) {
+			if (financeDetail.getJointAccountDetailList().size() > 3
+					&& financeDetail.getJointAccountDetailList().get(3) != null) {
 				spreadSheet.setCu4(getCustomerService().getCustomerDetailForFinancials(
-						financeDetail.getJountAccountDetailList().get(3).getCustCIF(), "_View"));
+						financeDetail.getJointAccountDetailList().get(3).getCustCIF(), "_View"));
 				setCustomerName(spreadSheet, spreadSheet.getCu4());
 
 			}
 
-			if (financeDetail.getJountAccountDetailList().size() > 4
-					&& financeDetail.getJountAccountDetailList().get(4) != null) {
+			if (financeDetail.getJointAccountDetailList().size() > 4
+					&& financeDetail.getJointAccountDetailList().get(4) != null) {
 				spreadSheet.setCu5(getCustomerService().getCustomerDetailForFinancials(
-						financeDetail.getJountAccountDetailList().get(4).getCustCIF(), "_View"));
+						financeDetail.getJointAccountDetailList().get(4).getCustCIF(), "_View"));
 				setCustomerName(spreadSheet, spreadSheet.getCu5());
 
 			}

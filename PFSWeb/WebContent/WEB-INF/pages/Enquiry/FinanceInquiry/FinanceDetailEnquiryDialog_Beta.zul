@@ -354,20 +354,6 @@
 													<intbox id="utilisedFrqDef" width="90px" maxlength="14" />
 												</hbox>
 											</row>
-											<row id="row_disbAcctId" visible="true">
-												<label id="label_FinanceMainDialog_DisbAcctId" value="${c:l('label_FinanceMainDialog_DisbAcctId.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<textbox id="disbAcctId" width="175px" readonly="true" />
-													<label id="disbAcctBal" />
-												</hbox>
-												<label id="label_FinanceMainDialog_RepayAcctId" value="${c:l('label_FinanceMainDialog_RepayAcctId.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<textbox id="repayAcctId" width="175px" readonly="true" />
-													<label id="repayAcctBal" />
-												</hbox>
-											</row>
 											<row id="row_Revolving_DP" visible="false">
 												<label id="label_FinanceTypeDialog_AllowRevolving" value="${c:l('label_FinanceTypeDialog_AllowRevolving.value')}"
 													visible="false" />
@@ -388,25 +374,10 @@
 												<label id="label_FinanceMainDialog_DownPayBank" value="${c:l('label_FinanceMainDialog_DownPayBank.value')}" />
 												<hbox>
 													<currencyBox id="downPayBank" />
-													<label id="label_FinanceMainDialog_DownPayAccount" value="${c:l('label_FinanceMainDialog_DownPayAccount.value')}" />
-													<accountSelectionBox id="downPayAccount" />
 												</hbox>
 												<label id="label_FinanceMainDialog_DownPaySupl" value="${c:l('label_FinanceMainDialog_DownPaySupl.value')}" />
 												<hbox>
 													<currencyBox id="downPaySupl" />
-												</hbox>
-											</row>
-											<row id="row_FinAcctId" visible="true">
-												<label id="label_FinanceMainDialog_FinAcctId" value="${c:l('label_FinanceMainDialog_FinAcctId.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<textbox id="finAcctId" width="175px" readonly="true" />
-													<label id="finAcctBal" />
-												</hbox>
-												<label id="label_FinanceMainDialog_UnEarnAcctId" value="${c:l('label_FinanceMainDialog_UnEarnAcctId.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<textbox id="unEarnAcctId" width="175px" readonly="true" />
 												</hbox>
 											</row>
 											<row id="row_commitment" visible="false">
@@ -417,8 +388,6 @@
 													<button id="btnSearchCommitmentRef" tooltiptext="${c:l('label_FinanceMainDialog_CommitRef.value')}"
 														image="/images/icons/more.png" autodisable="btnSearchCommitmentRef" disabled="true" />
 												</hbox>
-												<label id="label_FinanceMainDialog_DepriFrq" value="${c:l('label_FinanceMainDialog_DepriFrq.value')}" />
-												<frequencybox id="depreciationFrq" />
 											</row>
 
 											<row visible="true">
@@ -1485,8 +1454,6 @@
 												<decimalbox id="disb_totalBilling" tabindex="-1" disabled="true" sclass="decimalToString" />
 											</row>
 											<row>
-												<label id="label_DisbursementDetailDialog_ConsultFee" value="${c:l('label_DisbursementDetailDialog_ConsultFee.value')}" />
-												<decimalbox id="disb_consultFee" tabindex="-1" disabled="true" sclass="decimalToString" />
 												<label id="label_DisbursementDetailDialog_TotalCost" value="${c:l('label_DisbursementDetailDialog_TotalCost.value')}" />
 												<decimalbox id="disb_totalCost" tabindex="-1" disabled="true" sclass="decimalToString" />
 											</row>

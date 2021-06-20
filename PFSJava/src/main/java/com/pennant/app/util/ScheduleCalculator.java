@@ -420,7 +420,6 @@ public class ScheduleCalculator {
 
 		finMain.setFinAmount(finMain.getDownPayBank());
 		finMain.setFeeChargeAmt(BigDecimal.ZERO);
-		finMain.setInsuranceAmt(BigDecimal.ZERO);
 		finMain.setDownPayBank(BigDecimal.ZERO);
 		finMain.setDownPayment(BigDecimal.ZERO);
 		finMain.setDownPaySupl(BigDecimal.ZERO);
@@ -1881,7 +1880,6 @@ public class ScheduleCalculator {
 		String recaltype = finMain.getRecalType();
 
 		// TODO: PV Will be addresses while working for Flat to converting and
-		// Islamic
 		/*
 		 * if (finMain.isPftIntact()) { finScheduleData = calEffectiveRate(finScheduleData,
 		 * CalculationConstants.SCH_SPECIFIER_TOTAL, totalDesiredProfit, evtFromDate, finMain.getCalMaturity(), false);
@@ -3080,10 +3078,6 @@ public class ScheduleCalculator {
 
 		if (finMain.getLastRepayDate() == null) {
 			finMain.setLastRepayDate(finMain.getFinStartDate());
-		}
-
-		if (finMain.getLastDepDate() == null) {
-			finMain.setLastDepDate(finMain.getFinStartDate());
 		}
 
 		if (finMain.getLastRepayCpzDate() == null) {
@@ -9384,7 +9378,6 @@ public class ScheduleCalculator {
 			disbursementDetails.setDisbReqDate(disbursementDetails.getDisbDate());
 			disbursementDetails.setFeeChargeAmt(main.getFeeChargeAmt());
 			disbursementDetails.setQuickDisb(main.isQuickDisb());
-			disbursementDetails.setInsuranceAmt(main.getInsuranceAmt());
 			data.getDisbursementDetails().add(disbursementDetails);
 
 			detail.setFinScheduleData(ScheduleGenerator.getNewSchd(data));

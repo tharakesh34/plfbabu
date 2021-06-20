@@ -104,7 +104,7 @@ import com.pennanttech.pff.eod.collateral.reval.model.CollateralRevaluation;
 import com.pennanttech.pff.model.external.interfacedetails.InterfaceServiceDetails;
 
 @XmlType(propOrder = { "finReference", "stp", "processStage", "finScheduleData", "foreClosureDetails",
-		"customerDetails", "advancePaymentsList", "mandate", "jountAccountDetailList", "gurantorsDetailList",
+		"customerDetails", "advancePaymentsList", "mandate", "jointAccountDetailList", "gurantorsDetailList",
 		"documentDetailsList", "covenantTypeList", "collateralAssignmentList", "finFlagsDetails", "finFeeDetails",
 		"returnDataSetList", "collateralSetup", "financeTaxDetails", "extendedDetails", "receiptAllocations",
 		"finOCRHeader", "returnStatus", "receiptProcessingAmt", "returnStatus" })
@@ -160,7 +160,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private List<GuarantorDetail> gurantorsDetailList = new ArrayList<>(1);
 	@XmlElementWrapper(name = "coApplicants")
 	@XmlElement(name = "coApplicant")
-	private List<JointAccountDetail> jountAccountDetailList = new ArrayList<>(1);
+	private List<JointAccountDetail> jointAccountDetailList = new ArrayList<>(1);
 	private List<FinanceDeviations> financeDeviations = new ArrayList<>();
 	private List<FinanceDeviations> approvedFinanceDeviations = new ArrayList<>();
 	private List<FinanceDeviations> manualDeviations = new ArrayList<>();
@@ -623,12 +623,12 @@ public class FinanceDetail implements java.io.Serializable {
 		this.gurantorsDetailList = gurantorsDetailList;
 	}
 
-	public List<JointAccountDetail> getJountAccountDetailList() {
-		return jountAccountDetailList;
+	public List<JointAccountDetail> getJointAccountDetailList() {
+		return jointAccountDetailList;
 	}
 
-	public void setJountAccountDetailList(List<JointAccountDetail> jountAccountDetailList) {
-		this.jountAccountDetailList = jountAccountDetailList;
+	public void setJointAccountDetailList(List<JointAccountDetail> jointAccountDetailList) {
+		this.jointAccountDetailList = jointAccountDetailList;
 	}
 
 	public List<FinanceDeviations> getFinanceDeviations() {

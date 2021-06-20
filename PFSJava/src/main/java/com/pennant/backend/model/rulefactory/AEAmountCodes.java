@@ -82,8 +82,6 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal instcpz = BigDecimal.ZERO;
 	private BigDecimal insttot = BigDecimal.ZERO;
 	private BigDecimal refund = BigDecimal.ZERO;
-	private BigDecimal insRefund = BigDecimal.ZERO;
-	private BigDecimal InsPay = BigDecimal.ZERO;
 	private BigDecimal schFeePay = BigDecimal.ZERO;
 	private BigDecimal woPayAmt = BigDecimal.ZERO;
 	private int ODDays = 0;
@@ -115,7 +113,6 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal downpayB = BigDecimal.ZERO;
 	private BigDecimal downpayS = BigDecimal.ZERO;
 	private BigDecimal FeeChargeAmt = BigDecimal.ZERO;
-	private BigDecimal InsuranceAmt = BigDecimal.ZERO;
 
 	private BigDecimal addFeeToFinance = BigDecimal.ZERO;
 	private BigDecimal paidFee = BigDecimal.ZERO;
@@ -123,13 +120,11 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal bpiTds = BigDecimal.ZERO;
 	private boolean bpiToAdvInt = false;
 	private BigDecimal deductFeeDisb = BigDecimal.ZERO;
-	private BigDecimal deductInsDisb = BigDecimal.ZERO;
 	private BigDecimal disbInstAmt = BigDecimal.ZERO;
 
 	private BigDecimal priWaived = BigDecimal.ZERO;
 	private BigDecimal pftWaived = BigDecimal.ZERO;
 	private BigDecimal feeWaived = BigDecimal.ZERO;
-	private BigDecimal insWaived = BigDecimal.ZERO;
 	private BigDecimal pftDueWaived = BigDecimal.ZERO;
 	private BigDecimal priDueWaived = BigDecimal.ZERO;
 	private BigDecimal accrueWaived = BigDecimal.ZERO;
@@ -324,8 +319,6 @@ public class AEAmountCodes implements Serializable {
 		map.put("ae_instcpz", this.instcpz);
 		map.put("ae_insttot", this.insttot);
 		map.put("ae_refund", this.refund);
-		map.put("ae_insRefund", this.insRefund);
-		map.put("ae_InsPay", this.InsPay);
 		map.put("ae_schFeePay", this.schFeePay);
 		map.put("ae_woPayAmt", this.woPayAmt);
 		map.put("ae_ODDays", this.ODDays);
@@ -353,19 +346,16 @@ public class AEAmountCodes implements Serializable {
 		map.put("ae_downpayB", this.downpayB);
 		map.put("ae_downpayS", this.downpayS);
 		map.put("ae_FeeChargeAmt", this.FeeChargeAmt);
-		map.put("ae_InsuranceAmt", this.InsuranceAmt);
 		map.put("ae_addFeeToFinance", this.addFeeToFinance);
 		map.put("ae_paidFee", this.paidFee);
 		map.put("ae_bpi", this.bpi);
 		map.put("ae_bpiTds", this.bpiTds);
 		map.put("ae_bpiToAdvInt", this.bpiToAdvInt);
 		map.put("ae_deductFeeDisb", this.deductFeeDisb);
-		map.put("ae_deductInsDisb", this.deductInsDisb);
 		map.put("ae_disbInstAmt", this.disbInstAmt);
 		map.put("ae_priWaived", this.priWaived);
 		map.put("ae_pftWaived", this.pftWaived);
 		map.put("ae_feeWaived", this.feeWaived);
-		map.put("ae_insWaived", this.insWaived);
 		map.put("ae_pftDueWaived", this.pftDueWaived);
 		map.put("ae_priDueWaived", this.priDueWaived);
 		map.put("ae_accrueWaived", this.accrueWaived);
@@ -892,22 +882,6 @@ public class AEAmountCodes implements Serializable {
 		this.refund = refund;
 	}
 
-	public BigDecimal getInsRefund() {
-		return insRefund;
-	}
-
-	public void setInsRefund(BigDecimal insRefund) {
-		this.insRefund = insRefund;
-	}
-
-	public BigDecimal getInsPay() {
-		return InsPay;
-	}
-
-	public void setInsPay(BigDecimal insPay) {
-		InsPay = insPay;
-	}
-
 	public BigDecimal getSchFeePay() {
 		return schFeePay;
 	}
@@ -1116,14 +1090,6 @@ public class AEAmountCodes implements Serializable {
 		FeeChargeAmt = feeChargeAmt;
 	}
 
-	public BigDecimal getInsuranceAmt() {
-		return InsuranceAmt;
-	}
-
-	public void setInsuranceAmt(BigDecimal insuranceAmt) {
-		InsuranceAmt = insuranceAmt;
-	}
-
 	public BigDecimal getAddFeeToFinance() {
 		return addFeeToFinance;
 	}
@@ -1156,14 +1122,6 @@ public class AEAmountCodes implements Serializable {
 		this.deductFeeDisb = deductFeeDisb;
 	}
 
-	public BigDecimal getDeductInsDisb() {
-		return deductInsDisb;
-	}
-
-	public void setDeductInsDisb(BigDecimal deductInsDisb) {
-		this.deductInsDisb = deductInsDisb;
-	}
-
 	public BigDecimal getDisbInstAmt() {
 		return disbInstAmt;
 	}
@@ -1194,14 +1152,6 @@ public class AEAmountCodes implements Serializable {
 
 	public void setFeeWaived(BigDecimal feeWaived) {
 		this.feeWaived = feeWaived;
-	}
-
-	public BigDecimal getInsWaived() {
-		return insWaived;
-	}
-
-	public void setInsWaived(BigDecimal insWaived) {
-		this.insWaived = insWaived;
 	}
 
 	public BigDecimal getPftDueWaived() {

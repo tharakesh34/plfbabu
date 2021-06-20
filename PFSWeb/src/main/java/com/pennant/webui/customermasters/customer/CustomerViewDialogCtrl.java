@@ -2076,7 +2076,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				lc.setParent(item);
 
 				BigDecimal totAmt = finEnquiry.getFinCurrAssetValue()
-						.add(finEnquiry.getFeeChargeAmt().add(finEnquiry.getInsuranceAmt()));
+						.add(finEnquiry.getFeeChargeAmt());
 				lc = new Listcell(PennantApplicationUtil.amountFormate(totAmt, format));
 				lc.setStyle("font-size:14px;font-weight: normal;; text-align:left;");
 				lc.setParent(item);

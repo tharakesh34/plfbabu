@@ -6,7 +6,6 @@ public class ChequeDetails {
 	private String appDate;
 
 	private String custName;
-	private String disbAccountId;
 	private String finReference;
 	private String repayAmount;
 	private String repayAmountinWords;
@@ -37,14 +36,6 @@ public class ChequeDetails {
 
 	public void setCustName(String custName) {
 		this.custName = custName;
-	}
-
-	public String getDisbAccountId() {
-		return disbAccountId;
-	}
-
-	public void setDisbAccountId(String disbAccountId) {
-		this.disbAccountId = disbAccountId;
 	}
 
 	public String getFinReference() {

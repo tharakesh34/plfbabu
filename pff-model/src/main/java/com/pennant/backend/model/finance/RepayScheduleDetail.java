@@ -66,13 +66,6 @@ public class RepayScheduleDetail implements Serializable {
 	private BigDecimal schdFeePayNow = BigDecimal.ZERO;
 	private BigDecimal schdFeeWaivedNow = BigDecimal.ZERO;
 
-	// Insurance Amount
-	private BigDecimal schdIns = BigDecimal.ZERO;
-	private BigDecimal schdInsPaid = BigDecimal.ZERO;
-	private BigDecimal schdInsBal = BigDecimal.ZERO;
-	private BigDecimal schdInsPayNow = BigDecimal.ZERO;
-	private BigDecimal schdInsWaivedNow = BigDecimal.ZERO;
-
 	private Long lppTaxHeaderId;
 	private Long lpiTaxHeaderId;
 
@@ -133,11 +126,6 @@ public class RepayScheduleDetail implements Serializable {
 		entity.setSchdFeeBal(this.schdFeeBal);
 		entity.setSchdFeePayNow(this.schdFeePayNow);
 		entity.setSchdFeeWaivedNow(this.schdFeeWaivedNow);
-		entity.setSchdIns(this.schdIns);
-		entity.setSchdInsPaid(this.schdInsPaid);
-		entity.setSchdInsBal(this.schdInsBal);
-		entity.setSchdInsPayNow(this.schdInsPayNow);
-		entity.setSchdInsWaivedNow(this.schdInsWaivedNow);
 		entity.setLppTaxHeaderId(this.lppTaxHeaderId);
 		entity.setLpiTaxHeaderId(this.lpiTaxHeaderId);
 		entity.setRefundMax(this.refundMax);
@@ -412,38 +400,6 @@ public class RepayScheduleDetail implements Serializable {
 		this.schdFeePayNow = schdFeePayNow;
 	}
 
-	public BigDecimal getSchdIns() {
-		return schdIns;
-	}
-
-	public void setSchdIns(BigDecimal schdIns) {
-		this.schdIns = schdIns;
-	}
-
-	public BigDecimal getSchdInsPaid() {
-		return schdInsPaid;
-	}
-
-	public void setSchdInsPaid(BigDecimal schdInsPaid) {
-		this.schdInsPaid = schdInsPaid;
-	}
-
-	public BigDecimal getSchdInsBal() {
-		return schdInsBal;
-	}
-
-	public void setSchdInsBal(BigDecimal schdInsBal) {
-		this.schdInsBal = schdInsBal;
-	}
-
-	public BigDecimal getSchdInsPayNow() {
-		return schdInsPayNow;
-	}
-
-	public void setSchdInsPayNow(BigDecimal schdInsPayNow) {
-		this.schdInsPayNow = schdInsPayNow;
-	}
-
 	public long getRepayID() {
 		return repayID;
 	}
@@ -522,14 +478,6 @@ public class RepayScheduleDetail implements Serializable {
 
 	public void setSchdFeeWaivedNow(BigDecimal schdFeeWaivedNow) {
 		this.schdFeeWaivedNow = schdFeeWaivedNow;
-	}
-
-	public BigDecimal getSchdInsWaivedNow() {
-		return schdInsWaivedNow;
-	}
-
-	public void setSchdInsWaivedNow(BigDecimal schdInsWaivedNow) {
-		this.schdInsWaivedNow = schdInsWaivedNow;
 	}
 
 	public BigDecimal getTdsSchdPayNow() {

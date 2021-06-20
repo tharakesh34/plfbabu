@@ -40,14 +40,12 @@ public class FinRepayQueueDAOImpl extends BasicDao<FinRepayQueue> implements Fin
 				" SchdPft, SchdPri, SchdPftPaid, SchdPriPaid, SchdPftBal, SchdPriBal, SchdIsPftPaid, SchdIsPriPaid,");
 		insertSql.append(
 				" SchdFee, SchdFeePaid, SchdFeeBal, SchdFeePayNow, PenaltyPayNow, LatePayPftPayNow, SchdRate, ");
-		insertSql.append(" SchdIns, SchdInsPaid, SchdInsBal, SchdInsPayNow,  ");
 		insertSql.append(" LinkedFinRef ) ");
 		insertSql.append(" Values(:RpyDate, :FinPriority, :FinType, :FinReference, :FinRpyFor, :Branch, :CustomerID, ");
 		insertSql.append(
 				" :SchdPft, :SchdPri, :SchdPftPaid , :SchdPriPaid, :SchdPftBal, :SchdPriBal, :SchdIsPftPaid, :SchdIsPriPaid ,");
 		insertSql.append(
 				" :SchdFee, :SchdFeePaid, :SchdFeeBal, :SchdFeePayNow, :PenaltyPayNow, :LatePayPftPayNow, :SchdRate , ");
-		insertSql.append(" :SchdIns, :SchdInsPaid, :SchdInsBal, :SchdInsPayNow, ");
 		insertSql.append(" :LinkedFinRef ) ");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -76,11 +74,9 @@ public class FinRepayQueueDAOImpl extends BasicDao<FinRepayQueue> implements Fin
 		//		insertSql.append("  (RpyDate, FinPriority, FinType, FinReference, FinRpyFor, Branch, CustomerID,");
 		//		insertSql.append(" SchdPft, SchdPri, SchdPftPaid, SchdPriPaid, SchdPftBal, SchdPriBal, SchdIsPftPaid, SchdIsPriPaid,");
 		//		insertSql.append(" SchdFee, SchdFeePaid, SchdFeeBal, SchdFeePayNow,");
-		//		insertSql.append(" SchdIns, SchdInsPaid, SchdInsBal, SchdInsPayNow)  ");
 		//		insertSql.append(" Values(:RpyDate, :FinPriority, :FinType, :FinReference, :FinRpyFor, :Branch, :CustomerID, ");
 		//		insertSql.append(" :SchdPft, :SchdPri, :SchdPftPaid , :SchdPriPaid, :SchdPftBal, :SchdPriBal, :SchdIsPftPaid, :SchdIsPriPaid ,");
-		//		insertSql.append(" :SchdFee, :SchdFeePaid, :SchdFeeBal, :SchdFeePayNow,");
-		//		insertSql.append(" :SchdIns, :SchdInsPaid, :SchdInsBal, :SchdInsPayNow) ");
+		//		insertSql.append(" :SchdFee, :SchdFeePaid, :SchdFeeBal, :SchdFeePayNow)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(repayQueue);
@@ -140,7 +136,7 @@ public class FinRepayQueueDAOImpl extends BasicDao<FinRepayQueue> implements Fin
 		selectSql.append(" RQ.SchdPftBal, RQ.SchdPriBal, RQ.SchdIsPftPaid, RQ.SchdIsPriPaid, ");
 		selectSql.append(
 				" (RQ.SchdPftBal+ RQ.SchdPriBal) AS RepayQueueBal, PD.AcrTillLBD, PD.PftAmzSusp, PD.AmzTillLBD,PD.LpiTillLBD,PD.LppTillLBD,");
-		selectSql.append(" RQ.SchdFee, RQ.SchdFeePaid, RQ.SchdFeeBal, RQ.SchdIns, RQ.SchdInsPaid, RQ.SchdInsBal");
+		selectSql.append(" RQ.SchdFee, RQ.SchdFeePaid, RQ.SchdFeeBal ");
 		selectSql.append(" FROM FinRpyQueue RQ  INNER JOIN FinPftDetails PD ON PD.FinReference = RQ.FinReference");
 		selectSql.append(
 				" WHERE RQ.RpyDate <= :RpyDate AND (SchdIsPftPaid = 0 OR SchdIsPriPaid = 0) and RQ.FinReference =:FinReference ");

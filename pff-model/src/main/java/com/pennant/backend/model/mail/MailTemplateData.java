@@ -113,7 +113,6 @@ public class MailTemplateData {
 	private String effectiveRate = "";
 	private String downPayment = "";
 	private String feeAmount = "";
-	private String insAmount = "";
 	private String finType = "";
 	private String finTypeDesc = "";
 
@@ -128,8 +127,6 @@ public class MailTemplateData {
 	// ---------------------------------
 
 	// facility
-	private String totAmountBD;
-	private String totAmountUSD;
 	private String cafReference;
 	private String countryOfDomicileName;
 	private String countryOfRiskName;
@@ -708,22 +705,6 @@ public class MailTemplateData {
 		this.nextUsrRole = nextUsrRole;
 	}
 
-	public String getTotAmountBD() {
-		return totAmountBD;
-	}
-
-	public void setTotAmountBD(String totAmountBD) {
-		this.totAmountBD = totAmountBD;
-	}
-
-	public String getTotAmountUSD() {
-		return totAmountUSD;
-	}
-
-	public void setTotAmountUSD(String totAmountUSD) {
-		this.totAmountUSD = totAmountUSD;
-	}
-
 	public void setCafReference(String cAFReference) {
 		this.cafReference = cAFReference;
 	}
@@ -1087,14 +1068,6 @@ public class MailTemplateData {
 
 	public void setNextRepayDate(String nextRepayDate) {
 		this.nextRepayDate = nextRepayDate;
-	}
-
-	public String getInsAmount() {
-		return insAmount;
-	}
-
-	public void setInsAmount(String insAmount) {
-		this.insAmount = insAmount;
 	}
 
 	public String getRecordStatus() {

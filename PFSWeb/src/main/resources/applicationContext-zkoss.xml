@@ -1835,12 +1835,12 @@
 
 	<!--============ Joint Account Details ============== -->
 
-	<bean id="jountAccountDetailListCtrl" class="com.pennant.webui.finance.jointaccountdetail.JointAccountDetailListCtrl"
+	<bean id="jointAccountDetailListCtrl" class="com.pennant.webui.finance.jointaccountdetail.JointAccountDetailListCtrl"
 		parent="basisListCtrl" scope="prototype">
 		<property name="jointAccountDetailService" ref="jointAccountDetailService" />
 	</bean>
 
-	<bean id="jountAccountDetailDialogCtrl" class="com.pennant.webui.finance.jointaccountdetail.JointAccountDetailDialogCtrl"
+	<bean id="jointAccountDetailDialogCtrl" class="com.pennant.webui.finance.jointaccountdetail.JointAccountDetailDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="pagedListService" ref="pagedListService" />
 		<property name="jointAccountDetailService" ref="jointAccountDetailService" />
@@ -3192,13 +3192,6 @@
 		<property name="securityOperationRolesService" ref="securityOperationRolesService" />
 	</bean>
 
-	<!--============ AddSecondaryAccount Details ============== -->
-	<bean id="addSecondaryAccountDialogCtrl" class="com.pennant.webui.finance.financemain.AddSecondaryAccountDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-
-	</bean>
-
-
 	<!--============ LIMIT DETAILS ============== -->
 
 	<!--Customer Limit Details -->
@@ -3308,10 +3301,6 @@
 		<property name="limitRuleService" ref="limitRuleService" />
 		<property name="pagedListService" ref="pagedListService" />
 	</bean>
-
-	<!-- Additinal Arabic Field Details -->
-	<!-- <bean id="agreementFieldsDetailDialogCtrl" class="com.pennant.webui.finance.financemain.AgreementFieldsDetailDialogCtrl" 
-		parent="basisCtrl" scope="prototype"> </bean> -->
 
 	<!-- Fail postings handler -->
 	<bean id="coreProvisionListCtrl" class="com.pennant.provisions.CoreProvisionListCtrl" parent="basisListCtrl"

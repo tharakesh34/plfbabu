@@ -1409,7 +1409,6 @@ public class PennantStaticListUtil {
 
 		if (paymentMode == null) {
 			paymentMode = new ArrayList<ValueLabel>(3);
-			paymentMode.add(new ValueLabel(PennantConstants.AHBACCOUNT, Labels.getLabel("label_AHBAccount")));
 			paymentMode.add(new ValueLabel(PennantConstants.FTS, Labels.getLabel("label_FTS")));
 			paymentMode.add(new ValueLabel(PennantConstants.PAYORDER, Labels.getLabel("label_PayOrder")));
 
@@ -1586,24 +1585,12 @@ public class PennantStaticListUtil {
 			operandTypesList.add(new ValueLabel(PennantConstants.CALCVALUE, Labels.getLabel("CALCVALUE")));
 			operandTypesList.add(new ValueLabel(PennantConstants.DBVALUE, Labels.getLabel("DBVALUE")));
 
-			/** Commented Global Variables as it is not being used by AIB **/
-			// operandTypesList.add(new ValueLabel(PennantConstants.GLOBALVAR,
-			// Labels.getLabel("GLOBALVAR")));
-			// operandTypesList.add(new ValueLabel("FUNCTION",
-			// Labels.getLabel("FUNCTION")));
-			// operandTypesList.add(new ValueLabel(PennantConstants.SUBQUERY
-			// ,Labels.getLabel("SUBQUERY")));
 		} else {
 			operandTypesList.add(new ValueLabel(PennantConstants.STATICTEXT, Labels.getLabel("STATICTEXT")));
 			operandTypesList.add(new ValueLabel(PennantConstants.FIELDLIST, Labels.getLabel("FIELDLIST")));
 			operandTypesList.add(new ValueLabel(PennantConstants.CALCVALUE, Labels.getLabel("CALCVALUE")));
 			operandTypesList.add(new ValueLabel(PennantConstants.DBVALUE, Labels.getLabel("DBVALUE")));
 
-			/** Commented Global Variables as it is not being used by AIB **/
-			// operandTypesList.add(new ValueLabel(PennantConstants.GLOBALVAR,
-			// Labels.getLabel("GLOBALVAR")));
-			// operandTypesList.add(new ValueLabel("FUNCTION",
-			// Labels.getLabel("FUNCTION")));
 			operandTypesList.add(new ValueLabel(PennantConstants.SUBQUERY, Labels.getLabel("SUBQUERY")));
 		}
 
@@ -1730,11 +1717,6 @@ public class PennantStaticListUtil {
 		eventrList.add(new ValueLabel(AccountConstants.FinanceAccount_REPY, Labels.getLabel("label_REPAY")));
 		eventrList.add(new ValueLabel(AccountConstants.FinanceAccount_DWNP, Labels.getLabel("label_DOWNPAY")));
 		eventrList.add(new ValueLabel(AccountConstants.FinanceAccount_ERLS, Labels.getLabel("label_ERLS")));
-		eventrList.add(new ValueLabel(AccountConstants.FinanceAccount_ISCONTADV, Labels.getLabel("label_ISCONTADV")));
-		eventrList.add(new ValueLabel(AccountConstants.FinanceAccount_ISBILLACCT, Labels.getLabel("label_ISBILLACCT")));
-		eventrList
-				.add(new ValueLabel(AccountConstants.FinanceAccount_ISCNSLTACCT, Labels.getLabel("label_ISCNSLTACCT")));
-		eventrList.add(new ValueLabel(AccountConstants.FinanceAccount_ISEXPACCT, Labels.getLabel("label_ISEXPACCT")));
 		return eventrList;
 	}
 
@@ -2950,10 +2932,6 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_AccountingEvent_GRACEEND"), false));
 			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_SCDCHG,
 					Labels.getLabel("label_AccountingEvent_SCDCHG"), true));
-			if (ImplementationConstants.ALLOW_DEPRECIATION) {
-				accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_DPRCIATE,
-						Labels.getLabel("label_AccountingEvent_DPRCIATE"), false));
-			}
 			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_REAGING,
 					Labels.getLabel("label_AccountingEvent_REAGING"), true));
 			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_EMIHOLIDAY,

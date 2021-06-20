@@ -491,7 +491,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	 */
 	private void getCoAppCustomer(FinanceDetail financeDetail) {
 
-		List<JointAccountDetail> coapplicants = financeDetail.getJountAccountDetailList();
+		List<JointAccountDetail> coapplicants = financeDetail.getJointAccountDetailList();
 		if (coapplicants == null || coapplicants.isEmpty()) {
 			return;
 		}
@@ -3090,7 +3090,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 			customerDetail.getExtendedFieldRender().setMapValues(extendedMapObject);
 		}
 
-		List<JointAccountDetail> coApplist = financeDetail.getJountAccountDetailList();
+		List<JointAccountDetail> coApplist = financeDetail.getJointAccountDetailList();
 		for (JointAccountDetail jointAccountDetail : coApplist) {
 			if (jointAccountDetail.getCustID() == customerDetail.getCustomer().getCustID()) {
 				jointAccountDetail.setCustomerDetails(customerDetail);

@@ -398,8 +398,6 @@
 												<row id="row_RolloverPayment" visible="false">
 													<label id="label_FinanceMainDialog_CustPaymentAmount" value="${c:l('label_FinanceMainDialog_CustPaymentAmount.value')}" />
 													<currencyBox id="custPaymentAmount" />
-													<label id="label_FinanceMainDialog_CustPayAccId" value="${c:l('label_FinanceMainDialog_CustPayAccId.value')}" />
-													<accountSelectionBox id="custPayAccId" />
 												</row>
 												<row visible="false">
 													<label id="label_FinanceMainDialog_LatePayAmount" value="${c:l('label_FinanceMainDialog_LatePayAmount.value')}" />
@@ -417,13 +415,7 @@
 													<label id="label_FinanceMainDialog_AppliedLoanAmt" value="${c:l('label_FinanceMainDialog_AppliedLoanAmt.value')}" />
 													<currencyBox id="appliedLoanAmt" />
 												</row>
-												<row id="row_disbAcctId">
-													<label id="label_FinanceMainDialog_DisbAcctId" value="${c:l('label_FinanceMainDialog_DisbAcctId.value')}" />
-													<accountSelectionBox id="disbAcctId" />
-													<label id="label_FinanceMainDialog_RepayAcctId" value="${c:l('label_FinanceMainDialog_RepayAcctId.value')}" />
-													<accountSelectionBox id="repayAcctId" />
-												</row>
-												<row id="row_secondaryAccount">
+												<row id="row_TdsApplicable">
 													<label id="label_FinanceMainDialog_TDSApplicable" value="${c:l('label_FinanceMainDialog_TDSApplicable.value')}" />
 													<hbox id="hbox_tdsApplicable">
 														<space spacing="2px" />
@@ -432,13 +424,6 @@
 													<label id="label_FinanceMainDialog_TDSType" value="${c:l('label_FinanceMainDialog_TDSType.value')}" />
 													<hbox>
 														<combobox id="cbTdsType" width="180px" readonly="true" visible="false" />
-													</hbox>
-												</row>
-												<row>
-													<label id="label_FinanceMainDialog_SecondaryAccount" value="${c:l('label_FinanceMainDialog_SecondaryAccount.value')}" />
-													<hbox>
-														<space spacing="2px" />
-														<button id="btnAddSecondaryAccounts" label="${c:l('label_Add')}" sclass="z-toolbarbutton" />
 													</hbox>
 												</row>
 												<row id="row_Revolving_DP" visible="false">
@@ -484,20 +469,12 @@
 													<label id="label_FinanceMainDialog_DownPaySupl" value="${c:l('label_FinanceMainDialog_DownPaySupl.value')}" />
 													<currencyBox id="downPaySupl" />
 												</row>
-												<row id="row_downPaySupl" visible="false">
-													<label id="label_FinanceMainDialog_DownPayAccount" value="${c:l('label_FinanceMainDialog_DownPayAccount.value')}" />
-													<accountSelectionBox id="downPayAccount" />
-												</row>
 												<row id="row_downPayPercentage" visible="false">
 													<label id="label_FinanceMainDialog_Percentage" value="${c:l('label_FinanceMainDialog_Percentage.value')}" />
 													<hbox>
 														<space spacing="2px" />
 														<label id="downPayPercentage" style="font-weight: bold;" />
 													</hbox>
-												</row>
-												<row id="row_securityDeposit" visible="false">
-													<label id="label_FinanceMainDialog_SecurityDeposit" value="${c:l('label_FinanceMainDialog_SecurityDeposit.value')}" />
-													<currencyBox id="securityDeposit" />
 												</row>
 												<row>
 													<label id="label_FinanceMainDialog_AlwGrace" value="${c:l('label_FinanceMainDialog_AlwGrace.value')}" />
@@ -529,9 +506,6 @@
 														<space spacing="2px" sclass="mandatory" />
 														<combobox id="finRepayMethod" width="200px" />
 													</hbox>
-													<label id="label_FinanceMainDialog_DepriFrq" value="${c:l('label_FinanceMainDialog_DepriFrq.value')}"
-														visible="false" />
-													<frequencybox id="depreciationFrq" visible="false" />
 												</row>
 												<row visible="false">
 													<label id="label_FinanceMainDialog_FinIsActive" value="${c:l('label_FinanceMainDialog_FinIsActive.value')}"
@@ -568,8 +542,6 @@
 												<row id="rowLimitRef">
 													<label id="label_FinanceMainDialog_FinLimitRef" value="${c:l('label_FinanceMainDialog_FinLimitRef.value')}" />
 													<extendedcombobox id="finLimitRef" />
-													<label id="label_FinanceMainDialog_mMAReference" value="${c:l('label_FinanceMainDialog_mMAReference.value')}" />
-													<extendedcombobox id="mMAReference" />
 												</row>
 												<row id="rowFacilityAmounts" visible="false">
 													<label id="label_facilityAmount" value="${c:l('label_FinanceMainDialog_FacilityAmount.value')}" />
@@ -696,33 +668,6 @@
 												</row>
 											</rows>
 										</grid>
-									</groupbox>
-									<groupbox id="gb_RolloverFinance" visible="false" closable="true">
-										<caption label="${c:l('label_FinanceMainDialog_RolloverFinance')}" />
-										<listbox id="listBoxRolledoverFinance" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
-											sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
-											multiple="false">
-											<listhead sizable="false" style="padding:0px;position:relative;">
-												<listheader id="listheader_FinReference" label="${c:l('listheader_FinReference.label')}" hflex="min" />
-												<listheader id="listheader_FinStartDate" label="${c:l('listheader_FinStartDate.label')}" hflex="min" />
-												<listheader id="listheader_FinAmount" label="${c:l('listheader_FinAmount.label')}" align="right"
-													hflex="min" />
-												<listheader id="listheader_ProfitRate" label="${c:l('listheader_ProfitRate.label')}" align="right"
-													hflex="min" />
-												<listheader id="listheader_TotalProfit" label="${c:l('listheader_TotalProfit.label')}" align="right"
-													hflex="min" />
-												<listheader id="listheader_TotalPriDue" label="${c:l('listheader_TotalPriDue.label')}" align="right"
-													hflex="min" />
-												<listheader id="listheader_TotalPftDue" label="${c:l('listheader_TotalPftDue.label')}" align="right"
-													hflex="min" />
-												<listheader id="listheader_TotalBal" label="${c:l('listheader_FinancingAmount.label')}" align="right"
-													hflex="min" />
-												<listheader id="listheader_CustPayment" label="${c:l('listheader_CustPayment.label')}" align="right"
-													hflex="min" />
-												<listheader id="listheader_RolloverAmount" label="${c:l('listheader_RolloverAmount.label')}"
-													align="right" hflex="min" />
-											</listhead>
-										</listbox>
 									</groupbox>
 									<groupbox id="gb_gracePeriodDetails">
 										<caption label="${c:l('finGracePeriodDetails')}" />

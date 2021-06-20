@@ -63,7 +63,7 @@ import com.pennant.backend.dao.finance.FinChangeCustomerDAO;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
-import com.pennant.backend.dao.finance.JountAccountDetailDAO;
+import com.pennant.backend.dao.finance.JointAccountDetailDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -101,7 +101,7 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 	private MandateDAO mandateDAO;
 	private transient LimitDetailService limitDetailService;
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
-	private JountAccountDetailDAO jountAccountDetailDAO;
+	private JointAccountDetailDAO jointAccountDetailDAO;
 
 	private CollateralSetupDAO collateralSetupDAO;
 
@@ -113,12 +113,12 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 		return auditHeaderDAO;
 	}
 
-	public JountAccountDetailDAO getJountAccountDetailDAO() {
-		return jountAccountDetailDAO;
+	public JointAccountDetailDAO getJointAccountDetailDAO() {
+		return jointAccountDetailDAO;
 	}
 
-	public void setJountAccountDetailDAO(JountAccountDetailDAO jountAccountDetailDAO) {
-		this.jountAccountDetailDAO = jountAccountDetailDAO;
+	public void setJointAccountDetailDAO(JointAccountDetailDAO jointAccountDetailDAO) {
+		this.jointAccountDetailDAO = jointAccountDetailDAO;
 	}
 
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
@@ -383,7 +383,7 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 				getFinanceTaxDetailDAO().deleteFinTaxDetails(financeTaxDetail, TableType.TEMP_TAB);
 			}
 			if (finChangeCustomer.getJointAccountDetail() != null) {
-				getJountAccountDetailDAO().delete(finChangeCustomer.getJointAccountDetail(), "_Temp");
+				getJointAccountDetailDAO().delete(finChangeCustomer.getJointAccountDetail(), "_Temp");
 			}
 
 			JointAccountDetail jointAccountDetail = new JointAccountDetail();
@@ -398,7 +398,7 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 			jointAccountDetail.setLastMntBy(finChangeCustomer.getJointAccountDetail().getLastMntBy());
 			jointAccountDetail.setFinReference(finReference);
 			jointAccountDetail.setCustCIF(finChangeCustomer.getCustCif());
-			getJountAccountDetailDAO().save(jointAccountDetail, "_Temp");
+			getJointAccountDetailDAO().save(jointAccountDetail, "_Temp");
 			// getCollateralAssignmentDAO().deLinkCollateral(finChangeCustomer.getFinReference());
 			// Collateral Setups
 

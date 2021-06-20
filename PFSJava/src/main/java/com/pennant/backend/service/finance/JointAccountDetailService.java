@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  JountAccountDetailService.java                                                   * 	  
+ * FileName    		:  JointAccountDetailService.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -56,15 +56,15 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 
 public interface JointAccountDetailService {
 
-	JointAccountDetail getJountAccountDetail();
+	JointAccountDetail getJointAccountDetail();
 
-	JointAccountDetail getNewJountAccountDetail();
+	JointAccountDetail getNewJointAccountDetail();
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	JointAccountDetail getJountAccountDetailById(long id);
+	JointAccountDetail getJointAccountDetailById(long id);
 
-	JointAccountDetail getApprovedJountAccountDetailById(long id);
+	JointAccountDetail getApprovedJointAccountDetailById(long id);
 
 	AuditHeader delete(AuditHeader auditHeader);
 
@@ -74,15 +74,15 @@ public interface JointAccountDetailService {
 
 	List<JointAccountDetail> getJoinAccountDetail(String finReference, String tableType);
 
-	List<FinanceExposure> getPrimaryExposureList(JointAccountDetail jountAccountDetail);
+	List<FinanceExposure> getPrimaryExposureList(JointAccountDetail jointAccountDetail);
 
-	List<FinanceExposure> getSecondaryExposureList(JointAccountDetail jountAccountDetail);
+	List<FinanceExposure> getSecondaryExposureList(JointAccountDetail jointAccountDetail);
 
-	List<FinanceExposure> getGuarantorExposureList(JointAccountDetail jountAccountDetail);
+	List<FinanceExposure> getGuarantorExposureList(JointAccountDetail jointAccountDetail);
 
 	FinanceExposure getExposureSummaryDetail(List<FinanceExposure> exposerList);
 
-	List<JointAccountDetail> getJountAccountDetailByFinRef(String finReference, String type);
+	List<JointAccountDetail> getJointAccountDetailByFinRef(String finReference, String type);
 
 	BigDecimal doFillExposureDetails(List<FinanceExposure> primaryList, JointAccountDetail detail);
 
@@ -108,5 +108,5 @@ public interface JointAccountDetailService {
 	List<AuditDetail> processingJointAccountDetail(List<AuditDetail> auditDetails, String tableType,
 			String auditTranType);
 
-	JointAccountDetail getJountAccountDetailByRef(String finReference, String custCIF, String type);
+	JointAccountDetail getJointAccountDetailByRef(String finReference, String custCIF, String type);
 }

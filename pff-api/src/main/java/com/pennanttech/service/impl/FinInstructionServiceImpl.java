@@ -1486,7 +1486,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		returnStatus.setReturnText(errorDetail.getError());
 		financeDetail.setFinScheduleData(null);
 		financeDetail.setDocumentDetailsList(null);
-		financeDetail.setJountAccountDetailList(null);
+		financeDetail.setJointAccountDetailList(null);
 		financeDetail.setGurantorsDetailList(null);
 		financeDetail.setCollateralAssignmentList(null);
 		financeDetail.setReturnDataSetList(null);
@@ -2627,7 +2627,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	private void doEmptyResponseObject(FinanceDetail detail) {
 		detail.setFinScheduleData(null);
 		detail.setDocumentDetailsList(null);
-		detail.setJountAccountDetailList(null);
+		detail.setJointAccountDetailList(null);
 		detail.setGurantorsDetailList(null);
 		detail.setCollateralAssignmentList(null);
 		detail.setReturnDataSetList(null);

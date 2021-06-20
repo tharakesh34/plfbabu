@@ -594,7 +594,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				legalDetail.setCustName(customerDetails.getCustomer().getCustShrtName());
 				legalDetail.setFinTypeDesc(financeMain.getLovDescFinTypeName());
 				legalDetail.setJointAccountDetailList(getJointAccountDetailService()
-						.getJountAccountDetailByFinRef(financeMain.getFinReference(), "_View"));
+						.getJointAccountDetailByFinRef(financeMain.getFinReference(), "_View"));
 				legalDetail.setStrFinAmoun(PennantApplicationUtil.amountFormate(financeMain.getFinAssetValue(),
 						CurrencyUtil.getFormat(financeMain.getFinCcy())));
 				try {

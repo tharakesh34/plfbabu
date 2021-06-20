@@ -106,7 +106,6 @@ import com.pennant.backend.model.limit.LimitGroupLines;
 import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.model.limit.LimitStructureDetail;
 import com.pennant.backend.model.mail.MailTemplate;
-import com.pennant.backend.model.rmtmasters.FinTypeAccount;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.BMTRBFldCriterias;
 import com.pennant.backend.model.rulefactory.BMTRBFldDetails;
@@ -930,21 +929,6 @@ public class PennantAppUtil {
 			maritalStsTypes.add(maritalSts);
 		}
 		return maritalStsTypes;
-	}
-
-	public static FinTypeAccount getFinanceAccounts(String fintType, String event, String finCcy) {
-		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-
-		JdbcSearchObject<FinTypeAccount> searchObject = new JdbcSearchObject<FinTypeAccount>(FinTypeAccount.class);
-		Filter[] filters = new Filter[3];
-		filters[0] = new Filter("FinType", fintType, Filter.OP_EQUAL);
-		filters[1] = new Filter("Event", event, Filter.OP_EQUAL);
-		filters[2] = new Filter("FinCcy", finCcy, Filter.OP_EQUAL);
-		searchObject.addFilters(filters);
-		searchObject.addTabelName("FinTypeAccount");
-
-		List<FinTypeAccount> finAccounts = pagedListService.getBySearchObject(searchObject);
-		return !finAccounts.isEmpty() ? finAccounts.get(0) : null;
 	}
 
 	public static List<DocumentType> getDocumentTypesList() {
@@ -1822,29 +1806,15 @@ public class PennantAppUtil {
 
 		Filter[] filters = null;
 
-		if (ImplementationConstants.ALLOW_DEPRECIATION) {
-			if (ImplementationConstants.ALLOW_ADDDBSF) {
-				filters = new Filter[1];
-				filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
-			} else {
-				List<String> list = new ArrayList<String>();
-				list.add(AccountEventConstants.ACCEVENT_ADDDBSF);
-				filters = new Filter[2];
-				filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
-				filters[1] = new Filter("AEEventCode", list, Filter.OP_NOT_IN);
-			}
-		} else {
-			List<String> list = new ArrayList<String>();
-			list.add(AccountEventConstants.ACCEVENT_DPRCIATE);
+		List<String> list = new ArrayList<String>();
 
-			if (!ImplementationConstants.ALLOW_ADDDBSF) {
-				list.add(AccountEventConstants.ACCEVENT_ADDDBSF);
-			}
-
-			filters = new Filter[2];
-			filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
-			filters[1] = new Filter("AEEventCode", list, Filter.OP_NOT_IN);
+		if (!ImplementationConstants.ALLOW_ADDDBSF) {
+			list.add(AccountEventConstants.ACCEVENT_ADDDBSF);
 		}
+
+		filters = new Filter[2];
+		filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+		filters[1] = new Filter("AEEventCode", list, Filter.OP_NOT_IN);
 
 		searchObject.addFilters(filters);
 		searchObject.addTabelName("BMTAEevents");
@@ -1869,30 +1839,16 @@ public class PennantAppUtil {
 
 		Filter[] filters = null;
 
-		if (ImplementationConstants.ALLOW_DEPRECIATION) {
-			if (ImplementationConstants.ALLOW_ADDDBSF) {
-				filters = new Filter[1];
-				filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
-			} else {
-				List<String> list = new ArrayList<String>();
-				list.add(AccountEventConstants.ACCEVENT_ADDDBSF);
-				filters = new Filter[2];
-				filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
-				filters[1] = new Filter("AEEventCode", list, Filter.OP_NOT_IN);
-			}
-		} else {
-			List<String> list = new ArrayList<String>();
-			list.add(AccountEventConstants.ACCEVENT_DPRCIATE);
-			list.add(AccountEventConstants.ACCEVENT_ADDDBSP);
+		List<String> list = new ArrayList<String>();
+		list.add(AccountEventConstants.ACCEVENT_ADDDBSP);
 
-			if (!ImplementationConstants.ALLOW_ADDDBSF) {
-				list.add(AccountEventConstants.ACCEVENT_ADDDBSF);
-			}
-
-			filters = new Filter[2];
-			filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
-			filters[1] = new Filter("AEEventCode", list, Filter.OP_NOT_IN);
+		if (!ImplementationConstants.ALLOW_ADDDBSF) {
+			list.add(AccountEventConstants.ACCEVENT_ADDDBSF);
 		}
+
+		filters = new Filter[2];
+		filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+		filters[1] = new Filter("AEEventCode", list, Filter.OP_NOT_IN);
 
 		searchObject.addFilters(filters);
 		searchObject.addTabelName("BMTAEevents");
@@ -1996,10 +1952,6 @@ public class PennantAppUtil {
 
 		if (!ImplementationConstants.ALLOW_ADDDBSF) {
 			excludeEvents.add(AccountEventConstants.ACCEVENT_ADDDBSF);
-		}
-
-		if (!ImplementationConstants.ALLOW_DEPRECIATION) {
-			excludeEvents.add(AccountEventConstants.ACCEVENT_DPRCIATE);
 		}
 
 		if (!ImplementationConstants.ALLOW_IND_AS) {

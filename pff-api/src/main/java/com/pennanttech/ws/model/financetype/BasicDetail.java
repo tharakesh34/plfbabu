@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "finCcy", "lovDescFinCcyName", "finDaysCalType", "lovDescFinDaysCalTypeName", "finMinAmount",
 		"finMaxAmount", "finCategory", "finAssetType", "finIsDwPayRequired", "downPayRule", "downPayRuleDesc",
-		"fInIsAlwGrace", "finIsAlwMD", "alwMaxDisbCheckReq", "finDepreciationReq", "limitRequired", "overrideLimit",
+		"fInIsAlwGrace", "finIsAlwMD", "alwMaxDisbCheckReq", "limitRequired", "overrideLimit",
 		"finCollateralReq", "finCollateralOvrride", "collateralType", "partiallySecured", "allowRIAInvestment",
 		"finDivision", "finIsActive",
 		"finCommitmentReq", "finCommitmentOvrride", "finAcType", "lovDescFinAcTypeName", "finContingentAcType",
@@ -53,7 +53,6 @@ public class BasicDetail implements Serializable {
 	private boolean fInIsAlwGrace;
 	private boolean finIsAlwMD;
 	private boolean alwMaxDisbCheckReq;
-	private boolean finDepreciationReq;
 	private boolean limitRequired;
 	private boolean overrideLimit;
 	private boolean finCollateralReq;
@@ -196,14 +195,6 @@ public class BasicDetail implements Serializable {
 
 	public void setFinIsAlwMD(boolean finIsAlwMD) {
 		this.finIsAlwMD = finIsAlwMD;
-	}
-
-	public boolean isFinDepreciationReq() {
-		return finDepreciationReq;
-	}
-
-	public void setFinDepreciationReq(boolean finDepreciationReq) {
-		this.finDepreciationReq = finDepreciationReq;
 	}
 
 	public boolean isLimitRequired() {

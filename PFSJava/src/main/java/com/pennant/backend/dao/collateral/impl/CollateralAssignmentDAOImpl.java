@@ -239,8 +239,8 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Module, CA.Reference, Coalesce(FM.FinCcy, CM.CmtCcy) Currency");
 		sql.append(", AssignPerc AssignedPerc, BankValuation CollateralValue, TotAssignedPerc");
-		sql.append(", Coalesce(FinCurrAssetValue+FeeChargeAmt+InsuranceAmt-FinRepaymentAmount, CmtUtilizedAmount)");
-		sql.append(" FinCurrAssetValue, Coalesce(FinAssetValue+FeeChargeAmt+InsuranceAmt, CmtUtilizedAmount)");
+		sql.append(", Coalesce(FinCurrAssetValue+FeeChargeAmt-FinRepaymentAmount, CmtUtilizedAmount)");
+		sql.append(" FinCurrAssetValue, Coalesce(FinAssetValue+FeeChargeAmt, CmtUtilizedAmount)");
 		sql.append(" FinAssetValue, CmtExpDate , Coalesce(FM.FinIsActive,Coalesce(CmtActive,0)) FinIsActive");
 		sql.append(", TotalUtilized, FT.FinLTVCheck");
 		sql.append(" From CollateralAssignment CA");

@@ -81,7 +81,6 @@ public class FinanceEnquiry implements Serializable {
 	private BigDecimal finAmount = BigDecimal.ZERO;
 	private BigDecimal finCurrAssetValue = BigDecimal.ZERO;
 	private BigDecimal feeChargeAmt = BigDecimal.ZERO;
-	private BigDecimal insuranceAmt = BigDecimal.ZERO;
 	private BigDecimal downPayment = BigDecimal.ZERO;
 	private BigDecimal finRepaymentAmount = BigDecimal.ZERO;
 	private Date grcPeriodEndDate;
@@ -431,14 +430,6 @@ public class FinanceEnquiry implements Serializable {
 
 	public void setFinRepayMethod(String finRepayMethod) {
 		this.finRepayMethod = finRepayMethod;
-	}
-
-	public BigDecimal getInsuranceAmt() {
-		return insuranceAmt;
-	}
-
-	public void setInsuranceAmt(BigDecimal insuranceAmt) {
-		this.insuranceAmt = insuranceAmt;
 	}
 
 	public Date getLatestRpyDate() {

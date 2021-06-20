@@ -240,8 +240,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	protected Listheader listheader_ScheduleDetailDialog_ScheduleEndBal;
 
 	// Step Details Headers
-	protected Listheader listHeader_cashFlowEffect;
-	protected Listheader listHeader_vSProfit;
 	protected Listheader listHeader_orgPrincipalDue;
 
 	// Overdraft Details Headers
@@ -467,8 +465,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		listheader_ScheduleDetailDialog_Total.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_Total"));
 		listheader_ScheduleDetailDialog_ScheduleEndBal
 				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_ScheduleEndBal"));
-		listHeader_cashFlowEffect.setLabel(Labels.getLabel("listheader_CashFlowEffect"));
-		listHeader_vSProfit.setLabel(Labels.getLabel("listheader_VsProfit"));
 		listHeader_orgPrincipalDue.setLabel(Labels.getLabel("listheader_OrgPrincipalDue"));
 		listheader_AvailableLimit.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_AvailableLimit"));
 		listheader_LimitChange.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_LimitChange"));
@@ -782,12 +778,12 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			totalCost = PennantAppUtil
 					.formateAmount(
 							financeMain.getFinAssetValue().subtract(financeMain.getDownPayment())
-									.add(financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt()),
+									.add(financeMain.getFeeChargeAmt()),
 							ccyFormatter);
 		} else {
 			this.schdl_purchasePrice.setValue(PennantAppUtil.formateAmount(finAmount, ccyFormatter));
 			totalCost = PennantAppUtil.formateAmount(finAmount.subtract(financeMain.getDownPayment())
-					.add(financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt()), ccyFormatter);
+					.add(financeMain.getFeeChargeAmt()), ccyFormatter);
 		}
 		this.schdl_otherExp.setValue(PennantAppUtil.formateAmount(financeMain.getFeeChargeAmt(), ccyFormatter));
 		this.schdl_totalPft.setValue(PennantAppUtil.formateAmount(financeMain.getTotalGrossPft(), ccyFormatter));
@@ -795,7 +791,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				.setValue(
 						PennantAppUtil.formateAmount(
 								finAmount.subtract(financeMain.getDownPayment()).add(financeMain.getFeeChargeAmt())
-										.add(financeMain.getInsuranceAmt()).add(financeMain.getTotalGrossPft()),
+										.add(financeMain.getTotalGrossPft()),
 								ccyFormatter));
 		this.schdl_totalCost.setValue(totalCost);
 		financeMain.setTotalPriAmt(this.schdl_contractPrice.getValue());
@@ -1200,19 +1196,13 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		FinanceMain financeMain = aFinSchData.getFinanceMain();
 		int ccyFormatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
-		this.listHeader_cashFlowEffect.setVisible(false);
-		this.listHeader_vSProfit.setVisible(false);
 		this.listHeader_orgPrincipalDue.setVisible(false);
 		if (financeMain.isStepFinance() && StringUtils.isEmpty(moduleDefiner)) {
 			if (financeMain.isAlwManualSteps()) {
-				this.listHeader_cashFlowEffect.setLabel(Labels.getLabel("listheader_CashFlowEffect"));
-				this.listHeader_vSProfit.setLabel(Labels.getLabel("listheader_VsProfit"));
 				this.listHeader_orgPrincipalDue.setLabel(Labels.getLabel("listheader_OrgPrincipalDue"));
 
 				// Temporarily Make it UnVisible after decision, If required can
 				// be visible.
-				this.listHeader_cashFlowEffect.setVisible(false);
-				this.listHeader_vSProfit.setVisible(false);
 				this.listHeader_orgPrincipalDue.setVisible(false);
 			}
 		}

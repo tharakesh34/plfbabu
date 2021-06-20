@@ -55,7 +55,6 @@ public class RepayData {
 	private BigDecimal pendingODC = BigDecimal.ZERO;
 	private boolean sufficientRefund = true;
 	private BigDecimal maxRefundAmt = BigDecimal.ZERO;
-	private BigDecimal actInsRefundAmt = BigDecimal.ZERO;
 	private String eventCodeRef = "";
 	private String sourceId;
 
@@ -151,14 +150,6 @@ public class RepayData {
 
 	public void setEventCodeRef(String eventCodeRef) {
 		this.eventCodeRef = eventCodeRef;
-	}
-
-	public BigDecimal getActInsRefundAmt() {
-		return actInsRefundAmt;
-	}
-
-	public void setActInsRefundAmt(BigDecimal actInsRefundAmt) {
-		this.actInsRefundAmt = actInsRefundAmt;
 	}
 
 	public FinanceDetail getFinanceDetail() {

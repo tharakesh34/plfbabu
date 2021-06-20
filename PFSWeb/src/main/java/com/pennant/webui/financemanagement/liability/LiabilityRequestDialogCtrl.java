@@ -90,7 +90,7 @@ import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
-import com.pennant.backend.dao.finance.JountAccountDetailDAO;
+import com.pennant.backend.dao.finance.JointAccountDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -156,7 +156,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	private LiabilityRequestService liabilityRequestService;
 	private FinanceWorkFlowService financeWorkFlowService;
 	protected CollateralAssignmentDAO collateralAssignmentDAO;
-	private JountAccountDetailDAO jountAccountDetailDAO;
+	private JointAccountDetailDAO jointAccountDetailDAO;
 	private Map<String, List<DocumentDetails>> autoDownloadMap = null;
 
 	/**
@@ -1138,28 +1138,6 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 					.setValue(Labels.getLabel("label_FinanceMainDialog_PromotionCode.value"));
 		}
 
-		this.repayAcctId.setMandatoryStyle(!isReadOnly("FinanceMainDialog_ManRepayAcctId"));
-		if (getWorkFlow() != null && !"Accounting".equals(getTaskTabs(getTaskId(getRole())))) {
-			this.disbAcctId.setMandatoryStyle(!isReadOnly("FinanceMainDialog_MandisbAcctId"));
-			this.downPayAccount.setMandatoryStyle(!isReadOnly("FinanceMainDialog_MandownPaymentAcc"));
-		} else {
-			if (!this.disbAcctId.isReadonly()) {
-				this.disbAcctId.setMandatoryStyle(true);
-			}
-			if (!this.downPayAccount.isReadonly()) {
-				this.downPayAccount.setMandatoryStyle(true);
-			}
-			if (this.downPayBank.isReadonly() && aFinanceMain.getDownPayBank().compareTo(BigDecimal.ZERO) == 0) {
-				this.downPayAccount.setMandatoryStyle(false);
-			}
-		}
-
-		if (isReadOnly("FinanceMainDialog_ManRepayAcctId")) {
-			this.repayAcctId.setMandatoryStyle(false);
-		} else {
-			this.repayAcctId.setMandatoryStyle(true);
-		}
-
 		// Finance MainDetails Tab ---> 1. Basic Details
 		this.vanCode.setValue(aFinanceMain.getVanCode());
 		this.finType.setValue(aFinanceMain.getFinType());
@@ -1177,12 +1155,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		this.custCIF.setValue(aFinanceMain.getLovDescCustCIF());
 		this.custShrtName.setValue(aFinanceMain.getLovDescCustShrtName());
 		this.custID.setValue(aFinanceMain.getCustID());
-		this.disbAcctId.setCustCIF(aFinanceMain.getLovDescCustCIF());
-		this.repayAcctId.setCustCIF(aFinanceMain.getLovDescCustCIF());
-		this.downPayAccount.setCustCIF(aFinanceMain.getLovDescCustCIF());
 		this.finPurpose.setValue(aFinanceMain.getFinPurpose());
-		this.disbAcctId.setValue(aFinanceMain.getDisbAccountId());
-		this.repayAcctId.setValue(aFinanceMain.getRepayAccountId());
 		this.accountsOfficer.setValue(String.valueOf(aFinanceMain.getAccountsOfficer()));
 		this.accountsOfficer.setDescription(aFinanceMain.getLovDescAccountsOfficer());
 
@@ -1276,17 +1249,6 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 			doEdit();
 		}
 
-		if (!financeType.isFinDepreciationReq()) {
-			this.depreciationFrq.setDisabled(true);
-			getLabel_FinanceMainDialog_DepriFrq().setVisible(false);
-			this.depreciationFrq.setMandatoryStyle(false);
-		} else {
-			readOnlyComponent(isReadOnly("FinanceMainDialog_depreciationFrq"), this.depreciationFrq);
-			getLabel_FinanceMainDialog_DepriFrq().setVisible(true);
-			this.depreciationFrq.setVisible(true);
-			this.depreciationFrq.setValue(aFinanceMain.getDepreciationFrq());
-		}
-
 		this.finIsActive.setChecked(aFinanceMain.isFinIsActive());
 		this.lovDescFinTypeName.setValue(aFinanceMain.getFinType() + "-" + aFinanceMain.getLovDescFinTypeName());
 		this.finCcy.setValue(aFinanceMain.getFinCcy(), CurrencyUtil.getCcyDesc(aFinanceMain.getFinCcy()));
@@ -1309,20 +1271,11 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		if (financeType.isFinIsDwPayRequired() && aFinanceMain.getMinDownPayPerc().compareTo(BigDecimal.ZERO) >= 0) {
 
 			this.row_downPayBank.setVisible(true);
-			this.row_downPaySupl.setVisible(true);
 			this.row_downPayPercentage.setVisible(true);
-			this.downPayAccount.setValue(aFinanceMain.getDownPayAccount());
 			this.downPayBank.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getDownPayBank(), format));
 			this.downPaySupl.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getDownPaySupl(), format));
-			if (aFinanceMain.isNewRecord()) {
-				this.downPayAccount.setValue("");
-			} else {
-				this.downPayAccount.setValue(aFinanceMain.getDownPayAccount());
-			}
 
 			if (this.downPayBank.isReadonly() && aFinanceMain.getDownPayBank().compareTo(BigDecimal.ZERO) == 0) {
-				this.downPayAccount.setMandatoryStyle(false);
-				this.downPayAccount.setReadonly(true);
 				this.row_downPayBank.setVisible(false);
 			}
 
@@ -1330,12 +1283,6 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 					&& aFinanceMain.getDownPayment().compareTo(BigDecimal.ZERO) == 0) {
 				this.row_downPayPercentage.setVisible(false);
 			}
-
-			if (this.downPaySupl.isReadonly() && aFinanceMain.getDownPaySupl().compareTo(BigDecimal.ZERO) == 0) {
-				this.row_downPaySupl.setVisible(false);
-			}
-		} else {
-			this.downPayAccount.setMandatoryStyle(false);
 		}
 
 		if (aFinanceMain.getMinDownPayPerc().compareTo(BigDecimal.ZERO) == 0) {
@@ -1351,7 +1298,6 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 			this.finPurpose.setValue(StringUtils.trimToEmpty(aFinanceMain.getFinPurpose()),
 					StringUtils.trimToEmpty(aFinanceMain.getLovDescFinPurposeName()));
 		}
-		this.securityDeposit.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getSecurityDeposit(), format));
 
 		// Step Finance
 		if ((aFinanceMain.isNewRecord() || !aFinanceMain.isStepFinance()) && !financeType.isStepFinance()) {
@@ -1791,8 +1737,8 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		aFinanceDetail.setCollateralAssignmentList(collateralAssignmentDAO
 				.getCollateralAssignmentByFinRef(finReference.getValue(), FinanceConstants.MODULE_NAME, "_View"));
 
-		aFinanceDetail.setJountAccountDetailList(
-				jountAccountDetailDAO.getJountAccountDetailByFinRef(finReference.getValue(), "_AView"));
+		aFinanceDetail.setJointAccountDetailList(
+				jointAccountDetailDAO.getJointAccountDetailByFinRef(finReference.getValue(), "_AView"));
 
 		aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		aFinanceDetail.getFinScheduleData().setFinanceMain(aFinanceMain);
@@ -1937,8 +1883,8 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	}
 
 	@Autowired
-	public void setJountAccountDetailDAO(JountAccountDetailDAO jountAccountDetailDAO) {
-		this.jountAccountDetailDAO = jountAccountDetailDAO;
+	public void setJointAccountDetailDAO(JointAccountDetailDAO jointAccountDetailDAO) {
+		this.jointAccountDetailDAO = jointAccountDetailDAO;
 	}
 
 }

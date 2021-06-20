@@ -210,7 +210,7 @@ public class RepaymentPostingsUtil implements Serializable {
 
 		BigDecimal totalWaivedAmount = rpyQueueHeader.getPriWaived().add(rpyQueueHeader.getPftWaived())
 				.add(rpyQueueHeader.getLatePftWaived()).add(rpyQueueHeader.getFeeWaived())
-				.add(rpyQueueHeader.getInsWaived()).add(rpyQueueHeader.getPenaltyWaived())
+				.add(rpyQueueHeader.getPenaltyWaived())
 				.add(rpyQueueHeader.getAdviseAmount());
 
 		boolean bouncePaidExists = true;
@@ -593,7 +593,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		// Total Payment Amount
 		BigDecimal waivedTotal = rpyQueueHeader.getPriWaived().add(rpyQueueHeader.getPftWaived())
 				.add(rpyQueueHeader.getFeeWaived()).add(rpyQueueHeader.getLatePftWaived())
-				.add(rpyQueueHeader.getInsWaived()).add(rpyQueueHeader.getPenaltyWaived());
+				.add(rpyQueueHeader.getPenaltyWaived());
 
 		// If Postings Process only for Excess Accounts
 		if ((rpyTotal.add(waivedTotal)).compareTo(BigDecimal.ZERO) == 0) {
@@ -887,12 +887,6 @@ public class RepaymentPostingsUtil implements Serializable {
 				break;
 			}
 
-			// Insurance
-			if ((curSchd.getInsSchd().subtract(curSchd.getSchdInsPaid())).compareTo(BigDecimal.ZERO) > 0) {
-				fullyPaid = false;
-				break;
-			}
-
 		}
 
 		// Check Penalty Paid Fully or not
@@ -1023,14 +1017,12 @@ public class RepaymentPostingsUtil implements Serializable {
 
 		// Fee Details
 		amountCodes.setSchFeePay(rpyQueueHeader.getFee());
-		amountCodes.setInsPay(rpyQueueHeader.getInsurance());
 
 		// Waived Amounts
 		amountCodes.setPriWaived(rpyQueueHeader.getPriWaived());
 		amountCodes.setPftWaived(rpyQueueHeader.getPftWaived());
 		amountCodes.setLpiWaived(rpyQueueHeader.getLatePftWaived());
 		amountCodes.setFeeWaived(rpyQueueHeader.getFeeWaived());
-		amountCodes.setInsWaived(rpyQueueHeader.getInsWaived());
 
 		// Penalty Amounts setting in case only on GOld Loan
 		amountCodes.setPenaltyPaid(rpyQueueHeader.getPenalty());
@@ -1518,8 +1510,6 @@ public class RepaymentPostingsUtil implements Serializable {
 		// Fee Details paid Amounts updation
 		schedule.setSchdFeePaid(schedule.getSchdFeePaid().add(finRepayQueue.getSchdFeePayNow())
 				.add(finRepayQueue.getSchdFeeWaivedNow()));
-		schedule.setSchdInsPaid(schedule.getSchdInsPaid().add(finRepayQueue.getSchdInsPayNow())
-				.add(finRepayQueue.getSchdInsWaivedNow()));
 
 		schedule.setSchdPftPaid(schedule.getSchdPftPaid().add(finRepayQueue.getSchdPftPayNow())
 				.add(finRepayQueue.getSchdPftWaivedNow()));
@@ -1577,7 +1567,6 @@ public class RepaymentPostingsUtil implements Serializable {
 
 		// Fee Details
 		repayment.setSchdFeePaid(queue.getSchdFeePayNow().add(queue.getSchdFeeWaivedNow()));
-		repayment.setSchdInsPaid(queue.getSchdInsPayNow().add(queue.getSchdInsWaivedNow()));
 
 		repayment.setPenaltyPaid(queue.getPenaltyPayNow());
 		repayment.setPenaltyWaived(queue.getWaivedAmount());
@@ -1873,8 +1862,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().add(rpyPri));
 		financeMain.setFinStatus(curFinStatus);
 		financeMain.setFinStsReason(FinanceConstants.FINSTSRSN_MANUAL);
-		BigDecimal totalFinAmt = financeMain.getFinCurrAssetValue().add(financeMain.getFeeChargeAmt())
-				.add(financeMain.getInsuranceAmt());
+		BigDecimal totalFinAmt = financeMain.getFinCurrAssetValue().add(financeMain.getFeeChargeAmt());
 
 		if (ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FCIP)) {
 			if (totalFinAmt.subtract(financeMain.getFinRepaymentAmount()).compareTo(BigDecimal.ZERO) <= 0) {

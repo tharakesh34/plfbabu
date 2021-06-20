@@ -85,16 +85,12 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 	// Finance Main Details Tab---> 1. Key Details
 	protected CurrencyBox downPaySupl; // autoWired
-	protected Row row_downPaySupl; // autoWired
-	protected Row row_FinCancelAc; // autoWired
-	protected AccountSelectionBox finCancelAc; // autoWired
 	protected Button btnFlagDetails;
 	protected Uppercasebox flagDetails;
 
 	// old value variables for edit mode. that we can check if something
 	// on the values are edited since the last initialization.
 	protected transient BigDecimal oldVar_downPaySupl;
-	protected transient String oldVar_disbAcctId;
 
 	private FinanceCancellationService financeCancellationService;
 	private FinanceReferenceDetailService financeReferenceDetailService;
@@ -223,18 +219,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		this.downPaySupl.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.downPaySupl.setScale(formatter);
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
-		this.finCancelAc.setAccountDetails(financeType.getFinType(), AccountConstants.FinanceAccount_DISB,
-				financeType.getFinCcy());
-		this.finCancelAc.setFormatter(formatter);
-		this.finCancelAc.setBranchCode(
-				StringUtils.trimToEmpty(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch()));
-		this.finCancelAc.setTextBoxWidth(165);
 
-		if (ImplementationConstants.ACCOUNTS_APPLICABLE) {
-			this.row_FinCancelAc.setVisible(true);
-		} else {
-			this.row_FinCancelAc.setVisible(false);
-		}
 		this.finAssetValue.setProperties(false, formatter);
 		this.finCurrentAssetValue.setProperties(false, formatter);
 
@@ -380,22 +365,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 		if (aFinanceDetail.getFinScheduleData().getFinanceType().isFinIsDwPayRequired() && aFinanceDetail
 				.getFinScheduleData().getFinanceMain().getMinDownPayPerc().compareTo(BigDecimal.ZERO) >= 0) {
-			this.row_downPaySupl.setVisible(true);
 			this.downPaySupl.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPaySupl(),
 					CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
-		}
-		if (ImplementationConstants.ACCOUNTS_APPLICABLE) {
-			this.finCancelAc.setValue(aFinanceMain.getFinCancelAc());
-			this.finCancelAc.setReadonly(isReadOnly("FinanceMainDialog_finCancelAc"));
-			if (getWorkFlow() != null && !"Accounting".equals(getTaskTabs(getTaskId(getRole())))) {
-				this.finCancelAc.setMandatoryStyle(!isReadOnly("FinanceMainDialog_ManFinCanCelAc"));
-			} else {
-				this.finCancelAc.setMandatoryStyle(true);
-			}
-		} else {
-			this.finCancelAc.setValue("");
-			this.finCancelAc.setReadonly(true);
-			this.finCancelAc.setMandatoryStyle(false);
 		}
 
 		aFinanceDetail.setModuleDefiner(
@@ -547,20 +518,6 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 		try {
 
-			this.finCancelAc.clearErrorMessage();
-			if (!recSave && this.finCancelAc.isMandatory() && this.row_FinCancelAc.isVisible()
-					&& !this.finCancelAc.isReadonly()) {
-				this.finCancelAc.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_FinanceCancellationDialog_FinCancelAc.value"), null, true));
-			}
-
-			aFinanceMain.setFinCancelAc(PennantApplicationUtil.unFormatAccountNumber(this.finCancelAc.getValue()));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-
 			if (recSave) {
 
 				aFinanceMain
@@ -594,8 +551,6 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 									PennantAppUtil.formatAmount(reqDwnPay, formatter) }));
 				}
 			}
-			aFinanceMain
-					.setDownPayAccount(PennantApplicationUtil.unFormatAccountNumber(this.downPayAccount.getValue()));
 			aFinanceMain.setDownPayBank(PennantAppUtil.unFormateAmount(this.downPayBank.getActualValue(), formatter));
 			aFinanceMain.setDownPaySupl(PennantAppUtil.unFormateAmount(this.downPaySupl.getActualValue(), formatter));
 			aFinanceMain.setDownPayment(PennantAppUtil.unFormateAmount(
@@ -733,7 +688,6 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		if (wve.size() > 0) {
 			logger.debug("Throwing occured Errors By using WrongValueException");
 			tab.setSelected(true);
-			this.finCancelAc.setConstraint("");
 			buildEvent = false;
 
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -911,11 +865,6 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		if (!isReadOnly("FinanceMainDialog_ManFinCanCelAc")) {
 
 			BigDecimal finamt = aFinanceMain.getFinAmount().subtract(aFinanceMain.getDownPayment());
-			if (!StringUtils.equals(this.finCancelAc.getValue(), "")
-					&& finamt.compareTo(finCancelAc.getAcBalance()) > 0) {
-				MessageUtil.showError(Labels.getLabel("label_Finance_Cancel_InSufficientBal"));
-				return;
-			}
 		}
 
 		// Finance Stage Accounting Details Tab

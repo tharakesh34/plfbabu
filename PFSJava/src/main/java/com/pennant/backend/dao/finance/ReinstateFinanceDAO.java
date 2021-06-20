@@ -66,8 +66,6 @@ public interface ReinstateFinanceDAO {
 
 	ReinstateFinance getFinanceDetailsById(String finReference);
 
-	FinanceMain getRejectedFinanceById(final String id);
-
 	void processReInstateFinance(FinanceMain financeMain);
 
 	void deleteRejectFinance(ReinstateFinance reinstateFinance);

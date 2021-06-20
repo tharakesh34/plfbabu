@@ -411,7 +411,6 @@ public class ScheduleGenerator {
 
 			schedule.setDisbOnSchDate(true);
 			schedule.setFeeChargeAmt(disbursementDetail.getFeeChargeAmt());
-			schedule.setInsuranceAmt(disbursementDetail.getInsuranceAmt());
 			schedule.setDisbAmount(disbursementDetail.getDisbAmount().add(prvTermDisbAmount));
 
 		}
@@ -436,7 +435,6 @@ public class ScheduleGenerator {
 
 			schedule.setDisbOnSchDate(true);
 			schedule.setFeeChargeAmt(disbursementDetail.getFeeChargeAmt());
-			schedule.setInsuranceAmt(disbursementDetail.getInsuranceAmt());
 			schedule.setDisbAmount(disbursementDetail.getDisbAmount().add(prvTermDisbAmount));
 		}
 
@@ -614,7 +612,6 @@ public class ScheduleGenerator {
 			schedule.setDefSchdDate(disbursementDetail.getDisbDate());
 			schedule.setDisbAmount(disbursementDetail.getDisbAmount().add(prvTermDisbAmount));
 			schedule.setFeeChargeAmt(disbursementDetail.getFeeChargeAmt());
-			schedule.setInsuranceAmt(disbursementDetail.getInsuranceAmt());
 			schedule.setDisbOnSchDate(true);
 
 			if (i == 0) {

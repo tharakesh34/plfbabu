@@ -3,9 +3,9 @@
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 <zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-	<window id="window_JountAccountDetailDialog" border="none" apply="${jountAccountDetailDialogCtrl}" width="100%"
+	<window id="window_JointAccountDetailDialog" border="none" apply="${jointAccountDetailDialogCtrl}" width="100%"
 		sizable="false">
-		<borderlayout id="borderlayoutJountAccountDetail">
+		<borderlayout id="borderlayoutJointAccountDetail">
 			<north>
 				<div sclass="z-toolbar" style="padding:0">
 					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
@@ -25,7 +25,7 @@
 						</toolbar>
 						<!-- SEARCH AREA -->
 						<toolbar align="center" sclass="toolbar-center">
-							<label value="${c:l('window_JountAccountDetailDialog.title')}" sclass="label-heading" />
+							<label value="${c:l('window_JointAccountDetailDialog.title')}" sclass="label-heading" />
 						</toolbar>
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
@@ -49,7 +49,7 @@
 							</columns>
 							<rows>
 								<row id="row0">
-									<label id="label_CustCIF" value="${c:l('label_JountAccountDetailDialog_CustCIF.value')}" />
+									<label id="label_CustCIF" value="${c:l('label_JointAccountDetailDialog_CustCIF.value')}" />
 									<cell colspan="3">
 										<hbox id="hbox_CustCIF">
 											<space id="space_CustCIF" spacing="2px" sclass="mandatory" />
@@ -59,56 +59,56 @@
 											<space spacing="2px" />
 											<button id="viewCustInfo" image="/images/icons/more.png" tooltiptext="${c:l('tooltip_Custinfo')}" />
 											<space spacing="2px" />
-											<button id="btn_NewCust" label="${c:l('label_JountAccountDetailDialog_BtnNewCust.value')}"
+											<button id="btn_NewCust" label="${c:l('label_JointAccountDetailDialog_BtnNewCust.value')}"
 												tooltiptext="${c:l('tooltip_NewCust')}" autodisable="btn_NewCust,btn_EditCust" />
 											<space spacing="2px" />
-											<button id="btn_EditCust" label="${c:l('label_JountAccountDetailDialog_BtnEditCust.value')}"
+											<button id="btn_EditCust" label="${c:l('label_JointAccountDetailDialog_BtnEditCust.value')}"
 												tooltiptext="${c:l('tooltip_EditCust')}" autodisable="btn_EditCust,btn_NewCust" />
 										</hbox>
 									</cell>
 								</row>
 								<row>
-									<label id="label_CustCIFName" value="${c:l('label_JountAccountDetailDialog_CustCIFName.value')}" />
+									<label id="label_CustCIFName" value="${c:l('label_JointAccountDetailDialog_CustCIFName.value')}" />
 									<hbox id="hbox_CustCIFName">
 										<space id="space_CustCIFName" spacing="2px" sclass="mandatory" />
 										<textbox id="custCIFName" maxlength="200" width="250px" />
 									</hbox>
 								</row>
 								<row id="row1" visible="false">
-									<label id="label_IncludeRepay" value="${c:l('label_JountAccountDetailDialog_IncludeRepay.value')}" />
+									<label id="label_IncludeRepay" value="${c:l('label_JointAccountDetailDialog_IncludeRepay.value')}" />
 									<hbox id="hbox_IncludeRepay">
 										<space id="space_IncludeRepay" spacing="2px" />
 										<checkbox id="includeRepay" checked="false" />
 									</hbox>
-									<label id="label_RepayAccountId" value="${c:l('label_JountAccountDetailDialog_RepayAccountId.value')}" />
+									<label id="label_RepayAccountId" value="${c:l('label_JointAccountDetailDialog_RepayAccountId.value')}" />
 									<accountSelectionBox id="repayAccountId" />
 								</row>
 								<row id="row2" visible="false">
-									<label id="label_CustCIFStatus" value="${c:l('label_JountAccountDetailDialog_CIFStatus.value')}" />
+									<label id="label_CustCIFStatus" value="${c:l('label_JointAccountDetailDialog_CIFStatus.value')}" />
 									<hbox id="hlayout_CustCIFStatus">
 										<space id="space_CustCIFStatus" spacing="2px" />
 										<textbox id="custCIFStatus" width="180px" readonly="true" />
 									</hbox>
-									<label id="label_CustCIFWorstStatus" value="${c:l('label_JountAccountDetailDialog_WorstStatus.value')}" />
+									<label id="label_CustCIFWorstStatus" value="${c:l('label_JointAccountDetailDialog_WorstStatus.value')}" />
 									<hbox id="hbox_CustCIFWorstStatus">
 										<space id="space_CustCIFWorstStatus" spacing="2px" />
 										<textbox id="custCIFWorstStatus" maxlength="20" width="180px" readonly="true" />
 									</hbox>
 								</row>
 								<row id="row3">
-									<label id="label_CatOfCoApplicant" value="${c:l('label_JountAccountDetailDialog_CatOfCoApplicant.value')}" />
+									<label id="label_CatOfCoApplicant" value="${c:l('label_JointAccountDetailDialog_CatOfCoApplicant.value')}" />
 									<hbox id="hbox_CatOfCoApplicant">
 										<space id="space_CatOfCoApplicant" spacing="2px" />
 										<combobox id="catOfCoApplicant" width="200px" readonly="true" />
 									</hbox>
-									<label id="label_AuthoritySignatory" value="${c:l('label_JountAccountDetailDialog_AuthoritySignatory.value')}" />
+									<label id="label_AuthoritySignatory" value="${c:l('label_JointAccountDetailDialog_AuthoritySignatory.value')}" />
 									<hbox id="hbox_AuthoritySignatory">
 										<space id="space_AuthoritySignatory" spacing="2px" />
 										<checkbox id="authoritySignatory" checked="false" />
 									</hbox>
 								</row>
 								<row id="row4">
-									<label id="label_Sequence" value="${c:l('label_JountAccountDetailDialog_Sequence.value')}" />
+									<label id="label_Sequence" value="${c:l('label_JointAccountDetailDialog_Sequence.value')}" />
 									<hbox id="hbox_Sequence">
 										<space spacing="2px" id="space_Sequence" sclass="mandatory" />
 										<intbox id="sequence" width="50px" maxlength="1">
@@ -116,7 +116,7 @@
 									</hbox>
 								</row>
 								<row>
-									<label value="${c:l('label_JountAccountDetailDialog_IncludeIncome.value')}" />
+									<label value="${c:l('label_JointAccountDetailDialog_IncludeIncome.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<checkbox id="includeIncome" />
@@ -217,7 +217,7 @@
 						</listbox>
 					</groupbox>
 					<groupbox id="gb_EmptyExposure" visible="false">
-						<listbox fixedLayout="false" span="true" emptyMessage="${c:l('label_JountAccountDetailDialog_EmptyExposure.value')}" />
+						<listbox fixedLayout="false" span="true" emptyMessage="${c:l('label_JointAccountDetailDialog_EmptyExposure.value')}" />
 					</groupbox>
 				</groupbox>
 			</center>

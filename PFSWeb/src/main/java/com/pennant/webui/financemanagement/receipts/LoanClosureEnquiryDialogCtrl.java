@@ -1058,7 +1058,6 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				curRpySchd.setTdsSchdPayNow(curRpySchd.getTdsSchdPayNow().add(rpySchd.getTdsSchdPayNow()));
 				curRpySchd.setLatePftSchdPayNow(curRpySchd.getLatePftSchdPayNow().add(rpySchd.getLatePftSchdPayNow()));
 				curRpySchd.setSchdFeePayNow(curRpySchd.getSchdFeePayNow().add(rpySchd.getSchdFeePayNow()));
-				curRpySchd.setSchdInsPayNow(curRpySchd.getSchdInsPayNow().add(rpySchd.getSchdInsPayNow()));
 				curRpySchd.setPenaltyPayNow(curRpySchd.getPenaltyPayNow().add(rpySchd.getPenaltyPayNow()));
 				rpySchdMap.remove(rpySchd.getSchDate());
 			} else {
@@ -2074,14 +2073,12 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 				// Fee Details
 				amountCodes.setSchFeePay(amountCodes.getSchFeePay().add(rsd.getSchdFeePayNow()));
-				amountCodes.setInsPay(amountCodes.getInsPay().add(rsd.getSchdInsPayNow()));
 
 				// Waived Amounts
 				amountCodes.setPriWaived(amountCodes.getPriWaived().add(rsd.getPriSchdWaivedNow()));
 				amountCodes.setPftWaived(amountCodes.getPftWaived().add(rsd.getPftSchdWaivedNow()));
 				amountCodes.setLpiWaived(amountCodes.getLpiWaived().add(rsd.getLatePftSchdWaivedNow()));
 				amountCodes.setFeeWaived(amountCodes.getFeeWaived().add(rsd.getSchdFeeWaivedNow()));
-				amountCodes.setInsWaived(amountCodes.getInsWaived().add(rsd.getSchdInsWaivedNow()));
 			}
 
 			amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
@@ -2449,12 +2446,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			amountCodes.setRpPft(BigDecimal.ZERO);
 			amountCodes.setRpPri(BigDecimal.ZERO);
 			amountCodes.setSchFeePay(BigDecimal.ZERO);
-			amountCodes.setInsPay(BigDecimal.ZERO);
 			amountCodes.setPriWaived(BigDecimal.ZERO);
 			amountCodes.setPftWaived(BigDecimal.ZERO);
 			amountCodes.setLpiWaived(BigDecimal.ZERO);
 			amountCodes.setFeeWaived(BigDecimal.ZERO);
-			amountCodes.setInsWaived(BigDecimal.ZERO);
 			amountCodes.setPenaltyPaid(BigDecimal.ZERO);
 			amountCodes.setPenaltyWaived(BigDecimal.ZERO);
 			amountCodes.setRpTds(BigDecimal.ZERO);
@@ -2889,7 +2884,6 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		BigDecimal totalPri = BigDecimal.ZERO;
 		BigDecimal totalCharge = BigDecimal.ZERO;
 
-		BigDecimal totInsPaid = BigDecimal.ZERO;
 		BigDecimal totSchdFeePaid = BigDecimal.ZERO;
 
 		Listcell lc;
@@ -2959,10 +2953,6 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				lc.setParent(item);
 
 				// Fee Details
-				lc = new Listcell(PennantApplicationUtil.amountFormate(repaySchd.getSchdInsPayNow(), formatter));
-				lc.setStyle("text-align:right;");
-				totInsPaid = totInsPaid.add(repaySchd.getSchdInsPayNow());
-				lc.setParent(item);
 				lc = new Listcell(PennantApplicationUtil.amountFormate(repaySchd.getSchdFeePayNow(), formatter));
 				lc.setStyle("text-align:right;");
 				totSchdFeePaid = totSchdFeePaid.add(repaySchd.getSchdFeePayNow());
@@ -2970,7 +2960,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 				BigDecimal netPay = repaySchd.getProfitSchdPayNow().add(repaySchd.getPftSchdWaivedNow())
 						.add(repaySchd.getPrincipalSchdPayNow().add(repaySchd.getPriSchdWaivedNow()))
-						.add(repaySchd.getSchdInsPayNow()).add(repaySchd.getSchdFeePayNow())
+						.add(repaySchd.getSchdFeePayNow())
 						.add(repaySchd.getLatePftSchdPayNow().add(repaySchd.getLatePftSchdWaivedNow()))
 						.add(repaySchd.getPenaltyPayNow().add(repaySchd.getWaivedAmt()).subtract(refundPft));
 				lc = new Listcell(PennantApplicationUtil.amountFormate(netPay, formatter));
@@ -2978,7 +2968,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				lc.setParent(item);
 
 				BigDecimal netBalance = repaySchd.getProfitSchdBal().add(repaySchd.getPrincipalSchdBal())
-						.add(repaySchd.getSchdInsBal()).add(repaySchd.getSchdFeeBal());
+						.add(repaySchd.getSchdFeeBal());
 
 				lc = new Listcell(PennantApplicationUtil.amountFormate(
 						netBalance.subtract(netPay.subtract(totalCharge).subtract(totalLatePft)), formatter));
@@ -2997,7 +2987,6 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			paymentMap.put("totalLatePft", totalLatePft);
 			paymentMap.put("totalPri", totalPri);
 
-			paymentMap.put("insPaid", totInsPaid);
 			paymentMap.put("schdFeePaid", totSchdFeePaid);
 
 			doFillSummaryDetails(paymentMap);

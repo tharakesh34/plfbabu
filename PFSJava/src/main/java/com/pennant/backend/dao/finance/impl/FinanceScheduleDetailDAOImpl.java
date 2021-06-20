@@ -222,16 +222,15 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		insertSql.append(" DisbAmount, DownPaymentAmount, CpzAmount, CpzBalance, OrgPft , OrgPri, OrgEndBal, ");
 		insertSql.append(" ClosingBalance, ProfitFraction, PrvRepayAmount, OrgPlanPft,");
 		insertSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid, Specifier,");
-		insertSql.append(" CalculatedRate,FeeChargeAmt,InsuranceAmt,");
+		insertSql.append(" CalculatedRate,FeeChargeAmt,");
 		insertSql.append(" InstNumber, BpiOrHoliday, FrqDate, RecalLock,");
-		insertSql.append(" FeeSchd , SchdFeePaid , SchdFeeOS ,InsSchd, SchdInsPaid,");
+		insertSql.append(" FeeSchd , SchdFeePaid , SchdFeeOS ,");
 		insertSql.append(" TDSAmount, TDSPaid, PftDaysBasis,");
 		if (!isWIF) {
 			insertSql.append(" RefundOrWaiver, EarlyPaid, EarlyPaidBal , WriteoffPrincipal, WriteoffProfit,");
-			insertSql.append(" WriteoffIns , WriteoffSchFee, PartialPaidAmt, SchdPftWaiver,");
+			insertSql.append(" WriteoffSchFee, PartialPaidAmt, SchdPftWaiver,");
 		}
-		insertSql.append(" DefSchdDate, SchdMethod,  ");
-		insertSql.append(" InsuranceAmt)");
+		insertSql.append(" DefSchdDate, SchdMethod)");
 		insertSql.append(" Values(:FinReference, :SchDate, :SchSeq, :PftOnSchDate,");
 		insertSql.append(" :CpzOnSchDate, :RepayOnSchDate, :RvwOnSchDate, :DisbOnSchDate, ");
 		insertSql.append(
@@ -241,15 +240,15 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		insertSql.append(" :DisbAmount, :DownPaymentAmount, :CpzAmount, :CpzBalance, :OrgPft , :OrgPri, :OrgEndBal, ");
 		insertSql.append(" :ClosingBalance, :ProfitFraction, :PrvRepayAmount, :OrgPlanPft,");
 		insertSql.append(" :SchdPriPaid, :SchdPftPaid, :SchPriPaid, :SchPftPaid, :Specifier,");
-		insertSql.append(" :CalculatedRate,:FeeChargeAmt,:InsuranceAmt, ");
+		insertSql.append(" :CalculatedRate,:FeeChargeAmt, ");
 		insertSql.append(" :InstNumber, :BpiOrHoliday, :FrqDate, :RecalLock,");
-		insertSql.append(" :FeeSchd , :SchdFeePaid , :SchdFeeOS , :InsSchd, :SchdInsPaid,");
+		insertSql.append(" :FeeSchd , :SchdFeePaid , :SchdFeeOS , ");
 		insertSql.append(" :TDSAmount, :TDSPaid, :PftDaysBasis, ");
 		if (!isWIF) {
 			insertSql.append(" :RefundOrWaiver, :EarlyPaid, :EarlyPaidBal, :WriteoffPrincipal, :WriteoffProfit,");
-			insertSql.append(" :WriteoffIns, :WriteoffSchFee, :PartialPaidAmt, :SchdPftWaiver,");
+			insertSql.append(" :WriteoffSchFee, :PartialPaidAmt, :SchdPftWaiver,");
 		}
-		insertSql.append("  :DefSchdDate, :SchdMethod, :InsuranceAmt)");
+		insertSql.append("  :DefSchdDate, :SchdMethod)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -274,11 +273,11 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		sql.append(", SplRate, MrgRate, ActRate, NoOfDays, DayFactor, ProfitCalc");
 		sql.append(", ProfitSchd, PrincipalSchd, RepayAmount, ProfitBalance, DisbAmount, DownPaymentAmount");
 		sql.append(", CpzAmount, CpzBalance, OrgPft, OrgPri, OrgEndBal, OrgPlanPft, ClosingBalance");
-		sql.append(", ProfitFraction, PrvRepayAmount, CalculatedRate, FeeChargeAmt, InsuranceAmt");
-		sql.append(", FeeSchd, SchdFeePaid, SchdFeeOS, InsSchd, SchdInsPaid, TDSAmount, TDSPaid, PftDaysBasis");
+		sql.append(", ProfitFraction, PrvRepayAmount, CalculatedRate, FeeChargeAmt");
+		sql.append(", FeeSchd, SchdFeePaid, SchdFeeOS, TDSAmount, TDSPaid, PftDaysBasis");
 		if (!isWIF) {
 			sql.append(", RefundOrWaiver, EarlyPaid, EarlyPaidBal, WriteoffPrincipal, WriteoffProfit");
-			sql.append(", WriteoffIns, WriteoffSchFee, PartialPaidAmt");
+			sql.append(", WriteoffSchFee, PartialPaidAmt");
 			sql.append(", PresentmentId, TDSApplicable, SchdPftWaiver");
 			if (type.contains("Log")) {
 				sql.append(", LogKey");
@@ -289,9 +288,9 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		sql.append(" Values(");
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		if (!isWIF) {
-			sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+			sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 			if (type.contains("Log")) {
 				sql.append(", ?");
 			}
@@ -343,12 +342,9 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 					ps.setBigDecimal(index++, fsd.getPrvRepayAmount());
 					ps.setBigDecimal(index++, fsd.getCalculatedRate());
 					ps.setBigDecimal(index++, fsd.getFeeChargeAmt());
-					ps.setBigDecimal(index++, fsd.getInsuranceAmt());
 					ps.setBigDecimal(index++, fsd.getFeeSchd());
 					ps.setBigDecimal(index++, fsd.getSchdFeePaid());
 					ps.setBigDecimal(index++, fsd.getSchdFeeOS());
-					ps.setBigDecimal(index++, fsd.getInsSchd());
-					ps.setBigDecimal(index++, fsd.getSchdInsPaid());
 					ps.setBigDecimal(index++, fsd.getTDSAmount());
 					ps.setBigDecimal(index++, fsd.getTDSPaid());
 					ps.setString(index++, fsd.getPftDaysBasis());
@@ -359,7 +355,6 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 						ps.setBigDecimal(index++, fsd.getEarlyPaidBal());
 						ps.setBigDecimal(index++, fsd.getWriteoffPrincipal());
 						ps.setBigDecimal(index++, fsd.getWriteoffProfit());
-						ps.setBigDecimal(index++, fsd.getWriteoffIns());
 						ps.setBigDecimal(index++, fsd.getWriteoffSchFee());
 						ps.setBigDecimal(index++, fsd.getPartialPaidAmt());
 						ps.setLong(index++, fsd.getPresentmentId());
@@ -438,14 +433,14 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		updateSql.append(" SchdPriPaid= :SchdPriPaid, SchdPftPaid= :SchdPftPaid, SchPriPaid= :SchPriPaid,");
 
 		updateSql.append(" SchPftPaid= :SchPftPaid,Specifier= :Specifier,");
-		updateSql.append(" CalculatedRate =:CalculatedRate,FeeChargeAmt=:FeeChargeAmt,InsuranceAmt=:InsuranceAmt, ");
+		updateSql.append(" CalculatedRate =:CalculatedRate,FeeChargeAmt=:FeeChargeAmt,");
 		updateSql.append(
-				" FeeSchd=:FeeSchd , SchdFeePaid=:SchdFeePaid , SchdFeeOS=:SchdFeeOS , InsSchd=:InsSchd, SchdInsPaid=:SchdInsPaid,");
+				" FeeSchd=:FeeSchd , SchdFeePaid=:SchdFeePaid , SchdFeeOS=:SchdFeeOS , ");
 		updateSql.append(" TDSAmount=:TDSAmount, TDSPaid=:TDSPaid, PftDaysBasis=:PftDaysBasis, ");
 		if (!isWIF) {
 			updateSql.append(" RefundOrWaiver=:RefundOrWaiver, EarlyPaid =:EarlyPaid, EarlyPaidBal=:EarlyPaidBal ,");
 			updateSql.append(" WriteoffPrincipal=:WriteoffPrincipal, WriteoffProfit=:WriteoffProfit ,");
-			updateSql.append(" WriteoffIns=:WriteoffIns , PresentmentId=:PresentmentId, ");
+			updateSql.append(" PresentmentId=:PresentmentId, ");
 			updateSql.append(" WriteoffSchFee=:WriteoffSchFee, PartialPaidAmt=:PartialPaidAmt,  ");
 			updateSql.append(" tDSApplicable=:tDSApplicable, SchdPftWaiver = :SchdPftWaiver,");
 		}
@@ -514,7 +509,6 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		ps.setBoolean(index++, schd.isSchPriPaid());
 		ps.setBigDecimal(index++, schd.getTDSPaid());
 		ps.setBigDecimal(index++, schd.getSchdFeePaid());
-		ps.setBigDecimal(index++, schd.getSchdInsPaid());
 
 		ps.setString(index++, schd.getFinReference());
 		ps.setDate(index++, JdbcUtil.getDate(schd.getSchDate()));
@@ -525,7 +519,6 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		StringBuilder sql = new StringBuilder();
 		sql.append("Update FinScheduleDetails set");
 		sql.append(" SchdPftPaid = ?, SchdPriPaid = ?, SchPftPaid = ?, SchPriPaid = ?, TDSPaid = ?, SchdFeePaid = ?");
-		sql.append(", SchdInsPaid = ?");
 		sql.append(" Where FinReference = ? and SchDate = ? and SchSeq = ?");
 		return sql;
 	}
@@ -609,14 +602,14 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		sql.append(", ActRate, NoOfDays, DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd");
 		sql.append(", RepayAmount, ProfitBalance, DisbAmount, DownPaymentAmount, CpzAmount, CpzBalance");
 		sql.append(", OrgPft, OrgPri, OrgEndBal, OrgPlanPft, ClosingBalance, ProfitFraction, PrvRepayAmount");
-		sql.append(", CalculatedRate, FeeChargeAmt, InsuranceAmt, FeeSchd, SchdFeePaid, SchdFeeOS");
-		sql.append(", InsSchd, SchdInsPaid, TDSAmount, TDSPaid, PftDaysBasis, SchdPriPaid, SchdPftPaid");
+		sql.append(", CalculatedRate, FeeChargeAmt, FeeSchd, SchdFeePaid, SchdFeeOS");
+		sql.append(", TDSAmount, TDSPaid, PftDaysBasis, SchdPriPaid, SchdPftPaid");
 		sql.append(", SchPriPaid, SchPftPaid, Specifier, DefSchdDate, SchdMethod, InstNumber, BpiOrHoliday");
 		sql.append(", FrqDate, RecalLock");
 
 		if (!isWIF) {
 			sql.append(", RefundOrWaiver, EarlyPaid, EarlyPaidBal, WriteoffPrincipal, WriteoffProfit, PresentmentId");
-			sql.append(", WriteoffIns, WriteoffSchFee, PartialPaidAmt, TdsApplicable, SchdPftWaiver");
+			sql.append(", WriteoffSchFee, PartialPaidAmt, TdsApplicable, SchdPftWaiver");
 			sql.append(" From FinScheduleDetails");
 
 		} else {
@@ -935,7 +928,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		// Get Sum of Total Payment Amount(profits and Principals)
 		StringBuilder selectSql = new StringBuilder(
 				" select sum(ProfitSchd - SchdPftPaid + PrincipalSchd - SchdPriPaid + ");
-		selectSql.append(" FeeSchd - SchdFeePaid + InsSchd - SchdInsPaid ) ");
+		selectSql.append(" FeeSchd - SchdFeePaid ) ");
 		selectSql.append(" from FinScheduleDetails  where FinReference = :FinReference ");
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -1017,11 +1010,9 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		StringBuilder selectSql = new StringBuilder(
 				" select sum(WriteoffPrincipal) WrittenoffPri, sum(WriteoffProfit) WrittenoffPft, ");
-		selectSql.append(" sum(WriteoffIns) WrittenoffIns, ");
 		selectSql.append(" sum(WriteoffSchFee) WrittenoffSchFee, ");
 		selectSql.append(" sum(PrincipalSchd - SchdPriPaid - WriteoffPrincipal) UnPaidSchdPri, ");
 		selectSql.append(" sum(ProfitSchd - SchdPftPaid - WriteoffProfit) UnPaidSchdPft,");
-		selectSql.append(" sum(InsSchd - SchdInsPaid - WriteoffIns) UnpaidIns,");
 		selectSql.append(" sum(FeeSchd - SchdFeePaid - WriteoffSchFee) UnpaidSchFee ");
 		selectSql.append(" from FinScheduleDetails  where FinReference = :FinReference ");
 
@@ -1082,105 +1073,6 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	/**
-	 * Method for Fetching Account hold Details on Future installment Amounts grouping by Repayments Account
-	 */
-	@Override
-	public List<AccountHoldStatus> getFutureInstAmtByRepayAc(Date dateValueDate, Date futureDate) {
-		logger.debug("Entering");
-
-		AccountHoldStatus holdStatus = new AccountHoldStatus();
-		holdStatus.setValueDate(dateValueDate);
-		holdStatus.setFutureDate(futureDate);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT F.RepayAccountId Account,  ");
-		selectSql.append(
-				" SUM(S.PrincipalSchd - S.SchdPriPaid + S.ProfitSchd - S.SchdPftPaid) CurODAmount FROM FinScheduleDetails S ");
-		selectSql.append(" INNER JOIN FinanceMain F ON S.FinReference = F.FinReference ");
-		selectSql.append(" INNER JOIN RMTFinanceTypes T ON F.FinType = T.FinType  ");
-		selectSql.append(" WHERE S.SchDate > :ValueDate AND  S.SchDate <= :FutureDate  ");
-		selectSql.append(" AND T.FinDivision = 'PBG' AND F.FinRepayMethod = 'AUTO' AND F.FinIsActive = 1 AND ");
-		selectSql.append(
-				"(S.PrincipalSchd - S.SchdPriPaid + S.ProfitSchd - S.SchdPftPaid) > 0 GROUP BY F.RepayAccountId ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(holdStatus);
-		RowMapper<AccountHoldStatus> typeRowMapper = BeanPropertyRowMapper.newInstance(AccountHoldStatus.class);
-
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
-
-	/**
-	 * Get Schedule Details for Auto Hunting
-	 * 
-	 * @param accountId
-	 */
-	public List<FinanceScheduleDetail> getFinSchDetlsByPrimary(String accountId) {
-		logger.debug("Entering");
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("RepayAccountId", accountId);
-		source.addValue("SchDate", SysParamUtil.getAppDate());
-
-		StringBuilder selectSql = new StringBuilder();
-
-		selectSql.append(" SELECT F.FinReference, F.FinBranch, F.FinType ,F.CustID ,F.LinkedFinRef,F.FinCcy,");
-		selectSql.append(" S.SchDate, S.ProfitSchd, S.PrincipalSchd, ");
-		selectSql.append(
-				" S.SchdPftpaid, S.SchdPriPaid, (S.ProfitSchd - S.SchdPftPaid) As SchdPftBal, (S.PrincipalSchd - S.SchdPriPaid) As SchdPriBal,");
-		selectSql.append(" S.FeeSchd , S.SchdFeePaid , ");
-		selectSql.append(" S.InsSchd , S.SchdInsPaid,F.RepayAccountId ");
-		selectSql.append(
-				" FROM FinanceMain F , FinScheduleDetails S WHERE F.FinReference = S.FinReference  and  (S.ProfitSchd - S.SchdPftPaid + S.PrincipalSchd - S.SchdPriPaid ");
-		selectSql.append(" + S.FeeSchd - S.SchdFeePaid + S.InsSchd - ");
-		selectSql.append(" S.SchdInsPaid ) > 0   AND S.SchDate < :SchDate AND  ");
-		selectSql
-				.append(" (S.RepayOnSchDate = 1 OR (S.PftOnSchDate = 1 AND RepayAmount > 0))  AND F.FinIsActive = 1  ");
-		selectSql.append("  and F.RepayAccountId=:RepayAccountId  ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<FinanceScheduleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceScheduleDetail.class);
-
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-	}
-
-	/**
-	 * Get Schedule Details for Auto Hunting
-	 * 
-	 * @param accountId
-	 */
-	@Override
-	public List<FinanceScheduleDetail> getFinSchDetlsBySecondary(String accountId) {
-		logger.debug("Entering");
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("RepayAccountId", accountId);
-		source.addValue("SchDate", SysParamUtil.getAppDate());
-
-		StringBuilder selectSql = new StringBuilder();
-
-		selectSql.append(" SELECT F.FinReference, F.FinBranch, F.FinType ,F.CustID ,F.LinkedFinRef,F.FinCcy,");
-		selectSql.append(" S.SchDate, S.ProfitSchd, S.PrincipalSchd, ");
-		selectSql.append(
-				" S.SchdPftpaid, S.SchdPriPaid, (S.ProfitSchd - S.SchdPftPaid) As SchdPftBal, (S.PrincipalSchd - S.SchdPriPaid) As SchdPriBal,");
-		selectSql.append(" S.FeeSchd , S.SchdFeePaid , ");
-		selectSql.append(" S.InsSchd , S.SchdInsPaid, F.RepayAccountId ");
-		selectSql.append(
-				" FROM FinanceMain F , FinScheduleDetails S inner join SecondaryAccounts sa on s.FinReference=sa.FinReference WHERE F.FinReference = S.FinReference  and  (S.ProfitSchd - S.SchdPftPaid + S.PrincipalSchd - S.SchdPriPaid ");
-		selectSql.append(" + S.FeeSchd - S.SchdFeePaid + S.InsSchd - ");
-		selectSql.append(" S.SchdInsPaid ) > 0   AND S.SchDate < :SchDate AND  ");
-		selectSql
-				.append(" (S.RepayOnSchDate = 1 OR (S.PftOnSchDate = 1 AND RepayAmount > 0))  AND F.FinIsActive = 1  ");
-		selectSql.append("  and sa.AccountNumber=:RepayAccountId  ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<FinanceScheduleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceScheduleDetail.class);
-
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-	}
-
-	/**
 	 * Method for fetch Finance Schedule details base on schdDate
 	 * 
 	 */
@@ -1200,13 +1092,13 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		selectSql.append(
 				" DisbAmount, DownPaymentAmount, CpzAmount, CpzBalance, ClosingBalance, ProfitFraction, PrvRepayAmount, ");
 		selectSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid,Specifier, OrgPlanPft,");
-		selectSql.append(" DefSchdDate,SchdMethod, CalculatedRate,FeeChargeAmt,InsuranceAmt,");
-		selectSql.append(" FeeSchd , SchdFeePaid , SchdFeeOS , InsSchd, SchdInsPaid,");
+		selectSql.append(" DefSchdDate,SchdMethod, CalculatedRate,FeeChargeAmt,");
+		selectSql.append(" FeeSchd , SchdFeePaid , SchdFeeOS , ");
 		selectSql.append(" TDSAmount, TDSPaid, PftDaysBasis,  ");
 		selectSql.append(" InstNumber, BpiOrHoliday, FrqDate, RecalLock ");
 
 		selectSql.append(" , RefundOrWaiver ,EarlyPaid, EarlyPaidBal, WriteoffPrincipal, WriteoffProfit, ");
-		selectSql.append(" WriteoffIns, WriteoffSchFee,PartialPaidAmt ");
+		selectSql.append(" WriteoffSchFee,PartialPaidAmt ");
 		if (!isWIF) {
 			selectSql.append(", SchdPftWaiver");
 			selectSql.append(" From FinScheduleDetails");
@@ -1627,11 +1519,11 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		sql.append(" DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, MrgRate, ActRate, NoOfDays,");
 		sql.append(" DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd, RepayAmount, ProfitBalance,");
 		sql.append(" DisbAmount, DownPaymentAmount, CpzAmount, CpzBalance, OrgPft , OrgPri, OrgEndBal,OrgPlanPft, ");
-		sql.append(" ClosingBalance, ProfitFraction, PrvRepayAmount, CalculatedRate,FeeChargeAmt,InsuranceAmt, ");
-		sql.append(" FeeSchd , SchdFeePaid , SchdFeeOS, InsSchd, SchdInsPaid, ");
+		sql.append(" ClosingBalance, ProfitFraction, PrvRepayAmount, CalculatedRate,FeeChargeAmt, ");
+		sql.append(" FeeSchd , SchdFeePaid , SchdFeeOS, ");
 		sql.append(" TDSAmount, TDSPaid, PftDaysBasis, ");
 		sql.append(" RefundOrWaiver, EarlyPaid , EarlyPaidBal ,WriteoffPrincipal, WriteoffProfit,");
-		sql.append(" WriteoffIns, WriteoffSchFee, PartialPaidAmt,PresentmentId, ");
+		sql.append(" WriteoffSchFee, PartialPaidAmt,PresentmentId, ");
 		sql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid,Specifier,");
 		sql.append(" DefSchdDate, SchdMethod, ");
 		sql.append(" InstNumber, BpiOrHoliday, FrqDate, RecalLock, SchdPftWaiver");
@@ -1742,12 +1634,9 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 			schd.setPrvRepayAmount(rs.getBigDecimal("PrvRepayAmount"));
 			schd.setCalculatedRate(rs.getBigDecimal("CalculatedRate"));
 			schd.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
-			schd.setInsuranceAmt(rs.getBigDecimal("InsuranceAmt"));
 			schd.setFeeSchd(rs.getBigDecimal("FeeSchd"));
 			schd.setSchdFeePaid(rs.getBigDecimal("SchdFeePaid"));
 			schd.setSchdFeeOS(rs.getBigDecimal("SchdFeeOS"));
-			schd.setInsSchd(rs.getBigDecimal("InsSchd"));
-			schd.setSchdInsPaid(rs.getBigDecimal("SchdInsPaid"));
 			schd.setTDSAmount(rs.getBigDecimal("TDSAmount"));
 			schd.setTDSPaid(rs.getBigDecimal("TDSPaid"));
 			schd.setPftDaysBasis(rs.getString("PftDaysBasis"));
@@ -1769,7 +1658,6 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 				schd.setWriteoffPrincipal(rs.getBigDecimal("WriteoffPrincipal"));
 				schd.setWriteoffProfit(rs.getBigDecimal("WriteoffProfit"));
 				schd.setPresentmentId(rs.getLong("PresentmentId"));
-				schd.setWriteoffIns(rs.getBigDecimal("WriteoffIns"));
 				schd.setWriteoffSchFee(rs.getBigDecimal("WriteoffSchFee"));
 				schd.setPartialPaidAmt(rs.getBigDecimal("PartialPaidAmt"));
 				schd.setTDSApplicable(rs.getBoolean("TdsApplicable"));

@@ -9,7 +9,6 @@ public class PaymentRecoveryDetail {
 
 	private String transactionReference;
 	private String primaryDebitAccount;
-	private String secondaryDebitAccounts; // (with= ;delimited)
 	private String creditAccount;
 	private Date scheduleDate;
 	private String financeReference;
@@ -59,14 +58,6 @@ public class PaymentRecoveryDetail {
 
 	public void setPrimaryDebitAccount(String primaryDebitAccount) {
 		this.primaryDebitAccount = primaryDebitAccount;
-	}
-
-	public String getSecondaryDebitAccounts() {
-		return secondaryDebitAccounts;
-	}
-
-	public void setSecondaryDebitAccounts(String secondaryDebitAccounts) {
-		this.secondaryDebitAccounts = secondaryDebitAccounts;
 	}
 
 	public String getCreditAccount() {

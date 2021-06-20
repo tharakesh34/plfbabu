@@ -236,12 +236,7 @@ public class PennantConstants {
 	public static final String YES = "Y";
 	public static final String NO = "N";
 
-	public static final String ALLOW_ACCESS_TO_APP = "ALLOW_ACCESS"; // TODO
-																		// What
-																		// are
-																		// the
-																		// other
-																		// options?
+	public static final String ALLOW_ACCESS_TO_APP = "ALLOW_ACCESS";
 
 	// Document Types
 	public static final String DOC_TYPE_IMAGE = "IMG";
@@ -414,7 +409,6 @@ public class PennantConstants {
 	public static final String KYC_PRIORITY_LOW = "1";
 
 	// Car Loan Details
-	public static final String AHBACCOUNT = "AHBACC";
 	public static final String FTS = "FTS";
 	public static final String PAYORDER = "PAYORDER";
 	public static final String DEALER = "DEALER";

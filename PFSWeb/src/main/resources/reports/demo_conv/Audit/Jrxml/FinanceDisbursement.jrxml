@@ -40,22 +40,18 @@
 	<field name="AftDisbDate" class="java.sql.Timestamp"/>
 	<field name="AftDisbSeq" class="java.lang.Integer"/>
 	<field name="AftDisbDesc" class="java.lang.String"/>
-	<field name="AftDisbAccountId" class="java.lang.String"/>
 	<field name="AftDisbAmount" class="java.math.BigDecimal"/>
 	<field name="AftFeeChargeAmt" class="java.math.BigDecimal"/>
 	<field name="AftDisbReqDate" class="java.sql.Timestamp"/>
-	<field name="AftDisbDisbursed" class="java.lang.String"/>
 	<field name="AftDisbIsActive" class="java.lang.String"/>
 	<field name="AftDisbRemarks" class="java.lang.String"/>
 	<field name="BefFinReference" class="java.lang.String"/>
 	<field name="BefDisbDate" class="java.sql.Timestamp"/>
 	<field name="BefDisbSeq" class="java.lang.Integer"/>
 	<field name="BefDisbDesc" class="java.lang.String"/>
-	<field name="BefDisbAccountId" class="java.lang.String"/>
 	<field name="BefDisbAmount" class="java.math.BigDecimal"/>
 	<field name="BefFeeChargeAmt" class="java.math.BigDecimal"/>
 	<field name="BefDisbReqDate" class="java.sql.Timestamp"/>
-	<field name="BefDisbDisbursed" class="java.lang.String"/>
 	<field name="BefDisbIsActive" class="java.lang.String"/>
 	<field name="BefDisbRemarks" class="java.lang.String"/>
 	<group name="GRPAuditDate" isStartNewPage="true">
@@ -325,35 +321,6 @@
 				</staticText>
 			</frame>
 			<frame>
-				<reportElement uuid="3989a8af-f9e3-453a-90b9-ef2f6037c3e9" positionType="Float" stretchType="RelativeToTallestObject" x="2" y="75" width="802" height="15" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[$F{BefDisbAccountId}!=$F{AftDisbAccountId}]]></printWhenExpression>
-				</reportElement>
-				<staticText>
-					<reportElement uuid="6a533de7-e7ea-4633-969a-b35087aaa2aa" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="38" y="0" width="139" height="15"/>
-					<textElement>
-						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
-					</textElement>
-					<text><![CDATA[Account Id]]></text>
-				</staticText>
-				<textField isBlankWhenNull="true">
-					<reportElement uuid="4d3549a6-60b5-42b3-9c7f-3afadd9344e2" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="195" y="0" width="293" height="15"/>
-					<textElement/>
-					<textFieldExpression><![CDATA[$F{BefDisbAccountId}]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement uuid="dcb13f43-caaf-4fbb-baa0-088407aeff0c" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="498" y="0" width="290" height="15"/>
-					<textElement/>
-					<textFieldExpression><![CDATA[$F{AftDisbAccountId}]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement uuid="922cf721-e3c0-471f-9387-d4e9639ceb7a" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="177" y="0" width="3" height="15"/>
-					<textElement>
-						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
-					</textElement>
-					<text><![CDATA[:]]></text>
-				</staticText>
-			</frame>
-			<frame>
 				<reportElement uuid="3989a8af-f9e3-453a-90b9-ef2f6037c3e9" positionType="Float" stretchType="RelativeToTallestObject" x="2" y="90" width="802" height="15" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$F{BefDisbAmount}!=$F{AftDisbAmount}]]></printWhenExpression>
 				</reportElement>
@@ -441,9 +408,6 @@
 				</staticText>
 			</frame>
 			<frame>
-				<reportElement uuid="3989a8af-f9e3-453a-90b9-ef2f6037c3e9" positionType="Float" stretchType="RelativeToTallestObject" x="2" y="135" width="802" height="15" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[$F{BefDisbDisbursed}!=$F{AftDisbDisbursed}]]></printWhenExpression>
-				</reportElement>
 				<staticText>
 					<reportElement uuid="6a533de7-e7ea-4633-969a-b35087aaa2aa" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="38" y="0" width="139" height="15"/>
 					<textElement>
@@ -451,16 +415,6 @@
 					</textElement>
 					<text><![CDATA[Disbursed]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
-					<reportElement uuid="4d3549a6-60b5-42b3-9c7f-3afadd9344e2" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="195" y="0" width="293" height="15"/>
-					<textElement/>
-					<textFieldExpression><![CDATA[$F{BefDisbDisbursed}]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement uuid="dcb13f43-caaf-4fbb-baa0-088407aeff0c" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="498" y="0" width="290" height="15"/>
-					<textElement/>
-					<textFieldExpression><![CDATA[$F{AftDisbDisbursed}]]></textFieldExpression>
-				</textField>
 				<staticText>
 					<reportElement uuid="922cf721-e3c0-471f-9387-d4e9639ceb7a" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="177" y="0" width="3" height="15"/>
 					<textElement>

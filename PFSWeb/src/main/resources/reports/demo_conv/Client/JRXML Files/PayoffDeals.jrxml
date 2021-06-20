@@ -34,7 +34,6 @@ FinReference,CustCIF]]>
 	<field name="DealAmount" class="java.math.BigDecimal"/>
 	<field name="PayOffAmt" class="java.math.BigDecimal"/>
 	<field name="CcyEditField" class="java.math.BigDecimal"/>
-	<field name="FinAccount" class="java.lang.String"/>
 	<field name="FinAcType" class="java.lang.String"/>
 	<columnHeader>
 		<band height="127">
@@ -466,18 +465,6 @@ $F{CcyEditField}==4 ?"#,##0.0000":"#,##0.00000"]]></patternExpression>
 						<paragraph leftIndent="3"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{FinAcType}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-					<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="364" y="0" width="90" height="15"/>
-					<box>
-						<topPen lineWidth="0.5" lineColor="#666666"/>
-						<bottomPen lineWidth="0.5" lineColor="#666666"/>
-						<rightPen lineWidth="0.5" lineColor="#666666"/>
-					</box>
-					<textElement>
-						<paragraph leftIndent="3"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{FinAccount}.substring(0,4)+"-"+$F{FinAccount}.substring(4,10)+"-"+$F{FinAccount}.substring(10,13)]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>

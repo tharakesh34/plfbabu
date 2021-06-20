@@ -242,13 +242,6 @@
 												<decimalbox id="provisionedAmt" width="150px" readonly="true" />
 											</hbox>
 										</row>
-										<row id="row_InsAmount" visible="true">
-											<label id="label_ReceiptDialog_InsPayment" value="${c:l('label_ReceiptDialog_InsPayment.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<decimalbox id="insPayment" width="150px" readonly="true" />
-											</hbox>
-										</row>
 										<row id="row_SchdFee" visible="true">
 											<label id="label_ReceiptDialog_SchdFeeAmount" value="${c:l('label_ReceiptDialog_SchdFeeAmount.value')}" />
 											<hbox>
@@ -645,8 +638,6 @@
 											<listheader label="${c:l('listheader_MaxAlwRefund.label')}" sort="false" visible="false" hflex="min" />
 											<listheader id="listheader_Refund" visible="false" label="${c:l('listheader_RefundPft.label')}"
 												sort="false" hflex="min" />
-											<listheader id="listheader_InsPayment" label="${c:l('listheader_InsPayment.label')}" sort="false"
-												visible="false" hflex="min" />
 											<listheader id="listheader_SchdFee" label="${c:l('listheader_SchdFee.label')}" sort="false"
 												visible="false" hflex="min" />
 											<listheader label="${c:l('listheader_NetPayment.label')}" sort="false" hflex="min" />
@@ -749,8 +740,6 @@
 										<listheader id="listheader_AvailableLimit" hflex="min" align="right" visible="false" />
 										<listheader id="listheader_ODLimit" hflex="min" align="right" visible="false" />
 										<listheader visible="false" id="listHeader_planEMIHDates" hflex="min" align="center" />
-										<listheader id="listHeader_cashFlowEffect" hflex="min" align="right" visible="false" />
-										<listheader id="listHeader_vSProfit" hflex="min" align="right" visible="false" />
 										<listheader id="listHeader_orgPrincipalDue" hflex="min" align="right" visible="false" />
 									</listhead>
 								</listbox>

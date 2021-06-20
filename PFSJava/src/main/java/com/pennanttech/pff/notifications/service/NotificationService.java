@@ -791,7 +791,6 @@ public class NotificationService extends GenericService<Notification> {
 		data.setFinAmount(PennantApplicationUtil.amountFormate(main.getFinAmount(), format));
 		data.setDownPayment(PennantApplicationUtil.amountFormate(main.getDownPayment(), format));
 		data.setFeeAmount(PennantApplicationUtil.amountFormate(main.getFeeChargeAmt(), format));
-		data.setInsAmount(PennantApplicationUtil.amountFormate(main.getInsuranceAmt(), format));
 		data.setFinCcy(main.getFinCcy());
 		data.setFinStartDate(DateUtility.formatToLongDate(main.getFinStartDate()));
 		data.setMaturityDate(DateUtility.formatToLongDate(main.getMaturityDate()));
@@ -1003,7 +1002,7 @@ public class NotificationService extends GenericService<Notification> {
 	}
 
 	/**
-	 * Method for Data Preparion
+	 * Method for Data Preparation
 	 * 
 	 * @param data
 	 * @param facility
@@ -1015,8 +1014,6 @@ public class NotificationService extends GenericService<Notification> {
 		// Facility Data Preparation For Notifications
 		data.setCustShrtName(facility.getCustShrtName());
 		data.setCustId(facility.getCustID());
-		data.setTotAmountBD(PennantApplicationUtil.formatAmount(facility.getAmountBD(), 3));
-		data.setTotAmountUSD(PennantApplicationUtil.formatAmount(facility.getAmountUSD(), 2));
 		// Role Code For Alert Notification
 		data.setRoleCode(facility.getNextRoleCode());
 		data.setCafReference(facility.getCAFReference());

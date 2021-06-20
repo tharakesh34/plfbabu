@@ -148,14 +148,6 @@ public class LoadFinanceData extends ServiceHelper {
 					custEODEvent.setDueExist(true);
 				}
 
-				// Insurance Due Exist
-				dueAmount = schd.getInsSchd().subtract(schd.getSchdInsPaid());
-
-				if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
-					finEODEvent.setIdxDue(i);
-					custEODEvent.setDueExist(true);
-				}
-
 				// Installment Due Exist
 				dueAmount = schd.getPrincipalSchd().add(schd.getProfitSchd()).subtract(schd.getSchdPriPaid())
 						.subtract(schd.getSchdPftPaid());
@@ -287,26 +279,6 @@ public class LoadFinanceData extends ServiceHelper {
 			if (schdDate.compareTo(fm.getNextRepayRvwDate()) == 0) {
 				finEODEvent.setIdxRpyPftRvw(iSchd);
 				custEODEvent.setDateRollover(true);
-			}
-		}
-
-		// Set Next Depreciation Date
-		Date nextDepDate = fm.getNextDepDate();
-		String deprFrq = fm.getDepreciationFrq();
-		if (nextDepDate != null && schdDate.compareTo(nextDepDate) == 0) {
-			if (!StringUtils.isEmpty(deprFrq)) {
-				if (nextDepDate.compareTo(fm.getMaturityDate()) < 0) {
-					Date nextFrqDate = FrequencyUtil.getNextDate(deprFrq, 1, schdDate, "A", false)
-							.getNextFrequencyDate();
-					fm.setNextDepDate(nextFrqDate);
-				}
-
-				if (nextDepDate.compareTo(fm.getMaturityDate()) > 0) {
-					fm.setNextDepDate(fm.getMaturityDate());
-				}
-
-				finEODEvent.setUpdFinMain(true);
-				finEODEvent.addToFinMianUpdate("NextDepDate");
 			}
 		}
 

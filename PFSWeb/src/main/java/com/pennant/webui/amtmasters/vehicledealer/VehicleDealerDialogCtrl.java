@@ -779,9 +779,8 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		fillComboBox(this.paymentMode, aVehicleDealer.getPaymentMode(), paymentModes, "");
 		checkPaymentMode();
 		this.iBANnumber.setReadonly(true);
-		if (this.paymentMode.getSelectedItem().getValue().toString().equals(PennantConstants.AHBACCOUNT)) {
-			this.accountNumber.setValue(StringUtils.trimToEmpty(aVehicleDealer.getAccountNumber()));
-		} else if (this.paymentMode.getSelectedItem().getValue().toString().equals(PennantConstants.FTS)) {
+		
+		if (this.paymentMode.getSelectedItem().getValue().toString().equals(PennantConstants.FTS)) {
 			this.iBANnumber.setValue(StringUtils.trimToEmpty(aVehicleDealer.getAccountNumber()));
 		}
 		this.email.setValue(aVehicleDealer.getEmail());
@@ -1030,11 +1029,6 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			if (this.paymentMode.getSelectedIndex() > 0) {
 				if (this.paymentMode.getSelectedItem().getValue().toString().equals(PennantConstants.FTS)) {
 					aVehicleDealer.setAccountNumber(this.iBANnumber.getValue());
-				} else if (this.paymentMode.getSelectedItem().getValue().toString()
-						.equals(PennantConstants.AHBACCOUNT)) {
-					this.accountNumber.validateValue();
-					aVehicleDealer.setAccountNumber(
-							PennantApplicationUtil.unFormatAccountNumber(this.accountNumber.getValue()));
 				} else {
 					aVehicleDealer.setAccountNumber("");
 
@@ -1957,16 +1951,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.accountNumber.setVisible(false);
 		this.space_IBANnumber.setSclass("");
 
-		if (this.paymentMode.getSelectedItem().getValue().toString().equals(PennantConstants.AHBACCOUNT)) {
-			this.iBANnumber.setVisible(false);
-			this.accountNumber.setVisible(true);
-			this.accountNumber.setMandatoryStyle(true);
-			this.label_VehicleDealerDialog_AccountNumber
-					.setValue(Labels.getLabel("label_VehicleDealerDialog_AccountNumber.value"));
-			this.accountNumber.setReadonly(isReadOnly("VehicleDealerDialog_AccountNumber"));
-			this.iBANnumber.setValue("");
-
-		} else if (this.paymentMode.getSelectedItem().getValue().toString().equals(PennantConstants.FTS)) {
+		if (this.paymentMode.getSelectedItem().getValue().toString().equals(PennantConstants.FTS)) {
 			this.iBANnumber.setReadonly(isReadOnly("VehicleDealerDialog_AccountNumber"));
 			this.space_IBANnumber.setSclass("mandatory");
 			this.label_VehicleDealerDialog_AccountNumber

@@ -21,14 +21,11 @@ public class FinRepayHeader implements Serializable {
 	private BigDecimal totalPenalty = BigDecimal.ZERO;
 	private BigDecimal totalRefund = BigDecimal.ZERO;
 	private BigDecimal totalWaiver = BigDecimal.ZERO;
-	private BigDecimal insRefund = BigDecimal.ZERO;
-	private String repayAccountId;
 	private String earlyPayEffMtd;
 	private Date earlyPayDate;
 	private boolean schdRegenerated;
 	private long linkedTranId = 0;
 	private long newLinkedTranId = 0;
-	private BigDecimal totalIns = BigDecimal.ZERO;
 	private BigDecimal totalSchdFee = BigDecimal.ZERO;
 	private BigDecimal realizeUnAmz = BigDecimal.ZERO;
 	private BigDecimal realizeUnLPI = BigDecimal.ZERO;
@@ -64,14 +61,11 @@ public class FinRepayHeader implements Serializable {
 		entity.setTotalPenalty(this.totalPenalty);
 		entity.setTotalRefund(this.totalRefund);
 		entity.setTotalWaiver(this.totalWaiver);
-		entity.setInsRefund(this.insRefund);
-		entity.setRepayAccountId(this.repayAccountId);
 		entity.setEarlyPayEffMtd(this.earlyPayEffMtd);
 		entity.setEarlyPayDate(this.earlyPayDate);
 		entity.setSchdRegenerated(this.schdRegenerated);
 		entity.setLinkedTranId(this.linkedTranId);
 		entity.setNewLinkedTranId(this.newLinkedTranId);
-		entity.setTotalIns(this.totalIns);
 		entity.setTotalSchdFee(this.totalSchdFee);
 		entity.setRealizeUnAmz(this.realizeUnAmz);
 		entity.setRealizeUnLPI(this.realizeUnLPI);
@@ -186,22 +180,6 @@ public class FinRepayHeader implements Serializable {
 		this.totalWaiver = totalWaiver;
 	}
 
-	public BigDecimal getInsRefund() {
-		return insRefund;
-	}
-
-	public void setInsRefund(BigDecimal insRefund) {
-		this.insRefund = insRefund;
-	}
-
-	public String getRepayAccountId() {
-		return repayAccountId;
-	}
-
-	public void setRepayAccountId(String repayAccountId) {
-		this.repayAccountId = repayAccountId;
-	}
-
 	public String getEarlyPayEffMtd() {
 		return earlyPayEffMtd;
 	}
@@ -240,14 +218,6 @@ public class FinRepayHeader implements Serializable {
 
 	public void setNewLinkedTranId(long newLinkedTranId) {
 		this.newLinkedTranId = newLinkedTranId;
-	}
-
-	public BigDecimal getTotalIns() {
-		return totalIns;
-	}
-
-	public void setTotalIns(BigDecimal totalIns) {
-		this.totalIns = totalIns;
 	}
 
 	public BigDecimal getTotalSchdFee() {

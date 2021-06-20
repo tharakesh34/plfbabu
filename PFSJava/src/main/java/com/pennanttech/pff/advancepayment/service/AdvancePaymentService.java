@@ -611,7 +611,6 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		// Fee Details
 		repayment.setSchdFeePaid(BigDecimal.ZERO);
-		repayment.setSchdInsPaid(BigDecimal.ZERO);
 
 		return repayment;
 	}

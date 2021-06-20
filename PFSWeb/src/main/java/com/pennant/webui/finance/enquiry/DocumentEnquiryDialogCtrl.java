@@ -65,7 +65,6 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAgreementDetail;
-import com.pennant.backend.service.finance.AgreementDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
@@ -93,7 +92,6 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	private List<DocumentDetails> finDocuments;
 
 	private FinanceDetailService financeDetailService;
-	private AgreementDetailService agreementDetailService;
 	private DMSService dMSService;
 
 	/**
@@ -291,14 +289,6 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
-	}
-
-	public void setAgreementDetailService(AgreementDetailService agreementDetailService) {
-		this.agreementDetailService = agreementDetailService;
-	}
-
-	public AgreementDetailService getAgreementDetailService() {
-		return agreementDetailService;
 	}
 
 	public void setDMSService(DMSService dMSService) {

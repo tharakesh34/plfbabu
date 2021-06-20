@@ -106,7 +106,7 @@ public class CustomizeFinanceDataValidation {
 		}
 
 		//Co-Applicant details Validation
-		errorDetails = joointAccountDetailsValidation(financeDetail);
+		errorDetails = jointAccountDetailsValidation(financeDetail);
 		if (!errorDetails.isEmpty()) {
 			finScheduleData.setErrorDetails(errorDetails);
 			return finScheduleData;
@@ -510,11 +510,11 @@ public class CustomizeFinanceDataValidation {
 	 * @param financeDetail
 	 * @return errorDetails
 	 */
-	private List<ErrorDetail> joointAccountDetailsValidation(FinanceDetail financeDetail) {
+	private List<ErrorDetail> jointAccountDetailsValidation(FinanceDetail financeDetail) {
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
-		List<JointAccountDetail> jountAccountDetails = financeDetail.getJountAccountDetailList();
-		if (jountAccountDetails != null) {
-			for (JointAccountDetail jointAccDetail : jountAccountDetails) {
+		List<JointAccountDetail> jointAccountDetails = financeDetail.getJointAccountDetailList();
+		if (jointAccountDetails != null) {
+			for (JointAccountDetail jointAccDetail : jointAccountDetails) {
 				if (jointAccDetail.isIncludeRepay()) {
 					if (StringUtils.isBlank(jointAccDetail.getRepayAccountId())) {
 						String[] valueParm = new String[2];
@@ -565,7 +565,7 @@ public class CustomizeFinanceDataValidation {
 
 				int duplicateSeqCount = 0;
 				int duplicateCifCount = 0;
-				for (JointAccountDetail detail : jountAccountDetails) {
+				for (JointAccountDetail detail : jointAccountDetails) {
 					if (jointAccDetail.getSequence() == detail.getSequence()) {
 						duplicateSeqCount++;
 					}

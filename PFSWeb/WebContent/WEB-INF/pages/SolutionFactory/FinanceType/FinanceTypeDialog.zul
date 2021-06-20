@@ -53,8 +53,6 @@
 						<tab label="${c:l('tab_FinanceTypeDialog_RepaymentDetails.value')}" id="repayment" />
 						<tab label="${c:l('tab_FinanceTypeDialog_ScheduleDetails.value')}" id="scheduleProfit"
 							visible="false" />
-						<tab visible="false" label="${c:l('tab_FinanceTypeDialog_FinTypeAccountDetails.value')}"
-							id="finTypeAccountDetails" />
 						<tab label="${c:l('tab_FinanceTypeDialog_ExtendedDetails.value')}" id="extendedDetails" />
 						<tab label="${c:l('tab_FinanceTypeDialog_FeaturDetails.value')}" id="featureDetails" />
 
@@ -331,12 +329,6 @@
 												</hbox>
 											</row>
 											<row visible="false">
-												<label id="label_FinanceTypeDialog_AllowAdvanceRent"
-													value="${c:l('label_FinanceTypeDialog_AllowAdvanceRentAllow.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<checkbox id="alwAdvanceRent" checked="false" />
-												</hbox>
 												<label id="label_FinanceTypeDialog_AllowRIAInvestment"
 													value="${c:l('label_FinanceTypeDialog_AllowRIAInvestment.value')}" />
 												<hbox>
@@ -353,22 +345,6 @@
 												<hbox>
 													<space spacing="2px" />
 													<checkbox id="finIsActive" checked="false" />
-												</hbox>
-											</row>
-											<row id="row_allowDownpayPgm" visible="false">
-												<label id="label_FinanceTypeDialog_AllowDownpayPgm"
-													value="${c:l('label_FinanceTypeDialog_AllowDownpayPgm.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<checkbox id="allowDownpayPgm" checked="false" />
-												</hbox>
-											</row>
-											<row id='row_finDepreciation'>
-												<label id="label_FinanceTypeDialog_FinDepreciationReq"
-													value="${c:l('label_FinanceTypeDialog_FinDepreciationReq.value')}" />
-												<hbox id="hbox_FinDepreciationReq">
-													<space spacing="2px" />
-													<checkbox id="finDepreciationReq" />
 												</hbox>
 											</row>
 											<row>
@@ -1030,10 +1006,6 @@
 													<space id="space_rpyHierarchy" spacing="2px" sclass="mandatory" />
 													<combobox id="rpyHierarchy" width="275px" readonly="true" />
 												</hbox>
-												<label id="label_FinanceTypeDialog_FinDepreciationFrq"
-													value="${c:l('label_FinanceTypeDialog_FinDepreciationFrq.value')}" />
-												<frequencybox id="finDepreciationFrq" />
-
 											</row>
 											<row visible="true">
 												<label id="label_FinanceTypeDialog_AlwBpiTreatment"
@@ -1381,29 +1353,9 @@
 										</toolbar>
 										<toolbar align="end" style="float:right; border-style: none; padding:0px;"
 											height="100%">
-											<button id="btnNew_FinTypeAccount" label="${c:l('label_New')}"
-												tooltiptext="${c:l('btnNew_FinTypeAccount.tooltiptext')}" autodisable="btnNew_FinTypeAccount" />
 										</toolbar>
 									</hbox>
 								</div>
-								<listbox id="listBoxFinTypeAccounts" fixedLayout="true" height="100px"
-									sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}" emptyMessage="${c:l('listbox.emptyMessage')}"
-									multiple="false" span="true">
-									<listhead sizable="true">
-										<listheader id="listheader_AccCurrency"
-											label="${c:l('listheader_AccCurrency.label')}" sort="auto" hflex="min" />
-										<listheader id="listheader_AccEvent" label="${c:l('listheader_AccEvent.label')}"
-											sort="auto" hflex="min" />
-										<listheader id="listheader_AlwManualEntry"
-											label="${c:l('listheader_AlwManualEntry.label')}" sort="auto" hflex="min" />
-										<listheader id="listheader_AlwCustAcc"
-											label="${c:l('listheader_AlwCustAcc.label')}" sort="auto" hflex="min" />
-										<listheader id="listheader_RecordStatus"
-											label="${c:l('listheader_RecordStatus.label')}" sort="auto" hflex="min" />
-										<listheader id="listheader_RecordType"
-											label="${c:l('listheader_RecordType.label')}" sort="auto" hflex="min" />
-									</listhead>
-								</listbox>
 							</groupbox>
 						</tabpanel>
 

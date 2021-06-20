@@ -32,7 +32,6 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 
 	// Fee Details
 	private BigDecimal schdFeePaid = BigDecimal.ZERO;
-	private BigDecimal schdInsPaid = BigDecimal.ZERO;
 
 	// not in database
 	private BigDecimal lovDescSchdPriPaid = BigDecimal.ZERO;
@@ -75,7 +74,6 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 		entity.setFinWaiver(this.finWaiver);
 		entity.setFinRefund(this.finRefund);
 		entity.setSchdFeePaid(this.schdFeePaid);
-		entity.setSchdInsPaid(this.schdInsPaid);
 		entity.setLovDescSchdPriPaid(this.lovDescSchdPriPaid);
 		entity.setLovDescSchdPftPaid(this.lovDescSchdPftPaid);
 		entity.setRepayBal(this.RepayBal);
@@ -314,14 +312,6 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 
 	public void setSchdFeePaid(BigDecimal schdFeePaid) {
 		this.schdFeePaid = schdFeePaid;
-	}
-
-	public BigDecimal getSchdInsPaid() {
-		return schdInsPaid;
-	}
-
-	public void setSchdInsPaid(BigDecimal schdInsPaid) {
-		this.schdInsPaid = schdInsPaid;
 	}
 
 	public BigDecimal getFinSchdTdsPaid() {

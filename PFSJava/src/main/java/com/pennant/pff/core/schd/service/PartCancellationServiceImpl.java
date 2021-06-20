@@ -202,7 +202,7 @@ public class PartCancellationServiceImpl extends GenericService<FinServiceInstru
 		aFinanceDetail.setEligibilityRuleList(new ArrayList<FinanceReferenceDetail>(1));
 		aFinanceDetail.setFinElgRuleList(new ArrayList<FinanceEligibilityDetail>(1));
 		aFinanceDetail.setGurantorsDetailList(new ArrayList<GuarantorDetail>(1));
-		aFinanceDetail.setJountAccountDetailList(new ArrayList<JointAccountDetail>(1));
+		aFinanceDetail.setJointAccountDetailList(new ArrayList<JointAccountDetail>(1));
 		aFinanceDetail.setFinanceDeviations(new ArrayList<FinanceDeviations>());
 		aFinanceDetail.setApprovedFinanceDeviations(new ArrayList<FinanceDeviations>());
 		aFinanceDetail.setFinanceCollaterals(new ArrayList<FinCollaterals>(1));

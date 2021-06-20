@@ -29,7 +29,7 @@
 		<field name="gurantorsDetailList">
 			<valid />
 		</field>
-		<field name="jountAccountDetailList">
+		<field name="jointAccountDetailList">
 			<valid />
 		</field>
 		<field name="financeCollaterals">

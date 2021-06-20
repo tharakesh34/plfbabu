@@ -153,13 +153,6 @@
 													</hbox>
 												</row>
 												<row>
-													<label id="label_ArabicName"
-														value="${c:l('label_CustomerDialog_FatherOrSpouse.value')}" />
-													<hbox>
-														<space id="space_CustArabicName" spacing="2px"
-															sclass="mandatory" />
-														<textbox id="custArabicName" maxlength="50" width="250px" />
-													</hbox>
 													<label id="label_CustomerDialog_motherMaidenName" value="${c:l('label_CustomerDialog_CustMotherMaiden.value')}" />
 													<hbox id="hbox_motherMaidenName">
 														<space spacing="2px" sclass="mandatory" />

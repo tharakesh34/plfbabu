@@ -912,8 +912,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			FinanceScheduleDetail curSchd = schdList.get(i);
 			if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
 					|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0
-					|| curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0
-					|| curSchd.getSchdInsPaid().compareTo(BigDecimal.ZERO) > 0) {
+					|| curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0) {
 				lastPaidDate = curSchd.getSchDate();
 			}
 

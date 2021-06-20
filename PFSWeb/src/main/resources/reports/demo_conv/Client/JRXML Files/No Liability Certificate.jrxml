@@ -9,7 +9,6 @@
 	</queryString>
 	<field name="CUSTCIF" class="java.lang.String"/>
 	<field name="CustShrtName" class="java.lang.String"/>
-	<field name="RepayAccountId" class="java.lang.String"/>
 	<field name="CustCPRno" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>

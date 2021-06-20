@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlType;
 		"lovDescFinSchdMthdName", "finIsIntCpz", "finCpzFrq", "finIsRvwAlw", "finRvwFrq", "finRvwRateApplFor",
 		"finSchCalCodeOnRvw", "finMinTerm", "finMaxTerm", "finDftTerms", "fInRepayMethod", "lovDescFInRepayMethodName",
 		"finIsAlwPartialRpy", "finIsAlwDifferment", "finMaxDifferment", "alwPlanDeferment", "planDeferCount",
-		"finScheduleOn", "alwEarlyPayMethods", "finDepreciationFrq", "finPftUnChanged", "equalRepayment",
+		"finScheduleOn", "alwEarlyPayMethods", "finPftUnChanged", "equalRepayment",
 		"finHistRetension", "finODRpyTries", "finAlwRateChangeAnyDate", "finIsAlwEarlyRpy", "finIsAlwEarlySettle",
 		"planEMIHAlw", "planEMIHMethod", "planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz",
 		"unPlanEMIHLockPeriod", "unPlanEMICpz", "reAgeCpz", "fddLockPeriod", "maxUnplannedEmi", "maxReAgeHolidays",
@@ -79,7 +79,6 @@ public class RepayDetail implements Serializable {
 	private int planDeferCount;
 	private String finScheduleOn;
 	private String alwEarlyPayMethods;
-	private String finDepreciationFrq;
 	private boolean finPftUnChanged;
 	private boolean equalRepayment;
 	private int finHistRetension;
@@ -364,14 +363,6 @@ public class RepayDetail implements Serializable {
 
 	public void setAlwEarlyPayMethods(String alwEarlyPayMethods) {
 		this.alwEarlyPayMethods = alwEarlyPayMethods;
-	}
-
-	public String getFinDepreciationFrq() {
-		return finDepreciationFrq;
-	}
-
-	public void setFinDepreciationFrq(String finDepreciationFrq) {
-		this.finDepreciationFrq = finDepreciationFrq;
 	}
 
 	public boolean isFinPftUnChanged() {

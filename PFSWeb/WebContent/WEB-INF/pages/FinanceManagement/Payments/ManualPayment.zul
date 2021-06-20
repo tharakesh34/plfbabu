@@ -238,13 +238,6 @@
 											<decimalbox id="provisionedAmt" width="150px" readonly="true" />
 										</hbox>
 									</row>
-									<row id="row_InsAmount" visible="true">
-										<label id="label_PaymentDialog_InsPayment" value="${c:l('label_PaymentDialog_InsPayment.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<decimalbox id="insPayment" width="150px" readonly="true" />
-										</hbox>
-									</row>
 									<row id="row_SchdFee" visible="true">
 										<label id="label_PaymentDialog_SchdFeeAmount" value="${c:l('label_PaymentDialog_SchdFeeAmount.value')}" />
 										<hbox>
@@ -298,22 +291,10 @@
 											<textbox id="lovDescCustCIF1" width="120px" readonly="true" />
 											<label id="custShrtName1" style="margin-left:10px;display:inline-block;padding-top:3px;" />
 										</hbox>
-										<label id="label_PaymentDialog_InsRefundAmt" value="${c:l('label_PaymentDialog_InsRefundAmt.value')}"
-											visible="false" />
-										<hbox id="hbox_insRefundAmt" visible="false">
-											<space spacing="2px" />
-											<decimalbox id="insRefundAmt" width="150px" disabled="true" />
-											<decimalbox id="actInsRefundAmt" width="150px" disabled="true" visible="false" style="font-weight:bold;" />
-										</hbox>
 									</row>
 									<row>
 										<label id="label_PaymentDialog_RpyAmount" value="${c:l('label_PaymentDialog_RpyAmount.value')}" />
 										<currencyBox id="rpyAmount" />
-										<label id="label_PaymentDialog_RepayAccount" value="${c:l('label_PaymentDialog_RepayAccount.value')}" />
-										<hbox id="hbox_repayAccount">
-											<accountSelectionBox id="repayAccount" />
-											<decimalbox id="earlySettlementBal" tabindex="-1" visible="false" disabled="true" sclass="decimalToString" />
-										</hbox>
 									</row>
 									<row>
 										<label id="label_PaymentDialog_PriPayment" value="${c:l('label_PaymentDialog_PriPayment.value')}" />
@@ -398,8 +379,6 @@
 									<listheader label="${c:l('listheader_PenaltyPayNow.label')}" sort="false" visible="true" hflex="min" />
 									<listheader label="${c:l('listheader_MaxAlwRefund.label')}" sort="false" visible="false" hflex="min" />
 									<listheader label="${c:l('listheader_RefundPft.label')}" sort="false" hflex="min" />
-									<listheader id="listheader_InsPayment" label="${c:l('listheader_InsPayment.label')}" sort="false"
-										visible="false" hflex="min" />
 									<listheader id="listheader_SchdFee" label="${c:l('listheader_SchdFee.label')}" sort="false" visible="false"
 										hflex="min" />
 									<listheader label="${c:l('listheader_NetPayment.label')}" sort="false" hflex="min" />
@@ -499,8 +478,6 @@
 									<listheader id="listheader_AvailableLimit" hflex="min" align="right" visible="false" />
 									<listheader id="listheader_ODLimit" hflex="min" align="right" visible="false" />
 									<listheader visible="false" id="listHeader_planEMIHDates" hflex="min" align="center" />
-									<listheader id="listHeader_cashFlowEffect" hflex="min" align="right" visible="false" />
-									<listheader id="listHeader_vSProfit" hflex="min" align="right" visible="false" />
 									<listheader id="listHeader_orgPrincipalDue" hflex="min" align="right" visible="false" />
 								</listhead>
 							</listbox>

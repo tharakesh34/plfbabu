@@ -522,10 +522,10 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 					} else if (StringUtils.equals(taxuploadDetail.getApplicableFor(),
 							PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT)) {
 						//get the co-applicants attached to the finance
-						List<JointAccountDetail> jountAccountDetailList = jointAccountDetailService
+						List<JointAccountDetail> jointAccountDetailList = jointAccountDetailService
 								.getJoinAccountDetail(financeMain.getFinReference(), "_View");
 						//chek for one match
-						for (JointAccountDetail jointAccountDetail : jountAccountDetailList) {
+						for (JointAccountDetail jointAccountDetail : jointAccountDetailList) {
 							if (StringUtils.equals(jointAccountDetail.getCustCIF(), taxuploadDetail.getApplicant())) {
 								idExist = true;
 								break;

@@ -79,16 +79,6 @@
 									<space spacing="2px" sclass="mandatory" id="space_AddTermAfter" />
 									<combobox id="cbAddTermAfter" readonly="true" width="120px"></combobox>
 								</hbox>
-							</row>
-							<row id="disbursementAccount">
-								<label id="label_AddDisbursementDialog_DisbAcctId" value="${c:l('label_AddDisbursementDialog_DisbAcctId.value')}" />
-								<hbox>
-									<space id="space_disbAcctId" spacing="2px" sclass="mandatory" />
-									<textbox id="disbAcctId" width="175px" readonly="true" />
-									<button id="btnSearchDisbAcctId" image="/images/icons/LOVSearch.png" tabindex="11" />
-									<label id="disbAcctBal" />
-								</hbox>
-							</row>
 							<row id="row_assetUtilization" visible="false">
 								<label id="label_AddDisbursementDialog_AlwUtilizeAssetValue" value="${c:l('label_AddDisbursementDialog_AlwUtilizeAssetValue.value')}" />
 								<hbox>

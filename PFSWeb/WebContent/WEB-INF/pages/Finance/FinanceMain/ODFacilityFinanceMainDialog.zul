@@ -161,10 +161,6 @@
 													<currencyBox id="appliedLoanAmt" />
 												</row>
 												<row visible="false">
-													<label id="label_FinanceMainDialog_DisbAcctId" value="${c:l('label_FinanceMainDialog_DisbAcctId.value')}" />
-													<accountSelectionBox id="disbAcctId" visible="false" />
-												</row>
-												<row visible="false">
 													<label id="label_FinanceMainDialog_FinAmount" value="${c:l('label_FinanceMainDialog_FinAmount.value')}" />
 													<currencyBox id="finAmount" visible="false" />
 													<label id="label_FinanceMainDialog_TDSApplicable" value="${c:l('label_FinanceMainDialog_TDSApplicable.value')}" />
@@ -189,8 +185,6 @@
 												<row id="row_RolloverPayment" visible="false">
 													<label id="label_FinanceMainDialog_CustPaymentAmount" value="${c:l('label_FinanceMainDialog_CustPaymentAmount.value')}" />
 													<currencyBox id="custPaymentAmount" />
-													<label id="label_FinanceMainDialog_CustPayAccId" value="${c:l('label_FinanceMainDialog_CustPayAccId.value')}" />
-													<accountSelectionBox id="custPayAccId" />
 												</row>
 												<row visible="false">
 													<label id="label_FinanceMainDialog_LatePayAmount" value="${c:l('label_FinanceMainDialog_LatePayAmount.value')}" />
@@ -225,11 +219,6 @@
 													</hbox>
 												</row>
 												<row visible="false">
-													<label id="label_FinanceMainDialog_RepayAcctId" value="${c:l('label_FinanceMainDialog_RepayAcctId.value')}"
-														visible="false" />
-													<hbox id="hbox_repayAcctId" visible="false">
-														<accountSelectionBox id="repayAcctId" visible="false" />
-													</hbox>
 													<label id="label_FinanceMainDialog_NetFinAmount" value="${c:l('label_FinanceMainDialog_NetFinAmount.value')}"
 														visible="false" />
 													<hbox id="hbox_netFinAmount" visible="false">
@@ -240,21 +229,10 @@
 												<row id="row_downPayBank" visible="false">
 													<label id="label_FinanceMainDialog_DownPayBank" value="${c:l('label_FinanceMainDialog_DownPayBank.value')}" />
 													<currencyBox id="downPayBank" />
-													<label id="label_FinanceMainDialog_DownPayAccount" value="${c:l('label_FinanceMainDialog_DownPayAccount.value')}" />
-													<accountSelectionBox id="downPayAccount" />
 												</row>
 												<row id="row_downPaySupl" visible="false">
 													<label id="label_FinanceMainDialog_DownPaySupl" value="${c:l('label_FinanceMainDialog_DownPaySupl.value')}" />
 													<currencyBox id="downPaySupl" />
-												</row>
-												<row id="row_secondaryAccount">
-													<label id="label_FinanceMainDialog_SecondaryAccount" value="${c:l('label_FinanceMainDialog_SecondaryAccount.value')}"
-														visible="false" />
-													<hbox id="hbox_btnAddSecondaryAccounts" visible="false">
-														<space spacing="2px" />
-														<button id="btnAddSecondaryAccounts" label="${c:l('label_Add')}" sclass="z-toolbarbutton" visible="false" />
-													</hbox>
-
 												</row>
 												<row id="row_Revolving_DP" visible="false">
 													<label id="label_FinanceTypeDialog_AllowRevolving" value="${c:l('label_FinanceTypeDialog_AllowRevolving.value')}"
@@ -305,11 +283,6 @@
 														<space spacing="2px" />
 														<checkbox id="allowGrace" checked="false" visible="false" />
 													</hbox>
-												</row>
-												<row visible="false">
-													<label id="label_FinanceMainDialog_DepriFrq" value="${c:l('label_FinanceMainDialog_DepriFrq.value')}"
-														visible="false" />
-													<frequencybox id="depreciationFrq" visible="false" />
 												</row>
 												<row visible="false">
 													<label id="label_FinanceMainDialog_FinIsActive" value="${c:l('label_FinanceMainDialog_FinIsActive.value')}"
@@ -445,10 +418,6 @@
 														<space spacing="2px" id="space_applicationNo" />
 														<uppercasebox id="applicationNo" width="170px" visible="true" />
 													</hbox>
-												</row>
-												<row id="row_securityDeposit" visible="false">
-													<label id="label_FinanceMainDialog_SecurityDeposit" value="${c:l('label_FinanceMainDialog_SecurityDeposit.value')}" />
-													<currencyBox id="securityDeposit" />
 												</row>
 												<row id="row_EligibilityMethod" visible="false">
 													<label id="label_FinanceMainDialog_EligibilityMethod" value="${c:l('label_FinanceMainDialog_EligibilityMethod.value')}" />

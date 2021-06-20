@@ -318,9 +318,9 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 
 				this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
 
-				if (financeDetail != null && financeDetail.getJountAccountDetailList() != null
-						&& financeDetail.getJountAccountDetailList().size() > 0) {
-					for (JointAccountDetail jointAccountDetail : financeDetail.getJountAccountDetailList()) {
+				if (financeDetail != null && financeDetail.getJointAccountDetailList() != null
+						&& financeDetail.getJointAccountDetailList().size() > 0) {
+					for (JointAccountDetail jointAccountDetail : financeDetail.getJointAccountDetailList()) {
 						if (!StringUtils.equals(jointAccountDetail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)
 								&& !StringUtils.equals(jointAccountDetail.getRecordType(),
 										PennantConstants.RECORD_TYPE_CAN)) {
@@ -330,8 +330,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				}
 
 				// getting co-applicant id's
-				// coAppIds =
-				// jountAccountDetailDAO.getCustIdsByFinnRef(finReference);
+				// coAppIds = jointAccountDetailDAO.getCustIdsByFinnRef(finReference);
 				custIds.add(this.custID.getValue());
 
 				// Adding co-applicant id's

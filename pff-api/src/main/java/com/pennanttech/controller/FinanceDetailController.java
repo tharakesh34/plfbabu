@@ -396,9 +396,6 @@ public class FinanceDetailController extends SummaryDetailService {
 		disbursementDetails.setVersion(1);
 		disbursementDetails.setDisbReqDate(DateUtility.getAppDate());
 		disbursementDetails.setFeeChargeAmt(financeMain.getFeeChargeAmt());
-		disbursementDetails.setInsuranceAmt(financeMain.getInsuranceAmt());
-		disbursementDetails
-				.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(financeMain.getDisbAccountId()));
 		finScheduleData.getDisbursementDetails().add(disbursementDetails);
 
 		logger.debug("Leaving");

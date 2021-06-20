@@ -59,7 +59,6 @@ public class ImplementationConstants {
 		ADD_FEEINFTV_ONCALC = getValueAsBoolean(extensions, "ADD_FEEINFTV_ONCALC", true);
 		ALLOW_FIN_SALARY_PAYMENT = getValueAsBoolean(extensions, "ALLOW_FIN_SALARY_PAYMENT", true);
 		ALLOW_SPECIALRATE = getValueAsBoolean(extensions, "ALLOW_SPECIALRATE", false);
-		ACCOUNTS_APPLICABLE = getValueAsBoolean(extensions, "ACCOUNTS_APPLICABLE", false);
 		ALLOW_MANUAL_SCHEDULE = getValueAsBoolean(extensions, "ALLOW_MANUAL_SCHEDULE", false);
 		CAPTURE_APPLICATION_NUMBER = getValueAsBoolean(extensions, "CAPTURE_APPLICATION_NUMBER", true);
 		ALLOW_PLANNED_EMIHOLIDAY = getValueAsBoolean(extensions, "ALLOW_PLANNED_EMIHOLIDAY", true);
@@ -76,7 +75,6 @@ public class ImplementationConstants {
 		ALLOW_ADDRESSTYPE_PRIORITY = getValueAsBoolean(extensions, "ALLOW_ADDRESSTYPE_PRIORITY", false);
 		ALLOW_EMIALTYPE_PRIORITY = getValueAsBoolean(extensions, "ALLOW_EMIALTYPE_PRIORITY", false);
 		ALLOW_PHONETYPE_PRIORITY = getValueAsBoolean(extensions, "ALLOW_PHONETYPE_PRIORITY", false);
-		ALLOW_DEPRECIATION = getValueAsBoolean(extensions, "ALLOW_DEPRECIATION", false);
 		EARLYPAY_ADJ_PRI = getValueAsBoolean(extensions, "EARLYPAY_ADJ_PRI", true);
 		//ALLOW_INSURANCE = getValueAsBoolean(extensions, "ALLOW_INSURANCE", false);
 		ALLOW_RIA = getValueAsBoolean(extensions, "ALLOW_RIA", false);
@@ -300,7 +298,6 @@ public class ImplementationConstants {
 	public static boolean ADD_FEEINFTV_ONCALC;
 	public static boolean ALLOW_FIN_SALARY_PAYMENT;
 	public static boolean ALLOW_SPECIALRATE;
-	public static boolean ACCOUNTS_APPLICABLE;
 	public static boolean ALLOW_MANUAL_SCHEDULE;
 	public static boolean CAPTURE_APPLICATION_NUMBER;
 	public static boolean ALLOW_PLANNED_EMIHOLIDAY;
@@ -317,7 +314,6 @@ public class ImplementationConstants {
 	public static boolean ALLOW_ADDRESSTYPE_PRIORITY;
 	public static boolean ALLOW_EMIALTYPE_PRIORITY;
 	public static boolean ALLOW_PHONETYPE_PRIORITY;
-	public static boolean ALLOW_DEPRECIATION;
 	public static boolean EARLYPAY_ADJ_PRI;
 	//public static boolean ALLOW_INSURANCE;
 	public static boolean ALLOW_RIA;

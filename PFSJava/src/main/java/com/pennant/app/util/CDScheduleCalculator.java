@@ -421,10 +421,6 @@ public class CDScheduleCalculator {
 			fm.setLastRepayDate(fm.getFinStartDate());
 		}
 
-		if (fm.getLastDepDate() == null) {
-			fm.setLastDepDate(fm.getFinStartDate());
-		}
-
 		if (fm.getLastRepayCpzDate() == null) {
 			fm.setLastRepayCpzDate(fm.getGrcPeriodEndDate());
 		}

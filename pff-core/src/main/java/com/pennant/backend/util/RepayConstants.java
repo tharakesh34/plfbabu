@@ -61,7 +61,6 @@ public class RepayConstants {
 
 	// Manual Receipts Usage
 	public static final char REPAY_FEE = 'F';
-	public static final char REPAY_INS = 'N';
 
 	// Excess Amounts to in Receipts
 	public static final String EXAMOUNTTYPE_EXCESS = "E";

@@ -205,8 +205,6 @@ import com.pennant.backend.model.facility.Facility;
 import com.pennant.backend.model.fees.FeePostings;
 import com.pennant.backend.model.finance.AutoKnockOff;
 import com.pennant.backend.model.finance.AutoKnockOffFeeMapping;
-import com.pennant.backend.model.finance.BulkProcessDetails;
-import com.pennant.backend.model.finance.BulkProcessHeader;
 import com.pennant.backend.model.finance.CAFFacilityType;
 import com.pennant.backend.model.finance.CashDenomination;
 import com.pennant.backend.model.finance.ChequeDetail;
@@ -346,7 +344,6 @@ import com.pennant.backend.model.returnedcheques.ReturnedChequeDetails;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.model.rmtmasters.CustomerType;
-import com.pennant.backend.model.rmtmasters.FinTypeAccount;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinTypeExpense;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
@@ -1416,9 +1413,6 @@ public class PennantJavaUtil {
 						new String[] { "FinType", "FinTypeDesc" },
 						new Object[][] { { "FinIsActive", "0", 1 }, { "Product", "0", "" } }, 600));
 
-		ModuleUtil.register("FinTypeAccount", new ModuleMapping("FinTypeAccount", FinTypeAccount.class,
-				new String[] { "FinTypeAccount" }, masterWF, new String[] { "FinCcy", "Event" }, null, 300));
-
 		ModuleUtil.register("HolidayMaster",
 				new ModuleMapping("HolidayMaster", HolidayMaster.class,
 						new String[] { "SMTHolidayMaster", "SMTHolidayMaster_AView" }, masterWF,
@@ -1971,16 +1965,6 @@ public class PennantJavaUtil {
 				new ModuleMapping("JointAccountDetail", JointAccountDetail.class,
 						new String[] { "FinJointAccountDetails", "FinJointAccountDetails_AView" }, masterWF,
 						new String[] { "JointAccountId", "CustCIF" }, null, 300));
-
-		ModuleUtil.register("BulkProcessHeader",
-				new ModuleMapping("BulkProcessHeader", BulkProcessHeader.class,
-						new String[] { "BulkProcessHeader", "BulkProcessHeader" }, masterWF,
-						new String[] { "BulkProcessID", "FromDate" }, null, 300));
-
-		ModuleUtil.register("BulkProcessDetails",
-				new ModuleMapping("BulkProcessDetails", BulkProcessDetails.class,
-						new String[] { "BulkProcessDetails", "BulkProcessDetails" }, finMaintainWF,
-						new String[] { "BulkProcessID", "FinReference" }, null, 300));
 
 		ModuleUtil.register("FinCollaterals",
 				new ModuleMapping("FinCollaterals", FinCollaterals.class,

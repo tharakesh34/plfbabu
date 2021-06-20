@@ -102,7 +102,6 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private BigDecimal disbAmount = BigDecimal.ZERO;
 	private BigDecimal downPaymentAmount = BigDecimal.ZERO;
 	private BigDecimal feeChargeAmt = BigDecimal.ZERO;
-	private BigDecimal insuranceAmt = BigDecimal.ZERO;
 
 	private BigDecimal refundOrWaiver = BigDecimal.ZERO;
 	private BigDecimal cpzAmount = BigDecimal.ZERO;
@@ -135,15 +134,11 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private BigDecimal feeSchd = BigDecimal.ZERO;
 	private BigDecimal schdFeePaid = BigDecimal.ZERO;
 	private BigDecimal schdFeeOS = BigDecimal.ZERO;
-	private BigDecimal insSchd = BigDecimal.ZERO;
-	private BigDecimal schdInsPaid = BigDecimal.ZERO;
 
 	@XmlElement
 	private BigDecimal tDSAmount = BigDecimal.ZERO;
 	private BigDecimal tDSPaid = BigDecimal.ZERO;
 	private String pftDaysBasis;
-	private BigDecimal writeoffIns = BigDecimal.ZERO;
-	private BigDecimal writeoffCrIns = BigDecimal.ZERO;
 	private BigDecimal writeoffSchFee = BigDecimal.ZERO;
 	private String finCcy;
 	private BigDecimal partialPaidAmt = BigDecimal.ZERO;
@@ -228,7 +223,6 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 		entity.setDisbAmount(this.disbAmount);
 		entity.setDownPaymentAmount(this.downPaymentAmount);
 		entity.setFeeChargeAmt(this.feeChargeAmt);
-		entity.setInsuranceAmt(this.insuranceAmt);
 		entity.setRefundOrWaiver(this.refundOrWaiver);
 		entity.setCpzAmount(this.cpzAmount);
 		entity.setCpzBalance(this.cpzBalance);
@@ -252,13 +246,9 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 		entity.setFeeSchd(this.feeSchd);
 		entity.setSchdFeePaid(this.schdFeePaid);
 		entity.setSchdFeeOS(this.schdFeeOS);
-		entity.setInsSchd(this.insSchd);
-		entity.setSchdInsPaid(this.schdInsPaid);
 		entity.setTDSAmount(this.tDSAmount);
 		entity.setTDSPaid(this.tDSPaid);
 		entity.setPftDaysBasis(this.pftDaysBasis);
-		entity.setWriteoffIns(this.writeoffIns);
-		entity.setWriteoffCrIns(this.writeoffCrIns);
 		entity.setWriteoffSchFee(this.writeoffSchFee);
 		entity.setFinCcy(this.finCcy);
 		entity.setPartialPaidAmt(this.partialPaidAmt);
@@ -793,14 +783,6 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 		this.pftDaysBasis = pftDaysBasis;
 	}
 
-	public BigDecimal getWriteoffCrIns() {
-		return writeoffCrIns;
-	}
-
-	public void setWriteoffCrIns(BigDecimal writeoffCrIns) {
-		this.writeoffCrIns = writeoffCrIns;
-	}
-
 	public BigDecimal getWriteoffSchFee() {
 		return writeoffSchFee;
 	}
@@ -815,38 +797,6 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 
 	public void setFinCcy(String finCcy) {
 		this.finCcy = finCcy;
-	}
-
-	public BigDecimal getInsuranceAmt() {
-		return insuranceAmt;
-	}
-
-	public void setInsuranceAmt(BigDecimal insuranceAmt) {
-		this.insuranceAmt = insuranceAmt;
-	}
-
-	public BigDecimal getInsSchd() {
-		return insSchd;
-	}
-
-	public void setInsSchd(BigDecimal insFeeSchd) {
-		this.insSchd = insFeeSchd;
-	}
-
-	public BigDecimal getSchdInsPaid() {
-		return schdInsPaid;
-	}
-
-	public void setSchdInsPaid(BigDecimal schdInsPaid) {
-		this.schdInsPaid = schdInsPaid;
-	}
-
-	public BigDecimal getWriteoffIns() {
-		return writeoffIns;
-	}
-
-	public void setWriteoffIns(BigDecimal writeoffIns) {
-		this.writeoffIns = writeoffIns;
 	}
 
 	public long getPresentmentId() {

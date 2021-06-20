@@ -63,7 +63,6 @@ public class AccountEventConstants {
 	public static final String ACCEVENT_COMPOUND = "COMPOUND";
 	public static final String ACCEVENT_DEFFRQ = "DEFFRQ";
 	public static final String ACCEVENT_DEFRPY = "DEFRPY";
-	public static final String ACCEVENT_DPRCIATE = "DPRCIATE";
 	public static final String ACCEVENT_EARLYPAY = "EARLYPAY";
 	public static final String ACCEVENT_EARLYSTL = "EARLYSTL";
 	public static final String ACCEVENT_GRACEEND = "GRACEEND";
@@ -78,7 +77,6 @@ public class AccountEventConstants {
 	public static final String ACCEVENT_MATURITY = "MATURITY";
 	public static final String ACCEVENT_MNTCMT = "MNTCMT";
 	public static final String ACCEVENT_NEWCMT = "NEWCMT";
-	public static final String ACCEVENT_PRGCLAIM = "PRGCLAIM";
 	public static final String ACCEVENT_PROVSN = "PROVSN";
 	public static final String ACCEVENT_PRVSN_MN = "PRVSN_MN";
 	public static final String ACCEVENT_PROVCHG = "PROVCHG";
@@ -98,11 +96,7 @@ public class AccountEventConstants {
 	public static final String ACCEVENT_LIABILITY = "LIBILITY";
 	public static final String ACCEVENT_NOCISSUANCE = "NOCISU";
 	public static final String ACCEVENT_TIMELYCLOSURE = "TIMECLS";
-	public static final String ACCEVENT_TAKAFULCLAIM = "TFCLAIM";
 	public static final String ACCEVENT_BRANCH_CLOSE = "BRNCLOSE";
-	public static final String THIRDPARTY_TRANSFER = "THIRDPT";
-	public static final String STUDY_DOCUMENTATION = "SDFAMZ";
-	public static final String FX_REVALUATION = "FXREVAL";
 	public static final String ACCEVENT_EMIHOLIDAY = "EMIDAY";
 	public static final String ACCEVENT_REAGING = "REAGING";
 	public static final String ACCEVENT_VAS_ACCRUAL = "VASACRUL";

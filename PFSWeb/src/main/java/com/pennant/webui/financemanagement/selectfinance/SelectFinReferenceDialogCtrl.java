@@ -389,7 +389,6 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		final Map<String, Object> map = new HashMap<String, Object>();
 
 		if (StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_LIABILITY)
-				|| StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_TAKAFULCLAIM)
 				|| StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_NOCISSUANCE)) {
 			// Fetch Total Finance Details Object
 			this.customerRow.setVisible(true);

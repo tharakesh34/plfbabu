@@ -175,11 +175,6 @@
 														<intbox id="planDeferCount" width="90px" maxlength="14" />
 													</hbox>
 												</row>
-												<row>
-													<label id="label_FinanceMainDialog_DepriFrq" value="${c:l('label_FinanceMainDialog_DepriFrq.value')}"
-														visible="false" />
-													<frequencybox id="depreciationFrq" visible="false" />
-												</row>
 												<row visible="false">
 													<label id="label_FinanceMainDialog_FinIsActive" value="${c:l('label_FinanceMainDialog_FinIsActive.value')}"
 														visible="false" />

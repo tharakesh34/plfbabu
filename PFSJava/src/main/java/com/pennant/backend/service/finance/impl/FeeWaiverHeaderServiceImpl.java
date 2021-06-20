@@ -1731,8 +1731,6 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		repayment.setFinRpyAmount(profitBal);
 		repayment.setFinSchdTdsPaid(tds);
 
-		repayment.setSchdInsPaid(BigDecimal.ZERO);
-
 		return repayment;
 	}
 

@@ -103,8 +103,6 @@
 													<space spacing="2px" />
 													<datebox id="writeoffDate" width="120px" />
 												</hbox>
-												<label id="label_FinWriteoffDialog_WrittenoffAcc" value="${c:l('label_FinWriteoffDialog_WrittenoffAcc.value')}" />
-												<accountSelectionBox id="writtenoffAcc" />
 											</row>
 										</rows>
 									</grid>
@@ -138,7 +136,6 @@
 													style="font-weight:bold;" />
 												<decimalbox id="label_FinWriteoffDialog_WOPriAmt" readonly="true" style="border:none;background-color:white;" />
 												<decimalbox id="label_FinWriteoffDialog_WOPftAmt" readonly="true" style="border:none;background-color:white;" />
-												<decimalbox id="label_FinWriteoffDialog_WOInsAmt" readonly="true" style="border:none;background-color:white;" />
 												<decimalbox id="label_FinWriteoffDialog_WOSchdFeeAmt" readonly="true"
 													style="border:none;background-color:white;" />
 											</row>
@@ -155,8 +152,6 @@
 													style="border:none;background-color:white;" />
 												<decimalbox id="label_FinWriteoffDialog_UnPaidPftAmt" readonly="true"
 													style="border:none;background-color:white;" />
-												<decimalbox id="label_FinWriteoffDialog_UnPaidInsAmt" readonly="true"
-													style="border:none;background-color:white;" />
 												<decimalbox id="label_FinWriteoffDialog_UnPaidSchFeeAmt" readonly="true"
 													style="border:none;background-color:white;" />
 											</row>
@@ -166,8 +161,6 @@
 												<decimalbox id="label_FinWriteoffDialog_OutStandPrincipal" readonly="true"
 													style="border:none;background-color:white;" />
 												<decimalbox id="label_FinWriteoffDialog_OutStandProfit" readonly="true"
-													style="border:none;background-color:white;" />
-												<decimalbox id="label_FinWriteoffDialog_OutStandIns" readonly="true"
 													style="border:none;background-color:white;" />
 												<decimalbox id="label_FinWriteoffDialog_OutStandSchFee" readonly="true"
 													style="border:none;background-color:white;" />
@@ -183,7 +176,6 @@
 													style="font-weight:bold;" />
 												<decimalbox id="writeoffPriAmt" maxlength="21" readonly="true" style="border:none;background-color:white;" />
 												<decimalbox id="writeoffPftAmt" maxlength="21" readonly="true" style="border:none;background-color:white;" />
-												<decimalbox id="writeoffInsAmt" maxlength="21" readonly="true" style="border:none;background-color:white;" />
 												<decimalbox id="writeoffSchFee" maxlength="21" readonly="true" style="border:none;background-color:white;" />
 											</row>
 											<row spans="2,1">
@@ -241,8 +233,6 @@
 										<listheader id="listheader_ScheduleDetailDialog_Principal" hflex="min" align="right" />
 										<listheader id="listheader_ScheduleDetailDialog_Total" hflex="min" align="right" />
 										<listheader id="listheader_ScheduleDetailDialog_ScheduleEndBal" hflex="min" align="right" />
-										<listheader id="listHeader_cashFlowEffect" hflex="min" align="right" visible="false" />
-										<listheader id="listHeader_vSProfit" hflex="min" align="right" visible="false" />
 										<listheader id="listHeader_orgPrincipalDue" hflex="min" align="right" visible="false" />
 									</listhead>
 								</listbox>

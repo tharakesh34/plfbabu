@@ -602,12 +602,8 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 					workflowCode = FinanceConstants.FINSER_EVENT_NOCISSUANCE;
 				} else if ("tab_TimelyClosure".equals(tab.getId())) {
 					moduleDefiner = FinanceConstants.FINSER_EVENT_TIMELYCLOSURE;
-					eventCodeRef = AccountEventConstants.ACCEVENT_TAKAFULCLAIM;
+					eventCodeRef = AccountEventConstants.ACCEVENT_TIMELYCLOSURE;
 					workflowCode = FinanceConstants.FINSER_EVENT_TIMELYCLOSURE;
-				} else if ("tab_TakafulClaim".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_INSCLAIM;
-					eventCodeRef = AccountEventConstants.ACCEVENT_TAKAFULCLAIM;
-					workflowCode = FinanceConstants.FINSER_EVENT_INSCLAIM;
 				}
 				return;
 			}

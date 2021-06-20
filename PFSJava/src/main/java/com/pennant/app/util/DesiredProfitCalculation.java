@@ -186,7 +186,6 @@ public class DesiredProfitCalculation {
 		int repayTerms = financeMain.getNumberOfTerms();
 		BigDecimal finAmount = financeMain.getFinAmount();
 		BigDecimal feeAmount = financeMain.getFeeChargeAmt();
-		BigDecimal insAmount = financeMain.getInsuranceAmt();
 		BigDecimal downpayment = financeMain.getDownPayment();
 		Date finStartDate = financeMain.getFinStartDate();
 		Date maturityDate = financeMain.getMaturityDate();
@@ -232,12 +231,12 @@ public class DesiredProfitCalculation {
 
 		//Grace Period desired profit calculation
 		BigDecimal gracePft = CalculationUtil.calInterest(finStartDate, gpEndDate,
-				finAmount.add(feeAmount).add(insAmount).subtract(downpayment), financeMain.getGrcProfitDaysBasis(),
+				finAmount.add(feeAmount).subtract(downpayment), financeMain.getGrcProfitDaysBasis(),
 				financeMain.getGrcPftRate());
 
 		//Repay Period desired profit calculation
 		BigDecimal rpyPft = CalculationUtil.calInterest(gpEndDate, maturityDate,
-				finAmount.add(feeAmount).add(insAmount).subtract(downpayment), financeMain.getProfitDaysBasis(),
+				finAmount.add(feeAmount).subtract(downpayment), financeMain.getProfitDaysBasis(),
 				financeMain.getRepayProfitRate());
 
 		gracePft = gracePft.setScale(0, RoundingMode.HALF_DOWN);

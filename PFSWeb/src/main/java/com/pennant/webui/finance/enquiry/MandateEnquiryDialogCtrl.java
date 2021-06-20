@@ -571,7 +571,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 				lc.setParent(item);
 
 				BigDecimal totAmt = finEnquiry.getFinCurrAssetValue()
-						.add(finEnquiry.getFeeChargeAmt().add(finEnquiry.getInsuranceAmt()));
+						.add(finEnquiry.getFeeChargeAmt());
 				lc = new Listcell(PennantAppUtil.amountFormate(totAmt, CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);

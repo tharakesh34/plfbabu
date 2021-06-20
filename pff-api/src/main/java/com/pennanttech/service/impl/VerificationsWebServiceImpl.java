@@ -1613,7 +1613,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 		List<CustomerAddres> coApplicantAddressList = new ArrayList<>();
 		List<CustomerAddres> primaryaddressList = new ArrayList<>();
 		List<Verification> verifications = new ArrayList<>();
-		List<JointAccountDetail> jountAccountDetailList = null;
+		List<JointAccountDetail> jointAccountDetailList = null;
 		FinanceDetail financeDetails = null;
 
 		String keyReference = verification.getKeyReference();
@@ -1685,9 +1685,9 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 				customerAddres.setLovDescCustShrtName(customer.getCustShrtName());
 			}
 
-			jountAccountDetailList = financeDetails.getJountAccountDetailList();
-			if (CollectionUtils.isNotEmpty((jountAccountDetailList))) {
-				for (JointAccountDetail jointAccountDetail : jountAccountDetailList) {
+			jointAccountDetailList = financeDetails.getJointAccountDetailList();
+			if (CollectionUtils.isNotEmpty((jointAccountDetailList))) {
+				for (JointAccountDetail jointAccountDetail : jointAccountDetailList) {
 					long custID = jointAccountDetail.getCustomerDetails().getCustID();
 					Customer coCustromer = jointAccountDetail.getCustomerDetails().getCustomer();
 					coApplicantAddressList = customerAddresDAO.getCustomerAddresByCustomer(custID, "");
@@ -1737,9 +1737,9 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			primaryaddressList.add(primarycustAddr);
 			response.setPrimaryCustomerAddress(primaryaddressList);
 
-			jountAccountDetailList = financeDetails.getJountAccountDetailList();
-			if (org.apache.commons.collections.CollectionUtils.isNotEmpty(jountAccountDetailList)) {
-				for (JointAccountDetail jointAccountDetail : jountAccountDetailList) {
+			jointAccountDetailList = financeDetails.getJointAccountDetailList();
+			if (org.apache.commons.collections.CollectionUtils.isNotEmpty(jointAccountDetailList)) {
+				for (JointAccountDetail jointAccountDetail : jointAccountDetailList) {
 					long custID = jointAccountDetail.getCustomerDetails().getCustID();
 					Customer coCustromer = jointAccountDetail.getCustomerDetails().getCustomer();
 					CustomerAddres priorityCustAddr = customerAddresDAO.getHighPriorityCustAddr(custID, "");
@@ -1848,8 +1848,8 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			//CoApplicant Documents
 			CustomerDetails cd = new CustomerDetails();
 			List<CustomerDocument> coApplicatnDocs = new ArrayList<>();
-			List<JointAccountDetail> jountAccountDetails = financeDetails.getJountAccountDetailList();
-			for (JointAccountDetail jointAccountDetail : jountAccountDetails) {
+			List<JointAccountDetail> jointAccountDetails = financeDetails.getJointAccountDetailList();
+			for (JointAccountDetail jointAccountDetail : jointAccountDetails) {
 				cd = jointAccountDetail.getCustomerDetails();
 				coApplicatnDocs = jointAccountDetail.getCustomerDetails().getCustomerDocumentsList();
 				if (cd != null && !coApplicatnDocs.isEmpty()) {
@@ -2230,9 +2230,9 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			}
 		}
 		// get joint account documents
-		List<JointAccountDetail> jountAccountDetailList = financeDetail.getJountAccountDetailList();
-		if (CollectionUtils.isNotEmpty(jountAccountDetailList)) {
-			for (JointAccountDetail jointAccountDetail : jountAccountDetailList) {
+		List<JointAccountDetail> jointAccountDetailList = financeDetail.getJointAccountDetailList();
+		if (CollectionUtils.isNotEmpty(jointAccountDetailList)) {
+			for (JointAccountDetail jointAccountDetail : jointAccountDetailList) {
 				coAppDocumentsList = jointAccountDetail.getCustomerDetails().getCustomerDocumentsList();
 			}
 		}

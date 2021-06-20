@@ -65,7 +65,6 @@ public class FinReceiptData implements Serializable {
 	private BigDecimal pendingODC = BigDecimal.ZERO;
 	private boolean sufficientRefund = true;
 	private BigDecimal maxRefundAmt = BigDecimal.ZERO;
-	private BigDecimal actInsRefundAmt = BigDecimal.ZERO;
 	private String eventCodeRef = "";
 	private String sourceId;
 	private BigDecimal totReceiptAmount = BigDecimal.ZERO;
@@ -139,7 +138,6 @@ public class FinReceiptData implements Serializable {
 		entity.setPendingODC(this.pendingODC);
 		entity.setSufficientRefund(this.sufficientRefund);
 		entity.setMaxRefundAmt(this.maxRefundAmt);
-		entity.setActInsRefundAmt(this.actInsRefundAmt);
 		entity.setEventCodeRef(this.eventCodeRef);
 		entity.setSourceId(this.sourceId);
 		entity.setTotReceiptAmount(this.totReceiptAmount);
@@ -247,14 +245,6 @@ public class FinReceiptData implements Serializable {
 
 	public void setMaxRefundAmt(BigDecimal maxRefundAmt) {
 		this.maxRefundAmt = maxRefundAmt;
-	}
-
-	public BigDecimal getActInsRefundAmt() {
-		return actInsRefundAmt;
-	}
-
-	public void setActInsRefundAmt(BigDecimal actInsRefundAmt) {
-		this.actInsRefundAmt = actInsRefundAmt;
 	}
 
 	public String getEventCodeRef() {

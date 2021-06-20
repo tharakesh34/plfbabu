@@ -48,7 +48,6 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
-import com.pennant.backend.model.rmtmasters.FinTypeAccount;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.ProductAsset;
 
@@ -72,10 +71,6 @@ public interface FinanceTypeService {
 	AuditHeader doReject(AuditHeader auditHeader);
 
 	FinanceType getFinanceTypeByFinType(String finType);
-
-	FinTypeAccount getFinTypeAccount();
-
-	FinTypeAccount getNewFinTypeAccount();
 
 	List<ProductAsset> getFinPurposeByAssetId(ArrayList<String> finAssetTypelist, String type);
 

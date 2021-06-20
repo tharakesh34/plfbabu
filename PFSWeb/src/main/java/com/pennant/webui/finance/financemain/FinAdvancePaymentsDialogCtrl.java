@@ -1119,7 +1119,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 					disbAmount = disbAmount.subtract(financeMain.getDownPayment());
 					disbAmount = disbAmount.subtract(financeMain.getDeductFeeDisb());
-					disbAmount = disbAmount.subtract(financeMain.getDeductInsDisb());
 					if (StringUtils.trimToEmpty(financeMain.getBpiTreatment())
 							.equals(FinanceConstants.BPI_DISBURSMENT)) {
 						disbAmount = disbAmount.subtract(financeMain.getBpiAmount());
@@ -1127,9 +1126,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 					}
 				} else if (curDisb.getDisbSeq() > 1) {
 					otherExp = otherExp.add(curDisb.getDeductFeeDisb());
-					otherExp = otherExp.add(curDisb.getDeductInsDisb());
 					disbAmount = disbAmount.subtract(curDisb.getDeductFeeDisb());
-					disbAmount = disbAmount.subtract(curDisb.getDeductInsDisb());
 				}
 			}
 		}
@@ -1149,19 +1146,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		} else {
 			advPayList = getPayOrderIssueDialogCtrl().getFinAdvancePaymentsList();
 		}
-
-		/*
-		 * BigDecimal otherExp = BigDecimal.ZERO; otherExp = otherExp.add(financeMain.getDeductFeeDisb());
-		 * 
-		 * disbAmount = disbAmount.subtract(financeMain.getDownPayment()); disbAmount =
-		 * disbAmount.subtract(financeMain.getDeductFeeDisb()); disbAmount =
-		 * disbAmount.subtract(financeMain.getDeductInsDisb()); if
-		 * (StringUtils.trimToEmpty(financeMain.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
-		 * disbAmount = disbAmount.subtract(financeMain.getBpiAmount()); otherExp =
-		 * otherExp.add(financeMain.getBpiAmount()); }
-		 */
-
-		//disbAmount = disbAmount.subtract(financeMain.getAdvanceEMI());
 
 		if (advPayList != null && !advPayList.isEmpty()) {
 			for (FinAdvancePayments advPay : advPayList) {
@@ -3141,8 +3125,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			}
 
 			//Co-applicant details from Add disbursement menu where co Applicants tab not available
-			List<JointAccountDetail> jountAccountDetailList = financeDetail.getJountAccountDetailList();
-			getCoAppList(custCIFs, jountAccountDetailList);
+			List<JointAccountDetail> jointAccountDetailList = financeDetail.getJointAccountDetailList();
+			getCoAppList(custCIFs, jointAccountDetailList);
 
 			//Get Co-applicant CIF's in side the loan queue from Co Applicants tab
 			JointAccountDetailDialogCtrl financeJointAccountDetailDialogCtrl = financeMainDialogCtrl
@@ -3169,11 +3153,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	/**
 	 * 
 	 * @param custCIFs
-	 * @param jountAccountDetailList
+	 * @param jointAccountDetailList
 	 */
-	private void getCoAppList(ArrayList<String> custCIFs, List<JointAccountDetail> jountAccountDetailList) {
-		if (!CollectionUtils.isEmpty(jountAccountDetailList)) {
-			for (JointAccountDetail accountDetail : jountAccountDetailList) {
+	private void getCoAppList(ArrayList<String> custCIFs, List<JointAccountDetail> jointAccountDetailList) {
+		if (!CollectionUtils.isEmpty(jointAccountDetailList)) {
+			for (JointAccountDetail accountDetail : jointAccountDetailList) {
 				custCIFs.add(accountDetail.getCustCIF());
 			}
 		}

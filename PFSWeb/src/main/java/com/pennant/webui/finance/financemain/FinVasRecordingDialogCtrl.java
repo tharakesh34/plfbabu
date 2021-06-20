@@ -447,8 +447,8 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.financeDetail = financeDetail;
 	}
 
-	public void addCoApplicants(List<JointAccountDetail> jountAccountDetails) {
-		this.jointAccountDetails = jountAccountDetails;
+	public void addCoApplicants(List<JointAccountDetail> jointAccountDetails) {
+		this.jointAccountDetails = jointAccountDetails;
 	}
 
 	public List<JointAccountDetail> getJointAccountDetails() {

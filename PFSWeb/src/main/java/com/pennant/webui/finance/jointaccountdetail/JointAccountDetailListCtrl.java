@@ -59,7 +59,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.service.finance.JointAccountDetailService;
-import com.pennant.webui.finance.jountaccountdetail.model.JountAccountDetailListModelItemRenderer;
+import com.pennant.webui.finance.jointaccountdetail.model.JointAccountDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -78,8 +78,8 @@ public class JointAccountDetailListCtrl extends GFCBaseListCtrl<JointAccountDeta
 	protected Listheader listheader_CustCIF;
 	protected Listheader listheader_RepayAccountId;
 
-	protected Button button_JountAccountDetailList_NewJountAccountDetail;
-	protected Button button_JountAccountDetailList_JountAccountDetailSearch;
+	protected Button button_JointAccountDetailList_NewJointAccountDetail;
+	protected Button button_JointAccountDetailList_JointAccountDetailSearch;
 
 	private transient JointAccountDetailService jointAccountDetailService;
 
@@ -103,12 +103,12 @@ public class JointAccountDetailListCtrl extends GFCBaseListCtrl<JointAccountDeta
 		// Set the page level components.
 		setPageComponents(window_JointAccountDetailList, borderLayout_JointAccountDetailList, listBoxJointAccountDetail,
 				pagingJointAccountDetailList);
-		setItemRender(new JountAccountDetailListModelItemRenderer());
+		setItemRender(new JointAccountDetailListModelItemRenderer());
 
 		// Register buttons and fields.
-		registerButton(button_JountAccountDetailList_NewJountAccountDetail,
+		registerButton(button_JointAccountDetailList_NewJointAccountDetail,
 				"button_JointAccountDetailList_NewJointAccountDetail", true);
-		registerButton(button_JountAccountDetailList_JountAccountDetailSearch);
+		registerButton(button_JointAccountDetailList_JointAccountDetailSearch);
 
 		registerField("custCIF", listheader_CustCIF);
 		registerField("repayAccountId", listheader_RepayAccountId);
@@ -175,7 +175,7 @@ public class JointAccountDetailListCtrl extends GFCBaseListCtrl<JointAccountDeta
 
 		// Get the selected entity.
 		long id = (long) selectedItem.getAttribute("id");
-		JointAccountDetail aJointAccountDetail = jointAccountDetailService.getJountAccountDetailById(id);
+		JointAccountDetail aJointAccountDetail = jointAccountDetailService.getJointAccountDetailById(id);
 
 		if (aJointAccountDetail == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -209,8 +209,8 @@ public class JointAccountDetailListCtrl extends GFCBaseListCtrl<JointAccountDeta
 		logger.debug("Entering");
 
 		Map<String, Object> arg = getDefaultArguments();
-		arg.put("jountAccountDetail", aJointAccountDetail);
-		arg.put("jountAccountDetailListCtrl", this);
+		arg.put("jointAccountDetail", aJointAccountDetail);
+		arg.put("jointAccountDetailListCtrl", this);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/JointAccountDetail/JointAccountDetailDialog.zul", null,

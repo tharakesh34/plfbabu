@@ -233,7 +233,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 			}
 
 			//Prepare JointApplicants Sheets
-			List<JointAccountDetail> coapplicantsList = financeDetail.getJountAccountDetailList();
+			List<JointAccountDetail> coapplicantsList = financeDetail.getJointAccountDetailList();
 			for (JointAccountDetail jointAccountDetail : coapplicantsList) {
 				prepareCoApplicantsSheets(jointAccountDetail.getCustomerDetails(), book);
 			}

@@ -238,7 +238,7 @@ public class FinStatementController extends SummaryDetailService {
 
 				stmtResponse.setCustomer(financeDetail.getCustomerDetails());
 				financeDetail.setCustomerDetails(null);
-				financeDetail.setJountAccountDetailList(null);
+				financeDetail.setJointAccountDetailList(null);
 				financeDetail.setCollateralAssignmentList(null);
 				financeDetail.getFinScheduleData().setVasRecordingList(null);
 				finDetailList.add(financeDetail);
@@ -702,8 +702,8 @@ public class FinStatementController extends SummaryDetailService {
 							? StringUtils.trimToEmpty(closureReport.getCustName())
 							: StringUtils.trimToEmpty(salutation) + " "
 									+ StringUtils.trimToEmpty(closureReport.getCustName());
-					if (CollectionUtils.isNotEmpty(finDetails.getJountAccountDetailList())) {
-						for (JointAccountDetail jointAccountDetail : finDetails.getJountAccountDetailList()) {
+					if (CollectionUtils.isNotEmpty(finDetails.getJointAccountDetailList())) {
+						for (JointAccountDetail jointAccountDetail : finDetails.getJointAccountDetailList()) {
 							if (StringUtils.isNotEmpty(nameString)) {
 								nameString = nameString + "\n";
 							}

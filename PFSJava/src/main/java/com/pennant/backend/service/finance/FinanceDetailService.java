@@ -155,8 +155,6 @@ public interface FinanceDetailService {
 
 	FinanceSummary getFinanceProfitDetails(String finRef);
 
-	FinanceMain fetchConvertedAmounts(FinanceMain financeMain, boolean calAllAmounts);
-
 	FinanceProfitDetail getFinProfitDetailsById(String finReference);
 
 	boolean checkFirstTaskOwnerAccess(Set<String> userroles, String event, String moduleName);

@@ -71,7 +71,7 @@ import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.finance.JountAccountDetailDAO;
+import com.pennant.backend.dao.finance.JointAccountDetailDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
 import com.pennant.backend.dao.pennydrop.PennyDropDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
@@ -138,7 +138,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	private PennyDropDAO pennyDropDAO;
 	@Autowired(required = false)
 	private transient BankAccountValidationService bankAccountValidationService;
-	private JountAccountDetailDAO jountAccountDetailDAO;
+	private JointAccountDetailDAO jointAccountDetailDAO;
 	@Autowired
 	private FinFeeDetailDAO finFeeDetailDAO;
 
@@ -344,9 +344,9 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			issueHeader.setvASRecordings(vasRecordingDAO.getVASRecordingsByLinkRef(finMian.getFinReference(), ""));
 		}
 		//Getting the JoinAccount Details
-		if (getJountAccountDetailDAO() != null) {
+		if (getJointAccountDetailDAO() != null) {
 			issueHeader.setJointAccountDetails(
-					getJountAccountDetailDAO().getJountAccountDetailByFinRef(id, TableType.MAIN_TAB.getSuffix()));
+					getJointAccountDetailDAO().getJointAccountDetailByFinRef(id, TableType.MAIN_TAB.getSuffix()));
 		}
 		logger.debug("Leaving");
 		return issueHeader;
@@ -1081,12 +1081,12 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		this.paymentsProcessService = paymentsProcessService;
 	}
 
-	public JountAccountDetailDAO getJountAccountDetailDAO() {
-		return jountAccountDetailDAO;
+	public JointAccountDetailDAO getJointAccountDetailDAO() {
+		return jointAccountDetailDAO;
 	}
 
-	public void setJountAccountDetailDAO(JountAccountDetailDAO jountAccountDetailDAO) {
-		this.jountAccountDetailDAO = jountAccountDetailDAO;
+	public void setJointAccountDetailDAO(JointAccountDetailDAO jointAccountDetailDAO) {
+		this.jointAccountDetailDAO = jointAccountDetailDAO;
 	}
 
 }

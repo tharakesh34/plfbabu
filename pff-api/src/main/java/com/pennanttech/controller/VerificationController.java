@@ -160,7 +160,7 @@ public class VerificationController {
 		}
 		List<Verification> verificationsList = verification.getVerifications();
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
-		List<JointAccountDetail> jountAccountDetailList = financeDetail.getJountAccountDetailList();
+		List<JointAccountDetail> jointAccountDetailList = financeDetail.getJointAccountDetailList();
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		verification.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		verification.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
@@ -171,8 +171,8 @@ public class VerificationController {
 		verification.setCreatedBy(userDetails.getUserId());
 
 		for (Verification vrf : verificationsList) {
-			if (CollectionUtils.isNotEmpty(jountAccountDetailList)) {
-				for (JointAccountDetail jointAccountDetail : jountAccountDetailList) {
+			if (CollectionUtils.isNotEmpty(jointAccountDetailList)) {
+				for (JointAccountDetail jointAccountDetail : jointAccountDetailList) {
 					if (jointAccountDetail.getCustCIF().equals(vrf.getCif())) {
 						vrf.setReference(jointAccountDetail.getCustCIF());
 						vrf.setCustomerName(jointAccountDetail.getLovDescCIFName());
@@ -777,9 +777,9 @@ public class VerificationController {
 			}
 		}
 		//get joint account documents
-		List<JointAccountDetail> jountAccountDetailList = financeDetail.getJountAccountDetailList();
-		if (CollectionUtils.isNotEmpty(jountAccountDetailList)) {
-			for (JointAccountDetail jointAccountDetail : jountAccountDetailList) {
+		List<JointAccountDetail> jointAccountDetailList = financeDetail.getJointAccountDetailList();
+		if (CollectionUtils.isNotEmpty(jointAccountDetailList)) {
+			for (JointAccountDetail jointAccountDetail : jointAccountDetailList) {
 				coAppDocumentsList = jointAccountDetail.getCustomerDetails().getCustomerDocumentsList();
 			}
 		}

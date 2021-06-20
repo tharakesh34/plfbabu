@@ -19,7 +19,6 @@
 	<field name="CustAddrCity" class="java.lang.String"/>
 	<field name="CustAddrProvince" class="java.lang.String"/>
 	<field name="CustAddrCountry" class="java.lang.String"/>
-	<field name="RepayAccountId" class="java.lang.String"/>
 	<field name="FinPurpose" class="java.lang.String"/>
 	<field name="Finstartdate" class="java.lang.String"/>
 	<field name="FinAmount" class="java.math.BigDecimal"/>

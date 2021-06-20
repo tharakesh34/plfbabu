@@ -1555,29 +1555,6 @@ public class FinanceDataValidation {
 			}
 		}
 
-		if (StringUtils.equals(finMain.getFinRepayMethod(), FinanceConstants.REPAYMTH_AUTO)) {
-			if (StringUtils.isBlank(finMain.getRepayAccountId())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "repayAccountId";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-			}
-		}
-
-		if (financeType.isFinDepreciationReq()) {
-			if (StringUtils.isBlank(finMain.getDepreciationFrq())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "depreciationFrq";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-			} else {
-				ErrorDetail errorDetail = FrequencyUtil.validateFrequency(finMain.getDepreciationFrq());
-				if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getCode())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = finMain.getDepreciationFrq();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90207", valueParm)));
-				}
-			}
-		}
-
 		String dsaCodeRef = finMain.getDsaCodeReference();
 
 		if (StringUtils.isNotBlank(dsaCodeRef)) {
@@ -1933,7 +1910,7 @@ public class FinanceDataValidation {
 		}
 
 		// validate coApplicants details
-		if (financeDetail.getJountAccountDetailList() != null && !financeDetail.getJountAccountDetailList().isEmpty()) {
+		if (financeDetail.getJointAccountDetailList() != null && !financeDetail.getJointAccountDetailList().isEmpty()) {
 			errorDetails = jointAccountDetailsValidation(financeDetail);
 			if (!errorDetails.isEmpty()) {
 				return errorDetails;
@@ -2381,9 +2358,9 @@ public class FinanceDataValidation {
 
 	private List<ErrorDetail> jointAccountDetailsValidation(FinanceDetail financeDetail) {
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
-		List<JointAccountDetail> jountAccountDetails = financeDetail.getJountAccountDetailList();
-		if (jountAccountDetails != null) {
-			for (JointAccountDetail jointAccDetail : jountAccountDetails) {
+		List<JointAccountDetail> jointAccountDetails = financeDetail.getJointAccountDetailList();
+		if (jointAccountDetails != null) {
+			for (JointAccountDetail jointAccDetail : jointAccountDetails) {
 				if (jointAccDetail.isIncludeRepay()) {
 					if (StringUtils.isBlank(jointAccDetail.getRepayAccountId())) {
 						String[] valueParm = new String[2];
@@ -2433,7 +2410,7 @@ public class FinanceDataValidation {
 				}
 				int duplicateSeqCount = 0;
 				int duplicateCifCount = 0;
-				for (JointAccountDetail detail : jountAccountDetails) {
+				for (JointAccountDetail detail : jointAccountDetails) {
 					if (jointAccDetail.getSequence() == detail.getSequence() && detail.getSequence() != 0) {
 						duplicateSeqCount++;
 					}
@@ -5890,9 +5867,9 @@ public class FinanceDataValidation {
 					}
 				} else if (StringUtils.equals(finTaxDetail.getApplicableFor(),
 						PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT)) {
-					List<JointAccountDetail> jountAccountDetails = financeDetail.getJountAccountDetailList();
-					if (jountAccountDetails != null && !jountAccountDetails.isEmpty()) {
-						for (JointAccountDetail coApplicant : jountAccountDetails) {
+					List<JointAccountDetail> jointAccountDetails = financeDetail.getJointAccountDetailList();
+					if (jointAccountDetails != null && !jointAccountDetails.isEmpty()) {
+						for (JointAccountDetail coApplicant : jointAccountDetails) {
 							if (StringUtils.equals(finTaxDetail.getCustCIF(), coApplicant.getCustCIF())) {
 								isValidCustCif = true;
 								break;
@@ -6251,7 +6228,7 @@ public class FinanceDataValidation {
 			// Set Customer Data to check the eligibility
 			detail.setCustomerEligibilityCheck(getFinanceDetailService().getCustEligibilityDetail(customer,
 					detail.getFinScheduleData().getFinanceType().getFinCategory(), financeMain.getFinReference(),
-					financeMain.getFinCcy(), curFinRepayAmt, months, null, detail.getJountAccountDetailList()));
+					financeMain.getFinCcy(), curFinRepayAmt, months, null, detail.getJointAccountDetailList()));
 
 			detail.getCustomerEligibilityCheck().setReqFinAmount(financeMain.getFinAmount());
 			detail.getCustomerEligibilityCheck()

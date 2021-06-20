@@ -431,7 +431,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.searchObj.addField("FinAmount");
 		this.searchObj.addField("DownPayment");
 		this.searchObj.addField("FeeChargeAmt");
-		this.searchObj.addField("InsuranceAmt");
 		this.searchObj.addField("LovDescCustCIF");
 		this.searchObj.addField("LovDescCustShrtName");
 		this.searchObj.addField("RecordStatus");

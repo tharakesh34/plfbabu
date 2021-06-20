@@ -37,13 +37,6 @@ public class FinRepayQueue {
 	private BigDecimal schdFeePayNow = BigDecimal.ZERO;
 	private BigDecimal schdFeeWaivedNow = BigDecimal.ZERO;
 
-	// Insurance Amount
-	private BigDecimal schdIns = BigDecimal.ZERO;
-	private BigDecimal schdInsPaid = BigDecimal.ZERO;
-	private BigDecimal schdInsBal = BigDecimal.ZERO;
-	private BigDecimal schdInsPayNow = BigDecimal.ZERO;
-	private BigDecimal schdInsWaivedNow = BigDecimal.ZERO;
-
 	// External Fields Used for EOD process
 	private BigDecimal refundAmount = BigDecimal.ZERO;
 	private boolean rcdNotExist = false;
@@ -295,38 +288,6 @@ public class FinRepayQueue {
 		this.schdFeePayNow = schdFeePayNow;
 	}
 
-	public BigDecimal getSchdIns() {
-		return schdIns;
-	}
-
-	public void setSchdIns(BigDecimal schdIns) {
-		this.schdIns = schdIns;
-	}
-
-	public BigDecimal getSchdInsPaid() {
-		return schdInsPaid;
-	}
-
-	public void setSchdInsPaid(BigDecimal schdInsPaid) {
-		this.schdInsPaid = schdInsPaid;
-	}
-
-	public BigDecimal getSchdInsBal() {
-		return schdInsBal;
-	}
-
-	public void setSchdInsBal(BigDecimal schdInsBal) {
-		this.schdInsBal = schdInsBal;
-	}
-
-	public BigDecimal getSchdInsPayNow() {
-		return schdInsPayNow;
-	}
-
-	public void setSchdInsPayNow(BigDecimal schdInsPayNow) {
-		this.schdInsPayNow = schdInsPayNow;
-	}
-
 	public BigDecimal getAcrTillLBD() {
 		return acrTillLBD;
 	}
@@ -437,14 +398,6 @@ public class FinRepayQueue {
 
 	public void setSchdFeeWaivedNow(BigDecimal schdFeeWaivedNow) {
 		this.schdFeeWaivedNow = schdFeeWaivedNow;
-	}
-
-	public BigDecimal getSchdInsWaivedNow() {
-		return schdInsWaivedNow;
-	}
-
-	public void setSchdInsWaivedNow(BigDecimal schdInsWaivedNow) {
-		this.schdInsWaivedNow = schdInsWaivedNow;
 	}
 
 	public BigDecimal getLatePayPftWaivedNow() {

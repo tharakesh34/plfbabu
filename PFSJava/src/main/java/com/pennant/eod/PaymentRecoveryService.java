@@ -79,7 +79,6 @@ public class PaymentRecoveryService {
 			detail.setPaymentAmount(dataSet.getPostAmount());
 			detail.setDebitCurrency(dataSet.getAcCcy());
 			detail.setPrimaryDebitAccount(dataSet.getAccount());
-			detail.setSecondaryDebitAccounts(StringUtils.trimToEmpty(dataSet.getSecondaryAccounts()));
 			// Credit details
 			detail.setCreditAccount(otherleg.getAccount());
 			detail.setCreditCurrency(otherleg.getAcCcy());

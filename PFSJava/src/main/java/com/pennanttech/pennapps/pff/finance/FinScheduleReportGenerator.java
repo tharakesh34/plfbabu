@@ -333,7 +333,7 @@ public class FinScheduleReportGenerator {
 				data.setSchdFee(formatAmt(curSchd.getFeeSchd(), false, false));
 				data.setSchdPri(formatAmt(curSchd.getPrincipalSchd(), false, false));
 				data.setTotalAmount(formatAmt(
-						curSchd.getRepayAmount().add(curSchd.getFeeSchd()).add(curSchd.getInsSchd()), false, false));
+						curSchd.getRepayAmount().add(curSchd.getFeeSchd()), false, false));
 				data.setEndBal(formatAmt(curSchd.getClosingBalance(), false, false));
 				data.setLimitDrop(formatAmt(limitIncreaseAmt, false, false));
 				data.setTotalLimit(formatAmt(odAvailAmt, false, false));
@@ -428,7 +428,7 @@ public class FinScheduleReportGenerator {
 						}
 						data.setEndBal(formatAmt(
 								curSchd.getClosingBalance().subtract(curSchd.getFeeChargeAmt())
-										.subtract(curSchd.getInsuranceAmt()).subtract(curSchd.getDisbAmount())
+										.subtract(curSchd.getDisbAmount())
 										.add(curTotDisbAmt).add(curSchd.getDownPaymentAmount()).add(advEMi),
 								false, false));
 						data.setLimitDrop(formatAmt(limitIncreaseAmt, false, false));
@@ -466,8 +466,8 @@ public class FinScheduleReportGenerator {
 					data.setSchdFee("");
 					data.setSchdPri("");
 					data.setTotalAmount(formatAmt(curSchd.getDownPaymentAmount(), false, false));
-					data.setEndBal(formatAmt(curSchd.getClosingBalance().subtract(curSchd.getFeeChargeAmt())
-							.subtract(curSchd.getInsuranceAmt()), false, false));
+					data.setEndBal(
+							formatAmt(curSchd.getClosingBalance().subtract(curSchd.getFeeChargeAmt()), false, false));
 					data.setLimitDrop(formatAmt(limitIncreaseAmt, false, false));
 					data.setTotalLimit(formatAmt(odAvailAmt, false, false));
 					BigDecimal availLimit = odAvailAmt.subtract(curSchd.getClosingBalance());
@@ -607,7 +607,7 @@ public class FinScheduleReportGenerator {
 					data.setSchdFee(formatAmt(curSchd.getFeeSchd(), false, false));
 					data.setSchdPri(formatAmt(curSchd.getPrincipalSchd(), false, false));
 					data.setTotalAmount(
-							formatAmt(curSchd.getRepayAmount().add(curSchd.getFeeSchd()).add(curSchd.getInsSchd()),
+							formatAmt(curSchd.getRepayAmount().add(curSchd.getFeeSchd()),
 									false, false));
 					data.setEndBal(formatAmt(closingBal, false, false));
 					data.setLimitDrop(formatAmt(limitIncreaseAmt, false, false));

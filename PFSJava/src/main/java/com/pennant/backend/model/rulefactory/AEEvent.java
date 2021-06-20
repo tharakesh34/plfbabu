@@ -50,7 +50,6 @@ public class AEEvent implements Serializable {
 	private String branch;
 	private String ccy;
 	private String accountingEvent;
-	private String disbAccountID;
 	private String postingUserBranch;
 	private String entityCode;
 
@@ -248,14 +247,6 @@ public class AEEvent implements Serializable {
 
 	public void setSchdDate(Date schdDate) {
 		this.schdDate = schdDate;
-	}
-
-	public String getDisbAccountID() {
-		return disbAccountID;
-	}
-
-	public void setDisbAccountID(String disbAccountID) {
-		this.disbAccountID = disbAccountID;
 	}
 
 	public String getVasPostAgainst() {

@@ -427,8 +427,6 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 					String finPurpose = financeDetail.getFinScheduleData().getFinanceMain().getFinPurpose();
 					String finLimitRef = financeDetail.getFinScheduleData().getFinanceMain().getFinLimitRef();
 					String finCommitmentRef = financeDetail.getFinScheduleData().getFinanceMain().getFinCommitmentRef();
-					String repayAccountId = financeDetail.getFinScheduleData().getFinanceMain().getRepayAccountId();
-					String depreciationFrq = financeDetail.getFinScheduleData().getFinanceMain().getDepreciationFrq();
 					String dsaCode = financeDetail.getFinScheduleData().getFinanceMain().getDsaCode();
 					String salesDepartment = financeDetail.getFinScheduleData().getFinanceMain().getSalesDepartment();
 					String dmaCode = financeDetail.getFinScheduleData().getFinanceMain().getDmaCode();
@@ -441,8 +439,6 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 					wifFinanceDetail.getFinScheduleData().getFinanceMain().setFinPurpose(finPurpose);
 					wifFinanceDetail.getFinScheduleData().getFinanceMain().setFinLimitRef(finLimitRef);
 					wifFinanceDetail.getFinScheduleData().getFinanceMain().setFinCommitmentRef(finCommitmentRef);
-					wifFinanceDetail.getFinScheduleData().getFinanceMain().setRepayAccountId(repayAccountId);
-					wifFinanceDetail.getFinScheduleData().getFinanceMain().setDepreciationFrq(depreciationFrq);
 					wifFinanceDetail.getFinScheduleData().getFinanceMain().setDsaCode(dsaCode);
 					wifFinanceDetail.getFinScheduleData().getFinanceMain().setSalesDepartment(salesDepartment);
 					wifFinanceDetail.getFinScheduleData().getFinanceMain().setDmaCode(dmaCode);
@@ -764,7 +760,7 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		response.setFinScheduleData(null);
 		response.setAdvancePaymentsList(null);
 		response.setMandate(null);
-		response.setJountAccountDetailList(null);
+		response.setJointAccountDetailList(null);
 		response.setGurantorsDetailList(null);
 		response.setDocumentDetailsList(null);
 		response.setCovenantTypeList(null);

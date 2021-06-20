@@ -155,8 +155,6 @@ public interface FinanceMainDAO {
 
 	FinanceMain getFinanceMainForRpyCancel(String id);
 
-	void updateFinAccounts(String finReference, String finAccount);
-
 	void updateFinancePriority();
 
 	void updateApprovalStatus(String finReference, String approvalStatus);
@@ -181,15 +179,11 @@ public interface FinanceMainDAO {
 
 	FinanceMain getFinanceMainByRef(String reference, String type, boolean isRejectFinance);
 
-	FinanceMain getFinanceMainForManagerCheque(String finReference, String type);
-
 	void updateRepaymentAmount(String finReference, BigDecimal repaymentAmount);
 
 	void updateStatus(String finReference, String status, String statusReason);
 
 	String getApprovedRepayMethod(String finReference, String type);
-
-	String getCurrencyByAccountNo(String accountNo);
 
 	void updateMaturity(String finReference, String closingStatus, boolean finIsActive, Date date);
 

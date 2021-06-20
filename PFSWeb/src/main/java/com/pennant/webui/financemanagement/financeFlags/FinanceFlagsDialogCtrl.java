@@ -1047,8 +1047,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 			this.finFlags_otherExp.setValue(PennantAppUtil.formateAmount(financeMain.getFeeChargeAmt(), ccyFormatter));
 			this.finFlags_totalCost.setValue(PennantAppUtil.formateAmount(financeMain.getFinAmount()
 					.subtract(financeMain.getDownPaySupl())
-					.add(financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO : financeMain.getFeeChargeAmt())
-					.add(financeMain.getInsuranceAmt() == null ? BigDecimal.ZERO : financeMain.getInsuranceAmt()),
+					.add(financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO : financeMain.getFeeChargeAmt()),
 					ccyFormatter));
 			this.finFlags_totalPft.setValue(PennantAppUtil.formateAmount(financeMain.getTotalProfit(), ccyFormatter));
 			this.finFlags_contractPrice
@@ -1056,8 +1055,6 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 							financeMain.getFinAmount().subtract(financeMain.getDownPaySupl())
 									.add(financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO
 											: financeMain.getFeeChargeAmt())
-									.add(financeMain.getInsuranceAmt() == null ? BigDecimal.ZERO
-											: financeMain.getInsuranceAmt())
 									.add(financeMain.getTotalProfit()),
 							ccyFormatter));
 

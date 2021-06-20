@@ -852,11 +852,6 @@
 													<checkbox id="finPftUnChanged" />
 												</hbox>
 											</row>
-											<row>
-												<label id="label_FinanceTypeDialog_FinDepreciationFrq" value="${c:l('label_CDFinanceTypeDialog_FinDepreciationFrq.value')}" />
-												<frequencybox id="finDepreciationFrq" />
-
-											</row>
 											<row visible="true">
 												<label id="label_FinanceTypeDialog_AlwBpiTreatment" value="${c:l('label_FinanceTypeDialog_AlwBpiTreatment.value')}" />
 												<hbox>
@@ -1054,11 +1049,6 @@
 											<hbox>
 												<space spacing="2px" />
 												<checkbox id="finIsAlwMD" checked="false" />
-											</hbox>
-											<label id="label_FinanceTypeDialog_FinDepreciationReq" value="${c:l('label_CDFinanceTypeDialog_FinDepreciationReq.value')}" />
-											<hbox id="hbox_FinDepreciationReq">
-												<space spacing="2px" />
-												<checkbox id="finDepreciationReq" />
 											</hbox>
 										</row>
 

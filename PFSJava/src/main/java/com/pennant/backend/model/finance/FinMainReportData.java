@@ -1,6 +1,7 @@
 package com.pennant.backend.model.finance;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -29,18 +30,12 @@ public class FinMainReportData implements Serializable {
 	private String finContractDate;
 	private String finAmount;
 	private String finRepaymentAmount;
-	private String disbAccountId;
-	private String repayAccountId;
-	private String finAccount;
-	private String finCustPftAccount;
 	private String downPayBank;
-	private String downPayAccount;
 	private String downPaySupl;
 	private String defferments;
 	private String planDeferCount;
 	private String finPurpose;
 	private String finCommitRef;
-	private String depreciationFrq;
 	private String overdueDays;
 	private String finSuspense;
 
@@ -248,52 +243,12 @@ public class FinMainReportData implements Serializable {
 		this.finRepaymentAmount = finRepaymentAmount;
 	}
 
-	public String getDisbAccountId() {
-		return disbAccountId;
-	}
-
-	public void setDisbAccountId(String disbAccountId) {
-		this.disbAccountId = disbAccountId;
-	}
-
-	public String getRepayAccountId() {
-		return repayAccountId;
-	}
-
-	public void setRepayAccountId(String repayAccountId) {
-		this.repayAccountId = repayAccountId;
-	}
-
-	public String getFinAccount() {
-		return finAccount;
-	}
-
-	public void setFinAccount(String finAccount) {
-		this.finAccount = finAccount;
-	}
-
-	public String getFinCustPftAccount() {
-		return finCustPftAccount;
-	}
-
-	public void setFinCustPftAccount(String finCustPftAccount) {
-		this.finCustPftAccount = finCustPftAccount;
-	}
-
 	public String getDownPayBank() {
 		return downPayBank;
 	}
 
 	public void setDownPayBank(String downPayBank) {
 		this.downPayBank = downPayBank;
-	}
-
-	public String getDownPayAccount() {
-		return downPayAccount;
-	}
-
-	public void setDownPayAccount(String downPayAccount) {
-		this.downPayAccount = downPayAccount;
 	}
 
 	public String getDownPaySupl() {
@@ -334,14 +289,6 @@ public class FinMainReportData implements Serializable {
 
 	public void setFinCommitRef(String finCommitRef) {
 		this.finCommitRef = finCommitRef;
-	}
-
-	public String getDepreciationFrq() {
-		return depreciationFrq;
-	}
-
-	public void setDepreciationFrq(String depreciationFrq) {
-		this.depreciationFrq = depreciationFrq;
 	}
 
 	public String getAllowGrace() {
@@ -1042,13 +989,8 @@ public class FinMainReportData implements Serializable {
 		reportData.setFinAmount(PennantApplicationUtil.amountFormate(financeMain.getFinAmount(), ccyFormatter));
 		reportData.setFinRepaymentAmount(PennantApplicationUtil
 				.amountFormate(financeMain.getFinAmount().subtract(financeMain.getFinRepaymentAmount()), ccyFormatter));
-		reportData.setDisbAccountId(PennantApplicationUtil.formatAccountNumber(financeMain.getDisbAccountId()));
-		reportData.setRepayAccountId(PennantApplicationUtil.formatAccountNumber(financeMain.getRepayAccountId()));
-		reportData.setFinAccount(PennantApplicationUtil.formatAccountNumber(financeMain.getFinAccount()));
-		reportData.setFinCustPftAccount(PennantApplicationUtil.formatAccountNumber(financeMain.getFinCustPftAccount()));
 		reportData.setDownPayBank(PennantApplicationUtil.amountFormate(financeMain.getDownPayBank(), ccyFormatter));
-		reportData.setDownPayAccount(PennantApplicationUtil.formatAccountNumber(financeMain.getDownPayAccount()));
-		if (StringUtils.isNotBlank(financeMain.getDownPayAccount())) {
+		if (financeMain.getDownPayBank().compareTo(BigDecimal.ZERO)>0) {
 			reportData.setApplyDownPay("TRUE");
 		}
 		reportData.setDownPaySupl(PennantApplicationUtil.amountFormate(financeMain.getDownPaySupl(), ccyFormatter));
@@ -1060,8 +1002,6 @@ public class FinMainReportData implements Serializable {
 		reportData.setFinPurpose(
 				financeMain.getFinPurpose() + "-" + StringUtils.trimToEmpty(financeMain.getLovDescFinPurposeName()));
 		reportData.setFinCommitRef(StringUtils.trimToEmpty(financeMain.getFinCommitmentRef()));
-		reportData.setDepreciationFrq(
-				FrequencyUtil.getFrequencyDetail(financeMain.getDepreciationFrq()).getFrequencyDescription());
 		reportData.setOverdueDays(financeMain.getFinStatus() + "/" + financeSummary.getFinCurODDays());
 
 		if (finSchData.isFinPftSuspended()) {

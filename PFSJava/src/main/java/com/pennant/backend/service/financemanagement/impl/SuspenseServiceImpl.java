@@ -188,11 +188,7 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 						.getCustomerDetailsById(scheduleData.getFinanceMain().getCustID(), true, "_View"));
 			}
 
-			//Finance Agreement Details	
-			//=======================================
 			String finType = scheduleData.getFinanceType().getFinType();
-			financeDetail.setAggrementList(
-					getAgreementDetailService().getAggrementDetailList(finType, procEdtEvent, userRole));
 
 			// Finance Check List Details 
 			//=======================================

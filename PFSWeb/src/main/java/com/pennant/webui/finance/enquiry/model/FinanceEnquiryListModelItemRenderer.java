@@ -55,9 +55,6 @@ public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<Fin
 		if (enquiry.getFeeChargeAmt() != null && enquiry.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0) {
 			finAmount = finAmount.add(enquiry.getFeeChargeAmt());
 		}
-		if (enquiry.getInsuranceAmt() != null && enquiry.getInsuranceAmt().compareTo(BigDecimal.ZERO) > 0) {
-			finAmount = finAmount.add(enquiry.getInsuranceAmt());
-		}
 
 		lc = new Listcell(PennantAppUtil.amountFormate(finAmount, CurrencyUtil.getFormat(enquiry.getFinCcy())));
 		lc.setStyle("text-align:right");
@@ -70,11 +67,11 @@ public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<Fin
 			} else {
 				if (ImplementationConstants.ALW_DOWNPAY_IN_LOANENQ_AND_SOA) {
 					curFinAmountValue = enquiry.getFinCurrAssetValue().add(enquiry.getFeeChargeAmt())
-							.add(enquiry.getInsuranceAmt()).add(enquiry.getTotalCpz())
+							.add(enquiry.getTotalCpz())
 							.subtract(enquiry.getFinRepaymentAmount()).subtract(enquiry.getSvAmount());
 				} else {
 					curFinAmountValue = enquiry.getFinCurrAssetValue().add(enquiry.getFeeChargeAmt())
-							.add(enquiry.getInsuranceAmt()).add(enquiry.getTotalCpz())
+							.add(enquiry.getTotalCpz())
 							.subtract(enquiry.getDownPayment()).subtract(enquiry.getFinRepaymentAmount())
 							.subtract(enquiry.getSvAmount());
 				}

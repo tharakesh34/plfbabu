@@ -168,11 +168,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			scheduleData
 					.setFinFeeDetailList(getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView"));
 
-			// Finance Agreement Details
-			// =======================================
 			String finType = scheduleData.getFinanceType().getFinType();
-			financeDetail.setAggrementList(
-					getAgreementDetailService().getAggrementDetailList(finType, procEdtEvent, userRole));
 
 			// Finance Check List Details
 			// =======================================

@@ -24,7 +24,6 @@
 	<field name="custCIF" class="java.lang.String"/>
 	<field name="finStartDate" class="java.lang.String"/>
 	<field name="finAmount" class="java.lang.String"/>
-	<field name="disbAccountId" class="java.lang.String"/>
 	<field name="finAccount" class="java.lang.String"/>
 	<field name="downPayBank" class="java.lang.String"/>
 	<field name="downPaySupl" class="java.lang.String"/>
@@ -35,10 +34,6 @@
 	<field name="finBranch" class="java.lang.String"/>
 	<field name="finContractDate" class="java.lang.String"/>
 	<field name="finRepaymentAmount" class="java.lang.String"/>
-	<field name="repayAccountId" class="java.lang.String"/>
-	<field name="finCustPftAccount" class="java.lang.String"/>
-	<field name="downPayAccount" class="java.lang.String"/>
-	<field name="depreciationFrq" class="java.lang.String"/>
 	<field name="finCommitRef" class="java.lang.String"/>
 	<field name="allowGrace" class="java.lang.String"/>
 	<field name="grcRateBasis" class="java.lang.String"/>
@@ -513,88 +508,6 @@
 					</textField>
 				</frame>
 				<frame>
-					<reportElement uuid="cd6bba85-4b5c-4f4d-9905-3ed8033ba2e0" x="0" y="59" width="802" height="15" isRemoveLineWhenBlank="true"/>
-					<staticText>
-						<reportElement uuid="64f6ddb7-17f1-4de3-902f-84901940f813" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="160" y="0" width="5" height="15"/>
-						<textElement>
-							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
-						</textElement>
-						<text><![CDATA[:]]></text>
-					</staticText>
-					<staticText>
-						<reportElement uuid="acd4ba44-7ba6-4a0e-80a2-254f55ede611" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="20" y="0" width="135" height="15"/>
-						<textElement>
-							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
-						</textElement>
-						<text><![CDATA[Disbursement Account Id]]></text>
-					</staticText>
-					<staticText>
-						<reportElement uuid="d7b87733-4838-4fc9-a9e4-55ca153e457c" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="555" y="0" width="5" height="15"/>
-						<textElement>
-							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
-						</textElement>
-						<text><![CDATA[:]]></text>
-					</staticText>
-					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-						<reportElement uuid="3c5da4d4-193e-4f31-b6a9-968f587f6948" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="170" y="0" width="230" height="15"/>
-						<textElement/>
-						<textFieldExpression><![CDATA[$F{disbAccountId}]]></textFieldExpression>
-					</textField>
-					<staticText>
-						<reportElement uuid="75123bb3-b110-4ee0-8b74-aa90c2a6dea3" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="415" y="0" width="135" height="15"/>
-						<textElement>
-							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
-						</textElement>
-						<text><![CDATA[Repayement Account ID]]></text>
-					</staticText>
-					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-						<reportElement uuid="99244b58-77c1-4259-b3d2-4cda53c770c4" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="565" y="0" width="230" height="15"/>
-						<textElement/>
-						<textFieldExpression><![CDATA[$F{repayAccountId}]]></textFieldExpression>
-					</textField>
-				</frame>
-				<frame>
-					<reportElement uuid="cd6bba85-4b5c-4f4d-9905-3ed8033ba2e0" x="0" y="74" width="802" height="15" isRemoveLineWhenBlank="true"/>
-					<staticText>
-						<reportElement uuid="64f6ddb7-17f1-4de3-902f-84901940f813" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="160" y="0" width="5" height="15"/>
-						<textElement>
-							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
-						</textElement>
-						<text><![CDATA[:]]></text>
-					</staticText>
-					<staticText>
-						<reportElement uuid="acd4ba44-7ba6-4a0e-80a2-254f55ede611" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="415" y="0" width="135" height="15"/>
-						<textElement>
-							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
-						</textElement>
-						<text><![CDATA[Customer Profit Account]]></text>
-					</staticText>
-					<staticText>
-						<reportElement uuid="d7b87733-4838-4fc9-a9e4-55ca153e457c" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="555" y="0" width="5" height="15"/>
-						<textElement>
-							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
-						</textElement>
-						<text><![CDATA[:]]></text>
-					</staticText>
-					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-						<reportElement uuid="3c5da4d4-193e-4f31-b6a9-968f587f6948" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="565" y="0" width="230" height="15"/>
-						<textElement/>
-						<textFieldExpression><![CDATA[$F{finCustPftAccount}]]></textFieldExpression>
-					</textField>
-					<staticText>
-						<reportElement uuid="21556c5b-e14d-4f55-95f4-d1366195afdb" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="20" y="0" width="135" height="15"/>
-						<textElement>
-							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
-						</textElement>
-						<text><![CDATA[Finance Account Id]]></text>
-					</staticText>
-					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-						<reportElement uuid="ef75ec25-ac87-446e-91c7-d70dfec1383b" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="170" y="0" width="230" height="15"/>
-						<textElement textAlignment="Left"/>
-						<textFieldExpression><![CDATA[$F{finAccount}]]></textFieldExpression>
-					</textField>
-				</frame>
-				<frame>
 					<reportElement uuid="cd6bba85-4b5c-4f4d-9905-3ed8033ba2e0" x="0" y="89" width="802" height="15" isRemoveLineWhenBlank="true"/>
 					<staticText>
 						<reportElement uuid="21556c5b-e14d-4f55-95f4-d1366195afdb" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="20" y="0" width="135" height="15"/>
@@ -619,11 +532,6 @@
 						<reportElement uuid="fe18b750-4238-42c6-b0ee-3ef9d7f9ff06" x="415" y="0" width="380" height="15" isRemoveLineWhenBlank="true">
 							<printWhenExpression><![CDATA[$F{applyDownPay}.equals("TRUE")]]></printWhenExpression>
 						</reportElement>
-						<textField isStretchWithOverflow="true" pattern="###0.000" isBlankWhenNull="true">
-							<reportElement uuid="3c5da4d4-193e-4f31-b6a9-968f587f6948" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="150" y="0" width="230" height="15"/>
-							<textElement textAlignment="Left"/>
-							<textFieldExpression><![CDATA[$F{downPayAccount}]]></textFieldExpression>
-						</textField>
 						<staticText>
 							<reportElement uuid="acd4ba44-7ba6-4a0e-80a2-254f55ede611" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="135" height="15"/>
 							<textElement>
@@ -763,11 +671,6 @@
 							</textElement>
 							<text><![CDATA[:]]></text>
 						</staticText>
-						<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-							<reportElement uuid="ef75ec25-ac87-446e-91c7-d70dfec1383b" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="170" y="0" width="135" height="15"/>
-							<textElement textAlignment="Right"/>
-							<textFieldExpression><![CDATA[$F{depreciationFrq}]]></textFieldExpression>
-						</textField>
 					</frame>
 				</frame>
 				<frame>

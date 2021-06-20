@@ -150,12 +150,6 @@
 													<currencyBox id="finCurrentAssetValue" />
 												</row>
 												<row>
-													<label id="label_FinanceMainDialog_DisbAcctId" value="${c:l('label_FinanceMainDialog_DisbAcctId.value')}" />
-													<accountSelectionBox id="disbAcctId" />
-													<label id="label_FinanceMainDialog_RepayAcctId" value="${c:l('label_FinanceMainDialog_RepayAcctId.value')}" />
-													<accountSelectionBox id="repayAcctId" />
-												</row>
-												<row>
 													<label id="label_FinanceMainDialog_TDSApplicable" value="${c:l('label_FinanceMainDialog_TDSApplicable.value')}" />
 													<hbox id="hbox_tdsApplicable">
 														<space spacing="2px" />
@@ -167,15 +161,9 @@
 														<combobox id="finRepayMethod" width="200px" />
 													</hbox>
 												</row>
-												<row id="row_FinCancelAc">
-													<label id="label_FinanceMainDialog_FinCancelAc" value="${c:l('label_FinanceMainDialog_FinCancelAc.value')}" />
-													<accountSelectionBox id="finCancelAc" />
-												</row>
 												<row id="row_downPayBank" visible="false">
 													<label id="label_FinanceMainDialog_DownPayBank" value="${c:l('label_FinanceMainDialog_DownPayBank.value')}" />
 													<currencyBox id="downPayBank" />
-													<label id="label_FinanceMainDialog_DownPayAccount" value="${c:l('label_FinanceMainDialog_DownPayAccount.value')}" />
-													<accountSelectionBox id="downPayAccount" />
 												</row>
 												<row id="row_downPaySupl" visible="false">
 													<label id="label_FinanceMainDialog_DownPaySupl" value="${c:l('label_FinanceMainDialog_DownPaySupl.value')}" />
@@ -212,9 +200,6 @@
 													<label id="label_FinanceMainDialog_FinLimitRef" value="${c:l('label_FinanceMainDialog_FinLimitRef.value')}"
 														visible="false" />
 													<extendedcombobox id="finLimitRef" visible="false" />
-													<label id="label_FinanceMainDialog_DepriFrq" value="${c:l('label_FinanceMainDialog_DepriFrq.value')}"
-														visible="false" />
-													<frequencybox id="depreciationFrq" visible="false" />
 												</row>
 												<row visible="false">
 													<label id="label_FinanceMainDialog_FinIsActive" value="${c:l('label_FinanceMainDialog_FinIsActive.value')}"

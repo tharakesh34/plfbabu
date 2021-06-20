@@ -176,8 +176,8 @@ public class DeviationExecutionCtrl {
 		// *** Co-applicant's details. ***
 		CustomerDetails customer;
 
-		if (CollectionUtils.isNotEmpty(aFinanceDetail.getJountAccountDetailList())) {
-			for (JointAccountDetail coApplicant : aFinanceDetail.getJountAccountDetailList()) {
+		if (CollectionUtils.isNotEmpty(aFinanceDetail.getJointAccountDetailList())) {
+			for (JointAccountDetail coApplicant : aFinanceDetail.getJointAccountDetailList()) {
 				CustomerDetails custDeatils = coApplicant.getCustomerDetails();
 				if (custDeatils != null) {
 					CustomerDetails custdet = setCoappExtendedfields(custDeatils);

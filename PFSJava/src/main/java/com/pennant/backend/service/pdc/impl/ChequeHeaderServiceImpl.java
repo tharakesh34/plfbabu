@@ -74,7 +74,7 @@ import com.pennant.backend.dao.customermasters.CustomerPhoneNumberDAO;
 import com.pennant.backend.dao.customermasters.CustomerRatingDAO;
 import com.pennant.backend.dao.customermasters.DirectorDetailDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.finance.JountAccountDetailDAO;
+import com.pennant.backend.dao.finance.JointAccountDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
@@ -123,7 +123,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 	private ChequeDetailDAO chequeDetailDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceTypeDAO financeTypeDAO;
-	private JountAccountDetailDAO jountAccountDetailDAO;
+	private JointAccountDetailDAO jointAccountDetailDAO;
 	private BankBranchDAO bankBranchDAO;
 	private CustomerDAO customerDAO;
 	private PrimaryAccountDAO primaryAccountDAO;
@@ -182,8 +182,8 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		this.financeTypeDAO = financeTypeDAO;
 	}
 
-	public void setJountAccountDetailDAO(JountAccountDetailDAO jountAccountDetailDAO) {
-		this.jountAccountDetailDAO = jountAccountDetailDAO;
+	public void setJointAccountDetailDAO(JointAccountDetailDAO jointAccountDetailDAO) {
+		this.jointAccountDetailDAO = jointAccountDetailDAO;
 	}
 
 	/**
@@ -838,7 +838,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		scheduleData.setFinanceMain(financeMain);
 		scheduleData.setFinanceType(financeType);
 		financeDetail.setCustomerDetails(getCustomerDetailsbyID(financeMain.getCustID(), true, "_View"));
-		financeDetail.setJountAccountDetailList(jountAccountDetailDAO.getJountAccountDetailByFinnRef(finReference));
+		financeDetail.setJointAccountDetailList(jointAccountDetailDAO.getJointAccountDetailByFinRef(finReference));
 		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}

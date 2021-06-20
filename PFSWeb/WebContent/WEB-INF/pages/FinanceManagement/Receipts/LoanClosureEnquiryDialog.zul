@@ -338,8 +338,6 @@
 										<listheader id="listheader_AvailableLimit" hflex="min" align="right" visible="false" />
 										<listheader id="listheader_ODLimit" hflex="min" align="right" visible="false" />
 										<listheader visible="false" id="listHeader_planEMIHDates" hflex="min" align="center" />
-										<listheader id="listHeader_cashFlowEffect" hflex="min" align="right" visible="false" />
-										<listheader id="listHeader_vSProfit" hflex="min" align="right" visible="false" />
 										<listheader id="listHeader_orgPrincipalDue" hflex="min" align="right" visible="false" />
 									</listhead>
 								</listbox>

@@ -20,18 +20,14 @@ public class FinanceWriteoff implements Serializable {
 	private BigDecimal unPaidSchdPft = BigDecimal.ZERO;
 	private BigDecimal penaltyAmount = BigDecimal.ZERO;
 	private BigDecimal provisionedAmount = BigDecimal.ZERO;
-	private String writtenoffAcc;
 
-	private BigDecimal writtenoffIns = BigDecimal.ZERO;
 	private BigDecimal writtenoffSchFee = BigDecimal.ZERO;
 
-	private BigDecimal unpaidIns = BigDecimal.ZERO;
 	private BigDecimal unpaidSchFee = BigDecimal.ZERO;
 
 	private Date writeoffDate;
 	private BigDecimal writeoffPrincipal = BigDecimal.ZERO;
 	private BigDecimal writeoffProfit = BigDecimal.ZERO;
-	private BigDecimal writeoffIns = BigDecimal.ZERO;
 	private BigDecimal writeoffSchFee = BigDecimal.ZERO;
 	private BigDecimal adjAmount = BigDecimal.ZERO;
 	private String remarks;
@@ -173,44 +169,12 @@ public class FinanceWriteoff implements Serializable {
 		this.seqNo = seqNo;
 	}
 
-	public String getWrittenoffAcc() {
-		return writtenoffAcc;
-	}
-
-	public void setWrittenoffAcc(String writtenoffAcc) {
-		this.writtenoffAcc = writtenoffAcc;
-	}
-
-	public BigDecimal getWrittenoffIns() {
-		return writtenoffIns;
-	}
-
-	public void setWrittenoffIns(BigDecimal writtenoffIns) {
-		this.writtenoffIns = writtenoffIns;
-	}
-
 	public BigDecimal getWrittenoffSchFee() {
 		return writtenoffSchFee;
 	}
 
 	public void setWrittenoffSchFee(BigDecimal writtenoffSchFee) {
 		this.writtenoffSchFee = writtenoffSchFee;
-	}
-
-	public BigDecimal getUnpaidIns() {
-		return unpaidIns;
-	}
-
-	public void setUnpaidIns(BigDecimal unpaidIns) {
-		this.unpaidIns = unpaidIns;
-	}
-
-	public BigDecimal getWriteoffIns() {
-		return writeoffIns;
-	}
-
-	public void setWriteoffIns(BigDecimal writeoffIns) {
-		this.writeoffIns = writeoffIns;
 	}
 
 	public BigDecimal getWriteoffSchFee() {

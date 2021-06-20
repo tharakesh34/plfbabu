@@ -203,10 +203,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 						getCustomerDetailsService().getCustomerDetailsById(financeMain.getCustID(), true, "_View"));
 			}
 
-			//Finance Agreement Details	
-			//=======================================
-			financeDetail.setAggrementList(getAgreementDetailService().getAggrementDetailList(financeType.getFinType(),
-					procEdtEvent, userRole));
 			// Finance Check List Details 
 			//=======================================
 			getCheckListDetailService().setFinanceCheckListDetails(repayData.getFinanceDetail(),
@@ -369,7 +365,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		String finReference = financeMain.getFinReference();
 		Date curBDay = DateUtility.getAppDate();
 
-		String actualRepayAcc = financeMain.getRepayAccountId();
 		long serviceUID = Long.MIN_VALUE;
 
 		if (repayData.getFinanceDetail().getFinScheduleData().getFinServiceInstructions().isEmpty()) {
@@ -404,20 +399,17 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		boolean partialPay = false;
 		FinanceProfitDetail profitDetail = null;
 		AEAmountCodes aeAmountCodes = null;
-		String finAccount = null;
 
 		List<FinRepayQueue> finRepayQueues = new ArrayList<FinRepayQueue>();
 
 		boolean emptyRepayInstructions = scheduleData.getRepayInstructions() == null ? true : false;
 
 		if (!financeMain.isWorkflow()) {
-			financeMain.setRepayAccountId(finRepayHeader.getRepayAccountId());
-
 			profitDetail = getProfitDetailsDAO().getFinProfitDetailsById(finReference);
 
 			List<RepayScheduleDetail> repaySchdList = repayData.getRepayScheduleDetails();
 			List<Object> returnList = processRepaymentPostings(financeMain, scheduleData.getFinanceScheduleDetails(),
-					profitDetail, repaySchdList, finRepayHeader.getInsRefund(), repayData.getEventCodeRef(),
+					profitDetail, repaySchdList, repayData.getEventCodeRef(),
 					scheduleData.getFeeRules(), scheduleData.getFinanceType().getFinDivision());
 
 			if (!(Boolean) returnList.get(0)) {
@@ -428,13 +420,11 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			linkedTranId = (Long) returnList.get(1);
 			partialPay = (Boolean) returnList.get(2);
 			aeAmountCodes = (AEAmountCodes) returnList.get(3);
-			finAccount = (String) returnList.get(4);
 			finRepayQueues = (List<FinRepayQueue>) returnList.get(5);
 		}
 
 		// Finance Main Details Save And Update
 		//=======================================
-		financeMain.setRepayAccountId(actualRepayAcc);
 		if (financeMain.isNew()) {
 			getFinanceMainDAO().save(financeMain, tableType, false);
 
@@ -518,8 +508,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 		//Process Updations For Postings
 		if (!financeMain.isWorkflow()) {
-			financeMain.setRepayAccountId(finRepayHeader.getRepayAccountId());
-
 			getRepayPostingUtil().UpdateScreenPaymentsProcess(financeMain, scheduleData.getFinanceScheduleDetails(),
 					profitDetail, finRepayQueues, linkedTranId, partialPay, aeAmountCodes);
 
@@ -530,12 +518,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				rpySchd.setLinkedTranId(linkedTranId);
 			}
 			getFinanceRepaymentsDAO().saveRpySchdList(repayData.getRepayScheduleDetails(), tableType);
-		}
-
-		//Reset Repay Account ID On Finance Main for Correcting Audit Data
-		financeMain.setRepayAccountId(actualRepayAcc);
-		if (finAccount != null) {
-			financeMain.setFinAccount(finAccount);
 		}
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
@@ -705,10 +687,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		FinScheduleData scheduleData = repayData.getFinanceDetail().getFinScheduleData();
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 		String finReference = financeMain.getFinReference();
-		String actualRepayAcc = financeMain.getRepayAccountId();
 		FinRepayHeader finRepayHeader = repayData.getFinRepayHeader();
 		AEAmountCodes aeAmountCodes = null;
-		String finAccount = null;
 
 		financeMain.setRcdMaintainSts("");
 		financeMain.setRoleCode("");
@@ -729,12 +709,11 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 		//Repayments Posting Process Execution
 		//=====================================
-		financeMain.setRepayAccountId(finRepayHeader.getRepayAccountId());
 		profitDetail = getProfitDetailsDAO().getFinProfitDetailsById(finReference);
 
 		List<RepayScheduleDetail> repaySchdList = repayData.getRepayScheduleDetails();
 		List<Object> returnList = processRepaymentPostings(financeMain, scheduleData.getFinanceScheduleDetails(),
-				profitDetail, repaySchdList, finRepayHeader.getInsRefund(), repayData.getEventCodeRef(),
+				profitDetail, repaySchdList, repayData.getEventCodeRef(),
 				scheduleData.getFeeRules(), scheduleData.getFinanceType().getFinDivision());
 
 		if (!(Boolean) returnList.get(0)) {
@@ -745,7 +724,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		linkedTranId = (Long) returnList.get(1);
 		partialPay = (Boolean) returnList.get(2);
 		aeAmountCodes = (AEAmountCodes) returnList.get(3);
-		finAccount = (String) returnList.get(4);
 		finRepayQueues = (List<FinRepayQueue>) returnList.get(5);
 
 		tranType = PennantConstants.TRAN_UPD;
@@ -780,10 +758,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		//Finance Main Updation
 		//=======================================
 		financeMain = (FinanceMain) returnList.get(3);
-		financeMain.setRepayAccountId(actualRepayAcc);
-		if (finAccount != null) {
-			financeMain.setFinAccount(finAccount);
-		}
 		getFinanceMainDAO().update(financeMain, TableType.MAIN_TAB, false);
 
 		// ScheduleDetails delete and save
@@ -852,7 +826,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 			RepayData tempRepayData = (RepayData) aAuditHeader.getAuditDetail().getModelData();
 			FinanceMain tempfinanceMain = tempRepayData.getFinanceDetail().getFinScheduleData().getFinanceMain();
-			financeMain.setRepayAccountId(actualRepayAcc);
 			auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
 					tempfinanceMain.getBefImage(), tempfinanceMain));
 
@@ -939,14 +912,13 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	 * @param financeMain
 	 * @param scheduleDetails
 	 * @param repaySchdList
-	 * @param insRefund
 	 * @return
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
 	 */
 	public List<Object> processRepaymentPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, BigDecimal insRefund,
+			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, 
 			String eventCodeRef, List<FeeRule> feeRuleList, String finDivision)
 			throws IllegalAccessException, InterfaceException, InvocationTargetException {
 		logger.debug("Entering");
@@ -975,7 +947,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			BigDecimal totRpyTds = BigDecimal.ZERO;
 			BigDecimal totRefund = BigDecimal.ZERO;
 			BigDecimal totSchdFee = BigDecimal.ZERO;
-			BigDecimal totSchdIns = BigDecimal.ZERO;
 
 			List<FinRepayQueue> finRepayQueues = new ArrayList<FinRepayQueue>();
 			Map<String, BigDecimal> totalsMap = new HashMap<String, BigDecimal>();
@@ -1005,7 +976,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 				//Fee Details
 				totSchdFee = totSchdFee.add(repaySchdList.get(i).getSchdFeePayNow());
-				totSchdIns = totSchdIns.add(repaySchdList.get(i).getSchdInsPayNow());
 
 				finRepayQueues.add(finRepayQueue);
 
@@ -1017,10 +987,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			totalsMap.put("totRpyTds", totRpyTds);
 			totalsMap.put("totRefund", totRefund);
 			//Schedule Early Settlement Insurance Refund
-			totalsMap.put("INSREFUND", insRefund);
 
 			//Fee Details
-			totalsMap.put("insPay", totSchdIns);
 			totalsMap.put("schFeePay", totSchdFee);
 
 			//Repayments Process For Schedule Repay List			
@@ -1082,12 +1050,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		finRepayQueue.setSchdFeeBal(rsd.getSchdFeeBal());
 		finRepayQueue.setSchdFeePayNow(rsd.getSchdFeePayNow());
 		finRepayQueue.setSchdFeePaid(rsd.getSchdFeePaid());
-
-		//	2. Schedule Insurance Amount
-		finRepayQueue.setSchdIns(rsd.getSchdIns());
-		finRepayQueue.setSchdInsBal(rsd.getSchdInsBal());
-		finRepayQueue.setSchdInsPayNow(rsd.getSchdInsPayNow());
-		finRepayQueue.setSchdInsPaid(rsd.getSchdInsPaid());
 
 		logger.debug("Leaving");
 		return finRepayQueue;
@@ -1515,8 +1477,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 					subHeadRule
 							.setWAVFEE(insAmt.getWaiverAmount() == null ? BigDecimal.ZERO : insAmt.getWaiverAmount());
 					subHeadRule.setPAIDFEE(insAmt.getPaidAmount() == null ? BigDecimal.ZERO : insAmt.getPaidAmount());
-					repayData.setActInsRefundAmt(subHeadRule.getCALFEE().subtract(subHeadRule.getWAVFEE())
-							.subtract(subHeadRule.getPAIDFEE()));
 				}
 
 			} catch (IllegalAccessException e) {
@@ -1540,14 +1500,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 									? financeMain.getMaturityDate() : repayData.getRepayMain().getRefundCalStartDate(),
 							true);
 			subHeadRule.setRemTenure(months);
-
-			Rule insRefundRule = getRuleService().getApprovedRuleById("INSREFND", RuleConstants.MODULE_REFUND,
-					RuleConstants.EVENT_REFUND);
-			if (insRefundRule != null) {
-				BigDecimal refundResult = (BigDecimal) RuleExecutionUtil.executeRule(insRefundRule.getSQLRule(),
-						subHeadRule.getDeclaredFieldValues(), financeMain.getFinCcy(), RuleReturnType.DECIMAL);
-				repayData.getRepayMain().setInsRefund(refundResult);
-			}
 		}
 
 		logger.debug("Leaving");

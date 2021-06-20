@@ -93,11 +93,6 @@ public class WIFFinanceMainListModelItemRenderer implements ListitemRenderer<Fin
 			lc.setParent(item);
 		}
 
-		lc = new Listcell(
-				PennantAppUtil.amountFormate(wIFFinanceMain.getFinCurrAssetValue().add(wIFFinanceMain.getFeeChargeAmt())
-						.add(wIFFinanceMain.getInsuranceAmt()), CurrencyUtil.getFormat(wIFFinanceMain.getFinCcy())));
-		lc.setStyle("text-align:right;");
-		lc.setParent(item);
 		lc = new Listcell(wIFFinanceMain.getFinCcy());
 		lc.setParent(item);
 		lc = new Listcell(wIFFinanceMain.getScheduleMethod());

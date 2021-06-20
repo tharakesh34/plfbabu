@@ -37,10 +37,6 @@ public class FinApprovalStsInquiryListModelItemRenderer
 		if (enquiry.getFeeChargeAmt() != null && enquiry.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0) {
 			finAmount = finAmount.add(enquiry.getFeeChargeAmt());
 		}
-		/*
-		 * if(enquiry.getInsuranceAmt() != null && enquiry.getInsuranceAmt().compareTo(BigDecimal.ZERO) > 0){ finAmount
-		 * = finAmount.add(enquiry.getInsuranceAmt()); }
-		 */
 		if (enquiry.getDownPayment() != null && enquiry.getDownPayment().compareTo(BigDecimal.ZERO) > 0) {
 			finAmount = finAmount.subtract(enquiry.getDownPayment());
 		}

@@ -2380,7 +2380,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		if (StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, getVASRecording().getPostingAgainst())) {
 			List<JointAccountDetail> jointAccountDetails = getJointAccountDetailService()
-					.getJountAccountDetailByFinRef(getVASRecording().getPrimaryLinkRef(), "_AView");
+					.getJointAccountDetailByFinRef(getVASRecording().getPrimaryLinkRef(), "_AView");
 			if (CollectionUtils.isNotEmpty(jointAccountDetails)) {
 				for (JointAccountDetail jointAccountDetail : jointAccountDetails) {
 					CustomerDetails customerDetails = getCustomerDetailsService()
@@ -2388,7 +2388,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 					formatCustomerData(customerDetails.getCustomer());
 					jointAccountDetail.setCustomerDetails(customerDetails);
 				}
-				financeDetail.setJountAccountDetailList(jointAccountDetails);
+				financeDetail.setJointAccountDetailList(jointAccountDetails);
 			}
 			FinScheduleData finScheduleData = new FinScheduleData();
 			FinanceMain financeMain = getFinanceDetailService().getFinanceMain(getVASRecording().getPrimaryLinkRef(),
@@ -2400,7 +2400,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			FinScheduleData finScheduleData = new FinScheduleData();
 			finScheduleData.setFinanceMain(financeMain);
 			financeDetail.setFinScheduleData(finScheduleData);
-			financeDetail.setJountAccountDetailList(new ArrayList<>());
+			financeDetail.setJointAccountDetailList(new ArrayList<>());
 		}
 		financeDetail.setCustomerDetails(details);
 		setClonedFinanceDetail(financeDetail);
@@ -2563,7 +2563,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				customerExist = true;
 			}
 
-			List<JointAccountDetail> accountDetailList = getClonedFinanceDetail().getJountAccountDetailList();
+			List<JointAccountDetail> accountDetailList = getClonedFinanceDetail().getJointAccountDetailList();
 
 			if (CollectionUtils.isNotEmpty(accountDetailList)) {
 				for (JointAccountDetail jointAccountDetail : accountDetailList) {

@@ -627,8 +627,6 @@ public class FinScheduleListItemRenderer implements Serializable {
 							endBal = getFinanceScheduleDetail().getClosingBalance()
 									.subtract(getFinanceScheduleDetail().getFeeChargeAmt() == null ? BigDecimal.ZERO
 											: getFinanceScheduleDetail().getFeeChargeAmt())
-									.subtract(getFinanceScheduleDetail().getInsuranceAmt() == null ? BigDecimal.ZERO
-											: getFinanceScheduleDetail().getInsuranceAmt())
 									.subtract(getFinanceScheduleDetail().getDisbAmount()).add(curTotDisbAmt);
 
 							if (AdvanceType.AE.name().equals(aFinanceMain.getAdvType())) {
@@ -659,8 +657,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 					isGrcBaseRate = false;
 					isRpyBaseRate = false;
 
-					BigDecimal chargeAmt = getFinanceScheduleDetail().getFeeChargeAmt()
-							.add(getFinanceScheduleDetail().getInsuranceAmt());
+					BigDecimal chargeAmt = getFinanceScheduleDetail().getFeeChargeAmt();
 
 					reb = new rpsEnquiryBean();
 					reb.setCount(count);
@@ -694,7 +691,6 @@ public class FinScheduleListItemRenderer implements Serializable {
 				if (finFeeDetailList != null && getFinanceScheduleDetail().getFeeChargeAmt() != null
 						&& getFinanceScheduleDetail().getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0) {
 					BigDecimal feeChargeAmt = getFinanceScheduleDetail().getFeeChargeAmt();
-					BigDecimal insuranceAmt = getFinanceScheduleDetail().getInsuranceAmt();
 
 					for (FinFeeDetail finFeeDetail : finFeeDetailList) {
 
@@ -714,7 +710,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 								reb.setTotalAdvAmount(actFeeCharge);
 								reb.setTotalAmount(actFeeCharge);
 								reb.setEndBal(getFinanceScheduleDetail().getClosingBalance().subtract(feeChargeAmt)
-										.subtract(insuranceAmt).add(actFeeCharge));
+										.add(actFeeCharge));
 								setRPSEnquiryBean(reb, isEditable, isRate, showZeroEndBal, isGrcBaseRate,
 										isRpyBaseRate);
 								reb.setEditable(false);
@@ -879,20 +875,18 @@ public class FinScheduleListItemRenderer implements Serializable {
 				setFinanceRepayments(repayDetailsMap.get(getFinanceScheduleDetail().getSchDate()));
 				for (int i = 0; i < getFinanceRepayments().size(); i++) {
 					FinanceRepayments rpy = getFinanceRepayments().get(i);
-					BigDecimal totPaid = rpy.getFinSchdPftPaid().add(rpy.getFinSchdPriPaid()).add(rpy.getSchdFeePaid())
-							.add(rpy.getSchdInsPaid());
+					BigDecimal totPaid = rpy.getFinSchdPftPaid().add(rpy.getFinSchdPriPaid()).add(rpy.getSchdFeePaid());
 					if (totPaid.compareTo(BigDecimal.ZERO) > 0) {
 						reb = new rpsEnquiryBean();
 						reb.setCount(count);
 						reb.setEventName(Labels.getLabel("label_listcell_AmountPaid.label",
 								new String[] { DateUtility.formatToLongDate(rpy.getFinPostDate()) }));
-						reb.setMiscAmount(rpy.getSchdInsPaid());
 						reb.setFeeAmount(rpy.getSchdFeePaid());
 						reb.setTdsAmount(rpy.getFinSchdTdsPaid());
 						reb.setSchdlPft(rpy.getFinSchdPftPaid());
 						reb.setCpzAmount(rpy.getFinSchdPriPaid());
-						reb.setTotalAmount(rpy.getFinSchdPftPaid().add(rpy.getFinSchdPriPaid())
-								.add(rpy.getSchdFeePaid()).add(rpy.getSchdInsPaid()));
+						reb.setTotalAmount(
+								rpy.getFinSchdPftPaid().add(rpy.getFinSchdPriPaid()).add(rpy.getSchdFeePaid()));
 						setRPSEnquiryBean(reb, isEditable, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate);
 						reb.setEditable(false);
 						reb.setBgColor("#330066");
@@ -2027,7 +2021,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 				data.setSchdFee(formatAmt(curSchd.getFeeSchd(), false, false));
 				data.setSchdPri(formatAmt(curSchd.getPrincipalSchd(), false, false));
 				data.setTotalAmount(formatAmt(
-						curSchd.getRepayAmount().add(curSchd.getFeeSchd()).add(curSchd.getInsSchd()), false, false));
+						curSchd.getRepayAmount().add(curSchd.getFeeSchd()), false, false));
 				data.setEndBal(formatAmt(curSchd.getClosingBalance(), false, false));
 				data.setLimitDrop(formatAmt(limitIncreaseAmt, false, false));
 				data.setTotalLimit(formatAmt(odAvailAmt, false, false));
@@ -2134,7 +2128,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 						} else {
 							data.setEndBal(formatAmt(
 									curSchd.getClosingBalance().subtract(curSchd.getFeeChargeAmt())
-											.subtract(curSchd.getInsuranceAmt()).subtract(curSchd.getDisbAmount())
+											.subtract(curSchd.getDisbAmount())
 											.add(curTotDisbAmt).add(curSchd.getDownPaymentAmount()).add(advEMi),
 									false, false));
 						}
@@ -2173,8 +2167,8 @@ public class FinScheduleListItemRenderer implements Serializable {
 					data.setSchdFee("");
 					data.setSchdPri("");
 					data.setTotalAmount(formatAmt(curSchd.getDownPaymentAmount(), false, false));
-					data.setEndBal(formatAmt(curSchd.getClosingBalance().subtract(curSchd.getFeeChargeAmt())
-							.subtract(curSchd.getInsuranceAmt()), false, false));
+					data.setEndBal(
+							formatAmt(curSchd.getClosingBalance().subtract(curSchd.getFeeChargeAmt()), false, false));
 					data.setLimitDrop(formatAmt(limitIncreaseAmt, false, false));
 					data.setTotalLimit(formatAmt(odAvailAmt, false, false));
 					BigDecimal availLimit = odAvailAmt.subtract(curSchd.getClosingBalance());
@@ -2314,7 +2308,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 					data.setSchdFee(formatAmt(curSchd.getFeeSchd(), false, false));
 					data.setSchdPri(formatAmt(curSchd.getPrincipalSchd(), false, false));
 					data.setTotalAmount(
-							formatAmt(curSchd.getRepayAmount().add(curSchd.getFeeSchd()).add(curSchd.getInsSchd()),
+							formatAmt(curSchd.getRepayAmount().add(curSchd.getFeeSchd()),
 									false, false));
 					data.setEndBal(formatAmt(closingBal, false, false));
 					data.setLimitDrop(formatAmt(limitIncreaseAmt, false, false));

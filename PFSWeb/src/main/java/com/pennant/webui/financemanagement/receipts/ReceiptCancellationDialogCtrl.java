@@ -219,7 +219,6 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	protected Listheader listheader_LatePft;
 	protected Listheader listheader_Refund;
 	protected Listheader listheader_Penalty;
-	protected Listheader listheader_InsPayment;
 	protected Listheader listheader_SchdFee;
 
 	protected Listbox listBoxReceipts;
@@ -1101,7 +1100,6 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 						curRpySchd.setLatePftSchdPayNow(
 								curRpySchd.getLatePftSchdPayNow().add(rpySchd.getLatePftSchdPayNow()));
 						curRpySchd.setSchdFeePayNow(curRpySchd.getSchdFeePayNow().add(rpySchd.getSchdFeePayNow()));
-						curRpySchd.setSchdInsPayNow(curRpySchd.getSchdInsPayNow().add(rpySchd.getSchdInsPayNow()));
 						curRpySchd.setPenaltyPayNow(curRpySchd.getPenaltyPayNow().add(rpySchd.getPenaltyPayNow()));
 						rpySchdMap.remove(rpySchd.getSchDate());
 					} else {
@@ -1300,7 +1298,6 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		BigDecimal totalPri = BigDecimal.ZERO;
 		BigDecimal totalCharge = BigDecimal.ZERO;
 
-		BigDecimal totInsPaid = BigDecimal.ZERO;
 		BigDecimal totSchdFeePaid = BigDecimal.ZERO;
 
 		Listcell lc;
@@ -1368,24 +1365,20 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 				lc.setParent(item);
 
 				//Fee Details
-				lc = new Listcell(PennantApplicationUtil.amountFormate(repaySchd.getSchdInsPayNow(), finFormatter));
-				lc.setStyle("text-align:right;");
-				totInsPaid = totInsPaid.add(repaySchd.getSchdInsPayNow());
-				lc.setParent(item);
 				lc = new Listcell(PennantApplicationUtil.amountFormate(repaySchd.getSchdFeePayNow(), finFormatter));
 				lc.setStyle("text-align:right;");
 				totSchdFeePaid = totSchdFeePaid.add(repaySchd.getSchdFeePayNow());
 				lc.setParent(item);
 
 				BigDecimal netPay = repaySchd.getProfitSchdPayNow().add(repaySchd.getPrincipalSchdPayNow())
-						.add(repaySchd.getSchdInsPayNow()).add(repaySchd.getSchdFeePayNow())
-						.add(repaySchd.getPenaltyPayNow()).add(repaySchd.getLatePftSchdPayNow()).subtract(refundPft);
+						.add(repaySchd.getSchdFeePayNow()).add(repaySchd.getPenaltyPayNow())
+						.add(repaySchd.getLatePftSchdPayNow()).subtract(refundPft);
 				lc = new Listcell(PennantApplicationUtil.amountFormate(netPay, finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
 				BigDecimal netBalance = repaySchd.getProfitSchdBal().add(repaySchd.getPrincipalSchdBal())
-						.add(repaySchd.getSchdInsBal()).add(repaySchd.getSchdFeeBal());
+						.add(repaySchd.getSchdFeeBal());
 
 				lc = new Listcell(PennantApplicationUtil.amountFormate(netBalance.subtract(
 						netPay.subtract(repaySchd.getPenaltyPayNow()).subtract(repaySchd.getLatePftSchdPayNow())),
@@ -1405,7 +1398,6 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			paymentMap.put("totalLatePft", totalLatePft);
 			paymentMap.put("totalPri", totalPri);
 
-			paymentMap.put("insPaid", totInsPaid);
 			paymentMap.put("schdFeePaid", totSchdFeePaid);
 
 			doFillSummaryDetails(paymentMap, finFormatter);
@@ -1473,13 +1465,6 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			fillListItem(Labels.getLabel("listcell_totalPriPayNow.label"), paymentMap.get("totalPri"), finFormatter);
 		}
 
-		if (paymentMap.get("insPaid").compareTo(BigDecimal.ZERO) > 0) {
-			totalSchAmount = totalSchAmount.add(paymentMap.get("insPaid"));
-			this.listheader_InsPayment.setVisible(true);
-			fillListItem(Labels.getLabel("listcell_insFeePayNow.label"), paymentMap.get("insPaid"), finFormatter);
-		} else {
-			this.listheader_InsPayment.setVisible(false);
-		}
 		if (paymentMap.get("schdFeePaid").compareTo(BigDecimal.ZERO) > 0) {
 			totalSchAmount = totalSchAmount.add(paymentMap.get("schdFeePaid"));
 			this.listheader_SchdFee.setVisible(true);

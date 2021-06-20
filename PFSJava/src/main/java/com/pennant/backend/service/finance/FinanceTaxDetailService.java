@@ -71,7 +71,7 @@ public interface FinanceTaxDetailService {
 
 	List<GuarantorDetail> getGuarantorDetailByFinRef(String finReference, String type);
 
-	List<JointAccountDetail> getJountAccountDetailByFinRef(String finReference, String type);
+	List<JointAccountDetail> getJointAccountDetailByFinRef(String finReference, String type);
 
 	FinanceMain getFinanceDetailsForService(String finReference, String type, boolean isWIF);
 

@@ -199,7 +199,6 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		ps.setBigDecimal(index++, fr.getFinSchdPftPaid());
 		ps.setBigDecimal(index++, fr.getFinSchdTdsPaid());
 		ps.setBigDecimal(index++, fr.getSchdFeePaid());
-		ps.setBigDecimal(index++, fr.getSchdInsPaid());
 		ps.setBigDecimal(index++, fr.getFinTotSchdPaid());
 		ps.setBigDecimal(index++, fr.getFinFee());
 		ps.setBigDecimal(index++, fr.getFinWaiver());
@@ -216,10 +215,10 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" (FinReference, FinSchdDate, FinRpyFor, FinPaySeq, LinkedTranId, FinRpyAmount, FinPostDate");
 		sql.append(", FinValueDate, FinBranch, FinType, FinCustID, FinSchdPriPaid, FinSchdPftPaid, FinSchdTdsPaid");
-		sql.append(", SchdFeePaid, SchdInsPaid, FinTotSchdPaid, FinFee");
+		sql.append(", SchdFeePaid, FinTotSchdPaid, FinFee");
 		sql.append(", FinWaiver, FinRefund, PenaltyPaid, PenaltyWaived, ReceiptId, WaiverId");
 		sql.append(") values(");
-		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 		return sql.toString();
 	}
@@ -280,7 +279,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		sql.append(" t1.FinReference, t1.FinPostDate, t1.FinRpyFor, t1.FinPaySeq, t1.FinRpyAmount");
 		sql.append(", t1.FinSchdDate, t1.FinValueDate, t1.FinBranch, t1.FinType, t1.FinCustID");
 		sql.append(", t1.FinSchdPriPaid, t1.FinSchdPftPaid, t1.FinSchdTdsPaid, t1.FinTotSchdPaid");
-		sql.append(", t1.FinFee, t1.FinWaiver, t1.FinRefund, t1.SchdFeePaid, t1.SchdInsPaid, t1.PenaltyPaid");
+		sql.append(", t1.FinFee, t1.FinWaiver, t1.FinRefund, t1.SchdFeePaid, t1.PenaltyPaid");
 		sql.append(", t1.PenaltyWaived");
 
 		if (isRpyCancelProc) {
@@ -426,13 +425,13 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		StringBuilder sql = new StringBuilder("Insert into");
 		sql.append(" FinRepayHeader").append(StringUtils.trimToEmpty(tableType.getSuffix()));
 		sql.append(" (RepayID, ReceiptSeqID, FinReference, ValueDate, FinEvent, RepayAmount, PriAmount");
-		sql.append(", PftAmount, TotalRefund, TotalWaiver, InsRefund, RepayAccountId, EarlyPayEffMtd");
-		sql.append(", EarlyPayDate, SchdRegenerated, LinkedTranId, TotalIns");
+		sql.append(", PftAmount, TotalRefund, TotalWaiver, EarlyPayEffMtd");
+		sql.append(", EarlyPayDate, SchdRegenerated, LinkedTranId ");
 		sql.append(", TotalSchdFee, PayApportionment, LatePftAmount, TotalPenalty, RealizeUnAmz, CpzChg");
 		sql.append(", AdviseAmount, FeeAmount, ExcessAmount, RealizeUnLPI, PartialPaidAmount, FutPriAmount");
 		sql.append(", FutPftAmount");
 		sql.append(") values(");
-		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?");
 		sql.append(")");
 
@@ -451,13 +450,10 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 			ps.setBigDecimal(index++, frh.getPftAmount());
 			ps.setBigDecimal(index++, frh.getTotalRefund());
 			ps.setBigDecimal(index++, frh.getTotalWaiver());
-			ps.setBigDecimal(index++, frh.getInsRefund());
-			ps.setString(index++, frh.getRepayAccountId());
 			ps.setString(index++, frh.getEarlyPayEffMtd());
 			ps.setDate(index++, JdbcUtil.getDate(frh.getEarlyPayDate()));
 			ps.setBoolean(index++, frh.isSchdRegenerated());
 			ps.setLong(index++, JdbcUtil.setLong(frh.getLinkedTranId()));
-			ps.setBigDecimal(index++, frh.getTotalIns());
 			ps.setBigDecimal(index++, frh.getTotalSchdFee());
 			ps.setString(index++, frh.getPayApportionment());
 			ps.setBigDecimal(index++, frh.getLatePftAmount());
@@ -486,9 +482,9 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		updateSql.append(" Set ValueDate=:ValueDate , FinEvent=:FinEvent , RepayAmount=:RepayAmount , ");
 		updateSql.append(" PriAmount=:PriAmount , PftAmount=:PftAmount , TotalRefund=:TotalRefund , ");
 		updateSql.append(
-				" TotalWaiver=:TotalWaiver , InsRefund=:InsRefund ,RepayAccountId=:RepayAccountId , EarlyPayEffMtd=:EarlyPayEffMtd , ");
+				" TotalWaiver=:TotalWaiver , EarlyPayEffMtd=:EarlyPayEffMtd , ");
 		updateSql.append(" EarlyPayDate=:EarlyPayDate, SchdRegenerated=:SchdRegenerated , LinkedTranId=:LinkedTranId,");
-		updateSql.append(" TotalIns=:TotalIns , RealizeUnAmz=:RealizeUnAmz, CpzChg=:CpzChg,");
+		updateSql.append(" RealizeUnAmz=:RealizeUnAmz, CpzChg=:CpzChg,");
 		updateSql.append(
 				" TotalSchdFee=:TotalSchdFee , PayApportionment=:PayApportionment, AdviseAmount= :AdviseAmount,FeeAmount= :FeeAmount, ExcessAmount= :ExcessAmount");
 		updateSql.append(" Where FinReference =:FinReference");
@@ -608,10 +604,10 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		insertSql.append(
 				" RefundReq , WaivedAmt , RepayBalance, PenaltyPayNow, SchdFee, SchdFeePaid, SchdFeeBal, SchdFeePayNow,");
 		insertSql.append(
-				" SchdIns, SchdInsPaid, SchdInsBal, SchdInsPayNow,  LatePftSchd, LatePftSchdPaid, LatePftSchdBal, LatePftSchdPayNow,  ");
+				" LatePftSchd, LatePftSchdPaid, LatePftSchdBal, LatePftSchdPayNow,  ");
 		insertSql.append(" PftSchdWaivedNow , LatePftSchdWaivedNow, ");
 		insertSql.append(
-				" PriSchdWaivedNow, SchdFeeWaivedNow, SchdInsWaivedNow, ");
+				" PriSchdWaivedNow, SchdFeeWaivedNow, ");
 		insertSql.append(" TaxHeaderId, WaiverId) ");
 		insertSql.append(
 				" Values(:RepayID,:RepaySchID, :FinReference , :SchDate , :SchdFor , :LinkedTranId , :ProfitSchdBal , :PrincipalSchdBal , ");
@@ -621,10 +617,10 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		insertSql.append(
 				" :RefundReq , :WaivedAmt , :RepayBalance, :PenaltyPayNow , :SchdFee, :SchdFeePaid, :SchdFeeBal, :SchdFeePayNow,");
 		insertSql.append(
-				" :SchdIns, :SchdInsPaid, :SchdInsBal, :SchdInsPayNow, :LatePftSchd, :LatePftSchdPaid, :LatePftSchdBal, :LatePftSchdPayNow, ");
+				" :LatePftSchd, :LatePftSchdPaid, :LatePftSchdBal, :LatePftSchdPayNow, ");
 		insertSql.append(" :PftSchdWaivedNow , :LatePftSchdWaivedNow, ");
 		insertSql.append(
-				" :PriSchdWaivedNow, :SchdFeeWaivedNow, :SchdInsWaivedNow, ");
+				" :PriSchdWaivedNow, :SchdFeeWaivedNow, ");
 		insertSql.append(" :TaxHeaderId, :WaiverId) ");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -887,7 +883,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, FinPostDate, FinRpyFor, FinPaySeq, FinRpyAmount, FinSchdDate, FinValueDate");
 		sql.append(", FinBranch, FinType, FinCustID, FinSchdPriPaid, FinSchdPftPaid, FinSchdTdsPaid");
-		sql.append(", FinTotSchdPaid, FinFee, FinWaiver, FinRefund, SchdFeePaid, SchdInsPaid");
+		sql.append(", FinTotSchdPaid, FinFee, FinWaiver, FinRefund, SchdFeePaid ");
 		sql.append(" from FinRepayDetails");
 		sql.append(" where FinReference = ?");
 
@@ -939,7 +935,6 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 					rd.setFinWaiver(rs.getBigDecimal("FinWaiver"));
 					rd.setFinRefund(rs.getBigDecimal("FinRefund"));
 					rd.setSchdFeePaid(rs.getBigDecimal("SchdFeePaid"));
-					rd.setSchdInsPaid(rs.getBigDecimal("SchdInsPaid"));
 
 					return rd;
 				}
@@ -958,10 +953,10 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		sql.append(", ProfitSchd, ProfitSchdPaid, PrincipalSchd, PrincipalSchdPaid, ProfitSchdPayNow");
 		sql.append(", TdsSchdPayNow, PrincipalSchdPayNow, PenaltyAmt, DaysLate, MaxWaiver, AllowRefund");
 		sql.append(", AllowWaiver, RefundReq, WaivedAmt, RepayBalance, PenaltyPayNow, SchdFee, SchdFeePaid");
-		sql.append(", SchdFeeBal, SchdFeePayNow, SchdIns, SchdInsPaid, SchdInsBal, SchdInsPayNow, LatePftSchd");
+		sql.append(", SchdFeeBal, SchdFeePayNow, LatePftSchd");
 		sql.append(", LatePftSchdPaid, LatePftSchdBal, LatePftSchdPayNow");
 		sql.append(", PftSchdWaivedNow, LatePftSchdWaivedNow, PriSchdWaivedNow");
-		sql.append(", SchdFeeWaivedNow, SchdInsWaivedNow");
+		sql.append(", SchdFeeWaivedNow");
 		sql.append(", PaidPenaltyCGST, PaidPenaltySGST, PaidPenaltyUGST, PaidPenaltyIGST, PenaltyWaiverCGST");
 		sql.append(", PenaltyWaiverSGST, PenaltyWaiverUGST, PenaltyWaiverIGST, TaxHeaderId, WaiverId");
 		sql.append(" from FinRepayScheduleDetail");
@@ -972,9 +967,9 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 	private StringBuilder getFinRepayheaderQuery(String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" RepayID, ReceiptSeqID, FinReference, ValueDate, FinEvent, RepayAmount, PriAmount");
-		sql.append(", PftAmount, LatePftAmount, TotalPenalty, TotalRefund, TotalWaiver, InsRefund");
-		sql.append(", RepayAccountId, EarlyPayEffMtd, EarlyPayDate, SchdRegenerated, LinkedTranId");
-		sql.append(", TotalIns, TotalSchdFee, PayApportionment, RealizeUnAmz");
+		sql.append(", PftAmount, LatePftAmount, TotalPenalty, TotalRefund, TotalWaiver ");
+		sql.append(", EarlyPayEffMtd, EarlyPayDate, SchdRegenerated, LinkedTranId");
+		sql.append(", TotalSchdFee, PayApportionment, RealizeUnAmz");
 		sql.append(", CpzChg, RealizeUnLPI, RealizeUnLPP, RealizeUnLPIGst, RealizeUnLPPGst, CpzChg");
 		sql.append(", AdviseAmount, FeeAmount, ExcessAmount, PartialPaidAmount, FutPriAmount, FutPftAmount");
 		sql.append(" from FinRepayHeader");
@@ -1015,10 +1010,6 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 			frs.setSchdFeePaid(rs.getBigDecimal("SchdFeePaid"));
 			frs.setSchdFeeBal(rs.getBigDecimal("SchdFeeBal"));
 			frs.setSchdFeePayNow(rs.getBigDecimal("SchdFeePayNow"));
-			frs.setSchdIns(rs.getBigDecimal("SchdIns"));
-			frs.setSchdInsPaid(rs.getBigDecimal("SchdInsPaid"));
-			frs.setSchdInsBal(rs.getBigDecimal("SchdInsBal"));
-			frs.setSchdInsPayNow(rs.getBigDecimal("SchdInsPayNow"));
 			frs.setLatePftSchd(rs.getBigDecimal("LatePftSchd"));
 			frs.setLatePftSchdPaid(rs.getBigDecimal("LatePftSchdPaid"));
 			frs.setLatePftSchdBal(rs.getBigDecimal("LatePftSchdBal"));
@@ -1027,7 +1018,6 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 			frs.setLatePftSchdWaivedNow(rs.getBigDecimal("LatePftSchdWaivedNow"));
 			frs.setPriSchdWaivedNow(rs.getBigDecimal("PriSchdWaivedNow"));
 			frs.setSchdFeeWaivedNow(rs.getBigDecimal("SchdFeeWaivedNow"));
-			frs.setSchdInsWaivedNow(rs.getBigDecimal("SchdInsWaivedNow"));
 			frs.setTaxHeaderId(JdbcUtil.getLong(rs.getObject("TaxHeaderId")));
 			frs.setWaiverId(JdbcUtil.getLong(rs.getObject("WaiverId")));
 
@@ -1053,13 +1043,10 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 			rh.setTotalPenalty(rs.getBigDecimal("TotalPenalty"));
 			rh.setTotalRefund(rs.getBigDecimal("TotalRefund"));
 			rh.setTotalWaiver(rs.getBigDecimal("TotalWaiver"));
-			rh.setInsRefund(rs.getBigDecimal("InsRefund"));
-			rh.setRepayAccountId(rs.getString("RepayAccountId"));
 			rh.setEarlyPayEffMtd(rs.getString("EarlyPayEffMtd"));
 			rh.setEarlyPayDate(rs.getTimestamp("EarlyPayDate"));
 			rh.setSchdRegenerated(rs.getBoolean("SchdRegenerated"));
 			rh.setLinkedTranId(rs.getLong("LinkedTranId"));
-			rh.setTotalIns(rs.getBigDecimal("TotalIns"));
 			rh.setTotalSchdFee(rs.getBigDecimal("TotalSchdFee"));
 			rh.setPayApportionment(rs.getString("PayApportionment"));
 			rh.setRealizeUnAmz(rs.getBigDecimal("RealizeUnAmz"));
@@ -1111,7 +1098,6 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 			rd.setFinWaiver(rs.getBigDecimal("FinWaiver"));
 			rd.setFinRefund(rs.getBigDecimal("FinRefund"));
 			rd.setSchdFeePaid(rs.getBigDecimal("SchdFeePaid"));
-			rd.setSchdInsPaid(rs.getBigDecimal("SchdInsPaid"));
 			rd.setPenaltyPaid(rs.getBigDecimal("PenaltyPaid"));
 			rd.setPenaltyWaived(rs.getBigDecimal("PenaltyWaived"));
 

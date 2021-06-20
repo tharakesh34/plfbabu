@@ -891,9 +891,6 @@
 													<space id="space_rpyHierarchy" spacing="2px" sclass="mandatory" />
 													<combobox id="rpyHierarchy" width="275px" readonly="true" />
 												</hbox>
-												<label id="label_FinanceTypeDialog_FinDepreciationFrq" value="${c:l('label_OverDraftFinanceTypeDialog_FinDepreciationFrq.value')}" />
-												<frequencybox id="finDepreciationFrq" />
-
 											</row>
 											<row visible="true">
 												<label id="label_FinanceTypeDialog_AlwBpiTreatment" value="${c:l('label_FinanceTypeDialog_AlwBpiTreatment.value')}" />
@@ -1087,11 +1084,6 @@
 											<hbox>
 												<space spacing="2px" />
 												<checkbox id="finIsAlwMD" checked="false" />
-											</hbox>
-											<label id="label_FinanceTypeDialog_FinDepreciationReq" value="${c:l('label_OverDraftFinanceTypeDialog_FinDepreciationReq.value')}" />
-											<hbox id="hbox_FinDepreciationReq">
-												<space spacing="2px" />
-												<checkbox id="finDepreciationReq" />
 											</hbox>
 										</row>
 

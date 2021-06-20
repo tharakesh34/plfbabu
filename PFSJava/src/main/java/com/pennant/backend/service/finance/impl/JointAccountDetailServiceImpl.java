@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  JountAccountDetailServiceImpl.java                                                   * 	  
+ * FileName    		:  JointAccountDetailServiceImpl.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -62,7 +62,7 @@ import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
-import com.pennant.backend.dao.finance.JountAccountDetailDAO;
+import com.pennant.backend.dao.finance.JointAccountDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerDocument;
@@ -88,7 +88,7 @@ import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
 import com.pennanttech.pff.service.sampling.SamplingService;
 
 /**
- * Service implementation for methods that depends on <b>JountAccountDetail</b>.<br>
+ * Service implementation for methods that depends on <b>JointAccountDetail</b>.<br>
  * 
  */
 public class JointAccountDetailServiceImpl extends GenericService<JointAccountDetail>
@@ -96,7 +96,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	private static final Logger logger = LogManager.getLogger(JointAccountDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
-	private JountAccountDetailDAO jountAccountDetailDAO;
+	private JointAccountDetailDAO jointAccountDetailDAO;
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	private CustomerIncomeDAO customerIncomeDAO;
 	@Autowired
@@ -132,18 +132,18 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	}
 
 	/**
-	 * @return the jountAccountDetailDAO
+	 * @return the jointAccountDetailDAO
 	 */
-	public JountAccountDetailDAO getJountAccountDetailDAO() {
-		return jountAccountDetailDAO;
+	public JointAccountDetailDAO getJointAccountDetailDAO() {
+		return jointAccountDetailDAO;
 	}
 
 	/**
-	 * @param jountAccountDetailDAO
-	 *            the jountAccountDetailDAO to set
+	 * @param jointAccountDetailDAO
+	 *            the jointAccountDetailDAO to set
 	 */
-	public void setJountAccountDetailDAO(JountAccountDetailDAO jountAccountDetailDAO) {
-		this.jountAccountDetailDAO = jountAccountDetailDAO;
+	public void setJointAccountDetailDAO(JointAccountDetailDAO jointAccountDetailDAO) {
+		this.jointAccountDetailDAO = jointAccountDetailDAO;
 	}
 
 	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
@@ -167,27 +167,27 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	}
 
 	/**
-	 * @return the jountAccountDetail
+	 * @return the jointAccountDetail
 	 */
 	@Override
-	public JointAccountDetail getJountAccountDetail() {
-		return getJountAccountDetailDAO().getJountAccountDetail();
+	public JointAccountDetail getJointAccountDetail() {
+		return getJointAccountDetailDAO().getJointAccountDetail();
 	}
 
 	/**
-	 * @return the jountAccountDetail for New Record
+	 * @return the jointAccountDetail for New Record
 	 */
 	@Override
-	public JointAccountDetail getNewJountAccountDetail() {
-		return getJountAccountDetailDAO().getNewJountAccountDetail();
+	public JointAccountDetail getNewJointAccountDetail() {
+		return getJointAccountDetailDAO().getNewJointAccountDetail();
 	}
 
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
 	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
 	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
-	 * FinJointAccountDetails/FinJointAccountDetails_Temp by using JountAccountDetailDAO's save method b) Update the
-	 * Record in the table. based on the module workFlow Configuration. by using JountAccountDetailDAO's update method
+	 * FinJointAccountDetails/FinJointAccountDetails_Temp by using JointAccountDetailDAO's save method b) Update the
+	 * Record in the table. based on the module workFlow Configuration. by using JointAccountDetailDAO's update method
 	 * 3) Audit the record in to AuditHeader and AdtFinJointAccountDetails by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
@@ -203,8 +203,8 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
 	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
 	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
-	 * FinJointAccountDetails/FinJointAccountDetails_Temp by using JountAccountDetailDAO's save method b) Update the
-	 * Record in the table. based on the module workFlow Configuration. by using JountAccountDetailDAO's update method
+	 * FinJointAccountDetails/FinJointAccountDetails_Temp by using JointAccountDetailDAO's save method b) Update the
+	 * Record in the table. based on the module workFlow Configuration. by using JointAccountDetailDAO's update method
 	 * 3) Audit the record in to AuditHeader and AdtFinJointAccountDetails by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
@@ -222,18 +222,18 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 			return auditHeader;
 		}
 		String tableType = "";
-		JointAccountDetail jountAccountDetail = (JointAccountDetail) auditHeader.getAuditDetail().getModelData();
+		JointAccountDetail jointAccountDetail = (JointAccountDetail) auditHeader.getAuditDetail().getModelData();
 
-		if (jountAccountDetail.isWorkflow()) {
+		if (jointAccountDetail.isWorkflow()) {
 			tableType = "_Temp";
 		}
 
-		if (jountAccountDetail.isNew()) {
-			jountAccountDetail.setId(getJountAccountDetailDAO().save(jountAccountDetail, tableType));
-			auditHeader.getAuditDetail().setModelData(jountAccountDetail);
-			auditHeader.setAuditReference(String.valueOf(jountAccountDetail.getJointAccountId()));
+		if (jointAccountDetail.isNew()) {
+			jointAccountDetail.setId(getJointAccountDetailDAO().save(jointAccountDetail, tableType));
+			auditHeader.getAuditDetail().setModelData(jointAccountDetail);
+			auditHeader.setAuditReference(String.valueOf(jointAccountDetail.getJointAccountId()));
 		} else {
-			getJountAccountDetailDAO().update(jountAccountDetail, tableType);
+			getJointAccountDetailDAO().update(jointAccountDetail, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -245,7 +245,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	/**
 	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * FinJointAccountDetails by using JountAccountDetailDAO's delete method with type as Blank 3) Audit the record in
+	 * FinJointAccountDetails by using JointAccountDetailDAO's delete method with type as Blank 3) Audit the record in
 	 * to AuditHeader and AdtFinJointAccountDetails by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
@@ -262,8 +262,8 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 			return auditHeader;
 		}
 
-		JointAccountDetail jountAccountDetail = (JointAccountDetail) auditHeader.getAuditDetail().getModelData();
-		getJountAccountDetailDAO().delete(jountAccountDetail, "");
+		JointAccountDetail jointAccountDetail = (JointAccountDetail) auditHeader.getAuditDetail().getModelData();
+		getJointAccountDetailDAO().delete(jointAccountDetail, "");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -271,41 +271,41 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	}
 
 	/**
-	 * getJountAccountDetailById fetch the details by using JountAccountDetailDAO's getJountAccountDetailById method.
+	 * getJointAccountDetailById fetch the details by using JointAccountDetailDAO's getJointAccountDetailById method.
 	 * 
 	 * @param id
 	 *            (int)
 	 * @param type
 	 *            (String) ""/_Temp/_View
-	 * @return JountAccountDetail
+	 * @return JointAccountDetail
 	 */
 
 	@Override
-	public JointAccountDetail getJountAccountDetailById(long id) {
-		return getJountAccountDetailDAO().getJountAccountDetailById(id, "_View");
+	public JointAccountDetail getJointAccountDetailById(long id) {
+		return getJointAccountDetailDAO().getJointAccountDetailById(id, "_View");
 	}
 
 	/**
-	 * getApprovedJountAccountDetailById fetch the details by using JountAccountDetailDAO's getJountAccountDetailById
+	 * getApprovedJointAccountDetailById fetch the details by using JointAccountDetailDAO's getJointAccountDetailById
 	 * method . with parameter id and type as blank. it fetches the approved records from the FinJointAccountDetails.
 	 * 
 	 * @param id
 	 *            (int)
-	 * @return JountAccountDetail
+	 * @return JointAccountDetail
 	 */
 
-	public JointAccountDetail getApprovedJountAccountDetailById(long id) {
-		return getJountAccountDetailDAO().getJountAccountDetailById(id, "_AView");
+	public JointAccountDetail getApprovedJointAccountDetailById(long id) {
+		return getJointAccountDetailDAO().getJointAccountDetailById(id, "_AView");
 	}
 
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getJountAccountDetailDAO().delete with
-	 * parameters jountAccountDetail,"" b) NEW Add new record in to main table by using getJountAccountDetailDAO().save
-	 * with parameters jountAccountDetail,"" c) EDIT Update record in the main table by using
-	 * getJountAccountDetailDAO().update with parameters jountAccountDetail,"" 3) Delete the record from the workFlow
-	 * table by using getJountAccountDetailDAO().delete with parameters jountAccountDetail,"_Temp" 4) Audit the record
+	 * following actions a) DELETE Delete the record from the main table by using getJointAccountDetailDAO().delete with
+	 * parameters JointAccountDetail,"" b) NEW Add new record in to main table by using getJointAccountDetailDAO().save
+	 * with parameters JointAccountDetail,"" c) EDIT Update record in the main table by using
+	 * getJointAccountDetailDAO().update with parameters JointAccountDetail,"" 3) Delete the record from the workFlow
+	 * table by using getJointAccountDetailDAO().delete with parameters JointAccountDetail,"_Temp" 4) Audit the record
 	 * in to AuditHeader and AdtFinJointAccountDetails by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5)
 	 * Audit the record in to AuditHeader and AdtFinJointAccountDetails by using auditHeaderDAO.addAudit(auditHeader)
 	 * based on the transaction Type.
@@ -323,39 +323,39 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 			return auditHeader;
 		}
 
-		JointAccountDetail jountAccountDetail = new JointAccountDetail();
-		BeanUtils.copyProperties((JointAccountDetail) auditHeader.getAuditDetail().getModelData(), jountAccountDetail);
+		JointAccountDetail jointAccountDetail = new JointAccountDetail();
+		BeanUtils.copyProperties((JointAccountDetail) auditHeader.getAuditDetail().getModelData(), jointAccountDetail);
 
-		if (jountAccountDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+		if (jointAccountDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getJountAccountDetailDAO().delete(jountAccountDetail, "");
+			getJointAccountDetailDAO().delete(jointAccountDetail, "");
 
 		} else {
-			jountAccountDetail.setRoleCode("");
-			jountAccountDetail.setNextRoleCode("");
-			jountAccountDetail.setTaskId("");
-			jountAccountDetail.setNextTaskId("");
-			jountAccountDetail.setWorkflowId(0);
+			jointAccountDetail.setRoleCode("");
+			jointAccountDetail.setNextRoleCode("");
+			jointAccountDetail.setTaskId("");
+			jointAccountDetail.setNextTaskId("");
+			jointAccountDetail.setWorkflowId(0);
 
-			if (jountAccountDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			if (jointAccountDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
-				jountAccountDetail.setRecordType("");
-				getJountAccountDetailDAO().save(jountAccountDetail, "");
+				jointAccountDetail.setRecordType("");
+				getJointAccountDetailDAO().save(jointAccountDetail, "");
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
-				jountAccountDetail.setRecordType("");
-				getJountAccountDetailDAO().update(jountAccountDetail, "");
+				jointAccountDetail.setRecordType("");
+				getJointAccountDetailDAO().update(jointAccountDetail, "");
 			}
 		}
 
-		getJountAccountDetailDAO().delete(jountAccountDetail, "_Temp");
+		getJointAccountDetailDAO().delete(jointAccountDetail, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
-		auditHeader.getAuditDetail().setModelData(jountAccountDetail);
+		auditHeader.getAuditDetail().setModelData(jointAccountDetail);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -366,7 +366,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	/**
 	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getJountAccountDetailDAO().delete with parameters jountAccountDetail,"_Temp" 3) Audit the
+	 * workFlow table by using getJointAccountDetailDAO().delete with parameters JointAccountDetail,"_Temp" 3) Audit the
 	 * record in to AuditHeader and AdtFinJointAccountDetails by using auditHeaderDAO.addAudit(auditHeader) for Work
 	 * flow
 	 * 
@@ -382,10 +382,10 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 			return auditHeader;
 		}
 
-		JointAccountDetail jountAccountDetail = (JointAccountDetail) auditHeader.getAuditDetail().getModelData();
+		JointAccountDetail jointAccountDetail = (JointAccountDetail) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getJountAccountDetailDAO().delete(jountAccountDetail, "_Temp");
+		getJointAccountDetailDAO().delete(jointAccountDetail, "_Temp");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -424,7 +424,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	/**
 	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
 	 * tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5) for any
-	 * mismatch conditions Fetch the error details from getJountAccountDetailDAO().getErrorDetail with Error ID and
+	 * mismatch conditions Fetch the error details from getJointAccountDetailDAO().getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
@@ -437,38 +437,38 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method, boolean onlineRequest) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
-		JointAccountDetail jountAccountDetail = (JointAccountDetail) auditDetail.getModelData();
+		JointAccountDetail jointAccountDetail = (JointAccountDetail) auditDetail.getModelData();
 
-		JointAccountDetail tempJountAccountDetail = null;
-		if (jountAccountDetail.isWorkflow()) {
-			tempJountAccountDetail = getJountAccountDetailDAO().getJountAccountDetailById(jountAccountDetail.getId(),
+		JointAccountDetail tempJointAccountDetail = null;
+		if (jointAccountDetail.isWorkflow()) {
+			tempJointAccountDetail = getJointAccountDetailDAO().getJointAccountDetailById(jointAccountDetail.getId(),
 					"_Temp");
 		}
-		JointAccountDetail befJountAccountDetail = getJountAccountDetailDAO()
-				.getJountAccountDetailById(jountAccountDetail.getId(), "");
+		JointAccountDetail befJointAccountDetail = getJointAccountDetailDAO()
+				.getJointAccountDetailById(jointAccountDetail.getId(), "");
 
-		JointAccountDetail oldJountAccountDetail = jountAccountDetail.getBefImage();
+		JointAccountDetail oldJointAccountDetail = jointAccountDetail.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
-		valueParm[0] = String.valueOf(jountAccountDetail.getId());
+		valueParm[0] = String.valueOf(jointAccountDetail.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_JointAccountId") + ":" + valueParm[0];
 
-		if (jountAccountDetail.isNew()) { // for New record or new record into work flow
+		if (jointAccountDetail.isNew()) { // for New record or new record into work flow
 
-			if (!jountAccountDetail.isWorkflow()) {// With out Work flow only new records  
-				if (befJountAccountDetail != null) { // Record Already Exists in the table then error  
+			if (!jointAccountDetail.isWorkflow()) {// With out Work flow only new records  
+				if (befJointAccountDetail != null) { // Record Already Exists in the table then error  
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
-				if (jountAccountDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befJountAccountDetail != null || tempJountAccountDetail != null) { // if records already exists in the main table
+				if (jointAccountDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befJointAccountDetail != null || tempJointAccountDetail != null) { // if records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
-					if (befJountAccountDetail == null || tempJountAccountDetail != null) {
+					if (befJointAccountDetail == null || tempJointAccountDetail != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
@@ -476,14 +476,14 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 			}
 		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!jountAccountDetail.isWorkflow()) { // With out Work flow for update and delete
+			if (!jointAccountDetail.isWorkflow()) { // With out Work flow for update and delete
 
-				if (befJountAccountDetail == null) { // if records not exists in the main table
+				if (befJointAccountDetail == null) { // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (oldJountAccountDetail != null
-							&& !oldJountAccountDetail.getLastMntOn().equals(befJountAccountDetail.getLastMntOn())) {
+					if (oldJointAccountDetail != null
+							&& !oldJointAccountDetail.getLastMntOn().equals(befJointAccountDetail.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
@@ -498,13 +498,13 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 				}
 			} else {
 
-				if (tempJountAccountDetail == null) { // if records not exists in the Work flow table 
+				if (tempJointAccountDetail == null) { // if records not exists in the Work flow table 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (oldJountAccountDetail != null && tempJountAccountDetail != null
-						&& !oldJountAccountDetail.getLastMntOn().equals(tempJountAccountDetail.getLastMntOn())) {
+				if (oldJointAccountDetail != null && tempJointAccountDetail != null
+						&& !oldJointAccountDetail.getLastMntOn().equals(tempJointAccountDetail.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -513,8 +513,8 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !jountAccountDetail.isWorkflow()) {
-			auditDetail.setBefImage(befJountAccountDetail);
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !jointAccountDetail.isWorkflow()) {
+			auditDetail.setBefImage(befJointAccountDetail);
 		}
 
 		return auditDetail;
@@ -623,15 +623,15 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 			}
 
 			if (saveRecord) {
-				getJountAccountDetailDAO().save(jointAccountDetail, tableType);
+				getJointAccountDetailDAO().save(jointAccountDetail, tableType);
 			}
 
 			if (updateRecord) {
-				getJountAccountDetailDAO().update(jointAccountDetail, tableType);
+				getJointAccountDetailDAO().update(jointAccountDetail, tableType);
 			}
 
 			if (deleteRecord) {
-				getJountAccountDetailDAO().delete(jointAccountDetail, tableType);
+				getJointAccountDetailDAO().delete(jointAccountDetail, tableType);
 			}
 
 			if (approveRec) {
@@ -746,14 +746,14 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		for (JointAccountDetail jointAccountDetail : jointAcDetailList) {
 			jointAccountDetail.setWorkflowId(0);
 			if (jointAccountDetail.isNewRecord()) {
-				getJountAccountDetailDAO().save(jointAccountDetail, tableType);
+				getJointAccountDetailDAO().save(jointAccountDetail, tableType);
 			} else {
 				// ### 10-05-2018 - Start- Development PSD 127038
 				// Unable to delete co applicant once saved at DDE stage  
 				if (StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, jointAccountDetail.getRecordType())) {
-					getJountAccountDetailDAO().delete(jointAccountDetail, tableType);
+					getJointAccountDetailDAO().delete(jointAccountDetail, tableType);
 				} else {
-					getJountAccountDetailDAO().update(jointAccountDetail, tableType);
+					getJointAccountDetailDAO().update(jointAccountDetail, tableType);
 				}
 				// ### 10-05-2018 - End- Development PSD 127038
 			}
@@ -874,12 +874,12 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 				jointAccountDetail.setWorkflowId(0);
 				jointAccountDetail.setRecordType("");
 
-				getJountAccountDetailDAO().save(jointAccountDetail, tableType);
+				getJointAccountDetailDAO().save(jointAccountDetail, tableType);
 			}
 
 			if (!StringUtils.equals(finSourceId, PennantConstants.FINSOURCE_ID_API) || apiHeader == null
 					|| StringUtils.isNotBlank(serviceName)) {
-				getJountAccountDetailDAO().delete(jointAccountDetail, "_Temp");
+				getJointAccountDetailDAO().delete(jointAccountDetail, "_Temp");
 			}
 
 			String[] fields = PennantJavaUtil.getFieldDetails(jointAccountDetail,
@@ -904,7 +904,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		//10-Jul-2018 BUG FIX related to Audit issue  TktNo:126609
 		int auditSeq = 1;
 		for (JointAccountDetail jointAccountDetail : jointAccountDetails) {
-			getJountAccountDetailDAO().delete(jointAccountDetail, tableType);
+			getJointAccountDetailDAO().delete(jointAccountDetail, tableType);
 			String[] fields = PennantJavaUtil.getFieldDetails(jointAccountDetail,
 					jointAccountDetail.getExcludeFields());
 			auditDetails.add(new AuditDetail(auditTranType, auditSeq++, fields[0], fields[1],
@@ -943,42 +943,42 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	private AuditDetail validate(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
-		JointAccountDetail jountAccountDetail = (JointAccountDetail) auditDetail.getModelData();
-		JointAccountDetail tempJountAccountDetail = null;
-		JointAccountDetail befJountAccountDetail = null;
-		JointAccountDetail oldJountAccountDetail = null;
+		JointAccountDetail jointAccountDetail = (JointAccountDetail) auditDetail.getModelData();
+		JointAccountDetail tempJointAccountDetail = null;
+		JointAccountDetail befJointAccountDetail = null;
+		JointAccountDetail oldJointAccountDetail = null;
 
-		if (jountAccountDetail.isWorkflow()) {
-			tempJountAccountDetail = getJountAccountDetailDAO().getJountAccountDetailByRefId(
-					jountAccountDetail.getFinReference(), jountAccountDetail.getJointAccountId(), "_Temp");
+		if (jointAccountDetail.isWorkflow()) {
+			tempJointAccountDetail = getJointAccountDetailDAO().getJointAccountDetailByRefId(
+					jointAccountDetail.getFinReference(), jointAccountDetail.getJointAccountId(), "_Temp");
 		}
 
-		befJountAccountDetail = getJountAccountDetailDAO().getJountAccountDetailByRefId(
-				jountAccountDetail.getFinReference(), jountAccountDetail.getJointAccountId(), "");
-		oldJountAccountDetail = jountAccountDetail.getBefImage();
+		befJointAccountDetail = getJointAccountDetailDAO().getJointAccountDetailByRefId(
+				jointAccountDetail.getFinReference(), jointAccountDetail.getJointAccountId(), "");
+		oldJointAccountDetail = jointAccountDetail.getBefImage();
 
 		String[] errParm = new String[2];
 		String[] valueParm = new String[2];
-		valueParm[0] = jountAccountDetail.getFinReference();
-		valueParm[1] = jountAccountDetail.getCustCIF();
+		valueParm[0] = jointAccountDetail.getFinReference();
+		valueParm[1] = jointAccountDetail.getCustCIF();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_JointCustCIf") + ":" + valueParm[1];
 
-		if (jountAccountDetail.isNew()) { // for New record or new record into work flow
+		if (jointAccountDetail.isNew()) { // for New record or new record into work flow
 
-			if (!jountAccountDetail.isWorkflow()) {// With out Work flow only new records  
-				if (befJountAccountDetail != null) { // Record Already Exists in the table then error  
+			if (!jointAccountDetail.isWorkflow()) {// With out Work flow only new records  
+				if (befJointAccountDetail != null) { // Record Already Exists in the table then error  
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
-				if (jountAccountDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befJountAccountDetail != null || tempJountAccountDetail != null) { // if records already exists in the main table
+				if (jointAccountDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befJointAccountDetail != null || tempJointAccountDetail != null) { // if records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
-					if (befJountAccountDetail == null || tempJountAccountDetail != null) {
+					if (befJointAccountDetail == null || tempJointAccountDetail != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
@@ -986,14 +986,14 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 			}
 		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!jountAccountDetail.isWorkflow()) { // With out Work flow for update and delete
+			if (!jointAccountDetail.isWorkflow()) { // With out Work flow for update and delete
 
-				if (befJountAccountDetail == null) { // if records not exists in the main table
+				if (befJointAccountDetail == null) { // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (oldJountAccountDetail != null
-							&& !oldJountAccountDetail.getLastMntOn().equals(befJountAccountDetail.getLastMntOn())) {
+					if (oldJointAccountDetail != null
+							&& !oldJointAccountDetail.getLastMntOn().equals(befJointAccountDetail.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
@@ -1008,13 +1008,13 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 				}
 			} else {
 
-				if (tempJountAccountDetail == null) { // if records not exists in the Work flow table 
+				if (tempJointAccountDetail == null) { // if records not exists in the Work flow table 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (tempJountAccountDetail != null && oldJountAccountDetail != null
-						&& !oldJountAccountDetail.getLastMntOn().equals(tempJountAccountDetail.getLastMntOn())) {
+				if (tempJointAccountDetail != null && oldJointAccountDetail != null
+						&& !oldJointAccountDetail.getLastMntOn().equals(tempJointAccountDetail.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -1023,8 +1023,8 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !jountAccountDetail.isWorkflow()) {
-			auditDetail.setBefImage(befJountAccountDetail);
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !jointAccountDetail.isWorkflow()) {
+			auditDetail.setBefImage(befJointAccountDetail);
 		}
 		return auditDetail;
 	}
@@ -1039,15 +1039,15 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	 * @return List<FinanceExposure>
 	 */
 	@Override
-	public List<FinanceExposure> getPrimaryExposureList(JointAccountDetail jountAccountDetail) {
+	public List<FinanceExposure> getPrimaryExposureList(JointAccountDetail jointAccountDetail) {
 		FinanceExposure overDueDetail = null;
 
-		List<FinanceExposure> primaryExposureList = getJountAccountDetailDAO()
-				.getPrimaryExposureList(jountAccountDetail);
+		List<FinanceExposure> primaryExposureList = getJointAccountDetailDAO()
+				.getPrimaryExposureList(jointAccountDetail);
 
 		if (primaryExposureList != null && !primaryExposureList.isEmpty()) {
 			for (FinanceExposure finExposer : primaryExposureList) {
-				overDueDetail = getJountAccountDetailDAO().getOverDueDetails(finExposer);
+				overDueDetail = getJointAccountDetailDAO().getOverDueDetails(finExposer);
 				if (overDueDetail != null) {
 					setExposerDetails(overDueDetail, finExposer);
 				}
@@ -1070,12 +1070,12 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	@Override
 	public List<FinanceExposure> getSecondaryExposureList(JointAccountDetail jointAccountDetail) {
 		FinanceExposure overDueDetail = null;
-		List<FinanceExposure> secondaryExposureList = getJountAccountDetailDAO()
+		List<FinanceExposure> secondaryExposureList = getJointAccountDetailDAO()
 				.getSecondaryExposureList(jointAccountDetail);
 
 		if (secondaryExposureList != null && !secondaryExposureList.isEmpty()) {
 			for (FinanceExposure finExposer : secondaryExposureList) {
-				overDueDetail = getJountAccountDetailDAO().getOverDueDetails(finExposer);
+				overDueDetail = getJointAccountDetailDAO().getOverDueDetails(finExposer);
 				if (overDueDetail != null) {
 					setExposerDetails(overDueDetail, finExposer);
 				}
@@ -1099,12 +1099,12 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	public List<FinanceExposure> getGuarantorExposureList(JointAccountDetail jointAccountDetail) {
 		FinanceExposure overDueDetail = null;
 
-		List<FinanceExposure> guarantorExposureList = getJountAccountDetailDAO()
+		List<FinanceExposure> guarantorExposureList = getJointAccountDetailDAO()
 				.getGuarantorExposureList(jointAccountDetail);
 
 		if (guarantorExposureList != null) {
 			for (FinanceExposure finExposer : guarantorExposureList) {
-				overDueDetail = getJountAccountDetailDAO().getOverDueDetails(finExposer);
+				overDueDetail = getJointAccountDetailDAO().getOverDueDetails(finExposer);
 				if (overDueDetail != null) {
 					setExposerDetails(overDueDetail, finExposer);
 
@@ -1153,13 +1153,13 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	}
 
 	@Override
-	public List<JointAccountDetail> getJountAccountDetailByFinRef(String finReference, String type) {
-		return getJountAccountDetailDAO().getJountAccountDetailByFinRef(finReference, type);
+	public List<JointAccountDetail> getJointAccountDetailByFinRef(String finReference, String type) {
+		return getJointAccountDetailDAO().getJointAccountDetailByFinRef(finReference, type);
 	}
 
 	@Override
-	public JointAccountDetail getJountAccountDetailByRef(String finReference, String custCIF, String type) {
-		return getJountAccountDetailDAO().getJountAccountDetailByRef(finReference, custCIF, type);
+	public JointAccountDetail getJointAccountDetailByRef(String finReference, String custCIF, String type) {
+		return getJointAccountDetailDAO().getJointAccountDetailByRef(finReference, custCIF, type);
 	}
 
 	/**
@@ -1180,24 +1180,24 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		List<FinanceExposure> secoundaryList = null;
 		List<FinanceExposure> guarantorList = null;
 
-		List<JointAccountDetail> jointAccountDetailList = getJountAccountDetailByFinRef(finReference, tableType);
+		List<JointAccountDetail> jointAccountDetailList = getJointAccountDetailByFinRef(finReference, tableType);
 
 		if (jointAccountDetailList != null && !jointAccountDetailList.isEmpty()) {
 			for (JointAccountDetail detail : jointAccountDetailList) {
 				BigDecimal currentExpoSure = BigDecimal.ZERO;
 
 				// set the primary exposer details to Joint Account Details
-				primaryList = getJountAccountDetailDAO().getPrimaryExposureList(detail);
+				primaryList = getJointAccountDetailDAO().getPrimaryExposureList(detail);
 				currentExpoSure = doFillExposureDetails(primaryList, detail);
 				detail.setPrimaryExposure(String.valueOf(currentExpoSure));
 
 				// set the secondary exposer details to Joint Account 
-				secoundaryList = getJountAccountDetailDAO().getSecondaryExposureList(detail);
+				secoundaryList = getJointAccountDetailDAO().getSecondaryExposureList(detail);
 				currentExpoSure = doFillExposureDetails(secoundaryList, detail);
 				detail.setSecondaryExposure(String.valueOf(currentExpoSure));
 
 				// set the exposer details to Joint Account
-				guarantorList = getJountAccountDetailDAO().getGuarantorExposureList(detail);
+				guarantorList = getJointAccountDetailDAO().getGuarantorExposureList(detail);
 				currentExpoSure = doFillExposureDetails(guarantorList, detail);
 				detail.setGuarantorExposure(String.valueOf(currentExpoSure));
 
@@ -1233,8 +1233,8 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	@Override
 	public List<FinanceExposure> getJointExposureList(List<String> listCIF) {
 
-		List<FinanceExposure> exposures = getJountAccountDetailDAO().getPrimaryExposureList(listCIF);
-		exposures.addAll(getJountAccountDetailDAO().getSecondaryExposureList(listCIF));
+		List<FinanceExposure> exposures = getJointAccountDetailDAO().getPrimaryExposureList(listCIF);
+		exposures.addAll(getJointAccountDetailDAO().getSecondaryExposureList(listCIF));
 		return exposures;
 	}
 
@@ -1288,7 +1288,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		finExposer.setPastdueDays(overDueDetail.getPastdueDays());
 	}
 
-	private List<AuditDetail> getAuditDetail(List<JointAccountDetail> jountAccountDetailList, String auditTranType,
+	private List<AuditDetail> getAuditDetail(List<JointAccountDetail> jointAccountDetailList, String auditTranType,
 			String method, long workflowId) {
 		logger.debug("Entering");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -1296,41 +1296,41 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		JointAccountDetail object = new JointAccountDetail();
 		String[] fields = PennantJavaUtil.getFieldDetails(object, object.getExcludeFields());
 
-		for (int i = 0; i < jountAccountDetailList.size(); i++) {
+		for (int i = 0; i < jointAccountDetailList.size(); i++) {
 
-			JointAccountDetail jountAccountDetail = jountAccountDetailList.get(i);
-			jountAccountDetail.setWorkflowId(workflowId);
+			JointAccountDetail jointAccountDetail = jointAccountDetailList.get(i);
+			jointAccountDetail.setWorkflowId(workflowId);
 			boolean isRcdType = false;
 
-			if (jountAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-				jountAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			if (jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				jointAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				isRcdType = true;
-			} else if (jountAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-				jountAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			} else if (jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				jointAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				isRcdType = true;
-			} else if (jountAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-				jountAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			} else if (jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				jointAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				isRcdType = true;
 			}
 
 			if ("saveOrUpdate".equals(method) && (isRcdType)) {
-				jountAccountDetail.setNewRecord(true);
+				jointAccountDetail.setNewRecord(true);
 			}
 
 			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (jountAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (jountAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-						|| jountAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				} else if (jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					auditTranType = PennantConstants.TRAN_DEL;
 				} else {
 					auditTranType = PennantConstants.TRAN_UPD;
 				}
 			}
 
-			if (StringUtils.isNotEmpty(jountAccountDetail.getRecordType())) {
+			if (StringUtils.isNotEmpty(jointAccountDetail.getRecordType())) {
 				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-						jountAccountDetail.getBefImage(), jountAccountDetail));
+						jointAccountDetail.getBefImage(), jointAccountDetail));
 			}
 		}
 

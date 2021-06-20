@@ -16,10 +16,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
-import com.pennant.backend.dao.finance.JountAccountDetailDAO;
+import com.pennant.backend.dao.finance.JointAccountDetailDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.customermasters.Customer;
@@ -57,7 +56,7 @@ public class FeeCalculator implements Serializable {
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private RuleDAO ruleDAO;
 	private FinanceDetailService financeDetailService;
-	private JountAccountDetailDAO jountAccountDetailDAO;
+	private JointAccountDetailDAO jointAccountDetailDAO;
 	private FinTypeFeesDAO finTypeFeesDAO;
 
 	public FinReceiptData calculateFees(FinReceiptData receiptData) {
@@ -203,8 +202,7 @@ public class FeeCalculator implements Serializable {
 			}
 		}
 		
-		
-		Map<String, Integer> custCtgCount = jountAccountDetailDAO.getCustCtgCount(fm.getFinReference());
+		Map<String, Integer> custCtgCount = jointAccountDetailDAO.getCustCtgCount(fm.getFinReference());
 		if (custCtgCount != null) {
 			if (custCtgCount.containsKey(PennantConstants.PFF_CUSTCTG_INDIV)) {
 				retailCount = retailCount + custCtgCount.get(PennantConstants.PFF_CUSTCTG_INDIV);
@@ -933,12 +931,12 @@ public class FeeCalculator implements Serializable {
 		this.financeDetailService = financeDetailService;
 	}
 
-	public JountAccountDetailDAO getJountAccountDetailDAO() {
-		return jountAccountDetailDAO;
+	public JointAccountDetailDAO getJointAccountDetailDAO() {
+		return jointAccountDetailDAO;
 	}
 
-	public void setJountAccountDetailDAO(JountAccountDetailDAO jountAccountDetailDAO) {
-		this.jountAccountDetailDAO = jountAccountDetailDAO;
+	public void setJointAccountDetailDAO(JointAccountDetailDAO jointAccountDetailDAO) {
+		this.jointAccountDetailDAO = jointAccountDetailDAO;
 	}
 
 	public FinTypeFeesDAO getFinTypeFeesDAO() {

@@ -23,7 +23,6 @@ import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.backend.model.finance.BulkProcessHeader;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -316,14 +315,6 @@ public class ReportsUtil {
 		parameters.put("client", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT_DIGITAL));
 		parameters.put("productLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
 		parameters.put("SOAOrgLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_SOA));
-
-		if ("FINENQ_BulkDifferemmentDetails".equals(reportName)) {
-			String recalType = ((BulkProcessHeader) object).getReCalType();
-			if (recalType.equals(CalculationConstants.RPYCHG_ADJMDT)
-					|| recalType.equals(CalculationConstants.RPYCHG_ADDTERM)) {
-				parameters.put("recalTypeSubParm", "T");
-			}
-		}
 
 		return parameters;
 	}

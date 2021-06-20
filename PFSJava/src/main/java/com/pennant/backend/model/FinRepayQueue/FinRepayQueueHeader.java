@@ -26,7 +26,6 @@ public class FinRepayQueueHeader {
 	private BigDecimal latePftWaived = BigDecimal.ZERO;
 	private BigDecimal penaltyWaived = BigDecimal.ZERO;
 	private BigDecimal feeWaived = BigDecimal.ZERO;
-	private BigDecimal insWaived = BigDecimal.ZERO;
 
 	private BigDecimal manAdvPaid = BigDecimal.ZERO;
 	private BigDecimal manAdvWaived = BigDecimal.ZERO;
@@ -144,14 +143,6 @@ public class FinRepayQueueHeader {
 
 	public void setFeeWaived(BigDecimal feeWaived) {
 		this.feeWaived = feeWaived;
-	}
-
-	public BigDecimal getInsWaived() {
-		return insWaived;
-	}
-
-	public void setInsWaived(BigDecimal insWaived) {
-		this.insWaived = insWaived;
 	}
 
 	public List<FinRepayQueue> getQueueList() {

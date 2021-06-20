@@ -623,11 +623,11 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 		boolean coApplContainSpouseDts = false;
 
 		if (!inValidData) {
-			List<JointAccountDetail> jountAccountDetailList = financeDetail.getJountAccountDetailList();
+			List<JointAccountDetail> jointAccountDetailList = financeDetail.getJointAccountDetailList();
 			if (fromLoan && financeMainBaseCtrl != null) {
-				jountAccountDetailList = financeMainBaseCtrl.getJointAccountDetailList();
+				jointAccountDetailList = financeMainBaseCtrl.getJointAccountDetailList();
 			}
-			for (JointAccountDetail jointAccountDetail : jountAccountDetailList) {
+			for (JointAccountDetail jointAccountDetail : jointAccountDetailList) {
 				if (!PennantConstants.RECORD_TYPE_CAN.equals(jointAccountDetail.getRecordType())) {
 					if ("Wife".equals(jointAccountDetail.getCatOfcoApplicant())
 							|| "Husband".equals(jointAccountDetail.getCatOfcoApplicant())) {

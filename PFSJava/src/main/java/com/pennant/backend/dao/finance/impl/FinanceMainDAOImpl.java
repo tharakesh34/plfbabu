@@ -252,7 +252,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" fm.FinCcy, fm.FinType, fm.CustID, fm.FinStartDate, fm.FinBranch");
 		sql.append(", fm.FinReference, fm.MaturityDate, fm.FeeChargeAmt, fm.DownPayment");
-		sql.append(", fm.DeductFeeDisb, fm.BpiAmount, fm.DeductInsDisb, fm.FinIsActive");
+		sql.append(", fm.DeductFeeDisb, fm.BpiAmount, fm.FinIsActive");
 		sql.append(", fm.BpiTreatment, fm.QuickDisb, fm.InstBasedSchd, fm.FinAssetValue, fm.FinCurrAssetValue");
 		sql.append(", c.CustCIF, c.CustShrtName, ft.alwMultiPartyDisb, ft.FinTypeDesc");
 		sql.append(", PromotionCode, e.EntityCode");
@@ -281,7 +281,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setDownPayment(rs.getBigDecimal("DownPayment"));
 				fm.setDeductFeeDisb(rs.getBigDecimal("DeductFeeDisb"));
 				fm.setBpiAmount(rs.getBigDecimal("BpiAmount"));
-				fm.setDeductInsDisb(rs.getBigDecimal("DeductInsDisb"));
 				fm.setFinIsActive(rs.getBoolean("FinIsActive"));
 				fm.setBpiTreatment(rs.getString("BpiTreatment"));
 				fm.setQuickDisb(rs.getBoolean("QuickDisb"));
@@ -455,16 +454,16 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, GrcPeriodEndDate, FinRepaymentAmount, DisbAccountId, RepayAccountId");
-		sql.append(", FinAccount, FinCustPftAccount, FinCommitmentRef, FinLimitRef, FinCcy, FinBranch");
-		sql.append(", CustID, FinAmount, FeeChargeAmt, DownPayment, DownPayBank, DownPaySupl, DownPayAccount");
-		sql.append(", SecurityDeposit, FinType, FinStartDate, GraceTerms, NumberOfTerms, NextGrcPftDate");
+		sql.append(" FinReference, GrcPeriodEndDate, FinRepaymentAmount");
+		sql.append(", FinCommitmentRef, FinLimitRef, FinCcy, FinBranch");
+		sql.append(", CustID, FinAmount, FeeChargeAmt, DownPayment, DownPayBank, DownPaySupl");
+		sql.append(", FinType, FinStartDate, GraceTerms, NumberOfTerms, NextGrcPftDate");
 		sql.append(", NextRepayDate, LastRepayPftDate, NextRepayPftDate, ProductCategory, FinCategory");
 		sql.append(", LastRepayRvwDate, NextRepayRvwDate, FinAssetValue, FinCurrAssetValue, FinRepayMethod");
 		sql.append(", RepayFrq, ClosingStatus, DueBucket, CalRoundingMode, RoundingTarget, RecordType");
 		sql.append(", Version, ProfitDaysBasis, FinStatus, FinStsReason, PastduePftCalMthd, PastduePftMargin");
 		sql.append(", InitiateUser, MaturityDate");
-		sql.append(", feeAccountId, MinDownPayPerc, PromotionCode, FinIsActive, SanBsdSchdle, PromotionSeqId");
+		sql.append(", MinDownPayPerc, PromotionCode, FinIsActive, SanBsdSchdle, PromotionSeqId");
 		sql.append(", SvAmount, CbAmount, EmployeeName");
 		sql.append(" from Financemain");
 		sql.append("  Where FinReference = ?");
@@ -481,10 +480,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 							fm.setFinReference(rs.getString("FinReference"));
 							fm.setGrcPeriodEndDate(rs.getTimestamp("GrcPeriodEndDate"));
 							fm.setFinRepaymentAmount(rs.getBigDecimal("FinRepaymentAmount"));
-							fm.setDisbAccountId(rs.getString("DisbAccountId"));
-							fm.setRepayAccountId(rs.getString("RepayAccountId"));
-							fm.setFinAccount(rs.getString("FinAccount"));
-							fm.setFinCustPftAccount(rs.getString("FinCustPftAccount"));
 							fm.setFinCommitmentRef(rs.getString("FinCommitmentRef"));
 							fm.setFinLimitRef(rs.getString("FinLimitRef"));
 							fm.setFinCcy(rs.getString("FinCcy"));
@@ -495,8 +490,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 							fm.setDownPayment(rs.getBigDecimal("DownPayment"));
 							fm.setDownPayBank(rs.getBigDecimal("DownPayBank"));
 							fm.setDownPaySupl(rs.getBigDecimal("DownPaySupl"));
-							fm.setDownPayAccount(rs.getString("DownPayAccount"));
-							fm.setSecurityDeposit(rs.getBigDecimal("SecurityDeposit"));
 							fm.setFinType(rs.getString("FinType"));
 							fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
 							fm.setGraceTerms(rs.getInt("GraceTerms"));
@@ -526,7 +519,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 							fm.setPastduePftMargin(rs.getBigDecimal("PastduePftMargin"));
 							fm.setInitiateUser(rs.getLong("InitiateUser"));
 							fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
-							fm.setFeeAccountId(rs.getString("feeAccountId"));
 							fm.setMinDownPayPerc(rs.getBigDecimal("MinDownPayPerc"));
 							fm.setPromotionCode(rs.getString("PromotionCode"));
 							fm.setFinIsActive(rs.getBoolean("FinIsActive"));
@@ -612,7 +604,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (FinReference, InvestmentRef, FinType, FinCcy, FinBranch, FinAmount, FinStartDate,");
 		insertSql.append(" MaturityDate, CustID, RepayProfitRate , TotalRepayAmt ,");
-		insertSql.append(" TotalProfit, ProfitDaysBasis, ScheduleMethod, disbAccountId, repayAccountId,");
+		insertSql.append(" TotalProfit, ProfitDaysBasis, ScheduleMethod, ");
 		insertSql.append(" LastRepayDate, LastRepayPftDate, LastRepayRvwDate , LastRepayCpzDate ,");
 		insertSql.append(" GraceTerms, NumberOfTerms, AllowGrcPeriod, AllowGrcPftRvw , AllowGrcCpz ,");
 		insertSql.append(" AllowRepayRvw, AllowRepayCpz, CpzAtGraceEnd , CalTerms ,");
@@ -623,12 +615,12 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		insertSql
 				.append(" GrcProfitDaysBasis, StepFinance , StepPolicy, StepType, AlwManualSteps, NoOfSteps,DsaCode, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
-		insertSql.append(" NextTaskId, NextUserId, Priority, RecordType, WorkflowId, feeAccountId, MinDownPayPerc");
+		insertSql.append(" NextTaskId, NextUserId, Priority, RecordType, WorkflowId, MinDownPayPerc");
 		insertSql.append(", TDSApplicable,DroplineFrq,FirstDroplineDate,PftServicingODLimit, PromotionCode, TdsType)");
 
 		insertSql.append(" Values(:FinReference, :InvestmentRef, :FinType, :FinCcy, :FinBranch, :FinAmount, :FinStartDate,");
 		insertSql.append(" :MaturityDate, :CustID, :RepayProfitRate , :TotalRepayAmt ,");
-		insertSql.append(" :TotalProfit, :ProfitDaysBasis, :ScheduleMethod, :DisbAccountId, :RepayAccountId,");
+		insertSql.append(" :TotalProfit, :ProfitDaysBasis, :ScheduleMethod, ");
 		insertSql.append(" :LastRepayDate, :LastRepayPftDate, :LastRepayRvwDate, :LastRepayCpzDate,");
 		insertSql.append(" :GraceTerms, :NumberOfTerms, :AllowGrcPeriod, :AllowGrcPftRvw, :AllowGrcCpz,");
 		insertSql.append(" :AllowRepayRvw, :AllowRepayCpz, :CpzAtGraceEnd, :CalTerms,");
@@ -640,7 +632,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				" :GrcProfitDaysBasis, :StepFinance, :StepPolicy, :StepType, :AlwManualSteps, :NoOfSteps,:DsaCode, ");
 		insertSql.append(" :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
 		insertSql.append(
-				" :NextTaskId, :NextUserId, :Priority, :RecordType,:WorkflowId, :feeAccountId, :minDownPayPerc");
+				" :NextTaskId, :NextUserId, :Priority, :RecordType,:WorkflowId, :minDownPayPerc");
 		insertSql.append(
 				", :TDSApplicable,:DroplineFrq,:FirstDroplineDate,:PftServicingODLimit, :PromotionCode, :TdsType)");
 		logger.debug("insertSql: " + insertSql.toString());
@@ -671,15 +663,15 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", ProfitDaysBasis, ReqMaturity, CalTerms, CalMaturity, FirstRepay, LastRepay, FinStartDate");
 		sql.append(", FinAmount, FinRepaymentAmount, CustID, Defferments, PlanDeferCount, FinBranch, FinSourceID");
 		sql.append(", AllowedDefRpyChange, AvailedDefRpyChange, AllowedDefFrqChange, AvailedDefFrqChange");
-		sql.append(", RecalType, FinIsActive, FinAssetValue, disbAccountId, repayAccountId, LastRepayDate");
+		sql.append(", RecalType, FinIsActive, FinAssetValue, LastRepayDate");
 		sql.append(", LastRepayPftDate, LastRepayRvwDate, LastRepayCpzDate, AllowGrcRepay, GrcSchdMthd");
-		sql.append(", GrcMargin, RepayMargin, FinCommitmentRef, FinLimitRef, DepreciationFrq, FinCurrAssetValue");
-		sql.append(", NextDepDate, LastDepDate, FinAccount, FinCustPftAccount, ClosingStatus, FinApprovedDate");
+		sql.append(", GrcMargin, RepayMargin, FinCommitmentRef, FinLimitRef, FinCurrAssetValue");
+		sql.append(", ClosingStatus, FinApprovedDate");
 		sql.append(", DedupFound, SkipDedup, Blacklisted, GrcProfitDaysBasis, StepFinance, StepPolicy");
 		sql.append(", AlwManualSteps, NoOfSteps, StepType, AnualizedPercRate, EffectiveRateOfReturn, FinRepayPftOnFrq");
 		sql.append(", LinkedFinRef, GrcMinRate, GrcMaxRate, GrcMaxAmount, RpyMinRate, RpyMaxRate, ManualSchedule");
-		sql.append(", TakeOverFinance, feeAccountId, MinDownPayPerc, TDSApplicable");
-		sql.append(", InsuranceAmt, AlwBPI, BpiTreatment, PlanEMIHAlw, PlanEMIHMethod, PlanEMIHMaxPerYear");
+		sql.append(", MinDownPayPerc, TDSApplicable");
+		sql.append(", AlwBPI, BpiTreatment, PlanEMIHAlw, PlanEMIHMethod, PlanEMIHMaxPerYear");
 		sql.append(", PlanEMIHMax, PlanEMIHLockPeriod, PlanEMICpz, CalRoundingMode, RoundingTarget, AlwMultiDisb");
 		sql.append(", FinRepayMethod, FeeChargeAmt, BpiAmount, DeductFeeDisb, RvwRateApplFor, SchCalOnRvw");
 		sql.append(", PastduePftCalMthd, DroppingMethod, RateChgAnyDay, PastduePftMargin, FinCategory");
@@ -690,8 +682,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated");
 			sql.append(", CustDSR, LimitValid, OverrideLimit, FinPurpose, FinStatus, FinStsReason");
 			sql.append(", InitiateUser, DeviationApproval");
-			sql.append(", FinPreApprovedRef, MandateID, JointAccount, JointCustId, DownPayAccount, SecurityDeposit");
-			sql.append(", RcdMaintainSts, FinCancelAc, NextUserId, Priority");
+			sql.append(", FinPreApprovedRef, MandateID, JointAccount, JointCustId ");
+			sql.append(", RcdMaintainSts, NextUserId, Priority");
 			sql.append(", InitiateDate, AccountsOfficer, ApplicationNo, DsaCode, DroplineFrq");
 			sql.append(", FirstDroplineDate, PftServicingODLimit, ReferralId, EmployeeName, DmaCode, SalesDepartment");
 			sql.append(", QuickDisb, WifReference, UnPlanEMIHLockPeriod, UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi");
@@ -717,7 +709,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		if (!wif) {
 			sql.append(", ?, ?, ?, ?");
 			sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
@@ -810,8 +802,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				ps.setString(index++, fm.getRecalType());
 				ps.setBoolean(index++, fm.isFinIsActive());
 				ps.setBigDecimal(index++, fm.getFinAssetValue());
-				ps.setString(index++, fm.getDisbAccountId());
-				ps.setString(index++, fm.getRepayAccountId());
 				ps.setDate(index++, JdbcUtil.getDate(fm.getLastRepayDate()));
 				ps.setDate(index++, JdbcUtil.getDate(fm.getLastRepayPftDate()));
 				ps.setDate(index++, JdbcUtil.getDate(fm.getLastRepayRvwDate()));
@@ -822,12 +812,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				ps.setBigDecimal(index++, fm.getRepayMargin());
 				ps.setString(index++, fm.getFinCommitmentRef());
 				ps.setString(index++, fm.getFinLimitRef());
-				ps.setString(index++, fm.getDepreciationFrq());
 				ps.setBigDecimal(index++, fm.getFinCurrAssetValue());
-				ps.setDate(index++, JdbcUtil.getDate(fm.getNextDepDate()));
-				ps.setDate(index++, JdbcUtil.getDate(fm.getLastDepDate()));
-				ps.setString(index++, fm.getFinAccount());
-				ps.setString(index++, fm.getFinCustPftAccount());
 				ps.setString(index++, fm.getClosingStatus());
 				ps.setDate(index++, JdbcUtil.getDate(fm.getFinApprovedDate()));
 				ps.setBoolean(index++, fm.isDedupFound());
@@ -849,11 +834,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				ps.setBigDecimal(index++, fm.getRpyMinRate());
 				ps.setBigDecimal(index++, fm.getRpyMaxRate());
 				ps.setBoolean(index++, fm.isManualSchedule());
-				ps.setBoolean(index++, fm.isTakeOverFinance());
-				ps.setString(index++, fm.getFeeAccountId());
 				ps.setBigDecimal(index++, fm.getMinDownPayPerc());
 				ps.setBoolean(index++, fm.isTDSApplicable());
-				ps.setBigDecimal(index++, fm.getInsuranceAmt());
 				ps.setBoolean(index++, fm.isAlwBPI());
 				ps.setString(index++, fm.getBpiTreatment());
 				ps.setBoolean(index++, fm.isPlanEMIHAlw());
@@ -908,10 +890,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					ps.setLong(index++, JdbcUtil.setLong(fm.getMandateID()));
 					ps.setBoolean(index++, fm.isJointAccount());
 					ps.setLong(index++, JdbcUtil.setLong(fm.getJointCustId()));
-					ps.setString(index++, fm.getDownPayAccount());
-					ps.setBigDecimal(index++, fm.getSecurityDeposit());
 					ps.setString(index++, fm.getRcdMaintainSts());
-					ps.setString(index++, fm.getFinCancelAc());
 					ps.setString(index++, fm.getNextUserId());
 					ps.setInt(index++, fm.getPriority());
 					ps.setDate(index++, JdbcUtil.getDate(fm.getInitiateDate()));
@@ -1044,26 +1023,24 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" AllowedDefRpyChange= :AllowedDefRpyChange, AvailedDefRpyChange= :AvailedDefRpyChange,");
 		sql.append(" AllowedDefFrqChange= :AllowedDefFrqChange, AvailedDefFrqChange= :AvailedDefFrqChange,");
 		sql.append(" RecalType=:RecalType, FinIsActive= :FinIsActive,FinAssetValue= :FinAssetValue,");
-		sql.append(" disbAccountId= :disbAccountId, repayAccountId= :repayAccountId,");
 		sql.append(" LastRepayDate= :LastRepayDate,LastRepayPftDate= :LastRepayPftDate,");
 		sql.append(
 				" LastRepayRvwDate= :LastRepayRvwDate, LastRepayCpzDate= :LastRepayCpzDate,AllowGrcRepay= :AllowGrcRepay,");
 		sql.append(" GrcSchdMthd= :GrcSchdMthd, GrcMargin= :GrcMargin,RepayMargin= :RepayMargin,");
 		sql.append(
-				" FinCommitmentRef= :FinCommitmentRef, FinLimitRef=:FinLimitRef, DepreciationFrq= :DepreciationFrq, FinCurrAssetValue= :FinCurrAssetValue,");
-		sql.append(" NextDepDate= :NextDepDate, LastDepDate= :LastDepDate,FinAccount=:FinAccount, ");
+				" FinCommitmentRef= :FinCommitmentRef, FinLimitRef=:FinLimitRef, FinCurrAssetValue= :FinCurrAssetValue,");
 		sql.append(
-				" FinCustPftAccount=:FinCustPftAccount,ClosingStatus= :ClosingStatus, FinApprovedDate= :FinApprovedDate,");
+				" ClosingStatus= :ClosingStatus, FinApprovedDate= :FinApprovedDate,");
 		sql.append(
 				" AnualizedPercRate =:AnualizedPercRate , EffectiveRateOfReturn =:EffectiveRateOfReturn , FinRepayPftOnFrq =:FinRepayPftOnFrq ,");
 		sql.append(
 				" GrcProfitDaysBasis = :GrcProfitDaysBasis, StepFinance = :StepFinance, StepPolicy = :StepPolicy, StepType = :StepType,");
 		sql.append(
-				" AlwManualSteps = :AlwManualSteps, NoOfSteps = :NoOfSteps, ManualSchedule=:ManualSchedule , TakeOverFinance=:TakeOverFinance ,LinkedFinRef=:LinkedFinRef, ");
+				" AlwManualSteps = :AlwManualSteps, NoOfSteps = :NoOfSteps, ManualSchedule=:ManualSchedule , LinkedFinRef=:LinkedFinRef, ");
 		sql.append(
 				" GrcMinRate=:GrcMinRate, GrcMaxRate=:GrcMaxRate ,GrcMaxAmount=:GrcMaxAmount, RpyMinRate=:RpyMinRate, RpyMaxRate=:RpyMaxRate, ");
 		sql.append(
-				" FeeAccountId=:FeeAccountId , MinDownPayPerc=:MinDownPayPerc, TDSApplicable=:TDSApplicable,InsuranceAmt=:InsuranceAmt, AlwBPI=:AlwBPI , ");
+				" MinDownPayPerc=:MinDownPayPerc, TDSApplicable=:TDSApplicable,AlwBPI=:AlwBPI , ");
 		sql.append(
 				" BpiTreatment=:BpiTreatment , PlanEMIHAlw=:PlanEMIHAlw , PlanEMIHMethod=:PlanEMIHMethod , PlanEMIHMaxPerYear=:PlanEMIHMaxPerYear , ");
 		sql.append(
@@ -1075,13 +1052,13 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(
 					" DroplineFrq= :DroplineFrq,FirstDroplineDate = :FirstDroplineDate,PftServicingODLimit = :PftServicingODLimit,");
 			sql.append(
-					" MigratedFinance = :MigratedFinance,ScheduleMaintained = :ScheduleMaintained, ScheduleRegenerated = :ScheduleRegenerated,FinCancelAc=:FinCancelAc,");
+					" MigratedFinance = :MigratedFinance,ScheduleMaintained = :ScheduleMaintained, ScheduleRegenerated = :ScheduleRegenerated,");
 			sql.append(
 					" LimitValid= :LimitValid, OverrideLimit= :OverrideLimit,FinPurpose=:FinPurpose, DeviationApproval=:DeviationApproval,FinPreApprovedRef=:FinPreApprovedRef, MandateID=:MandateID, ");
 			sql.append(" FinStatus=:FinStatus , FinStsReason=:FinStsReason, InitiateUser=:InitiateUser,");
 			sql.append(" CustDSR=:CustDSR, JointAccount=:JointAccount, JointCustId=:JointCustId, ");
 			sql.append(
-					" DownPayAccount=:DownPayAccount,  SecurityDeposit = :SecurityDeposit, RcdMaintainSts=:RcdMaintainSts, FinRepayMethod=:FinRepayMethod, ");
+					" RcdMaintainSts=:RcdMaintainSts, FinRepayMethod=:FinRepayMethod, ");
 			sql.append(" NextUserId=:NextUserId, Priority=:Priority, InitiateDate= :InitiateDate, ");
 			sql.append(
 					" AccountsOfficer =:AccountsOfficer,DsaCode = :DsaCode, ApplicationNo=:ApplicationNo, ReferralId =:ReferralId ,EmployeeName =:EmployeeName, DmaCode =:DmaCode , SalesDepartment =:SalesDepartment , QuickDisb =:QuickDisb , WifReference =:WifReference ,");
@@ -1204,7 +1181,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		updateSql.append(" RepayProfitRate = :RepayProfitRate, TotalRepayAmt= :TotalRepayAmt, ");
 		updateSql.append(" TotalProfit = :TotalProfit, ProfitDaysBasis= :ProfitDaysBasis, ");
 		updateSql.append(" ScheduleMethod = :ScheduleMethod, ");
-		updateSql.append(" DisbAccountId = :DisbAccountId, RepayAccountId= :RepayAccountId, ");
 		updateSql.append(" LastRepayDate = :LastRepayDate, LastRepayPftDate = :LastRepayPftDate, ");
 		updateSql.append(" LastRepayRvwDate = :LastRepayRvwDate, LastRepayCpzDate = :LastRepayCpzDate, ");
 		updateSql.append(" NumberOfTerms = :NumberOfTerms, GraceTerms=:GraceTerms, AllowGrcPeriod = :AllowGrcPeriod, ");
@@ -1285,29 +1261,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		} else {
 			return true;
 		}
-	}
-
-	@Override
-	public void updateFinAccounts(String finReference, String finAccount) {
-		int recordCount = 0;
-
-		FinanceMain financeMain = new FinanceMain();
-		financeMain.setFinReference(finReference);
-		financeMain.setFinAccount(finAccount);
-
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update FinanceMain");
-		updateSql.append(" Set FinAccount =:FinAccount ");
-		updateSql.append(" Where FinReference =:FinReference");
-
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-
-		if (recordCount <= 0) {
-			throw new ConcurrencyException();
-		}
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -1687,14 +1640,14 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		insertSql.append(" FinStartDate, FinAmount, FinRepaymentAmount, CustID, Defferments,PlanDeferCount,");
 		insertSql.append(" FinBranch, FinSourceID, AllowedDefRpyChange, AvailedDefRpyChange, AllowedDefFrqChange,");
 		insertSql.append(
-				" AvailedDefFrqChange, RecalType, FinIsActive,FinAssetValue, disbAccountId, repayAccountId, FinCancelAc, ");
+				" AvailedDefFrqChange, RecalType, FinIsActive,FinAssetValue, ");
 		insertSql.append(
 				" LastRepayDate, LastRepayPftDate, LastRepayRvwDate, LastRepayCpzDate, AllowGrcRepay, GrcSchdMthd,");
-		insertSql.append(" GrcMargin, RepayMargin, FinCommitmentRef, FinLimitRef, DepreciationFrq, FinCurrAssetValue,");
-		insertSql.append(" NextDepDate, LastDepDate, FinAccount, FinCustPftAccount, ClosingStatus, FinApprovedDate, ");
+		insertSql.append(" GrcMargin, RepayMargin, FinCommitmentRef, FinLimitRef,  FinCurrAssetValue,");
+		insertSql.append(" ClosingStatus, FinApprovedDate, ");
 		insertSql.append(" DedupFound,SkipDedup,Blacklisted,");
 		insertSql.append(
-				" GrcProfitDaysBasis, StepFinance , StepPolicy, StepType, AlwManualSteps, NoOfSteps, ManualSchedule , TakeOverFinance ,");
+				" GrcProfitDaysBasis, StepFinance , StepPolicy, StepType, AlwManualSteps, NoOfSteps, ManualSchedule , ");
 		insertSql.append(" AnualizedPercRate , EffectiveRateOfReturn , FinRepayPftOnFrq, ");
 		insertSql.append(" LinkedFinRef, ");
 		insertSql.append(" GrcMinRate, GrcMaxRate,GrcMaxAmount, RpyMinRate, RpyMaxRate,  ");
@@ -1702,12 +1655,12 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		insertSql.append(
 				" FeeChargeAmt, BpiAmount, DeductFeeDisb, LimitValid, OverrideLimit,FinPurpose,DeviationApproval,FinPreApprovedRef,MandateID,FinStatus, FinStsReason, initiateUser,");
 		insertSql.append(
-				" JointAccount,JointCustId,DownPayAccount, SecurityDeposit, RcdMaintainSts,FinRepayMethod, AlwBPI , BpiTreatment , PlanEMIHAlw , ");
+				" JointAccount,JointCustId, RcdMaintainSts,FinRepayMethod, AlwBPI , BpiTreatment , PlanEMIHAlw , ");
 		insertSql.append(
 				" PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax , PlanEMIHLockPeriod , PlanEMICpz , CalRoundingMode ,RoundingTarget, AlwMultiDisb, ");
 		insertSql.append(" NextUserId, ");
 		insertSql.append(
-				" Priority, DsaCode, feeAccountId,MinDownPayPerc, InitiateDate,TDSApplicable,AccountsOfficer,ApplicationNo,");
+				" Priority, DsaCode, MinDownPayPerc, InitiateDate,TDSApplicable,AccountsOfficer,ApplicationNo,");
 		insertSql.append(
 				" ReferralId, DmaCode, SalesDepartment, QuickDisb, WifReference, UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, RvwRateApplFor ,SchCalOnRvw,PastduePftCalMthd,DroppingMethod,RateChgAnyDay,PastduePftMargin,  FinCategory, ProductCategory,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
@@ -1738,16 +1691,16 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		insertSql
 				.append(" :FinBranch, :FinSourceID, :AllowedDefRpyChange, :AvailedDefRpyChange, :AllowedDefFrqChange,");
 		insertSql.append(
-				" :AvailedDefFrqChange, :RecalType, :FinIsActive,:FinAssetValue, :disbAccountId, :repayAccountId,:FinCancelAc, ");
+				" :AvailedDefFrqChange, :RecalType, :FinIsActive,:FinAssetValue, ");
 		insertSql.append(
 				" :LastRepayDate, :LastRepayPftDate, :LastRepayRvwDate, :LastRepayCpzDate,:AllowGrcRepay, :GrcSchdMthd,");
 		insertSql.append(
-				" :GrcMargin, :RepayMargin, :FinCommitmentRef, :FinLimitRef, :DepreciationFrq, :FinCurrAssetValue,");
+				" :GrcMargin, :RepayMargin, :FinCommitmentRef, :FinLimitRef, :FinCurrAssetValue,");
 		insertSql.append(
-				" :NextDepDate, :LastDepDate, :FinAccount, :FinCustPftAccount, :ClosingStatus , :FinApprovedDate, ");
+				" :ClosingStatus , :FinApprovedDate, ");
 		insertSql.append(" :DedupFound,:SkipDedup,:Blacklisted,");
 		insertSql.append(
-				" :GrcProfitDaysBasis, :StepFinance , :StepPolicy, :StepType, :AlwManualSteps, :NoOfSteps, :ManualSchedule , :TakeOverFinance , ");
+				" :GrcProfitDaysBasis, :StepFinance , :StepPolicy, :StepType, :AlwManualSteps, :NoOfSteps, :ManualSchedule , ");
 		insertSql.append(" :AnualizedPercRate , :EffectiveRateOfReturn , :FinRepayPftOnFrq, ");
 		insertSql.append(" :LinkedFinRef, ");
 		insertSql.append(" :GrcMinRate, :GrcMaxRate ,:GrcMaxAmount, :RpyMinRate, :RpyMaxRate, ");
@@ -1755,12 +1708,12 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		insertSql.append(
 				" :FeeChargeAmt, :BpiAmount, :DeductFeeDisb, :LimitValid, :OverrideLimit, :FinPurpose,:DeviationApproval,:FinPreApprovedRef,:MandateID,:FinStatus, :FinStsReason, :InitiateUser,");
 		insertSql.append(
-				" :JointAccount,:JointCustId , :DownPayAccount,  :SecurityDeposit, :RcdMaintainSts,:FinRepayMethod, :AlwBPI , :BpiTreatment , :PlanEMIHAlw , ");
+				" :JointAccount,:JointCustId , ::RcdMaintainSts,:FinRepayMethod, :AlwBPI , :BpiTreatment , :PlanEMIHAlw , ");
 		insertSql.append(
 				" :PlanEMIHMethod , :PlanEMIHMaxPerYear , :PlanEMIHMax , :PlanEMIHLockPeriod , :PlanEMICpz , :CalRoundingMode ,:RoundingTarget, :AlwMultiDisb, ");
 		insertSql.append(" :NextUserId, ");
 		insertSql.append(
-				" :Priority,:DsaCode,:feeAccountId,:MinDownPayPerc, :InitiateDate,:TDSApplicable,:AccountsOfficer, :ApplicationNo,");
+				" :Priority,:DsaCode,:MinDownPayPerc, :InitiateDate,:TDSApplicable,:AccountsOfficer, :ApplicationNo,");
 		insertSql.append(
 				" :ReferralId, :DmaCode, :SalesDepartment, :QuickDisb, :WifReference, :UnPlanEMIHLockPeriod , :UnPlanEMICpz, :ReAgeCpz, :MaxUnplannedEmi, :MaxReAgeHolidays, :AvailedUnPlanEmi, :AvailedReAgeH,:RvwRateApplFor, :SchCalOnRvw,:PastduePftCalMthd,:DroppingMethod,:RateChgAnyDay,:PastduePftMargin, :FinCategory, :ProductCategory,");
 		insertSql.append(" :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
@@ -2124,67 +2077,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		return financeMain;
 	}
 
-	/**
-	 * Fetch the Record Finance Main Detail details by key field
-	 * 
-	 * @param finReference
-	 *            (String)
-	 * 
-	 * @return FinanceMain
-	 */
-	@Override
-	public FinanceMain getFinanceMainForManagerCheque(final String finReference, String type) {
-		logger.debug("Entering");
-
-		FinanceMain financeMain = new FinanceMain();
-		financeMain.setId(finReference);
-
-		StringBuilder selectSql = new StringBuilder("select  FinReference, GrcPeriodEndDate, FinRepaymentAmount,");
-		selectSql.append(" GraceBaseRate, GraceSpecialRate, GrcPftRate, GrcPftFrq,NextGrcPftDate, AllowGrcPftRvw,");
-		selectSql.append(" GrcPftRvwFrq, NextGrcPftRvwDate, AllowGrcCpz, GrcCpzFrq, NextGrcCpzDate,RepayBaseRate,");
-		selectSql.append(" RepaySpecialRate, RepayProfitRate, RepayFrq, NextRepayDate, RepayPftFrq, NextRepayPftDate,");
-		selectSql.append(" AllowRepayRvw,RepayRvwFrq, NextRepayRvwDate, AllowRepayCpz, RepayCpzFrq, NextRepayCpzDate,");
-		selectSql.append(
-				" MaturityDate, CpzAtGraceEnd,DownPayment, GraceFlatAmount, ReqRepayAmount, TotalProfit, DownPayBank, DownPaySupl, ");
-		selectSql.append(" TotalCpz,TotalGrossPft,TotalGracePft,TotalGraceCpz,TotalGrossGrcPft, TotalRepayAmt,");
-		selectSql.append(" GrcRateBasis, RepayRateBasis, FinType,FinRemarks, FinCcy, ScheduleMethod,");
-		selectSql.append(" ProfitDaysBasis, ReqMaturity, CalTerms, CalMaturity, FirstRepay, LastRepay,");
-		selectSql.append(" FinStartDate, FinAmount, FinRepaymentAmount, CustID, Defferments, ");
-		selectSql.append(" FinBranch, FinSourceID, AllowedDefRpyChange, AvailedDefRpyChange, AllowedDefFrqChange,");
-		selectSql
-				.append(" AvailedDefFrqChange, RecalType, FinAssetValue, disbAccountId, repayAccountId, FinIsActive, ");
-		selectSql.append(
-				" LastRepayDate, LastRepayPftDate,LastRepayRvwDate, LastRepayCpzDate, AllowGrcRepay, GrcSchdMthd,");
-		selectSql.append(
-				" GrcMargin, RepayMargin, FinCommitmentRef, FinLimitRef, DepreciationFrq, FinCurrAssetValue,FinContractDate,");
-		selectSql.append(" NextDepDate, LastDepDate, FinAccount, FinCustPftAccount,");
-		selectSql.append(" NextDepDate, LastDepDate, FinAccount, FinCustPftAccount,");
-		selectSql.append(" ClosingStatus, FinApprovedDate, ");
-		selectSql.append(
-				" AnualizedPercRate , EffectiveRateOfReturn , FinRepayPftOnFrq, FeeChargeAmt, BpiAmount, DeductFeeDisb, PromotionCode, SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount ");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(", lovDescFinTypeName, lovDescCustCIF, ");
-			selectSql.append(
-					" lovDescCustShrtName, LovDescCustFName, lovDescCustLName, lovDescFinBranchName, lovDescFinancingAmount ");
-		}
-		selectSql.append(" FROM Financemain");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference = :FinReference");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		RowMapper<FinanceMain> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
-
-		try {
-			financeMain = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			financeMain = null;
-		}
-		logger.debug("Leaving");
-		return financeMain;
-	}
-
 	@Override
 	public void updateRepaymentAmount(String finReference, BigDecimal repaymentAmount) {
 		logger.debug("Entering");
@@ -2301,36 +2193,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 		logger.debug("Leaving");
 		return repayMethod;
-	}
-
-	/**
-	 * @param AccountNo
-	 * @return
-	 */
-	@Override
-	public String getCurrencyByAccountNo(String accountNo) {
-		logger.debug("Entering");
-		FinanceMain financeMain = new FinanceMain();
-		financeMain.setRepayAccountId(accountNo);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" select FinCcy from FinanceMain fm inner join SecondaryAccounts sa on ");
-		selectSql.append(" fm.FinReference=sa.FinReference where fm.RepayAccountId= :RepayAccountId ");
-		selectSql.append(" or sa.AccountNumber = :RepayAccountId group by FinCcy ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-
-		String finCcy = null;
-		try {
-			finCcy = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			finCcy = null;
-		}
-		financeMain = null;
-		logger.debug("Leaving");
-		return finCcy;
 	}
 
 	@Override
@@ -3629,7 +3491,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		selectSql.append(" ClosingStatus, FinApprovedDate, ");
 		selectSql.append(" AnualizedPercRate,  FinRepayPftOnFrq , GrcProfitDaysBasis, ");
 		selectSql.append(" LinkedFinRef,");
-		selectSql.append(" RpyMinRate, RpyMaxRate, TDSApplicable, FeeChargeAmt, InsuranceAmt, ");
+		selectSql.append(" RpyMinRate, RpyMaxRate, TDSApplicable, FeeChargeAmt, ");
 		selectSql.append(" AlwBPI, BpiTreatment, BpiAmount,");
 		selectSql.append(" CalRoundingMode, RoundingTarget, AlwMultiDisb,");
 		selectSql.append(" DeductFeeDisb, RvwRateApplFor, SchCalOnRvw, PastduePftCalMthd, ");
@@ -4303,12 +4165,12 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public void updateFromReceipt(FinanceMain fm, TableType tableType) {
 		StringBuilder sql = new StringBuilder("Update");
 		sql.append(" FinanceMain set");
-		sql.append(" StepFinance = ?, RepayAccountId = ?, AccountsOfficer = ?, PlanEMIHMax = ?");
+		sql.append(" StepFinance = ?,  AccountsOfficer = ?, PlanEMIHMax = ?");
 		sql.append(", RepayCpzFrq = ?, WorkflowId = ?, UnPlanEMIHLockPeriod = ?");
 		sql.append(", NextRoleCode = ?, GrcPftRate = ?, AllowGrcRepay = ?, GrcCpzFrq = ?");
 		sql.append(", LastRepayPftDate = ?, NextGrcPftDate = ?, RecalType = ?, AllowedDefRpyChange = ?");
-		sql.append(", MinDownPayPerc = ?, CustDSR = ?, RvwRateApplFor = ?, RateChgAnyDay = ?, DownPayAccount = ?");
-		sql.append(", RcdMaintainSts = ?, MaxReAgeHolidays = ?, FinAccount = ?, DepreciationFrq = ?");
+		sql.append(", MinDownPayPerc = ?, CustDSR = ?, RvwRateApplFor = ?, RateChgAnyDay = ?");
+		sql.append(", RcdMaintainSts = ?, MaxReAgeHolidays = ?");
 		sql.append(", CustID = ?, CalTerms = ?, FinAmount = ?, UnPlanEMICpz = ?");
 		sql.append(", PlanDeferCount = ?, PlanEMIHAlw = ?, PlanEMIHAlwInGrace = ?, CalMaturity = ?");
 		sql.append(", DsaCode = ?, Defferments = ?, BpiAmount = ?, ApplicationNo = ?, LegalRequired = ?");
@@ -4316,37 +4178,37 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", GrcRateBasis = ?, LastRepayRvwDate = ?, RecordStatus = ?, TotalGraceCpz = ?");
 		sql.append(", RpyMaxRate = ?, RpyMinRate = ?, AlwMultiDisb = ?, NextRepayCpzDate = ?, FinRepaymentAmount = ?");
 		sql.append(", DmaCode = ?, ReqRepayAmount = ?, MaxUnplannedEmi = ?");
-		sql.append(", ScheduleRegenerated = ?, FixedRateTenor = ?, DisbAccountId = ?, GrcProfitDaysBasis = ?");
-		sql.append(", DownPayBank = ?, LastDepDate = ?, DroplineFrq = ?, FinStatus = ?, NumberOfTerms = ?");
+		sql.append(", ScheduleRegenerated = ?, FixedRateTenor = ?, GrcProfitDaysBasis = ?");
+		sql.append(", DownPayBank = ?, DroplineFrq = ?, FinStatus = ?, NumberOfTerms = ?");
 		sql.append(", OverrideLimit = ?, Version = ?, ScheduleMethod = ?, FirstRepay = ?");
 		sql.append(", RepayProfitRate = ?, FinIsActive = ?, GrcPeriodEndDate = ?");
-		sql.append(", RepayRvwFrq = ?, FinLimitRef = ?, ProductCategory = ?, FinCustPftAccount = ?");
+		sql.append(", RepayRvwFrq = ?, FinLimitRef = ?, ProductCategory = ?");
 		sql.append(", FinRepayPftOnFrq = ?, EmployeeName = ?, TDSApplicable = ?");
 		sql.append(", Connector = ?, AvailedDefRpyChange = ?, ScheduleMaintained = ?, LastRepayDate = ?");
 		sql.append(", LastRepay = ?, ReqMaturity = ?, PastduePftMargin = ?, RepayFrq = ?, TotalCpz = ?");
-		sql.append(", TotalGrossPft = ?, SecurityDeposit = ?, FinRepayMethod = ?, AllowRepayRvw = ?");
+		sql.append(", TotalGrossPft = ?, FinRepayMethod = ?, AllowRepayRvw = ?");
 		sql.append(", TotalProfit = ?, AvailedUnPlanEmi = ?, FinCategory = ?, GrcPftRvwFrq = ?, FinCommitmentRef = ?");
 		sql.append(", TotalGrossGrcPft = ?, DownPaySupl = ?, AllowGrcPeriod = ?, SalesDepartment = ?");
 		sql.append(", PlanEMICpz = ?, GrcMaxRate = ?, FirstDroplineDate = ?, MandateID = ?");
 		sql.append(", AvailedDefFrqChange = ?, CpzAtGraceEnd = ?, StepPolicy = ?, AllowGrcCpz = ?");
 		sql.append(", NextRepayPftDate = ?, AllowGrcPftRvw = ?, NextGrcPftRvwDate = ?, FinContractDate = ?");
 		sql.append(", InvestmentRef = ?, PromotionCode = ?, FinPreApprovedRef = ?, LimitValid = ?");
-		sql.append(", NoOfSteps = ?, FeeAccountId = ?, RoundingTarget = ?");
+		sql.append(", NoOfSteps = ?, RoundingTarget = ?");
 		sql.append(", LastRepayCpzDate = ?, NextGrcCpzDate = ?, PlanEMIHMethod = ?, AdvanceEMI = ?");
 		sql.append(", AnualizedPercRate = ?, FinCcy = ?, TaskId = ?, BpiPftDaysBasis = ?, StepType = ?");
 		sql.append(", WifReference = ?, InitiateDate = ?, FinApprovedDate = ?");
-		sql.append(", BpiTreatment = ?, NextRepayDate = ?, NextDepDate = ?, DroppingMethod = ?, RepayBaseRate = ?");
+		sql.append(", BpiTreatment = ?, NextRepayDate = ?, DroppingMethod = ?, RepayBaseRate = ?");
 		sql.append(", SchCalOnRvw = ?, AvailedReAgeH = ?, FeeChargeAmt = ?, MigratedFinance = ?");
 		sql.append(", FixedTenorRate = ?, LastMntOn = ?, GrcMaxAmount = ?, PlanEMIHLockPeriod = ?");
 		sql.append(", InitiateUser = ?, RepayPftFrq = ?, ProfitDaysBasis = ?, JointAccount = ?, FinBranch = ?");
 		sql.append(", GrcPftFrq = ?, FinSourceID = ?, EligibilityMethod = ?, CalRoundingMode = ?");
 		sql.append(", DeductFeeDisb = ?, FinType = ?, EffectiveRateOfReturn = ?, GraceTerms = ?");
-		sql.append(", DownPayment = ?, FinAssetValue = ?, InsuranceAmt = ?, FinRemarks = ?");
+		sql.append(", DownPayment = ?, FinAssetValue = ?, FinRemarks = ?");
 		sql.append(", Priority = ?, AllowedDefFrqChange = ?, DeviationApproval = ?, ManualSchedule = ?");
 		sql.append(", GraceBaseRate = ?, ReferralId = ?, SamplingRequired = ?, AlwBPI = ?, AlwManualSteps = ?");
 		sql.append(", GrcMargin = ?, RepayMargin = ?, RepayRateBasis = ?, LinkedFinRef = ?, TotalRepayAmt = ?");
-		sql.append(", JointCustId = ?, TakeOverFinance = ?, TotalGracePft = ?, RepaySpecialRate = ?");
-		sql.append(", RecordType = ?, FinCancelAc = ?, ReAgeCpz = ?, GraceSpecialRate = ?, AllowRepayCpz = ?");
+		sql.append(", JointCustId = ?, TotalGracePft = ?, RepaySpecialRate = ?");
+		sql.append(", RecordType = ?, ReAgeCpz = ?, GraceSpecialRate = ?, AllowRepayCpz = ?");
 		sql.append(", NextRepayRvwDate = ?, PlanEMIHMaxPerYear = ?, GrcSchdMthd = ?, LastMntBy = ?");
 		sql.append(", NextUserId = ?, FinStartDate = ?, MaturityDate = ?, ClosingStatus = ?");
 		sql.append(", PftServicingODLimit = ?, QuickDisb = ?, GrcMinRate = ?, PastduePftCalMthd = ?");
@@ -4365,7 +4227,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			int index = 1;
 
 			ps.setBoolean(index++, fm.isStepFinance());
-			ps.setString(index++, fm.getRepayAccountId());
 			ps.setLong(index++, fm.getAccountsOfficer());
 			ps.setInt(index++, fm.getPlanEMIHMax());
 			ps.setString(index++, fm.getRepayCpzFrq());
@@ -4383,11 +4244,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			ps.setBigDecimal(index++, fm.getCustDSR());
 			ps.setString(index++, fm.getRvwRateApplFor());
 			ps.setBoolean(index++, fm.isRateChgAnyDay());
-			ps.setString(index++, fm.getDownPayAccount());
 			ps.setString(index++, fm.getRcdMaintainSts());
 			ps.setInt(index++, fm.getMaxReAgeHolidays());
-			ps.setString(index++, fm.getFinAccount());
-			ps.setString(index++, fm.getDepreciationFrq());
 			ps.setLong(index++, fm.getCustID());
 			ps.setInt(index++, fm.getCalTerms());
 			ps.setBigDecimal(index++, fm.getFinAmount());
@@ -4420,10 +4278,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			ps.setInt(index++, fm.getMaxUnplannedEmi());
 			ps.setBoolean(index++, fm.isScheduleRegenerated());
 			ps.setInt(index++, fm.getFixedRateTenor());
-			ps.setString(index++, fm.getDisbAccountId());
 			ps.setString(index++, fm.getGrcProfitDaysBasis());
 			ps.setBigDecimal(index++, fm.getDownPayBank());
-			ps.setDate(index++, JdbcUtil.getDate(fm.getLastDepDate()));
 			ps.setString(index++, fm.getDroplineFrq());
 			ps.setString(index++, fm.getFinStatus());
 			ps.setInt(index++, fm.getNumberOfTerms());
@@ -4437,7 +4293,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			ps.setString(index++, fm.getRepayRvwFrq());
 			ps.setString(index++, fm.getFinLimitRef());
 			ps.setString(index++, fm.getProductCategory());
-			ps.setString(index++, fm.getFinCustPftAccount());
 			ps.setBoolean(index++, fm.isFinRepayPftOnFrq());
 			ps.setString(index++, fm.getEmployeeName());
 			ps.setBoolean(index++, fm.isTDSApplicable());
@@ -4451,7 +4306,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			ps.setString(index++, fm.getRepayFrq());
 			ps.setBigDecimal(index++, fm.getTotalCpz());
 			ps.setBigDecimal(index++, fm.getTotalGrossPft());
-			ps.setBigDecimal(index++, fm.getSecurityDeposit());
 			ps.setString(index++, fm.getFinRepayMethod());
 			ps.setBoolean(index++, fm.isAllowRepayRvw());
 			ps.setBigDecimal(index++, fm.getTotalProfit());
@@ -4480,7 +4334,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			ps.setString(index++, fm.getFinPreApprovedRef());
 			ps.setBoolean(index++, fm.isLimitValid());
 			ps.setInt(index++, fm.getNoOfSteps());
-			ps.setString(index++, fm.getFeeAccountId());
 			ps.setInt(index++, fm.getRoundingTarget());
 			ps.setDate(index++, JdbcUtil.getDate(fm.getLastRepayCpzDate()));
 			ps.setDate(index++, JdbcUtil.getDate(fm.getNextGrcCpzDate()));
@@ -4496,7 +4349,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			ps.setDate(index++, JdbcUtil.getDate(fm.getFinApprovedDate()));
 			ps.setString(index++, fm.getBpiTreatment());
 			ps.setDate(index++, JdbcUtil.getDate(fm.getNextRepayDate()));
-			ps.setDate(index++, JdbcUtil.getDate(fm.getNextDepDate()));
 			ps.setString(index++, fm.getDroppingMethod());
 			ps.setString(index++, fm.getRepayBaseRate());
 			ps.setString(index++, fm.getSchCalOnRvw());
@@ -4522,7 +4374,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			ps.setInt(index++, fm.getGraceTerms());
 			ps.setBigDecimal(index++, fm.getDownPayment());
 			ps.setBigDecimal(index++, fm.getFinAssetValue());
-			ps.setBigDecimal(index++, fm.getInsuranceAmt());
 			ps.setString(index++, fm.getFinRemarks());
 			ps.setInt(index++, fm.getPriority());
 			ps.setInt(index++, fm.getAllowedDefFrqChange());
@@ -4539,11 +4390,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			ps.setString(index++, fm.getLinkedFinRef());
 			ps.setBigDecimal(index++, fm.getTotalRepayAmt());
 			ps.setLong(index++, fm.getJointCustId());
-			ps.setBoolean(index++, fm.isTakeOverFinance());
 			ps.setBigDecimal(index++, fm.getTotalGracePft());
 			ps.setString(index++, fm.getRepaySpecialRate());
 			ps.setString(index++, fm.getRecordType());
-			ps.setString(index++, fm.getFinCancelAc());
 			ps.setBoolean(index++, fm.isReAgeCpz());
 			ps.setString(index++, fm.getGraceSpecialRate());
 			ps.setBoolean(index++, fm.isAllowRepayCpz());
@@ -4638,7 +4487,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(
-				" Select DISTINCT T1.FinReference, T1.FINTYPE, T1.FINSTARTDATE, T1.FINSTATUS, T1.FINCCY, T1.FinCurrAssetValue, T1.FeeChargeAmt, T1.InsuranceAmt, T1.FinRepaymentAmount");
+				" Select DISTINCT T1.FinReference, T1.FINTYPE, T1.FINSTARTDATE, T1.FINSTATUS, T1.FINCCY, T1.FinCurrAssetValue, T1.FeeChargeAmt, T1.FinRepaymentAmount");
 		selectSql.append(" From FinanceMain T1");
 		selectSql.append(" where T1.CustId = :CustId");
 
@@ -4667,7 +4516,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(
-				" Select DISTINCT T1.FinReference, T1.FINTYPE, T1.FINSTARTDATE, T1.FINSTATUS, T1.FINCCY, T1.FinCurrAssetValue, T1.FeeChargeAmt, T1.InsuranceAmt, T1.FinRepaymentAmount");
+				" Select DISTINCT T1.FinReference, T1.FINTYPE, T1.FINSTARTDATE, T1.FINSTATUS, T1.FINCCY, T1.FinCurrAssetValue, T1.FeeChargeAmt, T1.FinRepaymentAmount");
 		selectSql.append(" From FinanceMain T1");
 		selectSql.append(" Inner Join CollateralAssignment T2 On T2.Reference = T1.FinReference");
 		selectSql.append(" Where T2.COLLATERALREF In (select collateralref from COLLATERALASSIGNMENT ");
@@ -5319,17 +5168,17 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" ProfitDaysBasis, ReqMaturity, CalTerms, CalMaturity, FirstRepay, LastRepay,DownPaySupl,");
 		sql.append(" FinStartDate, FinAmount, FinRepaymentAmount, CustID, Defferments, PlanDeferCount, ");
 		sql.append(" FinBranch, FinSourceID, AllowedDefRpyChange, AvailedDefRpyChange, AllowedDefFrqChange,");
-		sql.append(" AvailedDefFrqChange, RecalType, FinAssetValue, DisbAccountId, RepayAccountId,FinIsActive,");
+		sql.append(" AvailedDefFrqChange, RecalType, FinAssetValue, FinIsActive,");
 		sql.append(" LastRepayDate, LastRepayPftDate,LastRepayRvwDate, LastRepayCpzDate, AllowGrcRepay, ");
-		sql.append(" GrcMargin, RepayMargin, FinCommitmentRef, DepreciationFrq, FinCurrAssetValue,");
-		sql.append(" NextDepDate, LastDepDate, FinAccount, FinCustPftAccount, ClosingStatus, FinApprovedDate,");
+		sql.append(" GrcMargin, RepayMargin, FinCommitmentRef, FinCurrAssetValue,");
+		sql.append(" ClosingStatus, FinApprovedDate,");
 		sql.append(" AnualizedPercRate , EffectiveRateOfReturn , FinRepayPftOnFrq , GrcProfitDaysBasis, ");
 		sql.append(" LinkedFinRef, GrcMinRate, GrcMaxRate , RpyMinRate, RpyMaxRate,GrcSchdMthd, StepPolicy,");
-		sql.append(" ManualSchedule, TakeOverFinance,");
-		sql.append(" FeeAccountId, MinDownPayPerc,TDSApplicable, FeeChargeAmt,");
+		sql.append(" ManualSchedule, ");
+		sql.append(" MinDownPayPerc,TDSApplicable, FeeChargeAmt,");
 		sql.append(" PlanEMIHMethod, PlanEMIHMaxPerYear, PlanEMIHMax, PlanEMIHLockPeriod , PlanEMICpz, ");
 		sql.append(" DeductFeeDisb,RvwRateApplFor, SchCalOnRvw,PastduePftCalMthd,DroppingMethod,RateChgAnyDay,");
-		sql.append(" InvestmentRef, DownPayAccount,SecurityDeposit, RcdMaintainSts,FinRepayMethod, FinCancelAc,");
+		sql.append(" InvestmentRef, RcdMaintainSts,FinRepayMethod, ");
 		sql.append(" MigratedFinance,ScheduleMaintained,ScheduleRegenerated,CustDSR,JointAccount,JointCustId,");
 		sql.append(" Blacklisted,OverrideLimit,FinPurpose,FinStatus,FinStsReason,InitiateUser,");
 		sql.append(" NextUserId, Priority, AlwManualSteps,");
@@ -5339,7 +5188,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" CalRoundingMode , AlwMultiDisb, BpiAmount, PastduePftMargin,FinCategory,ProductCategory,");
 		sql.append(" DeviationApproval,FinPreApprovedRef,MandateID,FirstDroplineDate,PftServicingODLimit,");
 		sql.append(" UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi,BpiTreatment, PlanEMIHAlw, PlanEMIHAlwInGrace");
-		sql.append(", InsuranceAmt, StepType, DroplineFrq, NoOfSteps");
+		sql.append(", StepType, DroplineFrq, NoOfSteps");
 		sql.append(", StepFinance, FinContractDate, TdsType, WriteoffLoan");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -5836,17 +5685,17 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", ReqMaturity, CalTerms, CalMaturity, FirstRepay, LastRepay, FinStartDate, FinAmount");
 		sql.append(", FinRepaymentAmount, CustID, Defferments, PlanDeferCount, FinBranch, FinSourceID");
 		sql.append(", AllowedDefRpyChange, AvailedDefRpyChange, AllowedDefFrqChange, AvailedDefFrqChange");
-		sql.append(", RecalType, FinAssetValue, DisbAccountId, RepayAccountId, FinIsActive, Version");
+		sql.append(", RecalType, FinAssetValue, FinIsActive, Version");
 		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId, MinDownPayPerc, LastRepayDate, LastRepayPftDate, LastRepayRvwDate");
 		sql.append(", LastRepayCpzDate, AllowGrcRepay, GrcSchdMthd, GrcMargin, RepayMargin, FinCurrAssetValue");
-		sql.append(", FinCommitmentRef, DepreciationFrq, FinContractDate, NextDepDate, LastDepDate");
-		sql.append(", FinAccount, FinCustPftAccount, TotalRepayAmt, FinApprovedDate, FeeChargeAmt");
+		sql.append(", FinCommitmentRef, FinContractDate ");
+		sql.append(", TotalRepayAmt, FinApprovedDate, FeeChargeAmt");
 		sql.append(", FinRepayPftOnFrq, AnualizedPercRate, EffectiveRateOfReturn, DownPayBank, DownPaySupl");
 		sql.append(", GraceTerms, GrcProfitDaysBasis, StepFinance, StepType, StepPolicy, AlwManualSteps");
 		sql.append(", NoOfSteps, LinkedFinRef, GrcMinRate, GrcMaxRate, GrcMaxAmount, RpyMinRate, RpyMaxRate");
-		sql.append(", ManualSchedule, TakeOverFinance, FeeAccountId");
-		sql.append(", TDSApplicable, InsuranceAmt, DeductInsDisb, AlwBPI, BpiTreatment, PlanEMIHAlw");
+		sql.append(", ManualSchedule");
+		sql.append(", TDSApplicable, AlwBPI, BpiTreatment, PlanEMIHAlw");
 		sql.append(", PlanEMIHMethod, PlanEMIHMaxPerYear, PlanEMIHMax, PlanEMIHLockPeriod, PlanEMICpz");
 		sql.append(", CalRoundingMode, RoundingTarget, AlwMultiDisb, BpiAmount, DeductFeeDisb, RvwRateApplFor");
 		sql.append(", SchCalOnRvw, PastduePftCalMthd, DroppingMethod, RateChgAnyDay, PastduePftMargin");
@@ -5859,14 +5708,14 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", DmaCode, TdsPercentage, FinStsReason, Connector, samplingRequired, LimitApproved");
 			sql.append(", NextUserId, VanCode, FinLimitRef");
 			sql.append(", legalRequired, CreditInsAmt, Blacklisted, FinRepayMethod, FirstDroplineDate");
-			sql.append(", CustDSR, DownPayAccount, AccountsOfficer, QuickDisb, UnPlanEMICpz");
+			sql.append(", CustDSR, AccountsOfficer, QuickDisb, UnPlanEMICpz");
 			sql.append(", ReAgeCpz, AvailedReAgeH, SalesDepartment, DroplineFrq");
-			sql.append(", SecurityDeposit, PromotionCode, TdsLimitAmt, MigratedFinance, MaxReAgeHolidays");
+			sql.append(", PromotionCode, TdsLimitAmt, MigratedFinance, MaxReAgeHolidays");
 			sql.append(", WifReference, UnPlanEMIHLockPeriod, TdsEndDate, Priority, Discrepancy, DeviationApproval");
 			sql.append(", ScheduleMaintained, FinPurpose, ScheduleRegenerated, SecurityCollateral, RcdMaintainSts");
 			sql.append(", MaxUnplannedEmi, DsaCode, ReferralId, InitiateDate, ProcessAttributes");
 			sql.append(", VanReq, InvestmentRef, FinPreApprovedRef, EmployeeName, OverrideLimit, TdsStartDate");
-			sql.append(", MandateID, LimitValid, FinCancelAc, ApplicationNo, EligibilityMethod, PftServicingODLimit");
+			sql.append(", MandateID, LimitValid, ApplicationNo, EligibilityMethod, PftServicingODLimit");
 			sql.append(", BusinessVertical, ReAgeBucket, JointCustId, InitiateUser, Approved");
 			sql.append(", JointAccount, FinStatus, AvailedUnPlanEmi, PlanEMIHAlwInGrace");
 
@@ -5981,8 +5830,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setAvailedDefFrqChange(rs.getInt("AvailedDefFrqChange"));
 			fm.setRecalType(rs.getString("RecalType"));
 			fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
-			fm.setDisbAccountId(rs.getString("DisbAccountId"));
-			fm.setRepayAccountId(rs.getString("RepayAccountId"));
 			fm.setFinIsActive(rs.getBoolean("FinIsActive"));
 			fm.setVersion(rs.getInt("Version"));
 			fm.setLastMntBy(rs.getLong("LastMntBy"));
@@ -6005,12 +5852,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setRepayMargin(rs.getBigDecimal("RepayMargin"));
 			fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
 			fm.setFinCommitmentRef(rs.getString("FinCommitmentRef"));
-			fm.setDepreciationFrq(rs.getString("DepreciationFrq"));
 			fm.setFinContractDate(rs.getTimestamp("FinContractDate"));
-			fm.setNextDepDate(rs.getTimestamp("NextDepDate"));
-			fm.setLastDepDate(rs.getTimestamp("LastDepDate"));
-			fm.setFinAccount(rs.getString("FinAccount"));
-			fm.setFinCustPftAccount(rs.getString("FinCustPftAccount"));
 			fm.setTotalRepayAmt(rs.getBigDecimal("TotalRepayAmt"));
 			fm.setFinApprovedDate(rs.getTimestamp("FinApprovedDate"));
 			fm.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
@@ -6033,11 +5875,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setRpyMinRate(rs.getBigDecimal("RpyMinRate"));
 			fm.setRpyMaxRate(rs.getBigDecimal("RpyMaxRate"));
 			fm.setManualSchedule(rs.getBoolean("ManualSchedule"));
-			fm.setTakeOverFinance(rs.getBoolean("TakeOverFinance"));
-			fm.setFeeAccountId(rs.getString("FeeAccountId"));
 			fm.setTDSApplicable(rs.getBoolean("TDSApplicable"));
-			fm.setInsuranceAmt(rs.getBigDecimal("InsuranceAmt"));
-			fm.setDeductInsDisb(rs.getBigDecimal("DeductInsDisb"));
 			fm.setAlwBPI(rs.getBoolean("AlwBPI"));
 			fm.setBpiTreatment(rs.getString("BpiTreatment"));
 			fm.setPlanEMIHAlw(rs.getBoolean("PlanEMIHAlw"));
@@ -6096,7 +5934,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setFinRepayMethod(rs.getString("FinRepayMethod"));
 				fm.setFirstDroplineDate(rs.getTimestamp("FirstDroplineDate"));
 				fm.setCustDSR(rs.getBigDecimal("CustDSR"));
-				fm.setDownPayAccount(rs.getString("DownPayAccount"));
 				fm.setAccountsOfficer(rs.getLong("AccountsOfficer"));
 				fm.setQuickDisb(rs.getBoolean("QuickDisb"));
 				fm.setUnPlanEMICpz(rs.getBoolean("UnPlanEMICpz"));
@@ -6104,7 +5941,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setAvailedReAgeH(rs.getInt("AvailedReAgeH"));
 				fm.setSalesDepartment(rs.getString("SalesDepartment"));
 				fm.setDroplineFrq(rs.getString("DroplineFrq"));
-				fm.setSecurityDeposit(rs.getBigDecimal("SecurityDeposit"));
 				fm.setPromotionCode(rs.getString("PromotionCode"));
 				fm.setTdsLimitAmt(rs.getBigDecimal("TdsLimitAmt"));
 				fm.setMigratedFinance(rs.getBoolean("MigratedFinance"));
@@ -6133,7 +5969,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setTdsStartDate(rs.getTimestamp("TdsStartDate"));
 				fm.setMandateID(rs.getLong("MandateID"));
 				fm.setLimitValid(rs.getBoolean("LimitValid"));
-				fm.setFinCancelAc(rs.getString("FinCancelAc"));
 				fm.setApplicationNo(rs.getString("ApplicationNo"));
 				fm.setEligibilityMethod(rs.getLong("EligibilityMethod"));
 				fm.setPftServicingODLimit(rs.getBoolean("PftServicingODLimit"));

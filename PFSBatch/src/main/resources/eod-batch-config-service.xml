@@ -31,7 +31,6 @@
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
-		<property name="secondaryAccountDAO" ref="secondaryAccountDAO" />
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="provisionDAO" ref="provisionDAO" />
@@ -251,9 +250,6 @@
 	<!--============ Finance Stage Accounting Log Details ============== -->
 	<bean id="finStageAccountingLogDAO" class="com.pennant.backend.dao.finance.impl.FinStageAccountingLogDAOImpl"
 		parent="basicDao" />
-
-	<!--============ Secondary Account Detail ============== -->
-	<bean id="secondaryAccountDAO" class="com.pennant.backend.dao.finance.impl.SecondaryAccountDAOImpl" parent="basicDao" />
 
 	<bean id="overdraftScheduleDetailDAO" class="com.pennant.backend.dao.finance.impl.OverdraftScheduleDetailDAOImpl"
 		parent="basicDao" />

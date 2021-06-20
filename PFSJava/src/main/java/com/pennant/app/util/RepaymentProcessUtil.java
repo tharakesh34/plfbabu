@@ -2031,7 +2031,6 @@ public class RepaymentProcessUtil {
 							curRpySchd.getLatePftSchdPayNow().add(rpySchd.getLatePftSchdPayNow()));
 
 					curRpySchd.setSchdFeePayNow(curRpySchd.getSchdFeePayNow().add(rpySchd.getSchdFeePayNow()));
-					curRpySchd.setSchdInsPayNow(curRpySchd.getSchdInsPayNow().add(rpySchd.getSchdInsPayNow()));
 					curRpySchd.setPenaltyPayNow(curRpySchd.getPenaltyPayNow().add(rpySchd.getPenaltyPayNow()));
 
 					rpySchdMap.remove(rpySchd.getSchDate());
@@ -2249,13 +2248,6 @@ public class RepaymentProcessUtil {
 		finRepayQueue.setSchdFeePaid(rsd.getSchdFeePaid());
 		finRepayQueue.setSchdFeeWaivedNow(rsd.getSchdFeeWaivedNow());
 
-		// 2. Schedule Insurance Amount
-		finRepayQueue.setSchdIns(rsd.getSchdIns());
-		finRepayQueue.setSchdInsBal(rsd.getSchdInsBal());
-		finRepayQueue.setSchdInsPayNow(rsd.getSchdInsPayNow());
-		finRepayQueue.setSchdInsPaid(rsd.getSchdInsPaid());
-		finRepayQueue.setSchdInsWaivedNow(rsd.getSchdInsWaivedNow());
-
 		logger.debug("Leaving");
 		return finRepayQueue;
 	}
@@ -2288,10 +2280,6 @@ public class RepaymentProcessUtil {
 			rsd.setPrincipalSchdPaid(curSchd.getSchdPriPaid());
 			rsd.setPrincipalSchdBal(rsd.getPrincipalSchd().subtract(rsd.getPrincipalSchdPaid()));
 
-			rsd.setSchdIns(curSchd.getInsSchd());
-			rsd.setSchdInsPaid(curSchd.getSchdInsPaid());
-			rsd.setSchdInsBal(rsd.getSchdIns().subtract(rsd.getSchdInsPaid()));
-
 			rsd.setSchdFee(curSchd.getFeeSchd());
 			rsd.setSchdFeePaid(curSchd.getSchdFeePaid());
 			rsd.setSchdFeeBal(rsd.getSchdFee().subtract(rsd.getSchdFeePaid()));
@@ -2323,11 +2311,6 @@ public class RepaymentProcessUtil {
 		// TDS Payment
 		if (rpyTo == RepayConstants.REPAY_TDS) {
 			rsd.setTdsSchdPayNow(balPayNow);
-		}
-
-		// Insurance Detail Payment
-		if (rpyTo == RepayConstants.REPAY_INS) {
-			rsd.setSchdInsPayNow(balPayNow);
 		}
 
 		// Penalty Charge Detail Payment

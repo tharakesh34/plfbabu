@@ -59,7 +59,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.finance.GuarantorDetailDAO;
-import com.pennant.backend.dao.finance.JountAccountDetailDAO;
+import com.pennant.backend.dao.finance.JointAccountDetailDAO;
 import com.pennant.backend.dao.smtmasters.CountryDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
@@ -99,7 +99,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
 	private GuarantorDetailDAO guarantorDetailDAO;
-	private JountAccountDetailDAO jountAccountDetailDAO;
+	private JointAccountDetailDAO jointAccountDetailDAO;
 	private CustomerDAO customerDAO;
 	private ProvinceDAO provinceDAO;
 	private FinanceMainDAO financeMainDAO;
@@ -698,7 +698,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 			financeTaxDetail.setTaxCustId(customer.getCustID());
 			break;
 		case PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT:
-			JointAccountDetail jointAccountDetail = jountAccountDetailDAO.getJountAccountDetailByRef(
+			JointAccountDetail jointAccountDetail = jointAccountDetailDAO.getJointAccountDetailByRef(
 					financeTaxDetail.getFinReference(), financeTaxDetail.getCustCIF(), "_AView");
 			if (null == jointAccountDetail) {
 				String[] valueParm = new String[1];
@@ -739,11 +739,11 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 		return this.guarantorDetailDAO.getGuarantorDetailByFinRef(finReference, type);
 	}
 
-	public List<JointAccountDetail> getJountAccountDetailByFinRef(String finReference, String type) {
+	public List<JointAccountDetail> getJointAccountDetailByFinRef(String finReference, String type) {
 		logger.debug(Literal.ENTERING);
 		logger.debug(Literal.LEAVING);
 
-		return this.jountAccountDetailDAO.getJountAccountDetailByFinRef(finReference, type);
+		return this.jointAccountDetailDAO.getJointAccountDetailByFinRef(finReference, type);
 
 	}
 
@@ -886,8 +886,8 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 		this.guarantorDetailDAO = guarantorDetailDAO;
 	}
 
-	public void setJountAccountDetailDAO(JountAccountDetailDAO jountAccountDetailDAO) {
-		this.jountAccountDetailDAO = jountAccountDetailDAO;
+	public void setJointAccountDetailDAO(JointAccountDetailDAO jointAccountDetailDAO) {
+		this.jointAccountDetailDAO = jointAccountDetailDAO;
 	}
 
 	public void setCustomerDAO(CustomerDAO customerDAO) {

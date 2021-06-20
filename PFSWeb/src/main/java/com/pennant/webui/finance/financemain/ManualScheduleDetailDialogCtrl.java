@@ -414,8 +414,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 					//Summary button addition to display Each part on O/S Principal Amount(Finance Amount & Down payment)
 					Listcell lsc = (Listcell) endBal.getParent();
-					BigDecimal excessAmount = finMain.getDownPayment().add(finMain.getFeeChargeAmt())
-							.add(finMain.getInsuranceAmt());
+					BigDecimal excessAmount = finMain.getDownPayment().add(finMain.getFeeChargeAmt());
 					if (li.getFellowIfAny("summary") == null && excessAmount.compareTo(BigDecimal.ZERO) > 0) {
 						Button summary = new Button();
 						summary.setId("summary");
@@ -457,11 +456,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 						? "Down Payment   : " + PennantAppUtil.amountFormate(finmain.getDownPayment(), formatter) : "")
 				+ "\n"
 				+ ((finmain.getFeeChargeAmt() != null && finmain.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0)
-						? "Fee Amount	: " + PennantAppUtil.amountFormate(finmain.getFeeChargeAmt(), formatter) : "")
-				+ "\n"
-				+ ((finmain.getInsuranceAmt() != null && finmain.getInsuranceAmt().compareTo(BigDecimal.ZERO) > 0)
-						? "Insurance Amount : " + PennantAppUtil.amountFormate(finmain.getInsuranceAmt(), formatter)
-						: "");
+						? "Fee Amount	: " + PennantAppUtil.amountFormate(finmain.getFeeChargeAmt(), formatter) : "");
 
 		Clients.showNotification(msg, "info", null, null, -1);
 
@@ -940,8 +935,6 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				fsd.setDisbOnSchDate(true);
 				fsd.setFeeChargeAmt(
 						financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO : financeMain.getFeeChargeAmt());
-				fsd.setInsuranceAmt(
-						financeMain.getInsuranceAmt() == null ? BigDecimal.ZERO : financeMain.getInsuranceAmt());
 				if (financeMain.getDownPayment() != null
 						&& financeMain.getDownPayment().compareTo(BigDecimal.ZERO) > 0) {
 					fsd.setDownPaymentAmount(financeMain.getDownPayment());
@@ -1061,7 +1054,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		FinanceMain financeMain = fm;
 		int ccyFormatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 		BigDecimal totalCost = financeMain.getFinAmount().subtract(financeMain.getDownPaySupl())
-				.add(financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt());
+				.add(financeMain.getFeeChargeAmt());
 
 		this.schdl_purchasePrice.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.schdl_otherExp.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
@@ -1501,8 +1494,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 					endBal.setValue(PennantAppUtil.amountFormate(curSchd.getClosingBalance(), formatter));
 				}
 
-				BigDecimal excessAmount = finMain.getDownPayment().add(finMain.getFeeChargeAmt())
-						.add(finMain.getInsuranceAmt());
+				BigDecimal excessAmount = finMain.getDownPayment().add(finMain.getFeeChargeAmt());
 				if (excessAmount.compareTo(BigDecimal.ZERO) > 0 && isStartDate) {
 					Button summary = new Button();
 					summary.setId("summary");

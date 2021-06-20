@@ -261,8 +261,6 @@
 		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
 
-	<bean id="secondaryAccountDAO" class="com.pennant.backend.dao.finance.impl.SecondaryAccountDAOImpl" parent="basicDao" />
-
 	<!-- Ext Tables DAO Details -->
 	<bean id="extTablesDAO" class="com.pennant.backend.dao.ext.impl.ExtTablesDAOImpl" parent="basicDao" />
 
@@ -443,12 +441,6 @@
 
 	<bean id="retailCibilReport" class="com.pennanttech.pff.external.cibil.RetailCibilReport" parent="basicDao" />
 	<bean id="corporateCibilReport" class="com.pennanttech.pff.external.cibil.CorporateCibilReport" parent="basicDao" />
-
-	<!-- AIB -->
-	<bean id="calendarInterfaceService" class="com.pennant.Interface.service.impl.aib.CalendarInterfaceServiceImpl">
-		<property name="weekendMasterDAO" ref="weekendMasterDAO" />
-		<property name="holidayMasterDAO" ref="holidayMasterDAO" />
-	</bean>
 
 	<!-- Limit Structure -->
 	<bean id="limitStructureDAO" class="com.pennant.backend.dao.limit.impl.LimitStructureDAOImpl" parent="basicDao" />

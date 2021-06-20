@@ -213,9 +213,6 @@ public class FeeDetailService {
 		if (AccountEventConstants.ACCEVENT_EARLYSTL.equals(finScheduleData.getFinanceMain().getFinSourceID())) {
 			finScheduleData.setFinFeeDetailList(finFeeDetailList);
 		}
-		// Insurance Amounts
-		finScheduleData.getFinanceMain().setInsuranceAmt(insAddToDisb);
-		finScheduleData.getFinanceMain().setDeductInsDisb(deductInsFromDisb);
 
 		logger.debug("Leaving");
 	}

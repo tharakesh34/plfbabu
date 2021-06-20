@@ -614,8 +614,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			renderCustomerDetails(customerDetails.getCustomer().getCustID(),
 					customerDetails.getCustomer().getCustShrtName(), null, customerDetails.getCustomer().getCustDOB(),
 					"Primary", maturityDate);
-			if (!financeDetail.getJountAccountDetailList().isEmpty()) {
-				List<JointAccountDetail> jointAccountDetailList = financeDetail.getJountAccountDetailList();
+			if (!financeDetail.getJointAccountDetailList().isEmpty()) {
+				List<JointAccountDetail> jointAccountDetailList = financeDetail.getJointAccountDetailList();
 				for (JointAccountDetail jointAccountDetail : jointAccountDetailList) {
 					renderCustomerDetails(jointAccountDetail.getCustID(), jointAccountDetail.getLovDescCIFName(),
 							jointAccountDetail.getCatOfcoApplicant(), jointAccountDetail.getLovCustDob(),

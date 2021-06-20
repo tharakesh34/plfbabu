@@ -70,7 +70,6 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -282,10 +281,6 @@ public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
 		setAccountingMandStyle(AccountEventConstants.ACCEVENT_CANCELFIN, true);
 		setAccountingMandStyle(AccountEventConstants.ACCEVENT_DISBINS, true);
 
-		if (financeTypeDialogCtrl.finDepreciationReq.isChecked() && !isOverdraft) {
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_DPRCIATE, true);
-		}
-
 		boolean vasFlag = false;
 		if (StringUtils.isNotBlank(financeTypeDialogCtrl.alwdVasProduct.getValue())) {
 			vasFlag = true;
@@ -308,8 +303,6 @@ public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
 		} else {
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_COMPOUND, false);
 		}
-
-		setAccountingMandStyle(AccountEventConstants.ACCEVENT_PRGCLAIM, false);
 
 		logger.debug("leaving");
 	}

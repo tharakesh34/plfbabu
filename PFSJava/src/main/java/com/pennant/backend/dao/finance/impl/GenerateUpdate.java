@@ -21,7 +21,7 @@ public class GenerateUpdate {
 	private static String getSelectQuery() {
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append(
-				"DisbDisbursed = :DisbDisbursed , LinkedTranId=:LinkedTranId , DisbDate =:DisbDate , DisbSeq =:DisbSeq");
+				" LinkedTranId=:LinkedTranId , DisbDate =:DisbDate , DisbSeq =:DisbSeq");
 		return updateSql.toString();
 	}
 

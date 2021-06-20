@@ -723,7 +723,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 
 			addCustomerAddresses(addressesList, false);
-			addCoApplicantAddresses(financeDetail.getJountAccountDetailList(), false);
+			addCoApplicantAddresses(financeDetail.getJointAccountDetailList(), false);
 			getTotalVerifications();
 		} else {
 			this.verification.setVerifications(getOldVerifications(null));
@@ -865,7 +865,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					result.add(vrf);
 				} else if (vrf.getReferenceType().equals("Co-applicant")) {
 					// getting co-applicants based on each verification
-					JointAccountDetail coApplicant = jointAccountDetailService.getJountAccountDetailByRef(keyReference,
+					JointAccountDetail coApplicant = jointAccountDetailService.getJointAccountDetailByRef(keyReference,
 							vrf.getReference(), "_Temp");
 					// retrieving verifications from verification_pd table
 					PersonalDiscussion pd = personalDiscussionService.getPersonalDiscussion(vrf.getId(), "_view");

@@ -878,9 +878,6 @@ public class FinServiceInstController extends SummaryDetailService {
 				disbursementDetails.setDisbSeq(seqNo);
 				disbursementDetails.setDisbReqDate(DateUtility.getAppDate());
 				disbursementDetails.setFeeChargeAmt(financeMain.getFeeChargeAmt());
-				disbursementDetails.setInsuranceAmt(financeMain.getInsuranceAmt());
-				disbursementDetails
-						.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(financeMain.getDisbAccountId()));
 				List<FinanceDisbursement> list = new ArrayList<FinanceDisbursement>();
 				list.add(disbursementDetails);
 
@@ -2476,8 +2473,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 			if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
 					|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0
-					|| curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0
-					|| curSchd.getSchdInsPaid().compareTo(BigDecimal.ZERO) > 0) {
+					|| curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0) {
 
 				validFrom = curSchd.getSchDate();
 				continue;
@@ -2642,7 +2638,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		aFinanceDetail.setEligibilityRuleList(new ArrayList<FinanceReferenceDetail>(1));
 		aFinanceDetail.setFinElgRuleList(new ArrayList<FinanceEligibilityDetail>(1));
 		aFinanceDetail.setGurantorsDetailList(new ArrayList<GuarantorDetail>(1));
-		aFinanceDetail.setJountAccountDetailList(new ArrayList<JointAccountDetail>(1));
+		aFinanceDetail.setJointAccountDetailList(new ArrayList<JointAccountDetail>(1));
 		aFinanceDetail.setFinanceDeviations(new ArrayList<FinanceDeviations>());
 		aFinanceDetail.setApprovedFinanceDeviations(new ArrayList<FinanceDeviations>());
 		aFinanceDetail.setFinanceCollaterals(new ArrayList<FinCollaterals>(1));
@@ -2798,7 +2794,6 @@ public class FinServiceInstController extends SummaryDetailService {
 		// Repayments Posting Process Execution
 		// =====================================
 		FinRepayHeader finRepayHeader = repayData.getFinRepayHeader();
-		financeMain.setRepayAccountId(finRepayHeader.getRepayAccountId());
 		Date valuedate = finServiceInst.getFromDate();
 
 		FinanceProfitDetail tempPftDetail = profitDetailsDAO.getFinProfitDetailsById(financeMain.getFinReference());
@@ -2823,7 +2818,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	private void doEmptyResponseObject(FinanceDetail detail) {
 		detail.setFinScheduleData(null);
 		detail.setDocumentDetailsList(null);
-		detail.setJountAccountDetailList(null);
+		detail.setJointAccountDetailList(null);
 		detail.setGurantorsDetailList(null);
 		detail.setCollateralAssignmentList(null);
 		detail.setReturnDataSetList(null);

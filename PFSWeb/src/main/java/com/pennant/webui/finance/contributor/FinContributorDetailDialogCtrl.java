@@ -1072,48 +1072,6 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * when clicks on button "btnSearchDisbAcctId"
-	 * 
-	 * @param event
-	 * @throws InterruptedException
-	 * @throws AccountNotFoundException
-	 */
-	public void onClick$btnSearchInvestmentAcc(Event event) throws InterruptedException {
-		logger.debug("Entering " + event.toString());
-		this.contributorCIF.clearErrorMessage();
-		if (StringUtils.isNotBlank(this.contributorCIF.getValue())) {
-			Object dataObject;
-
-			IAccounts iAccount = new IAccounts();
-			iAccount.setAcCcy(finCcy);
-			iAccount.setAcType("EACAJK");
-			iAccount.setAcCustCIF(this.contributorCIF.getValue());
-			iAccount.setDivision(getFinanceDetail().getFinScheduleData().getFinanceType().getFinDivision());
-
-			try {
-				dataObject = ExtendedSearchListBox.show(this.window_FinContributorDetailDialog, "Accounts");
-				if (dataObject instanceof String) {
-					this.investmentAcc.setValue(dataObject.toString());
-					this.investmentAcctBal.setValue("");
-				} else {
-					IAccounts details = (IAccounts) dataObject;
-					if (details != null) {
-						this.investmentAcc.setValue(details.getAccountId());
-					}
-				}
-			} catch (Exception e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showError("Account Details not Found!!!");
-			}
-		} else {
-			throw new WrongValueException(this.contributorCIF, Labels.getLabel("FIELD_NO_EMPTY",
-					new String[] { Labels.getLabel("label_FinContributorDetailDialog_CustID.value") }));
-		}
-
-		logger.debug("Leaving " + event.toString());
-	}
-
 	// WorkFlow Components
 
 	/**

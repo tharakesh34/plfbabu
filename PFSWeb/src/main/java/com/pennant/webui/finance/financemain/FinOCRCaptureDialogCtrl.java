@@ -957,13 +957,11 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 
 			totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
 			totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
-			totdisbAmt = totdisbAmt.subtract(main.getDeductInsDisb());
 			if (FinanceConstants.BPI_DISBURSMENT.equals(main.getBpiTreatment())) {
 				totdisbAmt = totdisbAmt.subtract(main.getBpiAmount());
 			}
 		} else if (financeDisbursement.getDisbSeq() > 1) {
 			totdisbAmt = totdisbAmt.subtract(financeDisbursement.getDeductFeeDisb());
-			totdisbAmt = totdisbAmt.subtract(financeDisbursement.getDeductInsDisb());
 
 		}
 		totdisbAmt = totdisbAmt.add(financeDisbursement.getDisbAmount());

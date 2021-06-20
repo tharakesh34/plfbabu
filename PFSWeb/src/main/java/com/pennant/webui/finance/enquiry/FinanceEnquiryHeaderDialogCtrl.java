@@ -125,7 +125,6 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
-import com.pennant.backend.service.finance.AgreementDetailService;
 import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.service.finance.DPDEnquiryService;
 import com.pennant.backend.service.finance.EligibilityDetailService;
@@ -160,8 +159,6 @@ import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.pff.finsampling.service.FinSamplingService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
-
-import net.sf.jasperreports.engine.JRException;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Reports/FinanceEnquiryHeaderDialogCtrl.zul.
@@ -208,7 +205,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	// not auto wired variables
 	private FinanceDetailService financeDetailService;
 	private EligibilityDetailService eligibilityDetailService;
-	private AgreementDetailService agreementDetailService;
 	private ScoringDetailService scoringDetailService;
 	private CheckListDetailService checkListDetailService;
 	private FinCovenantTypeService finCovenantTypeService;
@@ -456,17 +452,13 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else if ("DOCENQ".equals(this.enquiryType)) {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_DocumentEnquiry.value"));
-			List<FinAgreementDetail> finAgreements;
 			List<DocumentDetails> finDocuments;
 			if (fromApproved) {
-				finAgreements = getAgreementDetailService().getFinAgrByFinRef(this.finReference, "_AView");
 				finDocuments = getFinanceDetailService().getFinDocByFinRef(this.finReference, "", "");
 			} else {
-				finAgreements = getAgreementDetailService().getFinAgrByFinRef(this.finReference, "_View");
 				finDocuments = getFinanceDetailService().getFinDocByFinRef(this.finReference, "", "_View");
 			}
 
-			map.put("finAgreements", finAgreements);
 			map.put("finDocuments", finDocuments);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/DocumentEnquiryDialog.zul";
 			this.btnPrint.setVisible(false);
@@ -1240,14 +1232,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setEligibilityDetailService(EligibilityDetailService eligibilityDetailService) {
 		this.eligibilityDetailService = eligibilityDetailService;
-	}
-
-	public AgreementDetailService getAgreementDetailService() {
-		return agreementDetailService;
-	}
-
-	public void setAgreementDetailService(AgreementDetailService agreementDetailService) {
-		this.agreementDetailService = agreementDetailService;
 	}
 
 	public ScoringDetailService getScoringDetailService() {

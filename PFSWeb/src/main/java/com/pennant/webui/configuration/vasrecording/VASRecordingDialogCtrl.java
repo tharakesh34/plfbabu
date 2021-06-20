@@ -3012,7 +3012,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 			List<JointAccountDetail> resultAccountDetails = new ArrayList<>();
 			List<JointAccountDetail> jointAccountDetails = getJointAccountDetails();
-			List<JointAccountDetail> finJointAccountDetails = clonedDetail.getJountAccountDetailList();
+			List<JointAccountDetail> finJointAccountDetails = clonedDetail.getJointAccountDetailList();
 
 			if (CollectionUtils.isNotEmpty(jointAccountDetails) && CollectionUtils.isEmpty(finJointAccountDetails)) {
 				resultAccountDetails = jointAccountDetails;
@@ -3048,7 +3048,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 						jointAccountDetail.setCustomerDetails(details);
 					}
 				}
-				clonedDetail.setJountAccountDetailList(resultAccountDetails);
+				clonedDetail.setJointAccountDetailList(resultAccountDetails);
 			}
 
 			setClonedFinanceDetail(clonedDetail);
@@ -3068,9 +3068,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 			FinanceDetail financeDetail = new FinanceDetail();
 			if (CollectionUtils.isNotEmpty(getJointAccountDetails())) {
-				financeDetail.setJountAccountDetailList(getJointAccountDetails());
+				financeDetail.setJointAccountDetailList(getJointAccountDetails());
 			} else {
-				financeDetail.setJountAccountDetailList(new ArrayList<>());
+				financeDetail.setJointAccountDetailList(new ArrayList<>());
 			}
 
 			financeDetail.setCustomerDetails(details);
@@ -3210,9 +3210,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				}
 				if (!("#".equals(applicantType))) {
 					if (this.financeDetail != null) {
-						List<JointAccountDetail> jountAccountDetail = this.financeDetail.getJountAccountDetailList();
-						if (jountAccountDetail != null && ("CO-APPLICANT".equals(applicantType))) {
-							for (JointAccountDetail JointAccDetail : jountAccountDetail) {
+						List<JointAccountDetail> jointAccountDetail = this.financeDetail.getJointAccountDetailList();
+						if (jointAccountDetail != null && ("CO-APPLICANT".equals(applicantType))) {
+							for (JointAccountDetail JointAccDetail : jointAccountDetail) {
 								if (JointAccDetail.getCustCIF().equals(coapplicantType)) {
 									setFinanceData(this.financeDetail, JointAccDetail.getCustomerDetails());
 								}
@@ -3414,7 +3414,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				customerExist = true;
 			}
 
-			List<JointAccountDetail> accountDetailList = getClonedFinanceDetail().getJountAccountDetailList();
+			List<JointAccountDetail> accountDetailList = getClonedFinanceDetail().getJointAccountDetailList();
 
 			if (customerCif != null && CollectionUtils.isNotEmpty(accountDetailList)) {
 				for (JointAccountDetail jointAccountDetail : accountDetailList) {
