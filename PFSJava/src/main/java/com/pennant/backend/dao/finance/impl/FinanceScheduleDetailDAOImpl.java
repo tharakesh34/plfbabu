@@ -69,9 +69,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.app.util.ScheduleCalculator;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
-import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
