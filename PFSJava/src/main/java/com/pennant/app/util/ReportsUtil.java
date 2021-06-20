@@ -22,7 +22,6 @@ import org.zkoss.zkplus.spring.SpringUtil;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -403,7 +402,7 @@ public class ReportsUtil {
 	private static final String RPT_ERROR_1 = "Unable to get the connection from %s. Please contact the system administrator.";
 
 	public static Connection getConnection() {
-		return getConnection("dataSource");
+		return getConnection("reportsDataSource");
 	}
 
 	public static Connection getConnection(String dataSourceName) {
