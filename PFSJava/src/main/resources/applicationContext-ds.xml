@@ -30,4 +30,15 @@
 		<property name="jndiName" value="jdbc/PFFEXT" />
 		<property name="lookupOnStartup" value="true" />
 	</bean>
+	
+	<bean id="reportsDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="resourceRef" value="true" />
+		<property name="jndiName" value="jdbc/PFF-REPORTS" />
+		<property name="lookupOnStartup" value="true" />
+	</bean>
+	<bean id="reportsAuditDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="resourceRef" value="true" />
+		<property name="jndiName" value="jdbc/PFF-REPORTS-AUDIT" />
+		<property name="lookupOnStartup" value="true" />
+	</bean>
 </beans>
