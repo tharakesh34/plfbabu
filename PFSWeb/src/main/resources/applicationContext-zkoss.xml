@@ -1835,12 +1835,12 @@
 
 	<!--============ Joint Account Details ============== -->
 
-	<bean id="jointAccountDetailListCtrl" class="com.pennant.webui.finance.jointaccountdetail.JointAccountDetailListCtrl"
+	<bean id="jountAccountDetailListCtrl" class="com.pennant.webui.finance.jointaccountdetail.JointAccountDetailListCtrl"
 		parent="basisListCtrl" scope="prototype">
 		<property name="jointAccountDetailService" ref="jointAccountDetailService" />
 	</bean>
 
-	<bean id="jointAccountDetailDialogCtrl" class="com.pennant.webui.finance.jointaccountdetail.JointAccountDetailDialogCtrl"
+	<bean id="jountAccountDetailDialogCtrl" class="com.pennant.webui.finance.jointaccountdetail.JointAccountDetailDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="pagedListService" ref="pagedListService" />
 		<property name="jointAccountDetailService" ref="jointAccountDetailService" />
@@ -2647,7 +2647,6 @@
 		scope="prototype">
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />
-		<property name="agreementDetailService" ref="finAgreementDetailService" />
 		<property name="checkListDetailService" ref="finCheckListDetailService" />
 		<property name="manualPaymentService" ref="manualPaymentService" />
 		<property name="suspenseService" ref="suspenseService" />
@@ -2683,7 +2682,6 @@
 	<bean id="documentEnquiryDialogCtrl" class="com.pennant.webui.finance.enquiry.DocumentEnquiryDialogCtrl" parent="basisListCtrl"
 		scope="prototype">
 		<property name="financeDetailService" ref="financeDetailService" />
-		<property name="agreementDetailService" ref="finAgreementDetailService" />
 		<property name="dMSService" ref="dMSService" />
 	</bean>
 

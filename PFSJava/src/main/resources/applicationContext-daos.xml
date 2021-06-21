@@ -2923,7 +2923,6 @@
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="accountingSetDAO" ref="accountingSetDAO" />
-		<property name="finTypeAccountDAO" ref="finTypeAccountDAO" />
 		<property name="financeWorkFlowDAO" ref="financeWorkFlowDAO" />
 		<property name="productAssetDAO" ref="productAssetDAO" />
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
@@ -2937,8 +2936,6 @@
 		<property name="irrFinanceTypeDAO" ref="irrFinanceTypeDAO" />
 		<property name="finTypeReceiptModesDAO" ref="finTypeReceiptModesDAO" />
 	</bean>
-
-	<bean id="finTypeAccountDAO" class="com.pennant.backend.dao.rmtmasters.impl.FinTypeAccountDAOImpl" parent="basicDao" />
 
 	<bean id="finTypeFeesDAO" class="com.pennant.backend.dao.rmtmasters.impl.FinTypeFeesDAOImpl" parent="sequenceDao" />
 
@@ -3283,7 +3280,6 @@
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />
 		<property name="jointAccountDetailService" ref="finJointAccountDetailService" />
 		<property name="guarantorDetailService" ref="finGuarantorDetailService" />
-		<property name="agreementDetailService" ref="finAgreementDetailService" />
 		<property name="scoringDetailService" ref="finScoringDetailService" />
 		<property name="checkListDetailService" ref="finCheckListDetailService" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
@@ -3433,12 +3429,6 @@
 		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
 
-	<!-- Agreement Details -->
-	<bean id="finAgreementDetailService" class="com.pennant.backend.service.finance.impl.AgreementDetailServiceImpl">
-		<property name="finAgreementDetailDAO" ref="finAgreementDetailDAO" />
-		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
-	</bean>
-
 	<!-- Check Details -->
 	<bean id="finCheckListDetailService" class="com.pennant.backend.service.finance.impl.CheckListDetailServiceImpl">
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
@@ -3550,7 +3540,6 @@
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="checkListDetailService" ref="finCheckListDetailService" />
-		<property name="agreementDetailService" ref="finAgreementDetailService" />
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
@@ -4243,7 +4232,6 @@
 		<property name="recoveryPostingsUtil" ref="recoveryPostingsUtil" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="checkListDetailService" ref="finCheckListDetailService" />
-		<property name="agreementDetailService" ref="finAgreementDetailService" />
 		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
@@ -4302,7 +4290,6 @@
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
-		<property name="agreementDetailService" ref="finAgreementDetailService" />
 		<property name="checkListDetailService" ref="finCheckListDetailService" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
 		<property name="financeDetailService" ref="financeDetailService" />
@@ -4623,7 +4610,6 @@
 		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
-		<property name="agreementDetailService" ref="finAgreementDetailService" />
 		<property name="checkListDetailService" ref="finCheckListDetailService" />
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
@@ -4666,7 +4652,6 @@
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
 		<property name="checkListDetailService" ref="finCheckListDetailService" />
-		<property name="agreementDetailService" ref="finAgreementDetailService" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
@@ -4734,7 +4719,6 @@
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
 		<property name="checkListDetailService" ref="finCheckListDetailService" />
-		<property name="agreementDetailService" ref="finAgreementDetailService" />
 		<property name="jointAccountDetailService" ref="finJointAccountDetailService" />
 		<property name="guarantorDetailService" ref="finGuarantorDetailService" />
 		<property name="postingsDAO" ref="postingsDAO" />
@@ -10435,7 +10419,6 @@
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />
 		<property name="guarantorDetailService" ref="guarantorDetailService" />
 		<property name="jointAccountDetailService" ref="jointAccountDetailService" />
-		<property name="agreementDetailService" ref="finAgreementDetailService" />
 		<property name="scoringDetailService" ref="finScoringDetailService" />
 		<property name="checkListDetailService" ref="finCheckListDetailService" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
