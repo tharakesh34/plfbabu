@@ -521,11 +521,14 @@ public class PresentmentDetailExtractService {
 				RepayConstants.EXAMOUNTTYPE_EMIINADV);
 		if (excessAmount != null) {
 			emiInAdvanceAmt = excessAmount.getBalanceAmt();
-			pd.setExcessID(excessAmount.getExcessID());
 			excessAmount.setAmount(emiInAdvanceAmt);
 			pd.setEmiInAdvance(excessAmount);
 		} else {
 			emiInAdvanceAmt = BigDecimal.ZERO;
+		}
+
+		if (emiInAdvanceAmt.compareTo(BigDecimal.ZERO) > 0) {
+			pd.setExcessID(excessAmount.getExcessID());
 		}
 
 		if (emiInAdvanceAmt.compareTo(pd.getSchAmtDue()) >= 0) {

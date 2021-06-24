@@ -447,7 +447,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.jointAccHolderName.setMaxlength(50);
 		this.startDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.expiryDate.setFormat(DateFormat.SHORT_DATE.getPattern());
-		this.inputDate.setFormat(DateFormat.LONG_DATE_TIME.getPattern());
+		this.inputDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
 		this.maxLimit.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.maxLimit.setScale(ccyFormatter);
@@ -1278,6 +1278,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(isReadOnly("MandateDialog_PennyDropResult"), this.pennyDropResult);
 		readOnlyComponent(isReadOnly("MandateDialog_TxnDetails"), this.txnDetails);
 		readOnlyComponent(isReadOnly("MandateDialog_DefaultMandate"), this.defaultMandate);
+		readOnlyComponent(isReadOnly("MandateDialog_Active"), this.active);
 
 		/*
 		 * if (SysParamUtil.isAllowed("MANDATE_EMANDATE_REQUIRED")) {
@@ -1774,7 +1775,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 		// InputDate
 		try {
-			aMandate.setInputDate(this.inputDate.getValue());
+			aMandate.setInputDate(
+					DateUtility.getDate(DateUtil.format(this.inputDate.getValue(), PennantConstants.dateFormat)));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

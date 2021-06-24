@@ -380,7 +380,7 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 		}
 
 		try {
-			merchantDetails.setStoreName(this.storeName.getText());
+			merchantDetails.setStoreName(this.storeName.getText().trim());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

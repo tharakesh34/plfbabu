@@ -231,6 +231,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		header.setReceiptDetails(receiptDetails);
 		repaymentProcessUtil.calcualteAndPayReceipt(fm, customer, schedules, null, profitDetail, header, repayHeirarchy,
 				businessDate, businessDate);
+		financeMainDAO.updateSchdVersion(fm, true);
 		if (pd.getId() != Long.MIN_VALUE) {
 			presentmentDetailDAO.updateReceptId(pd.getId(), header.getReceiptID());
 		}

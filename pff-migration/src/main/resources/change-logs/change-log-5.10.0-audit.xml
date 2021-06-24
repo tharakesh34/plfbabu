@@ -169,4 +169,12 @@
 		 <modifyDataType tableName="ADTBOUNCEREASONS" columnName="REASON" newDataType="VARCHAR(150)" />
 	</changeSet>
 	
+	<changeSet id="DE#273.11" author="narendra.m">
+		<modifyDataType tableName="AdtFinTaxDetail" columnName="addrline1" newDataType="varchar(300)" />
+	</changeSet>
+	
+	<changeSet id="DE#273.12" author="narendra.m">
+		<modifyDataType tableName="AdtFinTaxUploadDetail" columnName="addrline1" newDataType="varchar(300)" />
+	</changeSet>
+	
 </databaseChangeLog>

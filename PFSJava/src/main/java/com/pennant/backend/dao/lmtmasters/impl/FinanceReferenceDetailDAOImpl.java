@@ -795,29 +795,33 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	 */
 	@Override
 	public FinCollaterals getFinCollaterals(String finReference, String collateralType) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, CollateralType, FirstChequeNo, LastChequeNo, Status");
+		sql.append(" From FinCollaterals");
+		sql.append(" Where FinReference = ? and CollateralType = ?");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("CollateralType", collateralType);
+		logger.debug(Literal.SQL + sql);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT  FinReference, CollateralType, FirstChequeNo, LastChequeNo, Status");
-		selectSql.append(" FROM  FinCollaterals");
-		selectSql.append(" Where FinReference =:FinReference AND CollateralType =:CollateralType");
-
-		logger.debug(Literal.SQL + selectSql.toString());
-
-		FinCollaterals finCollaterals = null;
 		try {
-			RowMapper<FinCollaterals> typeRowMapper = BeanPropertyRowMapper.newInstance(FinCollaterals.class);
-			finCollaterals = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, collateralType },
+					(rs, i) -> {
+						FinCollaterals fc = new FinCollaterals();
+
+						fc.setFinReference(rs.getString("FinReference"));
+						fc.setCollateralType(rs.getString("CollateralType"));
+						fc.setFirstChequeNo(rs.getString("FirstChequeNo"));
+						fc.setLastChequeNo(rs.getString("LastChequeNo"));
+						fc.setStatus(rs.getString("Status"));
+
+						return fc;
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			finCollaterals = null;
+			logger.warn(
+					"Record is not found in FinCollaterals for the specified FinReference >> {} and CollateralType >> {}",
+					finReference, collateralType);
 		}
-		logger.debug(Literal.LEAVING);
-		return finCollaterals;
+
+		return null;
 	}
 
 	@Override

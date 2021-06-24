@@ -144,7 +144,9 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 						}
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(
+					"Work Flow is not found or in active in the WorkFlowDetails table for the specified WorkFlowType >> {}",
+					workFlowType);
 		}
 
 		logger.debug(Literal.LEAVING);

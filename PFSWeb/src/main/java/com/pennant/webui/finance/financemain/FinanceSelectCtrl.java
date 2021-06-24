@@ -2414,6 +2414,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				fileLocaation.append("LoanDownSizingDialog.zul");
 			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_ODFACILITY)) {
 				fileLocaation.append("ODFacilityFinanceMainDialog.zul");
+			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_CD)) {
+				fileLocaation.append("CDFinanceMainDialog.zul");
 			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_DISCOUNT)) {
 				fileLocaation.append("DiscountFinanceMainDialog.zul");
 			} else {

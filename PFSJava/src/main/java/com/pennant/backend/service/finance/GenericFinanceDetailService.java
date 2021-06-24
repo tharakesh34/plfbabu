@@ -207,6 +207,7 @@ import com.pennant.subvention.service.SubventionService;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
@@ -1037,55 +1038,58 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 */
 	public List<AuditDetail> setFinStepDetailAuditData(FinScheduleData finScheduleData, String auditTranType,
 			String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		FinanceStepPolicyDetail object = new FinanceStepPolicyDetail();
-		String[] fields = PennantJavaUtil.getFieldDetails(object, object.getExcludeFields());
-		for (int i = 0; i < finScheduleData.getStepPolicyDetails().size(); i++) {
-			FinanceStepPolicyDetail financeStepPolicyDetail = finScheduleData.getStepPolicyDetails().get(i);
+		List<AuditDetail> auditDetails = new ArrayList<>();
+		FinanceStepPolicyDetail fspdObj = new FinanceStepPolicyDetail();
+		FinanceMain fm = finScheduleData.getFinanceMain();
+		int i = 0;
 
-			if (StringUtils.isEmpty(financeStepPolicyDetail.getRecordType())) {
+		String[] fields = PennantJavaUtil.getFieldDetails(fspdObj, fspdObj.getExcludeFields());
+
+		for (FinanceStepPolicyDetail fspd : finScheduleData.getStepPolicyDetails()) {
+			if (StringUtils.isEmpty(fspd.getRecordType())) {
+				i++;
 				continue;
 			}
 
-			financeStepPolicyDetail.setWorkflowId(finScheduleData.getFinanceMain().getWorkflowId());
+			fspd.setWorkflowId(fm.getWorkflowId());
 			boolean isRcdType = false;
 
-			if (financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-				financeStepPolicyDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			if (fspd.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				fspd.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				isRcdType = true;
-			} else if (financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-				financeStepPolicyDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			} else if (fspd.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				fspd.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				isRcdType = true;
-			} else if (financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-				financeStepPolicyDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			} else if (fspd.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				fspd.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 
 			if ("saveOrUpdate".equals(method) && (isRcdType)) {
-				financeStepPolicyDetail.setNewRecord(true);
+				fspd.setNewRecord(true);
 			}
 
 			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (fspd.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-						|| financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				} else if (fspd.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| fspd.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					auditTranType = PennantConstants.TRAN_DEL;
 				} else {
 					auditTranType = PennantConstants.TRAN_UPD;
 				}
 			}
 
-			financeStepPolicyDetail.setRecordStatus(finScheduleData.getFinanceMain().getRecordStatus());
-			financeStepPolicyDetail.setUserDetails(finScheduleData.getFinanceMain().getUserDetails());
-			financeStepPolicyDetail.setLastMntOn(finScheduleData.getFinanceMain().getLastMntOn());
+			fspd.setRecordStatus(fm.getRecordStatus());
+			fspd.setUserDetails(fm.getUserDetails());
+			fspd.setLastMntOn(fm.getLastMntOn());
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-					financeStepPolicyDetail.getBefImage(), financeStepPolicyDetail));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], fspd.getBefImage(), fspd));
+			i++;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
 
@@ -2340,7 +2344,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			finDetail.getFinanceScheduleDetails().get(i).setLogKey(logKey);
 		}
 
-		getFinanceScheduleDetailDAO().saveList(finDetail.getFinanceScheduleDetails(), tableType, isWIF);
+		financeScheduleDetailDAO.saveList(finDetail.getFinanceScheduleDetails(), tableType, isWIF);
+
+		// Schedule Version Updating
+		if (StringUtils.isBlank(tableType) && !isWIF) {
+			financeMainDAO.updateSchdVersion(finDetail.getFinanceMain(), false);
+		}
 		if (subventionService != null) {
 			subventionService.savSubvnetion(finDetail, tableType);
 		}

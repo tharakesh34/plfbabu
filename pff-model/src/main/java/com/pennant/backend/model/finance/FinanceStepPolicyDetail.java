@@ -13,7 +13,8 @@ import javax.xml.bind.annotation.XmlType;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-@XmlType(propOrder = { "stepNo", "tenorSplitPerc", "rateMargin", "emiSplitPerc" })
+@XmlType(propOrder = { "stepNo", "tenorSplitPerc", "rateMargin", "emiSplitPerc", "installments", "steppedEMI",
+		"stepSpecifier", "autoCal" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceStepPolicyDetail extends AbstractWorkflowEntity {
 
@@ -24,20 +25,24 @@ public class FinanceStepPolicyDetail extends AbstractWorkflowEntity {
 	private int stepNo;
 	@XmlElement
 	private BigDecimal tenorSplitPerc = BigDecimal.ZERO;
+	@XmlElement
 	private int installments;
 	@XmlElement
 	private BigDecimal rateMargin = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal emiSplitPerc = BigDecimal.ZERO;
+	@XmlElement
 	private BigDecimal steppedEMI = BigDecimal.ZERO;
 
 	private boolean newRecord = false;
 	private String lovValue;
-	private String stepSpecifier;
 	private FinanceStepPolicyDetail befImage;
 	private LoggedInUser userDetails;
+	@XmlElement
+	private String stepSpecifier;
 	private Date stepStart;
 	private Date stepEnd;
+	@XmlElement
 	private boolean autoCal = false;
 
 	public boolean isNew() {

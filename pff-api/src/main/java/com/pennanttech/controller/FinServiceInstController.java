@@ -118,6 +118,7 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayData;
+import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.covenant.CovenantDocument;
@@ -167,6 +168,7 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.finance.DisbRequest;
@@ -810,14 +812,92 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
 			financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_ADDDISB);
 
+			boolean posIntProcess = false;
+			Date maturityDate = null;
+			
+			if (CalculationConstants.SCHMTHD_POS_INT.equals(finScheduleData.getFinanceType().getFinSchdMthd())) {
+				Date startDate = finServiceInst.getFromDate();
+				maturityDate = FrequencyUtil
+						.getNextDate(financeMain.getRepayFrq(), 1, startDate, HolidayHandlerTypes.MOVE_NONE, false)
+						.getNextFrequencyDate();
+
+				posIntProcess = true;
+			}
+
 			if (FinanceConstants.PRODUCT_ODFACILITY.equals(financeMain.getProductCategory())) {
 				if (CollectionUtils.isEmpty(finScheduleData.getFinanceScheduleDetails())) {
 					financeDetail.setFinScheduleData(ScheduleGenerator.getNewSchd(financeDetail.getFinScheduleData()));
 				}
-				financeMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
+
+				if (posIntProcess) {
+					financeMain.setRecalType(CalculationConstants.RPYCHG_TILLDATE);
+					financeMain.setRecalFromDate(maturityDate);
+					financeMain.setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI);
+
+					// Schedule Details
+					List<FinanceScheduleDetail> schList = finScheduleData.getFinanceScheduleDetails();
+					Date schDateAfterCurInst = null;
+					for (FinanceScheduleDetail schd : schList) {
+
+						// Schedule Date Finding after new disbursement Date & before Maturity Date
+						if (DateUtil.compare(schd.getSchDate(), maturityDate) > 0) {
+							schDateAfterCurInst = schd.getSchDate();
+							break;
+						}
+
+						if (DateUtil.compare(schd.getSchDate(), maturityDate) == 0) {
+							schDateAfterCurInst = null;
+							schd.setPftOnSchDate(true);
+							schd.setRepayOnSchDate(true);
+						}
+					}
+
+					// Repay Instructions Setting
+					boolean rpyInstFound = false;
+					boolean futureRpyInst = false;
+					List<RepayInstruction> rpyInstructions = finScheduleData.getRepayInstructions();
+					for (RepayInstruction ri : rpyInstructions) {
+						if (DateUtil.compare(maturityDate, ri.getRepayDate()) == 0) {
+							ri.setRepayAmount(ri.getRepayAmount().add(finServiceInst.getAmount()));
+							rpyInstFound = true;
+						} else if (DateUtil.compare(maturityDate, ri.getRepayDate()) < 0) {
+							futureRpyInst = true;
+							break;
+						}
+
+					}
+
+					// If instruction not found then add with Disbursement amount
+					if (!rpyInstFound) {
+						RepayInstruction ri = new RepayInstruction();
+						ri.setRepayDate(maturityDate);
+						ri.setRepayAmount(finServiceInst.getAmount());
+						ri.setRepaySchdMethod(CalculationConstants.SCHMTHD_PRI);
+						finScheduleData.getRepayInstructions().add(ri);
+					}
+
+					// If Schedule instruction not found then add with Zero amount
+					if (!futureRpyInst && schDateAfterCurInst != null) {
+						RepayInstruction ri = new RepayInstruction();
+						ri.setRepayDate(schDateAfterCurInst);
+						ri.setRepayAmount(BigDecimal.ZERO);
+						ri.setRepaySchdMethod(CalculationConstants.SCHMTHD_PRI);
+						finScheduleData.getRepayInstructions().add(ri);
+					}
+
+					sortRepayInstructions(finScheduleData.getRepayInstructions());
+
+				} else {
+					financeMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
+					financeMain.setEventFromDate(finServiceInst.getFromDate());
+					financeMain.setRecalFromDate(finServiceInst.getFromDate());
+					financeMain.setRecalToDate(maturityDate);
+				}
+
+				financeMain.setRecalToDate(maturityDate);
+				finServiceInst.setRecalToDate(maturityDate);
 				financeMain.setEventFromDate(finServiceInst.getFromDate());
-				financeMain.setRecalFromDate(finServiceInst.getFromDate());
-				financeMain.setRecalToDate(financeMain.getMaturityDate());
+				finServiceInst.setFromDate(finServiceInst.getFromDate());
 			}
 
 			if (StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
@@ -4548,6 +4628,14 @@ public class FinServiceInstController extends SummaryDetailService {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, chequeHeader);
 		return new AuditHeader(chequeHeader.getFinReference(), null, null, null, auditDetail,
 				chequeHeader.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
+	}
+
+	private List<RepayInstruction> sortRepayInstructions(List<RepayInstruction> ri) {
+		if (CollectionUtils.isEmpty(ri)) {
+			return ri;
+		}
+		return ri.stream().sorted((l1, l2) -> DateUtil.compare(l1.getRepayDate(), l2.getRepayDate()))
+				.collect(Collectors.toList());
 	}
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {

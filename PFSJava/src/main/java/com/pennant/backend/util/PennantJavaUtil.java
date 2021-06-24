@@ -2683,12 +2683,12 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("ChequeHeader",
 				new ModuleMapping("ChequeHeader", ChequeHeader.class,
-						new String[] { "CHEQUEHEADER", "CHEQUEHEADER_AView" }, masterWF,
+						new String[] { "CHEQUEHEADER", "CHEQUEHEADER_AView" }, CHEQUE_WF,
 						new String[] { "FinReference", "ChequeType", "NoOfCheques", "TotalAmount" }, null, 600));
 
 		ModuleUtil.register("ChequeDetail",
 				new ModuleMapping("ChequeDetail", ChequeDetail.class,
-						new String[] { "CHEQUEDETAIL", "CHEQUEDETAIL_AView" }, masterWF, new String[] { "HeaderID",
+						new String[] { "CHEQUEDETAIL", "CHEQUEDETAIL_AView" }, CHEQUE_WF, new String[] { "HeaderID",
 								"BankBranchID", "AccountNo", "ChequeSerialNo", "ChequeDate", "ChequeCcy", "Status" },
 						null, 600));
 

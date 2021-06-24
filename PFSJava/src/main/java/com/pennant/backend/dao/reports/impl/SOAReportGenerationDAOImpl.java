@@ -435,7 +435,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		List<ReceiptAllocationDetail> finReceiptAllocationDetailsList = null;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" Select  ReceiptID, AllocationType, PaidAmount  From ReceiptAllocationDetail");
+		sql.append(" Select  ReceiptID, AllocationType, PaidAmount, TDSPaid From ReceiptAllocationDetail");
 		sql.append(" Where ReceiptId in (Select ReceiptId from FinReceiptHeader where Reference = :FinReference)");
 
 		logger.trace(Literal.SQL + sql.toString());

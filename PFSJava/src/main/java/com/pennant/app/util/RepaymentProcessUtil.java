@@ -2110,6 +2110,7 @@ public class RepaymentProcessUtil {
 
 					rpyQueueHeader.setFutTds(rad.getTdsPaid());
 					rpyQueueHeader.setFutProfit(paidNow);
+					rpyQueueHeader.setPftWaived(rpyQueueHeader.getPftWaived().add(waivedNow));
 					break;
 				case RepayConstants.ALLOCATION_LPFT:
 					rpyQueueHeader.setLateProfit(rpyQueueHeader.getLateProfit().add(paidNow));
@@ -2364,6 +2365,11 @@ public class RepaymentProcessUtil {
 		}
 
 		financeScheduleDetailDAO.saveList(scheduleData.getFinanceScheduleDetails(), tableType, false);
+
+		// Schedule Version Updating
+		if (StringUtils.isBlank(tableType)) {
+			financeMainDAO.updateSchdVersion(scheduleData.getFinanceMain(), false);
+		}
 
 		if (logKey != 0) {
 			// Finance Disbursement Details

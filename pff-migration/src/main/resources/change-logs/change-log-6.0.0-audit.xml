@@ -3174,69 +3174,6 @@
 		<modifyDataType tableName="adtsanctionconditions" columnName="sanctioncondition" newDataType="varchar(600)" />
 	</changeSet>
 	
-	 <changeSet id="330" author="praveena.v">
-		<addColumn tableName="adtrmtfinancetypes">
-			<column name="calcOfSteps" type="varchar(8)" />
-		</addColumn>
-	</changeSet>
-	
-	<changeSet id="331" author="praveena.v">
-			<addColumn tableName="adtrmtfinancetypes">
-			<column name="StepsAppliedFor" type="varchar(8)" />
-		</addColumn>
-	</changeSet>
-	
-	<changeSet id="332" author="praveena.v">
-		<addColumn tableName="adtfinancemain">
-			<column name="calcOfSteps" type="varchar(8)" />
-		</addColumn>
-	</changeSet>
-	
-	<changeSet id="333" author="praveena.v">
-		<addColumn tableName="adtfinancemain">
-			<column name="StepsAppliedFor" type="varchar(8)" />
-		</addColumn>
-	</changeSet> 
-	
-	<changeSet id="334" author="praveena.v">
-		<createTable tableName="adtfinsteppolicydetail">
-			<column name="AuditId" type="bigint">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="AuditDate" type="datetime">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="AuditSeq" type="int">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="AuditImage" type="char(1)">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="finreference" type="varchar(20)" >
-				<constraints nullable="false" />
-			</column>
-			<column name="stepno" type="int" />
-			<column name="tenorsplitperc" type="decimal(5,2)" />
-			<column name="installments" type="int" />
-			<column name="ratemargin" type="decimal(13,9)" />
-			<column name="emisplitperc" type="decimal(5,2)" />
-			<column name="steppedemi" type="decimal(18,0)" />
-			<column name="stepspecifier" type="varchar(5)" />
-			<column name="stepstart" type="datetime" />
-			<column name="stepend" type="datetime" />
-			<column name="Version" type="int" />
-			<column name="LastMntBy" type="bigint" />
-			<column name="LastMntOn" type="datetime" />
-			<column name="RecordStatus" type="varchar(50)" />
-			<column name="RoleCode" type="varchar(100)" />
-			<column name="NextRoleCode" type="varchar(200)" />
-			<column name="TaskId" type="varchar(50)" />
-			<column name="NextTaskId" type="varchar(200)" />
-			<column name="RecordType" type="varchar(50)" />
-			<column name="WorkflowId" type="bigint" />
-		</createTable>
-	</changeSet>
-	
 	<!-- ST#1627 Non LAN Receipt changes start -->
 	
 	<changeSet id="ST#1627.1" author="kavya.n">
@@ -3252,57 +3189,5 @@
 	</changeSet>
 	
 	<!-- ST#1627 Non LAN Receipt changes end -->
-	
-	 <changeSet id="TK#853.1" author="lakshmi.n">
-		<addColumn tableName="ADTFINANCEMAIN">
-			<column name="NoOfGrcSteps" type="int" />
-		</addColumn>
-	</changeSet>
-		
-	<changeSet id="TK#853.1.1" author="lakshmi.n">
-		<sql>
-			<![CDATA[
-				UPDATE ADTFINANCEMAIN SET NoOfGrcSteps = 0;
-			]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="TK#853.1.2" author="lakshmi.n" dbms="postgresql, oracle">
-		<addDefaultValue columnName="NoOfGrcSteps" tableName="ADTFINANCEMAIN" defaultValue="0"/>
-	</changeSet>
-	
-	<changeSet id="TK#853.1.2" author="lakshmi.n" dbms="mssql">
-		<sql>
-			<![CDATA[
-				ALTER TABLE ADTFINANCEMAIN ADD CONSTRAINT DF_AFM_NoOfGrcSteps DEFAULT 0 FOR NoOfGrcSteps;
-			]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="TK#853.2" author="lakshmi.n">
-		<addColumn tableName="ADTFINSTEPPOLICYDETAIL">
-			<column name="AutoCal" type="smallint" />
-		</addColumn>
-	</changeSet>
-	
-	<changeSet id="TK#853.2.1" author="lakshmi.n">
-		<sql>
-			<![CDATA[
-				UPDATE ADTFINSTEPPOLICYDETAIL SET AutoCal = 0;
-			]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="TK#853.2.2" author="lakshmi.n" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AutoCal" tableName="ADTFINSTEPPOLICYDETAIL" defaultValue="0"/>
-	</changeSet>
-	
-	<changeSet id="TK#853.2.2" author="lakshmi.n" dbms="mssql">
-		<sql>
-			<![CDATA[
-				ALTER TABLE ADTFINSTEPPOLICYDETAIL ADD CONSTRAINT DF_AFSPD_AutoCal DEFAULT 0 FOR AutoCal;
-			]]>
-		</sql>
-	</changeSet>
 	
 </databaseChangeLog>

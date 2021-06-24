@@ -22,4 +22,6 @@ public interface FinanceMaintenanceService {
 
 	boolean isFinActive(String finReference);
 
+	int getSchdVersion(String finReference);
+
 }

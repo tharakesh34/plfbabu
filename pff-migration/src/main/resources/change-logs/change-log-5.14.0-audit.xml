@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+	<!-- ST#2031 - Step Loans based on Installment amount changes start -->
+		
+	<changeSet id="ST#2031.1" author="savitri.n">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="CalcOfSteps" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#2031.2" author="savitri.n">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="StepsAppliedFor" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#2031.3" author="savitri.n">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="CalcOfSteps" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#2031.4" author="savitri.n">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="StepsAppliedFor" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#2031.5" author="savitri.n">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="NoOfGrcSteps" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#2031.6" author="savitri.n">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFINANCEMAIN Set NoOfGrcSteps = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#2031.7" author="savitri.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="NoOfGrcSteps" tableName="ADTFINANCEMAIN" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#2031.7" author="savitri.n" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTFINANCEMAIN ADD CONSTRAINT DF_ADTFM_NoOfGrcSteps DEFAULT 0 FOR NoOfGrcSteps;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#2031.8" author="savitri.n">
+		<createTable tableName="ADTFINSTEPPOLICYDETAIL">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="char(1)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="finreference" type="varchar(20)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="stepno" type="int" />
+			<column name="tenorsplitperc" type="decimal(5,2)" />
+			<column name="installments" type="int" />
+			<column name="ratemargin" type="decimal(13,9)" />
+			<column name="emisplitperc" type="decimal(5,2)" />
+			<column name="steppedemi" type="decimal(18,0)" />
+			<column name="stepspecifier" type="varchar(5)" />
+			<column name="stepstart" type="datetime" />
+			<column name="stepend" type="datetime" />
+			<column name="autocal" type="smallint" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#2031.9" author="savitri.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="StepSpecifier" tableName="ADTFINSTEPPOLICYDETAIL" defaultValue="R" />
+	</changeSet>
+
+	<changeSet id="ST#2031.9" author="savitri.n" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTFINSTEPPOLICYDETAIL ADD CONSTRAINT DF_ADTFSPD_StepSpecifier DEFAULT 'R' FOR StepSpecifier;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#2031.10" author="savitri.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="AutoCal" tableName="ADTFINSTEPPOLICYDETAIL" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#2031.10" author="savitri.n" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTFINSTEPPOLICYDETAIL ADD CONSTRAINT DF_ADTFSPD_AutoCal DEFAULT 0 FOR AutoCal;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<!-- ST#2031 - Step Loans based on Installment amount changes end -->
+	
+	<!--ST#2145 - Schedule version changes in LMS changes start -->
+		
+	<changeSet id="ST#2145" author="naveenkumar.a">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="SchdVersion" type="int"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#2145.1" author="savitri.n">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFINANCEMAIN Set SchdVersion = 0;
+			]]>
+		</sql>
+	</changeSet>	
+	
+	<changeSet id="ST#2145.2" author="naveenkumar.a" dbms="postgresql, oracle">
+		<addDefaultValue columnName="SchdVersion" tableName="ADTFINANCEMAIN" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#2145.2" author="naveenkumar.a" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTFINANCEMAIN ADD CONSTRAINT DF_ADTFINANCEMAIN_SCHDVERSION DEFAULT 0 FOR SCHDVERSION;	
+			 ]]>
+		</sql>
+	</changeSet>	
+	
+	<!--ST#2145 - Schedule version changes in LMS changes end -->
+	
+</databaseChangeLog>

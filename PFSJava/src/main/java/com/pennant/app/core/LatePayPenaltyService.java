@@ -197,9 +197,14 @@ public class LatePayPenaltyService extends ServiceHelper {
 		BigDecimal odPft = fod.getFinMaxODPft();
 
 		fod.setTotPenaltyAmt(BigDecimal.ZERO);
-		fod.setTotPenaltyPaid(BigDecimal.ZERO);
-		fod.setTotPenaltyBal(BigDecimal.ZERO);
-		fod.setTotWaived(BigDecimal.ZERO);
+		String odChargeCalOn = fod.getODChargeCalOn();
+
+		if (FinanceConstants.ODCALON_PIPD_FRQ.equals(odChargeCalOn)
+				|| FinanceConstants.ODCALON_PIPD_EOM.equals(odChargeCalOn)) {
+			fod.setTotPenaltyPaid(BigDecimal.ZERO);
+			fod.setTotPenaltyBal(BigDecimal.ZERO);
+			fod.setTotWaived(BigDecimal.ZERO);
+		}
 
 		BigDecimal totPenaltyPaid = BigDecimal.ZERO;
 		BigDecimal totWaived = BigDecimal.ZERO;
@@ -304,7 +309,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			odPri = odcr.getFinCurODPri();
 			odPft = odcr.getFinCurODPft();
 
-			if (odcr.getMovementDate().compareTo(valueDate) == 0) {
+			if (odcr.getMovementDate().compareTo(valueDate) == 0 && schdpaid.compareTo(BigDecimal.ZERO) > 0) {
 				isAddTodayRcd = false;
 			}
 
@@ -324,7 +329,6 @@ public class LatePayPenaltyService extends ServiceHelper {
 		}
 
 		// If LPP capitalization required then load capitalize dates
-		String odChargeCalOn = fod.getODChargeCalOn();
 		if (FinanceConstants.ODCALON_PIPD_FRQ.equals(odChargeCalOn)) {
 			loadFrqCpzDate(schedules, odcrList, valueDate, fm);
 		} else if (FinanceConstants.ODCALON_PIPD_EOM.equals(odChargeCalOn)) {

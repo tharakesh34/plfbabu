@@ -1012,6 +1012,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					0);
 			financeScheduleDetailDAO.saveList(schdList, "", false);
 
+			// Schedule Version Updating
+			financeMainDAO.updateSchdVersion(scheduleData.getFinanceMain(), false);
 		}
 
 		// Update Fee Details record with Cancel status
@@ -1085,6 +1087,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				schData.getFinanceScheduleDetails().get(i).setFinReference(schData.getFinanceMain().getFinReference());
 			}
 			financeScheduleDetailDAO.saveList(schData.getFinanceScheduleDetails(), "", false);
+
+			financeMainDAO.updateSchdVersion(schData.getFinanceMain(), false);
 
 			for (int i = 0; i < schData.getDisbursementDetails().size(); i++) {
 				schData.getDisbursementDetails().get(i).setFinReference(schData.getFinanceMain().getFinReference());

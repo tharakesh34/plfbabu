@@ -23,6 +23,7 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
@@ -343,6 +344,7 @@ public class FinanceDataValidation {
 
 		// Step validations
 		if (finScheduleData.getStepPolicyDetails() != null && !finScheduleData.getStepPolicyDetails().isEmpty()) {
+			finScheduleData.setStepPolicyDetails(finScheduleData.getStepPolicyDetails(), true);
 			errorDetails = stepValidations(vldGroup, finScheduleData, isAPICall);
 			if (!errorDetails.isEmpty()) {
 				finScheduleData.setErrorDetails(errorDetails);
@@ -4296,8 +4298,9 @@ public class FinanceDataValidation {
 				return errorDetails;
 			}
 			// Step Type
-			if (!StringUtils.equals(finMain.getStepType(), FinanceConstants.STEPTYPE_EMI)
-					&& !StringUtils.equals(finMain.getStepType(), FinanceConstants.STEPTYPE_PRIBAL)) {
+			if (PennantConstants.STEPPING_CALC_PERC.equals(financeType.getCalcOfSteps())
+					&& !FinanceConstants.STEPTYPE_EMI.equals(finMain.getStepType())
+					&& !FinanceConstants.STEPTYPE_PRIBAL.equals(finMain.getStepType())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = new StringBuilder(10).append(FinanceConstants.STEPTYPE_EMI).append(" & ")
 						.append(FinanceConstants.STEPTYPE_PRIBAL).toString();
@@ -5770,6 +5773,7 @@ public class FinanceDataValidation {
 	 */
 	private List<ErrorDetail> stepValidations(String vldGroup, FinScheduleData finScheduleData, boolean isAPICall) {
 		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
+		FinanceMain fm = finScheduleData.getFinanceMain();
 		BigDecimal tenorPercTotal = BigDecimal.ZERO;
 		BigDecimal emiPercTotal = BigDecimal.ZERO;
 		int totalSteps = 0;
@@ -5782,31 +5786,332 @@ public class FinanceDataValidation {
 		}
 
 		// validate split percentages
-		for (FinanceStepPolicyDetail policyDetail : finScheduleData.getStepPolicyDetails()) {
-			tenorPercTotal = tenorPercTotal.add(policyDetail.getTenorSplitPerc());
-			emiPercTotal = emiPercTotal.add(policyDetail.getEmiSplitPerc());
-			totalSteps++;
-		}
-		if (tenorPercTotal.compareTo(new BigDecimal(100)) != 0) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90234", null)));
-			return errorDetails;
-		}
+		if (PennantConstants.STEPPING_CALC_PERC.equals(fm.getCalcOfSteps())) {
 
-		if (StringUtils.equals(stepType, FinanceConstants.STEPTYPE_EMI)) {
-			BigDecimal emiPerc = emiPercTotal.divide(new BigDecimal(totalSteps), RoundingMode.HALF_UP);
-			if (emiPerc.compareTo(new BigDecimal(100)) != 0) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90235", null)));
+			if (fm.getNoOfSteps() != 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "NoOfSteps";
+				valueParm[1] = "Zero";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
 				return errorDetails;
 			}
-		} else if (StringUtils.equals(stepType, FinanceConstants.STEPTYPE_PRIBAL)) {
-			BigDecimal priPerc = emiPercTotal;
-			if (priPerc.compareTo(new BigDecimal(100)) != 0) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90236", null)));
+
+			if (fm.getNoOfGrcSteps() != 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "NoOfGrcSteps";
+				valueParm[1] = "Zero";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
 				return errorDetails;
+			}
+
+			for (FinanceStepPolicyDetail policyDetail : finScheduleData.getStepPolicyDetails()) {
+				if (policyDetail.getTenorSplitPerc().compareTo(BigDecimal.ZERO) <= 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Tenor split perc";
+					valueParm[1] = "zero";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
+					return errorDetails;
+				} else if (policyDetail.getEmiSplitPerc().compareTo(BigDecimal.ZERO) <= 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "EMI split perc";
+					valueParm[1] = "zero";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
+					return errorDetails;
+				} else if (policyDetail.getSteppedEMI().compareTo(BigDecimal.ZERO) != 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Stepped EMI";
+					valueParm[1] = "Zero";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
+					return errorDetails;
+				} else if (StringUtils.isNotBlank(policyDetail.getStepSpecifier())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Step Specifier";
+					valueParm[1] = "step calculated on percentage";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP006", valueParm)));
+					return errorDetails;
+				} else if (policyDetail.isAutoCal()) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "Step No " + policyDetail.getStepNo();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP004", valueParm)));
+					return errorDetails;
+				} else if (policyDetail.getInstallments() != 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Instalments";
+					valueParm[1] = "Zero";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
+					return errorDetails;
+				}
+			}
+
+			for (FinanceStepPolicyDetail policyDetail : finScheduleData.getStepPolicyDetails()) {
+				tenorPercTotal = tenorPercTotal.add(policyDetail.getTenorSplitPerc());
+				emiPercTotal = emiPercTotal.add(policyDetail.getEmiSplitPerc());
+				totalSteps++;
+			}
+
+			if (tenorPercTotal.compareTo(new BigDecimal(100)) != 0) {
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90234", null)));
+				return errorDetails;
+			}
+
+			if (FinanceConstants.STEPTYPE_EMI.equals(stepType)) {
+				BigDecimal emiPerc = emiPercTotal.divide(new BigDecimal(totalSteps), RoundingMode.HALF_UP);
+				if (emiPerc.compareTo(new BigDecimal(100)) != 0) {
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90235", null)));
+					return errorDetails;
+				}
+			} else if (FinanceConstants.STEPTYPE_PRIBAL.equals(stepType)) {
+				BigDecimal priPerc = emiPercTotal;
+				if (priPerc.compareTo(new BigDecimal(100)) != 0) {
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90236", null)));
+					return errorDetails;
+				}
 			}
 		}
 
+		if (PennantConstants.STEPPING_CALC_AMT.equals(fm.getCalcOfSteps())) {
+
+			if (!fm.isAlwManualSteps()) {
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP009", null)));
+				return errorDetails;
+			}
+
+			if (StringUtils.isNotBlank(fm.getStepType())) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Step type";
+				valueParm[1] = "step calculated on amount";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP006", valueParm)));
+				return errorDetails;
+			}
+
+			if (StringUtils.isNotBlank(fm.getStepPolicy())) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Step policy";
+				valueParm[1] = "step calculated on amount";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP006", valueParm)));
+				return errorDetails;
+			}
+
+			if (CollectionUtils.isEmpty(finScheduleData.getStepPolicyDetails())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Step";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				return errorDetails;
+			}
+
+			// Mandatory Data validations
+			for (FinanceStepPolicyDetail spd : finScheduleData.getStepPolicyDetails()) {
+				if (spd.getStepNo() == 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Step Number";
+					valueParm[1] = "Zero";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
+					return errorDetails;
+				} else if (StringUtils.isBlank(spd.getStepSpecifier())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "Step Speicfier";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("WFEE08", valueParm)));
+					return errorDetails;
+				} else if (!(PennantConstants.STEP_SPECIFIER_GRACE.equals(spd.getStepSpecifier())
+						|| PennantConstants.STEP_SPECIFIER_REG_EMI.equals(spd.getStepSpecifier()))) {
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP007", null)));
+					return errorDetails;
+				} else if (spd.getInstallments() == 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Number of instalments";
+					valueParm[1] = "Zero";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
+					return errorDetails;
+				} else if (spd.getTenorSplitPerc().compareTo(BigDecimal.ZERO) != 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Tenor split perc";
+					valueParm[1] = "Zero";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
+					return errorDetails;
+				} else if (spd.getRateMargin().compareTo(BigDecimal.ZERO) != 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Rate margin";
+					valueParm[1] = "Zero";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
+					return errorDetails;
+				} else if (spd.getEmiSplitPerc().compareTo(BigDecimal.ZERO) != 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "EMI split perc";
+					valueParm[1] = "Zero";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
+					return errorDetails;
+				}
+			}
+
+			List<FinanceStepPolicyDetail> graceSpdList = new ArrayList<>();
+			List<FinanceStepPolicyDetail> rpySpdList = new ArrayList<>();
+			int rpyTerms = 0;
+			int grcTerms = 0;
+			int repaySteps = 0;
+			int grcSteps = 0;
+
+			fm.setRpyStps(false);
+			fm.setGrcStps(false);
+			for (FinanceStepPolicyDetail spd : finScheduleData.getStepPolicyDetails()) {
+				if (PennantConstants.STEP_SPECIFIER_REG_EMI.equals(spd.getStepSpecifier())) {
+					repaySteps = repaySteps + 1;
+					rpyTerms = rpyTerms + spd.getInstallments();
+					rpySpdList.add(spd);
+					fm.setRpyStps(true);
+				} else if (PennantConstants.STEP_SPECIFIER_GRACE.equals(spd.getStepSpecifier())) {
+					grcSteps = grcSteps + 1;
+					graceSpdList.add(spd);
+					grcTerms = grcTerms + spd.getInstallments();
+					fm.setGrcStps(true);
+				}
+			}
+
+			if ((PennantConstants.STEPPING_APPLIED_BOTH.equals(fm.getStepsAppliedFor())
+					&& (CollectionUtils.isEmpty(rpySpdList) && CollectionUtils.isEmpty(graceSpdList)))
+					|| (PennantConstants.STEPPING_APPLIED_EMI.equals(fm.getStepsAppliedFor())
+							&& CollectionUtils.isEmpty(rpySpdList))
+					|| (PennantConstants.STEPPING_APPLIED_GRC.equals(fm.getStepsAppliedFor())
+							&& CollectionUtils.isEmpty(graceSpdList))) {
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30541", null)));
+				return errorDetails;
+			}
+
+			if (PennantConstants.STEPPING_APPLIED_GRC.equals(fm.getStepsAppliedFor())
+					&& CollectionUtils.isNotEmpty(rpySpdList)) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Grace steps";
+				valueParm[1] = fm.getFinType();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP0010", valueParm)));
+				return errorDetails;
+			}
+
+			if (PennantConstants.STEPPING_APPLIED_EMI.equals(fm.getStepsAppliedFor())
+					&& CollectionUtils.isNotEmpty(graceSpdList)) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Repay steps";
+				valueParm[1] = fm.getFinType();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP0010", valueParm)));
+				return errorDetails;
+			}
+
+			if (!fm.isAllowGrcPeriod() && CollectionUtils.isNotEmpty(graceSpdList)) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Grace steps";
+				valueParm[1] = "No Grace Period LAN";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP006", null)));
+				return errorDetails;
+			}
+
+			if (fm.getNoOfSteps() != rpySpdList.size()) {
+				String[] valueParm = new String[2];
+				valueParm[0] = Labels.getLabel("label_FinanceMainDialog_RepaySteps.value");
+				valueParm[1] = Labels.getLabel("label_FinanceMainDialog_RepaySteps.value");
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP005", valueParm)));
+				return errorDetails;
+			}
+
+			if (fm.getNoOfGrcSteps() != graceSpdList.size()) {
+				String[] valueParm = new String[2];
+				valueParm[0] = Labels.getLabel("label_FinanceMainDialog_GrcSteps.value");
+				valueParm[1] = Labels.getLabel("label_FinanceMainDialog_GrcSteps.value");
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP005", valueParm)));
+				return errorDetails;
+			}
+
+			if (CollectionUtils.isNotEmpty(rpySpdList) && fm.getNumberOfTerms() != rpyTerms) {
+				String[] valueParm = new String[2];
+				valueParm[0] = Labels.getLabel("label_TotStepInstallments", new String[] { "Repay" });
+				valueParm[1] = Labels.getLabel("label_TotalTerms");
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30540", valueParm)));
+				return errorDetails;
+			}
+
+			if (CollectionUtils.isNotEmpty(graceSpdList) && fm.getGraceTerms() != grcTerms) {
+				String[] valueParm = new String[2];
+				valueParm[0] = Labels.getLabel("label_TotStepInstallments", new String[] { "Grace" });
+				valueParm[1] = Labels.getLabel("label_GrcTotalTerms");
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30540", valueParm)));
+				return errorDetails;
+			}
+
+			// Duplicate step number validation for repay steps
+			FinanceStepPolicyDetail duplicateStep = null;
+			duplicateStep = checkDuplicateStp(rpySpdList);
+			if (duplicateStep == null) {
+				duplicateStep = checkDuplicateStp(graceSpdList);
+			}
+			if (duplicateStep != null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Step no " + duplicateStep.getStepNo();
+				valueParm[1] = "step specifier " + duplicateStep.getStepSpecifier();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("41015", valueParm)));
+				return errorDetails;
+			}
+
+			// Step No and Amount validation For Repay steps
+			for (FinanceStepPolicyDetail spd : rpySpdList) {
+				if (spd.getStepNo() > repaySteps) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "Repay step no" + " " + String.valueOf(spd.getStepNo());
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90405", valueParm)));
+					return errorDetails;
+				} else if (spd.getStepNo() < repaySteps && spd.getSteppedEMI().compareTo(BigDecimal.ZERO) <= 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = Labels.getLabel("label_FinStepPolicyDialog_SteppedEMI.value");
+					valueParm[1] = String.valueOf(BigDecimal.ZERO);
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
+					return errorDetails;
+				} else if (spd.getStepNo() == repaySteps && spd.getSteppedEMI().compareTo(BigDecimal.ZERO) > 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Last " + Labels.getLabel("label_FinStepPolicyDialog_SteppedEMI.value");
+					valueParm[1] = String.valueOf(BigDecimal.ZERO) + " in repay steps";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
+					return errorDetails;
+				} else if (spd.isAutoCal()) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "Repay Step No " + String.valueOf(spd.getStepNo());
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP004", valueParm)));
+					return errorDetails;
+				}
+			}
+
+			// Step no and Amount Validation For Grace steps
+			for (FinanceStepPolicyDetail spd : graceSpdList) {
+				if (spd.getStepNo() > grcSteps) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "Grace step no" + " " + String.valueOf(spd.getStepNo());
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90405", valueParm)));
+					return errorDetails;
+				} else if (spd.getStepNo() < grcSteps && spd.isAutoCal()) {
+					String[] valueParm = new String[1];
+					valueParm[0] = Labels.getLabel("listheader_StepFinanceGrace_StepNo.label") + " "
+							+ String.valueOf(spd.getStepNo());
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP004", valueParm)));
+					return errorDetails;
+				} else if (spd.isAutoCal() && spd.getSteppedEMI().compareTo(BigDecimal.ZERO) != 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Steppef EMI";
+					valueParm[1] = "zero for auto calculate step";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
+					return errorDetails;
+				}
+			}
+		}
 		return errorDetails;
+	}
+
+	private FinanceStepPolicyDetail checkDuplicateStp(List<FinanceStepPolicyDetail> spdList) {
+		if (CollectionUtils.isNotEmpty(spdList)) {
+			Map<Integer, FinanceStepPolicyDetail> newMap = new HashMap<>();
+			for (FinanceStepPolicyDetail spd : spdList) {
+				if (newMap.containsKey(spd.getStepNo())) {
+					return spd;
+				} else {
+					newMap.put(spd.getStepNo(), spd);
+				}
+			}
+		}
+		return null;
 	}
 
 	public List<ErrorDetail> doFeeValidations(String vldSrvLoan, FinServiceInstruction finServiceInstruction,

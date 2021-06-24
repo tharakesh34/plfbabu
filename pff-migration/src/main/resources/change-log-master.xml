@@ -19,11 +19,12 @@
 	<include file="change-logs/change-log-security-seq-reseed.xml" />
 	<include file="change-logs/change-log-5.12.0.xml" />
 	<include file="change-logs/change-log-5.13.0.xml" />
+	<include file="change-logs/change-log-5.14.0.xml" />
 	<include file="change-logs/change-log-6.0.0.xml" />
+	<include file="change-logs/change-log-islamic_code_removal.xml" />
 	<include file="change-logs/change-log-security-seq-reseed.xml" />
 	<include file="change-logs/change-log-indexes.xml" />
 	<include file="change-logs/change-log-hl-missing-indexes.xml" />
 	<include file="change-logs/change-log-meta-data.xml" />
-	<include file="change-logs/change-log-islamic_code_removal.xml" />
 
 </databaseChangeLog>

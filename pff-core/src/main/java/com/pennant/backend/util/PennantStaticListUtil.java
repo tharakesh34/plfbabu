@@ -4539,6 +4539,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ReceiptPaymentMode_ONLINE")));
 			receiptPaymentModes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_DIGITAL,
 					Labels.getLabel("label_ReceiptPaymentMode_DIGITAL")));
+			receiptPaymentModes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_PRESENT,
+					Labels.getLabel("label_ReceiptPaymentMode_PRESENT")));
 		}
 		return receiptPaymentModes;
 	}

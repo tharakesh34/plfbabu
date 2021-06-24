@@ -535,6 +535,7 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 				}
 
 				if (upldHdr.getUploadProgress() == ReceiptUploadConstants.RECEIPT_INPROCESS) {
+					listCheckBox.setChecked(false);
 					listCheckBox.setDisabled(true);
 				}
 
@@ -840,6 +841,7 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
+		listHeader_CheckBox_Comp.setChecked(false);
 		search();
 		Clients.showNotification("Receipt Process initialized.", "info", null, null, -1);
 
@@ -852,6 +854,10 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 
 		for (long id : receiptidList) {
 			ReceiptUploadHeader receiptUploadHeader = receiptUploadHeaderService.getUploadHeaderById(id, false);
+
+			if (receiptUploadHeader.getUploadProgress() == ReceiptUploadConstants.RECEIPT_INPROCESS) {
+				continue;
+			}
 
 			String whereCond = " UploadHeaderId= ?";
 

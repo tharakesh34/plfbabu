@@ -91,6 +91,7 @@ import com.pennant.component.PTCKeditor;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennanttech.framework.web.AbstractDialogController;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class NotesCtrl extends GFCBaseCtrl<Notes> {
@@ -140,6 +141,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	private Tabpanel tabpanel = null;
 	private boolean isEnquiry = false;
 	private boolean isNotFinanceProcess = false;
+	private boolean maxLenReq = false;
 
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private CollateralBasicDetailsCtrl collateralBasicDetailsCtrl;
@@ -216,11 +218,18 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 			appendFinBasicDetails((ArrayList<Object>) arguments.get("finHeaderList"));
 		}
 
+		if (arguments.containsKey("maxLenReq")) {
+			this.maxLenReq = (boolean) arguments.get("maxLenReq");
+		}
+
 		this.mainControl = (AbstractDialogController<Object>) arguments.get("control");
 		this.remarks.setCustomConfigurationsPath(PTCKeditor.SIMPLE_LIST);
 
 		getBorderLayoutHeight();
 		listboxNotes.setHeight(getListBoxHeight(13));
+
+		// set Field Properties
+		doSetFieldProperties();
 
 		doShowDialog(getNotes());
 		doCheckEnquiry();
@@ -228,6 +237,14 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 		this.remarks.setValue(" ");
 
 		logger.debug("Leaving" + event.toString());
+	}
+
+	private void doSetFieldProperties() {
+		logger.debug(Literal.ENTERING);
+		if (maxLenReq) {
+			this.remarksText.setMaxlength(2000);
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doCheckEnquiry() {
@@ -338,19 +355,14 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 		doClearMessage();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		if (!isFinanceNotes) {
+		aNotes.setRemarks(remarks.getValue());
 
-			if (this.remarksText.getValue() == null || this.remarksText.getValue().trim().length() <= 0) {
+		if (!isFinanceNotes
+				&& (this.remarksText.getValue() == null || this.remarksText.getValue().trim().length() <= 0)) {
 				wve.add(new WrongValueException(this.remarksText, Labels.getLabel("Notes_NotEmpty")));
 			} else {
 				aNotes.setRemarks(this.remarksText.getValue().trim());
 			}
-
-		} else if (this.remarks.getValue() != null) {
-			String remarkVal = remarks.getValue().split("\t")[1].split("<")[0];
-			remarks.setValue(remarkVal);
-			aNotes.setRemarks(remarks.getValue());
-		}
 
 		if (wve.size() > 0) {
 
@@ -592,13 +604,15 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				}
 				//Fixed Stored Cross Site Scripting Vulnerability in Notes Dialogue
 				String content = "<p class='triangle-right " + alignSide + "'> <font style='font-weight:bold;'> "
-						+ StringEscapeUtils.escapeHtml(note.getRemarks()) + " </font> <br>  ";
+						+ StringEscapeUtils.unescapeHtml(note.getRemarks()) + " </font> <br>  ";
 				String date = DateUtility.format(note.getInputDate(), PennantConstants.dateTimeAMPMFormat);
 				if ("I".equals(note.getRemarkType())) {
-					content = content + "<font style='color:#FF0000;float:" + usrAlign + ";'>"
+					content = "<div style='word-wrap: break-word; width: 400px'>" + content
+							+ "<font style='color:#FF0000;float:" + usrAlign + ";'>"
 							+ note.getUsrLogin().toLowerCase() + " : " + date + "</font></p>";
 				} else {
-					content = content + "<font style='color:white;float:" + usrAlign + ";'>"
+					content = "<div style='word-wrap: break-word; width: 400px'>" + content
+							+ "<font style='color:white;float:" + usrAlign + ";'>"
 							+ note.getUsrLogin().toLowerCase() + " : " + date + "</font></p>";
 				}
 				html.setContent(content);
@@ -690,7 +704,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				lc = new Listcell();
 				Html html = new Html();
 				//Fixed Stored Cross Site Scripting Vulnerability in Notes Dialogue
-				html.setContent(note.getRemarks());
+				html.setContent(StringEscapeUtils.unescapeHtml(note.getRemarks()));
 				lc.appendChild(html);
 				lc.setStyle("cursor:default;");
 				lc.setParent(item);

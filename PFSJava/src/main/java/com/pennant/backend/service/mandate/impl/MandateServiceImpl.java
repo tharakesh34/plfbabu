@@ -659,8 +659,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 		if (mandate.isSwapIsActive()
 				&& (StringUtils.equals(PennantConstants.RCD_STATUS_SUBMITTED, mandate.getRecordStatus()))) {
-			BigDecimal repayAmount = getMandateDAO().getMaxRepayAmount(mandate.getOrgReference(), "_View");
-			if (mandate.getMaxLimit().compareTo(repayAmount) < 0) {
+			BigDecimal repayAmount = mandateDAO.getMaxRepayAmount(mandate.getOrgReference(), "_View");
+			if (repayAmount != null && mandate.getMaxLimit().compareTo(repayAmount) < 0) {
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90320", null)));
 			}
 

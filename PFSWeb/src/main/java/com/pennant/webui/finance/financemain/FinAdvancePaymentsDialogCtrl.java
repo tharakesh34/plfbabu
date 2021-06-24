@@ -1211,6 +1211,10 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				this.disbDoc.setContent(media);
 				eastDocument.setVisible(true);
 				eastDocument.setTitle(documentDetails.getDocName());
+				if (ImplementationConstants.FA_CANCEL_CHEQUE_AUTO_OPEN) {
+					eastDocument.setOpen(true);
+					eastDocument.setCollapsible(false);
+				}
 			} else {
 				String referenceId = String.valueOf(aFinAdvnancePayments.getPaymentId());
 				DocumentDetails documentDetails = documentDetailsDAO.getDocumentDetails(referenceId,

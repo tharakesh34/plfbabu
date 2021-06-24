@@ -715,9 +715,7 @@ public class AccrualService extends ServiceHelper {
 
 	private void setProvisionData(FinanceProfitDetail pftDetail) {
 		if (pftDetail.getCurODDays() > 0) {
-			BigDecimal pftAmz = pftDetail.getPftAmz();
-
-			pftDetail.setPftAmzSusp(pftAmz);
+			pftDetail.setPftAmzSusp(pftDetail.getPftAccrued().subtract(pftDetail.getODProfit()));
 			pftDetail.setPftAccrueSusp(pftDetail.getPftAccrued());
 
 			pftDetail.setPftAmz(BigDecimal.ZERO);

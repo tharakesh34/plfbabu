@@ -68,6 +68,7 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
@@ -315,63 +316,57 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 */
 	@Override
 	public FinanceMain getFinanceMainForPftCalc(final String finReference) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, FinType, CustID, FinAmount, DownPayment, FeeChargeAmt, GrcPeriodEndDate");
 		sql.append(", NextRepayPftDate, NextRepayRvwDate, FinIsActive, ProfitDaysBasis, FinStartDate");
 		sql.append(", FinAssetValue, LastRepayPftDate, LastRepayRvwDate, FinCurrAssetValue, MaturityDate");
 		sql.append(", FinStatus, FinStsReason, InitiateUser");
 		sql.append(", ClosingStatus, LastRepayDate, NextRepayDate, PromotionCode, PastduePftCalMthd");
-		sql.append(", PastduePftMargin,instbasedschd");
+		sql.append(", PastduePftMargin, InstBasedSchd, SchdVersion");
 		sql.append(" from FinanceMain");
 		sql.append(" Where FinReference = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
-					new RowMapper<FinanceMain>() {
-						@Override
-						public FinanceMain mapRow(ResultSet rs, int rowNum) throws SQLException {
-							FinanceMain fm = new FinanceMain();
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, (rs, i) -> {
+				FinanceMain fm = new FinanceMain();
 
-							fm.setFinReference(rs.getString("FinReference"));
-							fm.setFinType(rs.getString("FinType"));
-							fm.setCustID(rs.getLong("CustID"));
-							fm.setFinAmount(rs.getBigDecimal("FinAmount"));
-							fm.setDownPayment(rs.getBigDecimal("DownPayment"));
-							fm.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
-							fm.setGrcPeriodEndDate(rs.getTimestamp("GrcPeriodEndDate"));
-							fm.setNextRepayPftDate(rs.getTimestamp("NextRepayPftDate"));
-							fm.setNextRepayRvwDate(rs.getTimestamp("NextRepayRvwDate"));
-							fm.setFinIsActive(rs.getBoolean("FinIsActive"));
-							fm.setProfitDaysBasis(rs.getString("ProfitDaysBasis"));
-							fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
-							fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
-							fm.setLastRepayPftDate(rs.getTimestamp("LastRepayPftDate"));
-							fm.setLastRepayRvwDate(rs.getTimestamp("LastRepayRvwDate"));
-							fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
-							fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
-							fm.setFinStatus(rs.getString("FinStatus"));
-							fm.setFinStsReason(rs.getString("FinStsReason"));
-							fm.setInitiateUser(rs.getLong("InitiateUser"));
-							fm.setClosingStatus(rs.getString("ClosingStatus"));
-							fm.setLastRepayDate(rs.getTimestamp("LastRepayDate"));
-							fm.setNextRepayDate(rs.getTimestamp("NextRepayDate"));
-							fm.setPromotionCode(rs.getString("PromotionCode"));
-							fm.setPastduePftCalMthd(rs.getString("PastduePftCalMthd"));
-							fm.setPastduePftMargin(rs.getBigDecimal("PastduePftMargin"));
-							fm.setInstBasedSchd(rs.getBoolean("instbasedschd"));
+				fm.setFinReference(rs.getString("FinReference"));
+				fm.setFinType(rs.getString("FinType"));
+				fm.setCustID(rs.getLong("CustID"));
+				fm.setFinAmount(rs.getBigDecimal("FinAmount"));
+				fm.setDownPayment(rs.getBigDecimal("DownPayment"));
+				fm.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
+				fm.setGrcPeriodEndDate(rs.getTimestamp("GrcPeriodEndDate"));
+				fm.setNextRepayPftDate(rs.getTimestamp("NextRepayPftDate"));
+				fm.setNextRepayRvwDate(rs.getTimestamp("NextRepayRvwDate"));
+				fm.setFinIsActive(rs.getBoolean("FinIsActive"));
+				fm.setProfitDaysBasis(rs.getString("ProfitDaysBasis"));
+				fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
+				fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
+				fm.setLastRepayPftDate(rs.getTimestamp("LastRepayPftDate"));
+				fm.setLastRepayRvwDate(rs.getTimestamp("LastRepayRvwDate"));
+				fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
+				fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
+				fm.setFinStatus(rs.getString("FinStatus"));
+				fm.setFinStsReason(rs.getString("FinStsReason"));
+				fm.setInitiateUser(rs.getLong("InitiateUser"));
+				fm.setClosingStatus(rs.getString("ClosingStatus"));
+				fm.setLastRepayDate(rs.getTimestamp("LastRepayDate"));
+				fm.setNextRepayDate(rs.getTimestamp("NextRepayDate"));
+				fm.setPromotionCode(rs.getString("PromotionCode"));
+				fm.setPastduePftCalMthd(rs.getString("PastduePftCalMthd"));
+				fm.setPastduePftMargin(rs.getBigDecimal("PastduePftMargin"));
+				fm.setInstBasedSchd(rs.getBoolean("InstBasedSchd"));
+				fm.setSchdVersion(rs.getInt("SchdVersion"));
 
-							return fm;
-						}
-					});
+				return fm;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Record is not found in FinanceMain for the specified FinReference >> {}", finReference);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
@@ -386,73 +381,65 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 */
 	@Override
 	public FinanceMain getFinanceMainForRpyCancel(final String id) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ft.FinType, FinReference, CustID, GrcPeriodEndDate, NextRepayPftDate, NextRepayRvwDate");
 		sql.append(", FinStatus, FinAmount, FeeChargeAmt, FinRepaymentAmount, fm.FinCcy, FinBranch");
 		sql.append(", ProfitDaysBasis, FinStartDate, FinAssetValue, LastRepayPftDate, LastRepayRvwDate");
-		sql.append(", FinCurrAssetValue, MaturityDate, PromotionCode, e.EntityCode, WriteoffLoan");
+		sql.append(", FinCurrAssetValue, MaturityDate, PromotionCode, e.EntityCode, WriteoffLoan, SchdVersion");
 		sql.append(" from Financemain fm");
 		sql.append(" inner join RmtFinanceTypes ft on ft.Fintype = fm.Fintype");
 		sql.append(" inner join SmtDivisionDetail d on d.DivisionCode = ft.FinDivision");
 		sql.append(" inner join entity e on e.EntityCode = d.EntityCode");
 		sql.append("  Where FinReference = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id },
-					new RowMapper<FinanceMain>() {
-						@Override
-						public FinanceMain mapRow(ResultSet rs, int rowNum) throws SQLException {
-							FinanceMain fm = new FinanceMain();
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, i) -> {
+				FinanceMain fm = new FinanceMain();
 
-							fm.setFinType(rs.getString("FinType"));
-							fm.setFinReference(rs.getString("FinReference"));
-							fm.setCustID(rs.getLong("CustID"));
-							fm.setGrcPeriodEndDate(rs.getTimestamp("GrcPeriodEndDate"));
-							fm.setNextRepayPftDate(rs.getTimestamp("NextRepayPftDate"));
-							fm.setNextRepayRvwDate(rs.getTimestamp("NextRepayRvwDate"));
-							fm.setFinStatus(rs.getString("FinStatus"));
-							fm.setFinAmount(rs.getBigDecimal("FinAmount"));
-							fm.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
-							fm.setFinRepaymentAmount(rs.getBigDecimal("FinRepaymentAmount"));
-							fm.setFinCcy(rs.getString("FinCcy"));
-							fm.setFinBranch(rs.getString("FinBranch"));
-							fm.setProfitDaysBasis(rs.getString("ProfitDaysBasis"));
-							fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
-							fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
-							fm.setLastRepayPftDate(rs.getTimestamp("LastRepayPftDate"));
-							fm.setLastRepayRvwDate(rs.getTimestamp("LastRepayRvwDate"));
-							fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
-							fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
-							fm.setPromotionCode(rs.getString("PromotionCode"));
-							fm.setEntityCode(rs.getString("EntityCode"));
-							fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
+				fm.setFinType(rs.getString("FinType"));
+				fm.setFinReference(rs.getString("FinReference"));
+				fm.setCustID(rs.getLong("CustID"));
+				fm.setGrcPeriodEndDate(rs.getTimestamp("GrcPeriodEndDate"));
+				fm.setNextRepayPftDate(rs.getTimestamp("NextRepayPftDate"));
+				fm.setNextRepayRvwDate(rs.getTimestamp("NextRepayRvwDate"));
+				fm.setFinStatus(rs.getString("FinStatus"));
+				fm.setFinAmount(rs.getBigDecimal("FinAmount"));
+				fm.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
+				fm.setFinRepaymentAmount(rs.getBigDecimal("FinRepaymentAmount"));
+				fm.setFinCcy(rs.getString("FinCcy"));
+				fm.setFinBranch(rs.getString("FinBranch"));
+				fm.setProfitDaysBasis(rs.getString("ProfitDaysBasis"));
+				fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
+				fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
+				fm.setLastRepayPftDate(rs.getTimestamp("LastRepayPftDate"));
+				fm.setLastRepayRvwDate(rs.getTimestamp("LastRepayRvwDate"));
+				fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
+				fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
+				fm.setPromotionCode(rs.getString("PromotionCode"));
+				fm.setEntityCode(rs.getString("EntityCode"));
+				fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
+				fm.setSchdVersion(rs.getInt("SchdVersion"));
 
-							return fm;
-						}
-					});
+				return fm;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Record is not found in Financemain for the specified FinReference >> {}", id);
 		}
-		logger.debug(Literal.LEAVING);
+
 		return null;
 	}
 
 	/**
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
-	 * @param finReference
-	 *            (String)
+	 * @param finReference (String)
 	 * 
 	 * @return FinanceMain
 	 */
 	@Override
 	public FinanceMain getFinanceMainForBatch(final String finReference) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, GrcPeriodEndDate, FinRepaymentAmount");
 		sql.append(", FinCommitmentRef, FinLimitRef, FinCcy, FinBranch");
@@ -464,80 +451,75 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", Version, ProfitDaysBasis, FinStatus, FinStsReason, PastduePftCalMthd, PastduePftMargin");
 		sql.append(", InitiateUser, MaturityDate");
 		sql.append(", MinDownPayPerc, PromotionCode, FinIsActive, SanBsdSchdle, PromotionSeqId");
-		sql.append(", SvAmount, CbAmount, EmployeeName");
+		sql.append(", SvAmount, CbAmount, EmployeeName, SchdVersion");
 		sql.append(" from Financemain");
 		sql.append("  Where FinReference = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
-					new RowMapper<FinanceMain>() {
-						@Override
-						public FinanceMain mapRow(ResultSet rs, int rowNum) throws SQLException {
-							FinanceMain fm = new FinanceMain();
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, (rs, i) -> {
+				FinanceMain fm = new FinanceMain();
 
-							fm.setFinReference(rs.getString("FinReference"));
-							fm.setGrcPeriodEndDate(rs.getTimestamp("GrcPeriodEndDate"));
-							fm.setFinRepaymentAmount(rs.getBigDecimal("FinRepaymentAmount"));
-							fm.setFinCommitmentRef(rs.getString("FinCommitmentRef"));
-							fm.setFinLimitRef(rs.getString("FinLimitRef"));
-							fm.setFinCcy(rs.getString("FinCcy"));
-							fm.setFinBranch(rs.getString("FinBranch"));
-							fm.setCustID(rs.getLong("CustID"));
-							fm.setFinAmount(rs.getBigDecimal("FinAmount"));
-							fm.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
-							fm.setDownPayment(rs.getBigDecimal("DownPayment"));
-							fm.setDownPayBank(rs.getBigDecimal("DownPayBank"));
-							fm.setDownPaySupl(rs.getBigDecimal("DownPaySupl"));
-							fm.setFinType(rs.getString("FinType"));
-							fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
-							fm.setGraceTerms(rs.getInt("GraceTerms"));
-							fm.setNumberOfTerms(rs.getInt("NumberOfTerms"));
-							fm.setNextGrcPftDate(rs.getTimestamp("NextGrcPftDate"));
-							fm.setNextRepayDate(rs.getTimestamp("NextRepayDate"));
-							fm.setLastRepayPftDate(rs.getTimestamp("LastRepayPftDate"));
-							fm.setNextRepayPftDate(rs.getTimestamp("NextRepayPftDate"));
-							fm.setProductCategory(rs.getString("ProductCategory"));
-							fm.setFinCategory(rs.getString("FinCategory"));
-							fm.setLastRepayRvwDate(rs.getTimestamp("LastRepayRvwDate"));
-							fm.setNextRepayRvwDate(rs.getTimestamp("NextRepayRvwDate"));
-							fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
-							fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
-							fm.setFinRepayMethod(rs.getString("FinRepayMethod"));
-							fm.setRepayFrq(rs.getString("RepayFrq"));
-							fm.setClosingStatus(rs.getString("ClosingStatus"));
-							fm.setDueBucket(rs.getInt("DueBucket"));
-							fm.setCalRoundingMode(rs.getString("CalRoundingMode"));
-							fm.setRoundingTarget(rs.getInt("RoundingTarget"));
-							fm.setRecordType(rs.getString("RecordType"));
-							fm.setVersion(rs.getInt("Version"));
-							fm.setProfitDaysBasis(rs.getString("ProfitDaysBasis"));
-							fm.setFinStatus(rs.getString("FinStatus"));
-							fm.setFinStsReason(rs.getString("FinStsReason"));
-							fm.setPastduePftCalMthd(rs.getString("PastduePftCalMthd"));
-							fm.setPastduePftMargin(rs.getBigDecimal("PastduePftMargin"));
-							fm.setInitiateUser(rs.getLong("InitiateUser"));
-							fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
-							fm.setMinDownPayPerc(rs.getBigDecimal("MinDownPayPerc"));
-							fm.setPromotionCode(rs.getString("PromotionCode"));
-							fm.setFinIsActive(rs.getBoolean("FinIsActive"));
-							fm.setSanBsdSchdle(rs.getBoolean("SanBsdSchdle"));
-							fm.setPromotionSeqId(rs.getLong("PromotionSeqId"));
-							fm.setSvAmount(rs.getBigDecimal("SvAmount"));
-							fm.setCbAmount(rs.getBigDecimal("CbAmount"));
-							fm.setEmployeeName(rs.getString("EmployeeName"));
+				fm.setFinReference(rs.getString("FinReference"));
+				fm.setGrcPeriodEndDate(rs.getTimestamp("GrcPeriodEndDate"));
+				fm.setFinRepaymentAmount(rs.getBigDecimal("FinRepaymentAmount"));
+				fm.setFinCommitmentRef(rs.getString("FinCommitmentRef"));
+				fm.setFinLimitRef(rs.getString("FinLimitRef"));
+				fm.setFinCcy(rs.getString("FinCcy"));
+				fm.setFinBranch(rs.getString("FinBranch"));
+				fm.setCustID(rs.getLong("CustID"));
+				fm.setFinAmount(rs.getBigDecimal("FinAmount"));
+				fm.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
+				fm.setDownPayment(rs.getBigDecimal("DownPayment"));
+				fm.setDownPayBank(rs.getBigDecimal("DownPayBank"));
+				fm.setDownPaySupl(rs.getBigDecimal("DownPaySupl"));
+				fm.setFinType(rs.getString("FinType"));
+				fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
+				fm.setGraceTerms(rs.getInt("GraceTerms"));
+				fm.setNumberOfTerms(rs.getInt("NumberOfTerms"));
+				fm.setNextGrcPftDate(rs.getTimestamp("NextGrcPftDate"));
+				fm.setNextRepayDate(rs.getTimestamp("NextRepayDate"));
+				fm.setLastRepayPftDate(rs.getTimestamp("LastRepayPftDate"));
+				fm.setNextRepayPftDate(rs.getTimestamp("NextRepayPftDate"));
+				fm.setProductCategory(rs.getString("ProductCategory"));
+				fm.setFinCategory(rs.getString("FinCategory"));
+				fm.setLastRepayRvwDate(rs.getTimestamp("LastRepayRvwDate"));
+				fm.setNextRepayRvwDate(rs.getTimestamp("NextRepayRvwDate"));
+				fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
+				fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
+				fm.setFinRepayMethod(rs.getString("FinRepayMethod"));
+				fm.setRepayFrq(rs.getString("RepayFrq"));
+				fm.setClosingStatus(rs.getString("ClosingStatus"));
+				fm.setDueBucket(rs.getInt("DueBucket"));
+				fm.setCalRoundingMode(rs.getString("CalRoundingMode"));
+				fm.setRoundingTarget(rs.getInt("RoundingTarget"));
+				fm.setRecordType(rs.getString("RecordType"));
+				fm.setVersion(rs.getInt("Version"));
+				fm.setProfitDaysBasis(rs.getString("ProfitDaysBasis"));
+				fm.setFinStatus(rs.getString("FinStatus"));
+				fm.setFinStsReason(rs.getString("FinStsReason"));
+				fm.setPastduePftCalMthd(rs.getString("PastduePftCalMthd"));
+				fm.setPastduePftMargin(rs.getBigDecimal("PastduePftMargin"));
+				fm.setInitiateUser(rs.getLong("InitiateUser"));
+				fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
+				fm.setMinDownPayPerc(rs.getBigDecimal("MinDownPayPerc"));
+				fm.setPromotionCode(rs.getString("PromotionCode"));
+				fm.setFinIsActive(rs.getBoolean("FinIsActive"));
+				fm.setSanBsdSchdle(rs.getBoolean("SanBsdSchdle"));
+				fm.setPromotionSeqId(rs.getLong("PromotionSeqId"));
+				fm.setSvAmount(rs.getBigDecimal("SvAmount"));
+				fm.setCbAmount(rs.getBigDecimal("CbAmount"));
+				fm.setEmployeeName(rs.getString("EmployeeName"));
+				fm.setSchdVersion(rs.getInt("SchdVersion"));
 
-							return fm;
-						}
-					});
+				return fm;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Record is not found in Financemain table for the specified FinReference >> {}", finReference);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
-
 	}
 
 	/**
@@ -631,8 +613,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		insertSql.append(
 				" :GrcProfitDaysBasis, :StepFinance, :StepPolicy, :StepType, :AlwManualSteps, :NoOfSteps,:DsaCode, ");
 		insertSql.append(" :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
-		insertSql.append(
-				" :NextTaskId, :NextUserId, :Priority, :RecordType,:WorkflowId, :minDownPayPerc");
+		insertSql.append(" :NextTaskId, :NextUserId, :Priority, :RecordType,:WorkflowId, :minDownPayPerc");
 		insertSql.append(
 				", :TDSApplicable,:DroplineFrq,:FirstDroplineDate,:PftServicingODLimit, :PromotionCode, :TdsType)");
 		logger.debug("insertSql: " + insertSql.toString());
@@ -691,7 +672,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", EligibilityMethod, samplingRequired, legalRequired, connector, ProcessAttributes");
 			sql.append(", PromotionCode, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimitAmt");
 			sql.append(", VanReq, VanCode, SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount");
-			sql.append(", AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate, PlanEMIHAlwInGrace");
+			sql.append(", AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate, PlanEMIHAlwInGrace, SchdVersion");
 			// HL
 			sql.append(", FinOcrRequired, ReqLoanAmt, ReqLoanTenor, OfferProduct, OfferAmount");
 			sql.append(", CustSegmentation, BaseProduct, ProcessType, BureauTimeSeries");
@@ -714,7 +695,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", ?, ?, ?, ?");
 			sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 			sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-			sql.append(", ?, ?, ?, ?, ?, ?");
+			sql.append(", ?, ?, ?, ?, ?, ?, ?");
 			// HL
 			sql.append(", ?, ?, ?, ?, ?");
 			sql.append(", ?, ?, ?, ?");
@@ -726,7 +707,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 
 		try {
 			jdbcOperations.update(sql.toString(), ps -> {
@@ -966,6 +947,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					ps.setInt(index++, fm.getNoOfGrcSteps());
 					ps.setString(index++, fm.getCalcOfSteps());
 					ps.setString(index++, fm.getStepsAppliedFor());
+					ps.setInt(index++, fm.getSchdVersion());
 				}
 				ps.setInt(index++, fm.getVersion());
 				ps.setLong(index++, JdbcUtil.setLong(fm.getLastMntBy()));
@@ -1029,8 +1011,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" GrcSchdMthd= :GrcSchdMthd, GrcMargin= :GrcMargin,RepayMargin= :RepayMargin,");
 		sql.append(
 				" FinCommitmentRef= :FinCommitmentRef, FinLimitRef=:FinLimitRef, FinCurrAssetValue= :FinCurrAssetValue,");
-		sql.append(
-				" ClosingStatus= :ClosingStatus, FinApprovedDate= :FinApprovedDate,");
+		sql.append(" ClosingStatus= :ClosingStatus, FinApprovedDate= :FinApprovedDate,");
 		sql.append(
 				" AnualizedPercRate =:AnualizedPercRate , EffectiveRateOfReturn =:EffectiveRateOfReturn , FinRepayPftOnFrq =:FinRepayPftOnFrq ,");
 		sql.append(
@@ -1039,8 +1020,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				" AlwManualSteps = :AlwManualSteps, NoOfSteps = :NoOfSteps, ManualSchedule=:ManualSchedule , LinkedFinRef=:LinkedFinRef, ");
 		sql.append(
 				" GrcMinRate=:GrcMinRate, GrcMaxRate=:GrcMaxRate ,GrcMaxAmount=:GrcMaxAmount, RpyMinRate=:RpyMinRate, RpyMaxRate=:RpyMaxRate, ");
-		sql.append(
-				" MinDownPayPerc=:MinDownPayPerc, TDSApplicable=:TDSApplicable,AlwBPI=:AlwBPI , ");
+		sql.append(" MinDownPayPerc=:MinDownPayPerc, TDSApplicable=:TDSApplicable,AlwBPI=:AlwBPI , ");
 		sql.append(
 				" BpiTreatment=:BpiTreatment , PlanEMIHAlw=:PlanEMIHAlw , PlanEMIHMethod=:PlanEMIHMethod , PlanEMIHMaxPerYear=:PlanEMIHMaxPerYear , ");
 		sql.append(
@@ -1057,8 +1037,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					" LimitValid= :LimitValid, OverrideLimit= :OverrideLimit,FinPurpose=:FinPurpose, DeviationApproval=:DeviationApproval,FinPreApprovedRef=:FinPreApprovedRef, MandateID=:MandateID, ");
 			sql.append(" FinStatus=:FinStatus , FinStsReason=:FinStsReason, InitiateUser=:InitiateUser,");
 			sql.append(" CustDSR=:CustDSR, JointAccount=:JointAccount, JointCustId=:JointCustId, ");
-			sql.append(
-					" RcdMaintainSts=:RcdMaintainSts, FinRepayMethod=:FinRepayMethod, ");
+			sql.append(" RcdMaintainSts=:RcdMaintainSts, FinRepayMethod=:FinRepayMethod, ");
 			sql.append(" NextUserId=:NextUserId, Priority=:Priority, InitiateDate= :InitiateDate, ");
 			sql.append(
 					" AccountsOfficer =:AccountsOfficer,DsaCode = :DsaCode, ApplicationNo=:ApplicationNo, ReferralId =:ReferralId ,EmployeeName =:EmployeeName, DmaCode =:DmaCode , SalesDepartment =:SalesDepartment , QuickDisb =:QuickDisb , WifReference =:WifReference ,");
@@ -1070,7 +1049,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					" TDSPercentage = :TdsPercentage, TdsStartDate = :TdsStartDate, TdsEndDate = :TdsEndDate, TdsLimitAmt = :TdsLimitAmt");
 			sql.append(", VanReq =:VanReq, VanCode =:VanCode, PlanEMIHAlwInGrace = :PlanEMIHAlwInGrace");
 
-			//HL
+			// HL
 			sql.append(", FinOcrRequired = :FinOcrRequired, ReqLoanAmt = :ReqLoanAmt, ReqLoanTenor = :ReqLoanTenor");
 			sql.append(", OfferProduct = :OfferProduct, OfferAmount = :OfferAmount");
 			sql.append(
@@ -1639,8 +1618,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		insertSql.append(" ProfitDaysBasis, ReqMaturity, CalTerms, CalMaturity, FirstRepay, LastRepay,");
 		insertSql.append(" FinStartDate, FinAmount, FinRepaymentAmount, CustID, Defferments,PlanDeferCount,");
 		insertSql.append(" FinBranch, FinSourceID, AllowedDefRpyChange, AvailedDefRpyChange, AllowedDefFrqChange,");
-		insertSql.append(
-				" AvailedDefFrqChange, RecalType, FinIsActive,FinAssetValue, ");
+		insertSql.append(" AvailedDefFrqChange, RecalType, FinIsActive,FinAssetValue, ");
 		insertSql.append(
 				" LastRepayDate, LastRepayPftDate, LastRepayRvwDate, LastRepayCpzDate, AllowGrcRepay, GrcSchdMthd,");
 		insertSql.append(" GrcMargin, RepayMargin, FinCommitmentRef, FinLimitRef,  FinCurrAssetValue,");
@@ -1672,7 +1650,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		insertSql.append(", CustSegmentation, BaseProduct, ProcessType, BureauTimeSeries, CampaignName");
 		insertSql.append(", ExistingLanRefNo, LeadSource, PoSource, Rsa, Verification, SourcingBranch");
 		insertSql.append(", SourChannelCategory, AsmName, OfferId, AlwLoanSplit");
-		insertSql.append(", AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate, TdsType)");
+		insertSql.append(", AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate, TdsType, SchdVersion)");
 
 		insertSql.append(" Values(:FinReference,:GraceTerms, :NumberOfTerms, :GrcPeriodEndDate, :AllowGrcPeriod,");
 		insertSql.append(" :GraceBaseRate, :GraceSpecialRate,:GrcPftRate,:GrcPftFrq,:NextGrcPftDate,:AllowGrcPftRvw,");
@@ -1690,14 +1668,11 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		insertSql.append(" :FinStartDate,:FinAmount,:FinRepaymentAmount,:CustID,:Defferments,:PlanDeferCount,");
 		insertSql
 				.append(" :FinBranch, :FinSourceID, :AllowedDefRpyChange, :AvailedDefRpyChange, :AllowedDefFrqChange,");
-		insertSql.append(
-				" :AvailedDefFrqChange, :RecalType, :FinIsActive,:FinAssetValue, ");
+		insertSql.append(" :AvailedDefFrqChange, :RecalType, :FinIsActive,:FinAssetValue, ");
 		insertSql.append(
 				" :LastRepayDate, :LastRepayPftDate, :LastRepayRvwDate, :LastRepayCpzDate,:AllowGrcRepay, :GrcSchdMthd,");
-		insertSql.append(
-				" :GrcMargin, :RepayMargin, :FinCommitmentRef, :FinLimitRef, :FinCurrAssetValue,");
-		insertSql.append(
-				" :ClosingStatus , :FinApprovedDate, ");
+		insertSql.append(" :GrcMargin, :RepayMargin, :FinCommitmentRef, :FinLimitRef, :FinCurrAssetValue,");
+		insertSql.append(" :ClosingStatus , :FinApprovedDate, ");
 		insertSql.append(" :DedupFound,:SkipDedup,:Blacklisted,");
 		insertSql.append(
 				" :GrcProfitDaysBasis, :StepFinance , :StepPolicy, :StepType, :AlwManualSteps, :NoOfSteps, :ManualSchedule , ");
@@ -1725,7 +1700,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		insertSql.append(", :CustSegmentation, :BaseProduct, :ProcessType, :BureauTimeSeries, :CampaignName");
 		insertSql.append(", :ExistingLanRefNo, :LeadSource, :PoSource, :Rsa, :Verification, :SourcingBranch");
 		insertSql.append(", :SourChannelCategory, :AsmName, :OfferId, :AlwLoanSplit");
-		insertSql.append(", :AlwGrcAdj, :EndGrcPeriodAftrFullDisb, :AutoIncGrcEndDate, :TdsType)");
+		insertSql.append(", :AlwGrcAdj, :EndGrcPeriodAftrFullDisb, :AutoIncGrcEndDate, :TdsType, :SchdVersion)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -5494,12 +5469,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", FinRepayMethod, MigratedFinance, ScheduleMaintained, ScheduleRegenerated, MandateID");
 		sql.append(", FinStatus, DueBucket, FinStsReason");
 		sql.append(", PromotionCode, FinCategory, ProductCategory, ReAgeBucket, TDSApplicable, BpiTreatment");
-		sql.append(", FinRepaymentAmount, GrcAdvType, AdvType, SanBsdSchdle");
-		sql.append(", PromotionSeqId, SvAmount, CbAmount, EmployeeName");
-		sql.append(", AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate");
-		sql.append(", Version, LastMntOn, ReferralId, GraceTerms");
-		sql.append(", FinAssetValue, FinCurrAssetValue");
-		sql.append(", NumberOfTerms, Alwmultidisb, TdsType, WriteoffLoan");
+		sql.append(", FinRepaymentAmount, GrcAdvType, AdvType, SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount");
+		sql.append(", EmployeeName, FinAssetValue, FinCurrAssetValue, AlwGrcAdj, EndGrcPeriodAftrFullDisb");
+		sql.append(", AutoIncGrcEndDate, Version, LastMntOn, ReferralId, GraceTerms, NumberOfTerms");
+		sql.append(", WriteoffLoan, SchdVersion, Alwmultidisb, TdsType");
 		sql.append(" from FinanceMain");
 		return sql;
 	}
@@ -5615,6 +5588,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setNumberOfTerms(rs.getInt("NumberOfTerms"));
 			fm.setAlwMultiDisb(rs.getBoolean("Alwmultidisb"));
 			fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
+			fm.setSchdVersion(rs.getInt("SchdVersion"));
 
 			return fm;
 
@@ -5725,7 +5699,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", LeadSource, PoSource, Rsa, Verification, SourcingBranch, SourChannelCategory, AsmName");
 			sql.append(", AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate,InstBasedSchd, ParentRef");
 			sql.append(", AlwLoanSplit, LoanSplitted, Pmay, AllowSubvention, TdsType, NoOfGrcSteps");
-			sql.append(", CalcOfSteps, StepsAppliedFor");
+			sql.append(", CalcOfSteps, StepsAppliedFor, SchdVersion");
 		}
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -5796,7 +5770,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
 			fm.setCpzAtGraceEnd(rs.getBoolean("CpzAtGraceEnd"));
 			fm.setDownPayment(rs.getBigDecimal("DownPayment"));
-			//fm.setGraceFlatAmount(rs.getBigDecimal("GraceFlatAmount")); //(Not available in Bean)
+			// fm.setGraceFlatAmount(rs.getBigDecimal("GraceFlatAmount")); //(Not available in Bean)
 			fm.setReqRepayAmount(rs.getBigDecimal("ReqRepayAmount"));
 			fm.setTotalProfit(rs.getBigDecimal("TotalProfit"));
 			fm.setTotalCpz(rs.getBigDecimal("TotalCpz"));
@@ -5923,13 +5897,13 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setFinStsReason(rs.getString("FinStsReason"));
 				fm.setConnector(rs.getLong("Connector"));
 				fm.setSamplingRequired(rs.getBoolean("samplingRequired"));
-				//fm.setLimitApproved(rs.getString("LimitApproved"));  //(Not available in Bean)
+				// fm.setLimitApproved(rs.getString("LimitApproved")); //(Not available in Bean)
 				fm.setNextUserId(rs.getString("NextUserId"));
 				fm.setVanCode(rs.getString("VanCode"));
 				fm.setFinLimitRef(rs.getString("FinLimitRef"));
 				fm.setAvailedUnPlanEmi(rs.getInt("AvailedUnPlanEmi"));
 				fm.setLegalRequired(rs.getBoolean("legalRequired"));
-				//fm.setCreditInsAmt(rs.getBigDecimal("CreditInsAmt"));  //(Not available in Bean)
+				// fm.setCreditInsAmt(rs.getBigDecimal("CreditInsAmt")); //(Not available in Bean)
 				fm.setBlacklisted(rs.getBoolean("Blacklisted"));
 				fm.setFinRepayMethod(rs.getString("FinRepayMethod"));
 				fm.setFirstDroplineDate(rs.getTimestamp("FirstDroplineDate"));
@@ -5949,12 +5923,12 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setUnPlanEMIHLockPeriod(rs.getInt("UnPlanEMIHLockPeriod"));
 				fm.setTdsEndDate(rs.getTimestamp("TdsEndDate"));
 				fm.setPriority(rs.getInt("Priority"));
-				//fm.setDiscrepancy(rs.getString("Discrepancy"));  //(Not available in Bean)
+				// fm.setDiscrepancy(rs.getString("Discrepancy")); //(Not available in Bean)
 				fm.setDeviationApproval(rs.getBoolean("DeviationApproval"));
 				fm.setScheduleMaintained(rs.getBoolean("ScheduleMaintained"));
 				fm.setFinPurpose(rs.getString("FinPurpose"));
 				fm.setScheduleRegenerated(rs.getBoolean("ScheduleRegenerated"));
-				//fm.setSecurityCollateral(rs.getString("SecurityCollateral")); //(Not available in Bean)
+				// fm.setSecurityCollateral(rs.getString("SecurityCollateral")); //(Not available in Bean)
 				fm.setRcdMaintainSts(rs.getString("RcdMaintainSts"));
 				fm.setMaxUnplannedEmi(rs.getInt("MaxUnplannedEmi"));
 				fm.setDsaCode(rs.getString("DsaCode"));
@@ -6014,12 +5988,13 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setNoOfGrcSteps(rs.getInt("NoOfGrcSteps"));
 				fm.setCalcOfSteps(rs.getString("CalcOfSteps"));
 				fm.setStepsAppliedFor(rs.getString("StepsAppliedFor"));
+				fm.setSchdVersion(rs.getInt("SchdVersion"));
 			}
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				fm.setLovDescFinTypeName(rs.getString("LovDescFinTypeName"));
-				//fm.setLovDescFinMaxAmt(rs.getBigDecimal("LovDescFinMaxAmt"));  //(Not available in Bean)
-				//	fm.setLovDescFinMinAmount(rs.getBigDecimal("LovDescFinMinAmount")); //(Not available in Bean)
+				// fm.setLovDescFinMaxAmt(rs.getBigDecimal("LovDescFinMaxAmt")); //(Not available in Bean)
+				// fm.setLovDescFinMinAmount(rs.getBigDecimal("LovDescFinMinAmount")); //(Not available in Bean)
 				fm.setLovDescFinBranchName(rs.getString("LovDescFinBranchName"));
 
 				if (!wIf) {
@@ -6131,7 +6106,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		return financeMainList;
 
 	}
-	
+
 	@Override
 	public List<String> getInvestmentFinRef(String finReference, String type) {
 		logger.debug("Entering");
@@ -6155,7 +6130,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 	}
-	
+
 	@Override
 	public List<String> getParentRefifAny(String finReference, String type, boolean isFromAgr) {
 		logger.debug("Entering");
@@ -6695,6 +6670,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return null;
 	}
+
 	public List<String> getChildFinRefByParentRef(String parentRef) {
 		String sql = "Select FinReference From FinanceMain_Temp Where parentRef = ?";
 
@@ -6779,6 +6755,46 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			}
 		});
 
+	}
+
+	@Override
+	public void updateSchdVersion(FinanceMain fm, boolean isPresentment) {
+		StringBuilder sql = new StringBuilder("Update");
+		sql.append(" FinanceMain set");
+		sql.append(" SchdVersion = SchdVersion + ?");
+		sql.append(" Where FinReference = ?");
+		if (!isPresentment) {
+			sql.append(" and SchdVersion = ?");
+		}
+
+		logger.trace(Literal.SQL + sql);
+
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			ps.setInt(1, 1);
+			ps.setString(2, fm.getFinReference());
+			if (!isPresentment) {
+				ps.setInt(3, fm.getSchdVersion());
+			}
+		});
+
+		if (recordCount == 0) {
+			throw new ConcurrencyException(Labels.getLabel("FINSRV_Validation"));
+		}
+	}
+
+	@Override
+	public int getSchdVersion(String finReference) {
+		String sql = "Select SchdVersion From FinanceMain Where FinReference = ?";
+
+		logger.trace(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, new Object[] { finReference }, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Record is not found in FinanceMain table for the specified FinReference >> {}", finReference);
+		}
+
+		return 0;
 	}
 
 }

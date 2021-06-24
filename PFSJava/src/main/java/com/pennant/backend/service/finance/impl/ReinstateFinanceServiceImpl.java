@@ -52,6 +52,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.TaskOwnersDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -297,9 +298,11 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 		taskOwner.setCurrentOwner(0);
 		taskOwner.setProcessed(false);
 
-		getTaskOwnersDAO().delete(taskOwner); //delete the existing task owners for finance
+		if (StringUtils.equalsIgnoreCase("N", SysParamUtil.getValueAsString("ALLOW_LOAN_APP_LOCK"))) {
+			taskOwnersDAO.delete(taskOwner); // delete the existing task owners for finance
 
-		getTaskOwnersDAO().save(taskOwner); //save new task owner for finance
+			taskOwnersDAO.save(taskOwner); // save new task owner for finance
+		}
 
 		getReinstateFinanceDAO().delete(reinstateFinance, "_Temp");
 

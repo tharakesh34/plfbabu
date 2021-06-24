@@ -321,6 +321,12 @@ public class LoadFinanceData extends ServiceHelper {
 				logger.info("Updating FinScheduleDetails to effect rate review.");
 				saveLMSServiceLog(finEODEvent);
 				int schedules = financeScheduleDetailDAO.updateForRateReview(finEODEvent.getFinanceScheduleDetails());
+				// Schedule Version Updating
+				try {
+					financeMainDAO.updateSchdVersion(fm, false);
+				} catch (Exception e) {
+					logger.error(Literal.EXCEPTION, e);
+				}
 				logger.info("{} Schedules effected for the rate review", schedules);
 			}
 

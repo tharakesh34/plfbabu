@@ -1196,7 +1196,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		fillComboBox(receiptPurpose, rch.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), "");
 		this.receiptMode.setValue(rch.getReceiptMode());
 		this.receiptDate.setValue(rch.getReceiptDate());
-		this.receivedDate.setValue(rch.getReceivedDate());
+		this.receivedDate.setValue(rch.getValueDate());
 		this.receiptAmount.setValue(rch.getReceiptAmount());
 		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(rch.getReceiptAmount(), formatter));
 		this.tDSAmount.setValue(PennantApplicationUtil.formateAmount(rch.getTdsAmount(), formatter));

@@ -179,8 +179,6 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 					setInstallmentType(auditHeader);
 					setRateOfInst(auditHeader);
 					auditHeader = legalDeskService.executeLegalDesk(auditHeader, PennantConstants.method_LegalDesk);
-					afinanceDetail.getExtendedFieldRender().getMapValues().remove("INSTALLMENTTYPE_LEGALDESK");
-					afinanceDetail.getExtendedFieldRender().getMapValues().remove("RATE_LEGALDESK");
 					taskExecuted = true;
 				} catch (InterfaceException e) {
 					logger.error("Exception in LegalDesk:", e);
@@ -235,8 +233,6 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 					setInstallmentType(auditHeader);
 					setRateOfInst(auditHeader);
 					auditHeader = legalDeskService.executeLegalDesk(auditHeader, PennantConstants.METHOD_OFFERLETTER);
-					afinanceDetail.getExtendedFieldRender().getMapValues().remove("INSTALLMENTTYPE_LEGALDESK");
-					afinanceDetail.getExtendedFieldRender().getMapValues().remove("RATE_LEGALDESK");
 					taskExecuted = true;
 				} catch (InterfaceException e) {
 					logger.error("Exception in LegalDesk:", e);

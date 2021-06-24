@@ -579,34 +579,30 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 		rut.setHeaderId(ruh.getId());
 		rut.setImportStatusMap(statusMap);
 		rut.setTotalProcesses(5);
+
+		validateFileData(workbook, ruh, rudList, rut);
+
+		prepareAllocations(workbook, uadList, rut);
+
+		linkReceiptAllocations(rudList, uadList, rut);
+
+		ruh.setBefImage(ruh);
+
+		validateReceipt(ruh, rudList, rut);
+
+		ruh.setReceiptUploadList(rudList);
+
 		try {
-			validateFileData(workbook, ruh, rudList, rut);
-
-			prepareAllocations(workbook, uadList, rut);
-
-			linkReceiptAllocations(rudList, uadList, rut);
-
-			ruh.setBefImage(ruh);
-
-			validateReceipt(ruh, rudList, rut);
-
-			ruh.setReceiptUploadList(rudList);
-
-			try {
-				fileImport.backUpFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			saveRecord(ruh, rut);
-		} catch (Exception e) {
-			updateImportFail(ruh);
-			logger.error(Literal.EXCEPTION, e);
+			fileImport.backUpFile();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+
+		saveRecord(ruh, rut);
 		statusMap.remove(ruh.getId());
 	}
 
-	private void updateImportFail(ReceiptUploadHeader ruh) {
+	public void updateImportFail(ReceiptUploadHeader ruh) {
 		DataSourceTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);

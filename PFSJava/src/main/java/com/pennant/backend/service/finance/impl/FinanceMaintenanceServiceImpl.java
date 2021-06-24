@@ -2055,4 +2055,9 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		this.vehicleDealerService = vehicleDealerService;
 	}
 
+	@Override
+	public int getSchdVersion(String finReference) {
+		return financeMainDAO.getSchdVersion(finReference);
+	}
+
 }

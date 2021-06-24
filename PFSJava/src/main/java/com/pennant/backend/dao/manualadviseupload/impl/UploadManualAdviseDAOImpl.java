@@ -56,7 +56,7 @@ public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise> i
 		logger.debug("Entering ");
 
 		if (uploadManualAdvise.getAdviseId() == Long.MIN_VALUE) {
-			uploadManualAdvise.setAdviseId(getNextValue("SeqAdviseUploads"));
+			uploadManualAdvise.setAdviseId(getNextValue("SeqManualAdvise"));
 			logger.debug("get NextID:" + uploadManualAdvise.getAdviseId());
 		}
 

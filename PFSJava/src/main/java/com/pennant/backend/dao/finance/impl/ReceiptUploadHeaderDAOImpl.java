@@ -153,11 +153,6 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		sql.append(", TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?, entityCode = ?");
 		sql.append(", UploadProgress = ?");
 		sql.append(" Where UploadHeaderId = ?");
-		if (tableType == TableType.TEMP_TAB) {
-			sql.append(" And LastMntOn = ?");
-		} else {
-			sql.append(" And Version = ?");
-		}
 
 		logger.trace(Literal.SQL, sql.toString());
 
@@ -181,12 +176,6 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 			ps.setString(index++, ruh.getEntityCode());
 			ps.setInt(index++, ruh.getUploadProgress());
 			ps.setLong(index++, ruh.getUploadHeaderId());
-
-			if (tableType == TableType.TEMP_TAB) {
-				ps.setTimestamp(index++, ruh.getPrevMntOn());
-			} else {
-				ps.setInt(index++, ruh.getVersion() - 1);
-			}
 
 		});
 

@@ -169,6 +169,14 @@
 				</groups>
 				<element name="value">999999999999999999</element>
 			</constraint>
+			<constraint annotation="javax.validation.constraints.NotNull">
+				<message>amount is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SchedulePaymentGroup</value>
+					<value>com.pennant.validation.PartialSettlementGroup</value>
+					<value>com.pennant.validation.EarlySettlementGroup</value>
+				</groups>
+			</constraint>
 
 		</field>
 

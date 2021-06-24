@@ -804,6 +804,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean writeoffLoan = false;
 	// Restructure Loan
 	private boolean restructure = false;
+	private int schdVersion = 0;
 
 	private EventProperties eventProperties = new EventProperties();
 	@XmlElement
@@ -1500,6 +1501,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setCpzPosIntact(this.cpzPosIntact);
 		entity.setWriteoffLoan(this.writeoffLoan);
 		entity.setRestructure(this.restructure);
+		entity.setSchdVersion(this.schdVersion);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -5222,6 +5224,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setNoOfGrcSteps(int noOfGrcSteps) {
 		this.noOfGrcSteps = noOfGrcSteps;
+	}
+
+	public int getSchdVersion() {
+		return schdVersion;
+	}
+
+	public void setSchdVersion(int schdVersion) {
+		this.schdVersion = schdVersion;
 	}
 
 }

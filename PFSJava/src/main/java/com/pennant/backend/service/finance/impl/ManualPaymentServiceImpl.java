@@ -1088,14 +1088,15 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 	public void listSave(FinScheduleData scheduleData, String tableType, long logKey) {
 		logger.debug("Entering ");
-		Map<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
+		Map<Date, Integer> mapDateSeq = new HashMap<>();
 
+		String finReference = scheduleData.getFinReference();
+		FinanceMain fm = scheduleData.getFinanceMain();
+		
 		// Finance Schedule Details
-		for (int i = 0; i < scheduleData.getFinanceScheduleDetails().size(); i++) {
-
-			FinanceScheduleDetail curSchd = scheduleData.getFinanceScheduleDetails().get(i);
-			curSchd.setLastMntBy(scheduleData.getFinanceMain().getLastMntBy());
-			curSchd.setFinReference(scheduleData.getFinReference());
+		for (FinanceScheduleDetail curSchd : scheduleData.getFinanceScheduleDetails()) {
+			curSchd.setLastMntBy(fm.getLastMntBy());
+			curSchd.setFinReference(finReference);
 			int seqNo = 0;
 
 			if (mapDateSeq.containsKey(curSchd.getSchDate())) {
@@ -1108,33 +1109,36 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			curSchd.setLogKey(logKey);
 		}
 
-		getFinanceScheduleDetailDAO().saveList(scheduleData.getFinanceScheduleDetails(), tableType, false);
+		financeScheduleDetailDAO.saveList(scheduleData.getFinanceScheduleDetails(), tableType, false);
+
+		// Schedule Version Updating
+		if (StringUtils.isBlank(tableType)) {
+			financeMainDAO.updateSchdVersion(fm, false);
+		}
 
 		if (logKey != 0) {
 			// Finance Disbursement Details
-			mapDateSeq = new HashMap<Date, Integer>();
+			mapDateSeq = new HashMap<>();
 			Date curBDay = SysParamUtil.getAppDate();
-			for (FinanceDisbursement fd : scheduleData.getDisbursementDetails()) {
-				fd.setFinReference(scheduleData.getFinReference());
-				fd.setDisbReqDate(curBDay);
-				fd.setDisbIsActive(true);
-				fd.setLogKey(logKey);
-				fd.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				fd.setLastMntBy(scheduleData.getFinanceMain().getLastMntBy());
+			for (FinanceDisbursement dd : scheduleData.getDisbursementDetails()) {
+				dd.setFinReference(finReference);
+				dd.setDisbReqDate(curBDay);
+				dd.setDisbIsActive(true);
+				dd.setLogKey(logKey);
+				dd.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				dd.setLastMntBy(scheduleData.getFinanceMain().getLastMntBy());
 			}
-			getFinanceDisbursementDAO().saveList(scheduleData.getDisbursementDetails(), tableType, false);
+			financeDisbursementDAO.saveList(scheduleData.getDisbursementDetails(), tableType, false);
 
 		}
 
 		//Finance Repay Instruction Details
 		if (scheduleData.getRepayInstructions() != null) {
-			for (int i = 0; i < scheduleData.getRepayInstructions().size(); i++) {
-				RepayInstruction curSchd = scheduleData.getRepayInstructions().get(i);
-
-				curSchd.setFinReference(scheduleData.getFinReference());
+			for (RepayInstruction curSchd : scheduleData.getRepayInstructions()) {
+				curSchd.setFinReference(finReference);
 				curSchd.setLogKey(logKey);
 			}
-			getRepayInstructionDAO().saveList(scheduleData.getRepayInstructions(), tableType, false);
+			repayInstructionDAO.saveList(scheduleData.getRepayInstructions(), tableType, false);
 		}
 
 		logger.debug("Leaving ");

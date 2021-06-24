@@ -1598,7 +1598,8 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 		}
 		// Step Policy Details
-		if (financeMain.isStepFinance()) {
+		if (financeMain.isStepFinance() && PennantConstants.STEPPING_CALC_PERC.equals(financeMain.getCalcOfSteps())) {
+			financeMain.setRpyStps(true);
 			String stepPolicyCode = financeMain.getStepPolicy();
 			if (StringUtils.isNotBlank(stepPolicyCode)) {
 				List<StepPolicyDetail> stepPolicyList = stepPolicyDetailDAO.getStepPolicyDetailListByID(stepPolicyCode,
@@ -1633,6 +1634,25 @@ public class CreateFinanceController extends SummaryDetailService {
 				// method for prepare step installments
 				prepareStepInstallements(finStepDetails, financeMain.getNumberOfTerms());
 			}
+		} else if (financeMain.isStepFinance() && PennantConstants.STEPPING_CALC_AMT.equals(finType.getCalcOfSteps())) {
+
+			List<FinanceStepPolicyDetail> finStepPoliciesList = finScheduleData.getStepPolicyDetails();
+			List<FinanceStepPolicyDetail> graceSpdList = new ArrayList<>();
+			List<FinanceStepPolicyDetail> rpySpdList = new ArrayList<>();
+			financeMain.setRpyStps(false);
+			financeMain.setGrcStps(false);
+			for (FinanceStepPolicyDetail spd : finStepPoliciesList) {
+				if (PennantConstants.STEP_SPECIFIER_REG_EMI.equals(spd.getStepSpecifier())) {
+					rpySpdList.add(spd);
+					financeMain.setRpyStps(true);
+				} else if (PennantConstants.STEP_SPECIFIER_GRACE.equals(spd.getStepSpecifier())) {
+					graceSpdList.add(spd);
+					financeMain.setGrcStps(true);
+				}
+			}
+			prepareStepInstallements(rpySpdList, financeMain.getNumberOfTerms());
+			prepareStepInstallements(graceSpdList, financeMain.getGraceTerms());
+			finScheduleData.setStepPolicyDetails(finStepPoliciesList, true);
 		}
 
 		// pslDetails defaults
@@ -3044,7 +3064,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private void prepareResponse(FinanceDetail financeDetail) {
 		financeDetail.setFinReference(financeDetail.getFinScheduleData().getFinReference());
 		financeDetail.getFinScheduleData().setFinReference(null);
-		financeDetail.getFinScheduleData().setStepPolicyDetails(null);
+		// financeDetail.getFinScheduleData().setStepPolicyDetails(null);
 		financeDetail.getFinScheduleData().setPlanEMIHDates(null);
 		financeDetail.getFinScheduleData().setPlanEMIHmonths(null);
 		financeDetail.setFinFlagsDetails(null);
@@ -3190,16 +3210,33 @@ public class CreateFinanceController extends SummaryDetailService {
 		logger.debug(Literal.ENTERING);
 
 		int sumInstallments = 0;
+		BigDecimal tenurePerc = BigDecimal.ZERO;
+		BigDecimal sumTenurePerc = BigDecimal.ZERO;
 
 		for (int i = 0; i < finStepDetails.size(); i++) {
 			FinanceStepPolicyDetail detail = finStepDetails.get(i);
-			BigDecimal terms = detail.getTenorSplitPerc().multiply(new BigDecimal(totalTerms))
-					.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
-			sumInstallments = sumInstallments + Integer.parseInt(terms.toString());
-			detail.setInstallments(Integer.parseInt(terms.toString()));
-			if (i == (finStepDetails.size() - 1)) {
-				if (sumInstallments != totalTerms) {
-					detail.setInstallments(detail.getInstallments() + totalTerms - sumInstallments);
+			if (detail.getInstallments() > 0) {
+				tenurePerc = (new BigDecimal(detail.getInstallments()).multiply(new BigDecimal(100)))
+						.divide(new BigDecimal(totalTerms), 2, RoundingMode.HALF_DOWN);
+				detail.setTenorSplitPerc(tenurePerc);
+				sumTenurePerc = sumTenurePerc.add(tenurePerc);
+				sumInstallments = sumInstallments + detail.getInstallments();
+				if (i == (finStepDetails.size() - 1) && sumInstallments == totalTerms) {
+					if (sumTenurePerc.compareTo(new BigDecimal(100)) != 0) {
+						detail.setTenorSplitPerc(
+								detail.getTenorSplitPerc().add(new BigDecimal(100)).subtract(sumTenurePerc));
+					}
+				}
+			} else {
+				BigDecimal terms = detail.getTenorSplitPerc().multiply(new BigDecimal(totalTerms))
+						.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+				sumInstallments = sumInstallments + Integer.parseInt(terms.toString());
+				detail.setInstallments(Integer.parseInt(terms.toString()));
+				detail.setStepSpecifier(PennantConstants.STEP_SPECIFIER_REG_EMI);
+				if (i == (finStepDetails.size() - 1)) {
+					if (sumInstallments != totalTerms) {
+						detail.setInstallments(detail.getInstallments() + totalTerms - sumInstallments);
+					}
 				}
 			}
 		}

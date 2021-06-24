@@ -6175,7 +6175,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		boolean deleteNotes = false;
 
 		FinReceiptData aRepayData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
-		FinReceiptHeader afinanceMain = aRepayData.getReceiptHeader();
+		FinReceiptHeader frh = aRepayData.getReceiptHeader();
 
 		aRepayData.setForeClosure(isForeClosure);
 
@@ -6190,26 +6190,27 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 
-						if (afinanceMain.isNew()) {
+						if (frh.isNew()) {
 							((FinReceiptData) auditHeader.getAuditDetail().getModelData()).getFinanceDetail()
 									.setDirectFinalApprove(true);
 						}
 
 						auditHeader = getReceiptService().doApprove(auditHeader);
 
-						if (afinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+						if (frh.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
 
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						frh.setDedupCheckRequied(false);
 						auditHeader = getReceiptService().doReject(auditHeader);
-						if (afinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						if (frh.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReversal)) {
 						auditHeader = getReceiptService().doReversal(auditHeader);
-						if (afinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						if (frh.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 

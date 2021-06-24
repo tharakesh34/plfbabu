@@ -1757,6 +1757,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		// tasks # >>End Advance EMI and DSF
 
 		fillQDPValDays();
+		fillComboBox(this.calcOfSteps, aFinanceType.getCalcOfSteps(), PennantStaticListUtil.getCalcOfStepsList(), "");
+		fillComboBox(this.stepsAppliedFor, aFinanceType.getStepsAppliedFor(),
+				PennantStaticListUtil.getStepsAppliedFor(), "");
 
 		if (aFinanceType.isNewRecord() && !isCopyProcess) {
 			fillComboBox(this.allowedLoanPurposes, PennantConstants.ALL, loanPurposeList, "");
@@ -3853,6 +3856,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				visibilityFieldsForStepApplied(aFinanceType.getStepsAppliedFor(), aFinanceType.getCalcOfSteps(),
 						aFinanceType.isAlwManualSteps());
 				visibilityFieldsForCalcOfSteps(aFinanceType.getCalcOfSteps(), aFinanceType.isAlwManualSteps());
+				if (isCompReadonly) {
+					this.stepsAppliedFor.setDisabled(isCompReadonly);
+					this.allowManualSteps.setDisabled(isCompReadonly);
+					this.calcOfSteps.setDisabled(isCompReadonly);
+				}
 			}
 			dodisableGracePeriod();
 			if (isPromotion) {
@@ -8762,7 +8770,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	private void visibilityFieldsForCalcOfSteps(String calcOfSteps, boolean alwManualStep) {
-		if (StringUtils.equals(PennantConstants.STEPPING_CALC_AMT, calcOfSteps)) {
+		if (PennantConstants.STEPPING_CALC_AMT.equals(calcOfSteps)) {
 			this.label_FinanceTypeDialog_AllowedStepPolicies.setVisible(false);
 			this.hbox_alwdStepPolicies.setVisible(false);
 			this.hbox_dftStepPolicy.setVisible(false);
@@ -8786,7 +8794,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	private void visibilityFieldsOnUncheckingStepFinance() {
-
 		fillComboBox(this.stepsAppliedFor, PennantConstants.List_Select, PennantStaticListUtil.getStepsAppliedFor(),
 				"");
 		fillComboBox(this.calcOfSteps, PennantConstants.List_Select, PennantStaticListUtil.getCalcOfStepsList(), "");
@@ -8804,8 +8811,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	private void visibilityFieldsForStepApplied(String stepsAppliedFor, String calcOfStep, boolean alwManualStep) {
-		if ((StringUtils.equals(stepsAppliedFor, PennantConstants.STEPPING_APPLIED_GRC))
-				|| StringUtils.equals(stepsAppliedFor, PennantConstants.STEPPING_APPLIED_BOTH)) {
+		if ((PennantConstants.STEPPING_APPLIED_GRC.equals(stepsAppliedFor))
+				|| PennantConstants.STEPPING_APPLIED_BOTH.equals(stepsAppliedFor)) {
 			this.label_FinanceTypeDialog_AllowedStepPolicies.setVisible(false);
 			this.hbox_alwdStepPolicies.setVisible(false);
 			this.hbox_dftStepPolicy.setVisible(false);

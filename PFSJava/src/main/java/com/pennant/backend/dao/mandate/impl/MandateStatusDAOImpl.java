@@ -58,6 +58,7 @@ import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * DAO methods implementation for the <b>MandateStatus model</b> class.<br>
@@ -169,6 +170,7 @@ public class MandateStatusDAOImpl extends BasicDao<MandateStatus> implements Man
 			 */
 		}
 
+		mandateStatus.setChangeDate(DateUtil.getSysDate());
 		StringBuilder sql = new StringBuilder("Insert Into MandatesStatus ");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" (mandateID,status,reason,changeDate,fileID)");
@@ -199,6 +201,8 @@ public class MandateStatusDAOImpl extends BasicDao<MandateStatus> implements Man
 	public void update(MandateStatus mandateStatus, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
+	
+		mandateStatus.setChangeDate(DateUtil.getSysDate());
 		StringBuilder sql = new StringBuilder("Update MandatesStatus");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Set status=:status,reason=:reason,");

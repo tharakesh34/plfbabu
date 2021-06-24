@@ -2515,22 +2515,23 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * @param logKey
 	 */
 	private void listSave(FinScheduleData scheduleData, String tableType, long logKey, boolean saveDisb) {
-		logger.debug("Entering ");
-		Map<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
+		Map<Date, Integer> mapDateSeq = new HashMap<>();
+
+		FinanceMain fm = scheduleData.getFinanceMain();
+		String finReference = scheduleData.getFinReference();
 
 		// Finance Schedule Details
 		if (StringUtils.isEmpty(tableType)) {
-			for (int i = 0; i < scheduleData.getFinanceScheduleDetails().size(); i++) {
-
-				FinanceScheduleDetail curSchd = scheduleData.getFinanceScheduleDetails().get(i);
-				curSchd.setLastMntBy(scheduleData.getFinanceMain().getLastMntBy());
-				curSchd.setFinReference(scheduleData.getFinReference());
+			for (FinanceScheduleDetail curSchd : scheduleData.getFinanceScheduleDetails()) {
+				curSchd.setLastMntBy(fm.getLastMntBy());
+				curSchd.setFinReference(finReference);
 				int seqNo = 0;
 
 				if (mapDateSeq.containsKey(curSchd.getSchDate())) {
 					seqNo = mapDateSeq.get(curSchd.getSchDate());
 					mapDateSeq.remove(curSchd.getSchDate());
 				}
+
 				seqNo = seqNo + 1;
 				mapDateSeq.put(curSchd.getSchDate(), seqNo);
 				curSchd.setSchSeq(seqNo);
@@ -2538,17 +2539,20 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 
 			financeScheduleDetailDAO.saveList(scheduleData.getFinanceScheduleDetails(), tableType, false);
+
+			// Schedule Version Updating
+			financeMainDAO.updateSchdVersion(fm, false);
 		}
 
 		if (logKey != 0 || saveDisb) {
 			// Finance Disbursement Details
-			mapDateSeq = new HashMap<Date, Integer>();
-			for (FinanceDisbursement fd : scheduleData.getDisbursementDetails()) {
-				fd.setFinReference(scheduleData.getFinReference());
-				fd.setDisbIsActive(true);
-				fd.setLogKey(logKey);
-				fd.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				fd.setLastMntBy(scheduleData.getFinanceMain().getLastMntBy());
+			mapDateSeq = new HashMap<>();
+			for (FinanceDisbursement dd : scheduleData.getDisbursementDetails()) {
+				dd.setFinReference(finReference);
+				dd.setDisbIsActive(true);
+				dd.setLogKey(logKey);
+				dd.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				dd.setLastMntBy(scheduleData.getFinanceMain().getLastMntBy());
 			}
 			financeDisbursementDAO.saveList(scheduleData.getDisbursementDetails(), tableType, false);
 
@@ -2556,16 +2560,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// Finance Repay Instruction Details
 		if (scheduleData.getRepayInstructions() != null) {
-			for (int i = 0; i < scheduleData.getRepayInstructions().size(); i++) {
-				RepayInstruction curSchd = scheduleData.getRepayInstructions().get(i);
-
-				curSchd.setFinReference(scheduleData.getFinReference());
+			for (RepayInstruction curSchd : scheduleData.getRepayInstructions()) {
+				curSchd.setFinReference(finReference);
 				curSchd.setLogKey(logKey);
 			}
 			repayInstructionDAO.saveList(scheduleData.getRepayInstructions(), tableType, false);
 		}
 
-		logger.debug("Leaving ");
 	}
 
 	/**
@@ -5776,7 +5777,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		recData.setForeClosure(isForeClosure);
 		recData = receiptCalculator.initiateReceipt(recData, false);
 
-		if (receiptPurposeCtg == 2) {
+		if (receiptPurposeCtg == 2 && DateUtil.compare(valueDate, fm.getMaturityDate()) < 0) {
 			recData.getReceiptHeader().setValueDate(null);
 			recData.setOrgFinPftDtls(recData.getFinanceDetail().getFinScheduleData().getFinPftDeatil());
 			receiptPurposeCtg = receiptCalculator.setReceiptCategory(rch.getReceiptPurpose());
@@ -6528,8 +6529,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						FinanceConstants.CLOSURE_MAKER)
 						|| StringUtils.equals(receiptData.getReceiptHeader().getRoleCode(),
 								FinanceConstants.CLOSURE_APPROVER))) {
-					payable.setTotPaidNow(
-							receiptData.getTotalPastDues().add(receiptData.getReceiptHeader().getBalAmount()));
+					payable.setTotPaidNow(amount);
 				} else {
 					payable.setTotPaidNow(amount);
 				}
@@ -6566,6 +6566,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		receiptData.setValueDate(valueDate);
 		rch.setValueDate(null);
 		receiptData = receiptCalculator.initiateReceipt(receiptData, false);
+
+		if (receiptData.isForeClosure()) {
+			rch.setReceiptAmount(BigDecimal.ZERO);
+			receiptData.setExcessAvailable(getReceiptCalculator().getExcessAmount(receiptData));
+			rch.setReceiptAmount(receiptData.getExcessAvailable());
+		}
+
 		if (receiptPurposeCtg == 2 && DateUtility.compare(valueDate, finMain.getMaturityDate()) < 0
 				&& finMain.isFinIsActive()) {
 			receiptData.getReceiptHeader().setValueDate(null);

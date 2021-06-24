@@ -2011,6 +2011,16 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 
+		// Check disbursement case
+		if (actionLabel != null && !("Cancel".equalsIgnoreCase(actionLabel) || actionLabel.contains("Reject")
+				|| actionLabel.contains("Resubmit"))) {
+			int schDVersion = financeMaintenanceService.getSchdVersion(aFinanceMain.getFinReference());
+			if (schDVersion != aFinanceMain.getSchdVersion()) {
+				MessageUtil.showError(Labels.getLabel("FINSRV_Validation"));
+				return;
+			}
+		}
+
 		// Extended Fields
 		if (aFinanceDetail.getExtendedFieldHeader() != null) {
 			aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save(true));

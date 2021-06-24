@@ -58,6 +58,7 @@ public class DisbursementConstants {
 	public static final String PAYMENT_TYPE_IFT = "IFT";
 	public static final String PAYMENT_TYPE_IST = "IST";
 	public static final String PAYMENT_TYPE_ONLINE = "ONLINE";
+	public static final String PAYMENT_TYPE_PRESENT = "PRESENT";
 	public static final String PAYMENT_TYPE_BILLDESK = "BILLDESK";
 	public static final String PAYMENT_TYPE_MOB = "MOB";
 	public static final String PAYMENT_TYPE_OTC = "OTC";

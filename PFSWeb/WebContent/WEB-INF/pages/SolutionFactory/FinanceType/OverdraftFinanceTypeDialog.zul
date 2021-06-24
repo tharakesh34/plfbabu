@@ -215,6 +215,17 @@
 													<intbox id="fixedRateTenor" width="45px" maxlength="3" style="text-align:right" />
 												</hbox>
 											</row>
+											<row id="row_sanbsdschd">
+												<label
+													id="label_FinanceTypeDialog_SanBsdSchdle"
+													value="${c:l('label_FinanceTypeDialog_SanBsdSchdle.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<checkbox
+														id="sanBsdSchdle" checked="false" />
+												</hbox>
+											</row>
 											<row id="row_ApplyPricingPolicy">
 												<label id="label_ApplyRpyPricing" value="${c:l('label_OverDraftFinanceTypeDialog_ApplyRpyPricing.value')}" />
 												<hbox>
@@ -1221,6 +1232,11 @@
 												<space spacing="2px" />
 												<checkbox id="stepFinance" />
 											</hbox>
+											<label visible="false" id="label_FinanceTypeDialog_StepsAppliedFor" value="${c:l('label_FinanceTypeDialog_StepsAppliedFor.value')}" />
+											<hbox id="hbox_stepsAppliedFor" visible="false">
+												<space spacing="2px" id="space_stepsAppliedFor" />
+												<combobox id="stepsAppliedFor" width="155px" />
+											</hbox>
 											<label visible="false" id="label_FinanceTypeDialog_AllowedStepPolicies" value="${c:l('label_OverDraftFinanceTypeDialog_AllowedStepPolicies.value')}" />
 											<hbox id="hbox_alwdStepPolicies">
 												<space id="sp_alwdStepPolices" spacing="2px" />
@@ -1231,6 +1247,13 @@
 													            ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode">
 													</button>
 												</hbox>
+											</hbox>
+										</row>
+										<row id="row_CalcOfSteps" visible="false">
+											<label id="label_FinanceTypeDialog_CalcOfSteps" value="${c:l('label_FinanceTypeDialog_CalcOfSteps.value')}" />
+											<hbox>
+												<space spacing="2px" id="space_calcOfSteps" />
+												<combobox id="calcOfSteps" width="155px" />
 											</hbox>
 										</row>
 										<row visible="false" id="row_isSteppingMandatory">

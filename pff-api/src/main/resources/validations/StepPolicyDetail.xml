@@ -27,26 +27,7 @@
 				<element name="value">999</element>
 			</constraint>
 		</field>
-		<field name="tenorSplitPerc">
-			<constraint annotation="javax.validation.constraints.Min">
-				<message>tenorSplitPerc should be Positive</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.CreateFinanceGroup</value>
-					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
-				</groups>
-				<element name="value">1</element>
-			</constraint>
-			<constraint annotation="javax.validation.constraints.DecimalMax">
-				<message>tenorSplitPerc allow 3 digits only</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.CreateFinanceGroup</value>
-					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
-				</groups>
-				<element name="value">999</element>
-			</constraint>
-		</field>
+
 		<field name="rateMargin">
 			<constraint annotation="javax.validation.constraints.DecimalMax">
 				<message>rateMargin allow 4 digits only</message>
@@ -56,27 +37,6 @@
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 				</groups>
 				<element name="value">9999</element>
-			</constraint>
-		</field>
-
-		<field name="emiSplitPerc">
-			<constraint annotation="javax.validation.constraints.Min">
-				<message>emiSplitPerc should should be Positive</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.CreateFinanceGroup</value>
-					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
-				</groups>
-				<element name="value">1</element>
-			</constraint>
-			<constraint annotation="javax.validation.constraints.DecimalMax">
-				<message>emiSplitPerc allow 3 digits only</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.CreateFinanceGroup</value>
-					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
-				</groups>
-				<element name="value">999</element>
 			</constraint>
 		</field>
 	</bean>

@@ -1304,14 +1304,6 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 			this.row_stepFinance.setVisible(false);
 		}
 		this.stepFinance.setChecked(aFinanceMain.isStepFinance());
-		/*
-		 * this.stepPolicy.setValue(aFinanceMain.getStepPolicy());
-		 * this.stepPolicy.setDescription(aFinanceMain.getLovDescStepPolicyName());
-		 * this.alwManualSteps.setChecked(aFinanceMain.isAlwManualSteps());
-		 * this.noOfSteps.setValue(aFinanceMain.getNoOfSteps());
-		 */
-		//	fillComboBox(this.stepType, aFinanceMain.getStepType(), PennantStaticListUtil.getStepType(), "");
-
 		if (aFinanceMain.isNewRecord()) {
 			if (aFinanceMain.isAlwManualSteps()
 					&& getFinanceDetail().getFinScheduleData().getStepPolicyDetails() == null) {

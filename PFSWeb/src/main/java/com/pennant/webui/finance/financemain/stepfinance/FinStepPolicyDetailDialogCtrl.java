@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zhtml.Label;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
@@ -18,6 +17,7 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Window;
@@ -101,8 +101,6 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 	private FinScheduleData finScheduleData = null;
 	private FinanceMain financeMain = null;
 
-	private boolean isEnquiry = false;
-
 	/**
 	 * default constructor.<br>
 	 */
@@ -148,10 +146,6 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 			this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
 		}
 
-		if (arguments.containsKey("enquiryModule")) {
-			isEnquiry = (Boolean) arguments.get("enquiryModule");
-		}
-
 		if (arguments.containsKey("ccyFormatter")) {
 			this.ccyFormatter = (Integer) arguments.get("ccyFormatter");
 		}
@@ -187,7 +181,7 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 				setNewRecord(getFinanceStepPolicyDetail().isNewRecord());
 			}
 			this.financeStepPolicyDetail.setWorkflowId(0);
-			if (arguments.containsKey("roleCode") && !isEnquiry) {
+			if (arguments.containsKey("roleCode")) {
 				userRole = arguments.get("roleCode").toString();
 				getUserWorkspace().allocateRoleAuthorities(userRole, "FinStepPolicyDetailDialog");
 			}
@@ -463,6 +457,7 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 				btnCancel.setVisible(false);
 			}
 		}
+
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aFinStepPolicy);
@@ -492,7 +487,7 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 	}
 
 	private void doCheckEnquiry() {
-		if ("ENQ".equals(this.moduleType) || isEnquiry) {
+		if ("ENQ".equals(this.moduleType)) {
 			this.tenorSplitPerc.setDisabled(true);
 			this.installments.setReadonly(true);
 			this.eMIStepPerc.setDisabled(true);
@@ -677,6 +672,7 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 						} else {
 							stepDetailDialogCtrl.doFillStepDetais(this.finStepPolicyDetails);
 						}
+						stepDetailDialogCtrl.setDataChanged(true);
 						closeDialog();
 					}
 				}

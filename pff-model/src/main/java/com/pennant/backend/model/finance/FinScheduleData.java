@@ -224,7 +224,7 @@ public class FinScheduleData implements Serializable {
 	}
 
 	public void setStepPolicyDetails(List<FinanceStepPolicyDetail> stepPolicyDetails, boolean sort) {
-		//Steps needs to sort based on specifier and step no for schedule calculation if step calculated on Amount.
+		// Steps needs to sort based on specifier and step no for schedule calculation if step calculated on Amount.
 		if (sort && CollectionUtils.isNotEmpty(stepPolicyDetails)) {
 			stepPolicyDetails = stepPolicyDetails.stream()
 					.sorted(Comparator.comparing(FinanceStepPolicyDetail::getStepSpecifier)

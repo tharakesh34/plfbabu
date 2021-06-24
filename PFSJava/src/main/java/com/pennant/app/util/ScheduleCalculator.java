@@ -1,54 +1,41 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  *******************************************************************************************************
- *                                 FILE HEADER                                              			*
+ * FILE HEADER *
  *******************************************************************************************************
  *
- * FileName    		:  ScheduleCalculator.java															*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES															*
- *                                                                  
- * Creation Date    :  26-04-2011																		*
- *                                                                  
- * Modified Date    :  10-05-2018																		*
- *                                                                  
- * Description 		:												 									*                                 
- *                                                                                          
+ * FileName : ScheduleCalculator.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 10-05-2018 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************************
- * Date             Author                   Version      Comments                          			*
+ * Date Author Version Comments *
  ********************************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            			*	 
- *                                                                                          			* 
- * 10-05-2018       Satya	                 0.2          PSD - Ticket : 126189							*
- * 														  While doing Add Disbursement getting 			*
- * 														  ArthemeticException in AccrualService due to  *
- * 														  NoofDays is ZERO in newly added Schedule 		*
- * 01-08-2018  		Mangapathi				 0.3		  PSD - Ticket : 125445, 125588					*
- * 														  Mail Sub : Freezing Period, Dt : 30-May-2018  *
- *                                                        To address Freezing period case when schedule *
- *														  term is in Presentment. 						*                                  			* 
- *            
- * 05-12-2018		Pradeep Varma			 0.4		  Schedules sent for presentment should	and     * 
- *                                                        waiting for fate should be untouched for any  * 
- *                                                        schedule change								* 
- * 05-12-2018		Pradeep Varma			 0.5		  Interest should not be left for future        * 
- *                                                        adjustments based on loan type flag           * 
- *                                                        schedule change								*  
- * 05-12-2018		Pradeep Varma			 0.6		  Adjut Terms while Rate Change				    *
- *                                                                                          			*
- *                                                                                          			* 
+ * 26-04-2011 Pennant 0.1 * * 10-05-2018 Satya 0.2 PSD - Ticket : 126189 * While doing Add Disbursement getting *
+ * ArthemeticException in AccrualService due to * NoofDays is ZERO in newly added Schedule * 01-08-2018 Mangapathi 0.3
+ * PSD - Ticket : 125445, 125588 * Mail Sub : Freezing Period, Dt : 30-May-2018 * To address Freezing period case when
+ * schedule * term is in Presentment. * *
+ * 
+ * 05-12-2018 Pradeep Varma 0.4 Schedules sent for presentment should and * waiting for fate should be untouched for any
+ * * schedule change * 05-12-2018 Pradeep Varma 0.5 Interest should not be left for future * adjustments based on loan
+ * type flag * schedule change * 05-12-2018 Pradeep Varma 0.6 Adjut Terms while Rate Change * * *
  ********************************************************************************************************
  */
 package com.pennant.app.util;
@@ -260,7 +247,7 @@ public class ScheduleCalculator {
 		return new ScheduleCalculator(PROC_ADDDATEDSCHEDULE, finScheduleData, BigDecimal.ZERO).getFinScheduleData();
 	}
 
-	//InstBasedProcess
+	// InstBasedProcess
 	public static FinScheduleData instBasedSchedule(FinScheduleData finScheduleData, BigDecimal amount,
 			boolean utilizeGrcEndDisb, boolean isLoanNotApproved, FinanceDisbursement finDisb, boolean feeAmtInclude) {
 		return new ScheduleCalculator(PROC_INSTBASEDSCHEDULE, finScheduleData, amount, utilizeGrcEndDisb,
@@ -2537,7 +2524,7 @@ public class ScheduleCalculator {
 		dd.setLinkedDisbId(disbId);
 		finScheduleData.getDisbursementDetails().add(dd);
 
-		//validate if this disb date is equal to realization date
+		// validate if this disb date is equal to realization date
 		// return schedule
 
 		/*
@@ -3745,7 +3732,7 @@ public class ScheduleCalculator {
 		boolean isManualAmtStep = false;
 
 		if (finMain.isStepFinance() && finMain.isAlwManualSteps() && finMain.isGrcStps()) {
-			if (StringUtils.equals(finMain.getCalcOfSteps(), PennantConstants.STEPPING_CALC_AMT)) {
+			if (PennantConstants.STEPPING_CALC_AMT.equals(finMain.getCalcOfSteps())) {
 				isManualAmtStep = true;
 			}
 		}
@@ -3803,10 +3790,10 @@ public class ScheduleCalculator {
 				}
 
 				if ((curSchd.isRepayOnSchDate() || isManualAmtStep) && !isFreezeSchd
-						&& !(StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI))) {
+						&& !(FinanceConstants.FLAG_BPI.equals(curSchd.getBpiOrHoliday()))) {
 					if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_EQUAL)) {
 						if (firstRepayDate != null && DateUtility.compare(firstRepayDate, curSchdDate) == 0) {// bpi
-																													// change
+																												// change
 							curSchd.setRepayAmount(instructAmount.add(bpiBalance));
 							bpiBalance = BigDecimal.ZERO;
 						} else {
@@ -3880,7 +3867,7 @@ public class ScheduleCalculator {
 		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
 		Date schdDate = new Date();
 		int instNumber = 0;
-		//PSD#166759
+		// PSD#166759
 		int calTerms = 0;
 		int graceTerms = 0;
 		BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValueAsString(CalculationConstants.TDS_PERCENTAGE));
@@ -3967,7 +3954,9 @@ public class ScheduleCalculator {
 					|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_STRTPRDHLD)) {
 
 				// PSD Ticket : 133179, Partial Settlement Cases
-				if (curSchd.getRepayAmount().compareTo(curSchd.getPartialPaidAmt()) != 0 || curSchd.isFrqDate()) {
+				// Removed the condition because for part payment installment no is setting for step loans.
+				// FIXME Lakshmi.N
+				if (curSchd.isFrqDate()) {
 					instNumber = instNumber + 1;
 					curSchd.setInstNumber(instNumber);
 				} else {
@@ -3981,7 +3970,7 @@ public class ScheduleCalculator {
 				// Reset Grace Terms -- PSD Ticket :136185
 				if (curSchd.isFrqDate() && DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) <= 0) {
 					graceTerms = graceTerms + 1;
-				} //End PSD#166759
+				} // End PSD#166759
 			} else {
 				curSchd.setInstNumber(0);
 			}
@@ -4011,13 +4000,13 @@ public class ScheduleCalculator {
 		}
 		// PSD#169262:Issue while decreasing ROI when by Adjusting terms.
 		// FIXME if Required: below condition added while decreasing the ROI for adjust terms.
-		//add rate change tenor showing wrong when rate is decreased.
+		// add rate change tenor showing wrong when rate is decreased.
 		if (!FinanceConstants.FINSER_EVENT_RATECHG.equals(finMain.getProcMethod())) {
 			// PSD#166759
 			finMain.setCalTerms(calTerms);
 		}
 		// Ticket id:PSD Ticket :136185,resetting grace terms
-		finMain.setGraceTerms(graceTerms);//End PSD#166759
+		finMain.setGraceTerms(graceTerms);// End PSD#166759
 
 		finMain.setTotalGrossGrcPft(finMain.getTotalGraceCpz().add(finMain.getTotalGracePft()));
 		finMain.setTotalGrossPft(finMain.getTotalProfit().add(finMain.getTotalCpz()));
@@ -4160,12 +4149,14 @@ public class ScheduleCalculator {
 		finScheduleData = fetchRepayCurRates(finScheduleData);
 
 		if (finMain.isStepFinance() && finMain.isAlwManualSteps()
-				&& (!CalculationConstants.RPYCHG_ADJMDT.equals(finMain.getRecalType()))) {
-			if (StringUtils.equals(finMain.getCalcOfSteps(), PennantConstants.STEPPING_CALC_AMT)) {
+				&& (isFirstRun || CalculationConstants.RPYCHG_ADDRECAL.equals(finMain.getRecalType()))) {
+			if (PennantConstants.STEPPING_CALC_AMT.equals(finMain.getCalcOfSteps())
+					&& CollectionUtils.isNotEmpty(finScheduleData.getStepPolicyDetails())) {
 				prepareManualRepayRI(finScheduleData);
-				//finMain.setEqualRepay(false);
+				// finMain.setEqualRepay(false);
 			}
 		}
+
 		finScheduleData = getRpyInstructDetails(finScheduleData);
 
 		/* Grace Schedule calculation */
@@ -4174,7 +4165,7 @@ public class ScheduleCalculator {
 		if (isFirstRun) {
 			finScheduleData = prepareFirstSchdCal(finScheduleData);
 
-			if (finMain.isStepFinance() && !finMain.isAlwManualSteps()) {
+			if (finMain.isStepFinance() && PennantConstants.STEPPING_CALC_PERC.equals(finMain.getCalcOfSteps())) {
 				finScheduleData = adjustBPISchd(finScheduleData);
 				finScheduleData = setFinanceTotals(finScheduleData);
 				logger.debug("Leaving");
@@ -4561,18 +4552,21 @@ public class ScheduleCalculator {
 		}
 
 		boolean isPftCpzFromReset = false;
-		if (StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFTCPZ)) {
+		if (CalculationConstants.SCHMTHD_PFTCPZ.equals(finMain.getScheduleMethod())) {
 			isPftCpzFromReset = true;
 		}
 
 		finMain.setPftCpzFromReset(BigDecimal.ZERO);
 		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
 		int sdSize = schdDetails.size();
+
+		boolean cpzPOSIntact = SysParamUtil.isAllowed(SMTParameterConstants.CPZ_POS_INTACT);
+
 		for (int i = 0; i < sdSize; i++) {
 			curSchd = schdDetails.get(i);
 			if (curSchd.getSchDate().compareTo(evtFromDate) < 0) {
 
-				if (finMain.isCpzPosIntact()) {
+				if (cpzPOSIntact) {
 					finMain.setPftCpzFromReset(BigDecimal.ZERO);
 				} else {
 					if (isPftCpzFromReset && curSchd.isCpzOnSchDate() && curSchd.isRepayOnSchDate()) {
@@ -4864,7 +4858,7 @@ public class ScheduleCalculator {
 			finMain.setNewMaturityIndex(schdDetails.size() - 1);
 			derivedMDT = schdDetails.get(schdDetails.size() - 1).getSchDate();
 		}
-		// common issue 16
+		// common issue 8
 		if (FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(finMain.getReceiptPurpose())) {
 			derivedMDT = finMain.getEventFromDate();
 		}
@@ -4988,7 +4982,7 @@ public class ScheduleCalculator {
 			// LAST REPAYMENT DATE
 			if (DateUtility.compare(curSchDate, derivedMDT) == 0) {
 				finScheduleData = procMDTRecord(finScheduleData, i, isRepayComplete, cpzPOSIntact);
-				//common issue 22:if earlysettlement doing on bpi schedule date.
+				// common issue 22:if earlysettlement doing on bpi schedule date.
 				if (FinanceConstants.FLAG_BPI.equals(curSchd.getBpiOrHoliday())) {
 					curSchd.setBpiOrHoliday(null);
 				}
@@ -5316,7 +5310,7 @@ public class ScheduleCalculator {
 			if (finMain.isAlwBPI() && StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)
 					&& (StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_DISBURSMENT)
 							|| StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_SCHEDULE))) {// Bpi
-																																																																							// changes
+																												// changes
 				schdInterest = curSchd.getProfitCalc();
 
 				// FIXME: PV 02JUN18 WHY BELOW CODE IS REQUIRED?. Commented for
@@ -6548,7 +6542,7 @@ public class ScheduleCalculator {
 		finMain.setAdjTerms(terms);
 
 		if (finMain.isStepFinance() && finMain.isRpyStps()) {
-			if (StringUtils.equals(finMain.getCalcOfSteps(), PennantConstants.STEPPING_CALC_PERC)) {
+			if (PennantConstants.STEPPING_CALC_PERC.equals(finMain.getCalcOfSteps())) {
 				finScheduleData = calStepSchd(finScheduleData);
 			}
 		} else {
@@ -9419,31 +9413,55 @@ public class ScheduleCalculator {
 	private void prepareManualRepayRI(FinScheduleData fsData) {
 		FinanceMain fm = fsData.getFinanceMain();
 		List<FinanceStepPolicyDetail> spdList = fsData.getStepPolicyDetails();
-		List<FinanceScheduleDetail> fsdList = fsData.getFinanceScheduleDetails();
+		List<FinanceScheduleDetail> schedules = fsData.getFinanceScheduleDetails();
 
 		int idxStart = 0;
 		int riStart = 0;
 		int riEnd = 0;
-		String schdMethod = "";
+		String schdMethod = fm.getScheduleMethod();
 		String grcSchdMethod = fm.getGrcSchdMthd();
+		// PSD#170539 BPI amount is capitalized and adding to POS because of schedule method, issue fixed.
+		boolean bpiFound = false;
+
+		for (FinanceStepPolicyDetail spd : spdList) {
+			if (PennantConstants.STEP_SPECIFIER_GRACE.equals(spd.getStepSpecifier())) {
+				fm.setGrcStps(true);
+				break;
+			}
+		}
 
 		if (!fm.isGrcStps()) {
-			for (FinanceScheduleDetail fsd : fsdList) {
-				if (fsd.getSchDate().compareTo(fm.getGrcPeriodEndDate()) <= 0) {
+			for (FinanceScheduleDetail schd : schedules) {
+				if (FinanceConstants.FLAG_BPI.equals(schd.getBpiOrHoliday())
+						|| schd.getSchDate().compareTo(fm.getGrcPeriodEndDate()) <= 0) {
 					idxStart = idxStart + 1;
 				}
+			}
+		} else {
+			for (FinanceScheduleDetail schd : schedules) {
+				idxStart = idxStart + 1;
+				if (FinanceConstants.FLAG_BPI.equals(schd.getBpiOrHoliday())) {
+					bpiFound = false;
+					Date schDate = schd.getSchDate();
+					if (fm.isAllowGrcPeriod()) {
+						setRpyInstructDetails(fsData, schDate, schDate, BigDecimal.ZERO, grcSchdMethod);
+					} else {
+						setRpyInstructDetails(fsData, schDate, schDate, BigDecimal.ZERO, schdMethod);
+					}
+					break;
+				}
+			}
+			if (!bpiFound) {
+				idxStart = 0;
 			}
 		}
 
 		boolean grcEnd = false;
 
-		for (int iSpd = 0; iSpd < spdList.size(); iSpd++) {
-			FinanceStepPolicyDetail spd = spdList.get(iSpd);
-
+		for (FinanceStepPolicyDetail spd : spdList) {
 			if (grcEnd && PennantConstants.STEP_SPECIFIER_GRACE.equals(spd.getStepSpecifier())) {
 				continue;
 			}
-
 			riStart = idxStart;
 			if (riEnd == 0) {
 				riEnd = riStart + spd.getInstallments();
@@ -9452,27 +9470,30 @@ public class ScheduleCalculator {
 			}
 
 			int instCount = 0;
-			for (int iFsd = idxStart; iFsd < fsdList.size(); iFsd++) {
-				FinanceScheduleDetail fsd = fsdList.get(iFsd);
+			for (int iFsd = idxStart; iFsd < schedules.size(); iFsd++) {
+				FinanceScheduleDetail fsd = schedules.get(iFsd);
 				if (iFsd == riStart) {
 					spd.setStepStart(fsd.getSchDate());
 				}
+
+				// Part payment installment is also considering for installment count so added isFrqDate condition.
 				String specifier = fsd.getSpecifier();
-				if (fsd.isRepayOnSchDate()) {
+				if (fsd.isRepayOnSchDate() && fsd.isFrqDate()) {
 					instCount = instCount + 1;
 				} else if (iFsd != 0 && PennantConstants.STEP_SPECIFIER_GRACE.equals(spd.getStepSpecifier())
 						&& !(FinanceConstants.FLAG_BPI.equals(fsd.getBpiOrHoliday()))
 						&& (CalculationConstants.SCH_SPECIFIER_GRACE.equals(specifier)
 								|| CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier))
-						&& !fsd.isDisbOnSchDate()) {
+						&& !fsd.isDisbOnSchDate() && fsd.isFrqDate()) {
 					instCount = instCount + 1;
 				}
 
-				//iFsd == riEnd
-				boolean flag = CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier)
-						&& CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier);
-				if (spd.getInstallments() == instCount || flag) {
-					if (flag) {
+				// iFsd == riEnd
+				if (spd.getInstallments() == instCount
+						|| (CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier)
+								&& CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier))) {
+					if (CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier)
+							&& CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier)) {
 						grcEnd = true;
 					}
 					spd.setStepEnd(fsd.getSchDate());
@@ -9480,8 +9501,6 @@ public class ScheduleCalculator {
 					break;
 				}
 			}
-
-			schdMethod = fm.getScheduleMethod();
 
 			if (!spd.isAutoCal()) {
 				setRpyInstructDetails(fsData, spd.getStepStart(), spd.getStepEnd(), spd.getSteppedEMI(), schdMethod);
@@ -9496,7 +9515,7 @@ public class ScheduleCalculator {
 		}
 		FinanceStepPolicyDetail spd = spdList.get(spdList.size() - 1);
 
-		if (StringUtils.equals(spd.getStepSpecifier(), PennantConstants.STEP_SPECIFIER_REG_EMI)) {
+		if (PennantConstants.STEP_SPECIFIER_REG_EMI.equals(spd.getStepSpecifier())) {
 			fm.setRecalFromDate(spd.getStepStart());
 			fm.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 			fm.setCalculateRepay(true);
@@ -9504,7 +9523,6 @@ public class ScheduleCalculator {
 			fm.setRecalSchdMethod(schdMethod);
 			setRpyInstructDetails(fsData, fm.getRecalFromDate(), fm.getMaturityDate(), BigDecimal.ZERO, schdMethod);
 		}
-
 	}
 
 	private FinScheduleData buildRestructure(FinScheduleData fsData) {

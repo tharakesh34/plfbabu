@@ -713,6 +713,63 @@
 									</rows>
 								</grid>
 							</groupbox>
+							<groupbox id="gb_autoGraceInc_Details" visible="false">
+								<caption label="${c:l('label_FinanceTypeDialog_AutoGraceIncrement')}" />
+								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+									<columns>
+										<column width="260px" />
+										<column />
+										<column width="260px" />
+										<column />
+									</columns>
+									<rows>
+										<row>
+											<label id="label_GrcAdjReq"
+												value="${c:l('label_FinanceTypeDialog_GrcAdjReq.value')}" />
+											<hbox id="hlayout_GrcAdjReq" spacing="2px">
+												<space id="space_GrcAdjReq" spacing="2px" />
+												<checkbox id="grcAdjReq" />
+											</hbox>
+										</row>
+										<row>
+											<label id="label_GrcPeriodAftrFullDisb"
+												value="${c:l('label_FinanceTypeDialog_GrcPeriodAftrFullDisb.value')}" />
+											<hlayout id="hlayout_GrcPeriodAftrFullDisb" spacing="2px">
+												<space id="space_GrcPeriodAftrFullDisb" spacing="2px" />
+												<checkbox id="grcPeriodAftrFullDisb" />
+											</hlayout>
+											<label id="label_AutoIncrGrcEndDate"
+												value="${c:l('label_FinanceTypeDialog_AutoIncrGrcEndDate.value')}" />
+											<hlayout id="hlayout_AutoIncrGrcEndDate" spacing="2px">
+												<space id="space_AutoIncrGrcEndDate" spacing="2px" />
+												<checkbox id="autoIncrGrcEndDate" />
+											</hlayout>
+										</row>
+										<row>
+											<label id="label_GrcAutoIncrMonths"
+												value="${c:l('label_FinanceTypeDialog_GrcAutoIncrMonths.value')}" />
+											<hlayout id="hlayout_GrcAutoIncrMonths" spacing="2px">
+												<space id="space_GrcAutoIncrMonths" spacing="2px" />
+												<intbox id="grcAutoIncrMonths" />
+											</hlayout>
+											<label id="label_MaxAutoIncrAllowed"
+												value="${c:l('label_FinanceTypeDialog_MaxAutoIncrAllowed.value')}" />
+											<hlayout id="hlayout_MaxAutoIncrAllowed" spacing="2px">
+												<space id="space_MaxAutoIncrAllowed" spacing="2px" />
+												<intbox id="maxAutoIncrAllowed" />
+											</hlayout>
+										</row>
+										<row>
+											<label id="label_ThrldtoMaintainGrcPrd"
+												value="${c:l('label_FinanceTypeDialog_ThrldtoMaintainGrcPrd.value')}" />
+											<hlayout id="hlayoutThrldtoMaintainGrcPrd" spacing="2px">
+												<space id="spaceThrldtoMaintainGrcPrd" spacing="2px" />
+												<intbox id="thrldtoMaintainGrcPrd" />
+											</hlayout>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
 						</tabpanel>
 						<tabpanel style="overflow:auto" ca:data-scrollable="true">
 							<div id="repayDetailDiv">
@@ -1186,6 +1243,11 @@
 												<space spacing="2px" />
 												<checkbox id="stepFinance" />
 											</hbox>
+											<label visible="false" id="label_FinanceTypeDialog_StepsAppliedFor" value="${c:l('label_FinanceTypeDialog_StepsAppliedFor.value')}" />
+											<hbox id="hbox_stepsAppliedFor" visible="false">
+												<space spacing="2px" id="space_stepsAppliedFor" />
+												<combobox id="stepsAppliedFor" width="155px" />
+											</hbox>
 											<label visible="false" id="label_FinanceTypeDialog_AllowedStepPolicies" value="${c:l('label_CDFinanceTypeDialog_AllowedStepPolicies.value')}" />
 											<hbox id="hbox_alwdStepPolicies">
 												<space id="sp_alwdStepPolices" spacing="2px" />
@@ -1196,6 +1258,13 @@
 													            ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode">
 													</button>
 												</hbox>
+											</hbox>
+										</row>
+										<row id="row_CalcOfSteps" visible="false">
+											<label id="label_FinanceTypeDialog_CalcOfSteps" value="${c:l('label_FinanceTypeDialog_CalcOfSteps.value')}" />
+											<hbox>
+												<space spacing="2px" id="space_calcOfSteps" />
+												<combobox id="calcOfSteps" width="155px" />
 											</hbox>
 										</row>
 										<row visible="false" id="row_isSteppingMandatory">

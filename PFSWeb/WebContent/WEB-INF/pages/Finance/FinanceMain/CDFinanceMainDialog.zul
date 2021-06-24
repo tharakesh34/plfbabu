@@ -664,7 +664,25 @@
 														<intbox id="grcAdvTerms" />
 													</hbox>
 												</row>
-
+												<row id="row_underConstruction" visible="false">
+													<label id="label_UnderConstruction" value="${c:l('label_FinanceMainDialog_UnderConstruction.value')}" />
+													<hbox id="hbox_UnderConstruction">
+														<space id="space_UnderConstruction" spacing="2px" />
+														<checkbox id="underConstruction" />
+													</hbox>
+												</row>
+												<row id="row_autoIncrGrcEndDate">
+													<label id="label_AutoIncrGrcEndDate" value="${c:l('label_FinanceMainDialog_AutoIncrGrcEndDate.value')}" />
+													<hbox id="hbox_AutoIncrGrcEndDate">
+														<space id="space_AutoIncrGrcEndDate" spacing="2px" />
+														<checkbox id="autoIncrGrcEndDate" />
+													</hbox>
+													<label id="label_GrcPeriodAftrFullDisb" value="${c:l('label_FinanceMainDialog_GrcPeriodAftrFullDisb.value')}" />
+													<hbox id="hbox_GrcPeriodAftrFullDisb">
+														<space id="space_GrcPeriodAftrFullDisb" spacing="2px" />
+														<checkbox id="grcPeriodAftrFullDisb" />
+													</hbox>
+												</row>
 											</rows>
 										</grid>
 									</groupbox>

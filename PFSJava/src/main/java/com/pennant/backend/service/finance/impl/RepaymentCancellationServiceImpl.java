@@ -49,6 +49,7 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.RepaymentCancellationService;
 import com.pennant.backend.util.FinanceConstants;
@@ -797,47 +798,54 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 	}
 
 	private void listSave(FinScheduleData finDetail, String tableType, long logKey) {
-		logger.debug("Entering ");
-		Map<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
+		Map<Date, Integer> mapDateSeq = new HashMap<>();
 
 		// Finance Schedule Details
-		for (int i = 0; i < finDetail.getFinanceScheduleDetails().size(); i++) {
-			finDetail.getFinanceScheduleDetails().get(i).setLastMntBy(finDetail.getFinanceMain().getLastMntBy());
-			finDetail.getFinanceScheduleDetails().get(i).setFinReference(finDetail.getFinanceMain().getFinReference());
+		FinanceMain fm = finDetail.getFinanceMain();
+		String finReference = fm.getFinReference();
+
+		for (FinanceScheduleDetail schd : finDetail.getFinanceScheduleDetails()) {
+			schd.setLastMntBy(fm.getLastMntBy());
+			schd.setFinReference(finReference);
 			int seqNo = 0;
 
-			if (mapDateSeq.containsKey(finDetail.getFinanceScheduleDetails().get(i).getSchDate())) {
-				seqNo = mapDateSeq.get(finDetail.getFinanceScheduleDetails().get(i).getSchDate());
-				mapDateSeq.remove(finDetail.getFinanceScheduleDetails().get(i).getSchDate());
+			if (mapDateSeq.containsKey(schd.getSchDate())) {
+				seqNo = mapDateSeq.get(schd.getSchDate());
+				mapDateSeq.remove(schd.getSchDate());
 			}
 			seqNo = seqNo + 1;
-			mapDateSeq.put(finDetail.getFinanceScheduleDetails().get(i).getSchDate(), seqNo);
-			finDetail.getFinanceScheduleDetails().get(i).setSchSeq(seqNo);
-			finDetail.getFinanceScheduleDetails().get(i).setLogKey(logKey);
+			mapDateSeq.put(schd.getSchDate(), seqNo);
+			schd.setSchSeq(seqNo);
+			schd.setLogKey(logKey);
 		}
-		getFinanceScheduleDetailDAO().saveList(finDetail.getFinanceScheduleDetails(), tableType, false);
+
+		// Schedule Version Updating
+		if (StringUtils.isBlank(tableType)) {
+			financeMainDAO.updateSchdVersion(fm, false);
+		}
+
+		financeScheduleDetailDAO.saveList(finDetail.getFinanceScheduleDetails(), tableType, false);
 
 		// Finance Disbursement Details
-		mapDateSeq = new HashMap<Date, Integer>();
+		mapDateSeq = new HashMap<>();
 		Date curBDay = SysParamUtil.getAppDate();
-		for (FinanceDisbursement fd : finDetail.getDisbursementDetails()) {
-			fd.setFinReference(finDetail.getFinanceMain().getFinReference());
-			fd.setDisbReqDate(curBDay);
-			fd.setDisbIsActive(true);
-			fd.setLogKey(logKey);
-			fd.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			fd.setLastMntBy(finDetail.getFinanceMain().getLastMntBy());
+		for (FinanceDisbursement dd : finDetail.getDisbursementDetails()) {
+			dd.setFinReference(finReference);
+			dd.setDisbReqDate(curBDay);
+			dd.setDisbIsActive(true);
+			dd.setLogKey(logKey);
+			dd.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			dd.setLastMntBy(finDetail.getFinanceMain().getLastMntBy());
 		}
-		getFinanceDisbursementDAO().saveList(finDetail.getDisbursementDetails(), tableType, false);
+		financeDisbursementDAO.saveList(finDetail.getDisbursementDetails(), tableType, false);
 
 		//Finance Repay Instruction Details
-		for (int i = 0; i < finDetail.getRepayInstructions().size(); i++) {
-			finDetail.getRepayInstructions().get(i).setFinReference(finDetail.getFinanceMain().getFinReference());
-			finDetail.getRepayInstructions().get(i).setLogKey(logKey);
+		for (RepayInstruction ri : finDetail.getRepayInstructions()) {
+			ri.setFinReference(finReference);
+			ri.setLogKey(logKey);
 		}
-		getRepayInstructionDAO().saveList(finDetail.getRepayInstructions(), tableType, false);
 
-		logger.debug("Leaving ");
+		repayInstructionDAO.saveList(finDetail.getRepayInstructions(), tableType, false);
 	}
 
 	// ******************************************************//

@@ -9778,48 +9778,6 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="HL_28_pre" author="rajesh.n" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'pmay_view');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="HL_28" author="rajesh.n">
-		<createView viewName="pmay_view" replaceIfExists="true">
-		<![CDATA[
-			Select	T1.FinReference,T1.notifiedTown,T1.TownCode,T4.TOWNNAME,T1.centralAssistance,T1.ownedHouse,T1.carpetArea,T1.householdAnnIncome,
-			T1.balanceTransfer,T1.primaryApplicant,T1.transactionFinType,T1.product,T1.PRPRTYOWNEDBYWOMEN,T1.waterSupply,T1.drinage,T1.electricity,
-			T1.pmayCategory,T1.version,T1.lastmntby,T1.lastmnton,T1.recordstatus,T1.rolecode,T1.nextrolecode,T1.taskid,T1.
-			nexttaskid,T1.recordtype,T1.workflowid,T3.CustCif,T3.CUSTSHRTNAME,T2.FinType
-			From PMAY_TEMP T1
-			Inner join financemain_view T2 on T1.Finreference =T2.Finreference
-			Inner join Customers T3 on T2.CustId =T3.CustId
-			left join Towncode T4 on T1.TownCode = T4.TownCode
-			WHERE t2.FinIsActive = 1
-       union all 
-       Select	T1.FinReference,T1.notifiedTown,T1.TownCode, T4.TOWNNAME ,T1.centralAssistance,T1.ownedHouse,T1.carpetArea,T1.householdAnnIncome,
-			T1.balanceTransfer,T1.primaryApplicant,T1.transactionFinType,T1.	product,T1.PRPRTYOWNEDBYWOMEN,T1.waterSupply,T1.drinage,T1.electricity,T1.
-			pmayCategory,T1.version,T1.lastmntby,T1.lastmnton,T1.recordstatus,T1.rolecode,T1.nextrolecode,T1.taskid,T1.
-			nexttaskid,T1.recordtype,T1.workflowid,T3.CustCif,T3.CUSTSHRTNAME,T2.FinType
-			From PMAY T1
-      Inner join financemain_view T2 on T1.Finreference =T2.Finreference
-			Inner join Customers T3 on T2.CustId =T3.CustId
-			left join Towncode T4 on T1.TownCode = T4.TownCode
-       WHERE     NOT EXISTS (SELECT 1 FROM PMAY_Temp WHERE finReference = T2.finReference) and t2.FinIsActive = 1
-		]]>
-		</createView>
-	</changeSet>
-
-	<changeSet id="HL_28_post" author="rajesh.n" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'pmay_view');
-			]]>
-		</sql>
-	</changeSet>
-
 	<changeSet id="HL_29" author="rajesh.n">
 		<comment>New view: PMAY_AView</comment>
 		<createView viewName="PMAY_AView" replaceIfExists="true">
@@ -10150,42 +10108,6 @@ UNION ALL
 				Inner Join  	FINRECEIPTHEADER T5 on T1.RECEIPTID = T5.RECEIPTID
 				WHERE     		(NOT EXISTS  (SELECT 1 FROM FinFeeReceipts_Temp WHERE (Id = T1.Id)))
 				]]>
-		</createView>
-	</changeSet>
-
-	<changeSet id="HL_35" author="Ganesh.P">
-		<comment>Changed mapping from RejectedFinance to FinanceMain_view</comment>
-		<createView viewName="FinFeeRefundHeader_TView" replaceIfExists="true">
-			<![CDATA[
-				SELECT 		T1.HeaderID, T1.FinReference, T1.LinkedTranId,
-				T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus,
-				T1.RoleCode,T1.NextRoleCode,T1.TaskId,T1.NextTaskId,T1.RecordType,T1.WorkflowId,
-				T2.Fintype,T2.FinBranch,T2.CustID,T2.FinCcy,T3.CustCIF LovDescCustCIF,T3.CustShrtName LovDescCustShrtName,
-				T4.fintypedesc, T5.branchdesc
-				FROM FinFeeRefundHeader_TEMP T1
-				Left join FinanceMain_view T2 On T2.FinReference =T1.FinReference
-				Left JOIN Customers T3 On T3.CustID=T2.CustID
-				Left JOIN rmtfinancetypes T4 ON T4.fintype = T2.fintype
-				LEFT JOIN rmtbranches T5 ON T2.finbranch = T5.branchcode
-				]]>
-		</createView>
-	</changeSet>
-
-	<changeSet id="HL_36" author="Ganesh.P">
-		<comment>Changed mapping from RejectedFinance to FinanceMain_view</comment>
-		<createView viewName="FinFeeRefundHeader_AView" replaceIfExists="true">
-			<![CDATA[
-				SELECT 		T1.HeaderID, T1.FinReference, T1.LinkedTranId,
-				T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus,
-				T1.RoleCode,T1.NextRoleCode,T1.TaskId,T1.NextTaskId,T1.RecordType,T1.WorkflowId,
-				T2.Fintype,T2.FinBranch,T2.CustID,T2.FinCcy,T3.CustCIF LovDescCustCIF,T3.CustShrtName LovDescCustShrtName,
-				T4.fintypedesc, T5.branchdesc
-				FROM FinFeeRefundHeader T1
-				Left join FinanceMain_view T2 On T2.FinReference =T1.FinReference
-				Left JOIN Customers T3 On T3.CustID=T2.CustID
-				Left JOIN rmtfinancetypes T4 ON T4.fintype = T2.fintype
-				LEFT JOIN rmtbranches T5 ON T2.finbranch = T5.branchcode
-			]]>
 		</createView>
 	</changeSet>
 
@@ -11733,67 +11655,6 @@ UNION ALL
    FROM rmtbaserates t1
      JOIN rmtbaseratecodes t2 ON t1.brtype = t2.brtype
 	]]>
-		</createView>
-	</changeSet>
-
-	<changeSet id="HL_76" author="Saidurga.V">
-		<comment>ST#1_TK#4</comment>
-		<createView viewName="customers_aeview" replaceIfExists="true">
-		<![CDATA[
-			SELECT t1.custid,
-				   t1.custcif,
-				   t1.custcorebank,
-				   t1.custctgcode,
-				   t1.custtypecode,
-				   t1.custshrtname,
-				   t1.custfname,
-				   t1.custlname,
-				   t1.custdob,
-				   t1.custnationality,
-				   t1.custsector,
-				   t1.custsubsector,
-				   t2.phonenumber,
-				   t2.phoneareacode,
-				   t2.phonecountrycode,
-				   t1.custcrcpr,
-				   t1.custpassportno,
-				   t3.custemail AS emailid,
-				   t1.custaddlvar82,
-				   t4.custtypedesc AS lovdesccusttypecodename,
-				   t1.custbaseccy,
-				   t4.custtypectg AS lovdesccustctgtype,
-				   t5.custctgdesc AS lovdesccustctgcodename,
-				   t6.custstsdescription AS lovdesccuststsname,
-				   t1.custdftbranch,
-				   t7.branchdesc AS lovdesccustdftbranchname,
-				   t1.subcategory,
-				   t1.casteid,
-				   t1.religionid,
-				   t8.castecode,
-				   t8.castedesc,
-				   t9.religioncode,
-				   t9.religiondesc,
-				   COALESCE(t32.roledesc, ${add.schema}fn_get_roledesc(t1.nextrolecode)) AS lovdescrequeststage,
-				   t1.margindeviation,
-				   t1.othercaste,
-				   t1.otherreligion,
-				   t1.natureofbusiness,
-				   t1.entitytype,
-				   t1.custresidentialsts,
-				   t1.qualification,
-				   t1.custflag,
-				   t1.vip
-			FROM customers t1
-			LEFT JOIN customerphonenumbers t2 ON t1.custid = t2.phonecustid AND t2.phonetypepriority = 5
-			LEFT JOIN customeremails t3 ON t1.custid = t3.custid AND t3.custemailtypecode  = 'OFFICE' 
-			LEFT JOIN rmtcusttypes t4 ON t1.custtypecode  = t4.custtypecode
-			LEFT JOIN bmtcustcategories t5 ON t1.custctgcode  = t5.custctgcode
-			LEFT JOIN bmtcuststatuscodes t6 ON t1.custsts  = t6.custstscode
-			LEFT JOIN rmtbranches t7 ON t1.custdftbranch  = t7.branchcode
-			LEFT JOIN caste t8 ON t1.casteid = t8.casteid
-			LEFT JOIN religion t9 ON t1.religionid = t9.religionid
-			LEFT JOIN secroles t32 ON t1.nextrolecode  = t32.rolecd
-			]]>
 		</createView>
 	</changeSet>
 
@@ -20464,85 +20325,6 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1211.100.46_pre" author="Gopal.p" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'finfeerefundheader_view');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#1211.100.46" author="Gopal.p">
-		<createView viewName="FinFeeRefundHeader_View" replaceIfExists="true">
-		<![CDATA[
-			SELECT T1.HEADERID,
-					T1.FINREFERENCE,
-					T1.LINKEDTRANID,
-					T1.VERSION,
-					T1.LASTMNTBY,
-					T1.LASTMNTON,
-					T1.RECORDSTATUS,
-					T1.ROLECODE,
-					T1.NEXTROLECODE,
-					T1.TASKID,
-					T1.NEXTTASKID,
-					T1.RECORDTYPE,
-					T1.WORKFLOWID,
-					T2.FINTYPE,
-					T2.FINBRANCH,
-					T2.CUSTID,
-					T2.FINCCY,
-					T3.CUSTCIF LOVDESCCUSTCIF,
-					T3.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
-					T4.FINTYPEDESC,
-					T5.BRANCHDESC,
-					T2.TDSAPPLICABLE FINTDSAPPLICABLE
-				FROM FINFEEREFUNDHEADER_TEMP T1
-				LEFT JOIN FINANCEMAIN_VIEW T2 ON T2.FINREFERENCE =T1.FINREFERENCE
-				LEFT JOIN CUSTOMERS T3 ON T3.CUSTID=T2.CUSTID
-				LEFT JOIN RMTFINANCETYPES T4 ON T4.FINTYPE = T2.FINTYPE
-				LEFT JOIN RMTBRANCHES T5 ON T2.FINBRANCH = T5.BRANCHCODE
-				UNION ALL
-					SELECT T1.HEADERID,
-					T1.FINREFERENCE,
-					T1.LINKEDTRANID,
-					T1.VERSION,
-					T1.LASTMNTBY,
-					T1.LASTMNTON,
-					T1.RECORDSTATUS,
-					T1.ROLECODE,
-					T1.NEXTROLECODE,
-					T1.TASKID,
-					T1.NEXTTASKID,
-					T1.RECORDTYPE,
-					T1.WORKFLOWID,
-					T2.FINTYPE,
-					T2.FINBRANCH,
-					T2.CUSTID,
-					T2.FINCCY,
-					T3.CUSTCIF LOVDESCCUSTCIF,
-					T3.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
-					T4.FINTYPEDESC,
-					T5.BRANCHDESC,
-					T2.TDSAPPLICABLE FINTDSAPPLICABLE
-				FROM FINFEEREFUNDHEADER T1
-				LEFT JOIN FINANCEMAIN_VIEW T2 ON T2.FINREFERENCE =T1.FINREFERENCE
-				LEFT JOIN CUSTOMERS T3 ON T3.CUSTID=T2.CUSTID
-				LEFT JOIN RMTFINANCETYPES T4 ON T4.FINTYPE = T2.FINTYPE
-				LEFT JOIN RMTBRANCHES T5 ON T2.FINBRANCH = T5.BRANCHCODE
-				WHERE NOT EXISTS(SELECT 1 FROM FINFEEREFUNDHEADER_TEMP WHERE HEADERID =T1.HEADERID)
-			]]>
-		</createView>
-	</changeSet>
-
-	<changeSet id="ST#1211.100.46_post" author="Gopal.p" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'finfeerefundheader_view');
-			]]>
-		</sql>
-	</changeSet>
-
 	<changeSet id="ST#1211.100.48.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -21126,84 +20908,6 @@ UNION ALL
 		<sql>
 			<![CDATA[
 				alter table verification_vt_dtls_stge rename to verification_vt_dtls_stage
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="PSD#167970_pre" author="saikiran.n" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'customers_aeview');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="PSD#167970" author="saikiran.n">
-		<createView viewName="CUSTOMERS_AEVIEW" replaceIfExists="true">
-			<![CDATA[
-				SELECT T1.CUSTID,
-				   T1.CUSTCIF,
-				   T1.CUSTCOREBANK,
-				   T1.CUSTCTGCODE,
-				   T1.CUSTTYPECODE,
-				   T1.CUSTSHRTNAME,
-				   T1.CUSTFNAME,
-				   T1.CUSTLNAME,
-				   T1.CUSTDOB,
-				   T1.CUSTNATIONALITY,
-				   T1.CUSTSECTOR,
-				   T1.CUSTSUBSECTOR,
-				   T2.PHONENUMBER,
-				   T2.PHONEAREACODE,
-				   T2.PHONECOUNTRYCODE,
-				   T1.CUSTCRCPR,
-				   T1.CUSTPASSPORTNO,
-				   T3.CUSTEMAIL EMAILID,
-				   T1.CUSTADDLVAR82,
-				   T4.CUSTTYPEDESC LOVDESCCUSTTYPECODENAME,
-				   T1.CUSTBASECCY,
-				   T4.CUSTTYPECTG LOVDESCCUSTCTGTYPE,
-				   T5.CUSTCTGDESC LOVDESCCUSTCTGCODENAME,
-				   T6.CUSTSTSDESCRIPTION LOVDESCCUSTSTSNAME,
-				   T1.CUSTDFTBRANCH,
-				   T7.BRANCHDESC LOVDESCCUSTDFTBRANCHNAME,
-				   T1.SUBCATEGORY,
-				   T1.CASTEID,
-				   T1.RELIGIONID,
-				   T8.CASTECODE,
-				   T8.CASTEDESC,
-				   T9.RELIGIONCODE,
-				   T9.RELIGIONDESC,
-				   COALESCE(T32.ROLEDESC, ${ADD.SCHEMA}FN_GET_ROLEDESC(T1.NEXTROLECODE)) LOVDESCREQUESTSTAGE,
-				   T1.MARGINDEVIATION,
-				   T1.OTHERCASTE,
-				   T1.OTHERRELIGION,
-				   T1.NATUREOFBUSINESS,
-				   T1.ENTITYTYPE,
-				   T1.CUSTRESIDENTIALSTS,
-				   T1.QUALIFICATION,
-				   T1.CUSTFLAG,
-				   T1.VIP,
-				   T12.NATIONALITYDESC LOVDESCCUSTNATIONALITYNAME
-				FROM CUSTOMERS T1
-				LEFT JOIN CUSTOMERPHONENUMBERS T2 ON T1.CUSTID = T2.PHONECUSTID AND T2.PHONETYPEPRIORITY = 5
-				LEFT JOIN CUSTOMEREMAILS T3 ON T1.CUSTID = T3.CUSTID AND T3.CUSTEMAILTYPECODE  = 'OFFICE' 
-				LEFT JOIN RMTCUSTTYPES T4 ON T1.CUSTTYPECODE  = T4.CUSTTYPECODE
-				LEFT JOIN BMTCUSTCATEGORIES T5 ON T1.CUSTCTGCODE  = T5.CUSTCTGCODE
-				LEFT JOIN BMTCUSTSTATUSCODES T6 ON T1.CUSTSTS  = T6.CUSTSTSCODE
-				LEFT JOIN RMTBRANCHES T7 ON T1.CUSTDFTBRANCH  = T7.BRANCHCODE
-				LEFT JOIN CASTE T8 ON T1.CASTEID = T8.CASTEID
-				LEFT JOIN RELIGION T9 ON T1.RELIGIONID = T9.RELIGIONID
-				LEFT JOIN SECROLES T32 ON T1.NEXTROLECODE  = T32.ROLECD
-				LEFT JOIN BMTNATIONALITYCODES T12 ON T1.CUSTNATIONALITY = T12.NATIONALITYCODE
-			]]>
-		</createView>
-	</changeSet>
-
-	<changeSet id="PSD#167970_post" author="saikiran.n" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'customers_aeview');
 			]]>
 		</sql>
 	</changeSet>
@@ -23643,182 +23347,6 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="915" author="praveena.v">
-		<addColumn tableName="rmtfinancetypes">
-			<column name="calcOfSteps" type="varchar(8)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="916" author="praveena.v">
-		<addColumn tableName="rmtfinancetypes_temp">
-			<column name="calcOfSteps" type="varchar(8)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="917" author="praveena.v">
-		<addColumn tableName="rmtfinancetypes">
-			<column name="StepsAppliedFor" type="varchar(8)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="918" author="praveena.v">
-		<addColumn tableName="rmtfinancetypes_temp">
-			<column name="StepsAppliedFor" type="varchar(8)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="919" author="praveena.v">
-		<addColumn tableName="financemain">
-			<column name="calcOfSteps" type="varchar(8)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="920" author="praveena.v">
-		<addColumn tableName="financemain_temp">
-			<column name="calcOfSteps" type="varchar(8)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="921" author="praveena.v">
-		<addColumn tableName="financemain">
-			<column name="StepsAppliedFor" type="varchar(8)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="922" author="praveena.v">
-		<addColumn tableName="financemain_temp">
-			<column name="StepsAppliedFor" type="varchar(8)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="923" author="praveena.v">
-		<addColumn tableName="finsteppolicydetail">
-			<column name="stepSpecifier" type="varchar(5)">
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="924" author="praveena.v">
-		<addColumn tableName="finsteppolicydetail_temp">
-			<column name="stepSpecifier" type="varchar(5)">
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="924.1" author="praveena.v">
-		<sql>
-			<![CDATA[
-				UPDATE FINSTEPPOLICYDETAIL SET STEPSPECIFIER = 'R';
-				UPDATE FINSTEPPOLICYDETAIL_TEMP SET STEPSPECIFIER = 'R';
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="924.2" author="praveena.v" dbms="postgresql, oracle">
-		<addDefaultValue columnName="stepSpecifier" tableName="finsteppolicydetail" defaultValue="R" />
-	</changeSet>
-
-	<changeSet id="924.3" author="praveena.v" dbms="postgresql, oracle">
-		<addDefaultValue columnName="stepSpecifier" tableName="finsteppolicydetail_temp" defaultValue="R" />
-	</changeSet>
-
-	<changeSet id="925" author="praveena.v">
-		<dropPrimaryKey constraintName="pk_financesteppolicydetail" tableName="finsteppolicydetail" />
-	</changeSet>
-
-	<changeSet id="926_pre" author="Sai">
-		<addNotNullConstraint tableName="finsteppolicydetail" columnName="stepSpecifier" columnDataType="varchar(5)" />
-	</changeSet>
-
-	<changeSet id="926" author="praveena.v">
-		<addPrimaryKey columnNames="stepSpecifier,finreference,stepno" constraintName="pk_financesteppolicydetail"
-			tableName="finsteppolicydetail" />
-	</changeSet>
-
-	<changeSet id="927" author="praveena.v">
-		<dropPrimaryKey constraintName="pk_finsteppolicydetail_temp" tableName="finsteppolicydetail_temp" />
-	</changeSet>
-
-	<changeSet id="928_pre" author="Sai">
-		<addNotNullConstraint tableName="finsteppolicydetail_temp" columnName="stepSpecifier"
-			columnDataType="varchar(5)" />
-	</changeSet>
-
-	<changeSet id="928" author="praveena.v">
-		<addPrimaryKey columnNames="stepSpecifier,finreference,stepno" constraintName="pk_finsteppolicydetail_temp"
-			tableName="finsteppolicydetail_temp" />
-	</changeSet>
-
-	<changeSet id="929" author="praveena.v">
-		<addColumn tableName="finsteppolicydetail">
-			<column name="stepstart" type="datetime">
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="930" author="praveena.v">
-		<addColumn tableName="finsteppolicydetail_temp">
-			<column name="stepstart" type="datetime">
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="931" author="praveena.v">
-		<addColumn tableName="WIFFinStepPolicyDetail">
-			<column name="stepstart" type="datetime">
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="932" author="praveena.v">
-		<addColumn tableName="WIFFinStepPolicyDetail_temp">
-			<column name="stepstart" type="datetime">
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="933" author="praveena.v">
-		<addColumn tableName="finsteppolicydetail">
-			<column name="stepend" type="datetime">
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="934" author="praveena.v">
-		<addColumn tableName="finsteppolicydetail_temp">
-			<column name="stepend" type="datetime">
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="935" author="praveena.v">
-		<addColumn tableName="WIFFinStepPolicyDetail">
-			<column name="stepend" type="datetime">
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="936" author="praveena.v">
-		<addColumn tableName="WIFFinStepPolicyDetail_temp">
-			<column name="stepend" type="datetime">
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="937" author="praveena.v">
-		<addColumn tableName="WIFFinStepPolicyDetail">
-			<column name="stepSpecifier" type="varchar(5)">
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="938" author="praveena.v">
-		<addColumn tableName="WIFFinStepPolicyDetail_temp">
-			<column name="stepSpecifier" type="varchar(5)">
-			</column>
-		</addColumn>
-	</changeSet>
-
 	<changeSet id="293" author="Swetha.s">
 		<comment>PSD#165575</comment>
 		<createTable tableName="cibil_member_details_bk">
@@ -24768,290 +24296,6 @@ UNION ALL
 		<sql>
 			<![CDATA[
 				UPDATE ERRORDETAILS SET MESSAGE = 'Number of {0} must be equal to entered Number of {1}' WHERE CODE = '30542';
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="552" author="lakshmi.n">
-		<comment>TK#853</comment>
-		<sql>
-			<![CDATA[
-				DELETE from ERRORDETAILS WHERE code='STP004';
-				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES('STP004', 'EN', 'E', 'Auto Calculate for {0} sould be false', '', 'Approved', '', '', '', '', '', 0, CURRENT_TIMESTAMP, 1000, 0);
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="553" author="lakshmi.n">
-		<comment>TK#853</comment>
-		<sql>
-			<![CDATA[
-				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'FinStepPolicyDetailDialog_AutoCal';
-				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE,VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(RIGHTID)+1 from SecRights), 3, 'FinStepPolicyDetailDialog_AutoCal', 'FinStepPolicyDetailDialog', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="TK#853.1" author="lakshmi.n">
-		<addColumn tableName="FINANCEMAIN_TEMP">
-			<column name="NoOfGrcSteps" type="int" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="TK#853.1.1" author="lakshmi.n">
-		<sql>
-			<![CDATA[
-				UPDATE FINANCEMAIN_TEMP SET NoOfGrcSteps = 0;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="TK#853.1.2" author="lakshmi.n" dbms="postgresql, oracle">
-		<addDefaultValue columnName="NoOfGrcSteps" tableName="FINANCEMAIN_TEMP" defaultValue="0" />
-	</changeSet>
-
-	<changeSet id="TK#853.1.2" author="lakshmi.n" dbms="mssql">
-		<sql>
-			<![CDATA[
-				ALTER TABLE FINANCEMAIN_TEMP ADD CONSTRAINT DF_FM_T_NoOfGrcSteps DEFAULT 0 FOR NoOfGrcSteps;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="TK#853.2" author="lakshmi.n">
-		<addColumn tableName="FINANCEMAIN">
-			<column name="NoOfGrcSteps" type="int" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="TK#853.2.1" author="lakshmi.n">
-		<sql>
-			<![CDATA[
-				UPDATE FINANCEMAIN SET NoOfGrcSteps = 0;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="TK#853.2.2" author="lakshmi.n" dbms="postgresql, oracle">
-		<addDefaultValue columnName="NoOfGrcSteps" tableName="FINANCEMAIN" defaultValue="0" />
-	</changeSet>
-
-	<changeSet id="TK#853.2.2" author="lakshmi.n" dbms="mssql">
-		<sql>
-			<![CDATA[
-				ALTER TABLE FINANCEMAIN ADD CONSTRAINT DF_FM_NoOfGrcSteps DEFAULT 0 FOR NoOfGrcSteps;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="TK#853.3" author="lakshmi.n">
-		<addColumn tableName="FINSTEPPOLICYDETAIL_TEMP">
-			<column name="AutoCal" type="smallint" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="TK#853.3.1" author="lakshmi.n">
-		<sql>
-			<![CDATA[
-				UPDATE FINSTEPPOLICYDETAIL_TEMP SET AutoCal = 0;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="TK#853.3.2" author="lakshmi.n" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AutoCal" tableName="FINSTEPPOLICYDETAIL_TEMP" defaultValue="0" />
-	</changeSet>
-
-	<changeSet id="TK#853.3.2" author="lakshmi.n" dbms="mssql">
-		<sql>
-			<![CDATA[
-				ALTER TABLE FINSTEPPOLICYDETAIL_TEMP ADD CONSTRAINT DF_FSPD_T_AutoCal DEFAULT 0 FOR AutoCal;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="TK#853.4" author="lakshmi.n">
-		<addColumn tableName="FINSTEPPOLICYDETAIL">
-			<column name="autocal" type="smallint" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="TK#853.4.1" author="lakshmi.n">
-		<sql>
-			<![CDATA[
-				UPDATE FINSTEPPOLICYDETAIL SET AutoCal = 0;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="TK#853.4.2" author="lakshmi.n" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AutoCal" tableName="FINSTEPPOLICYDETAIL" defaultValue="0" />
-	</changeSet>
-
-	<changeSet id="TK#853.4.2" author="lakshmi.n" dbms="mssql">
-		<sql>
-			<![CDATA[
-				ALTER TABLE FINSTEPPOLICYDETAIL ADD CONSTRAINT DF_FSPD_AutoCal DEFAULT 0 FOR AutoCal;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="101_pre" author="lakshmi.n" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'finsteppolicydetail_aview');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="101" author="lakshmi.n">
-		<createView viewName="FINSTEPPOLICYDETAIL_AVIEW" replaceIfExists="true">
-			<![CDATA[
-				SELECT T1.FINREFERENCE,
-					T1.STEPNO,
-					T1.TENORSPLITPERC,
-					T1.INSTALLMENTS,
-					T1.RATEMARGIN,
-					T1.EMISPLITPERC,
-					T1.STEPPEDEMI,
-					T1.VERSION,
-					T1.LASTMNTBY,
-					T1.LASTMNTON,
-					T1.RECORDSTATUS,
-					T1.ROLECODE,
-					T1.NEXTROLECODE,
-					T1.TASKID,
-					T1.NEXTTASKID,
-					T1.RECORDTYPE,
-					T1.WORKFLOWID,
-					T1.STEPSPECIFIER,
-					T1.STEPSTART,
-					T1.STEPEND,
-					T1.AUTOCAL
-				FROM FINSTEPPOLICYDETAIL T1
-			]]>
-		</createView>
-	</changeSet>
-
-	<changeSet id="101_post" author="lakshmi.n" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'finsteppolicydetail_aview');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="102_pre" author="lakshmi.n" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'finsteppolicydetail_tview');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="102" author="lakshmi.n">
-		<createView viewName="FINSTEPPOLICYDETAIL_TVIEW" replaceIfExists="true">
-			<![CDATA[
-				SELECT T1.FINREFERENCE,
-					T1.STEPNO,
-					T1.TENORSPLITPERC,
-					T1.INSTALLMENTS,
-					T1.RATEMARGIN,
-					T1.EMISPLITPERC,
-					T1.STEPPEDEMI,
-					T1.VERSION,
-					T1.LASTMNTBY,
-					T1.LASTMNTON,
-					T1.RECORDSTATUS,
-					T1.ROLECODE,
-					T1.NEXTROLECODE,
-					T1.TASKID,
-					T1.NEXTTASKID,
-					T1.RECORDTYPE,
-					T1.WORKFLOWID,
-					T1.STEPSPECIFIER,
-					T1.STEPSTART,
-					T1.STEPEND,
-					T1.AUTOCAL
-				FROM FINSTEPPOLICYDETAIL_TEMP T1
-			]]>
-		</createView>
-	</changeSet>
-
-	<changeSet id="102_post" author="lakshmi.n" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'finsteppolicydetail_tview');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="103_pre" author="lakshmi.n" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'finsteppolicydetail_view');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="103" author="lakshmi.n">
-		<createView viewName="FINSTEPPOLICYDETAIL_VIEW" replaceIfExists="true">
-			<![CDATA[
-				SELECT T1.FINREFERENCE,
-					T1.STEPNO,
-					T1.TENORSPLITPERC,
-					T1.INSTALLMENTS,
-					T1.RATEMARGIN,
-					T1.EMISPLITPERC,
-					T1.STEPPEDEMI,
-					T1.VERSION,
-					T1.LASTMNTBY,
-					T1.LASTMNTON,
-					T1.RECORDSTATUS,
-					T1.ROLECODE,
-					T1.NEXTROLECODE,
-					T1.TASKID,
-					T1.NEXTTASKID,
-					T1.RECORDTYPE,
-					T1.WORKFLOWID,
-					T1.STEPSPECIFIER,
-					T1.STEPSTART,
-					T1.STEPEND,
-					T1.AUTOCAL
-				FROM FINSTEPPOLICYDETAIL_TEMP T1
-				UNION ALL
-				SELECT T1.FINREFERENCE,
-					T1.STEPNO,
-					T1.TENORSPLITPERC,
-					T1.INSTALLMENTS,
-					T1.RATEMARGIN,
-					T1.EMISPLITPERC,
-					T1.STEPPEDEMI,
-					T1.VERSION,
-					T1.LASTMNTBY,
-					T1.LASTMNTON,
-					T1.RECORDSTATUS,
-					T1.ROLECODE,
-					T1.NEXTROLECODE,
-					T1.TASKID,
-					T1.NEXTTASKID,
-					T1.RECORDTYPE,
-					T1.WORKFLOWID,
-					T1.STEPSPECIFIER,
-					T1.STEPSTART,
-					T1.STEPEND,
-					T1.AUTOCAL
-				FROM FINSTEPPOLICYDETAIL T1
-				WHERE NOT (EXISTS ( SELECT 1 FROM FINSTEPPOLICYDETAIL_TEMP
-					WHERE FINSTEPPOLICYDETAIL_TEMP.FINREFERENCE = T1.FINREFERENCE AND FINSTEPPOLICYDETAIL_TEMP.STEPNO = T1.STEPNO))
-			]]>
-		</createView>
-	</changeSet>
-
-	<changeSet id="103_post" author="lakshmi.n" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'finsteppolicydetail_view');
 			]]>
 		</sql>
 	</changeSet>
@@ -27063,7 +26307,8 @@ UNION ALL
 					T1.RESTRUCTURE,
 					T1.CALCOFSTEPS,
 					T1.STEPSAPPLIEDFOR,
-					T1.NOOFGRCSTEPS
+					T1.NOOFGRCSTEPS,
+					T1.SCHDVERSION
 				FROM FINANCEMAIN_TEMP T1
 				INNER JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
 				INNER JOIN RMTFINANCETYPES T3 ON T3.FINTYPE = T1.FINTYPE
@@ -27403,7 +26648,8 @@ UNION ALL
 					T1.RESTRUCTURE,
 					T1.CALCOFSTEPS,
 					T1.STEPSAPPLIEDFOR,
-					T1.NOOFGRCSTEPS
+					T1.NOOFGRCSTEPS,
+					T1.SCHDVERSION
 				FROM FINANCEMAIN T1
 				JOIN RMTFINANCETYPES T7 ON T1.FINTYPE = T7.FINTYPE 
 				LEFT JOIN RMTBRANCHES T12 ON T1.FINBRANCH  = T12.BRANCHCODE 
@@ -27756,7 +27002,8 @@ UNION ALL
 					T1.RESTRUCTURE,
 					T1.CALCOFSTEPS,
 					T1.STEPSAPPLIEDFOR,
-					T1.NOOFGRCSTEPS
+					T1.NOOFGRCSTEPS,
+					T1.SCHDVERSION
 				FROM FINANCEMAIN_TEMP T1
 				JOIN RMTFINANCETYPES T7 ON T1.FINTYPE  = T7.FINTYPE 
 				LEFT JOIN RMTBRANCHES T12 ON T1.FINBRANCH  = T12.BRANCHCODE 
@@ -28086,7 +27333,8 @@ UNION ALL
 					T1.RESTRUCTURE,
 					T1.CALCOFSTEPS,
 					T1.STEPSAPPLIEDFOR,
-					T1.NOOFGRCSTEPS
+					T1.NOOFGRCSTEPS,
+					T1.SCHDVERSION
 				FROM FINANCEMAIN T1
 				JOIN RMTFINANCETYPES T7 ON T1.FINTYPE  = T7.FINTYPE 
 				LEFT JOIN RMTBRANCHES T12 ON T1.FINBRANCH  = T12.BRANCHCODE 
@@ -28105,9 +27353,8 @@ UNION ALL
 				LEFT JOIN LOANPURPOSES T39 ON T1.FINPURPOSE  = T39.LOANPURPOSECODE 
 				LEFT JOIN AMTVEHICLEDEALER T40 ON T1.CONNECTOR = T40.DEALERID
 				LEFT JOIN BUSINESS_VERTICAL BV ON BV.ID = T1.BUSINESSVERTICAL
-				WHERE NOT EXISTS (SELECT 1
-				FROM FINANCEMAIN_TEMP
-				WHERE FINANCEMAIN_TEMP.FINREFERENCE = T1.FINREFERENCE)
+				WHERE NOT EXISTS (SELECT 1 FROM FINANCEMAIN_TEMP
+					WHERE FINANCEMAIN_TEMP.FINREFERENCE = T1.FINREFERENCE)
 			]]>
 		</createView>
 	</changeSet>
@@ -28441,7 +27688,8 @@ UNION ALL
 					T1.RESTRUCTURE,
 					T1.CALCOFSTEPS,
 					T1.STEPSAPPLIEDFOR,
-					T1.NOOFGRCSTEPS
+					T1.NOOFGRCSTEPS,
+					T1.SCHDVERSION
 				FROM FINANCEMAIN_TEMP T1
 				JOIN RMTFINANCETYPES T7 ON T1.FINTYPE  = T7.FINTYPE 
 				LEFT JOIN RMTBRANCHES T12 ON T1.FINBRANCH  = T12.BRANCHCODE 
@@ -28512,7 +27760,8 @@ UNION ALL
 					T1.RESTRUCTURE,
 					T1.CALCOFSTEPS,
 					T1.STEPSAPPLIEDFOR,
-					T1.NOOFGRCSTEPS
+					T1.NOOFGRCSTEPS,
+					T1.SCHDVERSION
 				FROM FINANCEMAIN_TEMP T1
 				JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
 				JOIN RMTFINANCETYPES T3 ON T3.FINTYPE = T1.FINTYPE
@@ -29823,7 +29072,7 @@ UNION ALL
 		<createView viewName="REJECTFINANCEMAIN_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT F.FINREFERENCE,
-					T.FINCATEGORY AS LOVDESCPRODUCTCODENAME,
+					T.FINCATEGORY LOVDESCPRODUCTCODENAME,
 				    F.FINTYPE,
 				    F.FINBRANCH,
 				    F.FINSTARTDATE,
@@ -29831,17 +29080,17 @@ UNION ALL
 				    F.NUMBEROFTERMS,
 				    F.FINCCY,
 				    F.FINAMOUNT,
-					(((F.FINAMOUNT - F.DOWNPAYMENT) + F.FEECHARGEAMT) + F.INSURANCEAMT) AS FINANCINGAMOUNT,
+					(((F.FINAMOUNT - F.DOWNPAYMENT) + F.FEECHARGEAMT) + F.INSURANCEAMT) FINANCINGAMOUNT,
 				    F.FEECHARGEAMT,
 				    F.INSURANCEAMT,
-					((((F.FINAMOUNT - F.DOWNPAYMENT) + F.FEECHARGEAMT) + F.INSURANCEAMT) - F.FINREPAYMENTAMOUNT) AS CURFINAMOUNT,
+					((((F.FINAMOUNT - F.DOWNPAYMENT) + F.FEECHARGEAMT) + F.INSURANCEAMT) - F.FINREPAYMENTAMOUNT) CURFINAMOUNT,
 				    F.DOWNPAYMENT,
 				    F.FINCURRASSETVALUE,
 				    F.FINASSETVALUE,
 				    F.ALLOWDRAWINGPOWER,
 				    F.PROMOTIONSEQID,
 				    F.SANBSDSCHDLE,
-					C.CUSTCIF AS LOVDESCCUSTCIF,
+					C.CUSTCIF LOVDESCCUSTCIF,
 				    F.SVAMOUNT,
 				    F.CBAMOUNT,
 				    F.FINISRATERVWATGRCEND,
@@ -29867,10 +29116,13 @@ UNION ALL
 					F.ASMNAME,
 					F.TDSTYPE,
 					F.WRITEOFFLOAN,
-					F.RESTRUCTURE					
-			    FROM ((REJECTFINANCEMAIN F
-				LEFT JOIN CUSTOMERS C ON ((F.CUSTID = C.CUSTID)))
-				LEFT JOIN RMTFINANCETYPES T ON (((F.FINTYPE) = (T.FINTYPE))))				 
+					F.RESTRUCTURE,
+					F.CALCOFSTEPS,
+					F.STEPSAPPLIEDFOR,
+					F.NOOFGRCSTEPS
+			    FROM REJECTFINANCEMAIN F
+				LEFT JOIN CUSTOMERS C ON F.CUSTID = C.CUSTID
+				LEFT JOIN RMTFINANCETYPES T ON F.FINTYPE = T.FINTYPE
 			 ]]>
 		</createView>
 	</changeSet>
@@ -29891,7 +29143,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="WFMV_1" author="Gopal.p`">
+	<changeSet id="WFMV_1" author="Gopal.p">
 		<createView viewName="WIFFINANCEMAIN_AVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINREFERENCE,
@@ -30078,7 +29330,10 @@ UNION ALL
 					T1.ENDGRCPERIODAFTRFULLDISB,
 					T1.AUTOINCGRCENDDATE,
 					T1.WRITEOFFLOAN,
-					T1.RESTRUCTURE
+					T1.RESTRUCTURE,
+					T1.CALCOFSTEPS,
+					T1.STEPSAPPLIEDFOR,
+					T1.NOOFGRCSTEPS
 				FROM WIFFINANCEMAIN T1
 				LEFT JOIN WIFINDICATIVETERMDETAIL_TEMP T14 ON T14.FINREFERENCE = T1.FINREFERENCE
 				LEFT JOIN CUSTOMERS T15 ON T15.CUSTID = T1.CUSTID
@@ -30295,7 +29550,10 @@ UNION ALL
 					T1.ENDGRCPERIODAFTRFULLDISB,
 					T1.AUTOINCGRCENDDATE,
 					T1.WRITEOFFLOAN,
-					T1.RESTRUCTURE
+					T1.RESTRUCTURE,
+					T1.CALCOFSTEPS,
+					T1.STEPSAPPLIEDFOR,
+					T1.NOOFGRCSTEPS
 				FROM WIFFINANCEMAIN_TEMP T1
 				LEFT JOIN WIFINDICATIVETERMDETAIL_TEMP T14 ON T14.FINREFERENCE = T1.FINREFERENCE
 				LEFT JOIN CUSTOMERS T15 ON T15.CUSTID = T1.CUSTID
@@ -30490,7 +29748,10 @@ UNION ALL
 					T1.ENDGRCPERIODAFTRFULLDISB,
 					T1.AUTOINCGRCENDDATE,
 					T1.WRITEOFFLOAN,
-					T1.RESTRUCTURE
+					T1.RESTRUCTURE,
+					T1.CALCOFSTEPS,
+					T1.STEPSAPPLIEDFOR,
+					T1.NOOFGRCSTEPS
 				FROM WIFFINANCEMAIN T1
 				LEFT JOIN WIFINDICATIVETERMDETAIL_TEMP T14 ON T14.FINREFERENCE = T1.FINREFERENCE
 				LEFT JOIN CUSTOMERS T15 ON T15.CUSTID = T1.CUSTID
@@ -32237,9 +31498,12 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#171309.1" author="saikiran.n">
+	<changeSet id="PSD#171309.2" author="saikiran.n">
 		<sql>
 			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'BFSD_ORIGINATION_MAKER') and RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_CustomerDocumentDialog_btnUploadDoc');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'CUSTOMERDOCUMENT_MAKER') and RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_CustomerDocumentDialog_btnUploadDoc');
+				
 				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'BFSD_ORIGINATION_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'button_CustomerDocumentDialog_btnUploadDoc'), 1, 1, 10000, current_timestamp, 'Approved', '', '', '', '', '', 0);
 				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'CUSTOMERDOCUMENT_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'button_CustomerDocumentDialog_btnUploadDoc'), 1, 1, 10000, current_timestamp, 'Approved', '', '', '', '', '', 0);
 			]]>
@@ -32903,7 +32167,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#173275" author="kavya.n">
+	<changeSet id="PSD#173275.1" author="kavya.n">
 		<sql>
         	<![CDATA[
 				DELETE FROM REPORTLIST WHERE CODE = 'UploadHeader';
@@ -33516,5 +32780,684 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#168870.3_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'customers_aeview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#168870.3" author="Gopal.p">
+	<comment>Nationality Description is added in Customer Shareholder details</comment>
+		<createView viewName="CUSTOMERS_AEVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.CUSTID,
+				   T1.CUSTCIF,
+				   T1.CUSTCOREBANK,
+				   T1.CUSTCTGCODE,
+				   T1.CUSTTYPECODE,
+				   T1.CUSTSHRTNAME,
+				   T1.CUSTFNAME,
+				   T1.CUSTLNAME,
+				   T1.CUSTDOB,
+				   T1.CUSTNATIONALITY,
+				   T1.CUSTSECTOR,
+				   T1.CUSTSUBSECTOR,
+				   T2.PHONENUMBER,
+				   T2.PHONEAREACODE,
+				   T2.PHONECOUNTRYCODE,
+				   T1.CUSTCRCPR,
+				   T1.CUSTPASSPORTNO,
+				   T3.CUSTEMAIL EMAILID,
+				   T1.CUSTADDLVAR82,
+				   T4.CUSTTYPEDESC LOVDESCCUSTTYPECODENAME,
+				   T1.CUSTBASECCY,
+				   T4.CUSTTYPECTG LOVDESCCUSTCTGTYPE,
+				   T5.CUSTCTGDESC LOVDESCCUSTCTGCODENAME,
+				   T6.CUSTSTSDESCRIPTION LOVDESCCUSTSTSNAME,
+				   T1.CUSTDFTBRANCH,
+				   T7.BRANCHDESC LOVDESCCUSTDFTBRANCHNAME,
+				   T1.SUBCATEGORY,
+				   T1.CASTEID,
+				   T1.RELIGIONID,
+				   T8.CASTECODE,
+				   T8.CASTEDESC,
+				   T9.RELIGIONCODE,
+				   T9.RELIGIONDESC,
+				   COALESCE(T32.ROLEDESC, ${add.schema}FN_GET_ROLEDESC(T1.NEXTROLECODE)) LOVDESCREQUESTSTAGE,
+				   T1.MARGINDEVIATION,
+				   T1.OTHERCASTE,
+				   T1.OTHERRELIGION,
+				   T1.NATUREOFBUSINESS,
+				   T1.ENTITYTYPE,
+				   T1.CUSTRESIDENTIALSTS,
+				   T1.QUALIFICATION,
+				   T1.CUSTFLAG,
+				   T1.VIP,
+				   T12.NATIONALITYDESC LOVDESCCUSTNATIONALITYNAME
+				FROM CUSTOMERS T1
+				LEFT JOIN CUSTOMERPHONENUMBERS T2 ON T1.CUSTID = T2.PHONECUSTID AND T2.PHONETYPEPRIORITY = 5
+				LEFT JOIN CUSTOMEREMAILS T3 ON T1.CUSTID = T3.CUSTID AND T3.CUSTEMAILTYPECODE  = 'OFFICE' 
+				LEFT JOIN RMTCUSTTYPES T4 ON T1.CUSTTYPECODE  = T4.CUSTTYPECODE
+				LEFT JOIN BMTCUSTCATEGORIES T5 ON T1.CUSTCTGCODE  = T5.CUSTCTGCODE
+				LEFT JOIN BMTCUSTSTATUSCODES T6 ON T1.CUSTSTS  = T6.CUSTSTSCODE
+				LEFT JOIN RMTBRANCHES T7 ON T1.CUSTDFTBRANCH  = T7.BRANCHCODE
+				LEFT JOIN CASTE T8 ON T1.CASTEID = T8.CASTEID
+				LEFT JOIN RELIGION T9 ON T1.RELIGIONID = T9.RELIGIONID
+				LEFT JOIN SECROLES T32 ON T1.NEXTROLECODE  = T32.ROLECD
+				LEFT JOIN BMTNATIONALITYCODES T12 ON T1.CUSTNATIONALITY = T12.NATIONALITYCODE
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="PSD#168870.3_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'customers_aeview');
+			]]>
+		</sql>
+	</changeSet>	
+	
+	<changeSet id="ST#2031.82_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'lmtfinanceworkflowdef_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#2031.82" author="Gopal.p">
+	<comment>Nationality Description is added in Customer Shareholder details</comment>
+		<createView viewName="LMTFINANCEWORKFLOWDEF_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINTYPE,
+					T1.FINTYPE TYPECODE,
+					T2.FINTYPEDESC LOVDESCFINTYPENAME,
+					T6.COLLATERALDESC,
+					T7.PRODUCTDESC VASPRODUCTDESC,
+					T8.DESCRIPTION COMMITMENTTYPEDESC,
+					T1.FINTYPE LOVDESCPROMOTIONCODE,
+					T2.FINTYPEDESC LOVDESCPROMOTIONNAME,
+					T4.FACILITYDESC LOVDESCFACILITYTYPENAME,
+					T1.SCREENCODE,
+					T1.WORKFLOWTYPE,
+					T3.WORKFLOWDESC LOVDESCWORKFLOWTYPENAME,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T3.WORKFLOWROLES LOVDESCWORKFLOWROLESNAME,
+					T2.FINCATEGORY LOVDESCPRODUCTCODENAME,
+					T2.FINDIVISION LOVDESCFINDIVISIONNAME,
+					T3.FIRSTTASKOWNER LOVDESCFIRSTTASKOWNER,
+					T1.MODULENAME,
+					COALESCE(t2.FINISACTIVE, T6.ACTIVE, T7.ACTIVE, T8.ACTIVE) FINISACTIVE,
+					COALESCE(t2.PRODUCT, '') LOVDESCPRODUCTNAME,
+					T2.LOVDESCPROMOFINTYPEDESC,
+					T2.FINASSETTYPE,
+					T2.STARTDATE,
+					T2.ENDDATE,
+					T1.FINEVENT,
+					T5.PRODUCTCATEGORY,
+					COALESCE(t9.REFERENCEID, 0::BIGINT) REFERENCEID
+				FROM LMTFINANCEWORKFLOWDEF T1
+				LEFT JOIN RMTFINANCETYPES_AVIEW T2 ON T1.FINTYPE = T2.FINTYPE
+				JOIN WORKFLOWDETAILS T3 ON T1.WORKFLOWTYPE = T3.WORKFLOWTYPE AND T3.WORKFLOWACTIVE = 1
+				LEFT JOIN CAFFACILITYTYPES T4 ON T1.FINTYPE = T4.FACILITYTYPE
+				LEFT JOIN BMTPRODUCT T5 ON T2.FINCATEGORY = T5.PRODUCTCODE
+				LEFT JOIN COLLATERALSTRUCTURE T6 ON T1.FINTYPE = T6.COLLATERALTYPE
+				LEFT JOIN VASSTRUCTURE T7 ON T1.FINTYPE = T7.PRODUCTCODE
+				LEFT JOIN COMMITMENTTYPE T8 ON T1.FINTYPE = T8.TYPECODE
+				LEFT JOIN PROMOTIONS T9 ON T9.PROMOTIONCODE = T1.FINTYPE
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#2031.82_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'lmtfinanceworkflowdef_aview');
+			]]>
+		</sql>
+	</changeSet>	
+	
+	<changeSet id="ST#2031.83_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'verification_fi_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#2031.83" author="Gopal.p">
+		<createView viewName="VERIFICATION_FI_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FI.VERIFICATIONID,
+					FLV.FINTYPE,
+					FI.AGENTCODE,
+					FI.AGENTNAME,
+					FI.TYPE,
+					FI.VERIFIEDDATE,
+					FI.STATUS,
+					FI.REASON,
+					R1.CODE REASONCODE,
+					R1.DESCRIPTION REASONDESC,
+					FI.SUMMARYREMARKS,
+					FI.VERSION,
+					FI.LASTMNTBY,
+					FI.LASTMNTON,
+					FI.RECORDSTATUS,
+					FI.ROLECODE,
+					FI.NEXTROLECODE,
+					FI.TASKID,
+					FI.NEXTTASKID,
+					FI.RECORDTYPE,
+					FI.WORKFLOWID,
+					FI.ADDRESSTYPE,
+					C.CUSTSHRTNAME AS NAME,
+					FI.HOUSENUMBER,
+					FI.FLATNUMBER,
+					FI.STREET,
+					FI.ADDRESSLINE1,
+					FI.ADDRESSLINE2,
+					FI.ADDRESSLINE3,
+					FI.ADDRESSLINE4,
+					FI.ADDRESSLINE5,
+					FI.COUNTRY,
+					FI.PROVINCE,
+					FI.CITY,
+					FI.CONTACTNUMBER1,
+					FI.CONTACTNUMBER2,
+					FI.POBOX,
+					FI.ZIPCODE,
+					FI.OWNERSHIPSTATUS,
+					FI.YEARSATPRESENTADDRESS,
+					FI.PERSONMET,
+					FI.RELATIONSHIP,
+					R2.PRELATIONDESC LOVRELATIONDESC,
+					FI.CONTACTNUMBER,
+					FI.NEIGHBOURHOODFEEDBACK,
+					FI.LIVINGSTANDARD,
+					FI.NEGATIVECHECK,
+					FI.NOOFATTEMPTS,
+					FI.OBSERVATIONREMARKS,
+					C.CUSTCIF CIF,
+					V.CUSTID,
+					V.KEYREFERENCE,
+					V.CREATEDON,
+					V.AGENCY,
+					V.VERIFICATIONDATE,
+					A.DEALERNAME AGENCYNAME,
+					V.REINITID,
+					A.DEALERTYPE,
+					R1.REASONTYPECODE,
+					COUNTRY.COUNTRYDESC,
+					P.CPPROVINCENAME PROVINCEDESC,
+					CITY.PCCITYNAME CITYDESC
+				FROM VERIFICATION_FI_TEMP FI
+				JOIN VERIFICATIONS V ON V.ID = FI.VERIFICATIONID
+				LEFT JOIN AMTVEHICLEDEALER A ON A.DEALERID = V.AGENCY
+				JOIN BMTCOUNTRIES COUNTRY ON COUNTRY.COUNTRYCODE = FI.COUNTRY
+				JOIN RMTCOUNTRYVSPROVINCE P ON P.CPPROVINCE = FI.PROVINCE
+				JOIN RMTPROVINCEVSCITY CITY ON CITY.PCCITY = FI.CITY
+				LEFT JOIN CUSTOMERS C ON C.CUSTCIF = V.REFERENCE
+				LEFT JOIN REASONS_AVIEW R1 ON R1.ID = FI.REASON
+				LEFT JOIN BMTPRELATIONCODES R2 ON R2.PRELATIONCODE = FI.RELATIONSHIP
+				LEFT JOIN FINANCEMAIN_VIEW FLV ON FLV.FINREFERENCE = V.KEYREFERENCE
+				UNION ALL
+				SELECT FI.VERIFICATIONID,
+					FLV.FINTYPE,
+					FI.AGENTCODE,
+					FI.AGENTNAME,
+					FI.TYPE,
+					FI.VERIFIEDDATE,
+					FI.STATUS,
+					FI.REASON,
+					R1.CODE REASONCODE,
+					R1.DESCRIPTION REASONDESC,
+					FI.SUMMARYREMARKS,
+					FI.VERSION,
+					FI.LASTMNTBY,
+					FI.LASTMNTON,
+					FI.RECORDSTATUS,
+					FI.ROLECODE,
+					FI.NEXTROLECODE,
+					FI.TASKID,
+					FI.NEXTTASKID,
+					FI.RECORDTYPE,
+					FI.WORKFLOWID,
+					FI.ADDRESSTYPE,
+					C.CUSTSHRTNAME AS NAME,
+					FI.HOUSENUMBER,
+					FI.FLATNUMBER,
+					FI.STREET,
+					FI.ADDRESSLINE1,
+					FI.ADDRESSLINE2,
+					FI.ADDRESSLINE3,
+					FI.ADDRESSLINE4,
+					FI.ADDRESSLINE5,
+					FI.COUNTRY,
+					FI.PROVINCE,
+					FI.CITY,
+					FI.CONTACTNUMBER1,
+					FI.CONTACTNUMBER2,
+					FI.POBOX,
+					FI.ZIPCODE,
+					FI.OWNERSHIPSTATUS,
+					FI.YEARSATPRESENTADDRESS,
+					FI.PERSONMET,
+					FI.RELATIONSHIP,
+					R2.PRELATIONDESC LOVRELATIONDESC,
+					FI.CONTACTNUMBER,
+					FI.NEIGHBOURHOODFEEDBACK,
+					FI.LIVINGSTANDARD,
+					FI.NEGATIVECHECK,
+					FI.NOOFATTEMPTS,
+					FI.OBSERVATIONREMARKS,
+					C.CUSTCIF CIF,
+					V.CUSTID,
+					V.KEYREFERENCE,
+					V.CREATEDON,
+					V.AGENCY,
+					V.VERIFICATIONDATE,
+					A.DEALERNAME AGENCYNAME,
+					V.REINITID,
+					A.DEALERTYPE,
+					R1.REASONTYPECODE,
+					COUNTRY.COUNTRYDESC,
+					P.CPPROVINCENAME PROVINCEDESC,
+					CITY.PCCITYNAME CITYDESC
+				FROM VERIFICATION_FI FI
+				JOIN VERIFICATIONS V ON V.ID = FI.VERIFICATIONID
+				LEFT JOIN AMTVEHICLEDEALER A ON A.DEALERID = V.AGENCY
+				JOIN BMTCOUNTRIES COUNTRY ON COUNTRY.COUNTRYCODE = FI.COUNTRY
+				JOIN RMTCOUNTRYVSPROVINCE P ON P.CPPROVINCE = FI.PROVINCE
+				JOIN RMTPROVINCEVSCITY CITY ON CITY.PCCITY = FI.CITY
+				LEFT JOIN CUSTOMERS C ON C.CUSTCIF = V.REFERENCE
+				LEFT JOIN REASONS_AVIEW R1 ON R1.ID = FI.REASON
+				LEFT JOIN BMTPRELATIONCODES R2 ON R2.PRELATIONCODE = FI.RELATIONSHIP
+				LEFT JOIN FINANCEMAIN_VIEW FLV ON FLV.FINREFERENCE = V.KEYREFERENCE
+				WHERE NOT (EXISTS ( SELECT 1 FROM VERIFICATION_FI_TEMP
+					WHERE VERIFICATION_FI_TEMP.VERIFICATIONID = FI.VERIFICATIONID))
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#2031.83_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'verification_fi_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#2031.84_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'pmay_view');
+			]]>
+		</sql>
+	</changeSet>
 
+	<changeSet id="ST#2031.84" author="Gopal.p">
+		<createView viewName="PMAY_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+					T1.NOTIFIEDTOWN,
+					T1.TOWNCODE,
+					T4.TOWNNAME,
+					T1.CENTRALASSISTANCE,
+					T1.OWNEDHOUSE,
+					T1.CARPETAREA,
+					T1.HOUSEHOLDANNINCOME,
+					T1.BALANCETRANSFER,
+					T1.PRIMARYAPPLICANT,
+					T1.TRANSACTIONFINTYPE,
+					T1.PRODUCT,
+					T1.PRPRTYOWNEDBYWOMEN,
+					T1.WATERSUPPLY,
+					T1.DRINAGE,
+					T1.ELECTRICITY,
+					T1.PMAYCATEGORY,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T3.CUSTCIF,
+					T3.CUSTSHRTNAME,
+					T2.FINTYPE
+				FROM PMAY_TEMP T1
+				INNER JOIN FINANCEMAIN_VIEW T2 ON T1.FINREFERENCE =T2.FINREFERENCE
+				INNER JOIN CUSTOMERS T3 ON T2.CUSTID =T3.CUSTID
+				LEFT JOIN TOWNCODE T4 ON T1.TOWNCODE = T4.TOWNCODE
+				WHERE T2.FINISACTIVE = 1
+       			UNION ALL 
+       			SELECT T1.FINREFERENCE,
+					T1.NOTIFIEDTOWN,
+					T1.TOWNCODE,
+					T4.TOWNNAME,
+					T1.CENTRALASSISTANCE,
+					T1.OWNEDHOUSE,
+					T1.CARPETAREA,
+					T1.HOUSEHOLDANNINCOME,
+					T1.BALANCETRANSFER,
+					T1.PRIMARYAPPLICANT,
+					T1.TRANSACTIONFINTYPE,
+					T1.PRODUCT,
+					T1.PRPRTYOWNEDBYWOMEN,
+					T1.WATERSUPPLY,
+					T1.DRINAGE,
+					T1.ELECTRICITY,
+					T1.PMAYCATEGORY,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T3.CUSTCIF,
+					T3.CUSTSHRTNAME,
+					T2.FINTYPE
+				FROM PMAY T1
+      			INNER JOIN FINANCEMAIN_VIEW T2 ON T1.FINREFERENCE = T2.FINREFERENCE
+				INNER JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
+				LEFT JOIN TOWNCODE T4 ON T1.TOWNCODE = T4.TOWNCODE
+      			WHERE NOT EXISTS (SELECT 1 FROM PMAY_TEMP WHERE FINREFERENCE = T2.FINREFERENCE) AND T2.FINISACTIVE = 1
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#2031.84_post" author="rajesh.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'pmay_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+		<changeSet id="ST#2031.85_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'legaldetails_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2031.85" author="Gopal.p">
+		<createView viewName="LEGALDETAILS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.LEGALID,
+					T1.LEGALREFERENCE,
+					T1.LOANREFERENCE,
+					T1.COLLATERALREFERENCE,
+					T1.BRANCH,
+					T1.LEGALDATE,
+					T1.SCHEDULELEVELAREA,
+					T1.LEGALDECISION,
+					T1.LEGALREMARKS,
+					T1.PROPERTYDETAILMODT,
+					T1.PROPERTYDETAILECDATE,
+					T1.ECPROPERTYOWNERNAME,
+					T1.ACTIVE,
+					T1.MODULE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.BRANCHDESC,
+					T3.FINBRANCH,
+					T4.FINDIVISION
+				FROM LEGALDETAILS_TEMP T1
+				JOIN RMTBRANCHES T2 ON T1.BRANCH = T2.BRANCHCODE
+				JOIN FINANCEMAIN_TEMP T3 ON T3.FINREFERENCE = T1.LOANREFERENCE
+				JOIN RMTFINANCETYPES T4 ON T4.FINTYPE = T3.FINTYPE
+				UNION ALL
+				SELECT T1.LEGALID,
+					T1.LEGALREFERENCE,
+					T1.LOANREFERENCE,
+					T1.COLLATERALREFERENCE,
+					T1.BRANCH,
+					T1.LEGALDATE,
+					T1.SCHEDULELEVELAREA,
+					T1.LEGALDECISION,
+					T1.LEGALREMARKS,
+					T1.PROPERTYDETAILMODT,
+					T1.PROPERTYDETAILECDATE,
+					T1.ECPROPERTYOWNERNAME,
+					T1.ACTIVE,
+					T1.MODULE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.BRANCHDESC,
+					T3.FINBRANCH,
+					T4.FINDIVISION
+				FROM LEGALDETAILS T1
+				JOIN RMTBRANCHES T2 ON T1.BRANCH = T2.BRANCHCODE
+				JOIN FINANCEMAIN_VIEW T3 ON T3.FINREFERENCE = T1.LOANREFERENCE
+				JOIN RMTFINANCETYPES T4 ON T4.FINTYPE = T3.FINTYPE
+				WHERE NOT (EXISTS ( SELECT 1 FROM LEGALDETAILS_TEMP
+					WHERE LEGALDETAILS_TEMP.LEGALID = T1.LEGALID))
+		  ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#2031.85_post" author="rajesh.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'legaldetails_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#2031.86_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeerefundheader_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2031.86" author="Gopal.p">
+		<createView viewName="FINFEEREFUNDHEADER_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.HEADERID,
+					T1.FINREFERENCE,
+					T1.LINKEDTRANID,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.FINTYPE,
+					T2.FINBRANCH,
+					T2.CUSTID,
+					T2.FINCCY,
+					T3.CUSTCIF LOVDESCCUSTCIF,
+					T3.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
+					T4.FINTYPEDESC,
+					T5.BRANCHDESC,
+					T2.TDSAPPLICABLE FINTDSAPPLICABLE
+				FROM FINFEEREFUNDHEADER_TEMP T1
+				LEFT JOIN FINANCEMAIN_VIEW T2 ON T2.FINREFERENCE =T1.FINREFERENCE
+				LEFT JOIN CUSTOMERS T3 ON T3.CUSTID = T2.CUSTID
+				LEFT JOIN RMTFINANCETYPES T4 ON T4.FINTYPE = T2.FINTYPE
+				LEFT JOIN RMTBRANCHES T5 ON T2.FINBRANCH = T5.BRANCHCODE
+				UNION ALL
+					SELECT T1.HEADERID,
+					T1.FINREFERENCE,
+					T1.LINKEDTRANID,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.FINTYPE,
+					T2.FINBRANCH,
+					T2.CUSTID,
+					T2.FINCCY,
+					T3.CUSTCIF LOVDESCCUSTCIF,
+					T3.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
+					T4.FINTYPEDESC,
+					T5.BRANCHDESC,
+					T2.TDSAPPLICABLE FINTDSAPPLICABLE
+				FROM FINFEEREFUNDHEADER T1
+				LEFT JOIN FINANCEMAIN_VIEW T2 ON T2.FINREFERENCE = T1.FINREFERENCE
+				LEFT JOIN CUSTOMERS T3 ON T3.CUSTID = T2.CUSTID
+				LEFT JOIN RMTFINANCETYPES T4 ON T4.FINTYPE = T2.FINTYPE
+				LEFT JOIN RMTBRANCHES T5 ON T2.FINBRANCH = T5.BRANCHCODE
+				WHERE NOT EXISTS (SELECT 1 FROM FINFEEREFUNDHEADER_TEMP WHERE HEADERID = T1.HEADERID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#2031.86_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeerefundheader_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#2031.87_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeerefundheader_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#2031.87" author="Gopal.p">
+		<comment>Changed mapping from RejectedFinance to FinanceMain_view</comment>
+		<createView viewName="FINFEEREFUNDHEADER_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.HEADERID, 
+					T1.FINREFERENCE, 
+					T1.LINKEDTRANID,
+					T1.VERSION, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.FINTYPE,
+					T2.FINBRANCH,
+					T2.CUSTID,
+					T2.FINCCY,
+					T3.CUSTCIF LOVDESCCUSTCIF,
+					T3.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
+					T4.FINTYPEDESC,
+					T5.BRANCHDESC
+				FROM FINFEEREFUNDHEADER_TEMP T1
+				LEFT JOIN FINANCEMAIN_VIEW T2 ON T2.FINREFERENCE = T1.FINREFERENCE
+				LEFT JOIN CUSTOMERS T3 ON T3.CUSTID = T2.CUSTID
+				LEFT JOIN RMTFINANCETYPES T4 ON T4.FINTYPE = T2.FINTYPE
+				LEFT JOIN RMTBRANCHES T5 ON T2.FINBRANCH = T5.BRANCHCODE
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#2031.87_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeerefundheader_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#2031.88_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeerefundheader_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#2031.88" author="Gopal.p">
+		<comment>Changed mapping from RejectedFinance to FinanceMain_view</comment>
+		<createView viewName="FINFEEREFUNDHEADER_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.HEADERID, 
+					T1.FINREFERENCE, 
+					T1.LINKEDTRANID,
+					T1.VERSION, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.FINTYPE,
+					T2.FINBRANCH,
+					T2.CUSTID,
+					T2.FINCCY,
+					T3.CUSTCIF LOVDESCCUSTCIF,
+					T3.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
+					T4.FINTYPEDESC, 
+					T5.BRANCHDESC
+				FROM FINFEEREFUNDHEADER T1
+				LEFT JOIN FINANCEMAIN_VIEW T2 ON T2.FINREFERENCE =T1.FINREFERENCE
+				LEFT JOIN CUSTOMERS T3 ON T3.CUSTID = T2.CUSTID
+				LEFT JOIN RMTFINANCETYPES T4 ON T4.FINTYPE = T2.FINTYPE
+				LEFT JOIN RMTBRANCHES T5 ON T2.FINBRANCH = T5.BRANCHCODE
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#2031.88_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeerefundheader_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

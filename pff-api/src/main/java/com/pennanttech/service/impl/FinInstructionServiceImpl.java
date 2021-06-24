@@ -1379,9 +1379,9 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
 			return response;
-		} catch (ServiceException se) {
-			logger.error(Literal.EXCEPTION, se);
-			throw new ServiceException(se.getFaultDetails());
+		} catch (ServiceException e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new ServiceException(e.getFaultDetails());
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
@@ -1404,9 +1404,9 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
 			return response;
-		} catch (ServiceException se) {
-			logger.error(Literal.EXCEPTION, se);
-			throw new ServiceException(se.getFaultDetails());
+		} catch (ServiceException e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new ServiceException(e.getFaultDetails());
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);

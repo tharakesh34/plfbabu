@@ -203,6 +203,7 @@ public class ImplementationConstants {
 		FRQ_15DAYS_REQ = getValueAsBoolean(extensions, "FRQ_15DAYS_REQ", false);
 		NON_FRQ_CAPITALISATION = getValueAsBoolean(extensions, "NON_FRQ_CAPITALISATION", false);
 		ALW_DOWNPAY_IN_LOANENQ_AND_SOA = getValueAsBoolean(extensions, "ALW_DOWNPAY_IN_LOANENQ_AND_SOA", false);
+		FA_CANCEL_CHEQUE_AUTO_OPEN = getValueAsBoolean(extensions, "FA_CANCEL_CHEQUE_AUTO_OPEN", false);
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
 		 * ALLOW_TV_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_TV_INITIATION_LOS", true);
@@ -446,6 +447,8 @@ public class ImplementationConstants {
 	public static boolean FRQ_15DAYS_REQ;
 	public static boolean NON_FRQ_CAPITALISATION;
 	public static boolean ALW_DOWNPAY_IN_LOANENQ_AND_SOA;
+	/* Documents tab is automatically open in FinAdvancePayments Screen when value is "true" */
+	public static boolean FA_CANCEL_CHEQUE_AUTO_OPEN;
 
 	public static String REPAY_HIERARCHY_METHOD;
 	public static String REPAY_INTEREST_HIERARCHY;

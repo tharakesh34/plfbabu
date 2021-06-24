@@ -323,8 +323,13 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 
 			logger.info("Initiating Import Process For the HeaderID{}", ruh.getId());
 			new Thread(() -> {
-				receiptUploadHeaderService.initiateImport(ruh, workbook, ReceiptUploadHeaderListCtrl.importStatusMap,
-						fileImport);
+				try {
+					receiptUploadHeaderService.initiateImport(ruh, workbook,
+							ReceiptUploadHeaderListCtrl.importStatusMap, fileImport);
+				} catch (Exception e) {
+					receiptUploadHeaderService.updateImportFail(ruh);
+				}
+
 			}).start();
 
 			ReceiptUploadHeaderListCtrl.importStatusMap.put(ruh.getId(), 0);

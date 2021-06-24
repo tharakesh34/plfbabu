@@ -2660,7 +2660,7 @@ public class ReceiptCalculator implements Serializable {
 				}
 			} else if (repayTo == RepayConstants.REPAY_PROFIT) {
 				receiptData = intApportion(receiptData);
-				// common issue 16
+				// common issue 12
 				if (receiptData.isAdjSchedule() && receiptPurposeCtg == 2 && rch.getPftIdx() != -1
 						&& rch.getFutPftIdx() != -1 && rch.getAllocations().get(rch.getPftIdx()).getPaidAvailable()
 								.compareTo(BigDecimal.ZERO) <= 0) {
@@ -2959,6 +2959,10 @@ public class ReceiptCalculator implements Serializable {
 				if (curSchd.isTDSApplicable()) {
 					BigDecimal pftNow = getNetOffTDS(finScheduleData.getFinanceMain(), balAmount);
 					tdsPaidNow = pftNow.subtract(balAmount);
+
+					if (tdsPaidNow.compareTo(BigDecimal.ZERO) <= 0) {
+						tdsPaidNow = BigDecimal.ZERO;
+					}
 				}
 			}
 		}

@@ -1,44 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerExtLiabilityDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerExtLiabilityDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 *
+ * * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 19-04-2018       Vinay					 0.2        As per Profectus documnet 			*
- * 														below fields are added 				* 	
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * 19-04-2018 Vinay 0.2 As per Profectus documnet * below fields are added * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.customermasters.customer;
@@ -606,8 +587,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -628,8 +608,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCustomerExtLiability
-	 *            CustomerExtLiability
+	 * @param aCustomerExtLiability CustomerExtLiability
 	 */
 	public void doWriteBeanToComponents(CustomerExtLiability liability) {
 		logger.debug("Entering");
@@ -723,7 +702,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		}
 		this.repayFromAccNo.setMaxlength(maxAccNoLength);
 
-		//to calculate derived emi
+		// to calculate derived emi
 		if (!liability.isNewRecord()) {
 			deriveEmi();
 		}
@@ -1376,7 +1355,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			if (isNewCustomer()) {
 				this.btnCancel.setVisible(false);
 				this.btnSearchPRCustid.setVisible(false);
-				//this.emiFoir.setVisible(!isReadOnly("CustomerExtLiabilityDialog_EMIFoir"));
+				// this.emiFoir.setVisible(!isReadOnly("CustomerExtLiabilityDialog_EMIFoir"));
 			} else {
 				this.btnSearchPRCustid.setVisible(true);
 			}
@@ -1820,8 +1799,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1839,8 +1817,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -1925,7 +1902,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 
 	public void onChange$noOfInstallmentMonths(Event event) {
 		logger.debug(Literal.ENTERING);
-		//onChangeInstallmentList();
+		// onChangeInstallmentList();
 		doFillInstallmentDetails(true);
 		logger.debug(Literal.LEAVING);
 	}
@@ -1936,9 +1913,14 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 				listBoxInstallmentDetails.getItems().clear();
 				int noOfmonths = 0;
 
-				noOfmonths = this.noOfInstallmentMonths.getValue() == 0 ? this.totalTenure.getValue()
+				Integer tenure = this.totalTenure.getValue();
+				if (tenure == null) {
+					tenure = 0;
+				}
+
+				noOfmonths = this.noOfInstallmentMonths.getValue() == 0 ? tenure
 						: this.noOfInstallmentMonths.getValue();
-				String date = DateUtility.format(DateUtility.getAppDate(), PennantConstants.DBDateFormat);
+				String date = DateUtil.format(DateUtil.getSysDate(), PennantConstants.DBDateFormat);
 				int emiList = DateUtility.getMonthsBetween(finDate.getValue(), appDate);
 				List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(DateUtility.getDBDate(date),
 						noOfmonths, emiList);
@@ -1952,7 +1934,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 					for (int i = 0; i < extPaymentsData.size(); i++) {
 						extPaymentsData.get(i).setKeyValue(i + 1);
 					}
-					//displaying the latest emi's first
+					// displaying the latest emi's first
 					Collections.reverse(paymentDetails);
 					setExtLiabilitiesPaymentdetails(extPaymentsData);
 					doFillInstallmentDetails(false);
@@ -1970,7 +1952,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			isCustomer360 = true;
 		}
 		int totalInstallments = paymentDetails.size();
-		//Following Scenario is when, the number of installments for RTR is greater than the given loan tenure.
+		// Following Scenario is when, the number of installments for RTR is greater than the given loan tenure.
 		if (fromRTR && noOfInstallmentMonths.intValue() <= totalInstallments) {
 			totalInstallments = noOfInstallmentMonths.intValue();
 		}
@@ -1996,7 +1978,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			listcell.appendChild(emiClearanceCombobox);
 			listcell.setParent(listitem);
 
-			//New field added for EMI Cleared Date
+			// New field added for EMI Cleared Date
 			Intbox clearedDate = new Intbox();
 			clearedDate.setValue(installmentDetails.getEmiClearedDay());
 			clearedDate.setDisabled(isCustomer360);
@@ -2186,7 +2168,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 				double prin = originalAmount.doubleValue();
 				double drate = rate.doubleValue();
 				double caculatedROI = drate / (12 * 100);
-				//(principal*rate*Math.pow(1+rate,time))/(Math.pow(1+rate,time)-1)
+				// (principal*rate*Math.pow(1+rate,time))/(Math.pow(1+rate,time)-1)
 				double emi = (prin * caculatedROI * Math.pow(1 + caculatedROI, totTenure))
 						/ (Math.pow(1 + caculatedROI, totTenure) - 1);
 				this.imputedEmi.setValue(new BigDecimal(emi));

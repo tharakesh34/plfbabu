@@ -122,4 +122,6 @@ public interface ReceiptUploadHeaderService {
 	void executeThreads(List<Long> headerIdList, LoggedInUser loggedInUser, int startThread, int endThread,
 			Map<Long, ReceiptUploadLog> attemptMap);
 
+	void updateImportFail(ReceiptUploadHeader ruh);
+
 }

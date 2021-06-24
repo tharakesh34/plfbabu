@@ -461,4 +461,8 @@ public interface FinanceMainDAO {
 
 	void updateRejectFinanceMain(List<FinanceMain> list, String string);
 
+	void updateSchdVersion(FinanceMain fm, boolean isPresentment);
+
+	int getSchdVersion(String finReference);
+
 }

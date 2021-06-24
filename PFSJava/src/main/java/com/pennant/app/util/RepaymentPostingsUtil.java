@@ -916,25 +916,6 @@ public class RepaymentPostingsUtil implements Serializable {
 		return fullyPaid;
 	}
 
-	/**
-	 * Method for Posting Process execution in Single Entry Event for Total Repayment Amount
-	 * 
-	 * @param valueDate
-	 * @param dateValueDate
-	 * @param dateSchdDate
-	 * @param isEODProcess
-	 * @param financeMain
-	 * @param scheduleDetails
-	 * @param financeProfitDetail
-	 * @param rpyTotal
-	 * @param rpyPri
-	 * @param rpyPft
-	 * @param rpyRefund
-	 * @return
-	 * @throws InterfaceException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 */
 	private AEEvent postingEntryProcess(Date valueDate, Date postDate, Date dateSchdDate, boolean isEODProcess,
 			FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
 			FinanceProfitDetail financeProfitDetail, FinRepayQueueHeader rpyQueueHeader, AEEvent overdueEvent,
@@ -952,6 +933,12 @@ public class RepaymentPostingsUtil implements Serializable {
 		if (PennantConstants.APP_PHASE_EOD.equalsIgnoreCase(rpyQueueHeader.getPostBranch())) {
 			aeEvent.setEOD(true);
 		}
+
+		BigDecimal priDuePaid = BigDecimal.ZERO;
+		BigDecimal priDueWaived = BigDecimal.ZERO;
+		BigDecimal pftDuePaid = BigDecimal.ZERO;
+		BigDecimal pftDueWaived = BigDecimal.ZERO;
+
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		amountCodes.setBusinessvertical(financeMain.getBusinessVerticalCode());
 		amountCodes.setAlwflexi(financeMain.isAlwFlexi());
@@ -1028,6 +1015,20 @@ public class RepaymentPostingsUtil implements Serializable {
 		amountCodes.setPenaltyPaid(rpyQueueHeader.getPenalty());
 		amountCodes.setPenaltyWaived(rpyQueueHeader.getPenaltyWaived());
 
+		amountCodes.setFuturePriPaid(rpyQueueHeader.getFutPrincipal());
+		amountCodes.setFuturePriWaived(rpyQueueHeader.getFutPriWaived());
+
+		priDuePaid = rpyQueueHeader.getPrincipal().subtract(rpyQueueHeader.getFutPrincipal());
+		priDueWaived = rpyQueueHeader.getPriWaived().subtract(rpyQueueHeader.getFutPriWaived());
+
+		pftDuePaid = rpyQueueHeader.getProfit().subtract(rpyQueueHeader.getFutProfit());
+		pftDueWaived = rpyQueueHeader.getPftWaived().subtract(rpyQueueHeader.getFutPftWaived());
+
+		amountCodes.setPriDuePaid(priDuePaid);
+		amountCodes.setPriDueWaived(priDueWaived);
+		amountCodes.setPftDuePaid(pftDuePaid);
+		amountCodes.setPftDueWaived(pftDueWaived);
+
 		// Accrual & Future Paid Details
 		if (StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_EARLYSTL)) {
 
@@ -1059,11 +1060,74 @@ public class RepaymentPostingsUtil implements Serializable {
 					amountCodes.setLastSchPftWaived(amountCodes.getPftWaived());
 				}
 
+				// Profit Due Paid
+				if (amountCodes.getPftWaived()
+						.compareTo(lastSchd.getProfitSchd().subtract(lastSchd.getSchdPftPaid())) > 0) {
+					amountCodes.setPftDuePaid(amountCodes.getRpPft());
+				} else {
+					amountCodes.setPftDuePaid(amountCodes.getRpPft()
+							.subtract(lastSchd.getProfitSchd().subtract(lastSchd.getSchdPftPaid()))
+							.add(amountCodes.getPftWaived()));
+				}
+
+				// Profit Due Waived
+				if (amountCodes.getPftWaived()
+						.compareTo(lastSchd.getProfitSchd().subtract(lastSchd.getSchdPftPaid())) > 0) {
+					amountCodes.setPftDueWaived(amountCodes.getPftWaived()
+							.subtract(lastSchd.getProfitSchd().subtract(lastSchd.getSchdPftPaid())));
+				} else {
+					amountCodes.setPftDueWaived(BigDecimal.ZERO);
+				}
+
+				// Principal Due Paid
+				if (amountCodes.getPriWaived()
+						.compareTo(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid())) > 0) {
+					amountCodes.setPriDuePaid(amountCodes.getRpPri());
+				} else {
+					amountCodes.setPriDuePaid(amountCodes.getRpPri()
+							.subtract(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid()))
+							.add(amountCodes.getPriWaived()));
+				}
+
+				// Principal Due Waived
+				if (amountCodes.getPriWaived()
+						.compareTo(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid())) > 0) {
+					amountCodes.setPriDueWaived(amountCodes.getPriWaived()
+							.subtract(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid())));
+				}
+				// Future Principal Paid
+				if (amountCodes.getPriWaived()
+						.compareTo(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid())) > 0) {
+					amountCodes.setFuturePriPaid(BigDecimal.ZERO);
+				} else {
+					amountCodes.setFuturePriPaid(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid())
+							.subtract(amountCodes.getPriWaived()));
+				}
+
+				// Future Principal Waived
+				if (amountCodes.getPriWaived()
+						.compareTo(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid())) > 0) {
+					amountCodes.setFuturePriWaived(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid()));
+				} else {
+					amountCodes.setFuturePriWaived(amountCodes.getPriWaived());
+				}
 			} else {
 
 				// Last Schedule Interest Amounts Paid
 				amountCodes.setLastSchPftPaid(BigDecimal.ZERO);
 				amountCodes.setLastSchPftWaived(BigDecimal.ZERO);
+
+				// Profit Due Paid
+				amountCodes.setPftDuePaid(amountCodes.getRpPft().subtract(rpyQueueHeader.getFutProfit()));
+
+				// Profit Due Waived
+				amountCodes.setPftDueWaived(amountCodes.getPftWaived().subtract(rpyQueueHeader.getFutPftWaived()));
+
+				amountCodes.setPriDuePaid(amountCodes.getRpPri().subtract(rpyQueueHeader.getFutPrincipal()));
+				amountCodes.setPriDueWaived(amountCodes.getPriWaived().subtract(rpyQueueHeader.getFutPriWaived()));
+
+				amountCodes.setFuturePriPaid(rpyQueueHeader.getFutPrincipal());
+				amountCodes.setFuturePriWaived(rpyQueueHeader.getFutPriWaived());
 			}
 			// Total Future Profit amount
 			BigDecimal totFutPft = rpyQueueHeader.getFutProfit().add(rpyQueueHeader.getFutPftWaived());
@@ -1111,23 +1175,6 @@ public class RepaymentPostingsUtil implements Serializable {
 				}
 			}
 
-			// Future Principal Paid
-			if (amountCodes.getPriWaived()
-					.compareTo(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid())) > 0) {
-				amountCodes.setFuturePriPaid(BigDecimal.ZERO);
-			} else {
-				amountCodes.setFuturePriPaid(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid())
-						.subtract(amountCodes.getPriWaived()));
-			}
-
-			// Future Principal Waived
-			if (amountCodes.getPriWaived()
-					.compareTo(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid())) > 0) {
-				amountCodes.setFuturePriWaived(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid()));
-			} else {
-				amountCodes.setFuturePriWaived(amountCodes.getPriWaived());
-			}
-
 			// TDS for Last Installment
 			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
 
@@ -1173,8 +1220,9 @@ public class RepaymentPostingsUtil implements Serializable {
 		if (StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_REPAY)) {
 			if (financeProfitDetail.getTotalPftPaid().add(rpyQueueHeader.getProfit())
 					.compareTo(financeProfitDetail.getTotalPftSchd()) >= 0) {
-				amountCodes.setUnAccruedPaid(
-						financeProfitDetail.getTotalPftSchd().subtract(financeProfitDetail.getPrvMthAmz()));
+				amountCodes
+						.setUnAccruedPaid((financeProfitDetail.getTotalPftSchd().add(financeProfitDetail.getTdPftCpz()))
+								.subtract(financeProfitDetail.getPrvMthAmz()));
 			}
 			if (ImplementationConstants.ALLOW_NPA_PROVISION) {
 				boolean isExists = provisionDAO.isProvisionExists(financeMain.getFinReference(), TableType.MAIN_TAB);
@@ -1274,7 +1322,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		}
 
 		// GST Invoice Preparation for Exempted waiver case
-		BigDecimal pftDueWaived = amountCodes.getPftDueWaived();
+		pftDueWaived = amountCodes.getPftDueWaived();
 		if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE && aeEvent.getLinkedTranId() > 0 && pftDueWaived != null
 				&& pftDueWaived.compareTo(BigDecimal.ZERO) > 0) {
 			FinanceDetail financeDetail = new FinanceDetail();

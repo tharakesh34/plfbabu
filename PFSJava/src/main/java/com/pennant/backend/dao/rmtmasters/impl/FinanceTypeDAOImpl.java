@@ -144,7 +144,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinType = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
@@ -380,7 +380,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				return ft;
 			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Record is not found in RMTFinanceTypes{} for the specified FinType >> {}", type, id);
 		}
 
 		return null;
