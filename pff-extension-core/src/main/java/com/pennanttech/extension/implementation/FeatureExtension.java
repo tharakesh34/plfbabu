@@ -14,7 +14,6 @@ public class FeatureExtension implements IFeatureExtension {
 	 * 
 	 * example
 	 * <p>
-	 * <code>customConstants.put("ALLOW_FINACTYPES", false);</code>
 	 * <code>customConstants.put("CLIENT_NAME", "Pennant Technologies Private Limited");</code>
 	 * </p>
 	 */

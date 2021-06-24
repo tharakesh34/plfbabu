@@ -370,7 +370,6 @@ public class PennantAppUtil {
 		//excludeModules.add("MailTemplate");
 		excludeModules.add("LovFieldCode");
 		excludeModules.add("HolidayMaster");
-		excludeModules.add("GoodsLoanDetail");
 		excludeModules.add("FinanceStepPolicyDetail");
 		excludeModules.add("FinanceScoreHeader");
 		excludeModules.add("FinanceScoreDetail");
@@ -510,7 +509,6 @@ public class PennantAppUtil {
 		excludeModules.add("PriorityValuation");
 		excludeModules.add("MortgageUnit");
 		excludeModules.add("PaymentTo");
-		excludeModules.add("AgreementFieldDetails");
 		excludeModules.add("CMTFinanceType");
 		excludeModules.add("ChequeFinance");
 		excludeModules.add("CollateralAssignment");

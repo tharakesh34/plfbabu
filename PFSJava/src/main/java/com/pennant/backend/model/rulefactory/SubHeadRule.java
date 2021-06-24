@@ -15,7 +15,6 @@ public class SubHeadRule implements Serializable {
 	private String custSector;
 	private String custSubSector;
 	private String custTypeCode;
-	private String reqFinAcType;
 	private String reqProduct;
 	private BigDecimal REFUNDPFT = BigDecimal.ZERO;
 	private BigDecimal TOTALPFT = BigDecimal.ZERO;
@@ -94,14 +93,6 @@ public class SubHeadRule implements Serializable {
 
 	public void setCustTypeCode(String custTypeCode) {
 		this.custTypeCode = custTypeCode;
-	}
-
-	public String getReqFinAcType() {
-		return reqFinAcType;
-	}
-
-	public void setReqFinAcType(String reqFinAcType) {
-		this.reqFinAcType = reqFinAcType;
 	}
 
 	public String getReqProduct() {

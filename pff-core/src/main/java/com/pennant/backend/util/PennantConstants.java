@@ -388,7 +388,6 @@ public class PennantConstants {
 	public static final String EOD_PFT_DTL_UPLOAD = "UPLOAD PROFIT DETAILS";
 
 	// Rating Type Details
-	public static final String DEFAULT_RATE_TYPE = "MOODY";
 	public static final String DEFAULT_CUST_TYPE = "EA";
 
 	// For Commitment Details
@@ -453,7 +452,6 @@ public class PennantConstants {
 	public static final String REQ_TYPE_VALIDATE = "VALIDATE";
 	public static final String REQ_TYPE_CAN = "CANCELLATION";
 	public static final String RES_TYPE_SUCCESS = "0000";
-	public static final String DDA_ACK_REJECTED = "ACK";
 
 	public static final String ADDRESS_TYPE_RESIDENCE = "CURRES";
 	public static final String LEGEL_FEES = "Legal Fees";

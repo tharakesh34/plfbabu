@@ -1068,7 +1068,6 @@ public class ContributorDetailsDialogCtrl extends GFCBaseCtrl<FinContributorDeta
 		this.listBoxFinContributor.setSizedByContent(true);
 		this.listBoxFinContributor.getItems().clear();
 
-		//Adding AHB Share value
 		BigDecimal finAmt = PennantAppUtil.unFormateAmount(this.finAmount.subtract(this.downPayment), formatter);
 		if (finAmt.compareTo(BigDecimal.ZERO) <= 0) {
 			return;

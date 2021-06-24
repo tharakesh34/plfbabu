@@ -980,16 +980,6 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 			creditWorth = execCreditWorth;
 		}
 
-		if (!isRetail && !"None".equals(creditWorth)) {
-			RatingCode ratingCode = getRatingCodeService().getApprovedRatingCodeById(PennantConstants.DEFAULT_RATE_TYPE,
-					creditWorth);
-			if (ratingCode != null) {
-				creditWorth = ratingCode.getRatingCode() + "-" + ratingCode.getRatingCodeDesc();
-			} else {
-				MessageUtil.showError("Rating Code Details Not Defined Properly.");
-			}
-		}
-
 		logger.debug("Leaving");
 		return creditWorth;
 	}

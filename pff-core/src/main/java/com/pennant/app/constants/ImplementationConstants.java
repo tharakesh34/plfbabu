@@ -29,10 +29,7 @@ public class ImplementationConstants {
 		Map<String, Object> extensions = getFeatureExtensions();
 
 		ALLOW_MULTI_CCY = getValueAsBoolean(extensions, "ALLOW_MULTI_CCY", false);
-		IMPLEMENTATION_CONVENTIONAL = getValueAsBoolean(extensions, "IMPLEMENTATION_CONVENTIONAL", true);
 		LIST_RENDER_ON_LOAD = getValueAsBoolean(extensions, "LIST_RENDER_ON_LOAD", true);
-		ALLOW_FINACTYPES = getValueAsBoolean(extensions, "ALLOW_FINACTYPES", false);
-		ALLOW_CAPITALIZE = getValueAsBoolean(extensions, "ALLOW_CAPITALIZE", true);
 		LIMIT_INTERNAL = getValueAsBoolean(extensions, "LIMIT_INTERNAL", true);
 		ONLINE_IRL_CHECK = getValueAsBoolean(extensions, "ONLINE_IRL_CHECK", false);
 		ALLOW_MULTIPLE_EMPLOYMENTS = getValueAsBoolean(extensions, "ALLOW_MULTIPLE_EMPLOYMENTS", true);
@@ -158,7 +155,6 @@ public class ImplementationConstants {
 		SHOW_CUST_EMP_DETAILS = getValueAsBoolean(extensions, "SHOW_CUST_EMP_DETAILS", true);
 		SHOW_CUST_SHARE_HOLDER_DETAILS = getValueAsBoolean(extensions, "SHOW_CUST_SHARE_HOLDER_DETAILS", true);
 		ALLOW_SIMILARITY = getValueAsBoolean(extensions, "ALLOW_SIMILARITY", false);
-		IMPLEMENTATION_CONVENTIONAL = getValueAsBoolean(extensions, "IMPLEMENTATION_CONVENTIONAL", true);
 
 		GROUP_BATCH_BY_PARTNERBANK = getValueAsBoolean(extensions, "GROUP_BATCH_BY_PARTNERBANK", false);
 		CUST_EMP_TYPE_MANDATORY = getValueAsBoolean(extensions, "CUST_EMP_TYPE_MANDATORY", false);
@@ -270,9 +266,6 @@ public class ImplementationConstants {
 
 	}
 
-	public static boolean IMPLEMENTATION_CONVENTIONAL;
-	public static boolean ALLOW_FINACTYPES;
-	public static boolean ALLOW_CAPITALIZE;
 	public static boolean LIMIT_INTERNAL;
 	public static boolean ONLINE_IRL_CHECK;
 	public static boolean ALLOW_MULTIPLE_EMPLOYMENTS;
@@ -316,7 +309,6 @@ public class ImplementationConstants {
 	public static boolean ALLOW_EMIALTYPE_PRIORITY;
 	public static boolean ALLOW_PHONETYPE_PRIORITY;
 	public static boolean EARLYPAY_ADJ_PRI;
-	//public static boolean ALLOW_INSURANCE;
 	public static boolean ALLOW_RIA;
 	public static boolean ALLOW_ADDDBSF;
 	public static boolean UPFRONT_ADJUST_PAYABLEADVISE;

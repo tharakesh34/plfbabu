@@ -2365,11 +2365,6 @@ public class PennantJavaUtil {
 						new String[] { "FinLegalExpenses", "FinLegalExpenses_AView" }, "MSTGRP1",
 						new String[] { "ExpReference", "FinReference", "TransactionType" }, null, 390));
 
-		ModuleUtil.register("DDAFTransactionLog",
-				new ModuleMapping("LegalExpenses", LegalExpenses.class,
-						new String[] { "DDAFTransactionLog", "DDAFTransactionLog" }, "MSTGRP1",
-						new String[] { "FinRefence", "ErrorCode" }, null, 300));
-
 		ModuleUtil.register("Provisions",
 				new ModuleMapping("Provision", Provision.class, new String[] { "Provision", "Provision" }, "MSTGRP1",
 						new String[] { "FinRefence", "provisionAmt" }, null, 300));
@@ -3162,20 +3157,6 @@ public class PennantJavaUtil {
 		ModuleUtil.register("FinanceMain_Temp",
 				new ModuleMapping("FinanceMain", FinanceMain.class, new String[] { "FinanceMain", "FinanceMain_TView" },
 						null, new String[] { "FinReference", "FinType" }, null, 350));
-
-		ModuleUtil.register("CommodityType",
-				new ModuleMapping("CommodityType", CommodityType.class,
-						new String[] { "COMMODITY_TYPES", "COMMODITY_TYPES_AView" }, masterWF,
-						new String[] { "Id", "Code", "Description" }, null, 600));
-
-		ModuleUtil.register("CommodityType",
-				new ModuleMapping("CommodityType", CommodityType.class,
-						new String[] { "COMMODITY_TYPES", "COMMODITY_TYPES_AView" }, masterWF,
-						new String[] { "Id", "Code", "Description" }, null, 600));
-
-		ModuleUtil.register("Commodity",
-				new ModuleMapping("Commodities", Commodity.class, new String[] { "COMMODITIES", "COMMODITIES_AView" },
-						masterWF, new String[] { "Id", "CommodityTypeCode", "Code" }, null, 600));
 
 		ModuleUtil.register("DealerGroup",
 				new ModuleMapping("DealerGroup", DealerGroup.class,

@@ -114,41 +114,6 @@
 													<combobox id="cbfinDaysCalType" width="275px" readonly="true" />
 												</hbox>
 											</row>
-											<row id="row_finAcType" visible="false">
-												<label id="label_FinanceTypeDialog_FinAcType"
-													value="${c:l('label_FinanceTypeDialog_FinAcType.value')}" />
-												<extendedcombobox id="finAcType" />
-												<label id="label_FinanceTypeDialog_FinIsOpenNewFinAc"
-													value="${c:l('label_FinanceTypeDialog_FinIsOpenNewFinAc.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<checkbox id="finIsOpenNewFinAc" checked="false" />
-												</hbox>
-											</row>
-											<row id="row_finPftPayType" visible="false">
-												<label id="label_FinanceTypeDialog_PftPayAcType"
-													value="${c:l('label_FinanceTypeDialog_PftPayAcType.value')}" />
-												<extendedcombobox id="pftPayAcType" />
-												<label id="label_FinanceTypeDialog_FinIsOpenPftPayAcc"
-													value="${c:l('label_FinanceTypeDialog_FinIsOpenPftPayAcc.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<checkbox id="finIsOpenPftPayAcc" />
-												</hbox>
-											</row>
-											<row id="row_finSuspAcType" visible="false">
-												<label id="label_FinanceTypeDialog_FinSuspAcType"
-													value="${c:l('label_FinanceTypeDialog_FinSuspAcType.value')}" />
-												<extendedcombobox id="finSuspAcType" />
-												<label id="label_FinanceTypeDialog_FinProvisionAcType"
-													value="${c:l('label_FinanceTypeDialog_FinProvisionAcType.value')}" />
-												<extendedcombobox id="finProvisionAcType" />
-											</row>
-											<row id="row_finBankContingentAcType" visible="false">
-												<label id="label_FinanceTypeDialog_FinBankContingentAcType"
-													value="${c:l('label_FinanceTypeDialog_FinBankContingentAcType.value')}" />
-												<extendedcombobox id="finBankContingentAcType" />
-											</row>
 											<row visible="true">
 												<label id="label_FinanceTypeDialog_FinMinAmount"
 													value="${c:l('label_FinanceTypeDialog_FinMinAmount.value')}" />
@@ -1324,11 +1289,6 @@
 											<label id="label_FinanceTypeDialog_FinDftStmtFrq"
 												value="${c:l('label_FinanceTypeDialog_FinDftStmtFrq.value')}" />
 											<frequencybox id="finDftStmtFrq" />
-										</row>
-										<row id="row_finContingentAcType">
-											<label id="label_FinanceTypeDialog_FinContingentAcType"
-												value="${c:l('label_FinanceTypeDialog_FinContingentAcType.value')}" />
-											<extendedcombobox id="finContingentAcType" />
 										</row>
 										<row>
 											<label id="label_FinanceTypeDialog_FinGrcScheduleOn"

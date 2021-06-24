@@ -224,7 +224,6 @@ import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.model.reports.AvailFinance;
-import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.FinTypeExpense;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -264,7 +263,6 @@ import com.pennant.backend.service.finance.financialsummary.RisksAndMitigantsSer
 import com.pennant.backend.service.finance.financialsummary.SanctionConditionsService;
 import com.pennant.backend.service.finance.financialsummary.SynopsisDetailsService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditFinancialService;
-import com.pennant.backend.service.insurance.InsuranceDetailService;
 import com.pennant.backend.service.legal.LegalDetailService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
@@ -287,7 +285,6 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.cache.util.AccountingConfigCache;
-import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.engine.workflow.Action;
@@ -437,7 +434,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private DocumentVerificationService documentVerificationService;
 	@Autowired(required = false)
 	private LoanDataSyncService loanDataSyncService;
-	private InsuranceDetailService insuranceDetailService;
 	private transient BaseRateCodeDAO baseRateCodeDAO;
 
 	private DrawingPowerService drawingPowerService;
@@ -1595,17 +1591,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		logger.debug(Literal.LEAVING);
 		return feeChargeList;
-	}
-
-	/**
-	 * Method for Fetch Ins insurance Details Object for Early Settlement Refund
-	 * 
-	 * @param finReference
-	 * @return
-	 */
-	@Override
-	public FeeRule getInsFee(String finReference) {
-		return getFinFeeChargesDAO().getInsFee(finReference, "");
 	}
 
 	/**
@@ -6541,10 +6526,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// =======================================
 		updateTaskLog(fm, false);
 
-		// Send Cancel DDA Registration request to interface
-		// ==================================================
-		// getDdaControllerService().cancelDDARegistration(financeMain.getFinReference());
-
 		getFinMandateService().doRejct(fd, auditHeader);
 
 		logger.debug(Literal.LEAVING);
@@ -8487,110 +8468,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 */
 	public AuditHeader doCheckLimits(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
-
-		CustomerLimit custLimit = null;
-		String[] errParm = new String[2];
-		String[] valueParm = new String[2];
-
-		List<CustomerLimit> list = null;
-
 		FinanceDetail finDetails = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = finDetails.getFinScheduleData().getFinanceMain();
-		AccountType accountType = getAccountTypeDAO()
-				.getAccountTypeById(finDetails.getFinScheduleData().getFinanceType().getFinAcType(), "");
 
-		if (StringUtils.isNotBlank(accountType.getAcLmtCategory())) {
-			custLimit = new CustomerLimit();
-			custLimit.setCustMnemonic(financeMain.getLovDescCustCIF());
-			custLimit.setLimitCategory(accountType.getAcLmtCategory());
-			custLimit.setCustLocation(" ");
-		} else {
-			financeMain.setLimitValid(true);
-			auditHeader.getAuditDetail().setModelData(finDetails);
-			logger.debug(Literal.LEAVING);
-			return auditHeader;
-		}
-
-		try {
-			list = getCustLimitIntefaceService().fetchLimitDetails(custLimit);
-		} catch (Exception e) {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, e.getMessage(), null));
-			logger.debug("Exception: ", e);
-			logger.debug(Literal.LEAVING);
-			return auditHeader;
-		}
-
-		if (list == null || list.size() == 0) {
-
-			valueParm[0] = accountType.getAcLmtCategory();
-			errParm[0] = PennantJavaUtil.getLabel("label_LimtCategorys") + ":" + valueParm[0];
-
-			valueParm[1] = financeMain.getLovDescCustCIF();
-			errParm[1] = "For " + PennantJavaUtil.getLabel("label_IdCustID") + ":" + valueParm[1];
-
-			auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail("Limit", "41002", errParm, valueParm),
-					finDetails.getUserDetails().getLanguage()));
-			logger.debug(Literal.LEAVING);
-			return auditHeader;
-
-		} else {
-
-			for (CustomerLimit customerLimit : list) {
-
-				if (customerLimit.getLimitAmount() == null || customerLimit.getLimitAmount().equals(BigDecimal.ZERO)) {
-
-					valueParm[0] = customerLimit.getLimitCategory();
-					errParm[0] = PennantJavaUtil.getLabel("label_LimtCategory") + ":" + valueParm[0];
-					valueParm[1] = financeMain.getLovDescCustCIF();
-					errParm[1] = "For " + PennantJavaUtil.getLabel("label_IdCustID") + ":" + valueParm[1];
-
-					auditHeader.setErrorDetails(
-							ErrorUtil.getErrorDetail(new ErrorDetail("Limit", "41002", errParm, valueParm),
-									finDetails.getUserDetails().getLanguage()));
-
-					return auditHeader;
-
-				} else {
-
-					Currency fCurrency = CurrencyUtil.getCurrencyObject(financeMain.getFinCcy());
-					BigDecimal finAmount = calculateExchangeRate(financeMain.getFinAmount(), fCurrency);
-
-					Currency lCurrency = null;
-					if (!StringUtils.trimToEmpty(customerLimit.getLimitCurrency()).equals(fCurrency.getCcyCode())) {
-						lCurrency = CurrencyUtil.getCurrencyObject(customerLimit.getLimitCurrency());
-					} else {
-						lCurrency = fCurrency;
-					}
-
-					BigDecimal availAmount = calculateExchangeRate(customerLimit.getAvailAmount(), lCurrency);
-
-					if (availAmount != null && availAmount.compareTo(finAmount) < 0) {
-						int dftFormatter = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
-
-						valueParm[0] = PennantApplicationUtil.amountFormate(financeMain.getFinAmount(),
-								lCurrency.getCcyEditField() == 0 ? dftFormatter : lCurrency.getCcyEditField());
-						errParm[0] = valueParm[0];
-
-						valueParm[1] = PennantApplicationUtil.amountFormate(customerLimit.getLimitAmount(),
-								fCurrency.getCcyEditField() == 0 ? dftFormatter : fCurrency.getCcyEditField());
-						errParm[1] = valueParm[1];
-
-						String errorCode = "30532";
-						if (finDetails.getFinScheduleData().getFinanceType().isOverrideLimit()) {
-							errorCode = "65006";
-						}
-
-						auditHeader.setErrorDetails(
-								ErrorUtil.getErrorDetail(new ErrorDetail("Limit", errorCode, errParm, valueParm),
-										finDetails.getUserDetails().getLanguage()));
-						logger.debug(Literal.LEAVING);
-						return auditHeader;
-					}
-				}
-			}
-			financeMain.setLimitValid(true);
-			auditHeader.getAuditDetail().setModelData(finDetails);
-		}
+		financeMain.setLimitValid(true);
+		auditHeader.getAuditDetail().setModelData(finDetails);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -8615,154 +8497,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 		logger.debug(Literal.LEAVING);
 		return false;
-	}
-
-	public List<ErrorDetail> getDiscrepancies(FinanceDetail financeDetail) {
-		logger.debug(Literal.ENTERING);
-
-		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
-
-		long oDDays = getFinODDetailsDAO()
-				.checkCustPastDue(financeDetail.getFinScheduleData().getFinanceMain().getCustID());
-		int allowedDays = SysParamUtil.getValueAsInt("MAX_ALLOW_ODDAYS");
-		if (oDDays > 0) {
-			if (oDDays <= allowedDays) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60201",
-						new String[] { String.valueOf(oDDays) }, null), ""));
-			} else {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60202",
-						new String[] { String.valueOf(oDDays) }, null), ""));
-			}
-		}
-
-		// Check Limit Status of Customer
-		CustomerLimit custLimit = null;
-		List<CustomerLimit> customerLimitList = null;
-		AccountType accountType = getAccountTypeDAO()
-				.getAccountTypeById(financeDetail.getFinScheduleData().getFinanceType().getFinAcType(), "");
-		if (StringUtils.isNotBlank(accountType.getAcLmtCategory())) {
-			custLimit = new CustomerLimit();
-			custLimit.setCustMnemonic(financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF());
-			custLimit.setLimitCategory(accountType.getAcLmtCategory());
-			custLimit.setCustLocation(" ");
-		} else {
-			logger.debug(Literal.LEAVING);
-			return errorDetails;
-		}
-
-		try {
-			customerLimitList = getCustLimitIntefaceService().fetchLimitDetails(custLimit);
-		} catch (Exception e) {
-			logger.debug("Exception: ", e);
-			logger.debug(Literal.LEAVING);
-			return errorDetails;
-		}
-
-		if (customerLimitList != null && customerLimitList.size() > 0) {
-			Date curBussDate = SysParamUtil.getAppDate();
-			String limitType = "";
-
-			BigDecimal finAmount = financeDetail.getFinScheduleData().getFinanceMain().getFinAmount();
-			BigDecimal downpaybank = financeDetail.getFinScheduleData().getFinanceMain().getDownPayBank();
-			BigDecimal downpaySuppl = financeDetail.getFinScheduleData().getFinanceMain().getDownPaySupl();
-			finAmount = finAmount.subtract(downpaybank == null ? BigDecimal.ZERO : downpaybank)
-					.subtract(downpaySuppl == null ? BigDecimal.ZERO : downpaySuppl);
-			BigDecimal calcFinAmount = BigDecimal.ZERO;
-			for (CustomerLimit limit : customerLimitList) {
-				if (StringUtils.isNotEmpty(limit.getCustCountry())) {
-					limitType = " ( " + limit.getCustCountry() + " - " + limit.getCustCountryDesc() + " )";
-				} else if (StringUtils.isNotEmpty(limit.getCustGrpCode())) {
-					limitType = " ( " + limit.getCustGrpCode() + " - " + limit.getCustGrpDesc() + " ) ";
-				} else {
-					limitType = "Customer";
-				}
-
-				if (StringUtils.isEmpty(limit.getLimitCategory())) {
-					if (StringUtils.isNotEmpty(limit.getCustGrpCode())) {
-						errorDetails.add(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "60304", new String[] { limitType }, null),
-								""));
-					} else if (StringUtils.isNotEmpty(limit.getCustCountry())) {
-						errorDetails.add(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "60307", new String[] { limitType }, null),
-								""));
-					} else {
-						errorDetails.add(ErrorUtil
-								.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60301", null, null), ""));
-					}
-					continue;
-				}
-
-				if (limit.getLimitExpiry() != null && limit.getLimitExpiry().compareTo(curBussDate) < 0) {
-
-					if (StringUtils.isNotEmpty(limit.getCustGrpCode())) {
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60305",
-								new String[] { limitType, limit.getLimitCategoryDesc() }, null), ""));
-					} else if (StringUtils.isNotEmpty(limit.getCustCountry())) {
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60308",
-								new String[] { limitType, limit.getLimitCategoryDesc() }, null), ""));
-					} else {
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60302",
-								new String[] { limit.getLimitCategoryDesc() }, null), ""));
-					}
-					logger.debug(Literal.LEAVING);
-				}
-
-				if (StringUtils.isNotBlank(limit.getLimitCurrency())) {
-					if (!StringUtils.trimToEmpty(limit.getLimitCurrency())
-							.equals(financeDetail.getFinScheduleData().getFinanceMain().getFinCcy())) {
-						Currency lCurrency = CurrencyUtil.getCurrencyObject(limit.getLimitCurrency());
-						Currency fCurrency = CurrencyUtil
-								.getCurrencyObject(financeDetail.getFinScheduleData().getFinanceMain().getFinCcy());
-						calcFinAmount = CalculationUtil.getConvertedAmount(fCurrency, lCurrency, finAmount);
-					} else {
-						calcFinAmount = finAmount;
-					}
-				}
-				BigDecimal excessAmount = limit.getRiskAmount().add(calcFinAmount).subtract(limit.getLimitAmount());
-				if (excessAmount.compareTo(BigDecimal.ZERO) > 0) {
-					BigDecimal excessPerc;
-
-					int formatter = CurrencyUtil
-							.getFormat(financeDetail.getFinScheduleData().getFinanceMain().getFinCcy());
-					;
-
-					if (limit.getLimitAmount().compareTo(BigDecimal.ZERO) == 0) {
-						excessPerc = new BigDecimal(100);
-					} else {
-						excessPerc = excessAmount.multiply(new BigDecimal(100)).divide(limit.getLimitAmount(), 2,
-								RoundingMode.HALF_DOWN);
-					}
-
-					if (StringUtils.isNotEmpty(limit.getCustCountry())) {
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60309",
-								new String[] { excessPerc.toString(),
-										PennantApplicationUtil.amountFormate(excessAmount, formatter), limitType,
-										limit.getLimitCategoryDesc() },
-								null), ""));
-					} else if (StringUtils.isNotEmpty(limit.getCustGrpCode())) {
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60306",
-								new String[] { excessPerc.toString(),
-										PennantApplicationUtil.amountFormate(excessAmount, formatter), limitType,
-										limit.getLimitCategoryDesc() },
-								null), ""));
-					} else {
-						errorDetails
-								.add(ErrorUtil
-										.getErrorDetail(
-												new ErrorDetail(PennantConstants.KEY_FIELD, "60303",
-														new String[] { excessPerc.toString(),
-																PennantApplicationUtil.amountFormate(excessAmount,
-																		formatter),
-																limit.getLimitCategoryDesc() },
-														null),
-												""));
-					}
-				}
-			}
-		}
-		logger.debug(Literal.LEAVING);
-		return errorDetails;
 	}
 
 	/**
@@ -11579,10 +11313,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setLowerTaxDeductionDAO(LowerTaxDeductionDAO lowerTaxDeductionDAO) {
 		this.lowerTaxDeductionDAO = lowerTaxDeductionDAO;
-	}
-
-	public void setInsuranceDetailService(InsuranceDetailService insuranceDetailService) {
-		this.insuranceDetailService = insuranceDetailService;
 	}
 
 	public void setPaymentsProcessService(PaymentsProcessService paymentsProcessService) {

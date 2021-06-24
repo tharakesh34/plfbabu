@@ -12,8 +12,6 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface CustomerLimitIntefaceService {
 
-	List<CustomerLimit> fetchLimitDetails(CustomerLimit customerLimit) throws InterfaceException;
-
 	List<CustomerLimit> fetchLimitEnquiryDetails(CustomerLimit customerLimit) throws InterfaceException;
 
 	Map<String, Object> fetchCustLimitEnqList(int pageNo, int pageSize) throws InterfaceException;

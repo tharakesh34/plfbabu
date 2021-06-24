@@ -40,13 +40,6 @@ public class CustomerLimitIntefaceServiceImpl implements CustomerLimitIntefaceSe
 		return null;
 	}
 
-	@Override
-	public List<CustomerLimit> fetchLimitDetails(CustomerLimit custLimit) throws InterfaceException {
-		logger.debug("Entering");
-
-		return null;
-	}
-
 	public static List<CustomerLimitSummary> getCustomerLimitSummary(String customerid) {
 		PagedListService service = (PagedListService) SpringUtil.getBean("pagedListService");
 		JdbcSearchObject<CustomerLimitSummary> searchObject = new JdbcSearchObject<CustomerLimitSummary>(

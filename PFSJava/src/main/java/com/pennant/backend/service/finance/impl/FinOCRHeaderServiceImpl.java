@@ -283,8 +283,7 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using finOCRHeaderDAO.delete with parameters
-	 * etihadCreditBureauDetail,"" b) NEW Add new record in to main table by using finOCRHeaderDAO.save with parameters
+	 * following actions b) NEW Add new record in to main table by using finOCRHeaderDAO.save with parameters
 	 * FinOCRHeader,"" c) EDIT Update record in the main table by using finOCRHeaderDAO.update with parameters
 	 * FinOCRHeader,"" 3) Delete the record from the workFlow table by using finOCRHeaderDAO.delete with parameters
 	 * FinOCRHeader,"_Temp" 4) Audit the record in to AuditHeader and AdtLMTFinOCRHeader by using

@@ -228,14 +228,14 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		// FinVasTypeProduct Details
 		if (financeType.getFinTypeVASProductsList() != null && !financeType.getFinTypeVASProductsList().isEmpty()) {
 			List<AuditDetail> details = financeType.getAuditDetailMap().get("FinTypeVASProducts");
-			details = processingVasProductDetailList(details, financeType.getFinAcType(), tableType);
+			details = processingVasProductDetailList(details, tableType);
 			auditDetails.addAll(details);
 		}
 
 		// FinTypeReceiptModes Details
 		if (financeType.getFinTypeReceiptModesList() != null && !financeType.getFinTypeReceiptModesList().isEmpty()) {
 			List<AuditDetail> details = financeType.getAuditDetailMap().get("FinTypeReceiptModes");
-			details = processingReceiptModesList(details, financeType.getFinAcType(), tableType);
+			details = processingReceiptModesList(details, tableType);
 			auditDetails.addAll(details);
 		}
 
@@ -504,7 +504,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			// FinTypeVasProduct Details
 			if (financeType.getFinTypeVASProductsList() != null && financeType.getFinTypeVASProductsList().size() > 0) {
 				List<AuditDetail> details = financeType.getAuditDetailMap().get("FinTypeVASProducts");
-				details = processingVasProductDetailList(details, financeType.getFinAcType(), "");
+				details = processingVasProductDetailList(details, "");
 				auditDetails.addAll(details);
 			}
 
@@ -512,7 +512,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			if (financeType.getFinTypeReceiptModesList() != null
 					&& financeType.getFinTypeReceiptModesList().size() > 0) {
 				List<AuditDetail> details = financeType.getAuditDetailMap().get("FinTypeReceiptModes");
-				details = processingReceiptModesList(details, financeType.getFinAcType(), "");
+				details = processingReceiptModesList(details, "");
 				auditDetails.addAll(details);
 			}
 
@@ -1375,8 +1375,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 * @param type
 	 * @return
 	 */
-	private List<AuditDetail> processingVasProductDetailList(List<AuditDetail> auditDetails, String financeType,
-			String type) {
+	private List<AuditDetail> processingVasProductDetailList(List<AuditDetail> auditDetails, String type) {
 		logger.debug("Entering");
 
 		boolean saveRecord = false;
@@ -1472,8 +1471,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 * @param type
 	 * @return
 	 */
-	private List<AuditDetail> processingReceiptModesList(List<AuditDetail> auditDetails, String financeType,
-			String type) {
+	private List<AuditDetail> processingReceiptModesList(List<AuditDetail> auditDetails, String type) {
 		logger.debug("Entering");
 
 		boolean saveRecord = false;

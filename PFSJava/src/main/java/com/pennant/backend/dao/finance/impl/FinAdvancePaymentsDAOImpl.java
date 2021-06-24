@@ -200,7 +200,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 
 	/**
 	 * This method Deletes the Record from the FinAdvancePayments or FinAdvancePayments_Temp. if Record not deleted then
-	 * throws DataAccessException with error 41003. delete Goods Details by key LoanRefNumber
+	 * throws DataAccessException with error 41003. delete by key LoanRefNumber
 	 * 
 	 * @param Goods
 	 *            Details (FinAdvancePayments)
@@ -281,7 +281,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 
 	/**
 	 * This method updates the Record FinAdvancePayments or FinAdvancePayments_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Goods Details by key LoanRefNumber and Version
+	 * DataAccessException with error 41004. update Details by key LoanRefNumber and Version
 	 * 
 	 * @param Goods
 	 *            Details (FinAdvancePayments)

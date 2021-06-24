@@ -368,12 +368,12 @@
 													</hbox>
 												</row>
 												<row id="row_FinGrcRates" visible="false">
-													<label id="label_IjarahFinanceMainDialog_FinGrcMinRate" value="${c:l('label_IjarahFinanceMainDialog_FinGrcMinRate.value')}" />
+													<label id="label_FinanceMainDialog_FinGrcMinRate" value="${c:l('label_FinanceMainDialog_FinGrcMinRate.value')}" />
 													<hbox>
 														<space spacing="2px" />
 														<decimalbox id="finGrcMinRate" width="120px" maxlength="15" style="text-align:right" />
 													</hbox>
-													<label id="label_IjarahFinanceMainDialog_FinGrcMaxRate" value="${c:l('label_IjarahFinanceMainDialog_FinGrcMaxRate.value')}" />
+													<label id="label_FinanceMainDialog_FinGrcMaxRate" value="${c:l('label_FinanceMainDialog_FinGrcMaxRate.value')}" />
 													<hbox>
 														<space spacing="2px" />
 														<decimalbox id="finGrcMaxRate" width="120px" maxlength="15" style="text-align:right" />

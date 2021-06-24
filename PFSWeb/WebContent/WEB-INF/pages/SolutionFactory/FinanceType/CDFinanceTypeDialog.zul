@@ -440,44 +440,6 @@
 													<decimalbox id="oDMinCapAmount" width="120px" maxlength="15" />
 												</hbox>
 											</row>
-											<row id="row_finAcType" visible="false">
-												<label id="label_FinanceTypeDialog_FinAcType" value="${c:l('label_CDFinanceTypeDialog_FinAcType.value')}" />
-												<extendedcombobox id="finAcType" />
-												<label id="label_FinanceTypeDialog_FinIsOpenNewFinAc" value="${c:l('label_CDFinanceTypeDialog_FinIsOpenNewFinAc.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<checkbox id="finIsOpenNewFinAc" checked="false" />
-												</hbox>
-											</row>
-											<row id="row_finPftPayType" visible="false">
-												<label id="label_FinanceTypeDialog_PftPayAcType" value="${c:l('label_CDFinanceTypeDialog_PftPayAcType.value')}" />
-												<extendedcombobox id="pftPayAcType" />
-												<label id="label_FinanceTypeDialog_FinProvisionAcType" value="${c:l('label_CDFinanceTypeDialog_FinProvisionAcType.value')}" />
-												<extendedcombobox id="finProvisionAcType" />
-											</row>
-											<row id="row_finSuspAcType" visible="false">
-												<label id="label_FinanceTypeDialog_FinSuspAcType" value="${c:l('label_CDFinanceTypeDialog_FinSuspAcType.value')}" />
-												<extendedcombobox id="finSuspAcType" />
-											</row>
-											<row id="row_finBankContingentAcType" visible="false">
-												<label id="label_FinanceTypeDialog_FinBankContingentAcType" value="${c:l('label_CDFinanceTypeDialog_FinBankContingentAcType.value')}" />
-												<extendedcombobox id="finBankContingentAcType" />
-												<label id="label_FinanceTypeDialog_FinIsOpenPftPayAcc" value="${c:l('label_CDFinanceTypeDialog_FinIsOpenPftPayAcc.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<checkbox id="finIsOpenPftPayAcc" />
-												</hbox>
-											</row>
-											<row id="row_finContingentAcType" visible="false">
-												<label id="label_FinanceTypeDialog_FinContingentAcType" value="${c:l('label_CDFinanceTypeDialog_FinContingentAcType.value')}" />
-												<extendedcombobox id="finContingentAcType" />
-												<label id="label_FinanceTypeDialog_FInRepayMethod" visible="false"
-													value="${c:l('label_CDFinanceTypeDialog_FInRepayMethod.value')}" />
-												<hbox visible="false">
-													<space id="space_cbfinRepayMethod" spacing="2px" sclass="mandatory" />
-													<combobox id="cbfinRepayMethod" width="275px" readonly="true" />
-												</hbox>
-											</row>
 											<row id="row_alwdIRRDetails" visible="true">
 												<label id="label_FinanceTypeDialog_AlwIRRDetails" value="${c:l('label_FinanceTypeDialog_AlwIRRDetails.value')}" />
 												<hbox id="hbox_IRRDetails">

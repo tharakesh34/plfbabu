@@ -14,11 +14,7 @@ import javax.xml.bind.annotation.XmlType;
 		"fInIsAlwGrace", "finIsAlwMD", "alwMaxDisbCheckReq", "limitRequired", "overrideLimit",
 		"finCollateralReq", "finCollateralOvrride", "collateralType", "partiallySecured", "allowRIAInvestment",
 		"finDivision", "finIsActive",
-		"finCommitmentReq", "finCommitmentOvrride", "finAcType", "lovDescFinAcTypeName", "finContingentAcType",
-		"lovDescFinContingentAcTypeName", "finBankContingentAcType", "lovDescFinBankContAcTypeName",
-		"finProvisionAcType", "lovDescFinProvisionAcTypeName", "finSuspAcType", "lovDescFinSuspAcTypeName",
-		"pftPayAcType", "lovDescPftPayAcTypeName", "finIsOpenPftPayAcc", "finIsOpenNewFinAc", "alwMultiPartyDisb",
-		"tDSApplicable" })
+		"finCommitmentReq", "finCommitmentOvrride", "alwMultiPartyDisb", "tDSApplicable" })
 @XmlRootElement(name = "basicDetails")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BasicDetail implements Serializable {
@@ -63,32 +59,7 @@ public class BasicDetail implements Serializable {
 	private boolean finIsActive;
 	private boolean finCommitmentReq;
 	private boolean finCommitmentOvrride;
-	private String finAcType;
 
-	@XmlElement(name = "finAcTypeDesc")
-	private String lovDescFinAcTypeName;
-	private String finContingentAcType;
-
-	@XmlElement(name = "contingentAcTypeDesc")
-	private String lovDescFinContingentAcTypeName;
-	private String finBankContingentAcType;
-
-	@XmlElement(name = "bankContingentAcTypeDesc")
-	private String lovDescFinBankContAcTypeName;
-	private String finProvisionAcType;
-
-	@XmlElement(name = "provisionAcTypeDesc")
-	private String lovDescFinProvisionAcTypeName;
-	private String finSuspAcType;
-
-	@XmlElement(name = "suspenseAcTypeDesc")
-	private String lovDescFinSuspAcTypeName;
-	private String pftPayAcType;
-
-	@XmlElement(name = "pftPayAcTypeDesc")
-	private String lovDescPftPayAcTypeName;
-	private boolean finIsOpenPftPayAcc;
-	private boolean finIsOpenNewFinAc;
 	private boolean alwMultiPartyDisb;
 	private boolean tDSApplicable;
 	private boolean partiallySecured;
@@ -275,118 +246,6 @@ public class BasicDetail implements Serializable {
 
 	public void setFinCommitmentOvrride(boolean finCommitmentOvrride) {
 		this.finCommitmentOvrride = finCommitmentOvrride;
-	}
-
-	public String getFinAcType() {
-		return finAcType;
-	}
-
-	public void setFinAcType(String finAcType) {
-		this.finAcType = finAcType;
-	}
-
-	public String getLovDescFinAcTypeName() {
-		return lovDescFinAcTypeName;
-	}
-
-	public void setLovDescFinAcTypeName(String lovDescFinAcTypeName) {
-		this.lovDescFinAcTypeName = lovDescFinAcTypeName;
-	}
-
-	public String getFinContingentAcType() {
-		return finContingentAcType;
-	}
-
-	public void setFinContingentAcType(String finContingentAcType) {
-		this.finContingentAcType = finContingentAcType;
-	}
-
-	public String getLovDescFinContingentAcTypeName() {
-		return lovDescFinContingentAcTypeName;
-	}
-
-	public void setLovDescFinContingentAcTypeName(String lovDescFinContingentAcTypeName) {
-		this.lovDescFinContingentAcTypeName = lovDescFinContingentAcTypeName;
-	}
-
-	public String getFinBankContingentAcType() {
-		return finBankContingentAcType;
-	}
-
-	public void setFinBankContingentAcType(String finBankContingentAcType) {
-		this.finBankContingentAcType = finBankContingentAcType;
-	}
-
-	public String getLovDescFinBankContAcTypeName() {
-		return lovDescFinBankContAcTypeName;
-	}
-
-	public void setLovDescFinBankContAcTypeName(String lovDescFinBankContAcTypeName) {
-		this.lovDescFinBankContAcTypeName = lovDescFinBankContAcTypeName;
-	}
-
-	public String getFinProvisionAcType() {
-		return finProvisionAcType;
-	}
-
-	public void setFinProvisionAcType(String finProvisionAcType) {
-		this.finProvisionAcType = finProvisionAcType;
-	}
-
-	public String getLovDescFinProvisionAcTypeName() {
-		return lovDescFinProvisionAcTypeName;
-	}
-
-	public void setLovDescFinProvisionAcTypeName(String lovDescFinProvisionAcTypeName) {
-		this.lovDescFinProvisionAcTypeName = lovDescFinProvisionAcTypeName;
-	}
-
-	public String getFinSuspAcType() {
-		return finSuspAcType;
-	}
-
-	public void setFinSuspAcType(String finSuspAcType) {
-		this.finSuspAcType = finSuspAcType;
-	}
-
-	public String getLovDescFinSuspAcTypeName() {
-		return lovDescFinSuspAcTypeName;
-	}
-
-	public void setLovDescFinSuspAcTypeName(String lovDescFinSuspAcTypeName) {
-		this.lovDescFinSuspAcTypeName = lovDescFinSuspAcTypeName;
-	}
-
-	public String getPftPayAcType() {
-		return pftPayAcType;
-	}
-
-	public void setPftPayAcType(String pftPayAcType) {
-		this.pftPayAcType = pftPayAcType;
-	}
-
-	public String getLovDescPftPayAcTypeName() {
-		return lovDescPftPayAcTypeName;
-	}
-
-	public void setLovDescPftPayAcTypeName(String lovDescPftPayAcTypeName) {
-		this.lovDescPftPayAcTypeName = lovDescPftPayAcTypeName;
-	}
-
-	public boolean isFinIsOpenPftPayAcc() {
-		return finIsOpenPftPayAcc;
-	}
-
-	public void setFinIsOpenPftPayAcc(boolean finIsOpenPftPayAcc) {
-		this.finIsOpenPftPayAcc = finIsOpenPftPayAcc;
-	}
-
-	public boolean isFinIsOpenNewFinAc() {
-		return finIsOpenNewFinAc;
-	}
-
-	public void setFinIsOpenNewFinAc(boolean finIsOpenNewFinAc) {
-		this.finIsOpenNewFinAc = finIsOpenNewFinAc;
 	}
 
 	public boolean isAlwMultiPartyDisb() {

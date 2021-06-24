@@ -207,36 +207,4 @@ public class FinFeeChargesDAOImpl extends BasicDao<FeeRule> implements FinFeeCha
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
-	@Override
-	public FeeRule getInsFee(String finReference, String type) {
-		logger.debug("Entering");
-
-		FeeRule feeRule = new FeeRule();
-		feeRule.setFinReference(finReference);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
-				" SELECT SUM(FeeAmount) FeeAmount, SUM(WaiverAmount) WaiverAmount, SUM(PaidAmount) PaidAmount ");
-		selectSql.append(" FROM FinFeeCharges");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" WHERE FinReference=:FinReference AND FeeCode IN ('");
-		selectSql.append(RuleConstants.TAKAFUL_FEE);
-		selectSql.append("', '");
-		selectSql.append(RuleConstants.AUTOINS_FEE);
-		selectSql.append("' )");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeRule);
-		RowMapper<FeeRule> typeRowMapper = BeanPropertyRowMapper.newInstance(FeeRule.class);
-
-		try {
-			feeRule = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			feeRule = null;
-		}
-
-		logger.debug("Leaving");
-		return feeRule;
-	}
 }

@@ -847,7 +847,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		//Reset Finance Detail Object for Service Task Verifications
 		auditHeader.getAuditDetail().setModelData(repayData);
 
-		// send DDA Cancellation Request to Interface
 		//===========================================
 		//Fetch Total Repayment Amount till Maturity date for Early Settlement
 		if (FinanceConstants.CLOSE_STATUS_MATURED.equals(financeMain.getClosingStatus())) {
@@ -1455,7 +1454,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 			try {
 				BeanUtils.copyProperties(subHeadRule, customer);
-				subHeadRule.setReqFinAcType(financeType.getFinAcType());
 				//subHeadRule.setReqFinCcy(financeType.getFinCcy());
 				subHeadRule.setReqProduct(financeType.getFinCategory());
 				subHeadRule.setReqFinType(financeType.getFinType());
@@ -1474,14 +1472,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate(),
 						false);
 				subHeadRule.setTenure(months);
-
-				FeeRule insAmt = getFinanceDetailService().getInsFee(financeMain.getFinReference());
-				if (insAmt != null) {
-					subHeadRule.setCALFEE(insAmt.getFeeAmount() == null ? BigDecimal.ZERO : insAmt.getFeeAmount());
-					subHeadRule
-							.setWAVFEE(insAmt.getWaiverAmount() == null ? BigDecimal.ZERO : insAmt.getWaiverAmount());
-					subHeadRule.setPAIDFEE(insAmt.getPaidAmount() == null ? BigDecimal.ZERO : insAmt.getPaidAmount());
-				}
 
 			} catch (IllegalAccessException e) {
 				logger.error("Exception: ", e);

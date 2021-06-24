@@ -194,9 +194,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected ExtendedCombobox finCcy; // autoWired
 	protected Space space_finDaysCalType;
 	protected Combobox cbfinDaysCalType; // autoWired
-	protected ExtendedCombobox finAcType; // autoWired
-	protected Checkbox finIsOpenNewFinAc; // autoWired
-	protected Label label_FinanceTypeDialog_FinIsOpenNewFinAc;
 	protected CurrencyBox finMinAmount; // autoWired
 	protected CurrencyBox finMaxAmount; // autoWired
 	protected Space space_cbfinProductType;
@@ -434,11 +431,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Hbox hbox_pastduePftMargin; // autoWired
 
 	protected Label label_FinanceTypeDialog_ProfitOnPastDueMargin;
-	protected Row row_finAcType;
-	protected Row row_finPftPayType;
-	protected Row row_finSuspAcType;
-	protected Row row_finBankContingentAcType;
-	protected Row row_finContingentAcType;
 
 	protected Groupbox gb_vanDetails;
 	protected Checkbox vanRequired;
@@ -474,12 +466,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Space space_finGrcSchdMthd; // autoWired
 
 	// ========= Hidden Fields
-	protected ExtendedCombobox pftPayAcType; // autoWired
-	protected ExtendedCombobox finBankContingentAcType; // autoWired
-	protected ExtendedCombobox finContingentAcType; // autoWired
-	protected ExtendedCombobox finSuspAcType; // autoWired
-	protected ExtendedCombobox finProvisionAcType; // autoWired
-	protected Checkbox finIsOpenPftPayAcc; // autoWired
 	protected FrequencyBox finDftStmtFrq; // autoWired
 	protected Intbox finHistRetension; // autoWired
 	protected Checkbox finCollateralReq; // autoWired
@@ -780,74 +766,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finCcy.setValueColumn("CcyCode");
 		this.finCcy.setDescColumn("CcyDesc");
 		this.finCcy.setValidateColumns(new String[] { "CcyCode" });
-		if (ImplementationConstants.ALLOW_FINACTYPES) {
-			this.finAcType.setMaxlength(15);
-			this.finAcType.setMandatoryStyle(false);
-			this.finAcType.setModuleName("AccountType");
-			this.finAcType.setValueColumn("AcType");
-			this.finAcType.setDescColumn("AcTypeDesc");
-			this.finAcType.setValidateColumns(new String[] { "AcType" });
-			Filter[] finAcTypeFilters = new Filter[2];
-			finAcTypeFilters[0] = new Filter("AcPurpose", "F", Filter.OP_EQUAL);
-			finAcTypeFilters[1] = new Filter("internalAc", "0", Filter.OP_EQUAL);
-			this.finAcType.setFilters(finAcTypeFilters);
-			this.pftPayAcType.setMaxlength(15);
-			this.pftPayAcType.setMandatoryStyle(false);
-			this.pftPayAcType.setModuleName("AccountType");
-			this.pftPayAcType.setValueColumn("AcType");
-			this.pftPayAcType.setDescColumn("AcTypeDesc");
-			this.pftPayAcType.setValidateColumns(new String[] { "AcType" });
-			Filter[] pftPayAcTypeFilters = new Filter[2];
-			pftPayAcTypeFilters[0] = new Filter("AcPurpose", "U", Filter.OP_EQUAL);
-			pftPayAcTypeFilters[1] = new Filter("internalAc", "0", Filter.OP_EQUAL);
-			this.pftPayAcType.setFilters(pftPayAcTypeFilters);
-			this.finSuspAcType.setMaxlength(15);
-			this.finSuspAcType.setMandatoryStyle(false);
-			this.finSuspAcType.setModuleName("AccountType");
-			this.finSuspAcType.setValueColumn("AcType");
-			this.finSuspAcType.setDescColumn("AcTypeDesc");
-			this.finSuspAcType.setValidateColumns(new String[] { "AcType" });
-			Filter[] finSuspAcTypeFilters = new Filter[2];
-			finSuspAcTypeFilters[0] = new Filter("AcPurpose", "S", Filter.OP_EQUAL);
-			finSuspAcTypeFilters[1] = new Filter("internalAc", "0", Filter.OP_EQUAL);
-			this.finSuspAcType.setFilters(finSuspAcTypeFilters);
 
-			this.finProvisionAcType.setMaxlength(15);
-			this.finProvisionAcType.setMandatoryStyle(false);
-			this.finProvisionAcType.setModuleName("AccountType");
-			this.finProvisionAcType.setValueColumn("AcType");
-			this.finProvisionAcType.setDescColumn("AcTypeDesc");
-			this.finProvisionAcType.setValidateColumns(new String[] { "AcType" });
-			Filter[] finProvisionAcTypeFilters = new Filter[2];
-			finProvisionAcTypeFilters[0] = new Filter("AcPurpose", "P", Filter.OP_EQUAL);
-			finProvisionAcTypeFilters[1] = new Filter("internalAc", "0", Filter.OP_EQUAL);
-			this.finProvisionAcType.setFilters(finProvisionAcTypeFilters);
-
-			this.finBankContingentAcType.setMaxlength(15);
-			this.finBankContingentAcType.setMandatoryStyle(false);
-			this.finBankContingentAcType.setModuleName("AccountType");
-			this.finBankContingentAcType.setValueColumn("AcType");
-			this.finBankContingentAcType.setDescColumn("AcTypeDesc");
-			this.finBankContingentAcType.setValidateColumns(new String[] { "AcType" });
-			Filter[] finBankContingentAcTypeFilters = new Filter[2];
-			finBankContingentAcTypeFilters[0] = new Filter("AcPurpose", "C", Filter.OP_EQUAL);
-			finBankContingentAcTypeFilters[1] = new Filter("internalAc", "0", Filter.OP_EQUAL);
-			this.finBankContingentAcType.setFilters(finBankContingentAcTypeFilters);
-
-			this.finContingentAcType.setMaxlength(15);
-			this.finContingentAcType.setMandatoryStyle(false);
-			this.finContingentAcType.setModuleName("AccountType");
-			this.finContingentAcType.setValueColumn("AcType");
-			this.finContingentAcType.setDescColumn("AcTypeDesc");
-			this.finContingentAcType.setValidateColumns(new String[] { "AcType" });
-			Filter[] finContingentAcTypeFilters = new Filter[2];
-			finContingentAcTypeFilters[0] = new Filter("AcPurpose", "C", Filter.OP_EQUAL);
-			finContingentAcTypeFilters[1] = new Filter("internalAc", "0", Filter.OP_EQUAL);
-			this.finContingentAcType.setFilters(finContingentAcTypeFilters);
-		}
-		if (isOverdraft) {
-			this.finAcType.setMandatoryStyle(true);
-		}
 		this.finDivision.setMaxlength(8);
 		this.finDivision.setMandatoryStyle(true);
 		this.finDivision.setModuleName("DivisionDetail");
@@ -1159,23 +1078,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finCcy.setValue(StringUtils.trimToEmpty(aFinanceType.getFinCcy()));
 		this.finCcy.setDescription(CurrencyUtil.getCcyDesc(aFinanceType.getFinCcy()));
 
-		if (ImplementationConstants.ALLOW_FINACTYPES) {
-			this.finAcType.setDescription(aFinanceType.getLovDescFinAcTypeName());
-			this.finAcType.setValue(aFinanceType.getFinAcType());
-			this.finIsOpenNewFinAc.setChecked(aFinanceType.isFinIsOpenNewFinAc());
-			this.pftPayAcType.setDescription(aFinanceType.getLovDescPftPayAcTypeName());
-			this.pftPayAcType.setValue(aFinanceType.getPftPayAcType());
-			this.finProvisionAcType.setDescription(aFinanceType.getLovDescFinProvisionAcTypeName());
-			this.finProvisionAcType.setValue(aFinanceType.getFinProvisionAcType());
-			this.finSuspAcType.setDescription(aFinanceType.getLovDescFinSuspAcTypeName());
-			this.finSuspAcType.setValue(aFinanceType.getFinSuspAcType());
-			this.finContingentAcType.setValue(aFinanceType.getFinContingentAcType());
-			this.finContingentAcType.setDescription(aFinanceType.getLovDescFinContingentAcTypeName());
-			this.finBankContingentAcType.setValue(aFinanceType.getFinBankContingentAcType());
-			this.finBankContingentAcType.setDescription(aFinanceType.getLovDescFinBankContAcTypeName());
-			this.finIsOpenPftPayAcc.setChecked(aFinanceType.isFinIsOpenPftPayAcc());
-		}
-
 		this.finDivision.setDescription(aFinanceType.getLovDescFinDivisionName());
 		fillComboBox(this.cbfinDaysCalType, aFinanceType.getFinDaysCalType(),
 				PennantStaticListUtil.getProfitDaysBasis(), "");
@@ -1183,24 +1085,20 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finMinAmount.setValue(PennantAppUtil.formateAmount(aFinanceType.getFinMinAmount(), format));
 		this.finMaxAmount.setValue(PennantAppUtil.formateAmount(aFinanceType.getFinMaxAmount(), format));
 		Filter[] filters = null;
-		if (ImplementationConstants.IMPLEMENTATION_CONVENTIONAL) {
-			filters = new Filter[1];
-			if (isOverdraft) {
-				filters[0] = new Filter("ProductCategory", FinanceConstants.PRODUCT_ODFACILITY, Filter.OP_EQUAL);
-			} else if (consumerDurable) {
-				filters[0] = new Filter("ProductCategory", FinanceConstants.PRODUCT_CD, Filter.OP_EQUAL);
-			} else {
-				Filter[] tempFilter = new Filter[2];
-				tempFilter[0] = new Filter("ProductCategory", FinanceConstants.PRODUCT_DISCOUNT, Filter.OP_EQUAL);
-				tempFilter[1] = new Filter("ProductCategory", FinanceConstants.PRODUCT_CONVENTIONAL, Filter.OP_EQUAL);
-				filters[0] = Filter.or(tempFilter);
-			}
+
+
+		filters = new Filter[1];
+		if (isOverdraft) {
+			filters[0] = new Filter("ProductCategory", FinanceConstants.PRODUCT_ODFACILITY, Filter.OP_EQUAL);
+		} else if (consumerDurable) {
+			filters[0] = new Filter("ProductCategory", FinanceConstants.PRODUCT_CD, Filter.OP_EQUAL);
 		} else {
-			filters = new Filter[3];
-			filters[0] = new Filter("ProductCategory", FinanceConstants.PRODUCT_ODFACILITY, Filter.OP_NOT_EQUAL);
-			filters[1] = new Filter("ProductCategory", FinanceConstants.PRODUCT_CONVENTIONAL, Filter.OP_NOT_EQUAL);
-			filters[2] = new Filter("ProductCategory", FinanceConstants.PRODUCT_CD, Filter.OP_NOT_EQUAL);
+			Filter[] tempFilter = new Filter[2];
+			tempFilter[0] = new Filter("ProductCategory", FinanceConstants.PRODUCT_DISCOUNT, Filter.OP_EQUAL);
+			tempFilter[1] = new Filter("ProductCategory", FinanceConstants.PRODUCT_CONVENTIONAL, Filter.OP_EQUAL);
+			filters[0] = Filter.or(tempFilter);
 		}
+	
 
 		fillComboBox(this.cbfinProductType, aFinanceType.getFinCategory(), PennantAppUtil.getProductByCtg(filters), "");
 		this.finAssetType.setValue(StringUtils.trimToEmpty(aFinanceType.getFinAssetType()));
@@ -2023,54 +1921,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		if (ImplementationConstants.ALLOW_FINACTYPES) {
-			try {
-				aFinanceType.setLovDescFinAcTypeName(this.finAcType.getDescription());
-				aFinanceType.setFinAcType(this.finAcType.getValue());
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-			try {
-				aFinanceType.setFinIsOpenNewFinAc(this.finIsOpenNewFinAc.isChecked());
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-			try {
-				aFinanceType.setLovDescPftPayAcTypeName(this.pftPayAcType.getDescription());
-				aFinanceType.setPftPayAcType(this.pftPayAcType.getValue());
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-			try {
-				aFinanceType.setLovDescFinSuspAcTypeName(this.finSuspAcType.getDescription());
-				aFinanceType.setFinSuspAcType(this.finSuspAcType.getValue());
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-			try {
-				aFinanceType.setLovDescFinProvisionAcTypeName(this.finProvisionAcType.getDescription());
-				aFinanceType.setFinProvisionAcType(this.finProvisionAcType.getValue());
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-			try {
-				aFinanceType.setLovDescFinContingentAcTypeName(this.finContingentAcType.getDescription());
-				aFinanceType.setFinContingentAcType(this.finContingentAcType.getValue());
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-			try {
-				aFinanceType.setLovDescFinBankContAcTypeName(this.finBankContingentAcType.getDescription());
-				aFinanceType.setFinBankContingentAcType(this.finBankContingentAcType.getValue());
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-			try {
-				aFinanceType.setFinIsOpenPftPayAcc(this.finIsOpenPftPayAcc.isChecked());
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-		}
+
 		try {
 			aFinanceType.setLovDescFinDivisionName(this.finDivision.getDescription());
 			aFinanceType.setFinDivision(this.finDivision.getValue());
@@ -3659,12 +3510,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			showErrorDetails(wve, extendedDetails);
 		}
 
-		// Not visible fields
-		try {
-			aFinanceType.setFinIsOpenPftPayAcc(this.finIsOpenPftPayAcc.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
 		try {
 			// to Check frequency code and frequency month
 			if (!"#".equals(this.finDftStmtFrq.getFrqCodeValue())
@@ -4294,31 +4139,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_FinCcy.value"), null, true, true));
 
 		if (validate) {
-			if (ImplementationConstants.ALLOW_FINACTYPES) {
-				this.finAcType.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_FinanceTypeDialog_FinAcType.value"), null, false, true));
-				if (!isOverdraft && !consumerDurable) {
-					this.pftPayAcType.setConstraint(new PTStringValidator(
-							Labels.getLabel("label_FinanceTypeDialog_PftPayAcType.value"), null, false, true));
-
-					this.finSuspAcType.setConstraint(new PTStringValidator(
-							Labels.getLabel("label_FinanceTypeDialog_FinSuspAcType.value"), null, false, true));
-
-					this.finProvisionAcType.setConstraint(new PTStringValidator(
-							Labels.getLabel("label_FinanceTypeDialog_FinProvisionAcType.value"), null, false, true));
-
-					this.finContingentAcType.setConstraint(new PTStringValidator(
-							Labels.getLabel("label_FinanceTypeDialog_FinContingentAcType.value"), null, false, true));
-
-					this.finBankContingentAcType.setConstraint(new PTStringValidator(
-							Labels.getLabel("label_FinanceTypeDialog_FinBankContingentAcType.value"), null, false,
-							true));
-				} else {
-					this.finAcType.setConstraint(new PTStringValidator(
-							Labels.getLabel("label_FinanceTypeDialog_FinAcType.value"), null, true, true));
-				}
-			}
-
 			if (this.applyRpyPricing.isChecked() && !this.rpyPricingMethod.isReadonly()) {
 				this.rpyPricingMethod.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_FinanceTypeDialog_RpyPricingMethod.value"), null, true, true));
@@ -4339,14 +4159,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (isPromotion) {
 			this.product.setConstraint("");
 		}
-		if (ImplementationConstants.ALLOW_FINACTYPES) {
-			this.finAcType.setConstraint("");
-			this.pftPayAcType.setConstraint("");
-			this.finProvisionAcType.setConstraint("");
-			this.finSuspAcType.setConstraint("");
-			this.finContingentAcType.setConstraint("");
-			this.finBankContingentAcType.setConstraint("");
-		}
+
 		this.finCcy.setConstraint("");
 		this.finDivision.setConstraint("");
 		this.financeBaserate.getBaseComp().setConstraint("");
@@ -4440,7 +4253,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.row_PromoDates.setVisible(true);
 			}
 			// this.finType.setReadonly(false);
-			this.finIsOpenNewFinAc.setChecked(true);
 			this.finHistRetension.setValue(12);
 			this.btnCopyTo.setVisible(false);
 		} else {
@@ -4503,48 +4315,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finCcy.setReadonly(true);
 		this.finTypeDesc.setReadonly(isTrue);
 		this.finDivision.setReadonly(true);
-		if (ImplementationConstants.ALLOW_FINACTYPES) {
-			row_finAcType.setVisible(true);
-			this.finAcType.setReadonly(isTrue);
-			this.finIsOpenNewFinAc.setVisible(false);
-			this.label_FinanceTypeDialog_FinIsOpenNewFinAc.setVisible(false);
-			if (!isOverdraft && !consumerDurable) {
-				this.finIsOpenNewFinAc.setDisabled(isTrue);
-				this.row_finPftPayType.setVisible(true);
-				this.pftPayAcType.setReadonly(isTrue);
-				this.finProvisionAcType.setReadonly(isTrue);
-				this.row_finSuspAcType.setVisible(true);
-				this.finSuspAcType.setReadonly(isTrue);
-				this.row_finBankContingentAcType.setVisible(true);
-				this.finBankContingentAcType.setReadonly(isTrue);
-				this.row_finContingentAcType.setVisible(true);
-				this.finContingentAcType.setReadonly(isTrue);
-				this.finIsOpenNewFinAc.setVisible(true);
-				this.label_FinanceTypeDialog_FinIsOpenNewFinAc.setVisible(true);
-			}
-		} else {
-			row_finAcType.setVisible(false);
-			this.finAcType.setReadonly(true);
-			this.finAcType.setMandatoryStyle(false);
-			this.finIsOpenNewFinAc.setDisabled(true);
-
-			row_finPftPayType.setVisible(false);
-			this.pftPayAcType.setReadonly(true);
-			this.finProvisionAcType.setReadonly(true);
-			this.finProvisionAcType.setMandatoryStyle(false);
-
-			row_finSuspAcType.setVisible(false);
-			this.finSuspAcType.setReadonly(true);
-			this.finSuspAcType.setMandatoryStyle(false);
-
-			row_finBankContingentAcType.setVisible(false);
-			this.finBankContingentAcType.setReadonly(true);
-			this.finBankContingentAcType.setMandatoryStyle(false);
-
-			row_finContingentAcType.setVisible(false);
-			this.finContingentAcType.setReadonly(true);
-			this.finContingentAcType.setMandatoryStyle(false);
-		}
 
 		this.costOfFunds.setReadonly(isTrue);
 		if (ImplementationConstants.ALLOW_IRRCODES) {
@@ -4567,7 +4337,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.btnAlwElgMthdDetails.setDisabled(isTrue);
 		this.btnSearchAlwEarlyMethod.setDisabled(isTrue);
 
-		this.finIsOpenPftPayAcc.setDisabled(isTrue);
 		this.finCollateralReq.setDisabled(isTrue);
 		this.alwLoanSplit.setDisabled(isTrue);
 		this.finIsAlwMD.setDisabled(isTrue);
@@ -4770,13 +4539,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.financeGrcBaseRate.getSpecialComp().setMandatoryStyle(false);
 			this.financeGrcBaseRate.setReadonly(false);
 			this.rpyPricingMethod.setMandatoryStyle(false);
-			this.finAcType.setMandatoryStyle(false);
-			this.pftPayAcType.setMandatoryStyle(false);
-			this.finProvisionAcType.setMandatoryStyle(false);
-			this.finSuspAcType.setMandatoryStyle(false);
-			this.finBankContingentAcType.setMandatoryStyle(false);
 			this.downPayRule.setMandatoryStyle(false);
-			this.finContingentAcType.setMandatoryStyle(false);
 			this.grcPricingMethod.setMandatoryStyle(false);
 			this.finGrcDftIntFrq.setMandatoryStyle(false);
 			this.finGrcCpzFrq.setMandatoryStyle(false);
@@ -4855,20 +4618,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	public void doClear() {
 		logger.debug(Literal.ENTERING);
 
-		// remove validation, if there are a save before
-		if (ImplementationConstants.ALLOW_FINACTYPES) {
-			this.finAcType.setValue("");
-			this.finAcType.setDescription("");
-			this.pftPayAcType.setValue("");
-			this.pftPayAcType.setDescription("");
-			this.finProvisionAcType.setValue("");
-			this.finProvisionAcType.setDescription("");
-			this.finSuspAcType.setValue("");
-			this.finSuspAcType.setDescription("");
-			this.finBankContingentAcType.setValue("");
-			this.finContingentAcType.setValue("");
-		}
-
 		this.finType.setValue("");
 		this.finTypeDesc.setValue("");
 		this.finCcy.setValue("");
@@ -4884,7 +4633,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.alwEarlyPayMethods.setTooltiptext("");
 		this.finDftStmtFrq.setValue("");
 		this.finIsAlwMD.setChecked(false);
-		this.finIsOpenPftPayAcc.setChecked(false);
 		this.fInIsAlwGrace.setChecked(false);
 		this.finHistRetension.setText("");
 		this.financeBaserate.getBaseComp().setValue("", "");
@@ -5454,88 +5202,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			if (details != null) {
 				this.finDivision.setValue(details.getDivisionCode());
 				this.finDivision.setDescription(details.getDivisionCodeDesc());
-			}
-		}
-		logger.debug(Literal.LEAVING + event.toString());
-	}
-
-	/**
-	 * To get the AccountType LOV List From RMTAccountTypes Table filter is applied to get non internal account and it's
-	 * purpose is movement
-	 */
-
-	public void onFulfill$finAcType(Event event) {
-		logger.debug(Literal.ENTERING + event.toString());
-		Object dataObject = finAcType.getObject();
-		if (dataObject instanceof String) {
-			this.finAcType.setValue(dataObject.toString());
-			this.finAcType.setDescription("");
-		} else {
-			AccountType details = (AccountType) dataObject;
-			if (details != null) {
-				this.finAcType.setValue(details.getAcType());
-				this.finAcType.setDescription(details.getAcTypeDesc());
-			}
-		}
-		logger.debug(Literal.LEAVING + event.toString());
-	}
-
-	/**
-	 * To get the AccountType LOV List From RMTAccountTypes Table filter is applied to get non internal account and it's
-	 * purpose is movement
-	 */
-
-	public void onFulfill$pftPayAcType(Event event) {
-		logger.debug(Literal.ENTERING + event.toString());
-		Object dataObject = pftPayAcType.getObject();
-		if (dataObject instanceof String) {
-			this.pftPayAcType.setValue(dataObject.toString());
-			this.pftPayAcType.setDescription("");
-		} else {
-			AccountType details = (AccountType) dataObject;
-			if (details != null) {
-				this.pftPayAcType.setValue(details.getAcType());
-				this.pftPayAcType.setDescription(details.getAcTypeDesc());
-			}
-		}
-		logger.debug(Literal.LEAVING + event.toString());
-	}
-
-	/**
-	 * To get the AccountType LOV List From RMTAccountTypes Table filter is applied to get only an Internal account and
-	 * it's purpose is movement and it is a Suspense account
-	 */
-	public void onFulfill$finSuspAcType(Event event) {
-		logger.debug(Literal.ENTERING + event.toString());
-		Object dataObject = finSuspAcType.getObject();
-		if (dataObject instanceof String) {
-			this.finSuspAcType.setValue(dataObject.toString());
-			this.finSuspAcType.setDescription("");
-		} else {
-			AccountType details = (AccountType) dataObject;
-			if (details != null) {
-				this.finSuspAcType.setValue(details.getAcType());
-				this.finSuspAcType.setDescription(details.getAcTypeDesc());
-			}
-		}
-		logger.debug(Literal.LEAVING + event.toString());
-	}
-
-	/**
-	 * To get the AccountType LOV List From RMTAccountTypes Table filter is applied to get only an internal account and
-	 * it's purpose is movement and it is a Provision account
-	 */
-	public void onFulfill$finProvisionAcType(Event event) {
-		logger.debug(Literal.ENTERING + event.toString());
-		Object dataObject = finProvisionAcType.getObject();
-		if (dataObject instanceof String) {
-			this.finProvisionAcType.setValue(dataObject.toString());
-			this.finProvisionAcType.setDescription("");
-		} else {
-			AccountType details = (AccountType) dataObject;
-			if (details != null) {
-				this.finProvisionAcType.setValue(details.getAcType());
-				this.finProvisionAcType.setDescription(details.getAcTypeDesc());
 			}
 		}
 		logger.debug(Literal.LEAVING + event.toString());
@@ -7159,14 +6825,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.startDate.setErrorMessage("");
 			this.endDate.setErrorMessage("");
 		}
-		if (ImplementationConstants.ALLOW_FINACTYPES) {
-			this.finAcType.setErrorMessage("");
-			this.pftPayAcType.setErrorMessage("");
-			this.finProvisionAcType.setErrorMessage("");
-			this.finSuspAcType.setErrorMessage("");
-			this.finBankContingentAcType.setErrorMessage("");
-			this.finContingentAcType.setErrorMessage("");
-		}
+
 		this.finType.setErrorMessage("");
 		this.finTypeDesc.setErrorMessage("");
 		this.finCcy.setErrorMessage("");
@@ -7453,19 +7112,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	private void setDefaultValues() {
 		logger.debug(Literal.ENTERING);
 		FinanceType finType = getFinanceType();
-		if (ImplementationConstants.ALLOW_FINACTYPES) {
-			// this.pftPayAcType.setValue("");
-			this.finBankContingentAcType.setValue("");
-			this.finContingentAcType.setValue("");
-			// this.finSuspAcType.setValue("");
-			// this.finProvisionAcType.setValue("");
-		}
+
 		if (getFinanceType().isNewRecord()) {
 			this.finODRpyTries.setValue(-1);
 			this.finIsAlwGrcRepay.setChecked(true);
 		}
 		finType.setFinODRpyTries(-1);
-		this.finIsOpenPftPayAcc.setValue(false);
 		this.finDftStmtFrq.setValue("Y1231");
 		finType.setFinDftStmtFrq("Y1231");
 		this.finHistRetension.setValue(12);

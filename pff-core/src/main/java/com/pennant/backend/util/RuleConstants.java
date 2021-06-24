@@ -3,9 +3,6 @@ package com.pennant.backend.util;
 public class RuleConstants {
 	public static final String RULEFIELD_CCY = "CCY";
 
-	public static final String TAKAFUL_FEE = "TAKAFUL";
-	public static final String AUTOINS_FEE = "AUTOINS";
-
 	// Rule Module Codes
 	public static final String MODULE_FEES = "FEES";
 	public static final String MODULE_FEEPERC = "FEEPERC";

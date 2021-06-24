@@ -161,7 +161,7 @@ public interface FinanceDetailService {
 
 	List<Rule> getFeeRuleDetails(FinanceType finType, Date startDate, boolean isWIF);
 
-	List<ErrorDetail> getDiscrepancies(FinanceDetail financeDetail);
+	//List<ErrorDetail> getDiscrepancies(FinanceDetail financeDetail);
 
 	List<FeeRule> getApprovedFeeRules(String finReference, String finEvent, boolean isWIF);
 
@@ -175,8 +175,6 @@ public interface FinanceDetailService {
 	List<AvailFinance> getFinanceDetailByCmtRef(String cmtRef, long custId);
 
 	BigDecimal getCustRepayBankTotal(long custId);
-
-	FeeRule getInsFee(String finReference);
 
 	FinScheduleData getFinMaintainenceDetails(FinScheduleData finSchData);
 

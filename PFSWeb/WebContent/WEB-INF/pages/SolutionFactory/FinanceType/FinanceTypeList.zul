@@ -116,7 +116,6 @@
 								<listheader id="listheader_FinCcy" label="${c:l('listheader_FinCcy.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_FinBasicType" label="${c:l('listheader_FinDaysCalType.label')}" sort="auto"
 									hflex="min" />
-								<!-- <listheader id="listheader_FinAcType" label="${c:l('listheader_FinAcType.label')}" sort="auto" hflex="min" /> -->
 								<listheader id="listheader_SchdMthd" label="${c:l('listheader_FinSchdMthd.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_AlwGrace" label="${c:l('listheader_FInIsAlwGrace.label')}" sort="auto"

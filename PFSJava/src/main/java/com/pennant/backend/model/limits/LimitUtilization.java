@@ -19,7 +19,6 @@ public class LimitUtilization implements Serializable {
 	private BigDecimal dealAmount = BigDecimal.ZERO;
 	private String dealCcy;
 	private Date dealExpiry;
-	private String brokerID;
 	private String draweeID;
 	private String prevDealID;
 	private BigDecimal mtm = BigDecimal.ZERO;
@@ -152,14 +151,6 @@ public class LimitUtilization implements Serializable {
 
 	public void setDraweeID(String draweeID) {
 		this.draweeID = draweeID;
-	}
-
-	public String getBrokerID() {
-		return brokerID;
-	}
-
-	public void setBrokerID(String brokerID) {
-		this.brokerID = brokerID;
 	}
 
 	public String getPrevDealID() {

@@ -53,8 +53,6 @@ public interface FinFeeChargesDAO {
 
 	boolean updateFeeChargesByFinRefAndFee(FeeRule feeRule, String tableType);
 
-	FeeRule getInsFee(String finReference, String type);
-
 	void saveChargesBatch(List<FeeRule> chargeList, boolean isWIF, String tableType);
 
 	void deleteChargesBatch(String finReference, String finEvent, boolean isWIF, String tableType);

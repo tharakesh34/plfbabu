@@ -2086,7 +2086,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		receiptData.getFinanceDetail().getFinScheduleData().setFinanceMain(financeMain);
 		auditHeader.getAuditDetail().setModelData(receiptData);
 
-		// send DDA Cancellation Request to Interface
 		// ===========================================
 		// Fetch Total Repayment Amount till Maturity date for Early Settlement
 		if (FinanceConstants.CLOSE_STATUS_MATURED.equals(financeMain.getClosingStatus())) {

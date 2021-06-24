@@ -4640,10 +4640,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			for (FeeRule fee : feeChargesList) {
 				totalExpAmt = totalExpAmt
 						.add(fee.getFeeAmount().subtract(fee.getWaiverAmount()).subtract(fee.getPaidAmount()));
-				if (StringUtils.equals(fee.getFeeCode(), RuleConstants.TAKAFUL_FEE)
-						|| StringUtils.equals(fee.getFeeCode(), RuleConstants.AUTOINS_FEE)) {
-					insAmt = (fee.getCalFeeAmount().subtract(fee.getWaiverAmount())).subtract(fee.getPaidAmount());
-				}
 			}
 			agreement.setInsAmt(CurrencyUtil.format(insAmt, formatter));
 			agreement.setTotalExpAmt(CurrencyUtil.format(totalExpAmt, formatter));

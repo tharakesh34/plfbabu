@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  AgreementFieldsDetailDAOImpl.java                                                   * 	  
+ * FileName    		:  FinPlanEmiHolidayDAOImpl.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -58,7 +58,7 @@ import com.pennant.backend.model.finance.FinPlanEmiHoliday;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 /**
- * DAO methods implementation for the <b>AgreementFieldDetails model</b> class.<br>
+ * DAO methods implementation for the <b>FinPlanEmiHoliday model</b> class.<br>
  */
 public class FinPlanEmiHolidayDAOImpl extends BasicDao<FinPlanEmiHoliday> implements FinPlanEmiHolidayDAO {
 	private static Logger logger = LogManager.getLogger(FinPlanEmiHolidayDAOImpl.class);

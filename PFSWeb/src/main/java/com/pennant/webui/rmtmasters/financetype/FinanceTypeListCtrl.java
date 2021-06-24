@@ -105,7 +105,6 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 	protected Listheader listheader_FinTypeDesc;
 	protected Listheader listheader_FinCcy;
 	protected Listheader listheader_FinBasicType;
-	protected Listheader listheader_FinAcType;
 	protected Listheader listheader_ProductType;
 	protected Listheader listheader_SchdMthd;
 	protected Listheader listheader_AlwGrace;
@@ -164,19 +163,10 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 			} else if (consumerDurables) {
 				this.searchObject.addFilterEqual("ProductCategory", FinanceConstants.PRODUCT_CD);
 			} else {
-
-				if (ImplementationConstants.IMPLEMENTATION_CONVENTIONAL) {
-					Filter[] filters = new Filter[2];
-					filters[0] = new Filter("ProductCategory", FinanceConstants.PRODUCT_CONVENTIONAL, Filter.OP_EQUAL);
-					filters[1] = new Filter("ProductCategory", FinanceConstants.PRODUCT_DISCOUNT, Filter.OP_EQUAL);
-					this.searchObject.addFilterOr(filters);
-
-				} else {
-
-					this.searchObject.addFilterNotEqual("ProductCategory", FinanceConstants.PRODUCT_ODFACILITY);
-					this.searchObject.addFilterNotEqual("ProductCategory", FinanceConstants.PRODUCT_CONVENTIONAL);
-					this.searchObject.addFilterNotEqual("ProductCategory", FinanceConstants.PRODUCT_CD);
-				}
+				Filter[] filters = new Filter[2];
+				filters[0] = new Filter("ProductCategory", FinanceConstants.PRODUCT_CONVENTIONAL, Filter.OP_EQUAL);
+				filters[1] = new Filter("ProductCategory", FinanceConstants.PRODUCT_DISCOUNT, Filter.OP_EQUAL);
+				this.searchObject.addFilterOr(filters);
 			}
 		}
 	}
@@ -244,7 +234,6 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 		registerField("finCcy", listheader_FinCcy, SortOrder.NONE, finCcy, sortOperator_finCcy, Operators.STRING);
 		registerField("finDaysCalType", listheader_FinBasicType, SortOrder.NONE, finDaysCalType,
 				sortOperator_finDaysCalType, Operators.STRING);
-		/* registerField("finAcType", listheader_FinAcType, SortOrder.NONE); */
 		registerField("finSchdMthd", listheader_SchdMthd, SortOrder.NONE, finSchdMthd, sortOperator_finSchdMthd,
 				Operators.STRING);
 		if (!isOverdraft && !consumerDurables) {

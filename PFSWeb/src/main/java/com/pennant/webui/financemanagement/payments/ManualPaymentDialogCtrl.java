@@ -1037,7 +1037,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		try {
 			BeanUtils.copyProperties(subHeadRule, customer);
-			subHeadRule.setReqFinAcType(financeType.getFinAcType());
 			//subHeadRule.setReqFinCcy(financeType.getFinCcy());
 			subHeadRule.setReqProduct(financeType.getFinCategory());
 			subHeadRule.setReqFinType(financeType.getFinType());
@@ -1370,7 +1369,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			try {
 				BeanUtils.copyProperties(subHeadRule, customer);
-				subHeadRule.setReqFinAcType(financeType.getFinAcType());
 				//subHeadRule.setReqFinCcy(financeType.getFinCcy());
 				subHeadRule.setReqProduct(financeType.getFinCategory());
 				subHeadRule.setReqFinType(financeType.getFinType());
@@ -1389,16 +1387,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate(),
 						false);
 				subHeadRule.setTenure(months);
-
-				FeeRule insAmount = getFinanceDetailService().getInsFee(financeMain.getFinReference());
-				if (insAmount != null) {
-					subHeadRule
-							.setCALFEE(insAmount.getFeeAmount() == null ? BigDecimal.ZERO : insAmount.getFeeAmount());
-					subHeadRule.setWAVFEE(
-							insAmount.getWaiverAmount() == null ? BigDecimal.ZERO : insAmount.getWaiverAmount());
-					subHeadRule.setPAIDFEE(
-							insAmount.getPaidAmount() == null ? BigDecimal.ZERO : insAmount.getPaidAmount());
-				}
 
 			} catch (IllegalAccessException e) {
 				logger.error("Exception: ", e);
@@ -3032,21 +3020,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			earlySettlement.setDiscountPerc(discountPerc + " %");
 			earlySettlement.setDiscountAmount(
 					financeMain.getFinCcy() + " " + PennantApplicationUtil.amountFormate(totalRefund, formatter));
-
-			BigDecimal insAmount = BigDecimal.ZERO;
-			FeeRule feeRule = getFinanceDetailService().getInsFee(financeMain.getFinReference());
-			if (feeRule != null && feeRule.getFeeAmount() != null) {
-				insAmount = feeRule.getFeeAmount().subtract(feeRule.getWaiverAmount())
-						.subtract(feeRule.getPaidAmount());
-			}
-
-			int remMonths = DateUtility
-					.getMonthsBetween(
-							financeMain.getMaturityDate(), repayData.getRepayMain().getRefundCalStartDate() == null
-									? financeMain.getMaturityDate() : repayData.getRepayMain().getRefundCalStartDate(),
-							true);
-			int totalMonths = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate(),
-					false);
 
 			earlySettlement
 					.setTotCustPaidAmount(financeMain.getFinCcy() + " "

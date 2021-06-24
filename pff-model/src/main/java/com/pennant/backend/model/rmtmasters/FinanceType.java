@@ -59,16 +59,8 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String finTypeDesc;
 	private String finCcy;
 	private String finDaysCalType;
-	private String finAcType;
-	private String finContingentAcType;
-	private String finSuspAcType;
-	private String finBankContingentAcType;
-	private String finProvisionAcType;
-	private String pftPayAcType;
-	private boolean finIsOpenPftPayAcc;
 	private String finDivision;
 	private boolean finIsGenRef;
-	private boolean finIsOpenNewFinAc;
 	private BigDecimal finMaxAmount = BigDecimal.ZERO;
 	private BigDecimal finMinAmount = BigDecimal.ZERO;
 	private String finDftStmtFrq;
@@ -275,12 +267,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	//==================Not the Table
 	private String lovDescFinDivisionName;
-	private String lovDescFinAcTypeName;
-	private String lovDescPftPayAcTypeName;
-	private String lovDescFinContingentAcTypeName;
-	private String lovDescFinSuspAcTypeName;
-	private String lovDescFinBankContAcTypeName;
-	private String lovDescFinProvisionAcTypeName;
 	private String lovDescWorkFlowRolesName;
 	private String lovDescWorkFlowTypeName;
 	private String lovDescPromoFinTypeDesc;
@@ -370,16 +356,8 @@ public class FinanceType extends AbstractWorkflowEntity {
 		entity.setFinTypeDesc(this.finTypeDesc);
 		entity.setFinCcy(this.finCcy);
 		entity.setFinDaysCalType(this.finDaysCalType);
-		entity.setFinAcType(this.finAcType);
-		entity.setFinContingentAcType(this.finContingentAcType);
-		entity.setFinSuspAcType(this.finSuspAcType);
-		entity.setFinBankContingentAcType(this.finBankContingentAcType);
-		entity.setFinProvisionAcType(this.finProvisionAcType);
-		entity.setPftPayAcType(this.pftPayAcType);
-		entity.setFinIsOpenPftPayAcc(this.finIsOpenPftPayAcc);
 		entity.setFinDivision(this.finDivision);
 		entity.setFinIsGenRef(this.finIsGenRef);
-		entity.setFinIsOpenNewFinAc(this.finIsOpenNewFinAc);
 		entity.setFinMaxAmount(this.finMaxAmount);
 		entity.setFinMinAmount(this.finMinAmount);
 		entity.setFinDftStmtFrq(this.finDftStmtFrq);
@@ -569,12 +547,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 				entity.getAuditDetailMap().put(e.getKey(), null);
 		});
 		entity.setLovDescFinDivisionName(this.lovDescFinDivisionName);
-		entity.setLovDescFinAcTypeName(this.lovDescFinAcTypeName);
-		entity.setLovDescPftPayAcTypeName(this.lovDescPftPayAcTypeName);
-		entity.setLovDescFinContingentAcTypeName(this.lovDescFinContingentAcTypeName);
-		entity.setLovDescFinSuspAcTypeName(this.lovDescFinSuspAcTypeName);
-		entity.setLovDescFinBankContAcTypeName(this.lovDescFinBankContAcTypeName);
-		entity.setLovDescFinProvisionAcTypeName(this.lovDescFinProvisionAcTypeName);
 		entity.setLovDescWorkFlowRolesName(this.lovDescWorkFlowRolesName);
 		entity.setLovDescWorkFlowTypeName(this.lovDescWorkFlowTypeName);
 		entity.setLovDescPromoFinTypeDesc(this.lovDescPromoFinTypeDesc);
@@ -767,86 +739,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 		this.finDaysCalType = finDaysCalType;
 	}
 
-	public String getFinAcType() {
-		return finAcType;
-	}
-
-	public void setFinAcType(String finAcType) {
-		this.finAcType = finAcType;
-	}
-
-	public String getLovDescFinAcTypeName() {
-		return this.lovDescFinAcTypeName;
-	}
-
-	public void setLovDescFinAcTypeName(String lovDescFinAcTypeName) {
-		this.lovDescFinAcTypeName = lovDescFinAcTypeName;
-	}
-
-	public String getFinContingentAcType() {
-		return finContingentAcType;
-	}
-
-	public void setFinContingentAcType(String finContingentAcType) {
-		this.finContingentAcType = finContingentAcType;
-	}
-
-	public String getLovDescFinContingentAcTypeName() {
-		return this.lovDescFinContingentAcTypeName;
-	}
-
-	public void setLovDescFinContingentAcTypeName(String lovDescFinContingentAcTypeName) {
-		this.lovDescFinContingentAcTypeName = lovDescFinContingentAcTypeName;
-	}
-
-	public String getFinSuspAcType() {
-		return finSuspAcType;
-	}
-
-	public void setFinSuspAcType(String finSuspAcType) {
-		this.finSuspAcType = finSuspAcType;
-	}
-
-	public String getLovDescFinSuspAcTypeName() {
-		return this.lovDescFinSuspAcTypeName;
-	}
-
-	public void setLovDescFinSuspAcTypeName(String lovDescFinSuspAcTypeName) {
-		this.lovDescFinSuspAcTypeName = lovDescFinSuspAcTypeName;
-	}
-
-	public String getFinBankContingentAcType() {
-		return finBankContingentAcType;
-	}
-
-	public void setFinBankContingentAcType(String finBankContingentAcType) {
-		this.finBankContingentAcType = finBankContingentAcType;
-	}
-
-	public String getLovDescFinBankContAcTypeName() {
-		return lovDescFinBankContAcTypeName;
-	}
-
-	public void setLovDescFinBankContAcTypeName(String lovDescFinBankContAcTypeName) {
-		this.lovDescFinBankContAcTypeName = lovDescFinBankContAcTypeName;
-	}
-
-	public String getFinProvisionAcType() {
-		return finProvisionAcType;
-	}
-
-	public void setFinProvisionAcType(String finProvisionAcType) {
-		this.finProvisionAcType = finProvisionAcType;
-	}
-
-	public String getLovDescFinProvisionAcTypeName() {
-		return lovDescFinProvisionAcTypeName;
-	}
-
-	public void setLovDescFinProvisionAcTypeName(String lovDescFinProvisionAcTypeName) {
-		this.lovDescFinProvisionAcTypeName = lovDescFinProvisionAcTypeName;
-	}
-
 	public boolean isFinIsGenRef() {
 		return finIsGenRef;
 	}
@@ -869,14 +761,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setFinMinAmount(BigDecimal finMinAmount) {
 		this.finMinAmount = finMinAmount;
-	}
-
-	public boolean isFinIsOpenNewFinAc() {
-		return finIsOpenNewFinAc;
-	}
-
-	public void setFinIsOpenNewFinAc(boolean finIsOpenNewFinAc) {
-		this.finIsOpenNewFinAc = finIsOpenNewFinAc;
 	}
 
 	public String getFinDftStmtFrq() {
@@ -1361,22 +1245,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 		this.auditDetailMap = auditDetailMap;
 	}
 
-	public String getPftPayAcType() {
-		return pftPayAcType;
-	}
-
-	public void setPftPayAcType(String pftPayAcType) {
-		this.pftPayAcType = pftPayAcType;
-	}
-
-	public String getLovDescPftPayAcTypeName() {
-		return lovDescPftPayAcTypeName;
-	}
-
-	public void setLovDescPftPayAcTypeName(String lovDescPftPayAcTypeName) {
-		this.lovDescPftPayAcTypeName = lovDescPftPayAcTypeName;
-	}
-
 	public void setLovDescAERule(String aEEvent, AccountingSet lovDescAERule) {
 		if (this.lovDescAERule == null) {
 			this.lovDescAERule = new HashMap<String, AccountingSet>();
@@ -1391,14 +1259,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public Map<String, AccountingSet> getLovDescAERule() {
 		return lovDescAERule;
-	}
-
-	public void setFinIsOpenPftPayAcc(boolean finIsOpenPftPayAcc) {
-		this.finIsOpenPftPayAcc = finIsOpenPftPayAcc;
-	}
-
-	public boolean isFinIsOpenPftPayAcc() {
-		return finIsOpenPftPayAcc;
 	}
 
 	public boolean isFinIsAlwGrcRepay() {

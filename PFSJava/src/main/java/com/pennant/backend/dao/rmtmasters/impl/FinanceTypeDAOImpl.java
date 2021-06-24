@@ -91,9 +91,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	@Override
 	public FinanceType getFinanceTypeByID(final String id, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinType, Product, FinCategory, FinTypeDesc, FinCcy, FinDaysCalType, FinAcType");
-		sql.append(", FinContingentAcType, FinBankContingentAcType, FinProvisionAcType, FinSuspAcType");
-		sql.append(", FinIsGenRef, FinMaxAmount, FinMinAmount, FinIsOpenNewFinAc, FinDftStmtFrq, FinIsAlwMD");
+		sql.append(" FinType, Product, FinCategory, FinTypeDesc, FinCcy, FinDaysCalType");
+		sql.append(", FinIsGenRef, FinMaxAmount, FinMinAmount, FinDftStmtFrq, FinIsAlwMD");
 		sql.append(", FinSchdMthd, FInIsAlwGrace, FinHistRetension, EqualRepayment, SchdOnPMTCal, FinRateType");
 		sql.append(", FinBaseRate, FinSplRate, FinIntRate, FInMinRate, FinMaxRate, FinDftIntFrq, FinIsIntCpz");
 		sql.append(", FinCpzFrq, FinIsRvwAlw, FinRvwFrq, FinGrcRateType, FinGrcBaseRate, FinGrcSplRate");
@@ -103,7 +102,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", FinIsAlwEarlyRpy, FinIsAlwEarlySettle, FinODRpyTries, AlwPlanDeferment, PlanDeferCount");
 		sql.append(", FinIsDwPayRequired, FinRvwRateApplFor, FinAlwRateChangeAnyDate, FinIsIntCpzAtGrcEnd");
 		sql.append(", FinIsRateRvwAtGrcEnd, FinSchCalCodeOnRvw, FinAssetType");
-		sql.append(", FinIsActive, PftPayAcType, FinIsOpenPftPayAcc");
+		sql.append(", FinIsActive ");
 		sql.append(", FinGrcSchdMthd, FinIsAlwGrcRepay, FinMargin, FinGrcMargin, FinScheduleOn, FinGrcScheduleOn");
 		sql.append(", FinCommitmentReq, FinCollateralReq, AllowRIAInvestment");
 		sql.append(", OverrideLimit, LimitRequired, FinCommitmentOvrride, FinCollateralOvrride, FinRepayPftOnFrq");
@@ -131,9 +130,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(" , GrcAdjReq, GrcPeriodAftrFullDisb, AutoIncrGrcEndDate, GrcAutoIncrMonths");
 		sql.append(", MaxAutoIncrAllowed, AlwLoanSplit, SplitLoanType, TdsType, CalcOfSteps, StepsAppliedFor");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", FinCategoryDesc, DownPayRuleCode, DownPayRuleDesc, LovDescFinContingentAcTypeName");
-			sql.append(", LovDescFinBankContAcTypeName, LovDescFinProvisionAcTypeName, LovDescFinAcTypeName");
-			sql.append(", LovDescPftPayAcTypeName, LovDescFinSuspAcTypeName, LovDescFinDivisionName");
+			sql.append(", FinCategoryDesc, DownPayRuleCode, DownPayRuleDesc ");
+			sql.append(", LovDescFinDivisionName");
 			sql.append(", LovDescPromoFinTypeDesc, ProfitCenterCode, ProfitCenterDesc, LovDescEntityCode");
 		}
 
@@ -156,15 +154,9 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				ft.setFinTypeDesc(rs.getString("FinTypeDesc"));
 				ft.setFinCcy(rs.getString("FinCcy"));
 				ft.setFinDaysCalType(rs.getString("FinDaysCalType"));
-				ft.setFinAcType(rs.getString("FinAcType"));
-				ft.setFinContingentAcType(rs.getString("FinContingentAcType"));
-				ft.setFinBankContingentAcType(rs.getString("FinBankContingentAcType"));
-				ft.setFinProvisionAcType(rs.getString("FinProvisionAcType"));
-				ft.setFinSuspAcType(rs.getString("FinSuspAcType"));
 				ft.setFinIsGenRef(rs.getBoolean("FinIsGenRef"));
 				ft.setFinMaxAmount(rs.getBigDecimal("FinMaxAmount"));
 				ft.setFinMinAmount(rs.getBigDecimal("FinMinAmount"));
-				ft.setFinIsOpenNewFinAc(rs.getBoolean("FinIsOpenNewFinAc"));
 				ft.setFinDftStmtFrq(rs.getString("FinDftStmtFrq"));
 				ft.setFinIsAlwMD(rs.getBoolean("FinIsAlwMD"));
 				ft.setFinSchdMthd(rs.getString("FinSchdMthd"));
@@ -215,8 +207,6 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				ft.setFinSchCalCodeOnRvw(rs.getString("FinSchCalCodeOnRvw"));
 				ft.setFinAssetType(rs.getString("FinAssetType"));
 				ft.setFinIsActive(rs.getBoolean("FinIsActive"));
-				ft.setPftPayAcType(rs.getString("PftPayAcType"));
-				ft.setFinIsOpenPftPayAcc(rs.getBoolean("FinIsOpenPftPayAcc"));
 				ft.setFinGrcSchdMthd(rs.getString("FinGrcSchdMthd"));
 				ft.setFinIsAlwGrcRepay(rs.getBoolean("FinIsAlwGrcRepay"));
 				ft.setFinMargin(rs.getBigDecimal("FinMargin"));
@@ -353,12 +343,6 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 					ft.setFinCategoryDesc(rs.getString("FinCategoryDesc"));
 					ft.setDownPayRuleCode(rs.getString("DownPayRuleCode"));
 					ft.setDownPayRuleDesc(rs.getString("DownPayRuleDesc"));
-					ft.setLovDescFinContingentAcTypeName(rs.getString("LovDescFinContingentAcTypeName"));
-					ft.setLovDescFinBankContAcTypeName(rs.getString("LovDescFinBankContAcTypeName"));
-					ft.setLovDescFinProvisionAcTypeName(rs.getString("LovDescFinProvisionAcTypeName"));
-					ft.setLovDescFinAcTypeName(rs.getString("LovDescFinAcTypeName"));
-					ft.setLovDescPftPayAcTypeName(rs.getString("LovDescPftPayAcTypeName"));
-					ft.setLovDescFinSuspAcTypeName(rs.getString("LovDescFinSuspAcTypeName"));
 					ft.setLovDescFinDivisionName(rs.getString("LovDescFinDivisionName"));
 					ft.setLovDescPromoFinTypeDesc(rs.getString("LovDescPromoFinTypeDesc"));
 					ft.setProfitCenterCode(rs.getString("ProfitcenterCode"));
@@ -400,8 +384,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinType, FinCategory, FinTypeDesc, FinCcy, FinDaysCalType, FinAcType, FinContingentAcType");
-		sql.append(", FinIsGenRef, FinMaxAmount, FinMinAmount, FinIsOpenNewFinAc, FinIsAlwMD, FinSchdMthd");
+		sql.append(" FinType, FinCategory, FinTypeDesc, FinCcy, FinDaysCalType");
+		sql.append(", FinIsGenRef, FinMaxAmount, FinMinAmount, FinIsAlwMD, FinSchdMthd");
 		sql.append(", FInIsAlwGrace, EqualRepayment, SchdOnPMTCal, FinRateType, FinBaseRate, FinSplRate");
 		sql.append(", FinIntRate, FInMinRate, FinMaxRate, FinDftIntFrq, FinIsIntCpz, FinCpzFrq, FinIsRvwAlw");
 		sql.append(", FinRvwFrq, FinGrcRateType, FinGrcBaseRate, FinGrcSplRate, FinGrcIntRate, FInGrcMinRate");
@@ -410,13 +394,13 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", FinIsAlwPartialRpy, FinIsAlwDifferment, FinMaxDifferment, FinIsActive, StepFinance");
 		sql.append(", SteppingMandatory, AlwManualSteps, AlwdStepPolicies, DftStepPolicy, FinIsDwPayRequired");
 		sql.append(", FinRvwRateApplFor, FinAlwRateChangeAnyDate, FinIsIntCpzAtGrcEnd, FinSchCalCodeOnRvw");
-		sql.append(", AlwPlanDeferment, FinIsRateRvwAtGrcEnd, PlanDeferCount, PftPayAcType, FinIsOpenPftPayAcc");
+		sql.append(", AlwPlanDeferment, FinIsRateRvwAtGrcEnd, PlanDeferCount ");
 		sql.append(", FinIsAlwGrcRepay, FinGrcSchdMthd, FinGrcMargin, FinMargin, FinCommitmentReq");
-		sql.append(", FinCollateralReq, FinBankContingentAcType");
-		sql.append(", FinProvisionAcType, AllowRIAInvestment, OverrideLimit, LimitRequired, FinCommitmentOvrride");
+		sql.append(", FinCollateralReq ");
+		sql.append(", llowRIAInvestment, OverrideLimit, LimitRequired, FinCommitmentOvrride");
 		sql.append(", FinCollateralOvrride, FinRepayPftOnFrq, FinPftUnChanged, ApplyODPenalty, ODIncGrcDays");
 		sql.append(", ODChargeType, ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc");
-		sql.append(", ODMinCapAmount, FinDivision, FinSuspAcType, Product, StartDate, EndDate");
+		sql.append(", ODMinCapAmount, FinDivision, Product, StartDate, EndDate");
 		sql.append(", PastduePftCalMthd, PastduePftMargin");
 		sql.append(", DownPayRule, AlwMultiPartyDisb, CollateralType, TdsApplicable, ApplyGrcPricing");
 		sql.append(", ApplyRpyPricing, DroplineOD, DroppingMethod, RateChgAnyDay, ManualSchedule, AlwBPI");
@@ -460,12 +444,9 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 							ft.setFinTypeDesc(rs.getString("FinTypeDesc"));
 							ft.setFinCcy(rs.getString("FinCcy"));
 							ft.setFinDaysCalType(rs.getString("FinDaysCalType"));
-							ft.setFinAcType(rs.getString("FinAcType"));
-							ft.setFinContingentAcType(rs.getString("FinContingentAcType"));
 							ft.setFinIsGenRef(rs.getBoolean("FinIsGenRef"));
 							ft.setFinMaxAmount(rs.getBigDecimal("FinMaxAmount"));
 							ft.setFinMinAmount(rs.getBigDecimal("FinMinAmount"));
-							ft.setFinIsOpenNewFinAc(rs.getBoolean("FinIsOpenNewFinAc"));
 							ft.setFinIsAlwMD(rs.getBoolean("FinIsAlwMD"));
 							ft.setFinSchdMthd(rs.getString("FinSchdMthd"));
 							ft.setFInIsAlwGrace(rs.getBoolean("FInIsAlwGrace"));
@@ -515,16 +496,12 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 							ft.setAlwPlanDeferment(rs.getBoolean("AlwPlanDeferment"));
 							ft.setFinIsRateRvwAtGrcEnd(rs.getBoolean("FinIsRateRvwAtGrcEnd"));
 							ft.setPlanDeferCount(rs.getInt("PlanDeferCount"));
-							ft.setPftPayAcType(rs.getString("PftPayAcType"));
-							ft.setFinIsOpenPftPayAcc(rs.getBoolean("FinIsOpenPftPayAcc"));
 							ft.setFinIsAlwGrcRepay(rs.getBoolean("FinIsAlwGrcRepay"));
 							ft.setFinGrcSchdMthd(rs.getString("FinGrcSchdMthd"));
 							ft.setFinGrcMargin(rs.getBigDecimal("FinGrcMargin"));
 							ft.setFinMargin(rs.getBigDecimal("FinMargin"));
 							ft.setFinCommitmentReq(rs.getBoolean("FinCommitmentReq"));
 							ft.setFinCollateralReq(rs.getBoolean("FinCollateralReq"));
-							ft.setFinBankContingentAcType(rs.getString("FinBankContingentAcType"));
-							ft.setFinProvisionAcType(rs.getString("FinProvisionAcType"));
 							ft.setAllowRIAInvestment(rs.getBoolean("AllowRIAInvestment"));
 							ft.setOverrideLimit(rs.getBoolean("OverrideLimit"));
 							ft.setLimitRequired(rs.getBoolean("LimitRequired"));
@@ -542,7 +519,6 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 							ft.setODMaxWaiverPerc(rs.getBigDecimal("ODMaxWaiverPerc"));
 							ft.setODMinCapAmount(rs.getBigDecimal("ODMinCapAmount"));
 							ft.setFinDivision(rs.getString("FinDivision"));
-							ft.setFinSuspAcType(rs.getString("FinSuspAcType"));
 							ft.setProduct(rs.getString("Product"));
 							ft.setStartDate(rs.getTimestamp("StartDate"));
 							ft.setEndDate(rs.getTimestamp("EndDate"));
@@ -680,8 +656,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		FinanceType financeType = new FinanceType();
 		financeType.setFinType(finType);
 
-		StringBuilder selectSql = new StringBuilder("SELECT FinType, Product, FinAcType, FinCategory, FinDivision, ");
-		selectSql.append(" FinIsOpenNewFinAc, PftPayAcType,  FinSuspAcType, FinProvisionAcType , ");
+		StringBuilder selectSql = new StringBuilder("SELECT FinType, Product, FinCategory, FinDivision, ");
 		selectSql.append(" AllowRIAInvestment, FinIsAlwPartialRpy, FinSuspTrigger, FinSuspRemarks,  ");
 		selectSql.append(
 				" PastduePftCalMthd, PastduePftMargin,alwMultiPartyDisb, alwMaxDisbCheckReq, CostOfFunds, FinLTVCheck, PartiallySecured , AlwVan, vanAllocationMethod, AlwSanctionAmt, AlwSanctionAmtOverride, AutoApprove  ");
@@ -714,8 +689,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	public List<FinanceType> getFinTypeDetailForBatch() {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder("SELECT FinType, Product, FinAcType, FinCategory, FinDivision, ");
-		selectSql.append(" FinIsOpenNewFinAc, PftPayAcType,  FinSuspAcType, FinProvisionAcType , ");
+		StringBuilder selectSql = new StringBuilder("SELECT FinType, Product, FinCategory, FinDivision, ");
 		selectSql.append(" AllowRIAInvestment, FinIsAlwPartialRpy, FinSuspTrigger, FinSuspRemarks,  ");
 		selectSql.append(
 				" PastduePftCalMthd, PastduePftMargin,RpyHierarchy, CostOfFunds, FinLTVCheck, PartiallySecured ");
@@ -787,9 +761,9 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		StringBuilder sql = new StringBuilder("Insert Into RMTFinanceTypes");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(
-				"(FinType, Product, FinCategory,FinTypeDesc, FinCcy,  FinDaysCalType, FinAcType, FinContingentAcType,");
-		sql.append(" FinBankContingentAcType, FinProvisionAcType,FinSuspAcType, FinIsGenRef,");
-		sql.append(" FinMaxAmount, FinMinAmount,  FinIsOpenNewFinAc, FinDftStmtFrq,  FinIsAlwMD,");
+				"(FinType, Product, FinCategory,FinTypeDesc, FinCcy,  FinDaysCalType, ");
+		sql.append(" FinIsGenRef,");
+		sql.append(" FinMaxAmount, FinMinAmount,  FinDftStmtFrq,  FinIsAlwMD,");
 		sql.append(" FinSchdMthd, FInIsAlwGrace, FinHistRetension, EqualRepayment, SchdOnPMTCal, FinRateType,");
 		sql.append(
 				" FinBaseRate, FinSplRate, FinIntRate, FInMinRate, FinMaxRate,FinDftIntFrq,  FinIsIntCpz, FinCpzFrq,");
@@ -804,7 +778,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(" FinAlwRateChangeAnyDate, ");
 		sql.append(" FinSchCalCodeOnRvw,FinAssetType ,");
 		sql.append(
-				" FinIsActive, PftPayAcType,FinIsOpenPftPayAcc	,Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
+				" FinIsActive, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
 		sql.append(" NextTaskId, RecordType, WorkflowId ,FinGrcSchdMthd,FinIsAlwGrcRepay,");
 		sql.append("	FinCommitmentReq,FinCollateralReq,");
 		sql.append(" FinMargin,FinGrcMargin,FinScheduleOn,FinGrcScheduleOn, ");
@@ -837,9 +811,9 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				", MaxAutoIncrAllowed, ThrldtoMaintainGrcPrd, CalcOfSteps, StepsAppliedFor, AlwLoanSplit, SplitLoanType,InstBasedSchd, TdsType) ");
 		sql.append(
-				" Values(:FinType, :Product, :FinCategory,:FinTypeDesc, :FinCcy,  :FinDaysCalType, :FinAcType, :FinContingentAcType,");
-		sql.append(" :FinBankContingentAcType, :FinProvisionAcType,:FinSuspAcType, :FinIsGenRef,");
-		sql.append(" :FinMaxAmount, :FinMinAmount,  :FinIsOpenNewFinAc, :FinDftStmtFrq,  :FinIsAlwMD,");
+				" Values(:FinType, :Product, :FinCategory,:FinTypeDesc, :FinCcy,  :FinDaysCalType, ");
+		sql.append(" :FinIsGenRef,");
+		sql.append(" :FinMaxAmount, :FinMinAmount,  :FinDftStmtFrq,  :FinIsAlwMD,");
 		sql.append(" :FinSchdMthd, :FInIsAlwGrace, :FinHistRetension, :EqualRepayment, :SchdOnPMTCal, :FinRateType,");
 		sql.append(
 				" :FinBaseRate, :FinSplRate, :FinIntRate, :FInMinRate, :FinMaxRate,:FinDftIntFrq,  :FinIsIntCpz, :FinCpzFrq,");
@@ -854,7 +828,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				" :FinIsDwPayRequired, :FinRvwRateApplFor,:FinIsIntCpzAtGrcEnd, :FinAlwRateChangeAnyDate, :FinIsRateRvwAtGrcEnd,");
 		sql.append(" :FinSchCalCodeOnRvw,:FinAssetType, ");
 		sql.append(
-				" :FinIsActive, :PftPayAcType,:FinIsOpenPftPayAcc ,:Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, ");
+				" :FinIsActive, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, ");
 		sql.append(" :NextTaskId, :RecordType, :WorkflowId ,:FinGrcSchdMthd,:FinIsAlwGrcRepay,");
 		sql.append(" :FinCommitmentReq,:FinCollateralReq,");
 		sql.append(" :FinMargin,:FinGrcMargin,:FinScheduleOn,:FinGrcScheduleOn, ");
@@ -920,11 +894,9 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				" Set Product = :Product,  FinTypeDesc = :FinTypeDesc, FinCategory =:FinCategory, FinCcy = :FinCcy,");
 		sql.append(
-				" FinDaysCalType = :FinDaysCalType,FinAcType = :FinAcType, FinContingentAcType = :FinContingentAcType,");
-		sql.append(
-				" FinBankContingentAcType= :FinBankContingentAcType, FinProvisionAcType= :FinProvisionAcType,FinSuspAcType=:FinSuspAcType,");
+				" FinDaysCalType = :FinDaysCalType,");
 		sql.append(" FinIsGenRef = :FinIsGenRef, FinMaxAmount = :FinMaxAmount,FinMinAmount = :FinMinAmount,");
-		sql.append(" FinIsOpenNewFinAc = :FinIsOpenNewFinAc, FinDftStmtFrq = :FinDftStmtFrq,FinIsAlwMD = :FinIsAlwMD,");
+		sql.append(" FinDftStmtFrq = :FinDftStmtFrq,FinIsAlwMD = :FinIsAlwMD,");
 		sql.append(
 				" FinSchdMthd = :FinSchdMthd, FInIsAlwGrace = :FInIsAlwGrace, FinHistRetension = :FinHistRetension,");
 		sql.append(" EqualRepayment = :EqualRepayment, SchdOnPMTCal = :SchdOnPMTCal,");
@@ -952,7 +924,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(" FinSchCalCodeOnRvw = :FinSchCalCodeOnRvw,FinAssetType=:FinAssetType,");
 		sql.append(" FinIsActive = :FinIsActive,");
 		sql.append(
-				" PftPayAcType=:PftPayAcType,FinIsOpenPftPayAcc=:FinIsOpenPftPayAcc,Version = :Version ,LastMntBy = :LastMntBy,LastMntOn = :LastMntOn,");
+				" Version = :Version ,LastMntBy = :LastMntBy,LastMntOn = :LastMntOn,");
 		sql.append(
 				" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		sql.append(
