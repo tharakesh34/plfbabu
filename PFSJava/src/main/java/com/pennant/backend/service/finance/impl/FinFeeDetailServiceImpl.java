@@ -280,8 +280,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					taxHeader.setHeaderId(taxHeaderId);
 				}
 
-				if (finFeeDetail.isTaxApplicable()) {
-					TaxHeader txHeader = getTaxHeaderDetailsService().saveOrUpdate(taxHeader, tableType, auditTranType);
+				if (finFeeDetail.isTaxApplicable() && !isWIF) {
+					TaxHeader txHeader = taxHeaderDetailsService.saveOrUpdate(taxHeader, tableType, auditTranType);
 					finFeeDetail.setTaxHeaderId(txHeader.getHeaderId());
 				}
 			}

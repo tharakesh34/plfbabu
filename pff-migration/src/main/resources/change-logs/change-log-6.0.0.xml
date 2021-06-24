@@ -33460,4 +33460,55 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#2326.1" author="Gireesh.G">
+		<renameTable newTableName="INSTBASEDSCHDDETAILS_BKP" oldTableName="INSTBASEDSCHDDETAILS" />
+	</changeSet>
+
+	<changeSet id="ST#2326.2" author="Gireesh.G">
+		<createTable tableName="INSTBASEDSCHDDETAILS">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="BatchId" type="bigint" />
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DisbId" type="bigint" />
+			<column name="RealizedDate" type="datetime" />
+			<column name="Status" type="varchar(8)" />
+			<column name="ErrorDesc" type="varchar(1000)" />
+			<column name="UserId" type="bigint" />
+			<column name="Downloaded_On" type="datetime" />
+			<column name="DisbAmount" type="decimal(18,2)" />
+			<column name="LinkedTranId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#2326.3" author="Gireesh.G">
+		<addPrimaryKey columnNames="Id" constraintName="PK_INSTBASEDSCHDDETAILS_ID"
+			tableName="INSTBASEDSCHDDETAILS" />
+	</changeSet>
+
+	<changeSet id="ST#2326.4" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				INSERT INTO INSTBASEDSCHDDETAILS (BATCHID, FINREFERENCE, DISBID, REALIZEDDATE, STATUS, ERRORDESC, USERID, DOWNLOADED_ON, DISBAMOUNT, LINKEDTRANID) SELECT BATCHID, FINREFERENCE, DISBID, REALIZEDDATE, STATUS, ERRORDESC, USERID, DOWNLOADED_ON, DISBAMOUNT, LINKEDTRANID FROM INSTBASEDSCHDDETAILS_BKP;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2326.5" author="Gireesh.G">
+		<dropTable tableName="INSTBASEDSCHDDETAILS_BKP" />
+	</changeSet>
+	
+	<changeSet id="PSD#174801.1" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				DELETE FROM TAX_DETAILS WHERE REFERENCEID IN (SELECT TAXHEADERID FROM WIFFINFEEDETAIL WHERE TAXHEADERID > 0);
+				DELETE FROM TAX_HEADER WHERE HEADERID IN (SELECT TAXHEADERID FROM WIFFINFEEDETAIL WHERE TAXHEADERID > 0);
+				UPDATE WIFFINFEEDETAIL SET TAXHEADERID = 0 WHERE TAXHEADERID > 0; 
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

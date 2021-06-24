@@ -77,9 +77,9 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 		String nextRoleCode = financeDetailService.getNextRoleCodeByRef(finReference);
 
 		FinanceDetail financeDetail = null;
-		
+
 		boolean servicing = finAutoApprovalDetailDAO.getFinanceServiceInstruction(finReference);
-		
+
 		if (!servicing && !approvedLoan) {
 			financeDetail = financeDetailService.getOriginationFinance(finReference, nextRoleCode,
 					FinanceConstants.FINSER_EVENT_ORG, "");
@@ -89,17 +89,15 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 					AccountEventConstants.ACCEVENT_ADDDBSN, FinanceConstants.FINSER_EVENT_ADDDISB, nextRoleCode);
 		}
 
-
 		if (financeDetail != null) {
 			processAndApprove(loggedInUser, autoApproval, financeDetail);
 		}
-		
-		
+
 		if (DisbursementConstants.AUTODISB_STATUS_PENDING.equals(autoApproval.getStatus())
 				&& autoApproval.getErrorDesc() == null) {
 			autoApproval.setStatus(DisbursementConstants.AUTODISB_STATUS_SUCCESS);
 		}
-		
+
 		logger.info(Literal.LEAVING);
 	}
 
@@ -149,6 +147,14 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 
 		if (finAad.getRealizedDate() == null) {
 			throw new AppException("Payment Date is mandatory for Auto Approval Process.");
+		}
+
+		if (DateUtil.compare(fm.getNextRepayRvwDate(), finAad.getRealizedDate()) < 0) {
+			throw new AppException("Payment Date is crossed Next Interest Review Frequency Date..");
+		}
+
+		if (!fm.isFinIsActive()) {
+			throw new AppException("loan is not active.");
 		}
 
 		Map<String, Integer> qdpValidityDays = finAutoApprovalDetailDAO.loadQDPValidityDays();

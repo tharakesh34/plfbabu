@@ -2388,6 +2388,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Finance IRR Values
 			// =======================================
+			deleteFinIRR(finReference, tableType);
 			saveFinIRR(scheduleData.getiRRDetails(), finReference, tableType);
 		}
 
@@ -4152,6 +4153,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				// Finance IRR Details
 				// =======================================
+				deleteFinIRR(financeMain.getFinReference(), TableType.MAIN_TAB);
 				saveFinIRR(finScheduleData.getiRRDetails(), financeMain.getFinReference(), TableType.MAIN_TAB);
 
 				// BPI Repayment details saving

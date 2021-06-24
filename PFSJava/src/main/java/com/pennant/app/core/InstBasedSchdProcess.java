@@ -39,6 +39,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.logging.dao.InstBasedSchdDetailDAO;
 
 public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
@@ -58,7 +59,7 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 		user.setLoginUsrID(instBasedSchd.getUserId());
 		FinanceDetail fd = null;
 
-		//Check in main and temp rather than instruction
+		// Check in main and temp rather than instruction
 		String finReference = instBasedSchd.getFinReference();
 		String nxtRoleCd = financeDetailService.getNextRoleCodeByRef(finReference);
 		boolean isLoanApproved = instBasedSchdDetailDAO.getFinanceIfApproved(finReference);
@@ -96,7 +97,7 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 		FinScheduleData instBasedSchedule = null;
 
 		// from payment id we need to get disbursement id
-		//in disbursement details we need to mark  instCalReq ="false";
+		// in disbursement details we need to mark instCalReq ="false";
 		for (FinanceDisbursement financeDisbursement : fd.getFinScheduleData().getDisbursementDetails()) {
 			for (FinAdvancePayments finAdvancePayments : fd.getAdvancePaymentsList()) {
 
@@ -110,7 +111,7 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 			}
 		}
 
-		//Step Changes
+		// Step Changes
 		String valueAsString = SysParamUtil.getValueAsString("STEP_LOAN_SERVICING_REQ");
 		fm.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 
@@ -120,18 +121,26 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 			}
 		}
 
-		try {
+		if (instSchdDetail.getRealizedDate() == null) {
+			throw new AppException("Payment Date is mandatory for Inst Based Schdules.");
+		}
 
-			if (instSchdDetail.getRealizedDate() == null) {
-				throw new AppException("Payment Date is mandatory for Inst Based Schdules.");
-			}
+		if (DateUtil.compare(fm.getNextRepayRvwDate(), instSchdDetail.getRealizedDate()) < 0) {
+			throw new AppException("Payment Date is crossed Next Interest Review Frequency Date..");
+		}
+
+		if (!fm.isFinIsActive()) {
+			throw new AppException("Loan is not Active.");
+		}
+
+		try {
 
 			// if Loan not approved, then
 			if (isLoanNotApproved) {
 
 				fm.setEventFromDate(instSchdDetail.getRealizedDate());
 				fm.setRecalToDate(fm.getMaturityDate());
-				//financeMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
+				// financeMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 
 				instBasedSchedule = ScheduleCalculator.instBasedSchedule(fd.getFinScheduleData(),
 						instSchdDetail.getDisbAmount(), false, isLoanNotApproved, finDisb, true);
@@ -307,7 +316,8 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 		afinanceMain.setUserDetails(userDetails);
 		financeDetail.setUserDetails(userDetails);
 		financeDetail.getCustomerDetails().setUserDetails(userDetails);
-		//remove covenant documents from  DocumentdetailsList the same documents are available in covenant doc list(Bugfix: PrimaryKey issue)
+		// remove covenant documents from DocumentdetailsList the same documents are available in covenant doc
+		// list(Bugfix: PrimaryKey issue)
 		removeCovenantDocuments(financeDetail);
 
 		Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
@@ -364,7 +374,7 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 
 		return overideMap;
 	}
-	
+
 	private boolean isOverride(Map<String, List<ErrorDetail>> overideMap, ErrorDetail errorDetail) {
 		if (!overideMap.containsKey(errorDetail.getField())) {
 			return false;
@@ -391,12 +401,15 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 		List<Long> documents = new ArrayList<>();
 		List<Covenant> covenants = financeDetail.getCovenants();
 		if (CollectionUtils.isNotEmpty(covenants)) {
-			for (Covenant covenant : covenants) {//if covenants tab is not available in loan queue below list is getting empty
+			for (Covenant covenant : covenants) {// if covenants tab is not available in loan queue below list is
+													// getting empty
 				if (CollectionUtils.isNotEmpty(covenant.getDocumentDetails())) {
 					for (DocumentDetails document : covenant.getDocumentDetails()) {
 						documents.add(document.getDocId());
 					}
-				} else if (CollectionUtils.isNotEmpty(covenant.getCovenantDocuments())) {//we are preparing document list by using covenants doc
+				} else if (CollectionUtils.isNotEmpty(covenant.getCovenantDocuments())) {// we are preparing document
+																							// list by using covenants
+																							// doc
 					for (CovenantDocument covenantDocument : covenant.getCovenantDocuments()) {
 						if (covenantDocument.getDocumentDetail() != null) {
 							documents.add(covenantDocument.getDocumentDetail().getDocId());
@@ -408,7 +421,7 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 		}
 		List<DocumentDetails> documentDetails = financeDetail.getDocumentDetailsList();
 		if (!CollectionUtils.isEmpty(documentDetails)) {
-			//remove covenant documents in loan document list
+			// remove covenant documents in loan document list
 			for (int i = 0; i < documentDetails.size(); i++) {
 				DocumentDetails documentDetail = documentDetails.get(i);
 				if (documents.contains(documentDetail.getDocId())) {
