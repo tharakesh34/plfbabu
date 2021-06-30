@@ -17,7 +17,7 @@
 					<image src="/images/plf_client_logo.png" align="left" style="margin-right:6px; margin-top:4px" />
 					<image src="/images/plf_product_logo.png" align="right" style="margin-right:6px; margin-top:4px" />
 					<div align="left" style="margin-top:300px;margin-left:50px;">
-						<h:form action="j_spring_security_check?${_csrf.parameterName}=${_csrf.token}" method="post">
+						<h:form action="login?${_csrf.parameterName}=${_csrf.token}" method="post">
 							<grid style="border:none;background:white;">
 								<columns>
 									<column width="200px" />
@@ -45,7 +45,7 @@
 											ca:autocomplete="off" w:onOK="onSubmitOK();" w:onChange="encryptEventValue(event);"/>
 									</row>
 									<row>
-										<textbox id="txtbox_Username1" name="j_username" width="150px" height="22px" style="margin-right:60px"
+										<textbox id="txtbox_Username1" name="username" width="150px" height="22px" style="margin-right:60px"
 											visible="false" ca:autocomplete="off" w:onChange="encryptEventValue(event);"/>
 									</row>
 
@@ -55,7 +55,7 @@
 											style="margin-right:60px" ca:autocomplete="off" w:onOK="onSubmitOK();" w:onChange="encryptEventValue(event);"/>
 									</row>
 									<row spans="2" height="12px">
-										<textbox type="password" name="j_password" id="txtbox_Password1" visible="false" ca:autocomplete="off" w:onChange="encryptEventValue(event);"/>
+										<textbox type="password" name="password" id="txtbox_Password1" visible="false" ca:autocomplete="off" w:onChange="encryptEventValue(event);"/>
 									</row>
 									<row>
 										<cell colspan="2"></cell>

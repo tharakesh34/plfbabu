@@ -16,7 +16,7 @@
 					<image src="/images/plf_product_logo.png" width="120px" height="50px" align="right"
 						style="margin-right:6px; margin-top:4px" />
 					<div align="left" style="margin-top:300px;">
-						<h:form action="j_spring_security_check" method="post">
+						<h:form action="POST/login" method="post">
 							<grid style="border:none;background:white;">
 								<columns>
 									<column width="200px" />
@@ -41,7 +41,7 @@
 									</row>
 									<row align="left">
 										<label id="label_LoginDialog_user" value="${c:l('label_LoginDialog_user.value')}" style="margin-left:65px;font-weight:bold;" />
-										<textbox id="txtbox_Username" sclass="z-textbox-loginUser" name="j_username" width="180px" height="24px"
+										<textbox id="txtbox_Username" sclass="z-textbox-loginUser" name="username" width="180px" height="24px"
 											style="margin-right:60px" />
 									</row>
 									<row>
@@ -49,7 +49,7 @@
 									</row>
 									<row align="left">
 										<label id="label_LoginDialog_pwd" value=" ${c:l('label_LoginDialog_pwd.value')}" style="margin-left:65px;font-weight:bold;" />
-										<textbox type="password" sclass="z-textbox-loginPassword" id="txtbox_Password" name="j_password"
+										<textbox type="password" sclass="z-textbox-loginPassword" id="txtbox_Password" name="password"
 											width="180px" height="24px" style="margin-right:60px;" />
 									</row>
 									<row>
