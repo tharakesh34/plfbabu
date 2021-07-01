@@ -6,11 +6,14 @@
 
 	<import resource="classpath:applicationContext-ds.xml" />
 
-	<bean id="jobOperator" class="org.springframework.batch.core.launch.support.SimpleJobOperator" p:jobLauncher-ref="jobLauncher"
-		p:jobExplorer-ref="jobExplorer" p:jobRepository-ref="jobRepository" p:jobRegistry-ref="jobRegistry" />
+	<bean id="jobOperator" class="org.springframework.batch.core.launch.support.SimpleJobOperator"
+		p:jobLauncher-ref="jobLauncher" p:jobExplorer-ref="jobExplorer" p:jobRepository-ref="jobRepository"
+		p:jobRegistry-ref="jobRegistry" />
 
-	<bean id="jobExplorer" class="org.springframework.batch.core.explore.support.JobExplorerFactoryBean"
-		p:dataSource-ref="dataSource" />
+	<bean id="jobExplorer" class="org.springframework.batch.core.explore.support.JobExplorerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="serializer" ref="serializer" />
+	</bean>
 
 	<bean id="jobRegistry" class="org.springframework.batch.core.configuration.support.MapJobRegistry" />
 
@@ -22,14 +25,72 @@
 		<property name="jobRepository" ref="jobRepository" />
 	</bean>
 
-	<bean id="jobRepository" class="org.springframework.batch.core.repository.support.JobRepositoryFactoryBean"
-		p:dataSource-ref="dataSource" p:transactionManager-ref="transactionManager" />
-	<!-- p:lobHandler-ref="oracleLobHandler" -->
-	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" lazy-init="true">
+	<bean id="jobRepository" class="org.springframework.batch.core.repository.support.JobRepositoryFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="transactionManager" ref="transactionManager" />
+		<property name="serializer" ref="serializer" />
+	</bean>
+
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+		lazy-init="true">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
-	<!-- <bean id="oracleLobHandler" class="org.springframework.jdbc.support.lob.OracleLobHandler" p:nativeJdbcExtractor-ref="nativeJdbcExtractor" 
-		/> <bean id="nativeJdbcExtractor" class="org.springframework.jdbc.support.nativejdbc.SimpleNativeJdbcExtractor" /> -->
 	<bean id="oracleLobHandler" class="org.springframework.jdbc.support.lob.DefaultLobHandler" />
+	
+	<!-- FIXME Murthy the below bean needs to be deleted -->
+	<bean id="serializer" class="org.springframework.batch.core.repository.dao.Jackson2ExecutionContextStringSerializer">
+		<constructor-arg>
+			<list>
+				<value>java.util.ArrayList</value>
+				<value>java.util.Arrays$ArrayList</value>
+				<value>java.util.LinkedList</value>
+				<value>java.util.Collections$EmptyList</value>
+				<value>java.util.Collections$EmptyMap</value>
+				<value>java.util.Collections$EmptySet</value>
+				<value>java.util.Collections$UnmodifiableRandomAccessList</value>
+				<value>java.util.Collections$UnmodifiableList</value>
+				<value>java.util.Collections$UnmodifiableMap</value>
+				<value>java.util.Collections$UnmodifiableSet</value>
+				<value>java.util.Collections$SingletonList</value>
+				<value>java.util.Collections$SingletonMap</value>
+				<value>java.util.Collections$SingletonSet</value>
+				<value>java.util.Date</value>
+				<value>java.time.Instant</value>
+				<value>java.time.Duration</value>
+				<value>java.time.LocalDate</value>
+				<value>java.time.LocalTime</value>
+				<value>java.time.LocalDateTime</value>
+				<value>java.sql.Timestamp</value>
+				<value>java.net.URL</value>
+				<value>java.util.TreeMap</value>
+				<value>java.util.HashMap</value>
+				<value>java.util.LinkedHashMap</value>
+				<value>java.util.TreeSet</value>
+				<value>java.util.HashSet</value>
+				<value>java.util.LinkedHashSet</value>
+				<value>java.lang.Boolean</value>
+				<value>java.lang.Byte</value>
+				<value>java.lang.Short</value>
+				<value>java.lang.Integer</value>
+				<value>java.lang.Long</value>
+				<value>java.lang.Double</value>
+				<value>java.lang.Float</value>
+				<value>java.math.BigDecimal</value>
+				<value>java.math.BigInteger</value>
+				<value>java.lang.String</value>
+				<value>java.lang.Character</value>
+				<value>java.lang.CharSequence</value>
+				<value>java.util.Properties</value>
+				<value>[Ljava.util.Properties;</value>
+				<value>org.springframework.batch.core.JobParameter</value>
+				<value>org.springframework.batch.core.JobParameters</value>
+				<value>org.springframework.batch.core.jsr.partition.JsrPartitionHandler$PartitionPlanState</value>
+				<value>java.sql.Date</value>
+				<value>com.pennant.backend.model.eventproperties.EventProperties</value>
+				<value>com.pennanttech.dataengine.model.DataEngineStatus</value>
+			</list>
+		</constructor-arg>
+	</bean>
+
 </beans>
