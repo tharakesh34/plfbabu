@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  FinanceMainDAOImpl.java												*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  24-12-2017															*
- *                                                                  
- * Modified Date    :  24-12-2017															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : FinanceMainDAOImpl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 24-12-2017 *
+ * 
+ * Modified Date : 24-12-2017 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 24-12-2017       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 24-12-2017 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.finance.impl;
@@ -185,10 +176,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	/**
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -215,10 +204,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	/**
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -242,10 +229,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	/**
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -308,10 +293,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	/**
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -373,10 +356,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	/**
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -568,10 +549,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * 
 	 * save Finance Main Detail
 	 * 
-	 * @param Finance
-	 *            Main Detail (financeMain)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Main Detail (financeMain)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -600,7 +579,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		insertSql.append(" NextTaskId, NextUserId, Priority, RecordType, WorkflowId, MinDownPayPerc");
 		insertSql.append(", TDSApplicable,DroplineFrq,FirstDroplineDate,PftServicingODLimit, PromotionCode, TdsType)");
 
-		insertSql.append(" Values(:FinReference, :InvestmentRef, :FinType, :FinCcy, :FinBranch, :FinAmount, :FinStartDate,");
+		insertSql.append(
+				" Values(:FinReference, :InvestmentRef, :FinType, :FinCcy, :FinBranch, :FinAmount, :FinStartDate,");
 		insertSql.append(" :MaturityDate, :CustID, :RepayProfitRate , :TotalRepayAmt ,");
 		insertSql.append(" :TotalProfit, :ProfitDaysBasis, :ScheduleMethod, ");
 		insertSql.append(" :LastRepayDate, :LastRepayPftDate, :LastRepayRvwDate, :LastRepayCpzDate,");
@@ -1139,10 +1119,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * This method updates the Record FinanceMain or FinanceMain_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Finance Main Detail by key FinReference and Version
 	 * 
-	 * @param Finance
-	 *            Main Detail (financeMain)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Main Detail (financeMain)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -1594,10 +1572,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * 
 	 * save Finance Main Detail
 	 * 
-	 * @param Finance
-	 *            Main Detail (financeMain)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Main Detail (financeMain)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -1684,7 +1660,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		insertSql.append(
 				" :FeeChargeAmt, :BpiAmount, :DeductFeeDisb, :LimitValid, :OverrideLimit, :FinPurpose,:DeviationApproval,:FinPreApprovedRef,:MandateID,:FinStatus, :FinStsReason, :InitiateUser,");
 		insertSql.append(
-				" :JointAccount,:JointCustId , ::RcdMaintainSts,:FinRepayMethod, :AlwBPI , :BpiTreatment , :PlanEMIHAlw , ");
+				" :JointAccount,:JointCustId , :RcdMaintainSts,:FinRepayMethod, :AlwBPI , :BpiTreatment , :PlanEMIHAlw , ");
 		insertSql.append(
 				" :PlanEMIHMethod , :PlanEMIHMaxPerYear , :PlanEMIHMax , :PlanEMIHLockPeriod , :PlanEMICpz , :CalRoundingMode ,:RoundingTarget, :AlwMultiDisb, ");
 		insertSql.append(" :NextUserId, ");
@@ -2259,10 +2235,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	/**
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -2547,10 +2521,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	/**
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -2942,10 +2914,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	/**
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -6644,10 +6614,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	/**
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
