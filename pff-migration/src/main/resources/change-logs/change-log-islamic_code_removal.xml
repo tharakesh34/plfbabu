@@ -77,4 +77,8 @@
 		<dropNotNullConstraint tableName="FINANCEMAIN" columnName="TAKEOVERFINANCE"/>
 	</changeSet> 
 	
+	<changeSet id="ST#2361.11" author="Saikiran.n">
+		<dropNotNullConstraint tableName="REJECTFINANCEMAIN" columnName="TAKEOVERFINANCE"/>
+	</changeSet> 
+	
 </databaseChangeLog>
