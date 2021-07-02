@@ -83,7 +83,7 @@
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>document-generator</artifactId>
-				<version>3.0.0</version>
+				<version>3.1.01</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.framework.components</groupId>
@@ -134,32 +134,32 @@
 			<dependency>
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
-				<version>1.9</version>
+				<version>1.15</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-beanutils</groupId>
 				<artifactId>commons-beanutils</artifactId>
-				<version>1.9.2</version>
+				<version>1.9.4</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-collections</groupId>
 				<artifactId>commons-collections</artifactId>
-				<version>3.2.1</version>
+				<version>3.2.2</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-fileupload</groupId>
 				<artifactId>commons-fileupload</artifactId>
-				<version>1.2.2</version>
+				<version>1.4</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-validator</groupId>
 				<artifactId>commons-validator</artifactId>
-				<version>1.6</version>
+				<version>1.7</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
-				<version>3.9</version>
+				<version>3.12.0</version>
 			</dependency>
 			<!-- Spring Framework -->
 			<dependency>
@@ -236,24 +236,24 @@
 			<dependency>
 				<groupId>org.apache.pdfbox</groupId>
 				<artifactId>pdfbox</artifactId>
-				<version>2.0.23</version>
+				<version>3.0.0-RC1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jasypt</groupId>
 				<artifactId>jasypt-spring3</artifactId>
-				<version>1.9.0</version>
+				<version>1.9.3</version>
 			</dependency>
 
 			<!-- Testing Framework -->
 			<dependency>
 				<groupId>org.testng</groupId>
 				<artifactId>testng</artifactId>
-				<version>6.8.5</version>
+				<version>7.4.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>2.2.9</version>
+				<version>3.11.2</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -371,7 +371,7 @@
 		<dependency>
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
-			<version>2.3.29</version>
+			<version>2.3.31</version>
 		</dependency>
 
 		<!-- Logging Framework -->
@@ -395,7 +395,7 @@
 		<dependency>
 			<groupId>com.lmax</groupId>
 			<artifactId>disruptor</artifactId>
-			<version>3.4.2</version>
+			<version>3.4.4</version>
 		</dependency>
 
 
@@ -407,7 +407,7 @@
 		<dependency>
 			<groupId>jaxen</groupId>
 			<artifactId>jaxen</artifactId>
-			<version>1.1.4</version>
+			<version>1.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>
