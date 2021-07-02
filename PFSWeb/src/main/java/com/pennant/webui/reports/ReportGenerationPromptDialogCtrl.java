@@ -2336,9 +2336,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			StringBuilder whereCond = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
 
 			ReportFilterFields rff = reportConfiguration.getListReportFieldsDetails().stream()
-					.filter(e -> e.getFieldType().equals("DATE")).findAny().orElse(null);
+					.filter(e -> e.getFieldType().equals("DATERANGE")).findAny().orElse(null);
 
-			if (!(rff != null && rff.getFieldType().equals(FIELDTYPE.DATERANGE.toString()))) {
+			if ((rff != null && rff.getFieldType().equals(FIELDTYPE.DATERANGE.toString()))) {
 				Component component = dymanicFieldsRows.getFellow(Long.toString(rff.getFieldID()));
 				Date value = ((Datebox) component).getValue();
 

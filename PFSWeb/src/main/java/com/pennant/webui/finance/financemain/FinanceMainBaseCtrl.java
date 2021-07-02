@@ -14235,6 +14235,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 
+			if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+				aFinanceSchData = doWriteSchData(aFinanceSchData);
+			}
+
 			// Added SMTParameter for the QDP.
 			if (StringUtils.equalsIgnoreCase(PennantConstants.YES, SysParamUtil.getValueAsString("ALLOW_QUICK_DISB"))) {
 				List<FinanceDisbursement> disbList = aFinanceSchData.getDisbursementDetails();

@@ -695,7 +695,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", ?, ?, ?, ?");
 			sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 			sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-			sql.append(", ?, ?, ?, ?, ?, ?, ?");
+			sql.append(", ?, ?, ?, ?");
 			// HL
 			sql.append(", ?, ?, ?, ?, ?");
 			sql.append(", ?, ?, ?, ?");
@@ -916,6 +916,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					ps.setBoolean(index++, fm.isEndGrcPeriodAftrFullDisb());
 					ps.setBoolean(index++, fm.isAutoIncGrcEndDate());
 					ps.setBoolean(index++, fm.isPlanEMIHAlwInGrace());
+					ps.setInt(index++, fm.getSchdVersion());
 
 					// HL
 					ps.setBoolean(index++, fm.isFinOcrRequired());
@@ -947,7 +948,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					ps.setInt(index++, fm.getNoOfGrcSteps());
 					ps.setString(index++, fm.getCalcOfSteps());
 					ps.setString(index++, fm.getStepsAppliedFor());
-					ps.setInt(index++, fm.getSchdVersion());
+
 				}
 				ps.setInt(index++, fm.getVersion());
 				ps.setLong(index++, JdbcUtil.setLong(fm.getLastMntBy()));

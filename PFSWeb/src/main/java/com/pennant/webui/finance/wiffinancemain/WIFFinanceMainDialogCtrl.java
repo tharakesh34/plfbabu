@@ -6523,9 +6523,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 
-			if (this.downPayBank.getActualValue().compareTo(BigDecimal.ZERO) <= 0) {
-				errorList.add(new ErrorDetail("Frequency", "30543", new String[] {}, new String[] {}));
-			}
 
 			// BPI Validations
 			if (this.alwBpiTreatment.isChecked()

@@ -28,16 +28,18 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2361.1" author="Gopal.p">
+	 <changeSet id="ST#2361.1" author="Gopal.p">
 		<dropNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="allowdownpaypgm"/>
 		<dropNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="alwadvancerent"/>
 		<dropNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="rolloverfinance"/>
+		<dropNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="FINDEPRECIATIONREQ"/>
 	</changeSet>
 	
 	<changeSet id="ST#2361.2" author="Gopal.p">
 		<dropNotNullConstraint tableName="RMTFINANCETYPES" columnName="allowdownpaypgm"/>
 		<dropNotNullConstraint tableName="RMTFINANCETYPES" columnName="alwadvancerent"/>
 		<dropNotNullConstraint tableName="RMTFINANCETYPES" columnName="rolloverfinance"/>
+		<dropNotNullConstraint tableName="RMTFINANCETYPES" columnName="FINDEPRECIATIONREQ"/>
 	</changeSet>
 	
 	<changeSet id="ST#2361.3" author="Gireesh.G">
@@ -65,5 +67,14 @@
 	
 	<changeSet id="ST#2361.8" author="Gireesh.G">
 		<dropNotNullConstraint tableName="FINDISBURSEMENTDETAILS_LOG" columnName="DISBDISBURSED"/>
+	</changeSet> 
+	
+	 <changeSet id="ST#2361.9" author="Saikiran.n">
+		<dropNotNullConstraint tableName="FINANCEMAIN_TEMP" columnName="TAKEOVERFINANCE"/>
 	</changeSet>
+	
+	<changeSet id="ST#2361.10" author="Saikiran.n">
+		<dropNotNullConstraint tableName="FINANCEMAIN" columnName="TAKEOVERFINANCE"/>
+	</changeSet> 
+	
 </databaseChangeLog>

@@ -397,7 +397,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", AlwPlanDeferment, FinIsRateRvwAtGrcEnd, PlanDeferCount ");
 		sql.append(", FinIsAlwGrcRepay, FinGrcSchdMthd, FinGrcMargin, FinMargin, FinCommitmentReq");
 		sql.append(", FinCollateralReq ");
-		sql.append(", llowRIAInvestment, OverrideLimit, LimitRequired, FinCommitmentOvrride");
+		sql.append(", AllowRIAInvestment, OverrideLimit, LimitRequired, FinCommitmentOvrride");
 		sql.append(", FinCollateralOvrride, FinRepayPftOnFrq, FinPftUnChanged, ApplyODPenalty, ODIncGrcDays");
 		sql.append(", ODChargeType, ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc");
 		sql.append(", ODMinCapAmount, FinDivision, Product, StartDate, EndDate");

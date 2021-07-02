@@ -53,4 +53,8 @@
 		<dropNotNullConstraint tableName="ADTFINDISBURSEMENTDETAILS" columnName="DISBDISBURSED"/>
 	</changeSet>
 	
+	<changeSet id="ST#2361.4" author="Saikiran.n">
+		<dropNotNullConstraint tableName="ADTFINANCEMAIN" columnName="TAKEOVERFINANCE"/>
+	</changeSet>
+	
 </databaseChangeLog>

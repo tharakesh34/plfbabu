@@ -1521,14 +1521,6 @@
 													<combobox id="calcOfSteps" width="155px" />
 												</hbox>
 											</row>
-											<row id="row_CalcOfSteps">
-												<label id="label_FinanceTypeDialog_CalcOfSteps"
-													value="${c:l('label_FinanceTypeDialog_CalcOfSteps.value')}" />
-												<hbox>
-													<space spacing="2px" id="space_calcOfSteps" />
-													<combobox id="calcOfSteps" width="155px" />
-												</hbox>
-											</row>
 										</rows>
 									</grid>
 								</groupbox>

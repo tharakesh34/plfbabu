@@ -79,6 +79,7 @@
 									<space spacing="2px" sclass="mandatory" id="space_AddTermAfter" />
 									<combobox id="cbAddTermAfter" readonly="true" width="120px"></combobox>
 								</hbox>
+							</row>
 							<row id="row_assetUtilization" visible="false">
 								<label id="label_AddDisbursementDialog_AlwUtilizeAssetValue" value="${c:l('label_AddDisbursementDialog_AlwUtilizeAssetValue.value')}" />
 								<hbox>
