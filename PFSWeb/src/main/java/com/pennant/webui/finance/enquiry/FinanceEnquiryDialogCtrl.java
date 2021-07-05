@@ -529,7 +529,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	protected Space space_sourChannelCategory;
 	protected Space space_ReqloanTenor;
-	//Offer Details
+	// Offer Details
 	protected Groupbox gb_offerDetails;
 
 	protected Textbox offerId;
@@ -551,6 +551,11 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Checkbox alwLoanSplit;
 	protected ExtendedCombobox parentLoanReference;
 	protected Checkbox alwPlannedEmiHolidayInGrace;
+
+	// Subvention Details
+	protected Row row_Subvention;
+	protected Combobox subVentionFrom;
+	protected ExtendedCombobox manufacturerDealer;
 	Customer customer = null;
 	@Autowired
 	private JointAccountDetailService jointAccountDetailService;
@@ -558,7 +563,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private CreditApplicationReviewService creditApplicationReviewService;
 	protected Label label_FinanceMainDialog_ParentLoanReference;
 
-	//SubventionDetails
+	// SubventionDetails
 	protected Groupbox gb_SubventionDetails;
 	protected Checkbox subventionAllowed;
 	protected Combobox subventionType;
@@ -572,7 +577,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Datebox subventionEndDate_two;
 
 	private FinanceDetailService financeDetailService;
-	
+
 	public FinanceSummary getFinSummary() {
 		return finSummary;
 	}
@@ -825,7 +830,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Field visibility & Naming for FinAsset value and finCurrent asset
 		// value by OD/NONOD.
 		setFinAssetFieldVisibility(fintype);
-		//Setting parent loan reference field visible only for child loans
+		// Setting parent loan reference field visible only for child loans
 		if (getFinScheduleData().getFinanceMain().getParentRef() != null
 				&& StringUtils.isNotBlank(getFinScheduleData().getFinanceMain().getParentRef())) {
 			this.parentLoanReference.setVisible(true);
@@ -916,8 +921,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceMain
-	 *            financeMain
+	 * @param aFinanceMain financeMain
 	 * @throws InterruptedException
 	 */
 	@SuppressWarnings("deprecation")
@@ -1163,7 +1167,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.nextRepayCpzDate_two.setValue(aFinanceMain.getNextRepayCpzDate());
 			this.nextRepayPftDate_two.setValue(aFinanceMain.getNextRepayPftDate());
 			this.finReference.setValue(aFinanceMain.getFinReference());
-			//KMILLMS-854: Loan basic details-loan O/S amount is not getting 0.
+			// KMILLMS-854: Loan basic details-loan O/S amount is not getting 0.
 			if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(aFinanceMain.getClosingStatus())) {
 				this.finStatus.setValue(Labels.getLabel("label_Status_Cancelled"));
 			} else {
@@ -1218,12 +1222,12 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Accounts should be displayed only to the Banks
 		if (ImplementationConstants.ALLOW_BPI_TREATMENT) {
-				this.row_BpiTreatment.setVisible(true);
-				this.alwBpiTreatment.setChecked(aFinanceMain.isAlwBPI());
-				fillComboBox(this.dftBpiTreatment, aFinanceMain.getBpiTreatment(),
-						PennantStaticListUtil.getDftBpiTreatment(), "");
-				oncheckalwBpiTreatment();
-			} 
+			this.row_BpiTreatment.setVisible(true);
+			this.alwBpiTreatment.setChecked(aFinanceMain.isAlwBPI());
+			fillComboBox(this.dftBpiTreatment, aFinanceMain.getBpiTreatment(),
+					PennantStaticListUtil.getDftBpiTreatment(), "");
+			oncheckalwBpiTreatment();
+		}
 		if (ImplementationConstants.ALLOW_PLANNED_EMIHOLIDAY) {
 			this.alwPlannedEmiHoliday.setChecked(aFinanceMain.isPlanEMIHAlw());
 			onCheckPlannedEmiholiday();
@@ -1293,7 +1297,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		//FinanceMain Details ---> Start SubVention Details
+		// FinanceMain Details ---> Start SubVention Details
 		this.subventionAllowed.setChecked(aFinanceMain.isAllowSubvention());
 		if (aFinanceMain.isAllowSubvention()) {
 			this.gb_SubventionDetails.setVisible(true);
@@ -1597,6 +1601,17 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.vanCode.setValue(aFinanceMain.getVanCode());
 			this.vanCode.setDisabled(true);
 		}
+
+		if (aFinanceType.isSubventionReq()) {
+			this.row_Subvention.setVisible(true);
+			fillComboBox(this.subVentionFrom, aFinanceMain.getSubVentionFrom(),
+					PennantStaticListUtil.getSubVentionFrom(), "");
+			this.manufacturerDealer.setValue(aFinanceMain.getManufacturerDealerName(),
+					aFinanceMain.getManufacturerDealerCode());
+		} else {
+			this.row_Subvention.setVisible(false);
+		}
+
 		List<ReasonHeader> details = getFinanceCancellationService()
 				.getCancelReasonDetails(aFinanceMain.getFinReference());
 		String data = "";
@@ -1738,7 +1753,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Method for Rendering Joint account and Guaranteer Details Data in finance
 	 */
@@ -2359,7 +2374,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.repayRvwFrq.setDisabled(true);
 		this.repayCpzFrq.setDisabled(true);
 		this.parentLoanReference.setReadonly(true);
-		//BPI
+		// BPI
 		this.alwBpiTreatment.setDisabled(true);
 		this.dftBpiTreatment.setDisabled(true);
 	}

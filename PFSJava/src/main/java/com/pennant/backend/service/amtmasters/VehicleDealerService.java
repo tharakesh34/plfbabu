@@ -77,4 +77,6 @@ public interface VehicleDealerService {
 	VehicleDealer getDealerShortCode(long providerId);
 
 	AuditDetail doValidations(VehicleDealer vehicleDealer);
+
+	int getApprovedVehicleDealerCountById(long manufacturerDealerId, String delarType);
 }

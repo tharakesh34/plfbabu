@@ -85,10 +85,8 @@ public class DocumentTypeDAOImpl extends BasicDao<DocumentType> implements Docum
 	/**
 	 * Fetch the Record Document Types details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return DocumentType
 	 */
 	@Override
@@ -350,25 +348,17 @@ public class DocumentTypeDAOImpl extends BasicDao<DocumentType> implements Docum
 
 	}
 
-	public String getDocCategoryByDocType(String docTypeCode, String type) {
+	public String getDocCategoryByDocType(String code) {
+		String sql = "Select CategoryCode from BMTDocumentTypes_AView Where DocTypeCode = ?";
 
-		String categoryCode = null;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		StringBuilder sql = new StringBuilder("Select ");
+		logger.debug(Literal.SQL + sql);
 
-		if (type.contains("View")) {
-			sql.append(" CategoryCode ");
-		}
-		sql.append(" from BMTDocumentTypes");
-		sql.append(type);
-		sql.append(" where DocTypeCode = :DocTypeCode");
-		source.addValue("DocTypeCode", docTypeCode);
 		try {
-			categoryCode = jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+			return jdbcOperations.queryForObject(sql, new Object[] { code }, String.class);
 		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
+			logger.debug("Record is not Found in BMTDocumentTypes_AView for the specified DocTypeCode >> {}", code);
 		}
-		return categoryCode;
+
+		return null;
 	}
 }

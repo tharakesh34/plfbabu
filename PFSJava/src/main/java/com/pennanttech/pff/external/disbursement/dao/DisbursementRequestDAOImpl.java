@@ -157,6 +157,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 							req.setAlwFileDownload(getValueAsBoolean(rs, "ALW_FILE_DOWNLOAD"));
 							req.setPartnerBankAccount(getValueAsString(rs, "PARTNERBANK_ACCOUNT"));
 							req.setChequeNumber(getValueAsString(rs, "CHEQUE_NUMBER"));
+							req.setLoanAmount(getValueAsBigDecimal(rs, "FINAMOUNT"));
 							// default data
 							req.setPaymentDetail1(DISB_FI_EMAIL);
 							req.setHeaderId(requestData.getHeaderId());
@@ -529,6 +530,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		sql.append(" select * from (");
 		sql.append(" select fa.paymentid, fa.PaymentType, pb.partnerbankid, pb.PartnerbankCode");
 		sql.append(", fm.FinType, fm.FinReference, div.EntityCode, 'D' Channel, fa.status, fa.llDate");
+		sql.append(", pb.downloadType");
 		sql.append(" from finadvancepayments fa");
 		sql.append(" inner join partnerbanks pb on pb.partnerbankid = fa.partnerbankid");
 		sql.append(" inner join financemain fm on fm.FinReference = fa.FinReference");
@@ -537,6 +539,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		sql.append(" union all");
 		sql.append(" select paymentinstructionid paymentid,  pi.paymenttype, pb.partnerbankid, pb.PartnerbankCode");
 		sql.append(", fm.FinType, fm.FinReference, div.EntityCode, 'P' Channel, pi.status, pi.postDate llDate");
+		sql.append(", pb.downloadType");
 		sql.append(" from paymentinstructions pi");
 		sql.append(" inner join paymentheader ph on ph.paymentid = pi.paymentid");
 		sql.append(" inner join partnerbanks pb on pb.partnerbankid = pi.partnerbankid");
@@ -544,13 +547,13 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		sql.append(" inner join rmtfinancetypes ft on ft.fintype  = fm.fintype");
 		sql.append(" inner join smtdivisiondetail div on div.divisioncode  = ft.findivision");
 		sql.append(" union all");
-		sql.append(" select  pi.id  paymentid, pi.paymenttype, pb.partnerbankid, pb.PartnerbankCode");
+		sql.append(" select pi.id  paymentid, pi.paymenttype, pb.partnerbankid, pb.PartnerbankCode");
 		sql.append(", '' fintype, vr.primarylinkref  finreference, pi.entitycode, 'I' channel, pi.status");
-		sql.append(", pi.paymentdate llDate");
+		sql.append(", pi.paymentdate llDate, pb.downloadType");
 		sql.append(" from insurancepaymentinstructions pi");
 		sql.append(" inner join partnerbanks pb on pb.partnerbankid = pi.partnerbankid");
 		sql.append(" inner join vasrecording vr ON vr.paymentinsid = pi.id) t");
-		sql.append(" where status ='APPROVED' and llDate <= ? ");
+		sql.append(" where status ='APPROVED' and llDate <= ?");
 		sql.append(" and paymentid not in (SELECT disbursement_requests.disbursement_id FROM");
 		sql.append(" disbursement_requests)");
 
@@ -577,6 +580,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 							fap.setEntityCode(rs.getString("EntityCode"));
 							fap.setChannel(rs.getString("Channel"));
 							fap.setStatus(rs.getString("Status"));
+							fap.setDownloadType(rs.getString("downloadType"));
 
 							if (PATNER_BANKS.get(fap.getPartnerbankCode()) == null) {
 								loadPartnerBankDataEngineConfigs();
@@ -646,6 +650,10 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 			sql.append(" AND LLDATE <= ?");
 		}
 
+		if (req.getFinReference() != null) {
+			sql.append(" AND FinReference = ?");
+		}
+
 		logger.trace(Literal.SQL + sql.toString());
 
 		String ccy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
@@ -674,6 +682,10 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 			if (req.getToDate() != null) {
 				ps.setDate(index++, JdbcUtil.getDate(req.getToDate()));
+			}
+
+			if (req.getFinReference() != null) {
+				ps.setString(index++, req.getFinReference());
 			}
 		}, (rs, rowNum) -> {
 			DisbursementRequest dr = new DisbursementRequest();

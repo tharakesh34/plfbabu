@@ -1,1712 +1,444 @@
 package com.pennanttech.interfacebajaj.fileextract;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.sql.Types;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.zkoss.util.resource.Labels;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
-import com.pennant.app.constants.AccountEventConstants;
-import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.core.ReceiptPaymentService;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.ReceiptCalculator;
+import com.pennant.app.util.RepaymentPostingsUtil;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
-import com.pennant.backend.model.customermasters.CustomerDetails;
-import com.pennant.backend.model.customermasters.CustomerEMail;
-import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
-import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.ManualAdvise;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
-import com.pennant.backend.model.financemanagement.PresentmentHeader;
-import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
+import com.pennant.backend.eventproperties.service.EventPropertiesService;
+import com.pennant.backend.eventproperties.service.impl.EventPropertiesServiceImpl.EventType;
+import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
-import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.MandateConstants;
-import com.pennant.backend.util.NotificationConstants;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.presentment.PresentmentResponseProcess;
 import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.ProcessRecord;
-import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.interfacebajaj.fileextract.service.FileImport;
-import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.App.Type;
 import com.pennanttech.pennapps.core.AppException;
-import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pennapps.core.InterfaceException;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.script.ScriptEngine;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
-import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pff.external.PresentmentImportProcess;
-import com.pennanttech.pff.external.presentment.PresentmentCustomeExtractor;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class PresentmentDetailExtract extends FileImport implements Runnable {
 	private static final Logger logger = LogManager.getLogger(PresentmentDetailExtract.class);
 
-	// Constant values used in the interface
-	private static final long CON_RESPONSE_BOUNCE = 99;
-	private static final long CON_RESPONSE_SUCCESS = 0;
-	private static final String CON_LATERESPONSE_FLAG = "Y";
-	private static final String CON_BOUNCE_STATUS = "B";
-	private static final String CON_SUCCESS_STATUS = "S";
-	private static final long CON_USER_ID = 1000;
-	private static final String IS_LOANISACTIVE = "1";
-	private static final String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
-	private static final String REGIX = "[/:\\s]";
-
-	private PresentmentDetailService presentmentDetailService;
-	private NotificationService notificationService;
-	private String instrumentType = null;
-	private LoggedInUser userDetails;
-	private DataEngineStatus status;
+	/* Data Source */
 	private DataSource dataSource;
 
-	private PresentmentImportProcess presentmentImportProcess;
-	private ValidateRecord presentmentRespValidation;
-	private PostingsPreparationUtil postingsPreparationUtil;
+	/* DAO's */
 	private FinanceRepaymentsDAO financeRepaymentsDAO;
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
+	private PresentmentDetailDAO presentmentDetailDAO;
+	private FinanceMainDAO financeMainDAO;
+	private CustomerDAO customerDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private FinanceProfitDetailDAO financeProfitDetailDAO;
+	private FinODDetailsDAO finODDetailsDAO;
+	private FinReceiptDetailDAO finReceiptDetailDAO;
+	private FinExcessAmountDAO finExcessAmountDAO;
 
-	StringBuilder remarks = null;
-	PresentmentDetail detail = null;
-	int recordCount = 0;
-	int successCount = 0;
-	int failedCount = 0;
-	long batchId = 0;
+	/* Service's */
+	private NotificationService notificationService;
+	private ReceiptPaymentService receiptPaymentService;
+	private ReceiptCancellationService receiptCancellationService;
+	private PresentmentDetailService presentmentDetailService;
+	private PresentmentImportProcess presentmentImportProcess;
+	private PostingsPreparationUtil postingsPreparationUtil;
+	private RepaymentPostingsUtil repaymentPostingsUtil;
+	private ReceiptCalculator receiptCalculator;
+	private EventPropertiesService eventPropertiesService;
 
-	public PresentmentDetailExtract(DataSource datsSource, PresentmentDetailService presentmentDetailService,
-			NotificationService notificationService) {
+	/* Objects */
+	private LoggedInUser userDetails;
+	private DataEngineStatus deStatus;
+
+	/* Variables */
+	private String instrumentType = null;
+
+	public static AtomicLong recordCount = new AtomicLong(0);
+	public static AtomicLong successCount = new AtomicLong(0);
+	public static AtomicLong failedCount = new AtomicLong(0);
+
+	public static AtomicInteger totalThreads = new AtomicInteger(0);
+	public static AtomicInteger processedThreads = new AtomicInteger(0);
+
+	public PresentmentDetailExtract(DataSource datsSource) {
 		super(datsSource);
 		this.dataSource = datsSource;
-		this.presentmentDetailService = presentmentDetailService;
-		this.notificationService = notificationService;
+
+		recordCount = new AtomicLong(0);
+		successCount = new AtomicLong(0);
+		failedCount = new AtomicLong(0);
+
+		totalThreads = new AtomicInteger(0);
+		processedThreads = new AtomicInteger(0);
 	}
 
 	@Override
 	public void run() {
-		if (SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE)
-				|| !ImplementationConstants.DEFAULT_PRESENTMENT_UPLOAD) {
-			try {
-				importDataByInstrumentType();
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);// Handling
-			}
-		} else {
-			importData();
-		}
-	}
+		RuleExecutionUtil.PRESENTMENT_RESP_SCRIPT_ENGINE_MAP.clear();
 
-	// Importing the data from file
-	@SuppressWarnings("resource")
-	private void importData() {
-		logger.debug(Literal.ENTERING);
-
-		int lineNumber = 0;
-		MapSqlParameterSource map = null;
-		boolean isError = false;
-		Workbook workbook = null;
-		Sheet sheet = null;
-		FileInputStream fis = null;
-
-		Date sysDate = DateUtility.getSysDate();
 		try {
-			// rcdLegth = 79;
-			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setTotalRecords(getTotalRecords());
-			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStartTime(sysDate);
-			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.E.name());
-			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setFileName(getFile().getName());
-
-			// Clearing the data from staging tables
-			clearTables();
-
-			fis = new FileInputStream(getFile());
-
-			if (getFile().toString().toLowerCase().endsWith(".xls")) {
-				workbook = new HSSFWorkbook(fis);
-			} else {
-				workbook = new XSSFWorkbook(fis);
-			}
-
-			if (workbook != null) {
-				sheet = workbook.getSheetAt(0);
-			}
-
-			Row row = null;
-			for (int i = 0; i < sheet.getPhysicalNumberOfRows(); i++) {
-				row = sheet.getRow(i);
-				if (row == null) {
-					continue;
-				}
-
-				try {
-					if (i == 0 && (row != null && row.getPhysicalNumberOfCells() < row_NumberOfCells)) {
-						throw new Exception("Record is invalid at line :" + lineNumber);
-					}
-					if (i == 0) {
-						continue;
-					}
-
-					lineNumber++;
-
-					StringUtils.trimToNull(String.valueOf(row.getCell(0)));
-					if (row.getCell(0) == null) {
-						break;
-					}
-
-					PresentmentCustomeExtractor presentmentCustomeExtractor = getCustomExtract();
-
-					if (presentmentCustomeExtractor != null) {
-						map = presentmentCustomeExtractor.readData(row);
-					} else {
-						map = defaultReadData(row);
-					}
-				} catch (Exception e) {
-					logger.error("Exception {}", e);
-				}
-				// Validate Mandatory fields
-				validateFields(map);
-
-				String presentmentRef = map.getValue("Batchid").toString();
-				String status = presentmentDetailService.getPresementStatus(presentmentRef);
-				if (status == null) {
-					throw new Exception(Labels.getLabel("label_Presentmentdetails_Notavailable") + presentmentRef);
-				} else if (RepayConstants.PEXC_SUCCESS.equals(status) || RepayConstants.PEXC_BOUNCE.equals(status)) {
-					throw new Exception(" The presentment with the presentment reference :" + presentmentRef
-							+ " already processed.");
-				} else {
-					PresentmentDetail presentmentDetail = presentmentDetailService.getPresentmentDetail(presentmentRef);
-					if (presentmentDetail != null
-							&& DateUtility.compare(SysParamUtil.getAppDate(), presentmentDetail.getSchDate()) < 0) {
-						throw new AppException(
-								" The presentment not proceed with schedule date greater than application bussiness date.");
-					}
-				}
-
-				// Inserting the data into staging table
-				insertData(map);
-				map = null;
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.E.name());
-			}
-
-			if (lineNumber <= 0) {
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks(" Uploaded File is empty please verify once");
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setEndTime(sysDate);
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.F.name());
-			}
-		} catch (Exception e) {
+			instrumentTypeResponse();
+		} catch (AppException e) {
 			logger.error(Literal.EXCEPTION, e);
-			isError = true;
-			String errorMasg = e.toString().concat(". At line number: " + lineNumber);
-			if (StringUtils.containsIgnoreCase(errorMasg, "java.lang.Exception:")) {
-				errorMasg = StringUtils.replace(errorMasg, "java.lang.Exception:", "");
-			}
-			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks(errorMasg);
-			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setEndTime(sysDate);
-			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.F.name());
 		} finally {
-			try {
-				if (fis != null) {
-					fis.close();
+			for (Entry<String, ScriptEngine> entry : RuleExecutionUtil.PRESENTMENT_RESP_SCRIPT_ENGINE_MAP.entrySet()) {
+				try {
+					entry.getValue().setEod(false);
+					entry.getValue().close();
+				} catch (Exception e) {
+					//
 				}
-				if (!isError) {
-					backUpFile();
-				}
-			} catch (IOException e) {
-				logger.error("Exception {}", e);
 			}
-			if (isError) {
-				// If error, Clear the staging tables.
-				clearTables();
-			} else {
-				// After completion of file import, processing the data from
-				// staging tables.
-				processingPrsentments();
-			}
+			RuleExecutionUtil.PRESENTMENT_RESP_SCRIPT_ENGINE_MAP.clear();
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
-	private PresentmentCustomeExtractor getCustomExtract() {
-		PresentmentCustomeExtractor presentmentCustomeExtractor = null;
-		try {
-			presentmentCustomeExtractor = (PresentmentCustomeExtractor) SpringBeanUtil
-					.getBean("presentmentCustomeExtractor");
+	private void instrumentTypeResponse() {
+		logger.info(Literal.ENTERING);
 
+		String configName = deStatus.getName();
+		String fileName = getMedia().getName();
+
+		long userId = getUserDetails().getUserId();
+		Date appDate = SysParamUtil.getAppDate();
+
+		deStatus.reset();
+		deStatus.setFileName(fileName);
+		deStatus.setRemarks("Initiated file reading...");
+
+		logger.info("Data-engine config name: {}", configName);
+		logger.info("Presentment response file name: {}", fileName);
+
+		String database = App.DATABASE.name();
+		DataEngineImport dataEngine = new DataEngineImport(dataSource, userId, database, true, appDate, deStatus);
+		dataEngine.setMedia(getMedia());
+
+		try {
+			if (configName.equals("PRESENTMENT_RESPONSE_PDC")) {
+				dataEngine.setProcessRecord((ProcessRecord) SpringBeanUtil.getBean("customPresentmentExtact"));
+			}
 		} catch (Exception e) {
-			presentmentCustomeExtractor = null;
-		}
-		return presentmentCustomeExtractor;
-	}
-
-	private MapSqlParameterSource defaultReadData(Row row) {
-		MapSqlParameterSource map;
-		map = new MapSqlParameterSource();
-		map.addValue("BranchCode", getCellValue(row, pos_BranchCode));
-		map.addValue("AgreementNo", getCellValue(row, pos_AgreementNo));
-		map.addValue("InstalmentNo", "0");
-		map.addValue("BFLReferenceNo", getCellValue(row, pos_BFLReferenceNo));
-		map.addValue("Batchid", getCellValue(row, pos_Batchid));
-		map.addValue("AmountCleared", getCellValue(row, pos_AmountCleared));
-		map.addValue("ClearingDate", getDateValue(row, pos_ClearingDate), Types.DATE);
-		map.addValue("Status", getCellValue(row, pos_Status));
-
-		map.addValue("Name", getCellValue(row, pos_Name));
-		map.addValue("UMRNNo", getCellValue(row, pos_UMRNNo));
-		map.addValue("AccountType", getCellValue(row, pos_AccountType));
-		map.addValue("PaymentDue", getDateValue(row, pos_PaymentDue), Types.DATE);
-		map.addValue("ReasonCode", getStringCellValue(row, pos_ReasonCode));
-
-		// TODO:check set the value
-		if (row.getPhysicalNumberOfCells() > pos_FailureReasons) {
-			map.addValue("Failure reason",
-					StringUtils.trimToNull(row.getCell(pos_FailureReasons).getStringCellValue()));
-		}
-		return map;
-	}
-
-	// After file import, processing the data from staging table
-	public void processingPrsentments() {
-		logger.debug(Literal.ENTERING);
-
-		recordCount = 0;
-		successCount = 0;
-		failedCount = 0;
-		batchId = 0;
-		remarks = null;
-
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT BRANCHCODE, AGREEMENTNO, INSTALMENTNO, BFLREFERENCENO, BATCHID, AMOUNTCLEARED, ");
-		sql.append(" CLEARINGDATE, STATUS, REASONCODE  FROM PRESENTMENT_FILEIMPORT ");
-
-		jdbcTemplate.query(sql.toString(), new MapSqlParameterSource(), new ResultSetExtractor<Integer>() {
-			@Override
-			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
-
-				if (App.TYPE == Type.WEB) {
-					batchId = saveFileHeader(getFile().getName());
-				}
-
-				while (rs.next()) {
-					recordCount++;
-					try {
-						PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks("Processing the response file.....");
-						PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setProcessedRecords(recordCount);
-						PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setSuccessRecords(successCount);
-						PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setFailedRecords(failedCount);
-						PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.E.name());
-
-						// Fetching the mandatory data from resultset
-						String presentmentRef = rs.getString("BATCHID");
-						String status = rs.getString("STATUS");
-						String reasonCode = rs.getString("REASONCODE");
-						reasonCode = StringUtils.trimToEmpty(reasonCode);
-						boolean processReceipt = processInactiveLoan(presentmentRef);
-						if (RepayConstants.PEXC_PAID.equals(status)) {
-							status = "S";
-						}
-
-						Long linkedTranId = null;
-						PresentmentDetail presentmentDetails = null;
-						if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
-							presentmentDetails = presentmentDetailService.getPresentmentDetail(presentmentRef);
-							linkedTranId = postStageAccounting(presentmentRef, presentmentDetails);
-						}
-						if (RepayConstants.PEXC_SUCCESS.equals(status)) {
-							successCount++;
-							presentmentDetailService.updatePresentmentDetail(presentmentRef, status, linkedTranId);
-							updatePresentmentHeader(presentmentRef, status, status);
-							presentmentDetailService.updateFinanceDetails(presentmentRef);
-							PresentmentDetail presentmentDetail = isPresentmentResponseIsExist(presentmentRef);
-							if (!processReceipt) {
-								presentmentDetailService.processSuccessPresentments(presentmentDetail.getReceiptID());
-							}
-							updateChequeStatus(presentmentRef, PennantConstants.CHEQUESTATUS_REALISED);
-							if (App.TYPE == Type.WEB) {
-								saveBatchLog(batchId, status, presentmentRef, null);
-							}
-
-						} else {
-							try {
-								if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
-									reverseStageAccounting(linkedTranId, presentmentDetails.getReceiptID());
-								}
-								detail = presentmentCancellation(presentmentRef, reasonCode);
-								if (StringUtils.trimToNull(detail.getErrorDesc()) == null) {
-									successCount++;
-									detail.setErrorDesc(reasonCode + " - " + detail.getBounceReason());
-									updatePresentmentDetails(presentmentRef, RepayConstants.PEXC_BOUNCE,
-											detail.getBounceID(), detail.getManualAdviseId(), detail.getErrorDesc());
-									updatePresentmentHeader(presentmentRef, RepayConstants.PEXC_BOUNCE,
-											detail.getStatus());
-									if (App.TYPE == Type.WEB) {
-										saveBatchLog(batchId, RepayConstants.PEXC_BOUNCE, presentmentRef,
-												detail.getErrorDesc());
-									}
-
-									updateChequeStatus(presentmentRef, PennantConstants.CHEQUESTATUS_BOUNCE);
-								} else {
-									failedCount++;
-									updatePresentmentDetails(presentmentRef, RepayConstants.PEXC_FAILURE, "PR0001",
-											detail.getErrorDesc());
-									updatePresentmentHeader(presentmentRef, RepayConstants.PEXC_FAILURE,
-											detail.getStatus());
-									if (App.TYPE == Type.WEB) {
-										saveBatchLog(batchId, RepayConstants.PEXC_FAILURE, presentmentRef,
-												detail.getErrorDesc());
-									}
-								}
-							} catch (Exception e) {
-								logger.error(Literal.EXCEPTION, e);
-								failedCount++;
-								updatePresentmentDetails(presentmentRef, RepayConstants.PEXC_FAILURE, "PR0002",
-										e.getMessage());
-								updatePresentmentHeader(presentmentRef, RepayConstants.PEXC_FAILURE,
-										detail.getStatus());
-								if (App.TYPE == Type.WEB) {
-									saveBatchLog(batchId, RepayConstants.PEXC_FAILURE, presentmentRef, e.getMessage());
-								}
-							}
-						}
-					} catch (Exception e) {
-						logger.error(Literal.EXCEPTION, e);
-					}
-				}
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setProcessedRecords(recordCount);
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setSuccessRecords(successCount);
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setFailedRecords(failedCount);
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setEndTime(DateUtility.getSysDate());
-
-				// Update the Status of the file as Reading Successful
-				remarks = new StringBuilder();
-				if (failedCount > 0) {
-					remarks.append(" Completed with exceptions, total Records: ");
-					remarks.append(recordCount);
-					remarks.append(", Sucess: ");
-					remarks.append(successCount + ".");
-					remarks.append(", Failure: ");
-					remarks.append(failedCount + ".");
-					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks(remarks.toString());
-					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.F.name());
-				} else {
-					remarks.append(" Completed successfully, total Records: ");
-					remarks.append(recordCount);
-					remarks.append(", Sucess: ");
-					remarks.append(successCount + ".");
-					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks(remarks.toString());
-					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.S.name());
-				}
-				if (App.TYPE == Type.WEB) {
-					String strRemarks = remarks.toString();
-					if (StringUtils.trimToNull(strRemarks) != null) {
-						strRemarks = (strRemarks.length() >= 2000) ? remarks.substring(0, 1988) : strRemarks;
-					}
-					updateFileHeader(batchId, recordCount, successCount, failedCount, strRemarks);
-				}
-				return 0;
-			}
-		});
-		logger.debug(Literal.LEAVING);
-	}
-
-	// Inserting data into staging table
-	public void insertData(MapSqlParameterSource map) {
-
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append(
-				"INSERT INTO PRESENTMENT_FILEIMPORT (BranchCode,AgreementNo,InstalmentNo,BFLReferenceNo,Batchid,AmountCleared,ClearingDate,Status,ReasonCode)");
-		sql.append(
-				"Values ( :BranchCode, :AgreementNo, :InstalmentNo, :BFLReferenceNo, :Batchid, :AmountCleared, :ClearingDate, :Status, :ReasonCode)");
-		jdbcTemplate.update(sql.toString(), map);
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	// Validating the mandatory fields
-	private void validateFields(MapSqlParameterSource map) throws Exception {
-
-		// Aggement Number
-		Object aggrementNum = map.getValue("AgreementNo");
-		if (aggrementNum != null && aggrementNum.toString().length() > 14) {
-			throw new Exception("Client Code  length should be less than 15.");
+			//
 		}
 
-		// bflreferenceno
-		if (ImplementationConstants.PRESENTMENT_EXTRACT_DEALER_MAN) {
-			Object bflreferenceno = map.getValue("BFLReferenceNo");
-			if (bflreferenceno != null && bflreferenceno.toString().length() > 3) {
-				throw new Exception("Dealer Code  length should be less than 4.");
-			}
+		if (configName.equals("PRESENTMENT_RESPONSE")) {
+			dataEngine.setValidateRecord(new DefaultPresentmentRespValidation());
 		}
 
-		// batchReference
-		Object batchid = map.getValue("Batchid");
-		if (batchid == null) {
-			throw new Exception("Debit Ref should be mandatory.");
-		} else if (batchid.toString().length() != 29) {
-			throw new Exception("Debit Ref length should be 29.");
-		}
+		long headerId = presentmentDetailDAO.logHeader(fileName, null, "IMPORT", 0);
 
-		// status
-		Object status = map.getValue("Status");
-		if (status == null) {
-			throw new Exception("Status should be mandatory.");
-		} else if (status.toString().length() != 1) {
-			throw new Exception("Status length should be 1.");
-		} else {
-			int statusLength = status.toString().length();
-			int minLength = ImplementationConstants.PRESENTMENT_EXPORT_STATUS_MIN_LENGTH;
-			int maxLength = ImplementationConstants.PRESENTMENT_EXPORT_STATUS_MAX_LENGTH;
-			if (statusLength != minLength && statusLength != maxLength) {
-				throw new Exception("Status length should be minimum" + minLength + "and maximum" + maxLength);
-			}
-		}
+		logger.info("Import header-ID: {}", headerId);
 
-		// ReasonCode
-		Object reasonCode = map.getValue("ReasonCode");
-		if (status != null && !(StringUtils.equals(RepayConstants.PAYMENT_PAID, status.toString())
-				|| StringUtils.equals(RepayConstants.PAYMENT_SUCCESS, status.toString()))) {
-			if (reasonCode == null) {
-				throw new Exception("Failure Code should be mandatory.");
-			} else if (StringUtils.isBlank(reasonCode.toString())) {
-				throw new Exception("Failure Code should not be empty.");
-			}
-		}
-	}
+		Map<String, Object> parameterMap = new HashMap<>();
+		parameterMap.put("HEADER_ID", headerId);
 
-	private void importDataByInstrumentType() throws Exception {
-		logger.debug(Literal.ENTERING);
-
-		DataEngineStatus status = getStatus();
-		String configName = status.getName();
-		status.reset();
-		status.setFileName(getMedia().getName());
-		status.setRemarks("Initiated file reading...");
+		dataEngine.setParameterMap(parameterMap);
 
 		try {
 
-			clearTables();
-
-			DataEngineImport dataEngine;
-			dataEngine = new DataEngineImport(dataSource, getUserDetails().getUserId(), App.DATABASE.name(), true,
-					SysParamUtil.getAppDate(), status);
-			dataEngine.setMedia(getMedia());
-			dataEngine.setValidateRecord(presentmentRespValidation);
-			try {
-				if (configName.equals("PRESENTMENT_RESPONSE_PDC")) {
-					dataEngine.setProcessRecord((ProcessRecord) SpringBeanUtil.getBean("customPresentmentExtact"));
-				}
-			} catch (Exception e) {
-				//
-			}
 			dataEngine.importData(configName);
 
+			int totalRecords = 0;
+
 			do {
-				if (ExecutionStatus.S.name().equals(status.getStatus())
-						|| ExecutionStatus.F.name().equals(status.getStatus())) {
-					processingPrsentments(status.getFileName(), status);
-					break;
+				if (ExecutionStatus.S.name().equals(deStatus.getStatus())
+						|| ExecutionStatus.F.name().equals(deStatus.getStatus())) {
+					if (totalRecords > 0) {
+
+						deStatus.setTotalRecords(totalRecords);
+						deStatus.setStatus(ExecutionStatus.I.name());
+
+						long deExecutionId = (long) deStatus.getId();
+						int successRecords = (int) deStatus.getSuccessRecords();
+						int failedRecords = (int) deStatus.getFailedRecords();
+						String remarks = deStatus.getRemarks();
+						presentmentDetailDAO.updateHeader(headerId, deExecutionId, totalRecords, successRecords,
+								failedRecords, ExecutionStatus.S.name(), remarks);
+
+						deStatus.setRemarks("File Reading completed...Start processing...");
+						deStatus.setProcessedRecords(recordCount.get());
+						deStatus.setSuccessRecords(successCount.get());
+						deStatus.setFailedRecords(failedCount.get());
+
+						processingPrsentments(headerId, fileName);
+						break;
+					}
 				}
-			} while (ExecutionStatus.S.name().equals(status.getStatus())
-					|| ExecutionStatus.F.name().equals(status.getStatus()));
+
+				if (deStatus.getTotalRecords() > 0) {
+					totalRecords = (int) deStatus.getTotalRecords();
+					logger.info("\nTotal Records: {}", totalRecords);
+				}
+
+			} while (ExecutionStatus.S.name().equals(deStatus.getStatus())
+					|| ExecutionStatus.F.name().equals(deStatus.getStatus()));
 
 		} catch (Exception e) {
+			deStatus.setRemarks(e.getMessage());
+			deStatus.setStatus(ExecutionStatus.F.name());
+			deStatus.setEndTime(DateUtility.getSysDate());
 			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.info(configName + " file processing completed");
-		logger.debug(Literal.LEAVING);
-	}
-
-	// After file import, processing the data from staging table
-	private void processingPrsentments(String fileName, DataEngineStatus dataEngineStatus) {
-		logger.debug(Literal.ENTERING);
-
-		recordCount = 0;
-		successCount = 0;
-		failedCount = 0;
-		batchId = 0;
-		remarks = null;
-		String oldRemarks = status.getRemarks();
-		status.setRemarks("File Reading completed, Processing the response file...");
-
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT BRANCHCODE, AGREEMENTNO, INSTALMENTNO, BFLREFERENCENO, BATCHID, AMOUNTCLEARED, ");
-		sql.append(" CLEARINGDATE, STATUS, REASONCODE  FROM PRESENTMENT_FILEIMPORT ");
-
-		jdbcTemplate.query(sql.toString(), new MapSqlParameterSource(), new ResultSetExtractor<Integer>() {
-			@Override
-			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
-				batchId = saveFileHeader(fileName);
-
-				while (rs.next()) {
-					recordCount++;
-					try {
-						PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks("Processing the response file.....");
-						PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setProcessedRecords(recordCount);
-						PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setSuccessRecords(successCount);
-						PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setFailedRecords(failedCount);
-						PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.E.name());
-
-						String presentmentRef = null;
-						String status = null;
-						String reasonCode = null;
-
-						if (presentmentImportProcess != null) {
-							presentmentRef = presentmentImportProcess.getPresentmentRef(rs.getString("BATCHID"));
-							status = presentmentImportProcess.getStatus(rs.getString("STATUS"));
-							reasonCode = presentmentImportProcess.getReasonCode(rs.getString("REASONCODE"));
-							if ((status == null || status.equals(""))
-									&& (reasonCode != null && !reasonCode.equals(""))) {
-								status = "F";
-							} else if ((status == null || status.equals(""))
-									&& (reasonCode == null || reasonCode.equals(""))) {
-								status = "S";
-							}
-						} else {
-							presentmentRef = rs.getString("BATCHID");
-							status = rs.getString("STATUS");
-							reasonCode = rs.getString("REASONCODE");
-						}
-
-						reasonCode = StringUtils.trimToEmpty(reasonCode);
-
-						// Validate presentment response, if on exists.
-						PresentmentDetail presentmentDetail = presentmentDetailService
-								.getPresentmentDetail(presentmentRef);
-						boolean skipUpdate = false;
-						String errorMessage = "";
-
-						if (presentmentDetail == null) {
-							skipUpdate = true;
-							errorMessage = "Presentment not exists for the reference ".concat(presentmentRef);
-						} else {
-							if (RepayConstants.PEXC_SUCCESS.equals(presentmentDetail.getStatus())
-									&& RepayConstants.PEXC_SUCCESS.equals(status)) {
-								skipUpdate = true;
-								errorMessage = "Presentment response already marked as success for the reference "
-										.concat(presentmentRef);
-							} else if (RepayConstants.PEXC_BOUNCE.equals(presentmentDetail.getStatus())) {
-								skipUpdate = true;
-								errorMessage = "Presentment response already marked as bounce for the reference "
-										.concat(presentmentRef);
-							} else if (DateUtility.compare(DateUtility.getAppDate(),
-									presentmentDetail.getSchDate()) < 0) {
-								skipUpdate = true;
-								errorMessage = "Presentment schedule date is greater than application business date "
-										.concat(presentmentRef);
-							}
-						}
-
-						if (skipUpdate) {
-							failedCount++;
-							saveBatchLog(batchId, RepayConstants.PEXC_FAILURE, presentmentRef, errorMessage);
-							updateLog(dataEngineStatus.getId(), presentmentRef, "F", errorMessage);
-
-							continue;
-						}
-
-						boolean processReceipt = false;
-						if (ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
-							processReceipt = processPresentmentReceipt(presentmentRef);
-						} else {
-							processReceipt = processInactiveLoan(presentmentRef);
-						}
-
-						Long linkedTranId = null;
-						PresentmentDetail presentmentDetails = null;
-						if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
-							presentmentDetails = presentmentDetailService.getPresentmentDetail(presentmentRef);
-							linkedTranId = postStageAccounting(presentmentRef, presentmentDetails);
-						}
-
-						if (RepayConstants.PEXC_SUCCESS.equals(status)) {
-							successCount++;
-							presentmentDetailService.updatePresentmentDetail(presentmentRef, status, linkedTranId);
-							updatePresentmentHeader(presentmentRef, status, status);
-							presentmentDetailService.updateFinanceDetails(presentmentRef);
-							PresentmentDetail pd = isPresentmentResponseIsExist(presentmentRef);
-							if (!processReceipt) {
-								presentmentDetailService.processSuccessPresentments(pd.getReceiptID());
-							}
-							updateChequeStatus(presentmentRef, PennantConstants.CHEQUESTATUS_REALISED);
-							saveBatchLog(batchId, status, presentmentRef, null);
-							// Send customer notification for successful presentment
-							sendMailNotification(presentmentDetailService.getPresentmentDetail(presentmentRef), "");
-						} else {
-							try {
-								if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
-									reverseStageAccounting(linkedTranId, presentmentDetails.getReceiptID());
-								}
-
-								detail = presentmentCancellation(presentmentRef, reasonCode);
-								if (StringUtils.trimToNull(detail.getErrorDesc()) == null) {
-									successCount++;
-									detail.setErrorDesc(reasonCode + " - " + detail.getBounceReason());
-									updatePresentmentDetails(presentmentRef, RepayConstants.PEXC_BOUNCE,
-											detail.getBounceID(), detail.getManualAdviseId(), detail.getErrorDesc());
-									updatePresentmentHeader(presentmentRef, RepayConstants.PEXC_BOUNCE,
-											detail.getStatus());
-									saveBatchLog(batchId, RepayConstants.PEXC_BOUNCE, presentmentRef,
-											detail.getErrorDesc());
-									updateChequeStatus(presentmentRef, PennantConstants.CHEQUESTATUS_BOUNCE);
-									// Sending the Email Notification
-									sendMailNotification(detail, RepayConstants.MODULETYPE_BOUNCE);
-								} else {
-									failedCount++;
-									updatePresentmentDetails(presentmentRef, RepayConstants.PEXC_FAILURE, "PR0001",
-											detail.getErrorDesc());
-									updatePresentmentHeader(presentmentRef, RepayConstants.PEXC_FAILURE,
-											detail.getStatus());
-									saveBatchLog(batchId, RepayConstants.PEXC_FAILURE, presentmentRef,
-											detail.getErrorDesc());
-									updateLog(dataEngineStatus.getId(), presentmentRef, "F", detail.getErrorDesc());
-									updateChequeStatus(presentmentRef, PennantConstants.CHEQUESTATUS_FAILED);
-									// Sending the Email Notification
-									sendMailNotification(detail, RepayConstants.MODULETYPE_BOUNCE);
-								}
-							} catch (Exception e) {
-								logger.error(Literal.EXCEPTION, e);
-								failedCount++;
-								updatePresentmentDetails(presentmentRef, RepayConstants.PEXC_FAILURE, "PR0002",
-										e.getMessage());
-								updatePresentmentHeader(presentmentRef, RepayConstants.PEXC_FAILURE,
-										detail.getStatus());
-								saveBatchLog(batchId, RepayConstants.PEXC_FAILURE, presentmentRef, e.getMessage());
-								updateLog(dataEngineStatus.getId(), presentmentRef, "F", e.getMessage());
-							}
-						}
-					} catch (Exception e) {
-						logger.error(Literal.EXCEPTION, e);
-					}
-				}
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setProcessedRecords(recordCount);
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setSuccessRecords(successCount);
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setFailedRecords(failedCount);
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setEndTime(DateUtility.getSysDate());
-
-				// Update the Status of the file as Reading Successful
-				remarks = new StringBuilder();
-				if (recordCount > 0) {
-					if (failedCount > 0) {
-						remarks.append("Completed with exceptions, total Records: ");
-						remarks.append(status.getTotalRecords());
-						remarks.append(", Success: ");
-						remarks.append(status.getSuccessRecords() - failedCount);
-						remarks.append(", Failure: ");
-						remarks.append(status.getFailedRecords() + failedCount);
-						status.setSuccessRecords(status.getSuccessRecords() - failedCount);
-						status.setFailedRecords(status.getFailedRecords() + failedCount);
-						status.setRemarks(remarks.toString());
-						PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks(remarks.toString());
-					} else {
-						status.setRemarks(oldRemarks);
-					}
-					setExceptionLog(status);
-					updateStatus(status);
-					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.S.name());
-				} else {
-					status.setRemarks(oldRemarks);
-				}
-				updateFileHeader(batchId, recordCount, successCount, failedCount, status.getRemarks());
-				return 0;
-			}
-		});
-		logger.debug(Literal.LEAVING);
-	}
-
-	private PresentmentDetail presentmentCancellation(String presentmentRef, String reasonCode) throws Exception {
-		return this.presentmentDetailService.presentmentCancellation(presentmentRef, reasonCode);
-	}
-
-	public boolean processInactiveLoan(String presentmentRef) throws Exception {
-		boolean processReceipt = false;
-		boolean isLoanActive = isLoanActive(presentmentRef);
-		if (!isLoanActive) {
-			PresentmentDetail presentmentDetail = isPresentmentResponseIsExist(presentmentRef);
-			if (presentmentDetail != null && presentmentDetail.getReceiptID() == 0) {
-				presentmentDetailService.executeReceipts(presentmentDetail, false, true);
-				processReceipt = true;
-			}
-		}
-
-		return processReceipt;
-	}
-
-	public boolean processPresentmentReceipt(String presentmentRef) throws Exception {
-		boolean processReceipt = false;
-		PresentmentDetail presentmentDetail = isPresentmentResponseIsExist(presentmentRef);
-		if (presentmentDetail != null && presentmentDetail.getReceiptID() == 0
-				&& presentmentDetail.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
-			presentmentDetail.setAdvanceAmt(BigDecimal.ZERO);
-			presentmentDetailService.executeReceipts(presentmentDetail, false, false);
-		}
-		return processReceipt;
-	}
-
-	// Truncating the data from staging tables
-	public void clearTables() {
-		logger.debug(Literal.ENTERING);
-
-		jdbcTemplate.update("TRUNCATE TABLE PRESENTMENT_FILEIMPORT", new MapSqlParameterSource());
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	// Update the presentment status
-	private void updatePresentmentDetails(String presentmentRef, String status, String errorCode, String errorDesc) {
-		presentmentDetailService.updatePresentmentDetails(presentmentRef, status, errorCode, errorDesc);
-	}
-
-	// Update the presentment status and bounceid
-	private void updatePresentmentDetails(String presentmentRef, String status, long bounceId, long manualAdviseId,
-			String errorDesc) {
-		presentmentDetailService.updatePresentmentDetails(presentmentRef, status, bounceId, manualAdviseId, errorDesc);
-	}
-
-	// Update the PresentHeader Success and failure records
-	private void updatePresentmentHeader(String presentmentRef, String status, String preStatus) {
-		logger.debug(Literal.ENTERING);
-
-		long presentmentId = presentmentDetailService.getPresentmentId(presentmentRef);
-		updatePresentmentHeader(presentmentId, status, preStatus);
-
-		PresentmentHeader header = getPresentmentHeader(presentmentId);
-		if (header.getTotalRecords() == header.getSuccessRecords() + header.getFailedRecords()) {
-			updatePresentmentHeaderStatus(header);
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	// Update the PresentHeader Success and failure records
-	private void updatePresentmentHeader(long presentmentId, String status, String preStatus) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuffer sql = new StringBuffer();
-		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		if (RepayConstants.PEXC_SUCCESS.equals(status) || RepayConstants.PEXC_BOUNCE.equals(status)) {
-			if (RepayConstants.PEXC_FAILURE.equals(preStatus)) {
-				sql.append(
-						"Update PRESENTMENTHEADER set SUCCESSRECORDS = SUCCESSRECORDS+1, FAILEDRECORDS = FAILEDRECORDS-1 Where ID = :ID ");
-			} else {
-				sql.append("Update PRESENTMENTHEADER set SUCCESSRECORDS = SUCCESSRECORDS+1 Where ID = :ID ");
-			}
-		} else if (!RepayConstants.PEXC_FAILURE.equals(preStatus)) {
-			sql.append("Update PRESENTMENTHEADER set FAILEDRECORDS = FAILEDRECORDS+1 Where ID = :ID ");
-		}
-
-		try {
-			if (sql.length() > 0) {
-				source.addValue("ID", presentmentId);
-				this.jdbcTemplate.update(sql.toString(), source);
-			}
-		} catch (Exception e) {
-			logger.error("Exception {}", e);
-			throw e;
 		} finally {
-			source = null;
-			sql = null;
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
-	// Getting presentmentid using presentment reference
-	private PresentmentHeader getPresentmentHeader(long id) {
-		StringBuffer sql = new StringBuffer("SELECT ID, TOTALRECORDS, PROCESSEDRECORDS");
-		sql.append(", SUCCESSRECORDS, FAILEDRECORDS FROM PRESENTMENTHEADER WHERE ID = ?");
-
-		try {
-			return this.jdbcTemplate.getJdbcOperations().queryForObject(sql.toString(), new Object[] { id },
-					(rs, roNum) -> {
-						PresentmentHeader ph = new PresentmentHeader();
-						ph.setId(rs.getLong("ID"));
-						ph.setTotalRecords(rs.getInt("TOTALRECORDS"));
-						ph.setProcessedRecords(rs.getInt("PROCESSEDRECORDS"));
-						ph.setSuccessRecords(rs.getInt("SUCCESSRECORDS"));
-						ph.setFailedRecords(rs.getInt("FAILEDRECORDS"));
-						return ph;
-					});
-		} catch (Exception e) {
-			logger.warn("Record not found in PRESENTMENTHEADER table for the specified Id >> {}", id);
-		}
-		return null;
-	}
-
-	// Updating presentment header status
-	private void updatePresentmentHeaderStatus(PresentmentHeader header) {
-		StringBuffer sql = new StringBuffer();
-
-		sql.append("UPDATE PRESENTMENTHEADER SET STATUS = ? WHERE ID = ?");
-		this.jdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
-			int index = 1;
-			ps.setInt(index++, RepayConstants.PEXC_RECEIVED);
-			ps.setLong(index++, header.getId());
-		});
-	}
-
-	private long saveFileHeader(String fileName) {
-		StringBuilder sql = new StringBuilder();
-
-		sql.append(" INSERT INTO BatchFileHeader");
-		sql.append(" (ID, FileName, StartTime, ProcessName)");
-		sql.append(" VALUES(?,?,?,?)");
-
-		long batchId = presentmentDetailService.getSeqNumber("SeqBatchFileHeader");
-
-		this.jdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
-			int index = 1;
-			ps.setLong(index++, batchId);
-			ps.setString(index++, fileName);
-			ps.setDate(index++, JdbcUtil.getDate(DateUtility.getSysDate()));
-			ps.setString(index++, "PRESENTMENT_IMPORT");
-		});
-		return batchId;
-	}
-
-	// Data Engine log
-	private void updateLog(long id, String keyId, String status, String reason) {
-
-		StringBuilder query = null;
-		MapSqlParameterSource source = null;
-
-		if (reason != null) {
-			reason = reason.length() > 2000 ? reason.substring(0, 1995) : reason;
+			presentmentDetailDAO.deleteByHeaderId(headerId);
 		}
 
-		query = new StringBuilder("Update DATA_ENGINE_LOG");
-		query.append(" Set Status = :Status, Reason =:Reason Where StatusId = :Id and KeyId = :KeyId");
-
-		source = new MapSqlParameterSource();
-		source.addValue("Id", id);
-		source.addValue("KeyId", keyId);
-		source.addValue("Status", status);
-		source.addValue("Reason", reason);
-
-		int count = this.jdbcTemplate.update(query.toString(), source);
-
-		if (count == 0) {
-			query = new StringBuilder();
-			query.append(" INSERT INTO DATA_ENGINE_LOG");
-			query.append(" (StatusId, KeyId, Status, Reason)");
-			query.append(" VALUES(:Id, :KeyId, :Status, :Reason)");
-			this.jdbcTemplate.update(query.toString(), source);
-		}
-		query = null;
-		source = null;
+		logger.info(Literal.LEAVING);
 	}
 
-	// Setting the exception log data engine status.
+	public void truncateTable(String tableName) {
+		presentmentDetailDAO.truncate(tableName);
+	}
+
+	public void processingPrsentments(long importHeaderId, String batchReference) {
+		logger.info(Literal.ENTERING);
+
+		deStatus.setRemarks("Start processing...");
+
+		logger.info("Creating the header for processing..");
+
+		long headerId = presentmentDetailDAO.logHeader(batchReference, null, "PROCESS", 0);
+
+		logger.info("Process header-ID: {}", headerId);
+
+		int totalRecords = presentmentDetailDAO.logRespDetails(importHeaderId, headerId);
+
+		logger.info("Total Records: {}", totalRecords);
+
+		deStatus.setTotalRecords(totalRecords);
+		deStatus.setStatus(ExecutionStatus.I.name());
+
+		updateThreads(headerId, totalRecords);
+
+		EventProperties eventProperties = eventPropertiesService
+				.getEventProperties(EventType.PRESENTMENT_RESPONSE_UPLOAD);
+
+		List<Integer> threads = presentmentDetailDAO.getThreads(headerId);
+
+		int threadCount = threads.size();
+
+		logger.info("Total Threads: {}", threadCount);
+
+		totalThreads.set(threadCount);
+
+		SimpleAsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor("PLF_PRESENTMENT_RESP_THREAD_");
+
+		for (Integer threadId : threads) {
+			PresentmentResponseProcess prp = new PresentmentResponseProcess(dataSource, headerId, threadId,
+					eventProperties);
+			prp.setReceiptPaymentService(receiptPaymentService);
+			prp.setPresentmentDetailService(presentmentDetailService);
+			prp.setPostingsPreparationUtil(postingsPreparationUtil);
+			prp.setPresentmentDetailDAO(presentmentDetailDAO);
+			prp.setFinReceiptHeaderDAO(finReceiptHeaderDAO);
+			prp.setFinanceMainDAO(financeMainDAO);
+			prp.setCustomerDAO(customerDAO);
+			prp.setFinanceScheduleDetailDAO(financeScheduleDetailDAO);
+			prp.setFinanceProfitDetailDAO(financeProfitDetailDAO);
+			prp.setRepaymentPostingsUtil(repaymentPostingsUtil);
+			prp.setFinODDetailsDAO(finODDetailsDAO);
+			prp.setReceiptCalculator(receiptCalculator);
+			prp.setFinReceiptDetailDAO(finReceiptDetailDAO);
+			prp.setFinanceRepaymentsDAO(financeRepaymentsDAO);
+			prp.setFinExcessAmountDAO(finExcessAmountDAO);
+			prp.setReceiptCancellationService(receiptCancellationService);
+			prp.setNotificationService(notificationService);
+			prp.setPresentmentImportProcess(presentmentImportProcess);
+			prp.setDeStatus(deStatus);
+
+			taskExecutor.execute(prp);
+		}
+
+		do {
+			deStatus.setRemarks("Processing...");
+
+			deStatus.setProcessedRecords(recordCount.get());
+			deStatus.setSuccessRecords(successCount.get());
+			deStatus.setFailedRecords(failedCount.get());
+			deStatus.setStatus(ExecutionStatus.I.name());
+
+			if (processedThreads.get() == totalThreads.get()) {
+				long deExecutionId = (long) deStatus.getId();
+
+				logger.info("Logging Un-processed records...");
+				int unProcessedRcdCnt = logUnProcessedRcds(headerId);
+				logger.info("Un-processed records..." + unProcessedRcdCnt);
+
+				failedCount.set(failedCount.get() + unProcessedRcdCnt);
+				recordCount.set(recordCount.get() + unProcessedRcdCnt);
+
+				deStatus.setProcessedRecords(recordCount.get());
+				deStatus.setSuccessRecords(successCount.get());
+				deStatus.setFailedRecords(failedCount.get());
+
+				deStatus.setRemarks("Processing complted... Updating record counts..");
+
+				String status = ExecutionStatus.F.name();
+				if (failedCount.intValue() <= 0) {
+					status = ExecutionStatus.S.name();
+				}
+
+				String remarks = getRemarks();
+
+				presentmentDetailDAO.updateHeader(headerId, deExecutionId, recordCount.intValue(),
+						successCount.intValue(), failedCount.intValue(), status, remarks);
+
+				setExceptionLog(deStatus);
+
+				deStatus.setRemarks(remarks);
+				deStatus.setStatus(status);
+				deStatus.setEndTime(DateUtility.getSysDate());
+
+				presentmentDetailDAO.logRespDetailsLog(headerId);
+
+				logger.info("Updating the stats in PresentmentHeader table...");
+				updatePresentmentHeader(headerId);
+
+				presentmentDetailDAO.truncate("PRESENTMENT_RESP_DTLS");
+
+				break;
+			}
+
+		} while (processedThreads.get() != totalThreads.get());
+
+		logger.info(Literal.LEAVING);
+	}
+
+	private String getRemarks() {
+		StringBuilder remarks = new StringBuilder();
+
+		if (recordCount.intValue() > 0) {
+			if (failedCount.intValue() > 0) {
+				remarks.append(" Completed with exceptions, total Records: ");
+				remarks.append(recordCount.intValue());
+				remarks.append(", Sucess: ");
+				remarks.append(successCount.intValue() + ".");
+				remarks.append(", Failure: ");
+				remarks.append(failedCount.intValue() + ".");
+			} else {
+				remarks.append(" Completed successfully, total Records: ");
+				remarks.append(recordCount.intValue());
+				remarks.append(", Sucess: ");
+				remarks.append(successCount.intValue() + ".");
+			}
+		}
+
+		return remarks.toString();
+	}
+
+	private void updatePresentmentHeader(long headerId) {
+		List<Long> presentmentHeaders = presentmentDetailDAO.getPresentmentHeaderIdsByHeaderId(headerId);
+
+		for (Long id : presentmentHeaders) {
+			List<String> statusList = presentmentDetailDAO.getStatusListByHeader(id);
+			int successCount = 0;
+			int failedCount = 0;
+			int totalCount = statusList.size();
+
+			for (String sts : statusList) {
+				if (RepayConstants.PEXC_SUCCESS.equals(sts) || RepayConstants.PEXC_BOUNCE.equals(sts)) {
+					successCount++;
+				} else if (RepayConstants.PEXC_FAILURE.equals(sts)) {
+					failedCount++;
+				}
+			}
+
+			presentmentDetailDAO.updateHeaderCounts(id, successCount, failedCount);
+
+			if (totalCount == (successCount + failedCount)) {
+				presentmentDetailDAO.updateHeaderStatus(id, RepayConstants.PEXC_RECEIVED);
+			}
+		}
+	}
+
+	private int logUnProcessedRcds(long headerId) {
+		List<String> presentmentRefList = presentmentDetailDAO.getUnProcessedPrentmntRef(headerId);
+
+		if (CollectionUtils.isNotEmpty(presentmentRefList)) {
+			for (String presntmntRef : presentmentRefList) {
+				String errorDesc = "Presentment not exists for this reference.";
+				presentmentDetailDAO.updateDataEngineLog(deStatus.getId(), presntmntRef, "F", errorDesc);
+			}
+		}
+		return presentmentRefList.size();
+	}
+
+	private void updateThreads(long headerId, int totalRecords) {
+		logger.info(Literal.ENTERING);
+		int threadCount = SysParamUtil.getValueAsInt(SMTParameterConstants.PRESENTMENT_RESP_PROCESS_THREAD_COUNT);
+
+		long noOfRows = Math.round((new Double(totalRecords) / new Double(threadCount)));
+
+		boolean recordsLessThanThread = false;
+
+		if (totalRecords < threadCount) {
+			recordsLessThanThread = true;
+			noOfRows = 1;
+		}
+
+		long from = presentmentDetailDAO.getMinIDByHeaderID(headerId);
+		long to = presentmentDetailDAO.getMaxIDByHeaderID(headerId);
+		for (int i = 1; i <= threadCount; i++) {
+
+			int customerCount = 0;
+			if (i == threadCount) {
+				/* Last thread will have the remaining records */
+				noOfRows = totalRecords;
+			}
+
+			to = to + noOfRows;
+			customerCount = presentmentDetailDAO.updateThreadID(headerId, from, to, i);
+			from = to;
+
+			if (recordsLessThanThread && i == customerCount) {
+				break;
+			}
+		}
+
+		logger.info(Literal.LEAVING);
+	}
+
 	private void setExceptionLog(DataEngineStatus status) {
-		List<DataEngineLog> engineLogs = getExceptions(status.getId());
+		List<DataEngineLog> engineLogs = presentmentDetailDAO.getDEExceptions(status.getId());
 		if (CollectionUtils.isNotEmpty(engineLogs)) {
 			status.setDataEngineLogList(engineLogs);
-		}
-	}
-
-	// Getting the exception log
-	public List<DataEngineLog> getExceptions(long batchId) {
-		RowMapper<DataEngineLog> rowMapper = null;
-		MapSqlParameterSource parameterMap = null;
-		StringBuilder sql = null;
-
-		try {
-			sql = new StringBuilder("Select * from DATA_ENGINE_LOG where StatusId = :ID");
-			parameterMap = new MapSqlParameterSource();
-			parameterMap.addValue("ID", batchId);
-			rowMapper = BeanPropertyRowMapper.newInstance(DataEngineLog.class);
-			return jdbcTemplate.query(sql.toString(), parameterMap, rowMapper);
-		} catch (Exception e) {
-		} finally {
-			rowMapper = null;
-			sql = null;
-		}
-		return null;
-	}
-
-	// Data Engine status
-	private void updateStatus(DataEngineStatus status) {
-		StringBuffer query = new StringBuffer();
-		query.append(" UPDATE DATA_ENGINE_STATUS SET Status = :Status, ");
-		query.append(" SuccessRecords = :SuccessRecords, FailedRecords = :FailedRecords,  Remarks = :Remarks ");
-		query.append(" WHERE Id = :Id");
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(status);
-		this.jdbcTemplate.update(query.toString(), beanParameters);
-	}
-
-	private void saveBatchLog(long batchId, String status, String reference, String errDesc) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		sql.append(" INSERT INTO BatchFileDetails");
-		sql.append(" (FileId, Reference, Status, ErrorDesc)");
-		sql.append(" VALUES( :FileId, :Reference, :Status, :ErrorDesc)");
-
-		source.addValue("FileId", batchId);
-		source.addValue("Reference", reference);
-		source.addValue("Status", status);
-		if (StringUtils.trimToNull(errDesc) != null) {
-			errDesc = (errDesc.length() >= 1000) ? errDesc.substring(0, 988) : errDesc;
-		}
-		source.addValue("ErrorDesc", errDesc);
-
-		try {
-			this.jdbcTemplate.update(sql.toString(), source);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
-	private void updateFileHeader(long batchId, int recordCount, int successCount, int failedCount, String remarks) {
-		StringBuffer sql = new StringBuffer("UPDATE BatchFileHeader");
-		sql.append(" Set EndTime = ?, TotalRecords = ?, SucessRecords = ?, FailedRecords = ?, Remarks = ?");
-		sql.append(" Where ID = ?");
-
-		this.jdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
-			int index = 1;
-			ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
-			ps.setInt(index++, recordCount);
-			ps.setInt(index++, successCount);
-			ps.setInt(index++, failedCount);
-			ps.setString(index++, remarks);
-			ps.setLong(index++, batchId);
-		});
-	}
-
-	private void responseProcess() {
-		logger.debug(Literal.ENTERING);
-
-		recordCount = 0;
-		successCount = 0;
-		failedCount = 0;
-		batchId = 0;
-		remarks = null;
-
-		StringBuilder sql = new StringBuilder();
-		sql.append(
-				" SELECT RESPONSEID, AGREEMENTNO,INSTRUMENT_MODE,PRESENTATIONDATE,EMI_NO,CHEQUEAMOUNT,RETURN_CODE, LATE_RESPONSE_FLAG, BATCHID, PICKUP_BATCHID, ");
-		sql.append(
-				"  STATUS_CODE,RETURN_REASON ,LATE_RESPONSE_FLAG ,PROCESSED_DATE FROM PRESENTMENT_RESPONSE WHERE PICKUP_BATCHID IS NULL ");
-		sql.append("  Order By AgreementNo, ResponseID ");
-
-		jdbcTemplate.query(sql.toString(), new MapSqlParameterSource(), new ResultSetExtractor<Integer>() {
-			@Override
-			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
-				String procName = "PRESENTMENT_RESPONSE_SCHEDULE";
-				procName = procName.concat("_").concat(DateUtil.getSysDate(DateFormat.LONG_DATE_TIME));
-				batchId = saveFileHeader(procName);
-				String date = DateUtil.getSysDate(DATE_FORMAT);
-				date = date.replaceAll(REGIX, "");
-				long jobid = Long.valueOf(date);
-
-				while (rs.next()) {
-					recordCount++;
-					Presentment presement = new Presentment();
-					String presentmentRef = null;
-					try {
-						PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks("Processing the response file.....");
-						PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setProcessedRecords(recordCount);
-						PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setSuccessRecords(successCount);
-						PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setFailedRecords(failedCount);
-						PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.E.name());
-
-						// Fetching the mandatory data from resultset
-						presement.setBatchId(rs.getString("BATCHID"));
-						presement.setReturnCode(rs.getLong("RETURN_CODE"));
-						presement.setReturnReason(rs.getString("RETURN_REASON"));
-						presement.setLateResponseFlag(rs.getString("LATE_RESPONSE_FLAG"));
-						presement.setAgreementNo(rs.getString("AGREEMENTNO"));
-						presement.setInstrumentMode(rs.getString("INSTRUMENT_MODE"));
-						presement.setPresentationDate(rs.getDate("PRESENTATIONDATE"));
-						presement.setEmiNo(rs.getLong("EMI_NO"));
-						presement.setChequeAmount(rs.getBigDecimal("CHEQUEAMOUNT"));
-						presement.setProcessedDate(rs.getDate("PROCESSED_DATE"));
-						presement.setResponseID(rs.getLong("RESPONSEID"));
-						presement.setPickupBatchId(jobid);
-
-						validateResponseFields(presement);
-
-						PresentmentDetail presentmentDetail = isPresentmentResponseIsExits(presement.getBatchId());
-
-						if (presentmentDetail == null) {
-							throw new Exception(
-									Labels.getLabel("label_Presentmentdetails_Notavailable") + presentmentRef);
-						}
-
-						if (presentmentDetail.getStatus().equals(RepayConstants.PEXC_APPROV)) {
-							firstResponseUpdate(presentmentDetail, presement);
-						} else {
-							lateResponseUpdate(presentmentDetail, presement);
-						}
-
-					} catch (Exception e) {
-						logger.error(Literal.EXCEPTION, e);
-						failedCount++;
-						updatePresentmentResponse(presement, RepayConstants.PRES_ERROR, e.getMessage());
-
-					}
-				}
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setProcessedRecords(recordCount);
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setSuccessRecords(successCount);
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setFailedRecords(failedCount);
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setEndTime(DateUtility.getSysDate());
-
-				// Update the Status of the file as Reading Successful
-				remarks = new StringBuilder();
-				if (failedCount > 0) {
-					remarks.append(" Completed with exceptions, total Records: ");
-					remarks.append(recordCount);
-					remarks.append(", Sucess: ");
-					remarks.append(successCount + ".");
-					remarks.append(", Failure: ");
-					remarks.append(failedCount + ".");
-					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks(remarks.toString());
-					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.F.name());
-				} else {
-					remarks.append(" Completed successfully, total Records: ");
-					remarks.append(recordCount);
-					remarks.append(", Sucess: ");
-					remarks.append(successCount + ".");
-					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks(remarks.toString());
-					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.S.name());
-				}
-
-				String strRemarks = remarks.toString();
-				if (StringUtils.trimToNull(strRemarks) != null) {
-					strRemarks = (strRemarks.length() >= 2000) ? remarks.substring(0, 1988) : strRemarks;
-				}
-				updateFileHeader(batchId, recordCount, successCount, failedCount, strRemarks);
-
-				return 0;
-			}
-		});
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Update the first response
-	 * 
-	 * @param presentmentDetail
-	 * @param presement_Response
-	 */
-	private void firstResponseUpdate(PresentmentDetail presentmentDetail, Presentment presement_Response) {
-		if (DateUtility.compare(SysParamUtil.getAppDate(), presentmentDetail.getSchDate()) < 0) {
-			updatePresentmentResponse(presement_Response, RepayConstants.PRES_PENDING, null);
-			return;
-		}
-
-		if (CON_RESPONSE_BOUNCE == presement_Response.getReturnCode()) {
-			createBounce(presement_Response, presement_Response.getReturnReason(), RepayConstants.PRES_SUCCESS);
-		} else {
-			updateSuccessResponse(presement_Response);
-			presentmentDetailService.processSuccessPresentments(presentmentDetail.getReceiptID());
-		}
-	}
-
-	private void lateResponseUpdate(PresentmentDetail presentmentDetail, Presentment presement_Response)
-			throws Exception {
-
-		if (!StringUtils.equals(CON_LATERESPONSE_FLAG, presement_Response.getLateResponseFlag())) {
-			updatePresentmentResponse(presement_Response, RepayConstants.PRES_DUPLICATE,
-					Labels.getLabel("label_StatusCode_Duplicate"));
-			return;
-		}
-
-		String status = CON_SUCCESS_STATUS;
-		if (CON_RESPONSE_BOUNCE == presement_Response.getReturnCode()) {
-			status = CON_BOUNCE_STATUS;
-		}
-
-		if (status.equals(presentmentDetail.getStatus())) {
-			updatePresentmentResponse(presement_Response, RepayConstants.PRES_DUPLICATE,
-					Labels.getLabel("label_StatusCode_Duplicate"));
-			return;
-		}
-
-		if (status.equals(String.valueOf(CON_RESPONSE_BOUNCE))) {
-
-			Boolean isLoanActive = isLoanActive(presement_Response.getBatchId());
-
-			if (isLoanActive) {
-				createBounce(presement_Response, presement_Response.getReturnReason(), RepayConstants.PRES_SUCCESS);
-			} else {
-				updatePresentmentResponse(presement_Response, RepayConstants.PRES_LOANCLOSED,
-						Labels.getLabel("label_StatusCode_LoanClosed"));
-			}
-		} else {
-			if (presentmentDetail.getBounceID() > 0) {
-				ManualAdvise manualAdvise = getManualAdviceDetails(presentmentDetail.getPresentmentRef());
-				if (manualAdvise != null) {
-					boolean isExits = isManualAdviceExitsInManualMovements(manualAdvise.getAdviseID());
-
-					if (manualAdvise.getWaivedAmount().compareTo(new BigDecimal(0)) == 0
-							&& manualAdvise.getPaidAmount().compareTo(new BigDecimal(0)) == 0 && !isExits) {
-						cancelBounce(manualAdvise);
-					} else {
-						createPayableAdvice(manualAdvise);
-					}
-				}
-			}
-
-			LoggedInUser userDetails = new LoggedInUser();
-			userDetails.setLoginUsrID(CON_USER_ID);
-
-			PresentmentDetail prsntDetails = isPresentmentResponseIsExist(presement_Response.getBatchId());
-			presentmentDetailService.processReceipts(prsntDetails);
-
-			updateSuccessResponse(presement_Response);
-
-		}
-	}
-
-	private void cancelBounce(ManualAdvise manualAdvise) {
-		try {
-			saveToManualAdviseCancel(manualAdvise.getAdviseID());
-			deleteManualAdvise(manualAdvise.getAdviseID());
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-	}
-
-	private void deleteManualAdvise(long adviseID) {
-
-		MapSqlParameterSource param = new MapSqlParameterSource();
-		param.addValue("ADVISEID", adviseID);
-		this.jdbcTemplate.update("DELETE FROM MANUALADVISE WHERE ADVISEID=:ADVISEID", param);
-	}
-
-	private void saveToManualAdviseCancel(long adviseID) {
-
-		MapSqlParameterSource param = new MapSqlParameterSource();
-		param.addValue("ADVISEID", adviseID);
-		this.jdbcTemplate.update("INSERT INTO MANUALADVISE_CANCEL SELECT * FROM MANUALADVISE WHERE ADVISEID=:ADVISEID",
-				param);
-
-	}
-
-	private boolean isManualAdviceExitsInManualMovements(long manualAdviseId) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("select adviseID from MANUALADVISEMOVEMENTS_Temp ");
-		sql.append(" WHERE adviseID= ?");
-
-		logger.trace(Literal.SQL, sql);
-		return jdbcTemplate.getJdbcOperations().queryForObject(sql.toString(), new Object[] { manualAdviseId },
-				Long.class) > 0 ? true : false;
-	}
-
-	private void createPayableAdvice(ManualAdvise manualAdvise) {
-		String feeTypeCode = SysParamUtil.getValueAsString("PROCESS_FEE_TYPE");
-		int feetypeId = getFeeTypeIdBasedOnFeeType(feeTypeCode);
-		long SeqId = getSequenceId();
-		updateSequence(SeqId);
-		manualAdvise.setAdviseID(SeqId);
-		manualAdvise.setAdviseType(2);// change if neede
-		manualAdvise.setFeeTypeID(feetypeId);
-		manualAdvise.setValueDate(DateUtil.getSysDate());
-		manualAdvise.setPostDate(SysParamUtil.getAppDate());
-		manualAdvise.setPaidAmount(new BigDecimal(0));
-		manualAdvise.setWaivedAmount(new BigDecimal(0));
-		manualAdvise.setReservedAmt(new BigDecimal(0));
-		manualAdvise.setBalanceAmt(new BigDecimal(0));
-		manualAdvise.setRoleCode(null);
-		manualAdvise.setTaskId(null);
-		manualAdvise.setBounceID(0);
-		manualAdvise.setReceiptID(0);
-		manualAdvise.setWorkflowId(0);
-
-		saveManualAdvice(manualAdvise);
-	}
-
-	private void saveManualAdvice(ManualAdvise manualAdvise) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" insert into ManualAdvise");
-		sql.append("(adviseID, adviseType, finReference, feeTypeID, sequence, adviseAmount, BounceID, ReceiptID, ");
-		sql.append(" paidAmount, waivedAmount, remarks, ValueDate, PostDate,ReservedAmt, BalanceAmt,  ");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(");
-		sql.append(
-				" :adviseID, :adviseType, :finReference, :feeTypeID, :sequence, :adviseAmount, :BounceID, :ReceiptID,");
-		sql.append(" :paidAmount, :waivedAmount, :remarks, :ValueDate, :PostDate, :ReservedAmt, :BalanceAmt, ");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
-
-		try {
-			this.jdbcTemplate.update(sql.toString(), paramSource);
-		} catch (DuplicateKeyException e) {
-			throw new ConcurrencyException(e);
-		}
-
-		logger.debug(Literal.LEAVING);
-
-	}
-
-	private long getSequenceId() {
-		StringBuilder selectSql = new StringBuilder();
-
-		selectSql.append("select seqNo+1 from seqManualAdvise ");
-
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		return jdbcTemplate.queryForObject(selectSql.toString(), paramMap, Long.class);
-	}
-
-	public void updateSequence(long seqNo) {
-		StringBuilder updateSql = new StringBuilder();
-
-		updateSql.append("update seqManualAdvise set seqNo = :seqNo");
-
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("seqNo", seqNo);
-
-		this.jdbcTemplate.update(updateSql.toString(), paramMap);
-	}
-
-	private int getFeeTypeIdBasedOnFeeType(String feeTypeCode) {
-		StringBuilder sql = new StringBuilder();
-
-		sql.append(" SELECT Feetypeid FROM FeeTypes ");
-		sql.append(" WHERE Feetypecode = ?");
-		logger.debug(Literal.SQL, sql.toString());
-		return jdbcTemplate.getJdbcOperations().queryForObject(sql.toString(), new Object[] { feeTypeCode },
-				Integer.class);
-	}
-
-	private ManualAdvise getManualAdviceDetails(String presentmentRef) {
-		StringBuilder sql = new StringBuilder();
-
-		sql.append(" SELECT T2.ADVISEID,T2.finReference, T2.adviseAmount ");
-		sql.append(" FROM PRESENTMENTDETAILS T1 inner join ");
-		sql.append(" MANUALADVISE T2 on T2.ADVISEID=T1.MANUALADVISEID");
-		sql.append(" WHERE T1.PRESENTMENTREF= ?");
-		logger.trace(Literal.SQL, sql);
-		try {
-			return this.jdbcTemplate.getJdbcOperations().queryForObject(sql.toString(), new Object[] { presentmentRef },
-					(rs, roNum) -> {
-						ManualAdvise ma = new ManualAdvise();
-						ma.setAdviseID(rs.getLong("ADVISEID"));
-						ma.setFinReference(rs.getString("finReference"));
-						ma.setAdviseAmount(rs.getBigDecimal("adviseAmount"));
-						return ma;
-					});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record not found in PRESENTMENTDETAILS table for the specified PRESENTMENTREF >> {}",
-					presentmentRef);
-		}
-		return null;
-	}
-
-	private void updateSuccessResponse(Presentment presement_Response) {
-		successCount++;
-		presentmentDetailService.updatePresentmentDetail(presement_Response.getBatchId(), RepayConstants.PEXC_SUCCESS);
-		updatePresentmentHeader(presement_Response.getBatchId(), RepayConstants.PEXC_SUCCESS,
-				RepayConstants.PEXC_SUCCESS);
-		presentmentDetailService.updateFinanceDetails(presement_Response.getBatchId());
-		saveBatchLog(batchId, RepayConstants.PEXC_SUCCESS, presement_Response.getBatchId(), null);
-		updatePresentmentResponse(presement_Response, RepayConstants.PRES_SUCCESS, null);
-	}
-
-	/**
-	 * @param presentmentRef
-	 * @param reasonCode
-	 * @param statusCode
-	 */
-	private void createBounce(Presentment presement_Response, String reasonCode, String statusCode) {
-
-		try {
-			detail = presentmentCancellation(presement_Response.getBatchId(), reasonCode);
-
-			if (StringUtils.trimToNull(detail.getErrorDesc()) == null) {
-
-				successCount++;
-				detail.setErrorDesc(reasonCode + " - " + detail.getBounceReason());
-				updatePresentmentDetails(presement_Response.getBatchId(), RepayConstants.PEXC_BOUNCE,
-						detail.getBounceID(), detail.getManualAdviseId(), detail.getErrorDesc());
-				updatePresentmentHeader(presement_Response.getBatchId(), RepayConstants.PEXC_BOUNCE,
-						detail.getStatus());
-				saveBatchLog(batchId, RepayConstants.PEXC_BOUNCE, presement_Response.getBatchId(),
-						detail.getErrorDesc());
-				updatePresentmentResponse(presement_Response, statusCode, null);
-
-			} else {
-
-				failedCount++;
-				updatePresentmentDetails(presement_Response.getBatchId(), RepayConstants.PEXC_FAILURE, "PR0001",
-						detail.getErrorDesc());
-				updatePresentmentHeader(presement_Response.getBatchId(), RepayConstants.PEXC_FAILURE,
-						detail.getStatus());
-				saveBatchLog(batchId, RepayConstants.PEXC_FAILURE, presement_Response.getBatchId(),
-						detail.getErrorDesc());
-				updatePresentmentResponse(presement_Response, RepayConstants.PRES_FAILED, detail.getErrorDesc());
-
-			}
-
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			failedCount++;
-			updatePresentmentDetails(presement_Response.getBatchId(), RepayConstants.PEXC_FAILURE, "PR0002",
-					e.getMessage());
-			updatePresentmentHeader(presement_Response.getBatchId(), RepayConstants.PEXC_FAILURE, detail.getStatus());
-			saveBatchLog(batchId, RepayConstants.PEXC_FAILURE, presement_Response.getBatchId(), e.getMessage());
-			updatePresentmentResponse(presement_Response, RepayConstants.PRES_ERROR, e.getMessage());
-		}
-	}
-
-	private Boolean isLoanActive(String batchId) {
-
-		StringBuilder selectSql = new StringBuilder();
-		Boolean loanStatus = false;
-
-		selectSql.append("SELECT T2.FINISACTIVE FROM PRESENTMENTDETAILS T1 ");
-		selectSql.append(" INNER JOIN FINANCEMAIN T2 ON T2.FINREFERENCE=T1.FINREFERENCE ");
-		selectSql.append(" WHERE PRESENTMENTREF= :PRESENTMENTREF");
-
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("PRESENTMENTREF", batchId);
-
-		String status = jdbcTemplate.queryForObject(selectSql.toString(), paramMap, String.class);
-		if (IS_LOANISACTIVE.equals(status)) {
-			loanStatus = true;
-		} else {
-			loanStatus = false;
-		}
-		return loanStatus;
-	}
-
-	private void updatePresentmentResponse(Presentment presement_Response, String statusCode, String errorMsg) {
-
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource parmMap = null;
-
-		parmMap = new MapSqlParameterSource();
-
-		parmMap.addValue("RESPONSEID", presement_Response.getResponseID());
-		parmMap.addValue("PROCESSED_FLAG", "Y");
-		parmMap.addValue("PROCESSED_DATE", new Timestamp(System.currentTimeMillis()));
-		parmMap.addValue("STATUS_CODE", statusCode);
-		parmMap.addValue("ERROR_MSG", errorMsg);
-
-		if (StringUtils.equals(RepayConstants.PRES_PENDING, statusCode)) {
-			parmMap.addValue("PICKUP_BATCHID", null);
-		} else {
-			parmMap.addValue("PICKUP_BATCHID", presement_Response.getPickupBatchId());
-		}
-
-		// Prepare the SQL, ensure primary key will not be updated.
-		StringBuilder sql = new StringBuilder("UPDATE PRESENTMENT_RESPONSE");
-		sql.append(" SET PICKUP_BATCHID = :PICKUP_BATCHID ,STATUS_CODE = :STATUS_CODE ,");
-		sql.append(" PROCESSED_FLAG = :PROCESSED_FLAG,PROCESSED_DATE = :PROCESSED_DATE,");
-		sql.append(" ERROR_MSG = :ERROR_MSG");
-		sql.append(" WHERE RESPONSEID = :RESPONSEID");
-
-		// Execute the SQL, binding the arguments.
-		int recordCount = jdbcTemplate.update(sql.toString(), parmMap);
-
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
-	private void validateResponseFields(Presentment presement) throws Exception {
-
-		// batchReference
-		String batchReference = presement.getBatchId();
-		if (StringUtils.trimToNull(batchReference) == null) {
-			throw new Exception("Batchid should be mandatory.");
-		} else if (batchReference.length() != 29) {
-			throw new Exception("Batchid length should be 29.");
-		}
-
-		// status
-		Long status = presement.getReturnCode();
-		if (status == null) {
-			throw new Exception("Return Code should be mandatory.");
-		} else if (!(status == CON_RESPONSE_SUCCESS || status == CON_RESPONSE_BOUNCE)) {
-			throw new Exception("Return Code should be either 0 or 99.");
-		}
-		// ReasonCode
-		if (CON_RESPONSE_BOUNCE == presement.getReturnCode()
-				&& StringUtils.trimToNull(presement.getReturnReason()) == null) {
-			throw new Exception("Return Reason should be mandatory.");
-		}
-	}
-
-	private PresentmentDetail isPresentmentResponseIsExits(String batchId) {
-		logger.debug(Literal.ENTERING);
-
-		PresentmentDetail presentmentDetail = new PresentmentDetail();
-		StringBuffer sql = new StringBuffer();
-		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		sql.append(
-				" SELECT SCHDATE,STATUS,PRESENTMENTAMT,presentmentref,FINREFERENCE,EMINO, PRESENTMENTID, ID,MANDATEID,bounceid ");
-		sql.append(" FROM PRESENTMENTDETAILS  WHERE PRESENTMENTREF = :PRESENTMENTREF ");
-
-		source.addValue("PRESENTMENTREF", batchId);
-
-		RowMapper<PresentmentDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(PresentmentDetail.class);
-		try {
-			presentmentDetail = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-			presentmentDetail = null;
-		}
-		return presentmentDetail;
-	}
-
-	/*
-	 * Updating the cheque status if the mode is PDC
-	 */
-	private void updateChequeStatus(String presentmentRef, String status) {
-		String paymentMode = presentmentDetailService.getPaymenyMode(presentmentRef);
-		PresentmentDetail detail = presentmentDetailService.getPresentmentDetailsByMode(presentmentRef, paymentMode);
-		// Updating the cheque status as releases if the payment mode is PDC
-		if (MandateConstants.TYPE_PDC.equals(paymentMode)) {
-			updateChequeStatus(detail.getMandateId(), status);
-		}
-		logger.debug(Literal.LEAVING);
-
-	}
-
-	private void updateChequeStatus(long chequeDetailsId, String chequestatus) {
-		logger.debug(Literal.ENTERING);
-		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
-		try {
-			sql = new StringBuilder();
-			sql.append(
-					"update CHEQUEDETAIL Set Chequestatus = :Chequestatus  where ChequeDetailsId = :ChequeDetailsId ");
-			logger.trace(Literal.SQL + sql.toString());
-
-			source = new MapSqlParameterSource();
-			source.addValue("Chequestatus", chequestatus);
-			source.addValue("ChequeDetailsId", chequeDetailsId);
-			this.jdbcTemplate.update(sql.toString(), source);
-		} finally {
-			source = null;
-			sql = null;
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
-	private PresentmentDetail isPresentmentResponseIsExist(String batchId) {
-		logger.debug(Literal.ENTERING);
-
-		PresentmentDetail presentmentDetail = new PresentmentDetail();
-		StringBuffer sql = new StringBuffer();
-		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		sql.append(
-				" SELECT PD.ID, PD.PRESENTMENTID, PD.FINREFERENCE, PD.SCHDATE, PD.MANDATEID,PD.ADVANCEAMT, PD.EXCESSID,PD.RECEIPTID, PD.PRESENTMENTAMT, PD.EXCLUDEREASON, PD.BOUNCEID , PB.ACCOUNTNO, PB.ACTYPE");
-		sql.append(" ,PH.PRESENTMENTTYPE");
-		sql.append(" FROM PRESENTMENTDETAILS PD INNER JOIN PRESENTMENTHEADER PH ON PH.ID = PD.PRESENTMENTID ");
-		sql.append(
-				" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PH.PARTNERBANKID WHERE  PD.PRESENTMENTREF = :PRESENTMENTREF");
-
-		source.addValue("PRESENTMENTREF", batchId);
-
-		RowMapper<PresentmentDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(PresentmentDetail.class);
-		try {
-			presentmentDetail = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-			presentmentDetail = null;
-		}
-		return presentmentDetail;
-	}
-
-	/**
-	 * Sending the email notification if presentmnent is bounce
-	 * 
-	 * @param presentmentDetail
-	 */
-	protected void sendMailNotification(PresentmentDetail presentmentDetail, String status) {
-		logger.debug(Literal.ENTERING);
-		try {
-			Notification notification = new Notification();
-			notification.setKeyReference(presentmentDetail.getFinReference());
-			notification.setModule("LOAN");
-
-			if (StringUtils.equals(status, RepayConstants.MODULETYPE_BOUNCE)) {
-				notification.setSubModule("PRESENTMENT_BOUNCE");
-				notification.setTemplateCode(NotificationConstants.PRESENTMENT_BOUNCE_MAIL_NOTIFICATION);
-			} else {
-				notification.setSubModule("PRESENTMENT_SUCCESS");
-				notification.setTemplateCode(NotificationConstants.PRESENTMENT_SUCCESS_MAIL_NOTIFICATION);
-			}
-
-			FinanceDetail financeDetail = this.presentmentDetailService
-					.getFinanceDetailsByRef(presentmentDetail.getFinReference());
-
-			CustomerDetails customerDetails = financeDetail.getCustomerDetails();
-			if (customerDetails == null) {
-				return;
-			}
-			List<CustomerEMail> emailList = customerDetails.getCustomerEMailList();
-			String emailId = null;
-			for (CustomerEMail email : emailList) {
-				if (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == email.getCustEMailPriority()) {
-					emailId = email.getCustEMail();
-					break;
-				}
-			}
-			List<String> emails = new ArrayList<>();
-			if (emailId != null) {
-				emails.add(emailId);
-				notification.setEmails(emails);
-			}
-			// Customer Contact Number
-			String mobileNumber = null;
-			List<CustomerPhoneNumber> customerPhoneNumbers = customerDetails.getCustomerPhoneNumList();
-			for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumbers) {
-				if (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == customerPhoneNumber
-						.getPhoneTypePriority()) {
-					mobileNumber = customerPhoneNumber.getPhoneNumber();
-					break;
-				}
-			}
-
-			List<String> mobileNumberList = new ArrayList<>();
-			mobileNumberList.add(mobileNumber);
-			notification.setMobileNumbers(mobileNumberList);
-
-			presentmentDetail.setFinanceDetail(financeDetail);
-			notificationService.sendNotification(notification, presentmentDetail);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
-	private AEEvent doPresentmentStageAccounting(String presentmentRef, PresentmentDetail presentmentDetail) {
-		logger.debug(Literal.ENTERING);
-
-		String finReference = presentmentDetail.getFinReference();
-		Date schDate = presentmentDetail.getSchDate();
-		FinanceMain fm = presentmentDetailService.getDefualtPostingDetails(finReference, schDate);
-
-		AEEvent aeEvent = new AEEvent();
-		aeEvent.setFinReference(fm.getFinReference());
-		aeEvent.setCustID(fm.getCustID());
-		aeEvent.setFinType(fm.getFinType());
-		aeEvent.setBranch(fm.getFinBranch());
-		aeEvent.setCcy(fm.getFinCcy());
-		aeEvent.setPostingUserBranch(fm.getFinType());
-		aeEvent.setValueDate(presentmentDetail.getSchDate());
-		aeEvent.setPostDate(SysParamUtil.getAppDate());
-		aeEvent.setEntityCode(fm.getEntityCode());
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_PRSNTRSP);
-		aeEvent.setPostRefId(presentmentDetail.getPresentmentId());
-
-		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		amountCodes = aeEvent.getAeAmountCodes();
-		amountCodes.setFinType(fm.getFinType());
-		amountCodes.setPartnerBankAc(fm.getPartnerBankAc());
-		amountCodes.setPartnerBankAcType(fm.getPartnerBankAcType());
-
-		BigDecimal presentmentAmt = presentmentDetail.getPresentmentAmt();
-		Map<String, Object> dataMap = aeEvent.getDataMap();
-		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
-		dataMap.put("ae_presentmentAmt", presentmentAmt);
-		aeEvent.setDataMap(dataMap);
-
-		// Prepare Accounting Set of entries with valid account & Post amounts
-		// =======================================
-		try {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getFinType(),
-					AccountEventConstants.ACCEVENT_PRSNTRSP, FinanceConstants.MODULEID_FINTYPE));
-			aeEvent.setDataMap(dataMap);
-			aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			aeEvent.setErrorMessage(ErrorUtil.getErrorDetail(new ErrorDetail("Accounting Engine",
-					PennantConstants.ERR_UNDEF, "E", "Accounting Engine Failed to Create Postings:" + e.getMessage(),
-					new String[] {}, new String[] {})).getMessage());
-			return aeEvent;
-		}
-
-		if (!aeEvent.isPostingSucess()) {
-			throw new InterfaceException("9998", "Presentment response accounting postings failed.");
-		}
-
-		return aeEvent;
-	}
-
-	private Long postStageAccounting(String presentmentRef, PresentmentDetail presentmentDetail) {
-		logger.info("Posting stage accounting for the presentment reference {}", presentmentRef);
-		AEEvent event = doPresentmentStageAccounting(presentmentRef, presentmentDetail);
-		return event.getLinkedTranId();
-	}
-
-	private void reverseStageAccounting(long linkedTranId, long receiptID) {
-		logger.info("Stage accounting reversal for the linkedTranID {}", linkedTranId);
-		List<Long> linkedTranIDList = new ArrayList<>();
-		linkedTranIDList.add(linkedTranId);
-
-		Long tranId = financeRepaymentsDAO.getLinkedTranIdByReceipt(receiptID, "");
-		if (tranId != null) {
-			linkedTranIDList.add(tranId);
-		}
-
-		for (Long postingID : linkedTranIDList) {
-			postingsPreparationUtil.postReversalsByLinkedTranID(postingID);
 		}
 	}
 
@@ -1731,11 +463,11 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	}
 
 	public DataEngineStatus getStatus() {
-		return status;
+		return deStatus;
 	}
 
 	public void setStatus(DataEngineStatus status) {
-		this.status = status;
+		this.deStatus = status;
 	}
 
 	public DataSource getDataSource() {
@@ -1750,16 +482,84 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		this.presentmentImportProcess = presentmentImportProcess;
 	}
 
-	public void setPresentmentRespValidation(ValidateRecord presentmentRespValidation) {
-		this.presentmentRespValidation = presentmentRespValidation;
+	public PostingsPreparationUtil getPostingsPreparationUtil() {
+		return postingsPreparationUtil;
 	}
 
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
 
+	public FinanceRepaymentsDAO getFinanceRepaymentsDAO() {
+		return financeRepaymentsDAO;
+	}
+
 	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
 		this.financeRepaymentsDAO = financeRepaymentsDAO;
+	}
+
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
+	}
+
+	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
+		this.presentmentDetailDAO = presentmentDetailDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
+	}
+
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
+		this.financeProfitDetailDAO = financeProfitDetailDAO;
+	}
+
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
+	}
+
+	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
+		this.finReceiptDetailDAO = finReceiptDetailDAO;
+	}
+
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	public void setReceiptPaymentService(ReceiptPaymentService receiptPaymentService) {
+		this.receiptPaymentService = receiptPaymentService;
+	}
+
+	public void setReceiptCancellationService(ReceiptCancellationService receiptCancellationService) {
+		this.receiptCancellationService = receiptCancellationService;
+	}
+
+	public void setPresentmentDetailService(PresentmentDetailService presentmentDetailService) {
+		this.presentmentDetailService = presentmentDetailService;
+	}
+
+	public void setRepaymentPostingsUtil(RepaymentPostingsUtil repaymentPostingsUtil) {
+		this.repaymentPostingsUtil = repaymentPostingsUtil;
+	}
+
+	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
+		this.receiptCalculator = receiptCalculator;
+	}
+
+	public EventPropertiesService getEventPropertiesService() {
+		return eventPropertiesService;
+	}
+
+	public void setEventPropertiesService(EventPropertiesService eventPropertiesService) {
+		this.eventPropertiesService = eventPropertiesService;
 	}
 
 }

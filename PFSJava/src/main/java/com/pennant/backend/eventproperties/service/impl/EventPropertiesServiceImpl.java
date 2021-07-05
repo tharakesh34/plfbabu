@@ -18,7 +18,8 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 public class EventPropertiesServiceImpl implements EventPropertiesService {
 
 	public enum EventType {
-		EOD(1), PRESENTMENT_BATCH_APPROVE(2);
+		EOD(1), PRESENTMENT_BATCH_APPROVE(2), PRESENTMENT_RESPONSE_UPLOAD(3);
+
 		int value;
 
 		EventType(int value) {
@@ -39,6 +40,10 @@ public class EventPropertiesServiceImpl implements EventPropertiesService {
 
 		case 2:
 			return getPresentmentBatchApprovalParameters();
+
+		case 3:
+			return getPresentmentResponseUploadParameters();
+
 		default:
 			return new EventProperties();
 		}
@@ -72,7 +77,7 @@ public class EventPropertiesServiceImpl implements EventPropertiesService {
 		ep.setAcEffPostDate(SysParamUtil.isAllowed(SMTParameterConstants.ACCREV_EFF_POSTDATE));
 
 		boolean isCalAccrualFromStart = true;
-		//if the flag is 'Y' projected Accrual calculated from loan started without checking previous month data.
+		// if the flag is 'Y' projected Accrual calculated from loan started without checking previous month data.
 		if ("Y".equals(SysParamUtil.getValueAsString(SMTParameterConstants.MONTHENDACC_FROMFINSTARTDATE))) {
 			isCalAccrualFromStart = false;
 		}
@@ -189,6 +194,23 @@ public class EventPropertiesServiceImpl implements EventPropertiesService {
 		EventProperties eventProperties = new EventProperties();
 
 		return eventProperties;
+	}
+
+	private EventProperties getPresentmentResponseUploadParameters() {
+		EventProperties ep = new EventProperties();
+
+		ep.setParameterLoaded(true);
+		ep.setCacheLoaded(true);
+
+		ep.setAppDate(SysParamUtil.getAppDate());
+		ep.setDpdCalIncludeExcess(SysParamUtil.isAllowed(SMTParameterConstants.DPD_CALC_INCLUDE_EXCESS));
+		ep.setIgnoringBucket(SysParamUtil.getValueAsBigDecimal(SMTParameterConstants.IGNORING_BUCKET));
+		ep.setAccrualCalOn(SysParamUtil.getValueAsInt(SMTParameterConstants.ACCRUAL_CAL_ON));
+		ep.setAllowZeroPostings(SysParamUtil.getValueAsString(SMTParameterConstants.ALLOW_ZERO_POSTINGS));
+
+		setRoundingModes(ep);
+
+		return ep;
 	}
 
 }

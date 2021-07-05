@@ -46,7 +46,7 @@ public class FileImport {
 	private boolean backUp = true;
 	public int row_NumberOfCells;
 
-	//key fields need to map according to the responseFile format.
+	// key fields need to map according to the responseFile format.
 	public static int pos_BranchCode = 6;
 	public static int pos_AgreementNo = 8;
 	public static int pos_InstalmentNo = 0;
@@ -61,6 +61,8 @@ public class FileImport {
 	public static int pos_AccountType = 5;
 	public static int pos_PaymentDue = 7;
 	public static int pos_FailureReasons = 11;
+	public static int pos_BounceRemarks = 12;
+	public static int pos_UTRNumber = 13;
 
 	/**
 	 * Include the success records in the BatchLog, if BatchFileImport.isLogStatus() is true, default false

@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LegalDocument.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  18-06-2018    														*
- *                                                                  						*
- * Modified Date    :  18-06-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LegalDocument.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 18-06-2018 * * Modified Date :
+ * 18-06-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 18-06-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 18-06-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.model.legal;
 
 import java.sql.Timestamp;
@@ -118,6 +100,7 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 	private boolean documentMortgage = false;
 	private String finReference;
 	private Long custId;
+	private boolean docMandatory;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -142,6 +125,7 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("documentTypeApproveName");
 		excludeFields.add("finReference");
 		excludeFields.add("custId");
+		excludeFields.add("docMandatory");
 		return excludeFields;
 	}
 
@@ -403,6 +387,14 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 
 	public void setCustId(Long custId) {
 		this.custId = custId;
+	}
+
+	public boolean isDocMandatory() {
+		return docMandatory;
+	}
+
+	public void setDocMandatory(boolean docMandatory) {
+		this.docMandatory = docMandatory;
 	}
 
 }

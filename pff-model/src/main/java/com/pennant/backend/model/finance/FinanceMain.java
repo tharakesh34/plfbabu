@@ -80,20 +80,19 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"alwManualSteps", "stepPolicy", "stepType", "graceTerms", "grcPeriodEndDate", "grcRateBasis", "grcPftRate",
 		"graceBaseRate", "graceSpecialRate", "grcMargin", "grcProfitDaysBasis", "grcPftFrq", "nextGrcPftDate",
 		"grcPftRvwFrq", "nextGrcPftRvwDate", "grcCpzFrq", "nextGrcCpzDate", "allowGrcRepay", "grcSchdMthd",
-		"grcMinRate", "grcMaxRate", "grcMaxAmount", "numberOfTerms", "reqRepayAmount",
-		"repayRateBasis", "repayProfitRate", "repayBaseRate", "repaySpecialRate", "repayMargin", "scheduleMethod",
-		"repayFrq", "nextRepayDate", "repayPftFrq", "nextRepayPftDate", "repayRvwFrq", "nextRepayRvwDate",
-		"repayCpzFrq", "nextRepayCpzDate", "maturityDate", "finRepayPftOnFrq", "rpyMinRate", "rpyMaxRate",
-		"finContractDate", "finPurpose", "finLimitRef", "finCommitmentRef", 
-		"dsaCode", "accountsOfficer", "salesDepartment", "dmaCode", "referralId", "employeeName", "quickDisb",
-		"unPlanEMIHLockPeriod", "unPlanEMICpz", "reAgeCpz", "maxUnplannedEmi", "maxReAgeHolidays", "alwBPI",
-		"bpiTreatment", "bpiPftDaysBasis", "planEMIHAlw", "planEMIHAlwInGrace", "planEMIHMethod", "planEMIHMaxPerYear",
-		"planEMIHMax", "planEMIHLockPeriod", "planEMICpz", "firstDisbDate", "lastDisbDate", "stage", "status",
-		"product", "advTerms", "closedDate", "fixedRateTenor", "fixedTenorRate", "eligibilityMethod", "connector",
-		"legalRequired", "reqLoanAmt", "reqLoanTenor", "offerProduct", "offerAmount", "custSegmentation", "baseProduct",
-		"processType", "bureauTimeSeries", "campaignName", "existingLanRefNo", "leadSource", "poSource", "rsa",
-		"verification", "sourChannelCategory", "offerId", "endGrcPeriodAftrFullDisb", "autoIncGrcEndDate",
-		"noOfSteps" })
+		"grcMinRate", "grcMaxRate", "grcMaxAmount", "numberOfTerms", "reqRepayAmount", "repayRateBasis",
+		"repayProfitRate", "repayBaseRate", "repaySpecialRate", "repayMargin", "scheduleMethod", "repayFrq",
+		"nextRepayDate", "repayPftFrq", "nextRepayPftDate", "repayRvwFrq", "nextRepayRvwDate", "repayCpzFrq",
+		"nextRepayCpzDate", "maturityDate", "finRepayPftOnFrq", "rpyMinRate", "rpyMaxRate", "finContractDate",
+		"finPurpose", "finLimitRef", "finCommitmentRef", "dsaCode", "accountsOfficer", "salesDepartment", "dmaCode",
+		"referralId", "employeeName", "quickDisb", "unPlanEMIHLockPeriod", "unPlanEMICpz", "reAgeCpz",
+		"maxUnplannedEmi", "maxReAgeHolidays", "alwBPI", "bpiTreatment", "bpiPftDaysBasis", "planEMIHAlw",
+		"planEMIHAlwInGrace", "planEMIHMethod", "planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz",
+		"firstDisbDate", "lastDisbDate", "stage", "status", "product", "advTerms", "closedDate", "fixedRateTenor",
+		"fixedTenorRate", "eligibilityMethod", "connector", "legalRequired", "reqLoanAmt", "reqLoanTenor",
+		"offerProduct", "offerAmount", "custSegmentation", "baseProduct", "processType", "bureauTimeSeries",
+		"campaignName", "existingLanRefNo", "leadSource", "poSource", "rsa", "verification", "sourChannelCategory",
+		"offerId", "endGrcPeriodAftrFullDisb", "autoIncGrcEndDate", "noOfSteps" })
 @XmlRootElement(name = "financeDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceMain extends AbstractWorkflowEntity {
@@ -182,7 +181,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Date firstDroplineDate;
 	private boolean pftServicingODLimit;
 
-	//Offer Details Start
+	// Offer Details Start
 
 	@XmlElement
 	private String offerProduct;
@@ -211,9 +210,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private String offerId;
 
-	//Offer Details End
+	// Offer Details End
 
-	//Sourcing Details
+	// Sourcing Details
 	@XmlElement
 	private String sourcingBranch;
 	private String lovDescSourcingBranch;
@@ -223,7 +222,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement(name = "asmName")
 	private String lovDescAsmName;
 
-	//Payment type check
+	// Payment type check
 	private boolean chequeOrDDAvailable;
 	private boolean neftAvailable; // If NEFT/IMPS/RTGS Available
 
@@ -764,6 +763,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal totalFinAmount = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal appliedLoanAmt = BigDecimal.ZERO;
+	@XmlElement
+	private String subVentionFrom;
+	@XmlElement
+	private Long manufacturerDealerId;
+	private String manufacturerDealerName;
+	private String manufacturerDealerCode;
 	private boolean skipRateReset = false;
 	private List<ReasonDetails> detailsList = new ArrayList<ReasonDetails>();
 	private String cancelRemarks;
@@ -778,12 +783,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private List<ReturnDataSet> returnDataSet;
 
 	private boolean pmay;
-	//OCR changes
+	// OCR changes
 	@XmlElement
 	private boolean finOcrRequired = false;
-	//Check the Deviations are  Avilable or not in Workflow
+	// Check the Deviations are Avilable or not in Workflow
 	private boolean deviationAvail;
-	//Split Loan or Pricing Detail
+	// Split Loan or Pricing Detail
 	private boolean alwLoanSplit;
 	private boolean loanSplitted = false;
 	// Under Construction Details
@@ -795,10 +800,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean autoIncGrcEndDate;
 	private int pendingCovntCount = 0;
 	private String custEmpType = "";
-	//Disb based schedule
+	// Disb based schedule
 	private boolean instBasedSchd;
 	private boolean ocrDeviation = false;
-	//Accounting related
+	// Accounting related
 	private String partnerBankAcType;
 	private String partnerBankAc;
 	private boolean writeoffLoan = false;
@@ -1012,7 +1017,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("rateChange");
 		excludeFields.add("appDate");
 		excludeFields.add("eodValueDate");
-		//Sourcing Details
+		// Sourcing Details
 		excludeFields.add("lovDescSourcingBranch");
 		excludeFields.add("lovDescAsmName");
 		excludeFields.add("deviationAvail");
@@ -1028,13 +1033,15 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("returnDataSet");
 		excludeFields.add("ocrDeviation");
 		excludeFields.add("eventProperties");
-		//Accounting related
+		// Accounting related
 		excludeFields.add("partnerBankAcType");
 		excludeFields.add("partnerBankAc");
 		excludeFields.add("tdsType");
 		excludeFields.add("isRpyStps");
 		excludeFields.add("isGrcStps");
 		excludeFields.add("cpzPosIntact");
+		excludeFields.add("manufacturerDealerName");
+		excludeFields.add("manufacturerDealerCode");
 		return excludeFields;
 	}
 	// ******************************************************//
@@ -1502,6 +1509,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setWriteoffLoan(this.writeoffLoan);
 		entity.setRestructure(this.restructure);
 		entity.setSchdVersion(this.schdVersion);
+		entity.setSubVentionFrom(this.subVentionFrom);
+		entity.setManufacturerDealerId(this.manufacturerDealerId);
+		entity.setManufacturerDealerName(this.manufacturerDealerName);
+		entity.setManufacturerDealerCode(this.manufacturerDealerCode);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -2874,8 +2885,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	}
 
 	/**
-	 * @param errorDetails
-	 *            the errorDetails to set
+	 * @param errorDetails the errorDetails to set
 	 */
 	public void setErrorDetails(ArrayList<ErrorDetail> errorDetails) {
 		this.errorDetails = errorDetails;
@@ -5232,6 +5242,38 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setSchdVersion(int schdVersion) {
 		this.schdVersion = schdVersion;
+	}
+
+	public String getSubVentionFrom() {
+		return subVentionFrom;
+	}
+
+	public void setSubVentionFrom(String subVentionFrom) {
+		this.subVentionFrom = subVentionFrom;
+	}
+
+	public Long getManufacturerDealerId() {
+		return manufacturerDealerId;
+	}
+
+	public void setManufacturerDealerId(Long manufacturerDealerId) {
+		this.manufacturerDealerId = manufacturerDealerId;
+	}
+
+	public String getManufacturerDealerName() {
+		return manufacturerDealerName;
+	}
+
+	public void setManufacturerDealerName(String manufacturerDealerName) {
+		this.manufacturerDealerName = manufacturerDealerName;
+	}
+
+	public String getManufacturerDealerCode() {
+		return manufacturerDealerCode;
+	}
+
+	public void setManufacturerDealerCode(String manufacturerDealerCode) {
+		this.manufacturerDealerCode = manufacturerDealerCode;
 	}
 
 }

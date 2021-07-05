@@ -137,6 +137,9 @@ public class Presentment {
 	@XmlElement
 	private String status;
 
+	@XmlElement(name = "UTRNumber")
+	private String utrNumber;
+
 	@XmlElement
 	private WSReturnStatus returnStatus;
 
@@ -630,6 +633,14 @@ public class Presentment {
 
 	public void setReturnStatus(WSReturnStatus returnStatus) {
 		this.returnStatus = returnStatus;
+	}
+
+	public String getUtrNumber() {
+		return utrNumber;
+	}
+
+	public void setUtrNumber(String utrNumber) {
+		this.utrNumber = utrNumber;
 	}
 
 }

@@ -100,6 +100,7 @@ import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityUser;
+import com.pennant.backend.model.agreement.CovenantAggrement;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.bmtmasters.Product;
@@ -919,7 +920,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				agreement.setExternalLiabilityDetails(new ArrayList<>());
 			}
 
-			//sanctionConditions
+			// sanctionConditions
 			if (CollectionUtils.isNotEmpty(detail.getSanctionDetailsList())) {
 				agreement.getSanctionConditions().addAll(detail.getSanctionDetailsList());
 			}
@@ -1905,7 +1906,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 			agreement.setOtherMap(otherMap);
 
-			//Collateral Data
+			// Collateral Data
 			List<FinCollaterals> finCollaterals = agreement.getCollateralData();
 			List<Map<String, String>> collExtMapList = new ArrayList<>();
 			if (CollectionUtils.isNotEmpty(finCollaterals)) {
@@ -2675,7 +2676,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				verificationData.setInitiationDate(DateUtil.formatToLongDate(verification.getCreatedOn()));
 				verificationData.setCompletionDate(DateUtil.formatToLongDate(verification.getVerificationDate()));
 				String initialStatus = (null != RequestType.getType(verification.getRequestType()))
-						? RequestType.getType(verification.getRequestType()).getValue() : null;
+						? RequestType.getType(verification.getRequestType()).getValue()
+						: null;
 				verificationData.setInitialStatus(StringUtils.trimToEmpty(initialStatus));
 				verificationData.setRecommanditionStatus(StringUtils.trimToEmpty(verification.getVerificationStatus()));
 				verificationData.setRemarks(StringUtils.trimToEmpty(verification.getDecisionRemarks()));
@@ -3293,7 +3295,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				empExperence = (tempExperence > 0) ? (empExperence + tempExperence) : empExperence;
 				if (custEmploymentDetail.isCurrentEmployer()) {
 					custEmpName = StringUtils.equals(custEmploymentDetail.getLovDesccustEmpName(), "")
-							? custEmploymentDetail.getCompanyName() : custEmploymentDetail.getLovDesccustEmpName();
+							? custEmploymentDetail.getCompanyName()
+							: custEmploymentDetail.getLovDesccustEmpName();
 				}
 			}
 		}
@@ -3903,59 +3906,59 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		agreement.setCustAddrZIP(StringUtils.trimToEmpty(customerAddres.getCustAddrZIP()));
 
 		StringBuffer custAddress = new StringBuffer();
-		//careof
+		// careof
 		String custAddrLine3 = StringUtils.trimToEmpty(customerAddres.getCustAddrLine3());
 		if (StringUtils.isNotEmpty(custAddrLine3)) {
 			custAddress.append(custAddrLine3).append("\n");
 		}
-		//Flat/Shop/Unit No, Floor No & Wing
+		// Flat/Shop/Unit No, Floor No & Wing
 		String custAddrHNbr = StringUtils.trimToEmpty(customerAddres.getCustAddrHNbr());
 		if (StringUtils.isNotEmpty(custAddrHNbr)) {
 			custAddress.append(custAddrHNbr);
 		}
-		//Building/society/Project name
+		// Building/society/Project name
 		String custFlatNbr = StringUtils.trimToEmpty(customerAddres.getCustFlatNbr());
 		if (StringUtils.isNotEmpty(custFlatNbr)) {
 			custAddress.append(", ").append(custFlatNbr).append("\n");
 		} else {
 			custAddress.append("\n");
 		}
-		//Street / Road Name
+		// Street / Road Name
 		String custAddrStreet = StringUtils.trimToEmpty(customerAddres.getCustAddrStreet());
 		if (StringUtils.isNotEmpty(custAddrStreet)) {
 			custAddress.append(custAddrStreet).append("\n");
 		}
-		//Landmark
+		// Landmark
 		String custAddrLine1 = StringUtils.trimToEmpty(customerAddres.getCustAddrLine1());
 		if (StringUtils.isNotEmpty(custAddrLine1)) {
 			custAddress.append(custAddrLine1).append("\n");
 		}
-		//Locality
+		// Locality
 		String custAddrLine2 = StringUtils.trimToEmpty(customerAddres.getCustAddrLine2());
 		if (StringUtils.isNotEmpty(custAddrLine2)) {
 			custAddress.append(custAddrLine2).append("\n");
 		}
-		//Town/Village/Taluka
+		// Town/Village/Taluka
 		String custAddrLine4 = StringUtils.trimToEmpty(customerAddres.getCustAddrLine4());
 		if (StringUtils.isNotEmpty(custAddrLine4)) {
 			custAddress.append(custAddrLine4).append("\n");
 		}
-		//City
+		// City
 		String cityName = StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName());
 		if (StringUtils.isNotEmpty(cityName)) {
 			custAddress.append(cityName).append("\n");
 		}
-		//District
+		// District
 		String custDistrict = StringUtils.trimToEmpty(customerAddres.getCustDistrict());
 		if (StringUtils.isNotEmpty(custDistrict)) {
 			custAddress.append(custDistrict).append("\n");
 		}
-		//Province
+		// Province
 		String provinceName = StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrProvinceName());
 		if (StringUtils.isNotEmpty(provinceName)) {
 			custAddress.append(provinceName).append("\n");
 		}
-		//Zip Code
+		// Zip Code
 		String custAddrZIP = StringUtils.trimToEmpty(customerAddres.getCustAddrZIP());
 		if (StringUtils.isNotEmpty(custAddrZIP)) {
 			custAddress.append(custAddrZIP);
@@ -4181,7 +4184,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		Date nextRepDate = detail.getFinScheduleData().getFinanceMain().getNextRepayDate();
 		String defDates = "";
 		int seqNo = 0;
-		int morSeqNo = 0;//Moratorium Seq No
+		int morSeqNo = 0;// Moratorium Seq No
 		boolean isSchdPftFirstInst = false;
 		boolean bpiAmtReq = false;
 		if (StringUtils.equals(FinanceConstants.BPI_DISBURSMENT,
@@ -4350,8 +4353,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 											.collect(Collectors.toList());
 									String valueColumn = lovFields[0];
 									Object value = mapValues.get(details.get(0));
-									//Converting extended filed value to mapped field data type.
-									//Ex: Projectid in Builder project 
+									// Converting extended filed value to mapped field data type.
+									// Ex: Projectid in Builder project
 									if (App.DATABASE == Database.POSTGRES) {
 										if (value != null && value != "") {
 											for (Field field : moduleMapping.getModuleClass().getDeclaredFields()) {
@@ -5435,6 +5438,30 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		}
 
 		return strText.substring(0, start) + sbMaskString.toString() + strText.substring(start + maskLength);
+	}
+
+	public byte[] getCovenantAgreementGeneration(CovenantAggrement covenantAggrement, String templatepath,
+			String templateFile) {
+		logger.debug(Literal.ENTERING);
+
+		TemplateEngine engine;
+		try {
+			engine = new TemplateEngine();
+			engine.setTemplateSite(templatepath);
+			engine.setDocumentSite(templatepath);
+			engine.setTemplate(templateFile);
+			engine.loadTemplate();
+			engine.mergeFields(covenantAggrement);
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			engine.getDocument().save(stream, SaveFormat.PDF);
+			stream.close();
+			return stream.toByteArray();
+		} catch (Exception e) {
+			logger.error(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	public void setNotesService(NotesService notesService) {

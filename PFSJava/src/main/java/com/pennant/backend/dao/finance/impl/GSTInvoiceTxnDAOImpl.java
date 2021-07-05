@@ -11,31 +11,14 @@
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  GSTInvoiceTxnDAOImpl.java                                            * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  18-04-2018    														*
- *                                                                  						*
- * Modified Date    :  18-04-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : GSTInvoiceTxnDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 18-04-2018 * * Modified
+ * Date : 18-04-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 18-04-2018       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 18-04-2018 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.finance.impl;
@@ -46,6 +29,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -90,9 +74,9 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 		sql.append(", Company_GSTIN, Company_Address1, Company_Address2, Company_Address3, Company_PINCode");
 		sql.append(", Company_State_Code, Company_State_Name, HsnNumber, NatureService, PanNumber, LoanAccountNo");
 		sql.append(", CustomerID, CustomerName, CustomerGSTIN, CustomerStateCode, CustomerStateName, CustomerAddress");
-		sql.append(", Invoice_Status, InvoiceType, DueInvoiceId");
+		sql.append(", Invoice_Status, InvoiceType, DueInvoiceId, InvoiceFor");
 		sql.append(") values(");
-		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -127,7 +111,8 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 				ps.setString(index++, gsti.getCustomerAddress());
 				ps.setString(index++, gsti.getInvoice_Status());
 				ps.setString(index++, gsti.getInvoiceType());
-				ps.setLong(index, JdbcUtil.setLong(gsti.getDueInvoiceId()));
+				ps.setLong(index++, JdbcUtil.setLong(gsti.getDueInvoiceId()));
+				ps.setString(index++, gsti.getInvoiceFor());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -223,60 +208,50 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 		sql.append(", Company_GSTIN, Company_Address1, Company_Address2, Company_Address3, Company_PINCode");
 		sql.append(", Company_State_Code, Company_State_Name, HsnNumber, NatureService, PanNumber");
 		sql.append(", LoanAccountNo, CustomerID, CustomerName, CustomerGSTIN, CustomerStateCode, CustomerStateName");
-		sql.append(", CustomerAddress, Invoice_Status, InvoiceType, DueInvoiceId");
+		sql.append(", CustomerAddress, Invoice_Status, InvoiceType, DueInvoiceId, InvoiceFor");
 		sql.append(" From GST_Invoice_Txn");
-		sql.append(" Where InvoiceNo is null ");
-		sql.append(" Order By InvoiceId");
+		sql.append(" Where InvoiceNo is null");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-				}
-			}, new RowMapper<GSTInvoiceTxn>() {
-				@Override
-				public GSTInvoiceTxn mapRow(ResultSet rs, int rowNum) throws SQLException {
-					GSTInvoiceTxn gstIT = new GSTInvoiceTxn();
+		List<GSTInvoiceTxn> list = this.jdbcOperations.query(sql.toString(), ps -> {
+		}, (rs, i) -> {
+			GSTInvoiceTxn gstIT = new GSTInvoiceTxn();
 
-					gstIT.setInvoiceId(rs.getLong("InvoiceId"));
-					gstIT.setTransactionID(rs.getLong("TransactionID"));
-					gstIT.setInvoiceNo(rs.getString("InvoiceNo"));
-					gstIT.setInvoiceDate(rs.getTimestamp("InvoiceDate"));
-					gstIT.setInvoice_Amt(rs.getBigDecimal("Invoice_Amt"));
-					gstIT.setCompanyCode(rs.getString("CompanyCode"));
-					gstIT.setCompanyName(rs.getString("CompanyName"));
-					gstIT.setCompany_GSTIN(rs.getString("Company_GSTIN"));
-					gstIT.setCompany_Address1(rs.getString("Company_Address1"));
-					gstIT.setCompany_Address2(rs.getString("Company_Address2"));
-					gstIT.setCompany_Address3(rs.getString("Company_Address3"));
-					gstIT.setCompany_PINCode(rs.getString("Company_PINCode"));
-					gstIT.setCompany_State_Code(rs.getString("Company_State_Code"));
-					gstIT.setCompany_State_Name(rs.getString("Company_State_Name"));
-					gstIT.setHsnNumber(rs.getString("HsnNumber"));
-					gstIT.setNatureService(rs.getString("NatureService"));
-					gstIT.setPanNumber(rs.getString("PanNumber"));
-					gstIT.setLoanAccountNo(rs.getString("LoanAccountNo"));
-					gstIT.setCustomerID(rs.getString("CustomerID"));
-					gstIT.setCustomerName(rs.getString("CustomerName"));
-					gstIT.setCustomerGSTIN(rs.getString("CustomerGSTIN"));
-					gstIT.setCustomerStateCode(rs.getString("CustomerStateCode"));
-					gstIT.setCustomerStateName(rs.getString("CustomerStateName"));
-					gstIT.setCustomerAddress(rs.getString("CustomerAddress"));
-					gstIT.setInvoice_Status(rs.getString("Invoice_Status"));
-					gstIT.setInvoiceType(rs.getString("InvoiceType"));
-					gstIT.setDueInvoiceId(JdbcUtil.getLong(rs.getObject("DueInvoiceId")));
+			gstIT.setInvoiceId(rs.getLong("InvoiceId"));
+			gstIT.setTransactionID(rs.getLong("TransactionID"));
+			gstIT.setInvoiceNo(rs.getString("InvoiceNo"));
+			gstIT.setInvoiceDate(rs.getTimestamp("InvoiceDate"));
+			gstIT.setInvoice_Amt(rs.getBigDecimal("Invoice_Amt"));
+			gstIT.setCompanyCode(rs.getString("CompanyCode"));
+			gstIT.setCompanyName(rs.getString("CompanyName"));
+			gstIT.setCompany_GSTIN(rs.getString("Company_GSTIN"));
+			gstIT.setCompany_Address1(rs.getString("Company_Address1"));
+			gstIT.setCompany_Address2(rs.getString("Company_Address2"));
+			gstIT.setCompany_Address3(rs.getString("Company_Address3"));
+			gstIT.setCompany_PINCode(rs.getString("Company_PINCode"));
+			gstIT.setCompany_State_Code(rs.getString("Company_State_Code"));
+			gstIT.setCompany_State_Name(rs.getString("Company_State_Name"));
+			gstIT.setHsnNumber(rs.getString("HsnNumber"));
+			gstIT.setNatureService(rs.getString("NatureService"));
+			gstIT.setPanNumber(rs.getString("PanNumber"));
+			gstIT.setLoanAccountNo(rs.getString("LoanAccountNo"));
+			gstIT.setCustomerID(rs.getString("CustomerID"));
+			gstIT.setCustomerName(rs.getString("CustomerName"));
+			gstIT.setCustomerGSTIN(rs.getString("CustomerGSTIN"));
+			gstIT.setCustomerStateCode(rs.getString("CustomerStateCode"));
+			gstIT.setCustomerStateName(rs.getString("CustomerStateName"));
+			gstIT.setCustomerAddress(rs.getString("CustomerAddress"));
+			gstIT.setInvoice_Status(rs.getString("Invoice_Status"));
+			gstIT.setInvoiceType(rs.getString("InvoiceType"));
+			gstIT.setDueInvoiceId(JdbcUtil.getLong(rs.getObject("DueInvoiceId")));
+			gstIT.setInvoiceFor(rs.getString("InvoiceFor"));
 
-					return gstIT;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+			return gstIT;
+		});
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return list.stream().sorted((l1, l2) -> Long.compare(l1.getInvoiceId(), l2.getInvoiceId()))
+				.collect(Collectors.toList());
 	}
 
 	@Override

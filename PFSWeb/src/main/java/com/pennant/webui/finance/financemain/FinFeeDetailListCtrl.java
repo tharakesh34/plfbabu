@@ -760,6 +760,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(custId, finCCY, userBranch,
 					finBranch, financeDetail.getFinanceTaxDetail());
 
+			String subventionFeeCode = PennantConstants.FEETYPE_SUBVENTION;
+
 			for (FinTypeFees finTypeFee : finTypeFeesList) {
 				finFeeDetail = new FinFeeDetail();
 				finFeeDetail.setNewRecord(true);
@@ -790,6 +792,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				finFeeDetail.setTaxApplicable(finTypeFee.isTaxApplicable());
 
 				if (finTypeFee.isTaxApplicable()) {
+					if (subventionFeeCode.equals(finTypeFee.getFeeTypeCode())) {
+						taxPercentages = getDealerTaxPercentages();
+					}
 					this.finFeeDetailService.convertGSTFinTypeFees(finFeeDetail, finTypeFee, getFinanceDetail(),
 							taxPercentages);
 				} else {
@@ -1233,6 +1238,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					} else {
 						vasFee.setRecordType(PennantConstants.RCD_UPD);
 					}
+					vasFee.setLastMntBy(feeDetail.getLastMntBy());
+					vasFee.setLastMntOn(feeDetail.getLastMntOn());
+					vasFee.setWorkflowId(feeDetail.getWorkflowId());
 					feelist.remove(i); // Removing Finance Fee Detail
 					break;
 				}
@@ -1476,7 +1484,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				if (paymentMthdbox != null) {
 					if (validate && fee.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
 						if ("#".equals(getComboboxValue(paymentMthdbox))) {
-							// throw new WrongValueException(paymentMthdbox, Labels.getLabel("STATIC_INVALID", new String[] { Labels.getLabel("FeeDetail_PaymentRef") }));
+							// throw new WrongValueException(paymentMthdbox, Labels.getLabel("STATIC_INVALID", new
+							// String[] { Labels.getLabel("FeeDetail_PaymentRef") }));
 						}
 					}
 					fee.setPaymentRef(getComboboxValue(paymentMthdbox));
@@ -2228,8 +2237,15 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		finFeeDetail.setNetAmount(PennantApplicationUtil.unFormateAmount(netFeeBox.getValue(), formatter));
 		finFeeDetail.setPaidAmount(PennantApplicationUtil.unFormateAmount(paidBox.getValue(), formatter));
 
+		boolean isSubventionFee = PennantConstants.FEETYPE_SUBVENTION.equals(finFeeDetail.getFeeTypeCode());
+
 		if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
-			TaxAmountSplit taxSplit = GSTCalculator.getInclusiveGST(finFeeDetail.getNetAmount(), taxPercentages);
+			TaxAmountSplit taxSplit;
+			if (isSubventionFee) {
+				taxSplit = GSTCalculator.getInclusiveGST(finFeeDetail.getNetAmount(), getDealerTaxPercentages());
+			} else {
+				taxSplit = GSTCalculator.getInclusiveGST(finFeeDetail.getNetAmount(), taxPercentages);
+			}
 			BigDecimal netAmountOrginal = finFeeDetail.getNetAmount().subtract(taxSplit.gettGST());
 			finFeeDetail.setNetAmountGST(taxSplit.gettGST());
 			finFeeDetail.setNetAmountOriginal(netAmountOrginal);
@@ -2238,7 +2254,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		if (netFeeBoxOriginal.isDisabled() || paidBoxOriginal.isDisabled()) {
 			resetTDSonFee(finFeeDetail, financeMain);
 		}
-		this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, getTaxPercentages());
+		if (isSubventionFee) {
+			this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, getDealerTaxPercentages());
+		} else {
+			this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, getTaxPercentages());
+		}
 		resetTDSonFee(finFeeDetail, financeMain);
 
 		// Paid Fee
@@ -2378,7 +2398,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				resetTDSonFee(finFeeDetail, financeMain);
 			}
 
-			this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, getTaxPercentages());
+			String subventionFeeCode = PennantConstants.FEETYPE_SUBVENTION;
+			if (subventionFeeCode.equals(finFeeDetail.getFeeTypeCode())) {
+				this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, getDealerTaxPercentages());
+			} else {
+				this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, getTaxPercentages());
+			}
+
 			resetTDSonFee(finFeeDetail, financeMain);
 
 			remainingOriginal
@@ -2732,9 +2758,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		// Calculate the fee Percentage
 		calculateFeePercentageAmount(finScheduleData, valueDate);
 
-		// Calculating GST
+		String subventionFeeCode = PennantConstants.FEETYPE_SUBVENTION;
 		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
-			this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData, getTaxPercentages());
+			if (subventionFeeCode.equals(finFeeDetail.getFeeTypeCode())) {
+				this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData, getDealerTaxPercentages());
+			} else {
+				this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData, getTaxPercentages());
+			}
 		}
 
 		getCalculatedTdsOnFees(getFinFeeDetailList(), financeDetail.getFinScheduleData());
@@ -2842,6 +2872,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			executionMap.putAll(financeMain.getDeclaredFieldValues());
 		}
 
+		Map<String, BigDecimal> taxPercentages = getTaxPercentages();
+		String subventionFeeCode = PennantConstants.FEETYPE_SUBVENTION;
+
 		for (FinFeeDetail fee : getFinFeeDetailList()) {
 			if (StringUtils.isEmpty(fee.getRuleCode())) {
 				continue;
@@ -2855,8 +2888,12 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			fee.setCalculatedAmount(feeResult);
 
 			if (fee.isTaxApplicable()) {
-				this.finFeeDetailService.processGSTCalForRule(fee, feeResult, financeDetail, getTaxPercentages(),
-						false);
+				if (StringUtils.equals(subventionFeeCode, fee.getFeeTypeCode())) {
+					this.finFeeDetailService.processGSTCalForRule(fee, feeResult, financeDetail,
+							getDealerTaxPercentages(), false);
+				} else {
+					this.finFeeDetailService.processGSTCalForRule(fee, feeResult, financeDetail, taxPercentages, false);
+				}
 			} else {
 				if (!fee.isFeeModified() || !fee.isAlwModifyFee()) {
 					fee.setActualAmountOriginal(feeResult);
@@ -2883,6 +2920,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			return;
 		}
 
+		Map<String, BigDecimal> taxPercentages = getTaxPercentages();
+		String subventionFeeCode = PennantConstants.FEETYPE_SUBVENTION;
+
 		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
 			if (PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE.equals(finFeeDetail.getCalculationType())) {
 				BigDecimal calPercentageFee = getCalculatedPercentageFee(finFeeDetail, finScheduleData, valueDate);
@@ -2893,8 +2933,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				}
 
 				if (finFeeDetail.isTaxApplicable()) { // if GST applicable
-					this.finFeeDetailService.processGSTCalForPercentage(finFeeDetail, calPercentageFee, financeDetail,
-							getTaxPercentages(), false);
+					if (StringUtils.equals(subventionFeeCode, finFeeDetail.getFeeTypeCode())) {
+						this.finFeeDetailService.processGSTCalForPercentage(finFeeDetail, calPercentageFee,
+								financeDetail, getDealerTaxPercentages(), false);
+					} else {
+						this.finFeeDetailService.processGSTCalForPercentage(finFeeDetail, calPercentageFee,
+								financeDetail, taxPercentages, false);
+					}
 				} else {
 					if (!finFeeDetail.isFeeModified() || !finFeeDetail.isAlwModifyFee()) {
 						finFeeDetail.setActualAmountOriginal(calPercentageFee);
@@ -2964,7 +3009,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				ReceiptDialogCtrl rec = (ReceiptDialogCtrl) getFinanceMainDialogCtrl();
 				// FIXME: PV. CODE RELATED TO RECEIPT DAILOG CTRL DELETED FROM HERE
 				// calculatedAmt = rec.getTotalReceiptAmount(false);
-				//calculatedAmt = (BigDecimal) getFinanceMainDialogCtrl().getClass().getMethod("getTotalReceiptAmount", Boolean.class).invoke(getFinanceMainDialogCtrl(), false);
+				// calculatedAmt = (BigDecimal) getFinanceMainDialogCtrl().getClass().getMethod("getTotalReceiptAmount",
+				// Boolean.class).invoke(getFinanceMainDialogCtrl(), false);
 			} catch (Exception e) {
 				logger.info(e);
 			}
@@ -3185,7 +3231,21 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		}
 
-		taxPercentages = GSTCalculator.getTaxPercentages(custId, finCCY, userBranch, finBranch,
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(custId, finCCY, userBranch, finBranch,
+				financeDetail.getFinanceTaxDetail());
+
+		return taxPercentages;
+	}
+
+	private Map<String, BigDecimal> getDealerTaxPercentages() {
+
+		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+		String userBranch = getUserWorkspace().getLoggedInUser().getBranchCode();
+		String finBranch = financeMain.getFinBranch();
+		String finCCY = financeMain.getFinCcy();
+
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getDealerTaxPercentages(
+				financeMain.getManufacturerDealerId(), finCCY, userBranch, finBranch,
 				financeDetail.getFinanceTaxDetail());
 
 		return taxPercentages;

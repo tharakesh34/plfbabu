@@ -170,14 +170,14 @@
 									<row>
 										<label id="label_DocumentHolderProperty" value="${c:l('label_LegalDocumentDialog_DocumentHolderProperty.value')}" />
 										<hbox>
-											<space spacing="2px" sclass="mandatory" />
+											<space spacing="2px" />
 											<!-- <listbox id="documentHolderProperty" width="180px" multiple="true" height="100px" rows="4" /> -->
 											<textbox id="documentHolderProperty" width="180px" />
 											<button id="btnHolderProperty" image="/images/icons/LOVSearch.png" />
 										</hbox>
 										<label id="label_DocumentPropertyAddress" value="${c:l('label_LegalDocumentDialog_DocumentPropertyAddress.value')}" />
 										<hbox>
-											<space spacing="2px" sclass="mandatory" />
+											<space spacing="2px" />
 											<textbox id="documentPropertyAddress" width="180px" maxlength="60" />
 										</hbox>
 									</row>

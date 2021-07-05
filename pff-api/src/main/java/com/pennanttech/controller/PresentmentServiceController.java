@@ -11,11 +11,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import com.pennant.app.util.PostingsPreparationUtil;
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.model.WSReturnStatus;
@@ -26,9 +22,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
 import com.pennanttech.model.presentment.Presentment;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.SpringBeanUtil;
-import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.ws.model.presentment.PresentmentResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
@@ -36,7 +31,6 @@ public class PresentmentServiceController extends ExtendedTestClass {
 	private static Logger logger = LogManager.getLogger(PresentmentServiceController.class);
 
 	private PresentmentDetailService presentmentDetailService;
-	private NotificationService notificationService;
 	private DataSource dataSource;
 	private PresentmentDetailDAO presentmentDetailDAO;
 	private FinanceMainDAO financeMainDAO;
@@ -58,6 +52,8 @@ public class PresentmentServiceController extends ExtendedTestClass {
 			logger.debug(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+
+			logger.debug(Literal.LEAVING);
 			return response;
 		}
 
@@ -68,6 +64,8 @@ public class PresentmentServiceController extends ExtendedTestClass {
 			valueParm[2] = "the search";
 			valueParm[3] = "Criteria";
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30550", valueParm));
+
+			logger.debug(Literal.LEAVING);
 			return response;
 		}
 
@@ -82,6 +80,8 @@ public class PresentmentServiceController extends ExtendedTestClass {
 			valueParm[2] = "is";
 			valueParm[3] = "Empty";
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30550", valueParm));
+
+			logger.debug(Literal.LEAVING);
 			return response;
 		}
 
@@ -164,14 +164,13 @@ public class PresentmentServiceController extends ExtendedTestClass {
 		return response;
 	}
 
-	public PresentmentResponse getApprovedPresentment(PresentmentDetail presentmentDetail) {
+	public PresentmentResponse getApprovedPresentment(PresentmentDetail pd) {
 		logger.debug(Literal.ENTERING);
 
 		PresentmentResponse presentmentResponse = new PresentmentResponse();
 		try {
-			String PresentmentRef = presentmentDetailDAO.getPresentmentReference(presentmentDetail.getId(),
-					presentmentDetail.getFinReference());
-			if (StringUtils.isBlank(PresentmentRef)) {
+			PresentmentDetail apd = presentmentDetailDAO.getPresentmentById(pd.getId());
+			if (apd == null) {
 				String[] valueParm = new String[4];
 				valueParm[0] = "Presentment";
 				valueParm[1] = "Details";
@@ -181,13 +180,13 @@ public class PresentmentServiceController extends ExtendedTestClass {
 				return presentmentResponse;
 			}
 
-			Presentment presentment = presentmentDetailDAO.getPresentmentByBatchId(PresentmentRef, "");
+			Presentment presentment = presentmentDetailDAO.getPresentmentByBatchId(apd.getPresentmentRef(), "");
 			if (presentment == null) {
 				String[] valueParm = new String[4];
 				valueParm[0] = "Presentment";
 				valueParm[1] = "Details";
 				valueParm[2] = "not approved for id";
-				valueParm[3] = String.valueOf(presentmentDetail.getId());
+				valueParm[3] = String.valueOf(pd.getId());
 				presentmentResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("30550", valueParm));
 				return presentmentResponse;
 			}
@@ -209,27 +208,29 @@ public class PresentmentServiceController extends ExtendedTestClass {
 	public WSReturnStatus uploadPresentment(Presentment presentment) {
 		logger.debug(Literal.ENTERING);
 
-		PresentmentDetailExtract detailExtract = new PresentmentDetailExtract(dataSource, presentmentDetailService,
-				notificationService);
-		PostingsPreparationUtil ppu = (PostingsPreparationUtil) SpringBeanUtil.getBean("postingsPreparationUtil");
-		FinanceRepaymentsDAO frDAO = (FinanceRepaymentsDAO) SpringBeanUtil.getBean("financeRepaymentsDAO");
-		detailExtract.setPostingsPreparationUtil(ppu);
-		detailExtract.setFinanceRepaymentsDAO(frDAO);
+		PresentmentDetailExtract pde = new PresentmentDetailExtract(dataSource);
+		pde.setUserDetails(new LoggedInUser());
+		presentmentDetailService.setProperties(pde);
+
+		long headerId = presentmentDetailDAO.logHeader(presentment.getBatchId(), null, "IMPORT", 0);
+
+		logger.info("Import header-ID: {}", headerId);
+
 		try {
-			detailExtract.clearTables();
 
-			String status = presentmentDetailDAO.getPresementStatus(presentment.getBatchId());
+			PresentmentDetail pd = presentmentDetailDAO.getPresentmentByRef(presentment.getBatchId());
 
-			if (StringUtils.isBlank(status)) {
+			if (pd == null) {
 				String[] valueParm = new String[4];
 				valueParm[0] = "Presentment Details not available";
-				valueParm[1] = "or already processed";
+				valueParm[1] = "";
 				valueParm[2] = "for batch id";
 				valueParm[3] = presentment.getBatchId();
 				return APIErrorHandlerService.getFailedStatus("30550", valueParm);
 			}
 
-			if (RepayConstants.PEXC_SUCCESS.equals(status) || RepayConstants.PEXC_BOUNCE.equals(status)) {
+			if (RepayConstants.PEXC_SUCCESS.equals(pd.getStatus())
+					|| RepayConstants.PEXC_BOUNCE.equals(pd.getStatus())) {
 				String[] valueParm = new String[4];
 				valueParm[0] = "The Presentment with";
 				valueParm[1] = "the presentment reference";
@@ -238,18 +239,7 @@ public class PresentmentServiceController extends ExtendedTestClass {
 				return APIErrorHandlerService.getFailedStatus("30550", valueParm);
 			}
 
-			PresentmentDetail presentmentDetail = presentmentDetailDAO.getPresentmentDetail(presentment.getBatchId());
-
-			if (presentmentDetail != null && SysParamUtil.getAppDate().compareTo(presentmentDetail.getSchDate()) < 0) {
-				String[] valueParm = new String[4];
-				valueParm[0] = "The presentment not";
-				valueParm[1] = "proceed with schedule date";
-				valueParm[2] = "greater than";
-				valueParm[3] = "application bussiness date";
-				return APIErrorHandlerService.getFailedStatus("30550", valueParm);
-			}
-
-			if (!presentmentDetail.getFinReference().equals(presentment.getAgreementNo())) {
+			if (!pd.getFinReference().equals(presentment.getAgreementNo())) {
 				String[] valueParm = new String[4];
 				valueParm[0] = "FinReference";
 				valueParm[1] = "is Invalid";
@@ -258,44 +248,20 @@ public class PresentmentServiceController extends ExtendedTestClass {
 				return APIErrorHandlerService.getFailedStatus("30550", valueParm);
 			}
 
-			MapSqlParameterSource map = defaultReadData(presentment);
-			detailExtract.insertData(map);
-			detailExtract.processingPrsentments();
+			presentmentDetailDAO.logRequest(headerId, presentment);
+
+			pde.processingPrsentments(headerId, presentment.getBatchId());
 
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
+		} finally {
+			presentmentDetailDAO.deleteByHeaderId(headerId);
 		}
 
 		logger.debug(Literal.LEAVING);
 		return APIErrorHandlerService.getSuccessStatus();
-
-	}
-
-	public MapSqlParameterSource defaultReadData(Presentment presentment) {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource map = new MapSqlParameterSource();
-		map.addValue("BranchCode", presentment.getBrCode());
-		map.addValue("AgreementNo", presentment.getAgreementNo());
-		map.addValue("InstalmentNo", "0");
-		map.addValue("BFLReferenceNo", presentment.getBrCode());
-		map.addValue("Batchid", presentment.getBatchId());
-		map.addValue("AmountCleared", presentment.getChequeAmount());
-		map.addValue("ClearingDate", presentment.getSetilmentDate());
-		map.addValue("Status", presentment.getStatus());
-
-		map.addValue("Name", presentment.getDestAccHolder());
-		map.addValue("UMRNNo", presentment.getUmrnNo());
-		map.addValue("AccountType", presentment.getAccType());
-		map.addValue("PaymentDue", presentment.getCycleDate());
-		map.addValue("ReasonCode", presentment.getReturnReason());
-
-		map.addValue("Failure reason", presentment.getReturnReason());
-		logger.debug(Literal.LEAVING);
-
-		return map;
 	}
 
 	public PresentmentDetailService getPresentmentDetailService() {
@@ -304,14 +270,6 @@ public class PresentmentServiceController extends ExtendedTestClass {
 
 	public void setPresentmentDetailService(PresentmentDetailService presentmentDetailService) {
 		this.presentmentDetailService = presentmentDetailService;
-	}
-
-	public NotificationService getNotificationService() {
-		return notificationService;
-	}
-
-	public void setNotificationService(NotificationService notificationService) {
-		this.notificationService = notificationService;
 	}
 
 	public DataSource getDataSource() {

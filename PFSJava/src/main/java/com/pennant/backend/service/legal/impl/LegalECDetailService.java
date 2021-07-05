@@ -52,6 +52,7 @@ import org.apache.logging.log4j.Logger;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.legal.LegalECDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.legal.LegalECDetail;
 import com.pennant.backend.service.GenericService;
@@ -68,14 +69,6 @@ public class LegalECDetailService extends GenericService<LegalECDetail> {
 	private static final Logger logger = LogManager.getLogger(LegalECDetailService.class);
 
 	private LegalECDetailDAO legalECDetailDAO;
-
-	public LegalECDetailDAO getLegalECDetailDAO() {
-		return legalECDetailDAO;
-	}
-
-	public void setLegalECDetailDAO(LegalECDetailDAO legalECDetailDAO) {
-		this.legalECDetailDAO = legalECDetailDAO;
-	}
 
 	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method, String usrLanguage) {
 
@@ -94,11 +87,20 @@ public class LegalECDetailService extends GenericService<LegalECDetail> {
 		LegalECDetail legalECDetail = (LegalECDetail) auditDetail.getModelData();
 		LegalECDetail templegalECDetail = null;
 
+		AuditHeader auditHeader = new AuditHeader();
+		auditHeader.setModelData(legalECDetail);
+		auditHeader.setUsrLanguage(PennantConstants.default_Language);
+		List<ErrorDetail> errorDetails = doPostHookValidation(auditHeader);
+		if (errorDetails != null) {
+			errorDetails = ErrorUtil.getErrorDetails(errorDetails, auditHeader.getUsrLanguage());
+			auditDetail.getErrorDetails().addAll(errorDetails);
+		}
+
 		if (legalECDetail.isWorkflow()) {
-			templegalECDetail = getLegalECDetailDAO().getLegalECDetail(legalECDetail.getLegalECId(),
+			templegalECDetail = legalECDetailDAO.getLegalECDetail(legalECDetail.getLegalECId(),
 					TableType.TEMP_TAB.getSuffix());
 		}
-		LegalECDetail befLegalECDetail = getLegalECDetailDAO().getLegalECDetail(legalECDetail.getLegalECId(),
+		LegalECDetail befLegalECDetail = legalECDetailDAO.getLegalECDetail(legalECDetail.getLegalECId(),
 				TableType.MAIN_TAB.getSuffix());
 		LegalECDetail oldLegalECDetail = legalECDetail.getBefImage();
 
@@ -271,15 +273,15 @@ public class LegalECDetailService extends GenericService<LegalECDetail> {
 				legalECDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
 			if (saveRecord) {
-				getLegalECDetailDAO().save(legalECDetail, tableType);
+				legalECDetailDAO.save(legalECDetail, tableType);
 			}
 
 			if (updateRecord) {
-				getLegalECDetailDAO().update(legalECDetail, tableType);
+				legalECDetailDAO.update(legalECDetail, tableType);
 			}
 
 			if (deleteRecord) {
-				getLegalECDetailDAO().delete(legalECDetail, tableType);
+				legalECDetailDAO.delete(legalECDetail, tableType);
 			}
 
 			if (approveRec) {
@@ -303,12 +305,19 @@ public class LegalECDetailService extends GenericService<LegalECDetail> {
 			auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], legalECDetail.getBefImage(),
 					legalECDetail));
 		}
-		getLegalECDetailDAO().deleteList(legalECDetail, tableType);
+		legalECDetailDAO.deleteList(legalECDetail, tableType);
 		return auditList;
 	}
 
 	public List<LegalECDetail> getDetailsList(long legalId, String type) {
-		return getLegalECDetailDAO().getLegalECDetailList(legalId, type);
+		return legalECDetailDAO.getLegalECDetailList(legalId, type);
 	}
 
+	public List<ErrorDetail> doPostHookValidation(AuditHeader auditHeader) {
+		return null;
+	}
+
+	public void setLegalECDetailDAO(LegalECDetailDAO legalECDetailDAO) {
+		this.legalECDetailDAO = legalECDetailDAO;
+	}
 }

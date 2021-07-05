@@ -65,27 +65,39 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 	@Override
 	public LimitTransactionDetail getTransaction(String referenceCode, String referenceNumber, String tranType,
 			long headerId, int schSeq) {
-
-		StringBuilder sql = new StringBuilder("Select TransactionId, ReferenceCode, ReferenceNumber");
-		sql.append(", TransactionType, TransactionDate, OverrideFlag, TransactionAmount, SchSeq");
-		sql.append(", TransactionCurrency, LimitCurrency, LimitAmount, CreatedBy, CreatedOn");
-		sql.append(", LastMntBy, LastMntOn");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" TransactionId, ReferenceCode, ReferenceNumber, TransactionType, TransactionDate");
+		sql.append(", OverrideFlag, TransactionAmount, SchSeq, TransactionCurrency, LimitCurrency");
+		sql.append(", LimitAmount, CreatedBy, CreatedOn, LastMntBy, LastMntOn");
 		sql.append(" From LimitTransactionDetails");
-		sql.append(" where ReferenceCode = :ReferenceCode and ReferenceNumber = :ReferenceNumber");
-		sql.append(" and TransactionType = :TransactionType and HeaderId = :HeaderId and SchSeq = :SchSeq");
+		sql.append(" Where HeaderId = ? and ReferenceCode = ? and ReferenceNumber = ?");
+		sql.append(" and TransactionType = ? and SchSeq = ?");
+
 		logger.trace(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ReferenceCode", referenceCode);
-		source.addValue("ReferenceNumber", referenceNumber);
-		source.addValue("TransactionType", tranType);
-		source.addValue("HeaderId", headerId);
-		source.addValue("SchSeq", schSeq);
-
-		RowMapper<LimitTransactionDetail> typeRowMapper = BeanPropertyRowMapper
-				.newInstance(LimitTransactionDetail.class);
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(),
+					new Object[] { headerId, referenceCode, referenceNumber, tranType, schSeq }, (rs, i) -> {
+						LimitTransactionDetail ltd = new LimitTransactionDetail();
+
+						ltd.setTransactionId(rs.getLong("TransactionId"));
+						ltd.setReferenceCode(rs.getString("ReferenceCode"));
+						ltd.setReferenceNumber(rs.getString("ReferenceNumber"));
+						ltd.setTransactionType(rs.getString("TransactionType"));
+						ltd.setTransactionDate(rs.getTimestamp("TransactionDate"));
+						ltd.setOverrideFlag(rs.getBoolean("OverrideFlag"));
+						ltd.setTransactionAmount(rs.getBigDecimal("TransactionAmount"));
+						ltd.setSchSeq(rs.getInt("SchSeq"));
+						ltd.setTransactionCurrency(rs.getString("TransactionCurrency"));
+						ltd.setLimitCurrency(rs.getString("LimitCurrency"));
+						ltd.setLimitAmount(rs.getBigDecimal("LimitAmount"));
+						ltd.setCreatedBy(rs.getLong("CreatedBy"));
+						ltd.setCreatedOn(rs.getTimestamp("CreatedOn"));
+						ltd.setLastMntBy(rs.getLong("LastMntBy"));
+						ltd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+
+						return ltd;
+					});
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}
@@ -162,10 +174,8 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 	 * This method Deletes the Record from the LIMIT_DETAILS or LIMIT_DETAILS_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Limit Details by key DetailId
 	 * 
-	 * @param Limit
-	 *            Details (limitDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Limit Details (limitDetail)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

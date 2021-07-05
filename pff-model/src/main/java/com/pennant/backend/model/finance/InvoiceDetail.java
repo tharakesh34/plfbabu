@@ -24,6 +24,7 @@ public class InvoiceDetail extends AbstractEntity {
 	private boolean isWaiver;
 	private boolean dbInvSetReq;
 	private EventProperties eventProperties = new EventProperties();
+	private boolean subventionFeeInv;
 
 	public InvoiceDetail() {
 		super();
@@ -149,4 +150,11 @@ public class InvoiceDetail extends AbstractEntity {
 		this.eventProperties = eventProperties;
 	}
 
+	public boolean isSubventionFeeInv() {
+		return subventionFeeInv;
+	}
+
+	public void setSubventionFeeInv(boolean subventionFeeInv) {
+		this.subventionFeeInv = subventionFeeInv;
+	}
 }

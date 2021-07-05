@@ -61,9 +61,9 @@
 										</hbox>
 									</row>
 									<row>
-										<label value="${c:l('label_InterestCertificate_FinanceYear.value')}" />
+										<label id="label_InterestCertificate_FinanceYear" value="${c:l('label_InterestCertificate_FinanceYear.value')}" />
 										<hbox>
-											<space spacing="2px" sclass="mandatory" />
+											<space id="Space_FinanceYear" spacing="2px" sclass="mandatory" />
 											<combobox id="financeYear" width="160px" />
 										</hbox>
 									</row>

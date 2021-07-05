@@ -2617,13 +2617,13 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="100.25.2_pre" author="murthy.y">
+<!-- 	<changeSet id="100.25.2_pre" author="murthy.y">
 		<sql>
 			<![CDATA[
 				delete from  FinFeeDetail_Temp where TaxHeaderId not in (select HeaderId from tax_header_temp);
 			]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="100.25.2" author="murthy.y">
 		<addForeignKeyConstraint constraintName="FK_FFD_T_TH_T_THID" referencedTableName="TAX_Header_Temp"

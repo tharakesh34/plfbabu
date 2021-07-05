@@ -1,14 +1,21 @@
 package com.pennant.backend.service.collateral.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.collateral.CollateralMovement;
+import com.pennant.backend.util.CollateralConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -59,14 +66,16 @@ public class CollateralAssignmentValidation {
 
 		if (collateralAssignment.isNew()) { // for New record or new record into work flow
 
-			if (!collateralAssignment.isWorkflow()) {// With out Work flow only new records  
-				if (befAssignment != null) { // Record Already Exists in the table then error  
+			if (!collateralAssignment.isWorkflow()) {// With out Work flow only new records
+				if (befAssignment != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
-				if (collateralAssignment.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befAssignment != null || tempAssignment != null) { // if records already exists in the main table
+				if (collateralAssignment.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
+																										// is new
+					if (befAssignment != null || tempAssignment != null) { // if records already exists in the main
+																			// table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -96,7 +105,7 @@ public class CollateralAssignmentValidation {
 				}
 			} else {
 
-				if (tempAssignment == null) { // if records not exists in the Work flow table 
+				if (tempAssignment == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
@@ -115,4 +124,37 @@ public class CollateralAssignmentValidation {
 		return auditDetail;
 	}
 
+	public void saveCollateralMovements(String finReference) {
+		String module = FinanceConstants.MODULE_NAME;
+		List<CollateralAssignment> caList = collateralAssignmentDAO.getCollateralAssignmentByFinRef(finReference,
+				module, "");
+
+		if (CollectionUtils.isEmpty(caList)) {
+			return;
+		}
+
+		Date appDate = SysParamUtil.getAppDate();
+		List<CollateralMovement> movements = new ArrayList<>();
+
+		for (CollateralAssignment ca : caList) {
+			CollateralMovement movement = new CollateralMovement();
+
+			movement.setModule(module);
+			movement.setCollateralRef(ca.getCollateralRef());
+			movement.setReference(ca.getReference());
+			movement.setAssignPerc(BigDecimal.ZERO);
+			movement.setValueDate(appDate);
+			movement.setProcess(CollateralConstants.PROCESS_AUTO);
+
+			movements.add(movement);
+
+			if (movements.size() == PennantConstants.CHUNK_SIZE) {
+				collateralAssignmentDAO.saveList(movements);
+				movements.clear();
+			}
+		}
+
+		collateralAssignmentDAO.saveList(movements);
+		collateralAssignmentDAO.deLinkCollateral(finReference);
+	}
 }

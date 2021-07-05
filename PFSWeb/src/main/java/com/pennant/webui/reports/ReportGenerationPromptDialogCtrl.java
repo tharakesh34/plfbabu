@@ -54,6 +54,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -105,10 +106,12 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceScheduleReportData;
+import com.pennant.backend.model.finance.LinkedFinances;
 import com.pennant.backend.model.reports.ReportConfiguration;
 import com.pennant.backend.model.reports.ReportFilterFields;
 import com.pennant.backend.model.reports.ReportSearchTemplate;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.finance.LinkedFinancesService;
 import com.pennant.backend.service.reports.ReportConfigurationService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -174,6 +177,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	private List<ReportSearchTemplate> reportSearchTemplateFieldsList;
 	private ReportConfigurationService reportConfigurationService;
 	private FinanceDetailService financeDetailService;
+	private LinkedFinancesService linkedFinancesService;
 	private FinScheduleListItemRenderer renderer;
 
 	private StringBuilder searchCriteriaDesc = new StringBuilder(" ");
@@ -183,24 +187,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	};
 
 	public enum FIELDTYPE {
-		TXT,
-		DATE,
-		TIME,
-		DATETIME,
-		STATICLIST,
-		DYNAMICLIST,
-		LOVSEARCH,
-		DECIMAL,
-		INTRANGE,
-		DECIMALRANGE,
-		NUMBER,
-		CHECKBOX,
-		MULTISELANDLIST,
-		MULTISELINLIST,
-		DATERANGE,
-		DATETIMERANGE,
-		TIMERANGE,
-		STATICVALUE
+		TXT, DATE, TIME, DATETIME, STATICLIST, DYNAMICLIST, LOVSEARCH, DECIMAL, INTRANGE, DECIMALRANGE, NUMBER,
+		CHECKBOX, MULTISELANDLIST, MULTISELINLIST, DATERANGE, DATETIMERANGE, TIMERANGE, STATICVALUE
 	};
 
 	private boolean isExcel = false;
@@ -546,6 +534,13 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		hbox.appendChild(btn);
 		lovSearchFieldRow.appendChild(hbox);
 		dymanicFieldsRows.appendChild(lovSearchFieldRow);
+
+		if (StringUtils.equals(reportMenuCode, "menu_Item_GST_InvoiceReport")) {
+			lovSearchFieldRow.setId("row_GSTInv_" + aReportFieldsDetails.getFieldID());
+			if (aReportFieldsDetails.getFieldID() == 3 || aReportFieldsDetails.getFieldID() == 4) {
+				lovSearchFieldRow.setVisible(false);
+			}
+		}
 		logger.debug("Leaving");
 	}
 
@@ -791,6 +786,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		staticListRow.appendChild(hbox);
 		dymanicFieldsRows.appendChild(staticListRow);
 
+		if (StringUtils.equals(reportMenuCode, "menu_Item_GST_InvoiceReport")) {
+			comboBox.setSelectedIndex(1);
+		}
 		logger.debug("Leaving");
 	}
 
@@ -884,9 +882,30 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			reportSearchTemplateList = new ArrayList<ReportSearchTemplate>();
 		}
 
+		long reqRowId = 0;
+		if (StringUtils.equals(reportMenuCode, "menu_Item_GST_InvoiceReport")) {
+			Combobox invoiceFor = (Combobox) dymanicFieldsRows.getFellow("1");
+			String invForVal = StringUtils.trimToEmpty(invoiceFor.getSelectedItem().getValue().toString());
+
+			if ("D".equals(invForVal)) {
+				reqRowId = 4;
+			} else if ("M".equals(invForVal)) {
+				reqRowId = 3;
+			} else {
+				reqRowId = 2;
+			}
+		}
+
 		for (int i = 0; i < reportConfiguration.getListReportFieldsDetails().size(); i++) {
 			ReportFilterFields aReportFieldsDetails = reportConfiguration.getListReportFieldsDetails().get(i);
 			String filedId = Long.toString(aReportFieldsDetails.getFieldID());
+			if (reqRowId > 0) {
+				if (aReportFieldsDetails.getFieldID() >= 2 && aReportFieldsDetails.getFieldID() <= 4) {
+					if (reqRowId != aReportFieldsDetails.getFieldID()) {
+						continue;
+					}
+				}
+			}
 			if (dymanicFieldsRows.hasFellow(filedId)) {
 				filter = " = ";
 				// COMPONENT
@@ -1252,7 +1271,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 									throw new WrongValueException(fromDateBox,
 											Labels.getLabel("label_Error_FromValueMustGretaerTo.vlaue"));
 								}
-							} else if (StringUtils.equals("menu_Item_PresentmentStatusReport", reportMenuCode)) {//FIXME
+							} else if (StringUtils.equals("menu_Item_PresentmentStatusReport", reportMenuCode)) {// FIXME
 								int diffentDays = SysParamUtil.getValueAsInt("PRESENTMENT_DAYS_DEF");
 								if (DateUtility.getDaysBetween(((Datebox) fromDateBox).getValue(),
 										((Datebox) toDateBox).getValue()) > diffentDays) {
@@ -1800,13 +1819,13 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				if (dialogWindow != null) {
 					auditMap.put("dialogWindow", dialogWindow);
 				}
-				
+
 				argsMap.putAll(auditMap);
 
 				ReportsUtil.showPDF(PathUtil.REPORTS_ORGANIZATION, reportName, argsMap, dataSourceName);
 			} else {
 				ReportsUtil.downloadExcel(PathUtil.REPORTS_ORGANIZATION, reportName, argsMap, dataSourceName);
-				
+
 				if (selectTab != null) {
 					selectTab.onClose();
 				}
@@ -2389,14 +2408,14 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			boolean invoiceExist = false;
 			if (filters != null && filters.size() >= 2) {
 				for (ReportSearchTemplate template : filters) {
-					if (template.getFieldID() == 1) { // CustCif
+					if (template.getFieldID() == 2 || template.getFieldID() == 3 || template.getFieldID() == 4) { // CustCif
 						custCif = template.getFieldValue();
-					} else if (template.getFieldID() == 2) { // Fin Reference
+					} else if (template.getFieldID() == 5) { // Fin Reference
 						finReference = template.getFieldValue();
-					} else if (template.getFieldID() == 3) { // Invoice Number
+					} else if (template.getFieldID() == 6) { // Invoice Number
 						invoiceExist = true;
-						//break;
-					} else if (template.getFieldID() == 4) { // Dates
+						// break;
+					} else if (template.getFieldID() == 7) { // Dates
 						String[] fromDateArray = template.getFieldValue().split("&");
 						fromDate = DateUtility.format(DateUtility.getDate(fromDateArray[0]),
 								PennantConstants.DBDateFormat);
@@ -2409,7 +2428,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 							}
 						}
 
-					} else if (template.getFieldID() == 5) {
+					} else if (template.getFieldID() == 8) {
 						// Invoice Type
 						if (StringUtils.isNotBlank(template.getFieldValue())) {
 							if (StringUtils.equals(Labels.getLabel("Invoice_Type_Credit"), template.getFieldValue())) {
@@ -2432,7 +2451,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
 
-			//check if invoice number is existed or not
+			// check if invoice number is existed or not
 			boolean invoiceNoExist = getReportConfigurationService().isGstInvoiceExist(custCif, finReference,
 					invoiceType, DateUtility.getDBDate(fromDate), DateUtility.getDBDate(toDate));
 
@@ -2441,7 +2460,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 						null, null, null);
 			} else {
 				if (invoiceExist) {
-					MessageUtil.showMessage(Labels.getLabel("info.invoice_cust_not_invoice")); //TODO validate message
+					MessageUtil.showMessage(Labels.getLabel("info.invoice_cust_not_invoice")); // TODO validate message
 					return;
 				} else {
 					MessageUtil.showMessage(Labels.getLabel("info.invoice_not_generate"));
@@ -2494,6 +2513,14 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			}
 			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
 					null, null);
+		} else if ("menu_Item_NoObjectionCertificate".equals(reportMenuCode)) {
+			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,
+					false);
+			String finref = ((ReportSearchTemplate) filters.get(0)).getFieldValue();
+			processLinkedLoans(finref);
+			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
+			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
+					null, null);
 		}
 		// #PSD:152141 UAT2: Users:Report: Indaas accounting report not available -START
 		else if (StringUtils.equals(reportMenuCode, "menu_Item_AmortizationReport")) {
@@ -2514,6 +2541,43 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		}
 
 		logger.info(Literal.LEAVING);
+	}
+
+	private void processLinkedLoans(String finRef) {
+		List<LinkedFinances> linkedFinances = linkedFinancesService.getLinkedFinancesByFinRef(finRef, "_AView");
+		List<LinkedFinances> linkedFinances2 = linkedFinancesService.getLinkedFinancesByRef(finRef, "_AView");
+		if (CollectionUtils.isNotEmpty(linkedFinances) || CollectionUtils.isNotEmpty(linkedFinances2)) {
+			String[] parameters = new String[2];
+			parameters[0] = finRef;
+			StringBuilder ref = new StringBuilder("");
+			for (LinkedFinances LinkedFinance : linkedFinances) {
+
+				if (ref.length() > 0) {
+					ref.append(", ");
+				}
+
+				ref.append(LinkedFinance.getFinReference());
+
+			}
+			for (LinkedFinances LinkedFinance : linkedFinances2) {
+
+				if (ref.length() > 0) {
+					ref.append(", ");
+				}
+
+				ref.append(LinkedFinance.getLinkedReference());
+
+			}
+			parameters[1] = ref.toString();
+			if (MessageUtil.confirm(
+					parameters[0] + " is Linked with " + parameters[1]
+							+ " . Please Delink the loan first then Proceed ",
+					MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
+				ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+				wve.add(new WrongValueException("Please Delink the loan first then Proceed "));
+				showErrorDetails(wve);
+			}
+		}
 	}
 
 	private StringBuilder getWhereClauseForAMZ(StringBuilder whereCond, Date fromDate, Date toDate) {
@@ -2554,8 +2618,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		if (doClose(false)) {
@@ -2618,6 +2681,24 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		ReportFilterFields aReportFieldsDetails = reportConfiguration.getListReportFieldsDetails().get(0);
 		valueLabelMap.put(aReportFieldsDetails.getFieldDBName(), value);
 
+		if (StringUtils.equals(reportMenuCode, "menu_Item_GST_InvoiceReport")) {
+			Row customerRow = (Row) dymanicFieldsRows.getFellow("row_GSTInv_2");
+			Row maniufacturerRow = (Row) dymanicFieldsRows.getFellow("row_GSTInv_3");
+			Row dealerRow = (Row) dymanicFieldsRows.getFellow("row_GSTInv_4");
+			if (StringUtils.equals(value, "D")) {
+				customerRow.setVisible(false);
+				maniufacturerRow.setVisible(false);
+				dealerRow.setVisible(true);
+			} else if (StringUtils.equals(value, "M")) {
+				customerRow.setVisible(false);
+				maniufacturerRow.setVisible(true);
+				dealerRow.setVisible(false);
+			} else {
+				customerRow.setVisible(true);
+				maniufacturerRow.setVisible(false);
+				dealerRow.setVisible(false);
+			}
+		}
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -2656,7 +2737,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				Map<String, Object> filterMap = (Map<String, Object>) lovSearchBufferMap.get(valuestextBox.getId());
 				lovSearchMap = (Map<String, Object>) ExtendedMultipleSearchListBox.show(
 						this.window_ReportPromptFilterCtrl, button.getId(),
-						filterMap == null ? new HashMap<String, Object>() : filterMap);
+						filterMap == null ? new HashMap<String, Object>() : filterMap, filters);
 
 				// Put in map for select next time
 				lovSearchBufferMap.put(valuestextBox.getId(), lovSearchMap);
@@ -2784,6 +2865,11 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			writeOffFilter[0] = Filter.equalTo("FINISACTIVE", 0);
 			writeOffFilter[1] = Filter.in("CLOSINGSTATUS", FinanceConstants.CLOSE_STATUS_WRITEOFF);
 			filters = writeOffFilter;
+		} else if (StringUtils.equals(reportMenuCode, "menu_Item_SubventionAmortReport")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_SubventionMISReport")) {
+			Filter[] subFilter = new Filter[1];
+			subFilter[0] = Filter.greaterThan("manufacturerdealerid", 0);
+			filters = subFilter;
 		}
 		logger.debug("Leaving");
 		return filters;
@@ -2955,19 +3041,25 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			Long key = entry.getKey();
 			List<String> value = entry.getValue();
 			if (fieldID < key) {
-				// finding group for the clicked(clear button) one. 
+				// finding group for the clicked(clear button) one.
 				long index = 0;
 
-				if (aReportFieldsDetails.getFilterFileds() != null) { // checking whether clicked one is parent or child  
+				if (aReportFieldsDetails.getFilterFileds() != null) { // checking whether clicked one is parent or child
 					index = key - fieldID;
 				}
 
 				for (long i = index; i < value.size(); i++) { // clearing corresponding child in particular group.
-					Component component = dymanicFieldsRows.getFellow(Long.toString(fieldID));
-					Textbox textbox = (Textbox) component;
-					textbox.setValue("");
-					Textbox lovDisplayText = (Textbox) component.getNextSibling();
-					lovDisplayText.setValue("");
+					if (dymanicFieldsRows.getFellowIfAny(Long.toString(fieldID)) != null) {
+						Component component = dymanicFieldsRows.getFellow(Long.toString(fieldID));
+						if (component instanceof Textbox) {
+							Textbox textbox = (Textbox) component;
+							textbox.setValue("");
+							if (component.getNextSibling() != null && component.getNextSibling() instanceof Textbox) {
+								Textbox lovDisplayText = (Textbox) component.getNextSibling();
+								lovDisplayText.setValue("");
+							}
+						}
+					}
 					fieldID++;
 				}
 				break mapRenderer;
@@ -2975,6 +3067,22 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		}
 		renderMap.clear();
 		logger.debug("Entering");
+	}
+
+	private void showErrorDetails(ArrayList<WrongValueException> wve) {
+		logger.debug("Entering");
+
+		if (wve.size() > 0) {
+			logger.debug("Throwing occured Errors By using WrongValueException");
+
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
+		}
+
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -3007,7 +3115,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			toDateExceedFlag = true;
 		}
 		if (diffDays > 31) {
-			MessageUtil.showMessage(Labels.getLabel("info.invoice_toDate_fromDate_diff_days")); //TODO validate message
+			MessageUtil.showMessage(Labels.getLabel("info.invoice_toDate_fromDate_diff_days")); // TODO validate message
 			isValidInput = false;
 		} else if (toDateExceedFlag) {
 			MessageUtil.showMessage(Labels.getLabel("info.invoice_toDate_exceed_businessDate") + " "
@@ -3053,5 +3161,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 	public void setCollateralAssignmentDAO(CollateralAssignmentDAO collateralAssignmentDAO) {
 		this.collateralAssignmentDAO = collateralAssignmentDAO;
+	}
+
+	public void setLinkedFinancesService(LinkedFinancesService linkedFinancesService) {
+		this.linkedFinancesService = linkedFinancesService;
 	}
 }

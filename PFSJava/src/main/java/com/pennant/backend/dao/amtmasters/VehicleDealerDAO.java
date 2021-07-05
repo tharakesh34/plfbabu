@@ -80,4 +80,6 @@ public interface VehicleDealerDAO {
 
 	VehicleDealer getVehicleDealerById(Long id, String delarType, String type);
 
+	int getApprovedVehicleDealerCountById(long manufacturerDealerId, String delarType);
+
 }

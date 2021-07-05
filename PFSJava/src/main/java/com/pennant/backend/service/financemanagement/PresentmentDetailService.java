@@ -49,6 +49,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
+import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
 
 public interface PresentmentDetailService {
 
@@ -59,22 +60,11 @@ public interface PresentmentDetailService {
 	List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, boolean isApprove,
 			String type);
 
-	PresentmentDetail presentmentCancellation(String presentmentRef, String bounceCode) throws Exception;
-
-	void updatePresentmentDetails(String presentmentRef, String status, long bounceId, long manualAdviseId,
-			String errorDesc);
-
-	void updatePresentmentDetails(String presentmentRef, String status, String errorCode, String errorDesc);
-
 	void updatePresentmentIdAsZero(long presentmentId);
-
-	void updateFinanceDetails(String presentmentRef);
 
 	long getSeqNumber(String tableNme);
 
 	String getPaymenyMode(String presentmentRef);
-
-	PresentmentDetail getPresentmentDetailsByMode(String presentmentRef, String paymentMode);
 
 	void processReceipts(PresentmentDetail presentmentDetail) throws Exception;
 
@@ -83,8 +73,6 @@ public interface PresentmentDetailService {
 	FinanceDetail getFinanceDetailsByRef(String finReference);
 
 	FinanceMain getDefualtPostingDetails(String finReference, Date schDate);
-
-	PresentmentDetail getPresentmentDetail(String presentmentRef);
 
 	PresentmentDetail getPresentmentDetailByFinRefAndPresID(String finReference, long presentmentId);
 
@@ -108,11 +96,9 @@ public interface PresentmentDetailService {
 	void executeReceipts(PresentmentDetail presentmentDetail, boolean isFullEMIPresent, boolean isRealized)
 			throws Exception;
 
-	void updatePresentmentDetail(String batchId, String pexcSuccess);
+	void updatePresentmentDetail(long id, String pexcSuccess, String utrNumber);
 
-	String getPresementStatus(String presentmentRef);
+	void updatePresentmentDetail(long id, String status, Long linkedTranId, String utrNumber);
 
-	void updatePresentmentDetail(String presentmentRef, String status, Long linkedTranId);
-
-	long getPresentmentId(String presentmentRef);
+	void setProperties(PresentmentDetailExtract pde);
 }

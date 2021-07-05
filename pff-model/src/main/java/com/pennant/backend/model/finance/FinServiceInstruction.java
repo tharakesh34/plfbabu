@@ -64,7 +64,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	private String processStage;
 	@XmlElement
 	private String reqType;
-	//### 27-09-2019 Ticket id:124998
+	// ### 27-09-2019 Ticket id:124998
 	@XmlElement
 	private boolean receiptdetailExits;
 	@XmlElement
@@ -172,9 +172,9 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	private boolean wif;
 	private BigDecimal remPartPayAmt = BigDecimal.ZERO;
 	@XmlElement
-	private long UploadDetailId;//### 18-07-2018 Ticket ID : 124998,receipt upload
+	private long UploadDetailId;// ### 18-07-2018 Ticket ID : 124998,receipt upload
 
-	//### 27-07-2018 Ticket id:124998
+	// ### 27-07-2018 Ticket id:124998
 	@XmlElement
 	private String receiptFileName;
 
@@ -217,7 +217,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	@XmlElement(name = "depositAccount")
 	private String depositAcc;
 
-	//### 16-08-2018 Ticket ID : 124998,receipt upload
+	// ### 16-08-2018 Ticket ID : 124998,receipt upload
 	private BigDecimal closingBal = BigDecimal.ZERO;
 
 	@XmlElement
@@ -300,6 +300,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	private boolean normalLoanClosure = false;
 	@XmlElement
 	private long paymentId = Long.MIN_VALUE;
+	private Long logKey;
 
 	public FinServiceInstruction copyEntity() {
 		FinServiceInstruction entity = new FinServiceInstruction();
@@ -450,6 +451,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 		entity.setRecAgainst(this.recAgainst);
 		entity.setCollectionAgency(this.collectionAgency);
 		entity.setDivision(this.division);
+		entity.setLogKey(this.logKey);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -1495,7 +1497,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	public void setPaymentId(long paymentId) {
 		this.paymentId = paymentId;
 	}
-	
+
 	public BigDecimal getTdsAmount() {
 		return tdsAmount;
 	}
@@ -1535,4 +1537,13 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	public void setDivision(String division) {
 		this.division = division;
 	}
+
+	public Long getLogKey() {
+		return logKey;
+	}
+
+	public void setLogKey(Long logKey) {
+		this.logKey = logKey;
+	}
+
 }

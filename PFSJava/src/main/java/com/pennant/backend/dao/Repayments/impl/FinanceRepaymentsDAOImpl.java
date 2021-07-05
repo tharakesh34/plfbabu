@@ -329,20 +329,14 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 
 	@Override
 	public void deleteRpyDetailbyLinkedTranId(long linkedTranId, String finReference) {
-		logger.debug("Entering");
+		String sql = "Delete From FinRepayDetails where LinkedTranId = ? and FinReference = ?";
 
-		FinanceRepayments financeRepayments = new FinanceRepayments();
-		financeRepayments.setFinReference(finReference);
-		financeRepayments.setLinkedTranId(linkedTranId);
+		logger.debug(Literal.SQL + sql);
 
-		StringBuilder deleteSql = new StringBuilder(" DELETE From FinRepayDetails");
-		deleteSql.append(" where LinkedTranId=:LinkedTranId AND FinReference =:FinReference ");
-
-		logger.debug("selectSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeRepayments);
-
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setLong(1, linkedTranId);
+			ps.setString(2, finReference);
+		});
 	}
 
 	@Override
@@ -480,8 +474,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set ValueDate=:ValueDate , FinEvent=:FinEvent , RepayAmount=:RepayAmount , ");
 		updateSql.append(" PriAmount=:PriAmount , PftAmount=:PftAmount , TotalRefund=:TotalRefund , ");
-		updateSql.append(
-				" TotalWaiver=:TotalWaiver , EarlyPayEffMtd=:EarlyPayEffMtd , ");
+		updateSql.append(" TotalWaiver=:TotalWaiver , EarlyPayEffMtd=:EarlyPayEffMtd , ");
 		updateSql.append(" EarlyPayDate=:EarlyPayDate, SchdRegenerated=:SchdRegenerated , LinkedTranId=:LinkedTranId,");
 		updateSql.append(" RealizeUnAmz=:RealizeUnAmz, CpzChg=:CpzChg,");
 		updateSql.append(
@@ -602,11 +595,9 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		insertSql.append(" ProfitSchd , ProfitSchdPaid , PrincipalSchd , PrincipalSchdPaid , ");
 		insertSql.append(
 				" RefundReq , WaivedAmt , RepayBalance, PenaltyPayNow, SchdFee, SchdFeePaid, SchdFeeBal, SchdFeePayNow,");
-		insertSql.append(
-				" LatePftSchd, LatePftSchdPaid, LatePftSchdBal, LatePftSchdPayNow,  ");
+		insertSql.append(" LatePftSchd, LatePftSchdPaid, LatePftSchdBal, LatePftSchdPayNow,  ");
 		insertSql.append(" PftSchdWaivedNow , LatePftSchdWaivedNow, ");
-		insertSql.append(
-				" PriSchdWaivedNow, SchdFeeWaivedNow, ");
+		insertSql.append(" PriSchdWaivedNow, SchdFeeWaivedNow, ");
 		insertSql.append(" TaxHeaderId, WaiverId) ");
 		insertSql.append(
 				" Values(:RepayID,:RepaySchID, :FinReference , :SchDate , :SchdFor , :LinkedTranId , :ProfitSchdBal , :PrincipalSchdBal , ");
@@ -615,11 +606,9 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		insertSql.append(" :ProfitSchd , :ProfitSchdPaid , :PrincipalSchd , :PrincipalSchdPaid  , ");
 		insertSql.append(
 				" :RefundReq , :WaivedAmt , :RepayBalance, :PenaltyPayNow , :SchdFee, :SchdFeePaid, :SchdFeeBal, :SchdFeePayNow,");
-		insertSql.append(
-				" :LatePftSchd, :LatePftSchdPaid, :LatePftSchdBal, :LatePftSchdPayNow, ");
+		insertSql.append(" :LatePftSchd, :LatePftSchdPaid, :LatePftSchdBal, :LatePftSchdPayNow, ");
 		insertSql.append(" :PftSchdWaivedNow , :LatePftSchdWaivedNow, ");
-		insertSql.append(
-				" :PriSchdWaivedNow, :SchdFeeWaivedNow, ");
+		insertSql.append(" :PriSchdWaivedNow, :SchdFeeWaivedNow, ");
 		insertSql.append(" :TaxHeaderId, :WaiverId) ");
 
 		logger.debug("insertSql: " + insertSql.toString());

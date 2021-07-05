@@ -53,7 +53,7 @@ import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pff.settlement.dao.SettlementProcessDAO;
 import com.pennanttech.pff.settlementprocess.model.SettlementProcess;
 
-import AccountEventConstants.AccountingEvent;
+import com.pennant.app.constants.AccountingEvent;
 
 public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess> implements ProcessRecord {
 	private SettlementProcessDAO settlementProcessDAO;

@@ -85,8 +85,7 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 	/**
 	 * The Call method.
 	 * 
-	 * @param parent
-	 *            The parent component
+	 * @param parent The parent component
 	 * @return a BeanObject from the listBox or null.
 	 */
 	public static Object show(Component parent, List<?> custDedupList, String dedupFields, CustomerDedup custDedup,
@@ -131,7 +130,7 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 		brdLayout.setWidth("100%");
 		brdLayout.setParent(this);
 
-		//Center for BorderLayout
+		// Center for BorderLayout
 		final Center center = new Center();
 		center.setBorder("none");
 		center.setFlex(true);
@@ -141,20 +140,20 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 		Div divCenter = new Div();
 		divCenter.setParent(center);
 
-		//North for BorderLayout
+		// North for BorderLayout
 		North north = new North();
 		north.setParent(brdLayout);
 
-		//Div for North
+		// Div for North
 		Div divNorth = new Div();
 		divNorth.setSclass("z-toolbar");
 		divNorth.setParent(north);
 
-		//South for BorderLayout
+		// South for BorderLayout
 		South south = new South();
 		south.setParent(brdLayout);
 
-		//Groupbox for Rows
+		// Groupbox for Rows
 		Groupbox grpBox = new Groupbox();
 		grpBox.setMold("3d");
 		grpBox.setParent(divCenter);
@@ -163,7 +162,7 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 		Groupbox grpBoxForListbox = new Groupbox();
 		grpBoxForListbox.setParent(divCenter);
 
-		//Components for buttons alignments
+		// Components for buttons alignments
 		Hbox hboxForButton = new Hbox();
 		hboxForButton.setSclass("hboxRemoveWhiteStrips");
 		hboxForButton.setWidth("100%");
@@ -171,19 +170,19 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 		hboxForButton.setPack("stretch");
 		hboxForButton.setParent(divNorth);
 
-		//Toolbar for start
+		// Toolbar for start
 		Toolbar startToolbar = new Toolbar();
 		startToolbar.setAlign("start");
 		startToolbar.setSclass("toolbar-start");
 		startToolbar.setParent(hboxForButton);
 
-		//Toolbar for Center
+		// Toolbar for Center
 		Toolbar centerToolbar = new Toolbar();
 		centerToolbar.setAlign("center");
 		centerToolbar.setSclass("toolbar-center");
 		centerToolbar.setParent(hboxForButton);
 
-		//Toolbar for End
+		// Toolbar for End
 		Toolbar endToolbar = new Toolbar();
 		endToolbar.setAlign("end");
 		endToolbar.setSclass("toolbar-end");
@@ -200,7 +199,11 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 		final Button btnCancel = new Button();
 		btnCancel.setSclass("z-toolbarbutton");
 		btnCancel.setLabel(Labels.getLabel("button_DuplicateRecord_label"));
-		btnCancel.addEventListener("onClick", new OnCancelListener());
+		if (StringUtils.trimToNull(custDedup.getFinType()) != null) {
+			btnCancel.addEventListener("onClick", new OnCloseListener());
+		} else {
+			btnCancel.addEventListener("onClick", new OnCancelListener());
+		}
 		btnCancel.setParent(startToolbar);
 
 		// Button for Help
@@ -210,7 +213,7 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 		btnClose.addEventListener("onClick", new OnCloseListener());
 		btnClose.setParent(endToolbar);
 
-		//Label For Title
+		// Label For Title
 		Label titleLabel = new Label();
 		titleLabel.setValue(Labels.getLabel("window_CustomerDedupDialog.title"));
 		titleLabel.setSclass("label-heading");
@@ -218,7 +221,7 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 
 		// Grid Details for Checking Customer Details
 		Grid grid = new Grid();
-		//grid.setSizedByContent(true);
+		// grid.setSizedByContent(true);
 		grid.setParent(grpBox);
 
 		Columns columns = new Columns();
@@ -288,6 +291,11 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 		 */
 		this.listHeaders = headerList.split(",");
 		for (int i = 0; i < this.listHeaders.length; i++) {
+			if (StringUtils.trimToNull(custDedup.getFinType()) != null) {
+				if (listHeaders[i].equalsIgnoreCase("Override")) {
+					continue;
+				}
+			}
 			final Listheader listheader = new Listheader();
 			listheader.setLabel(getLabel(this.listHeaders[i]));
 			listheader.setHflex("min");
@@ -524,7 +532,7 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 					fieldValue = (String) data.getClass().getMethod(fieldMethod).invoke(data);
 					currentFieldValue = (String) getCustomerDedup().getClass().getMethod(fieldMethod)
 							.invoke(getCustomerDedup());
-					// Customer EID Number formating 
+					// Customer EID Number formating
 					if (StringUtils.equals(fieldMethod, "get" + Labels.getLabel("label_FinanceDeDupListCustCRCPR"))) {
 						if (fieldValue != null && currentFieldValue != null) {
 							fieldValue = PennantApplicationUtil.formatEIDNumber(fieldValue);

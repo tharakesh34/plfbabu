@@ -13,6 +13,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -43,9 +44,10 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity {
 	private List<FinCovenantType> finCovenantTypeList = new ArrayList<>(1);
 	private List<Covenant> covenants = new ArrayList<>();
 	private List<FinOption> finOptions = new ArrayList<>();
+	private List<CollateralAssignment> collateralAssignments = new ArrayList<>();
 
-	//Is TDS Applicable
-	private boolean tDSApplicable = false;//Clix added new TDS Applicable Flag
+	// Is TDS Applicable
+	private boolean tDSApplicable = false;// Clix added new TDS Applicable Flag
 
 	public boolean istDSApplicable() {
 		return tDSApplicable;
@@ -68,6 +70,7 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("covenants");
 		excludeFields.add("finOptions");
+		excludeFields.add("collateralAssignments");
 		return excludeFields;
 	}
 
@@ -205,6 +208,14 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity {
 
 	public void setTdsLimit(BigDecimal tdsLimit) {
 		this.tdsLimit = tdsLimit;
+	}
+
+	public List<CollateralAssignment> getCollateralAssignments() {
+		return collateralAssignments;
+	}
+
+	public void setCollateralAssignments(List<CollateralAssignment> collateralAssignments) {
+		this.collateralAssignments = collateralAssignments;
 	}
 
 }

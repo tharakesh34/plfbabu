@@ -320,8 +320,10 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> minList;
 
 	private static List<ValueLabel> npaPaymentTypesList;
+	private static List<ValueLabel> subVentionTypeList;
 
 	private static List<ValueLabel> receiptModeWithOnline = new ArrayList<>();
+	private static List<ValueLabel> taxInvoiceForList;
 
 	private static List<ValueLabel> ocrApplicableList;
 	private static List<ValueLabel> ocrContributorList;
@@ -382,8 +384,7 @@ public class PennantStaticListUtil {
 	/**
 	 * Adds the custom extended field master.
 	 * 
-	 * @param code
-	 *            The master code.
+	 * @param code The master code.
 	 */
 	public void addExtendedFieldMaster(String code) {
 		if (code == null) {
@@ -1373,6 +1374,8 @@ public class PennantStaticListUtil {
 			dealerType.add(new ValueLabel("TVAGENCY", Labels.getLabel("label_Technical_Verification")));
 			dealerType.add(new ValueLabel("PDAGENCY", Labels.getLabel("label_Personal_Discussion")));
 			dealerType.add(new ValueLabel("SVDM", Labels.getLabel("label_Sourcing_Vendor")));
+			dealerType.add(new ValueLabel("DSM", Labels.getLabel("label_Dealer_Details")));
+			dealerType.add(new ValueLabel("MANF", Labels.getLabel("label_Manufacturer_Details")));
 		}
 		return dealerType;
 	}
@@ -1848,6 +1851,8 @@ public class PennantStaticListUtil {
 			// remFeeSchdMethodList.add(new
 			// ValueLabel(CalculationConstants.REMFEE_WAIVED_BY_BANK,
 			// Labels.getLabel("label_RemFee_WaivedByBank")));
+			remFeeSchdMethodList
+					.add(new ValueLabel(CalculationConstants.FEE_SUBVENTION, Labels.getLabel("label_Fee_Subvention")));
 		}
 		return remFeeSchdMethodList;
 	}
@@ -2240,6 +2245,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_FinSerEvent_HoldEMI"), "HLDE"));
 			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_COVENANTS,
 					Labels.getLabel("label_FinSerEvent_Covenants"), "COVN"));
+			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_COLLATERAL,
+					Labels.getLabel("label_FinSerEvent_Collateral"), "COLL"));
 			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD,
 					Labels.getLabel("label_FinSerEvent_ChangeSchdMtd"), "CSCH"));
 			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_FEEWAIVERS,
@@ -2261,6 +2268,8 @@ public class PennantStaticListUtil {
 				events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_RESTRUCTURE,
 						Labels.getLabel("label_FinSerEvent_Restructure"), "RSTCR"));
 			}
+			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_LINKDELINK,
+					Labels.getLabel("label_FinSerEvent_LinkDelink"), "LDFIN"));
 		}
 		return events;
 	}
@@ -4273,8 +4282,7 @@ public class PennantStaticListUtil {
 	/**
 	 * Adds the custom extended field master.
 	 * 
-	 * @param code
-	 *            The master code.
+	 * @param code The master code.
 	 */
 	public void addQueryDetailExtRoles(List<ValueLabel> list) {
 		queryDetailExtRolesList = new ArrayList<>();
@@ -5420,7 +5428,7 @@ public class PennantStaticListUtil {
 
 	}
 
-	//Stepping Details
+	// Stepping Details
 	public static List<ValueLabel> getCalcOfStepsList() {
 		if (calcOfstepsList == null) {
 			calcOfstepsList = new ArrayList<ValueLabel>();
@@ -5455,5 +5463,24 @@ public class PennantStaticListUtil {
 		}
 		return stepDisbCalCodes;
 
+	}
+
+	public static List<ValueLabel> getSubVentionFrom() {
+		if (subVentionTypeList == null) {
+			subVentionTypeList = new ArrayList<>(2);
+			subVentionTypeList.add(new ValueLabel("DSM", Labels.getLabel("label_Dealer")));
+			subVentionTypeList.add(new ValueLabel("MANF", Labels.getLabel("label_Manufacturer")));
+		}
+		return subVentionTypeList;
+	}
+
+	public static List<ValueLabel> getTaxInvoiceFor() {
+		if (taxInvoiceForList == null) {
+			taxInvoiceForList = new ArrayList<>(3);
+			taxInvoiceForList.add(new ValueLabel("C", Labels.getLabel("label_TaxInvoiceFor_Customer")));
+			taxInvoiceForList.add(new ValueLabel("D", Labels.getLabel("label_TaxInvoiceFor_Dealer")));
+			taxInvoiceForList.add(new ValueLabel("M", Labels.getLabel("label_TaxInvoiceFor_Manufacturer")));
+		}
+		return taxInvoiceForList;
 	}
 }

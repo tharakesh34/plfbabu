@@ -1,5 +1,7 @@
 package com.pennanttech.pffws;
 
+import java.util.List;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -9,10 +11,15 @@ import javax.ws.rs.Produces;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.LoanPendingDetails;
 import com.pennant.backend.model.finance.ChequeHeader;
+import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennant.pff.model.subvention.SubventionHeader;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.ws.model.covenantStatus.CovenantStatus;
+import com.pennanttech.ws.model.customer.AgreementRequest;
+import com.pennanttech.ws.model.eligibility.AgreementData;
 import com.pennanttech.ws.model.finance.DisbRequest;
 import com.pennanttech.ws.model.finance.FinAdvPaymentDetail;
 
@@ -153,4 +160,22 @@ public interface FinServiceInstRESTService {
 	@POST
 	@Path("/loanInstructionService/nonLanReceipt")
 	public FinanceDetail nonLanReceipt(FinServiceInstruction finServiceInstRequest) throws ServiceException;
+
+	@POST
+	@Path("/loanInstructionService/subventionKnockOff")
+	public WSReturnStatus subventionKnockOff(SubventionHeader subventionHead) throws ServiceException;
+
+	@GET
+	@Path("/loanInstructionService/getCovenantDocumentStatus/{finReference}")
+	public List<CovenantStatus> getCovenantDocumentStatus(@PathParam("finReference") String finReference)
+			throws ServiceException;
+
+	@POST
+	@Path("/loanInstructionService/getCovenantAggrement")
+	public AgreementData getCovenantAggrement(AgreementRequest agreementRequest) throws ServiceException;
+
+	@POST
+	@Path("/loanInstructionService/processFeeWaiver")
+	public WSReturnStatus processFeeWaiver(FeeWaiverHeader feeWaiverHeader) throws ServiceException;
+
 }

@@ -59,6 +59,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.rmtmasters.FinTypeFeesService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -87,8 +88,7 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -102,8 +102,7 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 	}
 
 	/**
-	 * @param finTypeFeeDAO
-	 *            the finTypeFeeDAO to set
+	 * @param finTypeFeeDAO the finTypeFeeDAO to set
 	 */
 	public void setFinTypeFeesDAO(FinTypeFeesDAO finTypeFeeDAO) {
 		this.finTypeFeeDAO = finTypeFeeDAO;
@@ -117,8 +116,7 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 	 * Configuration. by using FinTypeFeessDAO's update method 3) Audit the record in to AuditHeader and AdtFinTypeFeess
 	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -157,10 +155,8 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 	/**
 	 * getFinTypeFeessById fetch the details by using FinTypeFeessDAO's getFinTypeFeessById method.
 	 * 
-	 * @param finType
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param finType (String)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return FinTypeFeess
 	 */
 	@Override
@@ -172,8 +168,7 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 	 * getApprovedFinTypeFeessById fetch the details by using FinTypeFeessDAO's getFinTypeFeessById method . with
 	 * parameter id and type as blank. it fetches the approved records from the FinTypeFeess.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return FinTypeFeess
 	 */
 	@Override
@@ -184,8 +179,7 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 	/**
 	 * getFinTypeFeessById fetch the details by using FinTypeFeessDAO's getFinTypeFeesByRef method.
 	 * 
-	 * @param reference
-	 *            (long)
+	 * @param reference (long)
 	 * @return FinTypeFeess
 	 */
 	@Override
@@ -204,8 +198,7 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtFinTypeFeess by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -264,8 +257,7 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 	 * workFlow table by using getFinTypeFeesDAO().delete with parameters promotionFee,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtFinTypeFeess by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -293,8 +285,7 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -350,7 +341,8 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 				}
 			} else { // with work flow
 				if (finTypeFees.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befFinTypeFees != null || tempFinTypeFees != null) { // if records already exists in the main table
+					if (befFinTypeFees != null || tempFinTypeFees != null) { // if records already exists in the main
+																				// table
 						auditDetail.setErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
@@ -381,7 +373,8 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 					}
 				}
 			} else {
-				if (tempFinTypeFees == null && !isAdvanceTypeFeeCode(finTypeFees)) { // if records not exists in the Work flow table
+				if (tempFinTypeFees == null && !isAdvanceTypeFeeCode(finTypeFees)) { // if records not exists in the
+																						// Work flow table
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
@@ -407,7 +400,8 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 		if (AdvanceRuleCode.ADVINT.name().equals(finTypeFees.getFeeTypeCode())
 				|| AdvanceRuleCode.ADVEMI.name().equals(finTypeFees.getFeeTypeCode())
 				|| AdvanceRuleCode.CASHCLT.name().equals(finTypeFees.getFeeTypeCode())
-				|| AdvanceRuleCode.DSF.name().equals(finTypeFees.getFeeTypeCode())) {
+				|| AdvanceRuleCode.DSF.name().equals(finTypeFees.getFeeTypeCode())
+				|| FinanceConstants.SUBVEN_FEE.equals(finTypeFees.getFeeTypeCode())) {
 			return true;
 		} else {
 			return false;
@@ -428,8 +422,8 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 				continue;
 			}
 
-			//finTypeFees.setFinType(financeType.getFinType());
-			//finTypeFees.setWorkflowId(financeType.getWorkflowId());
+			// finTypeFees.setFinType(financeType.getFinType());
+			// finTypeFees.setWorkflowId(financeType.getWorkflowId());
 			boolean isRcdType = false;
 			if (finTypeFees.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 				finTypeFees.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -453,9 +447,9 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 					auditTranType = PennantConstants.TRAN_UPD;
 				}
 			}
-			//finTypeFees.setRecordStatus(financeType.getRecordStatus());
-			//finTypeFees.setUserDetails(financeType.getUserDetails());
-			//finTypeFees.setLastMntOn(financeType.getLastMntOn());
+			// finTypeFees.setRecordStatus(financeType.getRecordStatus());
+			// finTypeFees.setUserDetails(financeType.getUserDetails());
+			// finTypeFees.setLastMntOn(financeType.getLastMntOn());
 
 			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finTypeFees.getBefImage(),
 					finTypeFees));
@@ -488,7 +482,7 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 				finTypeFees.setNextTaskId("");
 				finTypeFees.setWorkflowId(0);
 			}
-			//finTypeFees.setFinType(financeType.getFinType());
+			// finTypeFees.setFinType(financeType.getFinType());
 			if (finTypeFees.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
 			} else if (finTypeFees.isNewRecord()) {
@@ -601,7 +595,8 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 				}
 			} else { // with work flow
 				if (finTypeFees.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befFinTypeFees != null || tempFinTypeFees != null) { // if records already exists in the main table
+					if (befFinTypeFees != null || tempFinTypeFees != null) { // if records already exists in the main
+																				// table
 						auditDetail.setErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}

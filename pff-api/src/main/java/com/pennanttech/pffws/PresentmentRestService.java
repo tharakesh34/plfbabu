@@ -1,7 +1,9 @@
 package com.pennanttech.pffws;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -30,5 +32,10 @@ public interface PresentmentRestService {
 	@POST
 	@Path("/presentmentService/uploadPresentment")
 	public WSReturnStatus uploadPresentment(Presentment presentment) throws ServiceException;
+
+	@GET
+	@Path("/presentmentService/getPresentmentStatus/{finReference}")
+	public PresentmentResponse getPresentmentStatus(@PathParam("finReference") String finReference)
+			throws ServiceException;
 
 }

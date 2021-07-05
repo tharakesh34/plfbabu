@@ -27,4 +27,6 @@ public interface TaxHeaderDetailsDAO {
 
 	TaxHeader getTaxHeaderDetailsById(long headerId, String type);
 
+	long save(Taxes taxes, String type);
+
 }

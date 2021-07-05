@@ -59,6 +59,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.systemmasters.InterestCertificateDAO;
+import com.pennant.backend.model.agreement.CovenantAggrement;
 import com.pennant.backend.model.agreement.InterestCertificate;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -224,7 +225,7 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		try {
 			List<String> list = this.jdbcTemplate.queryForList(sql.toString(), source, String.class);
 			if (list != null && list.size() > 0) {
-				//Bugfix:considering single collateral property Value where it is returning multiple records 
+				// Bugfix:considering single collateral property Value where it is returning multiple records
 				return list.get(0);
 			}
 		} catch (EmptyResultDataAccessException e) {
@@ -433,4 +434,70 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		return null;
 	}
 
+	@Override
+	public List<CovenantAggrement> getCovenantReportStatus(String finreference) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" c.DocumentReceivedDate, c.ReceivableDate, ct.Description DocumentName");
+		sql.append(", cust.Custshrtname, c.KeyReference, custadd.CustAddrProvince, custadd.CustPOBox");
+		sql.append(", custadd.CustFlatNbr, custadd.CustAddrCity, custadd.CustAddrHnbr");
+		sql.append(", custadd.CustAddrStreet, custadd.CustAddrCountry, fm.FinReference");
+		sql.append(", CASE WHEN dd.DocCategory is NULL then 'PENDING' else 'RECEIVED' end as DocCategory");
+		sql.append(", CASE WHEN cd.OriginalDocument is NULL then 'Copy' WHEN cd.OriginalDocument = 0");
+		sql.append(" then 'Copy' else 'Original' end as DocumentType");
+		sql.append(" From COVENANTS c");
+		sql.append(" Left Join COVENANT_DOCUMENTS cd on cd.CovenantID = c.ID");
+		sql.append(" Left Join COVENANT_TYPES ct on ct.ID = c.CovenantTypeID");
+		sql.append(" Left Join DOCUMENTDETAILS dd on dd.DocID = cd.ID");
+		sql.append(" Left Join FINANCEMAIN fm on fm.FinReference = c.KeyReference");
+		sql.append(" Left Join CUSTOMERS cust on fm.CustID = cust.CustID");
+		sql.append(" Left Join CUSTOMERADDRESSES custadd on custadd.CustID = cust.CustID");
+		sql.append(" and custadd.CustAddrPriority = ?");
+		sql.append(" where c.KeyReference = ?");
+		sql.append(" UNION ALL");
+		sql.append(" Select c.DocumentReceivedDate, c.ReceivableDate, ct.Description DocumentName");
+		sql.append(", cust.Custshrtname, c.KeyReference, custadd.CustAddrProvince, custadd.CustPOBox");
+		sql.append(", custadd.CustFlatNbr, custadd.CustAddrCity, custadd.CustAddrHnbr");
+		sql.append(", custadd.CustAddrStreet, custadd.CustAddrCountry, fm.FinReference");
+		sql.append(", CASE WHEN dd.DocCategory is NULL then 'PENDING' else 'RECEIVED' end as DocCategory");
+		sql.append(" , CASE WHEN cd.OriginalDocument is NULL then 'Copy' WHEN cd.OriginalDocument = 0");
+		sql.append(" then 'Copy' else 'Original' end as DocumentType");
+		sql.append(" from COVENANTS_TEMP c");
+		sql.append(" left join COVENANT_DOCUMENTS_TEMP cd on cd.CovenantID = c.ID");
+		sql.append(" left join COVENANT_TYPES ct on ct.ID = c.CovenantTypeID");
+		sql.append(" left join DOCUMENTDETAILS_TEMP dd on dd.DocID = cd.ID");
+		sql.append(" left join FINANCEMAIN_VIEW fm on fm.FinReference = c.KeyReference");
+		sql.append(" left join CUSTOMERS cust on fm.CustID = cust.CustID");
+		sql.append(" left join CUSTOMERADDRESSES custadd on custadd.CustID = cust.CustID");
+		sql.append(" and custadd.CustAddrPriority = ?");
+		sql.append(" Where c.KeyReference = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.query(sql.toString(), ps -> {
+			ps.setInt(1, 5);
+			ps.setString(2, finreference);
+			ps.setInt(3, 5);
+			ps.setString(4, finreference);
+		}, (rs, i) -> {
+			CovenantAggrement ca = new CovenantAggrement();
+
+			ca.setDocumentReceivedDate(rs.getString("DocumentReceivedDate"));
+			ca.setReceivableDate(rs.getString("ReceivableDate"));
+			ca.setDocumentName(rs.getString("DocumentName"));
+			ca.setCustshrtname(rs.getString("Custshrtname"));
+			ca.setKeyReference(rs.getString("KeyReference"));
+			ca.setCustAddrProvince(rs.getString("CustAddrProvince"));
+			ca.setCustPOBox(rs.getString("CustPOBox"));
+			ca.setCustFlatNbr(rs.getString("CustFlatNbr"));
+			ca.setCustAddrCity(rs.getString("CustAddrCity"));
+			ca.setCustAddrHnbr(rs.getString("CustAddrHnbr"));
+			ca.setCustAddrStreet(rs.getString("CustAddrStreet"));
+			ca.setCustAddrCountry(rs.getString("CustAddrCountry"));
+			ca.setFinReference(rs.getString("FinReference"));
+			ca.setDocCategory(rs.getString("DocCategory"));
+			ca.setDocumentType(rs.getString("DocumentType"));
+
+			return ca;
+		});
+	}
 }

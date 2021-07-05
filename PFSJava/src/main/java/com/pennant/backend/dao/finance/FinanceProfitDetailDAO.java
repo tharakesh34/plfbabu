@@ -120,7 +120,7 @@ public interface FinanceProfitDetailDAO {
 
 	List<FinanceProfitDetail> getFinProfitListByFinRefList(List<String> finRefList); // Linked Loans
 
-	void updateAssignmentBPIAmounts(FinanceProfitDetail finProfitDetails); //Assignments
+	void updateAssignmentBPIAmounts(FinanceProfitDetail finProfitDetails); // Assignments
 
 	void updateFinPftMaturity(String finReference, String closingStatus, boolean finIsActive);
 
@@ -133,5 +133,7 @@ public interface FinanceProfitDetailDAO {
 
 	void updateSchPaid(FinanceProfitDetail profitDetail);
 
-	void UpdateClosingSts(String finReference, boolean writeoffLoan);
+	void updateClosingSts(String finReference, boolean writeoffLoan);
+
+	FinanceProfitDetail getFinProfitDetailsByFinRef(String finReference);
 }

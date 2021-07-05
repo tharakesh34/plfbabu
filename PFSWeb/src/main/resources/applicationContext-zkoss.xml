@@ -1744,6 +1744,7 @@
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 		<property name="receiptUploadDetailDAO" ref="receiptUploadDetailDAO" />
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
+		<property name="linkedFinancesService" ref="linkedFinancesService"/>
 	</bean>
 
 	<!--============ Finance Contributor Detail ============== -->
@@ -2354,6 +2355,7 @@
 		<property name="repayProcessUtil" ref="repayProcessUtil" />
 		<property name="feeTypeDAO" ref="feeTypeDAO" />
 		<property name="soaReportGenerationService" ref="soaReportGenerationService" />
+		<property name="linkedFinancesService" ref="linkedFinancesService"/>
 	</bean>
 
 	<!--============ Receipt Realization Process Details ============== -->
@@ -2859,6 +2861,7 @@
 		scope="prototype" parent="basisListCtrl">
 		<property name="reportConfigurationService" ref="reportConfigurationService" />
 		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="linkedFinancesService" ref="linkedFinancesService" />
 		<property name="unitName" value="PFF" />
 		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
 	</bean>
@@ -4859,6 +4862,7 @@
 		<property name="commitmentService" ref="commitmentService" />
 		<property name="accrualService" ref="accrualService" />
 		<property name="financeMainService" ref="financeMainService" />
+		<property name="linkedFinancesService" ref="linkedFinancesService"/>
 	</bean>
 
 	<bean id="linkedLoansDialogCtrl" class="com.pennant.webui.financemanagement.receipts.LinkedLoansDialogCtrl"
@@ -4984,8 +4988,30 @@
 	<!-- PresentmentImports -->
 	<bean id="importPresentmentDetailCtrl" class="com.pennant.webui.financemanagement.presentmentdetail.ImportPresentmentDetailCtrl"
 		parent="basisListCtrl" scope="prototype">
+		<property name="dataSource" ref="dataSource" />
+		
+		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
+		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
+		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+		
+		<property name="presentmentDetailService" ref="presentmentDetailService" />
+		<property name="notificationService" ref="notificationService" />
+		<property name="receiptPaymentService" ref="receiptPaymentService" />
+		<property name="receiptCancellationService" ref="receiptCancellationService" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="repaymentPostingsUtil" ref="repayPostingUtil" />
+		<property name="receiptCalculator" ref="receiptCalculator" />
 		<property name="presentmentExtractService" ref="presentmentExtractService" />
 		<property name="dataEngineConfig" ref="dataEngineConfig" />
+		<property name="eventPropertiesService" ref="eventPropertiesService" />
+		
 	</bean>
 
 	<!-- Presentment File Download -->
@@ -5564,4 +5590,36 @@
 	<bean id="menuRolesListCtrl" class="com.pennant.menuroles.MenuRolesListCtrl" parent="basisListCtrl"
 	   scope="prototype" />
 	   
+	 <!-- Subvention Upload -->
+	
+	<bean id="subventionUploadDialogCtrl" class="com.pennanttech.interfacebajaj.SubventionUploadDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="subventionKnockOffUpload" ref="subventionKnockOffUpload" />
+		<property name="dataEngineConfig" ref="dataEngineConfig" />
+	</bean>
+	
+	<!-- Collateral Release -->
+	
+	<bean id="collateralDelinkDialogCtrl" class="com.pennant.webui.customermasters.collateraldelink.CollateralDelinkDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name ="finCollateralDelinkService" ref ="finCollateralDelinkService"/>
+	</bean>
+	
+	<bean id="linkedFinancesDialogCtrl"
+		class="com.pennant.webui.finance.financemain.LinkedFinancesDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="linkedFinancesService" ref="linkedFinancesService" /> 
+	</bean>
+	
+	<!-- Change Payment Upload -->
+	<bean id="paymentMethodUploadDialogCtrl" class="com.pennant.webui.finance.upload.PaymentMethodUploadDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="dataEngineConfig" ref="dataEngineConfig" />
+		<property name="paymentMethodUploadService" ref="paymentMethodUploadService" />
+	</bean>
+	
+	<bean id="rescheduleReportGenerationDialogCtrl"
+		class="com.pennant.webui.reports.RescheduleReportGenerationDialogCtrl" scope="prototype" parent="basisListCtrl">
+		<property name="rescheduleReportGenerationService" ref="rescheduleReportGenerationService" />
+	</bean>
 </beans> 

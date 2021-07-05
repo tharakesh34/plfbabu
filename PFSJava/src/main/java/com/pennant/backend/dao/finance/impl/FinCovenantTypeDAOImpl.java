@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -500,27 +501,39 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 
 	@Override
 	public SecurityRole isMandRoleExists(String mandRole, String[] allowedRoles) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" RoleCd, RoleDesc");
+		sql.append(" From SecRoles");
+		sql.append(" Where RoleCd = ?");
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" Select  RoleCd, RoleDesc  from  SecRoles");
-		sql.append(" Where RoleCd In (:RoleCd) And RoleCd = :mandRole");
+		Object[] obj = new Object[] { mandRole };
+
+		if (ArrayUtils.isNotEmpty(allowedRoles)) {
+			sql.append(" and RoleCd In (");
+			for (int i = 0; i < allowedRoles.length; i++) {
+				sql.append(" ?,");
+			}
+			sql.deleteCharAt(sql.length() - 1);
+			sql.append(")");
+
+			obj = new Object[] { mandRole, Arrays.asList(allowedRoles) };
+		}
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("RoleCd", Arrays.asList(allowedRoles));
-		paramSource.addValue("mandRole", mandRole);
-
-		RowMapper<SecurityRole> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRole.class);
-
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), paramSource, typeRowMapper);
+			return jdbcOperations.queryForObject(sql.toString(), obj, (rs, i) -> {
+				SecurityRole sr = new SecurityRole();
+
+				sr.setRoleCd(rs.getString(1));
+				sr.setRoleDesc(rs.getString(2));
+
+				return sr;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn("Record is not found in SecRoles table for the specified RoleCd >> {}", mandRole);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

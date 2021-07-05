@@ -78,8 +78,10 @@ public class DatesUpdate extends SequenceDao<Object> implements Tasklet {
 		case ORACLE:
 		case MY_SQL:
 			jdbcOperations.execute("ALTER SEQUENCE " + seqName + " RESTART START WITH " + sequence);
+			break;
 		case POSTGRES:
 			jdbcOperations.execute("ALTER SEQUENCE " + seqName + " RESTART WITH " + sequence);
+			break;
 		default:
 			//
 		}

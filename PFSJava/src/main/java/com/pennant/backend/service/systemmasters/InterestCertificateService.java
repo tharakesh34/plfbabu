@@ -45,7 +45,9 @@ package com.pennant.backend.service.systemmasters;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 
+import com.pennant.backend.model.agreement.CovenantAggrement;
 import com.pennant.backend.model.agreement.InterestCertificate;
 import com.pennant.backend.model.finance.FinanceMain;
 
@@ -60,4 +62,5 @@ public interface InterestCertificateService {
 
 	FinanceMain getFinanceMain(String finReference, String[] columns, String type);
 
+	List<CovenantAggrement> getCovenantReportStatus(String finreference);
 }

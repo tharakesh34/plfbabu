@@ -89,6 +89,10 @@
 							<listhead sizable="true">
 								<listheader id="listheader_LoanReference" label="${c:l('listheader_LoanReference.label')}" sort="auto"
 									hflex="min" />
+								<listheader id="listheader_ApplicantName" label="${c:l('listheader_ApplicantName.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RequestStage" label="${c:l('listheader_RequestStage.label')}" sort="auto"
+									hflex="min" />
 								<listheader id="listheader_CollaterialReference" label="${c:l('listheader_CollaterialReference.label')}"
 									sort="auto" hflex="min" />
 								<listheader id="listheader_LegalReference" label="${c:l('listheader_LoanDetails_LegalReference.label')}"

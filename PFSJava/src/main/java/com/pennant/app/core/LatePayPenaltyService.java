@@ -87,7 +87,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			// #PSD 137379
 			fod.setTotPenaltyAmt(penalty);
 			fod.setTotPenaltyBal(penalty);
-
+			setTotals(fod);
 			return;
 		}
 
@@ -96,6 +96,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			// #PSD 137379
 			fod.setTotPenaltyAmt(penalty);
 			fod.setTotPenaltyBal(penalty);
+			setTotals(fod);
 			return;
 		}
 
@@ -162,6 +163,10 @@ public class LatePayPenaltyService extends ServiceHelper {
 		fod.setTotPenaltyAmt(penalty); // ### 03-12-2018 PSD Ticket ID: 130669
 		fod.setFinODTillDate(valueDate);
 
+		setTotals(fod);
+	}
+
+	private void setTotals(FinODDetails fod) {
 		BigDecimal totPenaltyBal = fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid())
 				.subtract(fod.getTotWaived());
 		if (totPenaltyBal.compareTo(BigDecimal.ZERO) >= 0) {
@@ -171,7 +176,6 @@ public class LatePayPenaltyService extends ServiceHelper {
 			fod.setTotPenaltyBal(BigDecimal.ZERO);
 			fod.setPayableAmount(fod.getTotPenaltyPaid().subtract(fod.getTotWaived()).subtract(fod.getTotPenaltyAmt()));
 		}
-
 	}
 
 	private BigDecimal getBalanceForCal(FinODDetails fod) {
@@ -247,7 +251,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 				continue;
 			}
 
-			//PSD#163479
+			// PSD#163479
 			totPenaltyPaid = totPenaltyPaid.add(rpd.getPenaltyPaid());
 			totWaived = totWaived.add(rpd.getPenaltyWaived());
 

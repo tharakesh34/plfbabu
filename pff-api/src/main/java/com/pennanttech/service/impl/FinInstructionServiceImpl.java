@@ -3,6 +3,7 @@ package com.pennanttech.service.impl;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,16 +19,20 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
+import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.dao.configuration.VASConfigurationDAO;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
+import com.pennant.backend.dao.finance.covenant.CovenantsDAO;
 import com.pennant.backend.dao.insurance.InsuranceDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
@@ -47,6 +52,7 @@ import com.pennant.backend.financeservice.RecalculateService;
 import com.pennant.backend.financeservice.RemoveTermsService;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.agreement.CovenantAggrement;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.applicationmaster.LoanPendingDetails;
@@ -56,6 +62,8 @@ import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
+import com.pennant.backend.model.finance.FeeWaiverDetail;
+import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
@@ -68,17 +76,21 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.covenant.Covenant;
+import com.pennant.backend.model.finance.covenant.CovenantDocument;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.insurance.InsurancePaymentInstructions;
 import com.pennant.backend.model.systemmasters.VASProviderAccDetail;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.fees.FeeDetailService;
+import com.pennant.backend.service.finance.FeeWaiverHeaderService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
+import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.finance.NonLanReceiptService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
+import com.pennant.backend.service.systemmasters.InterestCertificateService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -87,6 +99,11 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.pff.core.schd.service.PartCancellationService;
+import com.pennant.pff.dao.subvention.SubventionUploadDAO;
+import com.pennant.pff.model.subvention.Subvention;
+import com.pennant.pff.model.subvention.SubventionHeader;
+import com.pennant.pff.service.subvention.SubventionKnockOffService;
+import com.pennant.util.AgreementGeneration;
 import com.pennant.validation.AddDisbursementGroup;
 import com.pennant.validation.AddRateChangeGroup;
 import com.pennant.validation.AddTermsGroup;
@@ -121,6 +138,9 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pffws.FinServiceInstRESTService;
 import com.pennanttech.pffws.FinServiceInstSOAPService;
 import com.pennanttech.util.APIConstants;
+import com.pennanttech.ws.model.covenantStatus.CovenantStatus;
+import com.pennanttech.ws.model.customer.AgreementRequest;
+import com.pennanttech.ws.model.eligibility.AgreementData;
 import com.pennanttech.ws.model.finance.DisbRequest;
 import com.pennanttech.ws.model.finance.DisbResponse;
 import com.pennanttech.ws.model.finance.FinAdvPaymentDetail;
@@ -172,6 +192,14 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	private NonLanReceiptService nonLanReceiptService;
 	private PartCancellationService partCancellationService;
 	private FinanceWriteoffDAO financeWriteoffDAO;
+	private SubventionKnockOffService subventionKnockOffService;
+	private SubventionUploadDAO subventionUploadDAO;
+	private EntityDAO entityDAO;
+	private CovenantsDAO covenantsDAO;
+	private InterestCertificateService interestCertificateService;
+	private AgreementGeneration agreementGeneration;
+	private FinanceDetailService financeDetailService;
+	private FeeWaiverHeaderService feeWaiverHeaderService;
 
 	/**
 	 * Method for perform addRateChange operation
@@ -2284,27 +2312,39 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	@Override
 	public WSReturnStatus updateCovenants(FinanceDetail financeDetail) throws ServiceException {
 		logger.debug(Literal.ENTERING);
-		WSReturnStatus returnStatus = new WSReturnStatus();
 		List<ErrorDetail> errorDetails;
-		try {
 
+		try {
 			FinanceMain financeMain = null;
 			String finReference = financeDetail.getFinReference();
 			List<Covenant> covenantsList = financeDetail.getCovenants();
 
-			//validating the covenants if same covenant type and same category name
+			// validating the covenants if same covenant type and same category name
+
+			boolean origination = financeDetail.isOrigination();
 
 			if (finReference == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "FinReference";
-				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
-			} else {
-				financeMain = financeMainDAO.getFinanceMain(finReference, new String[] { "FinIsActive", "FinStartDate",
-						"MaturityDate, WorkFlowId, CustId, FinReference" }, "");
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+
+			String[] columns = new String[] { "FinIsActive", "FinStartDate",
+					"MaturityDate, WorkFlowId, CustId, FinReference, calMaturity" };
+
+			if (origination) {
+				financeMain = financeMainDAO.getFinanceMain(finReference, columns, "_Temp");
 				if (financeMain == null || !financeMain.isFinIsActive()) {
 					String[] valueParm = new String[1];
 					valueParm[0] = finReference;
-					return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+					return APIErrorHandlerService.getFailedStatus("90201", valueParm);
+				}
+			} else {
+				financeMain = financeMainDAO.getFinanceMain(finReference, columns, "");
+				if (financeMain == null || !financeMain.isFinIsActive()) {
+					String[] valueParm = new String[1];
+					valueParm[0] = finReference;
+					return APIErrorHandlerService.getFailedStatus("90201", valueParm);
 				}
 			}
 
@@ -2313,27 +2353,26 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			if (covenantsList == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "CovenatDetails ";
-				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
 
 			// for logging purpose
 			APIErrorHandlerService.logReference(finReference);
-
-			errorDetails = financeDataValidation.covenantValidation(financeMain, covenantsList, null);
-
+			// If Origination(true) Validations for the LOS, If not Validations For LMS
+			if (origination) {
+				errorDetails = financeDataValidation.covenantValidation(financeMain, covenantsList, "LOS");
+			} else {
+				errorDetails = financeDataValidation.covenantValidation(financeMain, covenantsList, null);
+			}
 			for (ErrorDetail errorDetail : errorDetails) {
-				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
-						errorDetail.getParameters());
-				return returnStatus;
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getParameters());
 			}
 
-			returnStatus = finServiceInstController.processCovenants(financeMain, covenantsList);
+			return finServiceInstController.processCovenants(financeMain, covenantsList, origination);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION + e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
-		logger.debug(Literal.LEAVING);
-		return returnStatus;
 	}
 
 	@Override
@@ -2936,6 +2975,112 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		return response;
 	}
 
+	@Override
+	public WSReturnStatus subventionKnockOff(SubventionHeader header) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+		String entityCode = header.getEntityCode();
+		String bRef = header.getBatchRef();
+
+		if (StringUtils.isEmpty(bRef)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Batch Reference";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
+
+		if (StringUtils.isEmpty(entityCode)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Entity Code";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
+
+		if (entityDAO.getEntityCount(entityCode) == 0) {
+			String[] valueParm = new String[4];
+			valueParm[0] = "Entity";
+			valueParm[1] = "Code";
+			valueParm[2] = "is Invalid";
+			valueParm[3] = entityCode;
+			return APIErrorHandlerService.getFailedStatus("30550", valueParm);
+		}
+
+		if (subventionKnockOffService.isFileExists(bRef)) {
+			String[] valueParm = new String[4];
+			valueParm[0] = "Batch";
+			valueParm[1] = "Reference";
+			valueParm[2] = "already";
+			valueParm[3] = "exists";
+			return APIErrorHandlerService.getFailedStatus("30550", valueParm);
+		}
+
+		for (Subvention sub : header.getSubventions()) {
+			String finReference = sub.getFinReference();
+			String finType = sub.getFinType();
+			String referenceCode = sub.getReferenceCode();
+			BigDecimal amount = sub.getAmount();
+			Date vdate = sub.getValueDate();
+			Date pdate = sub.getPostDate();
+			if (StringUtils.isEmpty(finReference)) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "FinReference";
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			} else if (!financeMainDAO.isFinReferenceExists(finReference, "", false)) {
+				String[] valueParm = new String[4];
+				valueParm[0] = "Fin";
+				valueParm[1] = "Reference";
+				valueParm[2] = "not";
+				valueParm[3] = "exists";
+				return APIErrorHandlerService.getFailedStatus("30550", valueParm);
+			}
+			if (StringUtils.isEmpty(finType)) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Fin type";
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+			if (StringUtils.isEmpty(referenceCode)) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Reference Code";
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+			if (amount == null || amount.compareTo(BigDecimal.ZERO) == 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Amount";
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+
+			if (pdate == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Post Date";
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+			if (vdate == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Value Date";
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+		}
+
+		header.setId(subventionUploadDAO.saveSubventionHeader(bRef, entityCode));
+
+		header.setTotalRecords(subventionUploadDAO.saveSubvention(header.getSubventions(), header.getId()));
+		List<Subvention> subventions = subventionUploadDAO.getSubventionDetails(header.getId());
+		header.setSubventions(subventions);
+
+		try {
+			subventionKnockOffService.process(header);
+			for (Subvention sub : subventions) {
+				if (!sub.getErrorDetails().isEmpty()) {
+					ErrorDetail errorDetail = sub.getErrorDetails().get(0);
+					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				}
+			}
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+			APIErrorHandlerService.logUnhandledException(e);
+			return APIErrorHandlerService.getFailedStatus();
+		}
+		logger.debug(Literal.LEAVING);
+		return APIErrorHandlerService.getSuccessStatus();
+	}
+
 	private void buildFinFeeForUpload(FinServiceInstruction finSrvcInst) {
 		for (FinFeeDetail feeDtl : finSrvcInst.getFinFeeDetails()) {
 			feeDtl.setFeeScheduleMethod("");
@@ -3024,6 +3169,302 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
 		}
 		return new WSReturnStatus();
+	}
+
+	@Override
+	public List<CovenantStatus> getCovenantDocumentStatus(String finReference) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+		CovenantStatus response = new CovenantStatus();
+		FinanceMain financeMain = null;
+		List<CovenantStatus> covenantStatus = new ArrayList<>();
+
+		try {
+			if (finReference == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "FinReference";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				covenantStatus.add(response);
+				return covenantStatus;
+			}
+			financeMain = financeMainDAO.getFinanceMain(finReference, new String[] { "FinIsActive", "FinReference" },
+					"_View");
+			if (financeMain == null || !financeMain.isFinIsActive()) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+				covenantStatus.add(response);
+				return covenantStatus;
+			}
+
+			List<Covenant> covenants = covenantsDAO.getCovenants(finReference, "LOAN", TableType.VIEW);
+			if (CollectionUtils.isEmpty(covenants)) {
+				String valueParm[] = new String[4];
+				valueParm[0] = "Covenants Are Not";
+				valueParm[1] = "Avaialable with the Finreference: " + finReference;
+				valueParm[2] = "";
+				valueParm[3] = "";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30550", valueParm));
+				covenantStatus.add(response);
+				return covenantStatus;
+			}
+
+			for (Covenant covenant : covenants) {
+				response = new CovenantStatus();
+				List<CovenantDocument> cd = covenantsDAO.getCovenantDocuments(covenant.getId(), TableType.VIEW);
+				if (CollectionUtils.isNotEmpty(cd)) {
+					response.setFinreference(covenant.getKeyReference());
+					response.setCovenantTypeId(covenant.getCovenantTypeId());
+					response.setCovenantType(covenant.getCovenantTypeCode());
+					response.setCategory(covenant.getCategory());
+					response.setDocStauts("RECEIVED");
+					covenantStatus.add(response);
+				} else {
+					response = new CovenantStatus();
+					response.setFinreference(covenant.getKeyReference());
+					response.setCovenantTypeId(covenant.getCovenantTypeId());
+					response.setCovenantType(covenant.getCovenantTypeCode());
+					response.setCategory(covenant.getCategory());
+					response.setDocStauts("PENDING");
+					covenantStatus.add(response);
+				}
+			}
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION + e);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			covenantStatus.add(response);
+			return covenantStatus;
+		}
+		logger.debug(Literal.LEAVING);
+		response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		return covenantStatus;
+	}
+
+	@Override
+	public AgreementData getCovenantAggrement(AgreementRequest agreementRequest) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+		AgreementData aggrementData = new AgreementData();
+		FinanceMain financeMain = null;
+
+		String finReference = agreementRequest.getFinReference();
+		if (StringUtils.isBlank(finReference)) {
+			if (finReference == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "FinReference";
+				aggrementData.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				return aggrementData;
+			}
+		}
+		financeMain = financeMainDAO.getFinanceMain(finReference, new String[] { "FinIsActive", "FinReference" },
+				"_View");
+		if (financeMain == null || !financeMain.isFinIsActive()) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;
+			aggrementData.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+			return aggrementData;
+		}
+
+		if (StringUtils.isBlank(agreementRequest.getAgreementType())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Aggrement Type";
+			aggrementData.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return aggrementData;
+		}
+
+		List<CovenantAggrement> cvntAggrement = interestCertificateService.getCovenantReportStatus(finReference);
+		if (CollectionUtils.isEmpty(cvntAggrement)) {
+			String valueParm[] = new String[4];
+			valueParm[0] = "Covenants Are Not";
+			valueParm[1] = "Avaialable with the Finreference: " + finReference;
+			valueParm[2] = "";
+			valueParm[3] = "";
+			aggrementData.setReturnStatus(APIErrorHandlerService.getFailedStatus("30550", valueParm));
+			return aggrementData;
+		}
+		CovenantAggrement covenantAgreement = new CovenantAggrement();
+		for (CovenantAggrement covenantAggrement : cvntAggrement) {
+			if (covenantAggrement.getReceivableDate() == null) {
+				covenantAggrement.setReceivableDate("");
+			}
+			if (covenantAggrement.getDocumentReceivedDate() == null) {
+				covenantAggrement.setDocumentReceivedDate("");
+			}
+		}
+		if (CollectionUtils.isNotEmpty(cvntAggrement)) {
+			CovenantAggrement ca = cvntAggrement.get(0);
+			String combinedString = null;
+			if (ca.getCustFlatNbr() == null) {
+				ca.setCustFlatNbr("");
+			}
+			if (ca.getCustPOBox() == null) {
+				ca.setCustPOBox("");
+			}
+			combinedString = ca.getCustAddrHnbr() + ca.getCustFlatNbr() + "\n" + ca.getCustAddrStreet() + " "
+					+ ca.getCustAddrCity() + "\n" + ca.getCustAddrProvince() + "\n" + ca.getCustAddrCountry() + "\n"
+					+ ca.getCustPOBox();
+			covenantAgreement.setCustAddrHnbr(combinedString);
+			covenantAgreement.setFinReference(ca.getFinReference());
+			covenantAgreement.setCustshrtname(ca.getCustshrtname());
+			aggrementData.setFinReference(covenantAgreement.getFinReference());
+		}
+		Date appdate = SysParamUtil.getAppDate();
+		covenantAgreement.setAppDate(appdate);
+		covenantAgreement.setCovenantAggrementList(cvntAggrement);
+
+		String agreement = "LOD.docx";
+		String path = PathUtil.getPath(PathUtil.CovenantStatusReport);
+
+		byte[] doc = agreementGeneration.getCovenantAgreementGeneration(covenantAgreement, path, agreement);
+
+		aggrementData.setDocContent(doc);
+		if (doc != null) {
+			aggrementData.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		} else {
+			aggrementData.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+		}
+		logger.debug(Literal.LEAVING);
+		return aggrementData;
+	}
+
+	@Override
+	public WSReturnStatus processFeeWaiver(FeeWaiverHeader feeWaiverHeader) throws ServiceException {
+		FinanceMain financeMain = null;
+		FeeWaiverHeader feeWaiver = new FeeWaiverHeader();
+		List<FeeWaiverDetail> actaulfeeWaiverDetails = new ArrayList<>();
+
+		String finReference = feeWaiverHeader.getFinReference();
+		if (StringUtils.isBlank(finReference)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "FinReference";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
+
+		financeMain = financeMainDAO.getFinanceMain(finReference,
+				new String[] { "FinIsActive", "FinReference", "CustID" }, "_View");
+		if (financeMain == null || !financeMain.isFinIsActive()) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;
+			return APIErrorHandlerService.getFailedStatus("90201", valueParm);
+		}
+
+		Date valueDate = feeWaiverHeader.getValueDate();
+		if (valueDate == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "ValueDate";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
+
+		int eodProgressCount = financeDetailService.getProgressCountByCust(financeMain.getCustID());
+
+		// If Customer Exists in EOD Processing, Not allowed to Maintenance till completion
+		if (eodProgressCount > 0) {
+			String[] valueParm = new String[1];
+			return APIErrorHandlerService.getFailedStatus("60203", valueParm);
+		}
+		// validating with the rcdmaintainsts
+		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(finReference, "_View");
+
+		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinanceConstants.FINSER_EVENT_FEEWAIVERS.equals(rcdMntnSts)) {
+			String valueParm[] = new String[4];
+			valueParm[0] = "Finance is";
+			valueParm[1] = "Progress";
+			valueParm[2] = "" + rcdMntnSts;
+			valueParm[3] = "";
+			return APIErrorHandlerService.getFailedStatus("30550", valueParm);
+		}
+
+		// Validating the records in temp table if Exists showing the Validation
+		FeeWaiverHeader fwh = feeWaiverHeaderService.getFeeWaiverByFinRef(feeWaiverHeader);
+		if (fwh != null) {
+			String valueParm[] = new String[4];
+			valueParm[0] = "Fee Waiver";
+			valueParm[1] = "in";
+			valueParm[2] = "Processing";
+			valueParm[3] = "";
+			return APIErrorHandlerService.getFailedStatus("30550", valueParm);
+		}
+
+		// get fee waiver details from manual advise and finoddetails to prepare the list.
+		feeWaiver.setNewRecord(true);
+		feeWaiver.setFinReference(finReference);
+		feeWaiver = feeWaiverHeaderService.getFeeWaiverByFinRef(feeWaiver);
+
+		if (!feeWaiver.isAlwtoProceed()) {
+			String valueParm[] = new String[4];
+			valueParm[0] = "Receipt is";
+			valueParm[1] = "in";
+			valueParm[2] = "Maintainance: ";
+			valueParm[3] = finReference;
+			return APIErrorHandlerService.getFailedStatus("30550", valueParm);
+		}
+
+		for (FeeWaiverDetail fwd : feeWaiver.getFeeWaiverDetails()) {
+			if (fwd.getBalanceAmount() != null && fwd.getBalanceAmount().compareTo(BigDecimal.ZERO) > 0) {
+				actaulfeeWaiverDetails.add(fwd);
+			}
+		}
+		// Setting the actual feewaiver values to the feewaiver
+		feeWaiver.setFeeWaiverDetails(actaulfeeWaiverDetails);
+
+		int actualFeeTypeCode = feeWaiver.getFeeWaiverDetails().size();
+		int feeTypeCode = feeWaiverHeader.getFeeWaiverDetails().size();
+		if (actualFeeTypeCode != feeTypeCode) {
+			String valueParm[] = new String[4];
+			valueParm[0] = "FeeType Codes";
+			valueParm[1] = "Should";
+			valueParm[2] = "be Matched With Existing: ";
+			valueParm[3] = finReference;
+			return APIErrorHandlerService.getFailedStatus("30550", valueParm);
+		}
+
+		List<FeeWaiverDetail> feeWaiverDetails = feeWaiverHeader.getFeeWaiverDetails();
+		for (FeeWaiverDetail feeWaiverDetail : feeWaiverDetails) {
+			if (StringUtils.isBlank(feeWaiverDetail.getFeeTypeCode())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "FeeType Code";
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+			if (feeWaiverDetail.getCurrWaiverAmount() == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "WaiverAmount";
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+		}
+
+		// Validating The Waiver amount with the Balance
+		for (FeeWaiverDetail fwd : feeWaiverDetails) {
+			for (FeeWaiverDetail compareWithBalance : actaulfeeWaiverDetails) {
+				if (StringUtils.equals(fwd.getFeeTypeCode(), compareWithBalance.getFeeTypeCode())) {
+					BigDecimal balanceAmount = compareWithBalance.getReceivableAmount();
+					if (balanceAmount.compareTo(fwd.getCurrWaiverAmount()) == -1) {
+						String valueParm[] = new String[4];
+						valueParm[0] = "CurrentWaived Amount";
+						valueParm[1] = "Should be";
+						valueParm[2] = "less than";
+						valueParm[3] = "or Equal to BalanceAmount with FeeTypeCode: " + fwd.getFeeTypeCode();
+						return APIErrorHandlerService.getFailedStatus("30550", valueParm);
+					}
+				}
+			}
+		}
+		boolean feeCode = false;
+		for (FeeWaiverDetail feeWaiverDetail : feeWaiverDetails) {
+			for (FeeWaiverDetail compareWithBalance : actaulfeeWaiverDetails) {
+				if (StringUtils.equals(feeWaiverDetail.getFeeTypeCode(), compareWithBalance.getFeeTypeCode())) {
+					feeCode = true;
+					break;
+				}
+			}
+		}
+		if (!feeCode) {
+			String valueParm[] = new String[4];
+			valueParm[0] = "FeeTypeCode";
+			valueParm[1] = "Should be";
+			valueParm[2] = "Valid";
+			valueParm[3] = "";
+			return APIErrorHandlerService.getFailedStatus("30550", valueParm);
+		}
+
+		return finServiceInstController.processFeeWaivers(feeWaiverHeader, feeWaiver);
 	}
 
 	@Autowired
@@ -3176,8 +3617,49 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	public void setNonLanReceiptService(NonLanReceiptService nonLanReceiptService) {
 		this.nonLanReceiptService = nonLanReceiptService;
 	}
+
 	@Autowired
 	public void setFinanceWriteoffDAO(FinanceWriteoffDAO financeWriteoffDAO) {
 		this.financeWriteoffDAO = financeWriteoffDAO;
+	}
+
+	@Autowired
+	public void setSubventionUploadDAO(SubventionUploadDAO subventionUploadDAO) {
+		this.subventionUploadDAO = subventionUploadDAO;
+	}
+
+	@Autowired
+	public void setSubventionKnockOffService(SubventionKnockOffService subventionKnockOffService) {
+		this.subventionKnockOffService = subventionKnockOffService;
+	}
+
+	@Autowired
+	public void setEntityDAO(EntityDAO entityDAO) {
+		this.entityDAO = entityDAO;
+	}
+
+	@Autowired
+	public void setCovenantsDAO(CovenantsDAO covenantsDAO) {
+		this.covenantsDAO = covenantsDAO;
+	}
+
+	@Autowired
+	public void setInterestCertificateService(InterestCertificateService interestCertificateService) {
+		this.interestCertificateService = interestCertificateService;
+	}
+
+	@Autowired
+	public void setAgreementGeneration(AgreementGeneration agreementGeneration) {
+		this.agreementGeneration = agreementGeneration;
+	}
+
+	@Autowired
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
+	}
+
+	@Autowired
+	public void setFeeWaiverHeaderService(FeeWaiverHeaderService feeWaiverHeaderService) {
+		this.feeWaiverHeaderService = feeWaiverHeaderService;
 	}
 }

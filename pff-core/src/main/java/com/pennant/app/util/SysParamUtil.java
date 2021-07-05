@@ -276,6 +276,27 @@ public class SysParamUtil {
 		return Integer.parseInt(getValueAsString(code));
 	}
 
+	/**
+	 * Convenience method for getting the value of a system parameter as an Bigdecimal value.
+	 * 
+	 * @param code The code of the parameter to access.
+	 * @return The value of the parameter as an Bigdecimal value.
+	 * @throws IllegalArgumentException - If the given code is <code>null</code>.
+	 * @throws NumberFormatException    - If the parameter does not contain a parsable decimal.
+	 */
+	public static BigDecimal getValueAsBigDecimal(String code) {
+		if (code == null) {
+			throw new IllegalArgumentException();
+		}
+
+		BigDecimal value = BigDecimal.ZERO;
+		Object object = SysParamUtil.getValue(code);
+		if (object != null) {
+			value = (BigDecimal) object;
+		}
+		return value;
+	}
+
 	public static void updateParamDetails(String code, String value) {
 		setParmDetails(code, value);
 		systemParameterService.update(code, value, "");

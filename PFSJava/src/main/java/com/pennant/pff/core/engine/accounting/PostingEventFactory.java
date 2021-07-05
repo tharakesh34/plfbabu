@@ -1,9 +1,8 @@
 package com.pennant.pff.core.engine.accounting;
 
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.pff.core.engine.accounting.event.PostingEvent;
 import com.pennanttech.pennapps.core.FactoryException;
-
-import AccountEventConstants.AccountingEvent;
 
 public class PostingEventFactory {
 	private PostingEvent disbInsPostingEvent;

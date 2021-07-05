@@ -284,12 +284,13 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				continue;
 			}
 
-			//If Record Exists  then we will make it as a active, otherwise save the record in temp table with Workflow details
+			// If Record Exists then we will make it as a active, otherwise save the record in temp table with Workflow
+			// details
 			if (isExists) {
 				getLegalDetailDAO().updateLegalDeatils(assignment.getReference(), assignment.getCollateralRef(), true);
 			} else {
-				//SetActive data from legalList if request from API 
-				//and save Legal child details
+				// SetActive data from legalList if request from API
+				// and save Legal child details
 				if (apiHeader != null
 						&& StringUtils.equals(aFinanceMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
 					if (legalDetails != null && !legalDetails.isEmpty()) {
@@ -351,6 +352,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 										for (DocumentDetails documentDetails : queryDetail.getDocumentDetailsList()) {
 											if (documentDetails.isNew()) {
 												documentDetails.setReferenceId(String.valueOf(queryDetail.getId()));
+												documentDetails.setFinReference(queryDetail.getFinReference());
 
 												saveDocument(DMSModule.FINANCE, DMSModule.LEGAL, documentDetails);
 
@@ -386,8 +388,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	 * Configuration. by using LegalDetailsDAO's update method 3) Audit the record in to AuditHeader and AdtLegalDetails
 	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -483,8 +484,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	 * LegalDetails by using LegalDetailsDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
 	 * and AdtLegalDetails by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -522,8 +522,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	/**
 	 * getLegalDetails fetch the details by using LegalDetailsDAO's getLegalDetailsById method.
 	 * 
-	 * @param legalId
-	 *            legalId of the LegalDetail.
+	 * @param legalId legalId of the LegalDetail.
 	 * @return LegalDetails
 	 */
 	@Override
@@ -619,8 +618,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	 * getApprovedLegalDetailsById fetch the details by using LegalDetailsDAO's getLegalDetailsById method . with
 	 * parameter id and type as blank. it fetches the approved records from the LegalDetails.
 	 * 
-	 * @param legalId
-	 *            legalId of the LegalDetail. (String)
+	 * @param legalId legalId of the LegalDetail. (String)
 	 * @return LegalDetails
 	 */
 	@Override
@@ -639,8 +637,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtLegalDetails by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -765,8 +762,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	 * workFlow table by using getLegalDetailDAO().delete with parameters legalDetail,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtLegalDetails by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -805,8 +801,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -827,8 +822,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private List<AuditDetail> validate(AuditHeader auditHeader, String method) {
@@ -932,7 +926,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 
 		// Query module, Validating the all quarry's raised by users resolved or not.
 		if ("doApprove".equals(method)) {
-			// Queries that were assigned to Legal Roles to be closed 
+			// Queries that were assigned to Legal Roles to be closed
 			if (StringUtils.equalsIgnoreCase("Y",
 					SysParamUtil.getValueAsString("QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES"))) {
 				WorkFlowDetails legalWorkflow = WorkFlowUtil.getDetailsByType("LEGAL_DETAILS");

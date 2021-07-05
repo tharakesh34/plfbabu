@@ -27,10 +27,24 @@ import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.core.ReceiptPaymentService;
 import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.ReceiptCalculator;
+import com.pennant.app.util.RepaymentPostingsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
+import com.pennant.backend.eventproperties.service.EventPropertiesService;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -38,7 +52,6 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.excecution.ProcessExecution;
@@ -46,8 +59,8 @@ import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
 import com.pennanttech.interfacebajaj.fileextract.service.FileExtractService;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.PresentmentImportProcess;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -65,26 +78,50 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	protected Timer timer;
 	protected Rows panelRows;
 
-	protected DataEngineConfig dataEngineConfig;
-	private Configuration config = null;
-	private DataEngineStatus PRSENTMENT_FILE_IMPORT_STATUS = null;
-
-	protected Combobox instrumentType;
 	protected Row rowInstrumentType;
+	protected Combobox instrumentType;
 	protected Grid grid_Default;
 	protected Grid grid_DataEngine;
 	protected Row defaultPanelRow;
 
+	private FileExtractService<PresentmentDetailExtract> presentmentExtractService;
+
+	/* Data-Source */
+	private DataSource dataSource;
+
+	/* DAO's */
+	private FinanceRepaymentsDAO financeRepaymentsDAO;
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
+	private PresentmentDetailDAO presentmentDetailDAO;
+	private FinanceMainDAO financeMainDAO;
+	private CustomerDAO customerDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private FinanceProfitDetailDAO financeProfitDetailDAO;
+	private FinODDetailsDAO finODDetailsDAO;
+	private FinReceiptDetailDAO finReceiptDetailDAO;
+	private FinExcessAmountDAO finExcessAmountDAO;
+
+	/* Service's */
+	private PresentmentDetailService presentmentDetailService;
+	private NotificationService notificationService;
+	private ReceiptPaymentService receiptPaymentService;
+	private ReceiptCancellationService receiptCancellationService;
+	private PostingsPreparationUtil postingsPreparationUtil;
+	private RepaymentPostingsUtil repaymentPostingsUtil;
+	private ReceiptCalculator receiptCalculator;
+	private PresentmentImportProcess presentmentImportProcess;
+	private EventPropertiesService eventPropertiesService;
+
+	private DataEngineConfig dataEngineConfig;
+	private Configuration config = null;
+	private DataEngineStatus PRSENTMENT_FILE_IMPORT_STATUS = null;
 	private ProcessExecution processExecution = null;
 	private PresentmentDetailExtract fileImport;
-	private FileExtractService<PresentmentDetailExtract> presentmentExtractService;
 	private String errorMsg = null;
 	private boolean allowInstrumentType;
 	private Media media = null;
 
-	PresentmentImportProcess presentmentImportProcess;
-	List<ValueLabel> defaultPaymentType;
-	private ValidateRecord presentmentRespValidation;
+	private List<ValueLabel> defaultPaymentType;
 
 	public ImportPresentmentDetailCtrl() {
 		super();
@@ -106,11 +143,11 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 
 		setPageComponents(window_ImportPresentmentDetails);
 
-		allowInstrumentType = "Y"
-				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE))
-						? true : false;
+		allowInstrumentType = "Y".equals(
+				SysParamUtil.getValueAsString(SMTParameterConstants.PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE)) ? true
+						: false;
 
-		if (allowInstrumentType || !ImplementationConstants.DEFAULT_PRESENTMENT_UPLOAD) {
+		if (allowInstrumentType) {
 			this.rowInstrumentType.setVisible(true);
 			doSetFieldProperties();
 			grid_Default.setVisible(false);
@@ -125,7 +162,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 			this.panelRows.setVisible(false);
 		}
 
-		if (!allowInstrumentType && ImplementationConstants.DEFAULT_PRESENTMENT_UPLOAD) {
+		if (!allowInstrumentType) {
 			if (processExecution == null) {
 				processExecution = new ProcessExecution();
 				createPanel(processExecution, PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT);
@@ -141,9 +178,11 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 					timer.stop();
 				}
 				btnUpload.setDisabled(false);
+				instrumentType.setDisabled(false);
 			} else if (ExecutionStatus.F.name().equals(status)) {
 				btnSave.setDisabled(true);
 				btnUpload.setDisabled(true);
+				instrumentType.setDisabled(true);
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -152,20 +191,18 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	public void onChange$instrumentType(Event event) throws Exception {
 		logger.debug(Literal.ENTERING + event.toString());
 
-		String instType = "";
-
-		if ("#".equals(getComboboxValue(this.instrumentType))) {
+		if (PennantConstants.List_Select.equals(getComboboxValue(this.instrumentType))) {
 			return;
 		}
 
-		instType = this.instrumentType.getSelectedItem().getValue();
+		String instType = this.instrumentType.getSelectedItem().getValue();
 		this.txtFileName.setValue("");
 
 		String instrumentTypeConfigName = "PRESENTMENT_RESPONSE_";
 		instrumentTypeConfigName = instrumentTypeConfigName.concat(instType);
 
 		String configName = SysParamUtil.getValueAsString(instrumentTypeConfigName);
-		if (StringUtils.isEmpty(configName)) {
+		if (configName == null) {
 			configName = "PRESENTMENT_RESPONSE";
 		}
 
@@ -175,6 +212,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 			MessageUtil.showError(e);
 			return;
 		}
+
 		PRSENTMENT_FILE_IMPORT_STATUS = dataEngineConfig.getLatestExecution(configName);
 
 		doFillPanel(config, PRSENTMENT_FILE_IMPORT_STATUS);
@@ -196,7 +234,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 							|| SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_PDC_AUTO_UPLOAD_JOB_ENABLED))) {
 				this.btnSave.setDisabled(true);
 			}
-		} else if (!ImplementationConstants.DEFAULT_PRESENTMENT_UPLOAD) {
+		} else {
 			defaultPaymentType = new ArrayList<ValueLabel>(1);
 			defaultPaymentType.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_IST,
 					Labels.getLabel("label_Presentment_Default")));
@@ -213,7 +251,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		if (allowInstrumentType) {
 			String instType = "";
 
-			if ("#".equals(getComboboxValue(this.instrumentType))) {
+			if (PennantConstants.List_Select.equals(getComboboxValue(this.instrumentType))) {
 				return;
 			}
 
@@ -263,7 +301,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		}
 		txtFileName.setText(media.getName());
 
-		if (allowInstrumentType || !ImplementationConstants.DEFAULT_PRESENTMENT_UPLOAD) {
+		if (allowInstrumentType) {
 			String mediaName = media.getName();
 			String prefix = config.getFilePrefixName();
 			String extension = config.getFileExtension();
@@ -282,8 +320,15 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 				return;
 			}
 
+			if (presentmentDetailDAO.isFileProcessed(mediaName)) {
+				MessageUtil.showError("Selected file already processed");
+
+				media = null;
+				return;
+			}
+
 		} else {
-			int row_NumberOfCells = 12;
+			int row_NumberOfCells = 14;
 			Object valu = SysParamUtil.getValue(SMTParameterConstants.PRESENTMENT_RESPONSE_ROW_LENGTH);
 			if (valu != null) {
 				row_NumberOfCells = Integer.parseInt(valu.toString());
@@ -356,7 +401,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 			throw new WrongValueException(this.txtFileName, Labels.getLabel("empty_file"));
 		}
 
-		if (allowInstrumentType && "#".equals(getComboboxValue(this.instrumentType))) {
+		if (allowInstrumentType && PennantConstants.List_Select.equals(getComboboxValue(this.instrumentType))) {
 			throw new WrongValueException(this.instrumentType, Labels.getLabel("FIELD_IS_MAND",
 					new String[] { Labels.getLabel("label_PresentmentDetailList_MandateType.value") }));
 		}
@@ -367,40 +412,22 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	private void doSave() throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		FinanceRepaymentsDAO frDAO = (FinanceRepaymentsDAO) SpringBeanUtil.getBean("financeRepaymentsDAO");
-		PostingsPreparationUtil ppu = (PostingsPreparationUtil) SpringBeanUtil.getBean("postingsPreparationUtil");
+		LoggedInUser loggedInUser = getUserWorkspace().getLoggedInUser();
+		PresentmentDetailExtract pde = new PresentmentDetailExtract(this.dataSource);
+		/* Data */
+		pde.setInstrumentType(this.instrumentType.getSelectedItem().getValue());
+		pde.setUserDetails(loggedInUser);
+		pde.setStatus(PRSENTMENT_FILE_IMPORT_STATUS);
+		pde.setMediaOnly(getMedia());
+		presentmentDetailService.setProperties(pde);
 
-		if (allowInstrumentType || !ImplementationConstants.DEFAULT_PRESENTMENT_UPLOAD) {
-			PresentmentDetailService service = (PresentmentDetailService) SpringBeanUtil
-					.getBean("presentmentDetailService");
-			DataSource source = (DataSource) SpringBeanUtil.getBean("dataSource");
-			NotificationService notificationService = (NotificationService) SpringBeanUtil
-					.getBean("notificationService");
-
-			PresentmentDetailExtract pde = new PresentmentDetailExtract(source, service, notificationService);
-			pde.setInstrumentType(this.instrumentType.getSelectedItem().getValue());
-			pde.setUserDetails(getUserWorkspace().getLoggedInUser());
-			pde.setStatus(PRSENTMENT_FILE_IMPORT_STATUS);
-			pde.setMediaOnly(getMedia());
-			pde.setPresentmentImportProcess(presentmentImportProcess);
-			pde.setFinanceRepaymentsDAO(frDAO);
-			pde.setPostingsPreparationUtil(ppu);
-			pde.setPresentmentRespValidation(presentmentRespValidation);
-
-			Thread thread = new Thread(pde);
-			thread.start();
-			Thread.sleep(1000);
-		} else {
-			fileImport.setFinanceRepaymentsDAO(frDAO);
-			fileImport.setPostingsPreparationUtil(ppu);
-			if (processExecution.getChildren() != null) {
-				processExecution.getChildren().clear();
-			}
-			Thread thread = new Thread(fileImport);
-			timer.start();
-			thread.start();
-			Thread.sleep(1000);
+		if (processExecution.getChildren() != null) {
+			processExecution.getChildren().clear();
 		}
+
+		Thread thread = new Thread(pde);
+		thread.start();
+		Thread.sleep(1000);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -445,7 +472,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	public void onTimer$timer(Event event) {
-		if (allowInstrumentType || !ImplementationConstants.DEFAULT_PRESENTMENT_UPLOAD) {
+		if (allowInstrumentType) {
 			List<Row> rows = this.panelRows.getChildren();
 			for (Row row : rows) {
 				List<Hbox> hboxs = row.getChildren();
@@ -457,9 +484,11 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 						if (ExecutionStatus.I.name().equals(status)) {
 							this.btnUpload.setDisabled(true);
 							this.btnSave.setDisabled(true);
+							this.instrumentType.setDisabled(true);
 						} else {
 							this.btnUpload.setDisabled(false);
 							this.btnSave.setDisabled(false);
+							this.instrumentType.setDisabled(false);
 						}
 						pe.render();
 					}
@@ -467,6 +496,15 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 			}
 		} else {
 			Events.postEvent("onCreate", this.window_ImportPresentmentDetails, event);
+		}
+	}
+
+	/**
+	 * Starting the Timer
+	 */
+	public void startTimer() {
+		if (!timer.isRunning()) {
+			timer.start();
 		}
 	}
 
@@ -497,9 +535,164 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		this.presentmentImportProcess = presentmentImportProcess;
 	}
 
-	@Autowired(required = false)
-	@Qualifier(value = "presentmentRespValidation")
-	public void setPresentmentRespValidation(ValidateRecord presentmentRespValidation) {
-		this.presentmentRespValidation = presentmentRespValidation;
+	public DataSource getDataSource() {
+		return dataSource;
 	}
+
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+
+	public FinanceRepaymentsDAO getFinanceRepaymentsDAO() {
+		return financeRepaymentsDAO;
+	}
+
+	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
+		this.financeRepaymentsDAO = financeRepaymentsDAO;
+	}
+
+	public FinReceiptHeaderDAO getFinReceiptHeaderDAO() {
+		return finReceiptHeaderDAO;
+	}
+
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
+	}
+
+	public PresentmentDetailDAO getPresentmentDetailDAO() {
+		return presentmentDetailDAO;
+	}
+
+	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
+		this.presentmentDetailDAO = presentmentDetailDAO;
+	}
+
+	public FinanceMainDAO getFinanceMainDAO() {
+		return financeMainDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public CustomerDAO getCustomerDAO() {
+		return customerDAO;
+	}
+
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
+	}
+
+	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
+		return financeScheduleDetailDAO;
+	}
+
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	public FinanceProfitDetailDAO getFinanceProfitDetailDAO() {
+		return financeProfitDetailDAO;
+	}
+
+	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
+		this.financeProfitDetailDAO = financeProfitDetailDAO;
+	}
+
+	public FinODDetailsDAO getFinODDetailsDAO() {
+		return finODDetailsDAO;
+	}
+
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
+	}
+
+	public FinReceiptDetailDAO getFinReceiptDetailDAO() {
+		return finReceiptDetailDAO;
+	}
+
+	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
+		this.finReceiptDetailDAO = finReceiptDetailDAO;
+	}
+
+	public FinExcessAmountDAO getFinExcessAmountDAO() {
+		return finExcessAmountDAO;
+	}
+
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	public PresentmentDetailService getPresentmentDetailService() {
+		return presentmentDetailService;
+	}
+
+	public void setPresentmentDetailService(PresentmentDetailService presentmentDetailService) {
+		this.presentmentDetailService = presentmentDetailService;
+	}
+
+	public NotificationService getNotificationService() {
+		return notificationService;
+	}
+
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
+	}
+
+	public ReceiptPaymentService getReceiptPaymentService() {
+		return receiptPaymentService;
+	}
+
+	public void setReceiptPaymentService(ReceiptPaymentService receiptPaymentService) {
+		this.receiptPaymentService = receiptPaymentService;
+	}
+
+	public ReceiptCancellationService getReceiptCancellationService() {
+		return receiptCancellationService;
+	}
+
+	public void setReceiptCancellationService(ReceiptCancellationService receiptCancellationService) {
+		this.receiptCancellationService = receiptCancellationService;
+	}
+
+	public PostingsPreparationUtil getPostingsPreparationUtil() {
+		return postingsPreparationUtil;
+	}
+
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+
+	public RepaymentPostingsUtil getRepaymentPostingsUtil() {
+		return repaymentPostingsUtil;
+	}
+
+	public void setRepaymentPostingsUtil(RepaymentPostingsUtil repaymentPostingsUtil) {
+		this.repaymentPostingsUtil = repaymentPostingsUtil;
+	}
+
+	public ReceiptCalculator getReceiptCalculator() {
+		return receiptCalculator;
+	}
+
+	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
+		this.receiptCalculator = receiptCalculator;
+	}
+
+	public FileExtractService<PresentmentDetailExtract> getPresentmentExtractService() {
+		return presentmentExtractService;
+	}
+
+	public PresentmentImportProcess getPresentmentImportProcess() {
+		return presentmentImportProcess;
+	}
+
+	public EventPropertiesService getEventPropertiesService() {
+		return eventPropertiesService;
+	}
+
+	public void setEventPropertiesService(EventPropertiesService eventPropertiesService) {
+		this.eventPropertiesService = eventPropertiesService;
+	}
+
 }

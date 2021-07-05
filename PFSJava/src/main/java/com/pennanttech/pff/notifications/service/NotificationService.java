@@ -407,14 +407,13 @@ public class NotificationService extends GenericService<Notification> {
 		}
 	}
 
-	//Prepare additional data required for rule .
+	// Prepare additional data required for rule .
 	private void prepareAdditionalData(List<DocumentDetails> documents, Map<String, Object> data) {
 		boolean isCovDocFound = false;
 		if (CollectionUtils.isNotEmpty(documents)) {
 			for (DocumentDetails documentDetail : documents) {
 				if (documentDetail != null && documentDetail.getDocCategory() != null) {
-					String docCategoryCode = documentTypeDAO.getDocCategoryByDocType(documentDetail.getDocCategory(),
-							"_AView");
+					String docCategoryCode = documentTypeDAO.getDocCategoryByDocType(documentDetail.getDocCategory());
 					if (StringUtils.equals(docCategoryCode, DocumentCategories.COVENANT.getKey())) {
 						isCovDocFound = true;
 						break;
@@ -740,7 +739,7 @@ public class NotificationService extends GenericService<Notification> {
 
 		data.setValueDate(DateUtility.formatToLongDate(presentmentDetail.getSchDate()));
 		data.setAmount(PennantApplicationUtil.amountFormate(presentmentDetail.getPresentmentAmt(), format));
-		data.setBounceReason(presentmentDetail.getBounceReason());
+		data.setBounceReason(presentmentDetail.getBounceCode());
 
 		return data.getDeclaredFieldValues();
 	}
@@ -1100,14 +1099,14 @@ public class NotificationService extends GenericService<Notification> {
 		data.setCustCIF(provision.getCustCIF());
 		data.setFinBranch(provision.getFinBranch());
 		int format = CurrencyUtil.getFormat(provision.getFinCcy());
-		//data.setPrincipalDue(PennantApplicationUtil.amountFormate(provision.getPrincipalDue(), format));
-		//data.setProfitDue(PennantApplicationUtil.amountFormate(provision.getProfitDue(), format));
-		//data.setTotalDue(PennantApplicationUtil.amountFormate(provision.getPrincipalDue().add(provision.getProfitDue()),
-		//		format));
+		// data.setPrincipalDue(PennantApplicationUtil.amountFormate(provision.getPrincipalDue(), format));
+		// data.setProfitDue(PennantApplicationUtil.amountFormate(provision.getProfitDue(), format));
+		// data.setTotalDue(PennantApplicationUtil.amountFormate(provision.getPrincipalDue().add(provision.getProfitDue()),
+		// format));
 		data.setDueFromDate(DateUtility.formatToLongDate(provision.getDueFromDate()));
-		//data.setNonFormulaProv(PennantApplicationUtil.amountFormate(provision.getNonFormulaProv(), format));
+		// data.setNonFormulaProv(PennantApplicationUtil.amountFormate(provision.getNonFormulaProv(), format));
 		data.setProvisionedAmt(PennantApplicationUtil.amountFormate(provision.getProvisionedAmt(), format));
-		//data.setProvisionedAmtCal(PennantApplicationUtil.amountFormate(provision.getProvisionAmtCal(), format));
+		// data.setProvisionedAmtCal(PennantApplicationUtil.amountFormate(provision.getProvisionAmtCal(), format));
 
 		// Role Code For Alert Notification
 		List<SecurityRole> securityRoles = PennantApplicationUtil.getRoleCodeDesc(provision.getRoleCode());
@@ -1228,12 +1227,12 @@ public class NotificationService extends GenericService<Notification> {
 				PennantApplicationUtil.amountFormate(ScheduleCalculator.getEMIOnFinAssetValue(aFinanceDetail), 2));
 		declaredFieldValues.put("ct_custSalutationCode",
 				StringUtils.trimToEmpty(customer.getLovDescCustSalutationCodeName()));
-		//setting the disbursement type to notification rule fields
+		// setting the disbursement type to notification rule fields
 		if (CollectionUtils.isNotEmpty(aFinanceDetail.getAdvancePaymentsList())) {
 			for (FinAdvancePayments advancePayments : aFinanceDetail.getAdvancePaymentsList()) {
 				String paymentType = StringUtils.trimToEmpty(advancePayments.getPaymentType());
 				declaredFieldValues.put("di_paymentType", paymentType);
-				//if multiple instructions are available considering only CHEQUE
+				// if multiple instructions are available considering only CHEQUE
 				if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentType)) {
 					break;
 				}

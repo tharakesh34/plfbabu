@@ -113,7 +113,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.BankAccountValidationService;
 
-import AccountEventConstants.AccountingEvent;
+import com.pennant.app.constants.AccountingEvent;
 
 /**
  * Service implementation for methods that depends on <b>FinancePurposeDetail</b>.<br>

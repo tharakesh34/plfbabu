@@ -306,7 +306,6 @@ public class FinanceDetail implements java.io.Serializable {
 	@XmlElement
 	private BigDecimal receiptProcessingAmt;
 
-
 	// used for Interfaces
 	private Long usrID;
 	private String usrLogin;
@@ -316,8 +315,12 @@ public class FinanceDetail implements java.io.Serializable {
 	private boolean vettingInitTab = false;
 	private PMAY pmay;
 
-	//Documents uploaded in DMS for already approved collateral, those documents need to synch PLF.
+	// Documents uploaded in DMS for already approved collateral, those documents need to synch PLF.
 	private List<CollateralSetup> dmsCollateralDocuments;
+	// Required only for the Covenants API
+	@XmlElement
+	private boolean isOrigination;
+	private List<LinkedFinances> linkedFinancesList;
 
 	public FinanceDetail() {
 		super();
@@ -327,6 +330,7 @@ public class FinanceDetail implements java.io.Serializable {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("orderStatus");
 		excludeFields.add("receiptProcessingAmt");
+		excludeFields.add("isOrigination");
 
 		return excludeFields;
 	}
@@ -1605,6 +1609,20 @@ public class FinanceDetail implements java.io.Serializable {
 		this.receiptProcessingAmt = receiptProcessingAmt;
 	}
 
+	public boolean isOrigination() {
+		return isOrigination;
+	}
 
+	public void setOrigination(boolean isOrigination) {
+		this.isOrigination = isOrigination;
+	}
+
+	public List<LinkedFinances> getLinkedFinancesList() {
+		return linkedFinancesList;
+	}
+
+	public void setLinkedFinancesList(List<LinkedFinances> linkedFinancesList) {
+		this.linkedFinancesList = linkedFinancesList;
+	}
 
 }

@@ -224,10 +224,8 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 	/**
 	 * Fetch the Record Vehicle Dealer details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return VehicleDealer
 	 */
 	@Override
@@ -374,10 +372,8 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 	 * This method Deletes the Record from the AMTVehicleDealer or AMTVehicleDealer_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Vehicle Dealer by key DealerId
 	 * 
-	 * @param Vehicle
-	 *            Dealer (vehicleDealer)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Vehicle Dealer (vehicleDealer)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -410,10 +406,8 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 	 * 
 	 * save Vehicle Dealer
 	 * 
-	 * @param Vehicle
-	 *            Dealer (vehicleDealer)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Vehicle Dealer (vehicleDealer)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -459,10 +453,8 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 	 * This method updates the Record AMTVehicleDealer or AMTVehicleDealer_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Vehicle Dealer by key DealerId and Version
 	 * 
-	 * @param Vehicle
-	 *            Dealer (vehicleDealer)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Vehicle Dealer (vehicleDealer)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -535,10 +527,8 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 	/**
 	 * Fetch the Record VehicleDealer details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return count
 	 */
 	@Override
@@ -731,7 +721,7 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 	@Override
 	public VehicleDealer getVehicleDealerById(Long id, String dealerType, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		VehicleDealer vehicleDealer = new VehicleDealer();
 		vehicleDealer.setDealerType(dealerType);
 		vehicleDealer.setDealerId(id);
@@ -754,6 +744,15 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		logger.debug(Literal.LEAVING);
 		return vehicleDealer;
 
+	}
+
+	@Override
+	public int getApprovedVehicleDealerCountById(long dealerId, String delarType) {
+		String sql = "Select Coalesce(Count(*), 0) From AMTVehicleDealer Where DealerType = ? and DealerId = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return jdbcOperations.queryForObject(sql, new Object[] { delarType, dealerId }, Integer.class);
 	}
 
 }

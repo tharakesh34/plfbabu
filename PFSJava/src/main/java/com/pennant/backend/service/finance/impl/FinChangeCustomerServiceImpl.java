@@ -43,6 +43,7 @@
 package com.pennant.backend.service.finance.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,8 +53,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.beneficiary.BeneficiaryDAO;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
@@ -241,8 +242,7 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 	 * FinChangeCustomer by using FinChangeCustomerDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtFinChangeCustomer by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -267,10 +267,8 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 	/**
 	 * getFinChangeCustomer fetch the details by using FinChangeCustomerDAO's getFinChangeCustomerById method.
 	 * 
-	 * @param entityCode
-	 *            entityCode of the FinChangeCustomer.
-	 * @param finReference
-	 *            finReference of the FinChangeCustomer.
+	 * @param entityCode   entityCode of the FinChangeCustomer.
+	 * @param finReference finReference of the FinChangeCustomer.
 	 * @return FinChangeCustomer
 	 */
 	@Override
@@ -288,10 +286,8 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 	 * getApprovedFinChangeCustomerById fetch the details by using FinChangeCustomerDAO's getFinChangeCustomerById
 	 * method . with parameter id and type as blank. it fetches the approved records from the FinChangeCustomer.
 	 * 
-	 * @param entityCode
-	 *            entityCode of the FinChangeCustomer.
-	 * @param finReference
-	 *            finReference of the FinChangeCustomer. (String)
+	 * @param entityCode   entityCode of the FinChangeCustomer.
+	 * @param finReference finReference of the FinChangeCustomer. (String)
 	 * @return FinChangeCustomer
 	 */
 	@Override
@@ -311,8 +307,7 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 	 * record in to AuditHeader and AdtFinChangeCustomer by using auditHeaderDAO.addAudit(auditHeader) based on the
 	 * transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -373,68 +368,84 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 	}
 
 	public void doProcess(FinChangeCustomer finChangeCustomer) {
-		if (finChangeCustomer.getCoApplicantId() > 0) {
-			String finReference = finChangeCustomer.getFinReference();
-			changeCustomerDetails(finChangeCustomer);
+		Long coApplicantId = finChangeCustomer.getCoApplicantId();
+		if (coApplicantId == null || coApplicantId <= 0) {
+			return;
+		}
 
-			FinanceTaxDetail financeTaxDetail = getFinanceTaxDetailDAO().getFinanceTaxDetail(finReference, "_Temp");
+		String finReference = finChangeCustomer.getFinReference();
+		String finRef = finReference;
+		changeCustomerDetails(finChangeCustomer);
 
-			if (financeTaxDetail != null) {
-				getFinanceTaxDetailDAO().deleteFinTaxDetails(financeTaxDetail, TableType.TEMP_TAB);
+		FinanceTaxDetail financeTaxDetail = getFinanceTaxDetailDAO().getFinanceTaxDetail(finRef, "_Temp");
+
+		if (financeTaxDetail != null) {
+			getFinanceTaxDetailDAO().deleteFinTaxDetails(financeTaxDetail, TableType.TEMP_TAB);
+		}
+
+		JointAccountDetail ajd = finChangeCustomer.getJointAccountDetail();
+		if (ajd != null) {
+			jointAccountDetailDAO.delete(ajd, "_Temp");
+		}
+
+		JointAccountDetail jd = new JointAccountDetail();
+		jd.setNewRecord(true);
+		jd.setWorkflowId(ajd.getWorkflowId());
+		jd.setRecordType(ajd.getRecordType());
+		jd.setRecordStatus(ajd.getRecordStatus());
+		jd.setRoleCode(ajd.getRoleCode());
+		jd.setNextRoleCode(ajd.getNextRoleCode());
+		jd.setVersion(ajd.getVersion());
+		jd.setLastMntOn(ajd.getLastMntOn());
+		jd.setLastMntBy(ajd.getLastMntBy());
+		jd.setFinReference(finRef);
+		jd.setCustCIF(finChangeCustomer.getCustCif());
+
+		jointAccountDetailDAO.save(jd, "_Temp");
+
+		Date appDate = SysParamUtil.getAppDate();
+		boolean collateralDelinkStatus = finChangeCustomer.isCollateralDelinkStatus();
+
+		if (!collateralDelinkStatus) {
+			return;
+		}
+
+		long oldCustId = finChangeCustomer.getOldCustId();
+		List<CollateralSetup> collateralsList = getCollateralByReference(finReference, oldCustId);
+
+		boolean colExist = false;
+		List<CollateralMovement> movements = new ArrayList<>();
+
+		CollateralAssignment assignment = null;
+		for (CollateralSetup collateralSetup : collateralsList) {
+			String colRef = collateralSetup.getCollateralRef();
+			assignment = collateralAssignmentDAO.getCollateralAssignmentByFinReference(finRef, colRef, "_Temp");
+
+			if (assignment == null) {
+				continue;
 			}
-			if (finChangeCustomer.getJointAccountDetail() != null) {
-				getJointAccountDetailDAO().delete(finChangeCustomer.getJointAccountDetail(), "_Temp");
-			}
 
-			JointAccountDetail jointAccountDetail = new JointAccountDetail();
-			jointAccountDetail.setNewRecord(true);
-			jointAccountDetail.setWorkflowId(finChangeCustomer.getJointAccountDetail().getWorkflowId());
-			jointAccountDetail.setRecordType(finChangeCustomer.getJointAccountDetail().getRecordType());
-			jointAccountDetail.setRecordStatus(finChangeCustomer.getJointAccountDetail().getRecordStatus());
-			jointAccountDetail.setRoleCode(finChangeCustomer.getJointAccountDetail().getRoleCode());
-			jointAccountDetail.setNextRoleCode(finChangeCustomer.getJointAccountDetail().getNextRoleCode());
-			jointAccountDetail.setVersion(finChangeCustomer.getJointAccountDetail().getVersion());
-			jointAccountDetail.setLastMntOn(finChangeCustomer.getJointAccountDetail().getLastMntOn());
-			jointAccountDetail.setLastMntBy(finChangeCustomer.getJointAccountDetail().getLastMntBy());
-			jointAccountDetail.setFinReference(finReference);
-			jointAccountDetail.setCustCIF(finChangeCustomer.getCustCif());
-			getJointAccountDetailDAO().save(jointAccountDetail, "_Temp");
-			// getCollateralAssignmentDAO().deLinkCollateral(finChangeCustomer.getFinReference());
-			// Collateral Setups
+			colExist = true;
+			CollateralMovement movement = new CollateralMovement();
+			movement.setModule(FinanceConstants.MODULE_NAME);
+			movement.setCollateralRef(colRef);
+			movement.setReference(finRef);
+			movement.setAssignPerc(assignment.getAssignPerc());
+			movement.setValueDate(appDate);
+			movement.setProcess(CollateralConstants.PROCESS_MANUAL);
 
-			if (finChangeCustomer.isCollateralDelinkStatus()) {
-				List<CollateralSetup> collateralsList = getCollateralByReference(finChangeCustomer.getFinReference(),
-						finChangeCustomer.getOldCustId());
-				if (CollectionUtils.isNotEmpty(collateralsList)) {
-					boolean colExist = false;
+			movements.add(movement);
 
-					for (CollateralSetup collateralSetup : collateralsList) {
-						String collateralRef = collateralSetup.getCollateralRef();
-						int count = collateralAssignmentDAO.getAssignedCollateralCountByRef(collateralRef, finReference,
-								"_Temp");
-						if (count > 0) {
-							CollateralAssignment assignment = collateralAssignmentDAO
-									.getCollateralAssignmentByFinReference(finReference, collateralRef, "_Temp");
-							if (assignment != null) {
-								colExist = true;
-								CollateralMovement movement = new CollateralMovement();
-								movement.setModule(FinanceConstants.MODULE_NAME);
-								movement.setCollateralRef(collateralRef);
-								movement.setReference(finReference);
-								movement.setAssignPerc(assignment.getAssignPerc());
-								movement.setValueDate(DateUtility.getAppDate());
-								movement.setProcess(CollateralConstants.PROCESS_MANUAL);
-								collateralAssignmentDAO.save(movement);
-							}
-						}
-					}
-					if (colExist) {
-						collateralAssignmentDAO.deLinkCollateral(finReference, "_Temp");
-					}
-				}
-
+			if (movements.size() == PennantConstants.CHUNK_SIZE) {
+				collateralAssignmentDAO.saveList(movements);
+				movements.clear();
 			}
 		}
+		collateralAssignmentDAO.saveList(movements);
+		if (colExist) {
+			collateralAssignmentDAO.deLinkCollateral(finRef, "_Temp");
+		}
+
 	}
 
 	/**
@@ -443,8 +454,7 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 	 * workFlow table by using getFinChangeCustomerDAO().delete with parameters FinChangeCustomer,"_Temp" 3) Audit the
 	 * record in to AuditHeader and AdtFinChangeCustomer by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -472,8 +482,7 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -682,6 +691,6 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 
 	@Override
 	public List<CollateralSetup> getCollateralByReference(String reference, long depositorId) {
-		return getCollateralSetupDAO().getCollateralByRef(reference, depositorId, "_View");
+		return collateralSetupDAO.getCollateralByRef(reference, depositorId, "_View");
 	}
 }

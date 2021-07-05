@@ -30,7 +30,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
 public class FinCovenantWebServiceImpl implements FinCovenantRestService, FinCovenantSoapService {
-	Logger logger = LogManager.getLogger(FinCovenantWebServiceImpl.class);
+	private Logger logger = LogManager.getLogger(FinCovenantWebServiceImpl.class);
 
 	private FinCovenantTypeService finCovenantTypeService;
 	private FinanceDetailService financeDetailService;

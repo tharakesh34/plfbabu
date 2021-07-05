@@ -27,6 +27,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FetchCustomerDedupDetails {
 
@@ -96,36 +97,38 @@ public class FetchCustomerDedupDetails {
 
 	public static List<CustomerDedup> fetchCustomerDedupDetails(String userRole, CustomerDedup customerDedup,
 			String curLoginUser, String finType) throws InterfaceException {
-
-		List<CustomerDedup> overridedCustDedupList = new ArrayList<CustomerDedup>();
-		List<CustomerDedup> customerDedupList = new ArrayList<CustomerDedup>();
+		List<CustomerDedup> overridedCustDedupList = new ArrayList<>();
+		List<CustomerDedup> customerDedupList = new ArrayList<>();
 		FinanceReferenceDetail referenceDetail = new FinanceReferenceDetail();
 		List<FinanceReferenceDetail> queryCodeList = new ArrayList<>();
+
 		if (StringUtils.isNotEmpty(finType)) {
 			referenceDetail.setMandInputInStage(userRole + ",");
 			referenceDetail.setFinType(finType);
-			queryCodeList = getDedupParmService().getQueryCodeList(referenceDetail, "_ACDView");
-		}
-		if (StringUtils.isNotEmpty(finType) && CollectionUtils.isEmpty(queryCodeList)) {
-			return new ArrayList<>();
+			queryCodeList = dedupParmService.getQueryCodeList(referenceDetail, "_ACDView");
 		}
 
-		List<DedupParm> list = getDedupParmService().getDedupParmByModule(FinanceConstants.DEDUP_CUSTOMER,
-				customerDedup.getCustCtgCode(), "");
+		if (StringUtils.isNotEmpty(finType) && CollectionUtils.isEmpty(queryCodeList)) {
+			return customerDedupList;
+		}
+
+		String custDedup = FinanceConstants.DEDUP_CUSTOMER;
+		List<DedupParm> list = dedupParmService.getDedupParmByModule(custDedup, customerDedup.getCustCtgCode(), "");
 
 		List<DedupParm> finDedupParmList = new ArrayList<>();
 
+		String custCIF = customerDedup.getCustCIF();
 		if (StringUtils.isNotEmpty(finType) && CollectionUtils.isNotEmpty(queryCodeList)
 				&& CollectionUtils.isNotEmpty(list)) {
 			for (FinanceReferenceDetail queryCode : queryCodeList) {
 
 				// to get previously overridden data
-				List<CustomerDedup> custDedupList = getCustomerDedupDAO().fetchOverrideCustDedupData(
-						customerDedup.getCustCIF(), queryCode.getLovDescNamelov(), FinanceConstants.DEDUP_CUSTOMER);
-				for (CustomerDedup custDedup : custDedupList) {
-					custDedup.setOverridenby(custDedup.getOverrideUser());
-					overridedCustDedupList.add(custDedup);
-				}
+				List<CustomerDedup> custDedupList = customerDedupDAO.fetchOverrideCustDedupData(custCIF,
+						queryCode.getLovDescNamelov(), custDedup);
+
+				custDedupList.forEach(l1 -> l1.setOverridenby(l1.getOverrideUser()));
+				overridedCustDedupList.addAll(custDedupList);
+
 				for (DedupParm parm : list) {
 					if (StringUtils.equals(parm.getQueryCode(), queryCode.getLovDescNamelov())) {
 						finDedupParmList.add(parm);
@@ -133,21 +136,21 @@ public class FetchCustomerDedupDetails {
 				}
 
 			}
-			//to get the de dup details based on the de dup parameters i.e query's list from both application and core banking
-			customerDedupList.addAll(getDedupParmService().getCustomerDedup(customerDedup, finDedupParmList));
+			// to get the de dup details based on the de dup parameters i.e query's list from both application and core
+			// banking
+			customerDedupList.addAll(dedupParmService.getCustomerDedup(customerDedup, finDedupParmList));
 		} else {
 			if (CollectionUtils.isNotEmpty(list)) {
 				for (DedupParm dedupParm : list) {
 					// to get previously overridden data
-					List<CustomerDedup> custDedupList = getCustomerDedupDAO().fetchOverrideCustDedupData(
-							customerDedup.getCustCIF(), dedupParm.getQueryCode(), FinanceConstants.DEDUP_CUSTOMER);
-					for (CustomerDedup custDedup : custDedupList) {
-						custDedup.setOverridenby(custDedup.getOverrideUser());
-						overridedCustDedupList.add(custDedup);
-					}
+					List<CustomerDedup> custDedupList = customerDedupDAO.fetchOverrideCustDedupData(custCIF,
+							dedupParm.getQueryCode(), custDedup);
+					custDedupList.forEach(l1 -> l1.setOverridenby(l1.getOverrideUser()));
+					overridedCustDedupList.addAll(custDedupList);
 				}
-				//to get the de dup details based on the de dup parameters i.e query's list from both application and core banking
-				customerDedupList.addAll(getDedupParmService().getCustomerDedup(customerDedup, list));
+				// to get the de dup details based on the de dup parameters i.e query's list from both application and
+				// core banking
+				customerDedupList.addAll(dedupParmService.getCustomerDedup(customerDedup, list));
 			}
 		}
 		customerDedupList = doSetCustomerDeDupGrouping(customerDedupList);
@@ -169,7 +172,7 @@ public class FetchCustomerDedupDetails {
 										+ PennantConstants.DELIMITER_COMMA + curLoginUser);
 								newUser = true;
 							}
-							//Checking for New Rule
+							// Checking for New Rule
 							if (isRuleChanged(previousDedup.getDedupRule(), currentDedup.getDedupRule())) {
 								currentDedup.setNewRule(true);
 								if (previousDedup.getCustCIF().equals(currentDedup.getCustCIF())) {
@@ -191,12 +194,56 @@ public class FetchCustomerDedupDetails {
 			} else if (!overridedCustDedupList.isEmpty() && customerDedupList.isEmpty()) {
 				customerDedupList.addAll(overridedCustDedupList);
 			}
-
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 
 		return customerDedupList;
+	}
+
+	public static CustomerDetails getCustomerDedupDetails(String userRole, CustomerDetails customerDetails,
+			Window parentWindow, String curLoginUser, String finType) throws InterfaceException {
+
+		if (customerDetails == null || customerDetails.getCustomer() == null) {
+			return customerDetails;
+		}
+
+		CustomerDedup customerDedup = doSetCustomerDedup(customerDetails);
+		Customer customer = customerDetails.getCustomer();
+
+		List<CustomerDedup> custDedupData = fetchCustomerDedupDetails(userRole, customerDedup, curLoginUser, finType);
+
+		if (CollectionUtils.isEmpty(custDedupData)) {
+			customer.setDedupFound(false);
+			customerDetails.setCustomerDedupList(null);
+			return customerDetails;
+		}
+
+		customer.setDedupFound(true);
+		customerDedup.setFinType(finType);
+		Object dataObject = ShowCustomerDedupListBox.show(parentWindow, custDedupData, CUSTOMERDEDUP_LABELS,
+				customerDedup, curLoginUser);
+
+		if (dataObject == null) {
+			return customerDetails;
+		}
+
+		ShowCustomerDedupListBox details = (ShowCustomerDedupListBox) dataObject;
+		System.out.println("THE ACTIONED VALUE IS ::::" + details.getUserAction());
+		logger.debug("The User Action is " + details.getUserAction());
+		int userAction = details.getUserAction();
+
+		@SuppressWarnings("unchecked")
+		List<CustomerDedup> customerDedupList = (List<CustomerDedup>) details.getObject();
+
+		if (userAction == 1) {
+			customerDetails.setCustomerDedupList(customerDedupList);
+			customer.setSkipDedup(true);
+		} else if (userAction == 0) {
+			customer.setSkipDedup(false);
+		}
+
+		return customerDetails;
 	}
 
 	/**
@@ -263,7 +310,7 @@ public class FetchCustomerDedupDetails {
 	}
 
 	private static CustomerDedup doSetCustomerDedup(CustomerDetails customerDetails) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		String mobileNumber = "";
 		String emailid = "";
 		String aadharId = "";
@@ -271,6 +318,8 @@ public class FetchCustomerDedupDetails {
 		String drivingLicenseNo = "";
 		String aadhar = masterDefDAO.getMasterCode("DOC_TYPE", "AADHAAR");
 		String passPort = masterDefDAO.getMasterCode("DOC_TYPE", "PASSPORT");
+		String panNumber = masterDefDAO.getMasterCode("DOC_TYPE", "PAN");
+
 		String voterIdCode = masterDefDAO.getMasterCode(PennantConstants.DOC_TYPE, PennantConstants.VOTER_ID);
 		String drivingLicenseCode = masterDefDAO.getMasterCode(PennantConstants.DOC_TYPE,
 				PennantConstants.DRIVING_LICENCE);
@@ -294,7 +343,7 @@ public class FetchCustomerDedupDetails {
 				}
 			}
 		}
-		//Aadhar 
+		// Aadhar
 		if (customerDetails.getCustomerDocumentsList() != null) {
 			for (CustomerDocument document : customerDetails.getCustomerDocumentsList()) {
 				if (document.getCustDocCategory().equals(aadhar)) {
@@ -303,7 +352,7 @@ public class FetchCustomerDedupDetails {
 				}
 			}
 		}
-		//Passport 
+		// Passport
 		if (customerDetails.getCustomerDocumentsList() != null) {
 			for (CustomerDocument document : customerDetails.getCustomerDocumentsList()) {
 				if (document.getCustDocCategory().equals(passPort)) {
@@ -313,7 +362,7 @@ public class FetchCustomerDedupDetails {
 			}
 		}
 
-		//Driving License 
+		// Driving License
 		if (customerDetails.getCustomerDocumentsList() != null && StringUtils.isNotEmpty(drivingLicenseCode)) {
 			for (CustomerDocument document : customerDetails.getCustomerDocumentsList()) {
 				if (StringUtils.equals(drivingLicenseCode, document.getCustDocCategory())) {
@@ -322,7 +371,7 @@ public class FetchCustomerDedupDetails {
 				}
 			}
 		}
-		//VoterId 
+		// VoterId
 		if (customerDetails.getCustomerDocumentsList() != null && StringUtils.isNotEmpty(voterIdCode)) {
 			for (CustomerDocument document : customerDetails.getCustomerDocumentsList()) {
 				if (StringUtils.equals(voterIdCode, document.getCustDocCategory())) {
@@ -332,17 +381,27 @@ public class FetchCustomerDedupDetails {
 			}
 		}
 
-		//Address
+		// Address
 		if (customerDetails.getAddressList() != null) {
 			for (CustomerAddres address : customerDetails.getAddressList()) {
 				if (String.valueOf(address.getCustAddrPriority()).equals(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 					custAddress.append(address.getCustAddrHNbr()).append(", ");
 					custAddress.append(StringUtils.isNotBlank(address.getCustAddrStreet())
-							? address.getCustAddrStreet().concat(", ") : "");
+							? address.getCustAddrStreet().concat(", ")
+							: "");
 					custAddress.append(address.getCustAddrCity()).append(", ");
 					custAddress.append(address.getCustAddrProvince()).append(", ");
 					custAddress.append(address.getCustAddrZIP()).append(", ");
 					custAddress.append(address.getCustAddrCountry());
+					break;
+				}
+			}
+		}
+		// PANCard
+		if (customerDetails.getCustomerDocumentsList() != null) {
+			for (CustomerDocument document : customerDetails.getCustomerDocumentsList()) {
+				if (document.getCustDocCategory().equals(panNumber)) {
+					panNumber = document.getCustDocTitle();
 					break;
 				}
 			}
@@ -358,6 +417,7 @@ public class FetchCustomerDedupDetails {
 		customerDedup.setCustDOB(customer.getCustDOB());
 		customerDedup.setCustCRCPR(customer.getCustCRCPR());
 		customerDedup.setAadharNumber(aadharId);
+		customerDedup.setPanNumber(panNumber);
 		customerDedup.setCustCtgCode(customer.getCustCtgCode());
 		customerDedup.setCustDftBranch(customer.getCustDftBranch());
 		customerDedup.setCustSector(customer.getCustSector());

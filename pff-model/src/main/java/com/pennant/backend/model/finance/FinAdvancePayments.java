@@ -187,7 +187,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 	private int tempSeq = 0;
 	private String tempReference = null;
 
-	//Auto Disbursement Download
+	// Auto Disbursement Download
 	private String configName;
 	private String fileName;
 	private String autoDisbStatus;
@@ -223,6 +223,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 
 	private Long disbResponseBatchId;
 	private long userId;
+	private String downloadType;
 
 	public String getFileNamePrefix() {
 		return fileNamePrefix;
@@ -322,6 +323,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 		entity.setRealizationDate(this.realizationDate);
 		entity.setOnlineProcReq(this.onlineProcReq);
 		entity.setHoldDisbursement(this.holdDisbursement);
+		entity.setDownloadType(this.downloadType);
 		entity.setPostDate(this.postDate);
 		entity.setDealerShortCode(this.dealerShortCode);
 		entity.setProductShortCode(this.productShortCode);
@@ -401,7 +403,6 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 
 		return excludeFields;
 	}
-
 
 	public String getServiceReqNo() {
 		return serviceReqNo;
@@ -1097,6 +1098,14 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 
 	public void setUserId(long userId) {
 		this.userId = userId;
+	}
+
+	public String getDownloadType() {
+		return downloadType;
+	}
+
+	public void setDownloadType(String downloadType) {
+		this.downloadType = downloadType;
 	}
 
 }

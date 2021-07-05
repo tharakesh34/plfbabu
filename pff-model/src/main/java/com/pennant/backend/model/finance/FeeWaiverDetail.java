@@ -48,6 +48,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -57,6 +61,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 
+@XmlAccessorType(XmlAccessType.NONE)
 public class FeeWaiverDetail extends AbstractWorkflowEntity implements Entity {
 
 	private static final long serialVersionUID = -6234931333270161797L;
@@ -65,12 +70,14 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity implements Entity {
 	private long waiverId = Long.MIN_VALUE;
 	private long adviseId = Long.MIN_VALUE;
 	private Date finODSchdDate;
+	@XmlElement
 	private String feeTypeCode;
 	private String feeTypeDesc;
 	private BigDecimal receivableAmount = BigDecimal.ZERO;
 	private BigDecimal receivedAmount = BigDecimal.ZERO;
 	private BigDecimal WaivedAmount = BigDecimal.ZERO;
 	private BigDecimal balanceAmount = BigDecimal.ZERO;
+	@XmlElement(name = "waiverAmount")
 	private BigDecimal currWaiverAmount = BigDecimal.ZERO;
 	private boolean newRecord = false;
 	private String lovValue;

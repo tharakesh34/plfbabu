@@ -43,6 +43,7 @@
 package com.pennant.backend.dao.collateral.impl;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -52,6 +53,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -85,10 +87,8 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	 * This method Deletes the Record from the CollateralAssignment or CollateralAssignment_Temp. if Record not deleted
 	 * then throws DataAccessException with error 41003. delete Collateral Assignment by key AssignmentId
 	 * 
-	 * @param Collateral
-	 *            Assignment (collateralAssignment)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Collateral Assignment (collateralAssignment)
+	 * @param type       (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -143,10 +143,8 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	 *
 	 * save Collateral Assignment
 	 * 
-	 * @param Collateral
-	 *            Assignment (collateralAssignment)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Collateral Assignment (collateralAssignment)
+	 * @param type       (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -175,10 +173,8 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	 * This method updates the Record CollateralAssignment or CollateralAssignment_Temp. if Record not updated then
 	 * throws DataAccessException with error 41004.
 	 * 
-	 * @param Collateral
-	 *            Assignment (collateralAssignment)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Collateral Assignment (collateralAssignment)
+	 * @param type       (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -401,31 +397,55 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	 *
 	 * save Collateral Movement
 	 * 
-	 * @param Collateral
-	 *            Movement (collateralMovement)
-	 * @param type
-	 *            (String) ""
+	 * @param Collateral Movement (collateralMovement)
+	 * @param type       (String) ""
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
 	public void save(CollateralMovement movement) {
-		logger.debug("Entering");
+		String sql = "Insert Into CollateralMovement (MovementSeq, Module, CollateralRef, Reference, AssignPerc, ValueDate, Process) Values (?, ?, ?, ?, ?, ?, ?)";
 
+		logger.debug(Literal.SQL + sql);
+
+		this.jdbcOperations.update(sql, ps -> {
+			setPreparedStatements(ps, movement);
+		});
+	}
+
+	@Override
+	public void saveList(List<CollateralMovement> movements) {
+		String sql = "Insert Into CollateralMovement (MovementSeq, Module, CollateralRef, Reference, AssignPerc, ValueDate, Process) Values(?, ?, ?, ?, ?, ?, ?)";
+
+		logger.debug(Literal.SQL + sql);
+
+		this.jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				CollateralMovement movement = movements.get(i);
+				setPreparedStatements(ps, movement);
+			}
+
+			@Override
+			public int getBatchSize() {
+				return movements.size();
+			}
+		});
+	}
+
+	private void setPreparedStatements(PreparedStatement ps, CollateralMovement movement) throws SQLException {
 		if (movement.getMovementSeq() == 0 || movement.getMovementSeq() == Long.MIN_VALUE) {
 			movement.setMovementSeq(getNextValue("SeqCollateralMovement"));
 		}
 
-		StringBuilder query = new StringBuilder("Insert Into CollateralMovement");
-		query.append(" (MovementSeq , Module, CollateralRef, Reference, AssignPerc , ValueDate, Process)");
-		query.append(" Values(:MovementSeq ,:Module, :CollateralRef, :Reference, :AssignPerc , :ValueDate, :Process)");
-
-		logger.debug("insertSql: " + query.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(movement);
-		this.jdbcTemplate.update(query.toString(), beanParameters);
-		logger.debug("Leaving");
+		ps.setLong(1, movement.getMovementSeq());
+		ps.setString(2, movement.getModule());
+		ps.setString(3, movement.getCollateralRef());
+		ps.setString(4, movement.getReference());
+		ps.setBigDecimal(5, movement.getAssignPerc());
+		ps.setDate(6, JdbcUtil.getDate(movement.getValueDate()));
+		ps.setString(7, movement.getProcess());
 	}
 
 	/**
@@ -564,7 +584,8 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, Integer.class) > 0
-					? true : false;
+					? true
+					: false;
 		} catch (EmptyResultDataAccessException e) {
 			return false;
 		}
@@ -616,12 +637,12 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 			ca.setWorkflowId(rs.getLong("WorkflowId"));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
-				ca.setDepositorCIF(rs.getString("DepositorCIF"));//added for Verification API
+				ca.setDepositorCIF(rs.getString("DepositorCIF"));// added for Verification API
 				ca.setCollateralCcy(rs.getString("CollateralCcy"));
 				ca.setCollateralValue(rs.getBigDecimal("CollateralValue"));
 				ca.setBankValuation(rs.getBigDecimal("BankValuation"));
 				ca.setTotAssignedPerc(rs.getBigDecimal("TotAssignedPerc"));
-				//ca.setUtilizedAmount(rs.getBigDecimal("UtilizedAmount")); (Not availble in Bean)
+				// ca.setUtilizedAmount(rs.getBigDecimal("UtilizedAmount")); (Not availble in Bean)
 				ca.setBankLTV(rs.getBigDecimal("BankLTV"));
 				ca.setSpecialLTV(rs.getBigDecimal("SpecialLTV"));
 				ca.setDepositorCIF(rs.getString("DepositorCIF"));

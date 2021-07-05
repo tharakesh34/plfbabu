@@ -86,9 +86,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Listbox;
-import org.zkoss.zul.Listcell;
-import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
@@ -125,7 +122,6 @@ import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.financemanagement.FinTypeReceiptModes;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
-import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.systemmasters.DivisionDetail;
@@ -589,6 +585,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Groupbox dsfAndCashCtlReq;
 	protected Groupbox grcAdvIntAndEMIReq;
 	protected Groupbox advIntAndEMIReq;
+	protected Groupbox gb_subventionReq;
+	protected Checkbox subventionReq;
 	// tasks # >>End Advance EMI and DSF
 	// Under Construction
 	protected Checkbox grcAdjReq;
@@ -1002,6 +1000,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.grcAdvIntAndEMIReq.setVisible(ImplementationConstants.ALLOW_ADV_INT);
 			this.advIntAndEMIReq.setVisible(ImplementationConstants.ALLOW_ADV_INT);
 			this.dsfAndCashCtlReq.setVisible(ImplementationConstants.ALLOW_DSF_CASHCLT);
+			this.gb_subventionReq.setVisible(ImplementationConstants.ALLOW_SUBVENTION);
 		}
 
 		logger.debug("Leaving");
@@ -1046,8 +1045,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -1056,8 +1054,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceType
-	 *            FinanceType
+	 * @param aFinanceType FinanceType
 	 * @throws InterruptedException
 	 */
 
@@ -1086,7 +1083,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finMaxAmount.setValue(PennantAppUtil.formateAmount(aFinanceType.getFinMaxAmount(), format));
 		Filter[] filters = null;
 
-
 		filters = new Filter[1];
 		if (isOverdraft) {
 			filters[0] = new Filter("ProductCategory", FinanceConstants.PRODUCT_ODFACILITY, Filter.OP_EQUAL);
@@ -1098,7 +1094,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			tempFilter[1] = new Filter("ProductCategory", FinanceConstants.PRODUCT_CONVENTIONAL, Filter.OP_EQUAL);
 			filters[0] = Filter.or(tempFilter);
 		}
-	
 
 		fillComboBox(this.cbfinProductType, aFinanceType.getFinCategory(), PennantAppUtil.getProductByCtg(filters), "");
 		this.finAssetType.setValue(StringUtils.trimToEmpty(aFinanceType.getFinAssetType()));
@@ -1641,6 +1636,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 				this.vanRequired.setChecked(aFinanceType.isAlwVan());
 			}
+			this.subventionReq.setChecked(aFinanceType.isSubventionReq());
 		}
 		setVanDetails(aFinanceType.isAlwVan());
 		if (!isOverdraft && !consumerDurable) {
@@ -3220,6 +3216,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					wve.add(we);
 				}
 			}
+			try {
+				aFinanceType.setSubventionReq(this.subventionReq.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 		}
 		// tasks # >>End Advance EMI and DSF
 
@@ -3460,8 +3461,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 
 		try {
-			aFinanceType.setFinSuspTrigger(PennantConstants.List_Select.equals(getComboboxValue(this.finSuspTrigger))
-					? "" : getComboboxValue(this.finSuspTrigger));
+			aFinanceType
+					.setFinSuspTrigger(PennantConstants.List_Select.equals(getComboboxValue(this.finSuspTrigger)) ? ""
+							: getComboboxValue(this.finSuspTrigger));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -4518,6 +4520,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.sanctionAmount.setDisabled(isTrue);
 			this.sanctionAmountOverride.setDisabled(isTrue);
 			this.schdOnPMTCal.setDisabled(isTrue);
+			this.subventionReq.setDisabled(isTrue);
 		}
 		readOnlyComponent(isTrue, this.grcAdjReq);
 		readOnlyComponent(isTrue, this.grcPeriodAftrFullDisb);
@@ -4874,10 +4877,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aFinanceType
-	 *            (FinanceType)
-	 * @param tranType
-	 *            (String)
+	 * @param aFinanceType (FinanceType)
+	 * @param tranType     (String)
 	 * @return boolean
 	 */
 	private boolean doProcess(FinanceType aFinanceType, String tranType) {
@@ -5032,10 +5033,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
-	 * @param method
-	 *            (String)
+	 * @param auditHeader (AuditHeader)
+	 * @param method      (String)
 	 * @return boolean
 	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
@@ -5291,9 +5290,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	private void setEffectiveRate() throws InterruptedException {
 		if (StringUtils.isBlank(this.financeBaserate.getBaseValue())) {
-			this.financeBaserate
-					.setEffRateText(PennantApplicationUtil.formatRate((this.financeBaserate.getMarginValue() == null
-							? BigDecimal.ZERO : this.financeBaserate.getMarginValue()).doubleValue(), 2));
+			this.financeBaserate.setEffRateText(
+					PennantApplicationUtil.formatRate((this.financeBaserate.getMarginValue() == null ? BigDecimal.ZERO
+							: this.financeBaserate.getMarginValue()).doubleValue(), 2));
 			return;
 		}
 		RateDetail rateDetail = RateUtil.rates(this.financeBaserate.getBaseValue(), this.finCcy.getValue(),
@@ -5376,9 +5375,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	private void setGraceEffectiveRate() throws InterruptedException {
 		if (StringUtils.isBlank(this.financeGrcBaseRate.getBaseValue())) {
-			this.financeGrcBaseRate
-					.setEffRateText(PennantApplicationUtil.formatRate((this.financeGrcBaseRate.getMarginValue() == null
-							? BigDecimal.ZERO : this.financeBaserate.getMarginValue()).doubleValue(), 2));
+			this.financeGrcBaseRate.setEffRateText(PennantApplicationUtil
+					.formatRate((this.financeGrcBaseRate.getMarginValue() == null ? BigDecimal.ZERO
+							: this.financeBaserate.getMarginValue()).doubleValue(), 2));
 			return;
 		}
 		RateDetail rateDetail = RateUtil.rates(this.financeGrcBaseRate.getBaseValue(), this.finCcy.getValue(),
@@ -6632,10 +6631,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	/**
 	 * Get Audit Header Details
 	 * 
-	 * @param aFinanceType
-	 *            (FinanceType)
-	 * @param tranType
-	 *            (String)
+	 * @param aFinanceType (FinanceType)
+	 * @param tranType     (String)
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(FinanceType aFinanceType, String tranType) {
@@ -7030,8 +7027,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	/**
 	 * To check the higher of the give two decimal boxes
 	 * 
-	 * @param Decimalbox
-	 *            ,Decimal box,String,String
+	 * @param Decimalbox ,Decimal box,String,String
 	 * @throws WrongValueException
 	 */
 	private void mustBeHigher(Decimalbox maxvalue, Decimalbox minvalue, String maxlabel, String minlabel) {

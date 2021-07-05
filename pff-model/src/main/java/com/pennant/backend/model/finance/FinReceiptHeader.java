@@ -1809,6 +1809,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	public void setDedupCheckRequied(boolean dedupCheckRequied) {
 		this.dedupCheckRequied = dedupCheckRequied;
 	}
+
 	public boolean isWriteoffLoan() {
 		return writeoffLoan;
 	}

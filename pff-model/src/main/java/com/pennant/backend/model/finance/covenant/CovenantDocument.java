@@ -21,6 +21,8 @@ public class CovenantDocument extends AbstractWorkflowEntity {
 	private Date frequencyDate;
 	private Date documentReceivedDate;
 	private boolean newRecord = false;
+	@XmlElement(name = "isOriginalDocument")
+	private boolean originalDocument;
 	private String lovValue;
 	private CovenantDocument befImage;
 	private LoggedInUser userDetails;
@@ -34,6 +36,8 @@ public class CovenantDocument extends AbstractWorkflowEntity {
 	private Long custId;
 	@XmlElement(name = "docContent")
 	private byte[] docImage;
+	@XmlElement
+	private String docStatus;
 
 	public CovenantDocument() {
 		super();
@@ -49,6 +53,7 @@ public class CovenantDocument extends AbstractWorkflowEntity {
 		excludeFields.add("frequencyDate");
 		excludeFields.add("custId");
 		excludeFields.add("docImage");
+		excludeFields.add("originalDocument");
 
 		return excludeFields;
 	}
@@ -183,6 +188,22 @@ public class CovenantDocument extends AbstractWorkflowEntity {
 
 	public void setCustId(Long custId) {
 		this.custId = custId;
+	}
+
+	public boolean isOriginalDocument() {
+		return originalDocument;
+	}
+
+	public void setOriginalDocument(boolean originalDocument) {
+		this.originalDocument = originalDocument;
+	}
+
+	public String getDocStatus() {
+		return docStatus;
+	}
+
+	public void setDocStatus(String docStatus) {
+		this.docStatus = docStatus;
 	}
 
 	public byte[] getDocImage() {

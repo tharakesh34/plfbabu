@@ -52,6 +52,7 @@ import org.apache.logging.log4j.Logger;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.legal.LegalPropertyTitleDAO;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.legal.LegalPropertyTitle;
 import com.pennant.backend.service.GenericService;
@@ -68,14 +69,6 @@ public class LegalPropertyTitleService extends GenericService<LegalPropertyTitle
 	private static final Logger logger = LogManager.getLogger(LegalPropertyTitleService.class);
 
 	private LegalPropertyTitleDAO legalPropertyTitleDAO;
-
-	public LegalPropertyTitleDAO getLegalPropertyTitleDAO() {
-		return legalPropertyTitleDAO;
-	}
-
-	public void setLegalPropertyTitleDAO(LegalPropertyTitleDAO legalPropertyTitleDAO) {
-		this.legalPropertyTitleDAO = legalPropertyTitleDAO;
-	}
 
 	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method, String usrLanguage) {
 
@@ -95,11 +88,20 @@ public class LegalPropertyTitleService extends GenericService<LegalPropertyTitle
 		LegalPropertyTitle propertyTitle = (LegalPropertyTitle) auditDetail.getModelData();
 		LegalPropertyTitle tempPropertyTitle = null;
 
-		if (propertyTitle.isWorkflow()) {
-			tempPropertyTitle = getLegalPropertyTitleDAO()
-					.getLegalPropertyTitle(propertyTitle.getLegalPropertyTitleId(), TableType.TEMP_TAB.getSuffix());
+		AuditHeader auditHeader = new AuditHeader();
+		auditHeader.setModelData(propertyTitle);
+		auditHeader.setUsrLanguage(PennantConstants.default_Language);
+		List<ErrorDetail> errorDetails = doPostHookValidation(auditHeader);
+		if (errorDetails != null) {
+			errorDetails = ErrorUtil.getErrorDetails(errorDetails, auditHeader.getUsrLanguage());
+			auditDetail.getErrorDetails().addAll(errorDetails);
 		}
-		LegalPropertyTitle befPropertyTitle = getLegalPropertyTitleDAO()
+
+		if (propertyTitle.isWorkflow()) {
+			tempPropertyTitle = legalPropertyTitleDAO.getLegalPropertyTitle(propertyTitle.getLegalPropertyTitleId(),
+					TableType.TEMP_TAB.getSuffix());
+		}
+		LegalPropertyTitle befPropertyTitle = legalPropertyTitleDAO
 				.getLegalPropertyTitle(propertyTitle.getLegalPropertyTitleId(), TableType.MAIN_TAB.getSuffix());
 		LegalPropertyTitle oldPropertyTitleDetail = propertyTitle.getBefImage();
 
@@ -272,15 +274,15 @@ public class LegalPropertyTitleService extends GenericService<LegalPropertyTitle
 				legalPropertyTitle.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
 			if (saveRecord) {
-				getLegalPropertyTitleDAO().save(legalPropertyTitle, tableType);
+				legalPropertyTitleDAO.save(legalPropertyTitle, tableType);
 			}
 
 			if (updateRecord) {
-				getLegalPropertyTitleDAO().update(legalPropertyTitle, tableType);
+				legalPropertyTitleDAO.update(legalPropertyTitle, tableType);
 			}
 
 			if (deleteRecord) {
-				getLegalPropertyTitleDAO().delete(legalPropertyTitle, tableType);
+				legalPropertyTitleDAO.delete(legalPropertyTitle, tableType);
 			}
 
 			if (approveRec) {
@@ -305,12 +307,19 @@ public class LegalPropertyTitleService extends GenericService<LegalPropertyTitle
 			auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], propertyTitle.getBefImage(),
 					propertyTitle));
 		}
-		getLegalPropertyTitleDAO().deleteList(propertyTitle, tableType);
+		legalPropertyTitleDAO.deleteList(propertyTitle, tableType);
 		return auditList;
 	}
 
 	public List<LegalPropertyTitle> getDetailsList(long legalId, String type) {
-		return getLegalPropertyTitleDAO().getLegalPropertyTitleList(legalId, type);
+		return legalPropertyTitleDAO.getLegalPropertyTitleList(legalId, type);
 	}
 
+	public List<ErrorDetail> doPostHookValidation(AuditHeader auditHeader) {
+		return null;
+	}
+
+	public void setLegalPropertyTitleDAO(LegalPropertyTitleDAO legalPropertyTitleDAO) {
+		this.legalPropertyTitleDAO = legalPropertyTitleDAO;
+	}
 }

@@ -80,7 +80,7 @@ public class PresentmentDetailExtractService {
 				ph.getGroups().put(key, headerId);
 			}
 
-			pd.setPresentmentId(headerId);
+			pd.setHeaderId(headerId);
 
 			if (pd.getExcessAmountReversal() != null) {
 				excessRevarsal.add(pd.getExcessAmountReversal());
@@ -216,7 +216,7 @@ public class PresentmentDetailExtractService {
 		PresentmentDetail pd = new PresentmentDetail();
 		pd.setEntityCode(rs.getString("ENTITYCODE"));
 		pd.setBankCode(rs.getString("BANKCODE"));
-		pd.setPresentmentId(ph.getId());
+		pd.setHeaderId(ph.getId());
 		pd.setPresentmentAmt(BigDecimal.ZERO);
 		pd.setStatus(RepayConstants.PEXC_IMPORT);
 		pd.setExcludeReason(RepayConstants.PEXC_EMIINCLUDE);
@@ -245,7 +245,7 @@ public class PresentmentDetailExtractService {
 		pd.settDSAmount(rs.getBigDecimal("TDSAMOUNT"));
 		pd.setSchInsDue(BigDecimal.ZERO);
 		pd.setSchPenaltyDue(BigDecimal.ZERO);
-		//pDetail.setAdvanceAmt(schAmtDue);
+		// pDetail.setAdvanceAmt(schAmtDue);
 		pd.setAdviseAmt(BigDecimal.ZERO);
 		pd.setExcessID(0);
 		pd.setReceiptID(0);
@@ -412,7 +412,8 @@ public class PresentmentDetailExtractService {
 				pd.setExcludeReason(RepayConstants.CHEQUESTATUS_REALISED);
 				return;
 			}
-			//COMMENTED THIS CODE FOR REPRESENTMENT PROCESS i.e, if Check got bounced also it shouldbe allowed for Representment
+			// COMMENTED THIS CODE FOR REPRESENTMENT PROCESS i.e, if Check got bounced also it shouldbe allowed for
+			// Representment
 			/*
 			 * if (PennantConstants.CHEQUESTATUS_BOUNCE.equals(presentmentDetail.getMandateStatus())) {
 			 * presentmentDetail.setExcludeReason(RepayConstants.CHEQUESTATUS_BOUNCE); }
@@ -425,13 +426,13 @@ public class PresentmentDetailExtractService {
 			return;
 		}
 
-		//at first advance interest and EMI then EMI advance 
+		// at first advance interest and EMI then EMI advance
 		if (StringUtils.equalsIgnoreCase(PennantConstants.PROCESS_PRESENTMENT, ph.getPresentmentType())) {
 			processAdvAmounts(ph, pd);
 		}
 
 		// EMI IN ADVANCE
-		//if there is no due no need to proceed further.
+		// if there is no due no need to proceed further.
 		if (pd.getSchAmtDue().compareTo(BigDecimal.ZERO) <= 0) {
 			return;
 		}
@@ -505,13 +506,13 @@ public class PresentmentDetailExtractService {
 			}
 		}
 
-		//at first advance interest and EMI then EMI advance 
+		// at first advance interest and EMI then EMI advance
 		if (StringUtils.equalsIgnoreCase(PennantConstants.PROCESS_PRESENTMENT, ph.getPresentmentType())) {
 			processAdvAmounts(ph, pd);
 		}
 
 		// EMI IN ADVANCE
-		//if there is no due no need to proceed further.
+		// if there is no due no need to proceed further.
 		if (pd.getSchAmtDue().compareTo(BigDecimal.ZERO) <= 0) {
 			return;
 		}
@@ -605,7 +606,7 @@ public class PresentmentDetailExtractService {
 			return;
 		}
 
-		//get excess
+		// get excess
 		String finRef = pd.getFinReference();
 		int exculdeReason = 0;
 		BigDecimal dueAmt = BigDecimal.ZERO;
@@ -644,8 +645,8 @@ public class PresentmentDetailExtractService {
 			}
 		}
 
+		pd.setAdvAdjusted(adjAmount);
 		if (adjAmount.compareTo(dueAmt) == 0) {
-			pd.setAdvAdjusted(adjAmount);
 			pd.setExcludeReason(exculdeReason);
 		}
 
@@ -655,16 +656,16 @@ public class PresentmentDetailExtractService {
 			}
 		}
 
-		//process advance moment
+		// process advance moment
 		finExAmt.setReservedAmt(adjAmount);
 		BigDecimal amount = finExAmt.getAmount();
 		BigDecimal reservedAmt = finExAmt.getReservedAmt();
 		BigDecimal utilisedAmt = finExAmt.getUtilisedAmt();
 		finExAmt.setBalanceAmt(amount.subtract(reservedAmt).subtract(utilisedAmt));
 		pd.setExcessAmountReversal(finExAmt);
-		//finExcessAmountDAO.updateExcessReserve(finExAmt);
+		// finExcessAmountDAO.updateExcessReserve(finExAmt);
 
-		//movement
+		// movement
 		FinExcessMovement exMovement = new FinExcessMovement();
 		exMovement.setExcessID(finExAmt.getExcessID());
 		exMovement.setReceiptID(ph.getId());
@@ -674,6 +675,6 @@ public class PresentmentDetailExtractService {
 		exMovement.setMovementType("I");
 		exMovement.setTranType("I");
 		finExAmt.setExcessMovement(exMovement);
-		//finExcessAmountDAO.saveExcessMovement(exMovement);
+		// finExcessAmountDAO.saveExcessMovement(exMovement);
 	}
 }

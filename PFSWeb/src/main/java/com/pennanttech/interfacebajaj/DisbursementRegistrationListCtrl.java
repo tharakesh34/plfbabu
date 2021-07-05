@@ -235,13 +235,17 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			searchObject.addFilters(filters);
 		}
 
+		// Adding filter to download only if the Download Type is Offline.
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("DOWNLOADTYPE", PennantConstants.OFFLINE, Filter.OP_EQUAL);
+		searchObject.addFilters(filters);
+
 	}
 
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_DisbursementRegistrationList(Event event) {
 		// Set the page level components.
@@ -484,10 +488,10 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			lc = new Listcell(PennantApplicationUtil.amountFormate(payments.getAmtToBeReleased(),
 					CurrencyUtil.getFormat(payments.getDisbCCy())));
 			lc.setParent(item);
-			
+
 			lc = new Listcell(PennantStaticListUtil.getlabelDesc(payments.getPaymentDetail(), paymentDetails));
 			lc.setParent(item);
-			
+
 			lc = new Listcell(payments.getCustShrtName());
 			lc.setParent(item);
 
@@ -582,8 +586,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_Search(Event event) {
 		this.disbursementMap.clear();
@@ -683,8 +686,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -762,6 +764,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			long userId = getUserWorkspace().getLoggedInUser().getUserId();
 			request.setFinType(this.finType.getValue());
 			request.setPartnerBankCode(this.partnerBank.getValue());
+			request.setPartnerBankId(partBank.getPartnerBankId());
 			request.setFinAdvancePayments(disbushmentList);
 			request.setUserId(userId);
 			request.setDataEngineConfigName(configName);
@@ -861,7 +864,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	public void onChange$disbParty(Event event) {
 		this.vasManufacturer.setValue("");
 		String disbParty = this.disbParty.getSelectedItem().getValue();
-		
+
 		boolean vasParty = DisbursementConstants.PAYMENT_DETAIL_VAS.equals(disbParty);
 		this.cellVMFC1.setVisible(vasParty);
 		this.cellVMFC2.setVisible(vasParty);

@@ -51,7 +51,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -4098586745401583126L;
 
-	//	Ordered Same AS Table please don't break It
+	// Ordered Same AS Table please don't break It
 	private String product = "";
 	private String finType;
 	private String finCategory;
@@ -182,11 +182,11 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String tdsApplicableTo;
 	private String addrLine1;
 
-	//Profit on past Due
+	// Profit on past Due
 	private String pastduePftCalMthd;
 	private BigDecimal pastduePftMargin = BigDecimal.ZERO;
 
-	//Overdue Penalty Details
+	// Overdue Penalty Details
 	private boolean applyODPenalty;
 	private boolean oDIncGrcDays;
 	private String oDChargeType;
@@ -210,7 +210,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private List<FinTypeVASProducts> finTypeVASProductsList;
 	private List<FinTypeReceiptModes> finTypeReceiptModesList = new ArrayList<>();
 
-	// Suspend details 
+	// Suspend details
 	private String finSuspTrigger;
 	private String finSuspRemarks;
 
@@ -230,12 +230,12 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String lovDescEntityCode;
 	private String lovDescEntityDesc;
 
-	//cheque
+	// cheque
 	private boolean chequeCaptureReq;
-	//autorejection No of Days
+	// autorejection No of Days
 	private int autoRejectionDays;
 
-	//Gst detial
+	// Gst detial
 	private boolean taxNoMand;
 
 	private boolean alwVan;
@@ -249,11 +249,11 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean finIsRateRvwAtGrcEnd;
 	private boolean schdOnPMTCal;
 
-	//OCR Check
+	// OCR Check
 	private boolean ocrRequired;
 	private String allowedOCRS;
 	private String defaultOCR;
-	//Loan Purpose
+	// Loan Purpose
 	private String allowedLoanPurposes;
 	private String specificLoanPurposes;
 
@@ -265,7 +265,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	@XmlTransient
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
-	//==================Not the Table
+	// ==================Not the Table
 	private String lovDescFinDivisionName;
 	private String lovDescWorkFlowRolesName;
 	private String lovDescWorkFlowTypeName;
@@ -281,14 +281,14 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private List<FinTypePartnerBank> finTypePartnerBankList = new ArrayList<FinTypePartnerBank>();
 	private List<FinTypeExpense> finTypeExpenseList = new ArrayList<FinTypeExpense>();
 
-	//Cost of funds
+	// Cost of funds
 	private String costOfFunds;
 	private List<IRRFinanceType> irrFinanceTypeList = new ArrayList<IRRFinanceType>();
 
-	//Collateral LTV Check Details
+	// Collateral LTV Check Details
 	private String finLTVCheck;
 
-	//Eligibility Method
+	// Eligibility Method
 	private String eligibilityMethods;
 	private boolean putCallRequired = false;
 
@@ -307,6 +307,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	private boolean dsfReq;
 	private boolean cashCollateralReq;
+	private boolean subventionReq;
 
 	// FIXME MUR>>
 	private int minGrcTerms;
@@ -580,6 +581,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 		entity.setAdvStage(this.advStage);
 		entity.setDsfReq(this.dsfReq);
 		entity.setCashCollateralReq(this.cashCollateralReq);
+		entity.setSubventionReq(this.subventionReq);
 		entity.setMinGrcTerms(this.minGrcTerms);
 		entity.setMaxGrcTerms(this.maxGrcTerms);
 		entity.setDefaultGrcTerms(this.defaultGrcTerms);
@@ -1124,8 +1126,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	}
 
 	/**
-	 * @param finFrEqrepayment
-	 *            the finFrEqrepayment to set
+	 * @param finFrEqrepayment the finFrEqrepayment to set
 	 */
 	public void setEqualRepayment(boolean equalRepayment) {
 		this.equalRepayment = equalRepayment;
@@ -1137,8 +1138,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	}
 
 	/**
-	 * @param finIsDwPayRequired
-	 *            the finIsDwPayRequired to set
+	 * @param finIsDwPayRequired the finIsDwPayRequired to set
 	 */
 	public void setFinIsDwPayRequired(boolean finIsDwPayRequired) {
 		this.finIsDwPayRequired = finIsDwPayRequired;
@@ -1594,7 +1594,8 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void getDeclaredFieldValues(Map<String, Object> financeTypeMap) {
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
-				//"ft_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
+				// "ft_" Should be in small case only, if we want to change the case we need to update the configuration
+				// fields as well.
 				financeTypeMap.put("ft_" + this.getClass().getDeclaredFields()[i].getName(),
 						this.getClass().getDeclaredFields()[i].get(this));
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
@@ -2289,6 +2290,14 @@ public class FinanceType extends AbstractWorkflowEntity {
 		this.cashCollateralReq = cashCollateralReq;
 	}
 
+	public boolean isSubventionReq() {
+		return subventionReq;
+	}
+
+	public void setSubventionReq(boolean subventionReq) {
+		this.subventionReq = subventionReq;
+	}
+
 	public int getGrcAdvMinTerms() {
 		return grcAdvMinTerms;
 	}
@@ -2608,7 +2617,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void setInstBasedSchd(boolean instBasedSchd) {
 		this.instBasedSchd = instBasedSchd;
 	}
-	
+
 	public String getTdsType() {
 		return tdsType;
 	}

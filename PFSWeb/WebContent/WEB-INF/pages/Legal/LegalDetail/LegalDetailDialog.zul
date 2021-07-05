@@ -177,7 +177,7 @@
 												<row spans="1,3">
 													<label value="${c:l('label_LegalApplicantDetails_SchedulelevelArea.value')}" style="font-weight:bold" />
 													<hbox>
-														<space spacing="2px" sclass="mandatory" />
+														<space spacing="2px" />
 														<textbox id="scheduleLevelArea" maxlength="2000" multiline="true" rows="3" width="900px" />
 													</hbox>
 												</row>
@@ -313,7 +313,7 @@
 												<row spans="1,3">
 													<label value="${c:l('label_LegalPropertyTitleDialog_MODT.value')}" />
 													<hbox>
-														<space spacing="2px" sclass="mandatory" />
+														<space spacing="2px" />
 														<textbox id="propertyDetailModt" maxlength="3000" multiline="true" rows="2" width="750px" />
 													</hbox>
 												</row>
@@ -386,14 +386,14 @@
 												<row>
 													<label value="${c:l('label_LegalPropertyTitleDialog_ECdate.value')}" />
 													<hbox>
-														<space spacing="2px" sclass="mandatory" />
+														<space spacing="2px" />
 														<datebox id="propertyDetailECDate" width="180px" />
 													</hbox>
 												</row>
 												<row spans="1,3">
 													<label value="${c:l('label_LegalPropertyTitleDialog_ECPropertyOwnerName.value')}" />
 													<hbox>
-														<space spacing="2px" sclass="mandatory" />
+														<space spacing="2px" />
 														<textbox id="ecPropertyOwnerName" maxlength="3000" multiline="true" rows="3" width="750px" />
 													</hbox>
 												</row>

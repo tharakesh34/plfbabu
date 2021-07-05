@@ -89,7 +89,7 @@ public class AccountEngineExecution implements Serializable {
 	private CurrencyDAO currencyDAO;
 	private AccountingSetDAO accountingSetDAO;
 
-	//Default Constructor
+	// Default Constructor
 	public AccountEngineExecution() {
 		super();
 	}
@@ -107,7 +107,7 @@ public class AccountEngineExecution implements Serializable {
 		logger.debug(Literal.ENTERING);
 
 		String tranCode = "";
-		//Method for Checking for Reverse Calculations Based upon Negative Amounts
+		// Method for Checking for Reverse Calculations Based upon Negative Amounts
 		int seq = 1;
 
 		if (CollectionUtils.isEmpty(returnDataSetList)) {
@@ -131,10 +131,11 @@ public class AccountEngineExecution implements Serializable {
 			tranCode = returnDataSet.getTranCode();
 			returnDataSet.setTranCode(returnDataSet.getRevTranCode());
 			returnDataSet.setRevTranCode(tranCode);
-			//FIXME CH to be discussed with PV
+			// FIXME CH to be discussed with PV
 			returnDataSet.setPostDate(appDate);
-			returnDataSet.setDrOrCr(returnDataSet.getDrOrCr().equals(AccountConstants.TRANTYPE_CREDIT)
-					? AccountConstants.TRANTYPE_DEBIT : AccountConstants.TRANTYPE_CREDIT);
+			returnDataSet.setDrOrCr(
+					returnDataSet.getDrOrCr().equals(AccountConstants.TRANTYPE_CREDIT) ? AccountConstants.TRANTYPE_DEBIT
+							: AccountConstants.TRANTYPE_CREDIT);
 
 			returnDataSet.setTransOrder(seq);
 			seq++;
@@ -146,19 +147,18 @@ public class AccountEngineExecution implements Serializable {
 	 * 
 	 * @param returnDataSet
 	 */
-	public void getReversePostings(List<ReturnDataSet> returnDataSetList, long newLinkedTranID, long postingId) {
+	public void getReversePostings(List<ReturnDataSet> returnDataSetList, long newLinkedTranID, long postingId,
+			Date appDate) {
 		logger.debug(Literal.ENTERING);
 
 		String tranCode = "";
-		//Method for Checking for Reverse Calculations Based upon Negative Amounts
+		// Method for Checking for Reverse Calculations Based upon Negative Amounts
 		int seq = 1;
-		EventProperties eventProperties = returnDataSetList.get(0).getEventProperties();
-		Date appDate = null;
-		if (eventProperties.isParameterLoaded()) {
-			appDate = eventProperties.getAppDate();
-		} else {
+
+		if (appDate == null) {
 			appDate = SysParamUtil.getAppDate();
 		}
+
 		for (ReturnDataSet returnDataSet : returnDataSetList) {
 			returnDataSet.setOldLinkedTranId(returnDataSet.getLinkedTranId());
 			returnDataSet.setLinkedTranId(newLinkedTranID);
@@ -167,10 +167,11 @@ public class AccountEngineExecution implements Serializable {
 			tranCode = returnDataSet.getTranCode();
 			returnDataSet.setTranCode(returnDataSet.getRevTranCode());
 			returnDataSet.setRevTranCode(tranCode);
-			//FIXME CH to be discussed with PV
+			// FIXME CH to be discussed with PV
 			returnDataSet.setPostDate(appDate);
-			returnDataSet.setDrOrCr(returnDataSet.getDrOrCr().equals(AccountConstants.TRANTYPE_CREDIT)
-					? AccountConstants.TRANTYPE_DEBIT : AccountConstants.TRANTYPE_CREDIT);
+			returnDataSet.setDrOrCr(
+					returnDataSet.getDrOrCr().equals(AccountConstants.TRANTYPE_CREDIT) ? AccountConstants.TRANTYPE_DEBIT
+							: AccountConstants.TRANTYPE_CREDIT);
 			returnDataSet.setTransOrder(seq);
 			seq++;
 		}
@@ -214,7 +215,7 @@ public class AccountEngineExecution implements Serializable {
 	public List<ReturnDataSet> getVasExecResults(AEEvent aeEvent, HashMap<String, Object> dataMap) {
 		logger.debug(Literal.ENTERING);
 
-		//Accounting Set Details
+		// Accounting Set Details
 		List<Long> acSetIDList = aeEvent.getAcSetIDList();
 		List<TransactionEntry> entries = new ArrayList<>();
 
@@ -231,7 +232,7 @@ public class AccountEngineExecution implements Serializable {
 			returnDataSets = new ArrayList<>();
 		}
 
-		//Method for Checking for Reverse Calculations Based upon Negative Amounts
+		// Method for Checking for Reverse Calculations Based upon Negative Amounts
 		for (ReturnDataSet set : returnDataSets) {
 			if (set.getPostAmount().compareTo(BigDecimal.ZERO) < 0) {
 				String tranCode = set.getTranCode();
@@ -256,12 +257,12 @@ public class AccountEngineExecution implements Serializable {
 
 		String acSetEvent = (String) dataMap.get("ae_finEvent");
 
-		//Accounting Set Details
+		// Accounting Set Details
 		List<TransactionEntry> transactionEntries = null;
-		//Accounting set code will be hard coded
+		// Accounting set code will be hard coded
 		long accountingSetId = accountingSetDAO.getAccountingSetId(acSetEvent, acSetEvent);
 		if (accountingSetId != 0) {
-			//get List of transaction entries
+			// get List of transaction entries
 			transactionEntries = transactionEntryDAO.getListTransactionEntryById(accountingSetId, "_AEView", true);
 		}
 
@@ -281,8 +282,8 @@ public class AccountEngineExecution implements Serializable {
 		List<Long> acSetList = aeEvent.getAcSetIDList();
 		List<ReturnDataSet> returnDataSets = new ArrayList<ReturnDataSet>();
 		List<TransactionEntry> teList = new ArrayList<>();
-		
-		//Working Transaction Entry list to avoid multiple times subhead rule calling
+
+		// Working Transaction Entry list to avoid multiple times subhead rule calling
 		List<TransactionEntry> wteList = new ArrayList<>(1);
 
 		if (aeEvent.isEOD()) {
@@ -300,11 +301,11 @@ public class AccountEngineExecution implements Serializable {
 			aeEvent.setAppDate(eventProperties.getAppDate());
 			aeEvent.setAppValueDate(eventProperties.getAppValueDate());
 			aeEvent.setPostDate(aeEvent.getPostDate() == null ? eventProperties.getPostDate() : aeEvent.getPostDate());
-			
-			if (StringUtils.equals(eventProperties.getAllowZeroPostings(),"Y")) {
+
+			if (StringUtils.equals(eventProperties.getAllowZeroPostings(), "Y")) {
 				isPostZeroEntries = true;
 			}
-			
+
 			appCurrency = eventProperties.getAppCurrency();
 		} else {
 			aeEvent.setAppDate(SysParamUtil.getAppDate());
@@ -313,16 +314,17 @@ public class AccountEngineExecution implements Serializable {
 				aeEvent.setPostDate(SysParamUtil.getPostDate());
 			}
 
-			if (StringUtils.equals(SysParamUtil.getValueAsString("ALLOW_ZERO_POSTINGS"),"Y")) {
+			if (StringUtils.equals(SysParamUtil.getValueAsString("ALLOW_ZERO_POSTINGS"), "Y")) {
 				isPostZeroEntries = true;
 			}
 
 			appCurrency = SysParamUtil.getAppCurrency();
 		}
 
-	/*	Map<String, Object> accountsMap = new HashMap<>();
-		List<IAccounts> accountsList = new ArrayList<>();
-		Map<String, String> accountCcyMap = new HashMap<>();*/
+		/*
+		 * Map<String, Object> accountsMap = new HashMap<>(); List<IAccounts> accountsList = new ArrayList<>();
+		 * Map<String, String> accountCcyMap = new HashMap<>();
+		 */
 
 		for (TransactionEntry transactionEntry : teList) {
 			dataMap = addFeeCodesToDataMap(dataMap, transactionEntry);
@@ -342,8 +344,8 @@ public class AccountEngineExecution implements Serializable {
 		}
 
 		ReturnDataSet returnDataSet;
-		//This is to maintain the multiple transactions with in the same linked train ID. 
-		//Late pay and Repay will be coming separately and will have same linked tranID.
+		// This is to maintain the multiple transactions with in the same linked train ID.
+		// Late pay and Repay will be coming separately and will have same linked tranID.
 		int seq = aeEvent.getTransOrder();
 
 		if (!aeEvent.isEOD()) {
@@ -357,7 +359,7 @@ public class AccountEngineExecution implements Serializable {
 		for (TransactionEntry transactionEntry : teList) {
 			returnDataSet = new ReturnDataSet();
 
-			//Set Object Data of ReturnDataSet(s)
+			// Set Object Data of ReturnDataSet(s)
 			returnDataSet.setLinkedTranId(aeEvent.getLinkedTranId());
 			returnDataSet.setFinReference(aeEvent.getFinReference());
 			returnDataSet.setFinEvent(aeEvent.getAccountingEvent());
@@ -393,7 +395,7 @@ public class AccountEngineExecution implements Serializable {
 			returnDataSet.setEntityCode(aeEvent.getEntityCode());
 			BigDecimal postAmt = executeAmountRule(aeEvent.getAccountingEvent(), transactionEntry, ccy, dataMap);
 
-			//If parameter flag is 'N' for zero postings not allow to insert zero postings
+			// If parameter flag is 'N' for zero postings not allow to insert zero postings
 			if (BigDecimal.ZERO.compareTo(postAmt) == 0 && !isPostZeroEntries) {
 				continue;
 			}
@@ -419,21 +421,21 @@ public class AccountEngineExecution implements Serializable {
 
 			returnDataSet.setTranOrderId(String.valueOf(transactionEntry.getTransOrder()));
 			returnDataSet.setAccount(transactionEntry.getAccount());
-			//	returnDataSet.setPostStatus(acc.getFlagPostStatus());
-			//returnDataSet.setErrorId(acc.getErrorCode());
-			//returnDataSet.setErrorMsg(acc.getErrorMsg());
+			// returnDataSet.setPostStatus(acc.getFlagPostStatus());
+			// returnDataSet.setErrorId(acc.getErrorCode());
+			// returnDataSet.setErrorMsg(acc.getErrorMsg());
 
-			//Regarding to Posting Data
+			// Regarding to Posting Data
 			returnDataSet.setAccountType(transactionEntry.getAccountType());
 			returnDataSet.setFinType(aeEvent.getFinType());
 
 			returnDataSet.setCustCIF(aeEvent.getCustCIF());
 			returnDataSet.setPostBranch(aeEvent.getBranch());
-			//returnDataSet.setFlagCreateNew(acc.getFlagCreateNew());
-			//returnDataSet.setFlagCreateIfNF(acc.getFlagCreateIfNF());
+			// returnDataSet.setFlagCreateNew(acc.getFlagCreateNew());
+			// returnDataSet.setFlagCreateIfNF(acc.getFlagCreateIfNF());
 			returnDataSet.setInternalAc(true);
 
-			//Amount Rule Execution for Amount Calculation
+			// Amount Rule Execution for Amount Calculation
 			if (postAmt.compareTo(BigDecimal.ZERO) >= 0) {
 				returnDataSet.setPostAmount(postAmt);
 				returnDataSet.setTranCode(transactionEntry.getTranscationCode());
@@ -450,34 +452,32 @@ public class AccountEngineExecution implements Serializable {
 				}
 			}
 
-			//post amount in Local currency
+			// post amount in Local currency
 			returnDataSet.setPostAmountLcCcy(CalculationUtil.getConvertedAmount(ccy, appCurrency, postAmt));
 			returnDataSet.setExchangeRate(CurrencyUtil.getExChangeRate(ccy));
 
-			//Converting Post Amount Based on Account Currency
+			// Converting Post Amount Based on Account Currency
 			returnDataSet.setAcCcy(ccy);
 			returnDataSet.setFormatter(CurrencyUtil.getFormat(ccy));
 
-			/*BigDecimal postAmount = null;
-			List<ReturnDataSet> newEntries = null;*/
-
-			/* THIS CODE WAS WRITTEN FOR BANKS WHERE PLF HITS CORE BANKING SYTSEM FOR ACCOUNTING
-			 * if (accountCcyMap.containsKey(acc.getAccountId())) {
-				String acCcy = accountCcyMap.get(acc.getAccountId());
-
-				if (!StringUtils.equals(ccy, acCcy)) {
-					postAmount = returnDataSet.getPostAmount();
-					returnDataSet.setPostAmount(CalculationUtil.getConvertedAmount(ccy, acCcy, postAmount));
-					returnDataSet.setEventProperties(eventProperties);
-
-					//Add Extra Entries For Debit & Credit
-					newEntries = createAccOnCCyConversion(returnDataSet, acCcy, postAmount, dataMap);
-
-					returnDataSet.setAcCcy(acCcy);
-				}
-			}
+			/*
+			 * BigDecimal postAmount = null; List<ReturnDataSet> newEntries = null;
 			 */
-			
+
+			/*
+			 * THIS CODE WAS WRITTEN FOR BANKS WHERE PLF HITS CORE BANKING SYTSEM FOR ACCOUNTING if
+			 * (accountCcyMap.containsKey(acc.getAccountId())) { String acCcy = accountCcyMap.get(acc.getAccountId());
+			 * 
+			 * if (!StringUtils.equals(ccy, acCcy)) { postAmount = returnDataSet.getPostAmount();
+			 * returnDataSet.setPostAmount(CalculationUtil.getConvertedAmount(ccy, acCcy, postAmount));
+			 * returnDataSet.setEventProperties(eventProperties);
+			 * 
+			 * //Add Extra Entries For Debit & Credit newEntries = createAccOnCCyConversion(returnDataSet, acCcy,
+			 * postAmount, dataMap);
+			 * 
+			 * returnDataSet.setAcCcy(acCcy); } }
+			 */
+
 			// Dates Setting
 			returnDataSet.setPostDate(aeEvent.getPostDate());
 			returnDataSet.setAppDate(aeEvent.getAppDate());
@@ -489,9 +489,9 @@ public class AccountEngineExecution implements Serializable {
 			}
 
 			returnDataSets.add(returnDataSet);
-			/*if (newEntries != null) {
-				returnDataSets.addAll(newEntries);
-			}*/
+			/*
+			 * if (newEntries != null) { returnDataSets.addAll(newEntries); }
+			 */
 		}
 		aeEvent.setTransOrder(seq);
 
@@ -499,7 +499,7 @@ public class AccountEngineExecution implements Serializable {
 	}
 
 	private Map<String, Object> addFeeCodesToDataMap(Map<String, Object> dataMap, TransactionEntry transactionEntry) {
-		//Place fee (codes) used in Transaction Entries to executing map
+		// Place fee (codes) used in Transaction Entries to executing map
 		String feeCodes = transactionEntry.getFeeCode();
 
 		if (feeCodes == null) {
@@ -594,75 +594,52 @@ public class AccountEngineExecution implements Serializable {
 	}
 
 	/*
-	private List<ReturnDataSet> createAccOnCCyConversion(ReturnDataSet existDataSet, String acCcy,
-			BigDecimal unconvertedPostAmt, Map<String, Object> dataMap) {
-
-		List<ReturnDataSet> newEntries = new ArrayList<>(2);
-
-		String finBranch = (String) dataMap.get("fm_finBranch");
-		String finCcy = (String) dataMap.get("fm_finCcy");
-
-		String actTranType = existDataSet.getDrOrCr();
-
-		EventProperties eventProperties = existDataSet.getEventProperties();
-		String phase = null;
-		String appCurrency = null;
-
-		if (eventProperties.isParameterLoaded()) {
-			phase = eventProperties.getPhase();
-			appCurrency = eventProperties.getAppCurrency();
-		} else {
-			phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
-			appCurrency = SysParamUtil.getAppCurrency();
-		}
-
-		String finCcyNum = "";
-		String acCcyNum = "";
-		int formatter = 0;
-		if (phase.equals(PennantConstants.APP_PHASE_EOD)) {
-			finCcyNum = CurrencyUtil.getCcyNumber(finCcy);
-			acCcyNum = CurrencyUtil.getCcyNumber(acCcy);
-		} else {
-			finCcyNum = currencyDAO.getCurrencyById(finCcy);
-
-			Currency currency = currencyDAO.getCurrencyByCode(acCcy);
-			acCcyNum = currency.getCcyNumber();
-			formatter = currency.getCcyEditField();
-		}
-
-		String drCr = actTranType.equals(AccountConstants.TRANTYPE_DEBIT) ? AccountConstants.TRANTYPE_CREDIT
-				: AccountConstants.TRANTYPE_DEBIT;
-		String crDr = actTranType.equals(AccountConstants.TRANTYPE_DEBIT) ? AccountConstants.TRANTYPE_DEBIT
-				: AccountConstants.TRANTYPE_CREDIT;
-
-		String crDrTranCode = SysParamUtil.getValueAsString("CCYCNV_" + crDr + "RTRANCODE");
-		String drCrTranCode = SysParamUtil.getValueAsString("CCYCNV_" + drCr + "RTRANCODE");
-
-		ReturnDataSet newDataSet1 = existDataSet.copyEntity();
-		newDataSet1.setDrOrCr(drCr);
-		newDataSet1.setAcCcy(acCcy);
-		newDataSet1.setTransOrder(existDataSet.getTransOrder() + 1);
-		newDataSet1.setTranCode(drCrTranCode);
-		newDataSet1.setRevTranCode(crDrTranCode);
-		newDataSet1.setAccount(existDataSet.getAccount().substring(0, 4) + "881" + acCcyNum + finCcyNum);
-		newDataSet1.setFormatter(formatter);
-		newEntries.add(newDataSet1);
-
-		ReturnDataSet newDataSet2 = existDataSet.copyEntity();
-		newDataSet2.setDrOrCr(crDr);
-		newDataSet2.setTransOrder(existDataSet.getTransOrder() + 2);
-		newDataSet2.setTranCode(crDrTranCode);
-		newDataSet2.setRevTranCode(drCrTranCode);
-		newDataSet2.setAccount(finBranch + "881" + finCcyNum + acCcyNum);
-		newDataSet2.setPostAmount(unconvertedPostAmt);
-		newDataSet2.setPostAmountLcCcy(CalculationUtil.getConvertedAmount(finCcy, appCurrency, unconvertedPostAmt));
-		newEntries.add(newDataSet2);
-
-		existDataSet.setFormatter(formatter);
-
-		return newEntries;
-	}
-	*/
+	 * private List<ReturnDataSet> createAccOnCCyConversion(ReturnDataSet existDataSet, String acCcy, BigDecimal
+	 * unconvertedPostAmt, Map<String, Object> dataMap) {
+	 * 
+	 * List<ReturnDataSet> newEntries = new ArrayList<>(2);
+	 * 
+	 * String finBranch = (String) dataMap.get("fm_finBranch"); String finCcy = (String) dataMap.get("fm_finCcy");
+	 * 
+	 * String actTranType = existDataSet.getDrOrCr();
+	 * 
+	 * EventProperties eventProperties = existDataSet.getEventProperties(); String phase = null; String appCurrency =
+	 * null;
+	 * 
+	 * if (eventProperties.isParameterLoaded()) { phase = eventProperties.getPhase(); appCurrency =
+	 * eventProperties.getAppCurrency(); } else { phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
+	 * appCurrency = SysParamUtil.getAppCurrency(); }
+	 * 
+	 * String finCcyNum = ""; String acCcyNum = ""; int formatter = 0; if (phase.equals(PennantConstants.APP_PHASE_EOD))
+	 * { finCcyNum = CurrencyUtil.getCcyNumber(finCcy); acCcyNum = CurrencyUtil.getCcyNumber(acCcy); } else { finCcyNum
+	 * = currencyDAO.getCurrencyById(finCcy);
+	 * 
+	 * Currency currency = currencyDAO.getCurrencyByCode(acCcy); acCcyNum = currency.getCcyNumber(); formatter =
+	 * currency.getCcyEditField(); }
+	 * 
+	 * String drCr = actTranType.equals(AccountConstants.TRANTYPE_DEBIT) ? AccountConstants.TRANTYPE_CREDIT :
+	 * AccountConstants.TRANTYPE_DEBIT; String crDr = actTranType.equals(AccountConstants.TRANTYPE_DEBIT) ?
+	 * AccountConstants.TRANTYPE_DEBIT : AccountConstants.TRANTYPE_CREDIT;
+	 * 
+	 * String crDrTranCode = SysParamUtil.getValueAsString("CCYCNV_" + crDr + "RTRANCODE"); String drCrTranCode =
+	 * SysParamUtil.getValueAsString("CCYCNV_" + drCr + "RTRANCODE");
+	 * 
+	 * ReturnDataSet newDataSet1 = existDataSet.copyEntity(); newDataSet1.setDrOrCr(drCr); newDataSet1.setAcCcy(acCcy);
+	 * newDataSet1.setTransOrder(existDataSet.getTransOrder() + 1); newDataSet1.setTranCode(drCrTranCode);
+	 * newDataSet1.setRevTranCode(crDrTranCode); newDataSet1.setAccount(existDataSet.getAccount().substring(0, 4) +
+	 * "881" + acCcyNum + finCcyNum); newDataSet1.setFormatter(formatter); newEntries.add(newDataSet1);
+	 * 
+	 * ReturnDataSet newDataSet2 = existDataSet.copyEntity(); newDataSet2.setDrOrCr(crDr);
+	 * newDataSet2.setTransOrder(existDataSet.getTransOrder() + 2); newDataSet2.setTranCode(crDrTranCode);
+	 * newDataSet2.setRevTranCode(drCrTranCode); newDataSet2.setAccount(finBranch + "881" + finCcyNum + acCcyNum);
+	 * newDataSet2.setPostAmount(unconvertedPostAmt);
+	 * newDataSet2.setPostAmountLcCcy(CalculationUtil.getConvertedAmount(finCcy, appCurrency, unconvertedPostAmt));
+	 * newEntries.add(newDataSet2);
+	 * 
+	 * existDataSet.setFormatter(formatter);
+	 * 
+	 * return newEntries; }
+	 */
 
 	private void doFilldataMap(Map<String, Object> dataMap) throws IllegalAccessException, InvocationTargetException {
 		Customer customer = customerDAO.getCustomerForPostings((long) dataMap.get("fm_custID"));
@@ -674,7 +651,7 @@ public class AccountEngineExecution implements Serializable {
 	private void getAccountNumber(AEEvent aeEvent, TransactionEntry te, List<TransactionEntry> wteList,
 			Map<String, Object> dataMap) {
 
-		//Find if same account is already part of the List
+		// Find if same account is already part of the List
 		for (int iWte = 0; iWte < wteList.size(); iWte++) {
 			TransactionEntry wte = wteList.get(iWte);
 			if (StringUtils.equals(te.getAccountType(), wte.getAccountType())
@@ -683,14 +660,14 @@ public class AccountEngineExecution implements Serializable {
 				return;
 			}
 		}
-		
-		//String txnOrder = String.valueOf(te.getTransOrder());
+
+		// String txnOrder = String.valueOf(te.getTransOrder());
 
 		TransactionEntry wte = new TransactionEntry();
 		wte.setAccountType(te.getAccountType());
 		wte.setAccountSubHeadRule(te.getAccountSubHeadRule());
 		wte.setAccount(te.getAccount());
-		
+
 		Rule rule = null;
 		String accountSubHeadRule = te.getAccountSubHeadRule();
 		String moduleSubhead = RuleConstants.MODULE_SUBHEAD;
@@ -706,9 +683,9 @@ public class AccountEngineExecution implements Serializable {
 					RuleReturnType.STRING);
 			wte.setAccount(accountNumber);
 		}
-		
+
 		wteList.add(te);
-		
+
 		return;
 	}
 

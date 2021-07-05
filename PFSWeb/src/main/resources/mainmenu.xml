@@ -179,6 +179,10 @@
 				rightName="menu_Item_ProductGroup" />
 			<menuItem id="menu_Item_TransactionMapping" zulNavigation="/WEB-INF/pages/SystemMaster/TransactionMapping/TransactionMappingList.zul"
 				rightName="menu_Item_TransactionMapping" />
+			<menuItem id="menu_Item_Dealer" zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul?module=DSM"
+				rightName="menu_Item_subventionDealer" />
+			<menuItem id="menu_Item_Manufacturer" zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul?module=MANF"
+				rightName="menu_Item_subventionManufacturer" />	
 			<menuItem id="menu_Item_SourcingVendor" zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul?module=SVDM"
 				rightName="menuItem_SystemMaster_SourcingVendor" />
 		</menu>
@@ -463,6 +467,8 @@
 			rightName="menuItem_Commitment_Commitment" />
 		<menuItem id="menu_Item_CKYCProcess" zulNavigation="/WEB-INF/pages/CustomerMasters/CKYC/CKYCProcess.zul"
 			rightName="menuItem_CKYCProcess" />
+		<menuItem id="menu_Item_CollateralDelink" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menu_Item_CollateralDelink" />
 
 		<!-- <menuItem id="menu_Item_CommCreditAppReview" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewList.zul?moduleName=CommCreditAppReview"/> 
 			<menuItem id="menu_Item_FinCreditRevSubCategory" zulNavigation="/WEB-INF/pages/CustomerMasters/FinCreditRevSubCategory/FinCreditRevSubCategoryList.zul"/> -->
@@ -769,6 +775,8 @@
 		</menu>
 		<menuItem id="menu_Item_LoanDownSizing" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
 			rightName="menuItem_FinanceManagement_LoanDownSizing" />
+		<menuItem id="menu_Item_LinkingDelinking" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+		    rightName="menuItem_LinkingDelinking"/>
 
 		<menuItem id="menu_Item_DMSRetrievalProcess" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/DMSRetrievalProcess.zul"
 			rightName="menuItem_DMSRetrievalProcess" />
@@ -857,6 +865,8 @@
 			<!-- subvention -->
 			<menuItem id="menu_Item_DataEngine_SubventionProcessUpload" zulNavigation="/WEB-INF/pages/DataEngine/SubventionProcessUpload.zul"
 				rightName="menuItem_Subvention_Process_Upload" />
+			<menuItem id="menu_Item_DataEngine_SubventionProcessUpload" zulNavigation="/WEB-INF/pages/DataEngine/SubventionUploadDialog.zul"
+				rightName="menuItem_Subvention_knockoff_Upload" />
 
 			<menuItem id="menu_Item_Vocher_Dowload" zulNavigation="/WEB-INF/pages/DataEngine/VocherDownloadList.zul"
 				rightName="menu_Item_Vocher_Dowload" />
@@ -878,6 +888,8 @@
 			<menuItem id="menu_Item_AdviseUpload_Approver" zulNavigation="/WEB-INF/pages/Finance/Uploads/UploadList.zul?module=AdviseApprover"
 				rightName="menuItem_AdviseUploadApprover" />
 		</menu>
+		<menuItem id="menu_Item_PaymentMethodUpload" zulNavigation="/WEB-INF/pages/Finance/Uploads/PaymentMethodUpload.zul"
+				rightName="menu_Item_PaymentMethodUpload" />
 		<menu id="menu_Category_CersaiProcess">
 			<menuItem id="menu_Item_CersaiUpload" zulNavigation="/WEB-INF/pages/InterfaceBajaj/CersaiDataFileImport.zul"
 				rightName="menuItem_DataEngine_CersaiUpload" />
@@ -1173,13 +1185,27 @@
 				rightName="menuItem_CustomerTemplates_Prov_Certificate" />
 			<menuItem id="menu_Item_InterestCertficate" zulNavigation="/WEB-INF/pages/Reports/InterestCertificateGenerationDialog.zul?module=interest"
 				rightName="menuItem_CustomerTemplates_InterestCertificate" />
+			<menuItem id="menu_Item_CovenantStatusReport" zulNavigation="/WEB-INF/pages/Reports/InterestCertificateGenerationDialog.zul?module=covenant"
+				rightName="menu_Item_CovenantStatusReport" />
 			<!-- <menuItem id="menu_Item_NOCReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_NOCReport" 
 				/> <menuItem id="menu_Item_NDCReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_NDCReport" 
 				/> <menuItem id="menu_Item_BalanceCertificate" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_BalanceCertificate" 
 				/> -->
 			<menuItem id="menu_Item_IndASReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_IndASReport" />
+			<menuItem id="menu_Item_CovenantReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_CovenantReport" />
 		</menu>
+		
+		<menu id="menu_Subvention_Reports">
+			<menuItem id="menu_Item_SubventionUploadStsRpt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_SubventionUploadStsRpt" />
+			<menuItem id="menu_Item_SubventionMISReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_SubventionMISReport" />	
+			<menuItem id="menu_Item_SubventionAmortReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_SubventionAmortReport" />
+		</menu>
+		
 		<menu id="menu_Category_Disbursements">
 			<menuItem id="menu_Item_DAILYDISBURSALREPORT" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_DAILYDISBURSALREPORT" />
@@ -1207,6 +1233,8 @@
 				rightName="menu_Item_FinByMaturity" />
 			<menuItem id="menu_Item_PresentmentExcludeReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_FinByMaturity" />
+			<!-- <menuItem id="menu_Item_LoanbyMaturityDtls" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_LoanbyMaturityDtls" /> -->
 			<menuItem id="menu_Item_PendingFinances" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_PendingFinances" />
 			<menuItem id="menu_Item_LISTOFDOCUMENTEXTRACT" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
@@ -1277,6 +1305,8 @@
 				rightName="menu_Item_PDCChequeRealization" />
 			<menuItem id="menu_Item_EMIDueReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_EMIDueReport" />
+			<menuItem id="menu_Item_LoanWiseMandateDetails" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" 
+			    rightName="menu_Item_LoanWise_MandateDetails" />
 		</menu>
 
 		<menu id="menu_Category_Legal">
@@ -1321,6 +1351,8 @@
 				rightName="menu_Item_IndASReport" />
 			<menuItem id="menu_Item_SubventionPendingDue" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_IndASReport" />
+			<menuItem id="menu_Item_InterestAccrualReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_InterestAccrualReport" />
 
 		</menu>
 
@@ -1392,6 +1424,10 @@
 				rightName="menuItem_FinDeptReports_PastDue" />
 			<menuItem id="menu_Item_ReceiptDetails" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_ReceiptDetails" />
+			<!-- <menuItem id="menu_Item_LMSReceiptReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_LMSReceiptReport" />	 -->
+			<menuItem id="menu_Item_RescheduleReport" zulNavigation="/WEB-INF/pages/Reports/RescheduleReportGenerationDialog.zul" 
+			rightName="menuItem_RescheduleReport"/>
 		</menu>
 		<menu id="menu_Category_Operations">
 			<menuItem id="menu_Item_RefundReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"

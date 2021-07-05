@@ -101,6 +101,8 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 	protected Listheader listheader_Branch;
 	protected Listheader listheader_LegalDate;
 	protected Listheader listheader_LegalReference;
+	protected Listheader listheader_ApplicantName;
+	protected Listheader listheader_RequestStage;
 
 	// checkRights
 	protected Button button_LegalDetailList_NewLegalDetail;
@@ -122,6 +124,8 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 	protected Listbox sortOperator_SchedulelevelArea;
 	protected Listbox sortOperator_LegalDecision;
 	protected Listbox sortOperator_LegalReference;
+	protected Listbox sortOperator_ApplicantName;
+	protected Listbox sortOperator_RequestStage;
 
 	private transient LegalDetailService legalDetailService;
 	private String module;
@@ -231,8 +235,7 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_LegalDetailList(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -246,6 +249,8 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 
 		registerField("loanReference", listheader_LoanReference, SortOrder.NONE, loanReference,
 				sortOperator_LoanReference, Operators.STRING);
+		registerField("applicantName", listheader_ApplicantName);
+		registerField("requestStage", listheader_RequestStage);
 		registerField("collateralReference", listheader_CollaterialReference, SortOrder.NONE, collaterialReference,
 				sortOperator_CollaterialReference, Operators.STRING);
 		registerField("legalReference", listheader_LegalReference, SortOrder.NONE, legalReference,
@@ -280,8 +285,7 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_LegalDetailList_LegalDetailSearch(Event event) {
 		search();
@@ -290,8 +294,7 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -301,8 +304,7 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_LegalDetailList_NewLegalDetail(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -319,8 +321,7 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 
 	public void onLegalDetailItemDoubleClicked(Event event) {
@@ -362,8 +363,7 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param legaldetail
-	 *            The entity that need to be passed to the dialog.
+	 * @param legaldetail The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(LegalDetail legaldetail) {
 		logger.debug(Literal.ENTERING);
@@ -385,8 +385,7 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -395,8 +394,7 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

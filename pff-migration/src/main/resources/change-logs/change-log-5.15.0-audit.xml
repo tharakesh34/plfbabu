@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="1" author="Gopal.p">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="SubVentionFrom" type="char(4)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="2" author="Gopal.p">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="ManufacturerDealerId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="3" author="Gopal.p">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="SubventionReq"  type="smallint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="4" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				UPDATE Adtrmtfinancetypes Set SubventionReq = 0  where SubventionReq is null;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="5" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="SubventionReq" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="5" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_AFT_SubventionReq DEFAULT 0 FOR SubventionReq;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="6" author="Gopal.p">
+		<addNotNullConstraint tableName="Adtrmtfinancetypes" columnName="SubventionReq" columnDataType="smallint" />
+	</changeSet>
+	
+	<changeSet id="7" author="Gopal.p">
+		<createTable tableName="ADTLINKEDFINANCES">
+			<column name="AuditId" type="bigint">
+			<constraints primaryKey="true"/>
+			</column>
+			<column name="AuditDate" type="datetime">
+			<constraints primaryKey="true"/>
+			</column>
+			<column name="AuditSeq" type="int">
+			<constraints primaryKey="true"/>
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+			<constraints primaryKey="true"/>
+			</column>
+			<column name="LinkedFinancesSeq" type="bigint" />
+			<column name="FinReference" type="varchar(20)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="LinkedReference" type="varchar(20)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="Status" type="Varchar(8)"/>
+			<column name="Version" type="int" >
+			<constraints nullable="false"/>
+			</column>
+			<column name="Lastmntby" type="bigint" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)"/>
+			<column name="TaskId" type="varchar(50)"/>
+			<column name="NextTaskId" type="varchar(200)"/>
+			<column name="RecordType" type="varchar(50)"/>
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet> 
+	
+	<changeSet id="8" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="WorkflowId" tableName="ADTLINKEDFINANCES" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="8" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTLINKEDFINANCES ADD CONSTRAINT DF_ALF_workflowid DEFAULT 0 FOR workflowid;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="9_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plfaudit', 'adtlinkedfinances');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="9" author="Gopal.p">
+		<renameColumn tableName="ADTLINKEDFINANCES" oldColumnName="LinkedFinancesSeq" newColumnName="ID"/>
+	</changeSet>
+	
+	<changeSet id="9_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plfaudit', 'adtlinkedfinances');
+			]]>
+		</sql>
+	</changeSet>
+	
+</databaseChangeLog>

@@ -10,8 +10,10 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.SnapshotService;
 import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 
@@ -27,8 +29,11 @@ public class SnapShotPreparation implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
 		Date valueDate = EODUtil.getDate("APP_DATE", context);
-		logger.info("START Snap Shot Preparation On {}", valueDate);
+		if (ImplementationConstants.SNAP_SHOT_DATE_AS_CUR_BUS_DATE) {
+			valueDate = DateUtil.addDays(valueDate, -1);
+		}
 
+		logger.info("START Snap Shot Preparation On {}", valueDate);
 		int count = snapshotService.doSnapshotPreparation(valueDate);
 
 		StepUtil.SNAPSHOT_PREPARATION.setTotalRecords(count);

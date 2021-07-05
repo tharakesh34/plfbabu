@@ -103,4 +103,45 @@
 			incrementBy="1" />
 	</changeSet>
 
+<changeSet id="ST#214.25.1" author="pavankalyan.s" >
+		<sql>
+			<![CDATA[
+				ALTER TABLE Closure_Types DROP CONSTRAINT DK_Closure_Types_WrkflwId;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#214.25.2" author="pavankalyan.s" >
+		<sql>
+			<![CDATA[
+				ALTER TABLE Closure_Types_Temp DROP CONSTRAINT DK_Closure_Types_Temp_WrkflwId;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="03_pre" author="pavankalyan.s" >
+		<sql>
+			<![CDATA[
+				DELETE FROM DATABASECHANGELOG WHERE ID = 'ST#49.17' and AUTHOR  = 'Manoj.P' and FILENAME = 'change-logs/change-log-5.5.0.xml';
+				DELETE FROM DATABASECHANGELOG WHERE ID = 'ST#49.18' and AUTHOR  = 'Manoj.P' and FILENAME = 'change-logs/change-log-5.5.0.xml';
+			]]>
+		</sql>
+    </changeSet>
+    
+    <changeSet id="04_pre" author="pavankalyan.s" >
+		<sql>
+			<![CDATA[
+				Exec sp_rename 'presentment_req_details_temp.SPECIALHIT_FILE_#', 'SPECIALHIT_FILE', 'COLUMN'; 
+                Exec sp_rename 'presentment_req_details.SPECIALHIT_FILE_#', 'SPECIALHIT_FILE', 'COLUMN'; 
+			]]>
+		</sql>
+    </changeSet>
+    <changeSet id="05_pre" author="pavankalyan.s" >
+		<sql>
+			<![CDATA[
+			    DELETE FROM DATABASECHANGELOG WHERE ID='100.25.2_pre' AND FILENAME='change-logs/change-log-5.8.0.xml';
+			    INSERT INTO DATABASECHANGELOG (ID, AUTHOR, FILENAME, DATEEXECUTED, ORDEREXECUTED, EXECTYPE, MD5SUM, DESCRIPTION, COMMENTS, TAG, LIQUIBASE, CONTEXTS, LABELS, DEPLOYMENT_ID) VALUES ('100.25.2_pre', 'murthy.y', 'change-logs/change-log-5.8.0.xml', current_timestamp, 21916, 'EXECUTED', '7:078604c4f986a24b06aad123e29696f0', 'sql', '', NULL, '3.5.3', NULL, NULL, '6385971071');
+			]]>
+		</sql>
+    </changeSet>
 </databaseChangeLog>

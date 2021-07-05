@@ -4982,7 +4982,7 @@ public class ScheduleCalculator {
 			// LAST REPAYMENT DATE
 			if (DateUtility.compare(curSchDate, derivedMDT) == 0) {
 				finScheduleData = procMDTRecord(finScheduleData, i, isRepayComplete, cpzPOSIntact);
-				// common issue 22:if earlysettlement doing on bpi schedule date.
+				// common issue when early settlement doing at the time of same BPI schedule Date
 				if (FinanceConstants.FLAG_BPI.equals(curSchd.getBpiOrHoliday())) {
 					curSchd.setBpiOrHoliday(null);
 				}
@@ -5023,6 +5023,7 @@ public class ScheduleCalculator {
 										curSchd.getBalanceForPftCal(), curSchd.getPftDaysBasis(),
 										prvSchd.getCalculatedRate());
 
+								// Common issue 16
 								if (calInt.add(prvSchd.getProfitFraction()).compareTo(BigDecimal.ZERO) <= 0) {
 									calInt = BigDecimal.ZERO;
 								} else {

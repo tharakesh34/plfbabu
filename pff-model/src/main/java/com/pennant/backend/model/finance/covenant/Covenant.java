@@ -6,10 +6,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 
+@XmlAccessorType(XmlAccessType.NONE)
 public class Covenant extends CovenantType {
 	private static final long serialVersionUID = 1L;
 
@@ -111,6 +114,8 @@ public class Covenant extends CovenantType {
 		excludeFields.add("lGraceDays");
 		excludeFields.add("lAlertDays");
 		excludeFields.add("strAllowPostPonement");
+		excludeFields.add("remarks1");
+		excludeFields.add("returnStatus");
 		return excludeFields;
 	}
 
@@ -361,5 +366,4 @@ public class Covenant extends CovenantType {
 	public void setStrDocumentReceived(String strDocumentReceived) {
 		this.strDocumentReceived = strDocumentReceived;
 	}
-
 }

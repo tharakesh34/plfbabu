@@ -74,6 +74,8 @@ public interface CollateralAssignmentDAO {
 
 	void save(CollateralMovement movement);
 
+	void saveList(List<CollateralMovement> movements);
+
 	List<CollateralMovement> getCollateralMovements(String collateralRef);
 
 	CollateralAssignment getCollateralAssignmentByFinReference(String reference, String collateralRef, String type);

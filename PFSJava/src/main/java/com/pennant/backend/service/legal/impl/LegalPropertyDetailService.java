@@ -52,6 +52,7 @@ import org.apache.logging.log4j.Logger;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.legal.LegalPropertyDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.legal.LegalPropertyDetail;
 import com.pennant.backend.service.GenericService;
@@ -68,25 +69,6 @@ public class LegalPropertyDetailService extends GenericService<LegalPropertyDeta
 	private static final Logger logger = LogManager.getLogger(LegalPropertyDetailService.class);
 
 	private LegalPropertyDetailDAO legalPropertyDetailDAO;
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	/**
-	 * @return the legalPropertyDetailDAO
-	 */
-	public LegalPropertyDetailDAO getLegalPropertyDetailDAO() {
-		return legalPropertyDetailDAO;
-	}
-
-	/**
-	 * @param legalPropertyDetailDAO
-	 *            the legalPropertyDetailDAO to set
-	 */
-	public void setLegalPropertyDetailDAO(LegalPropertyDetailDAO legalPropertyDetailDAO) {
-		this.legalPropertyDetailDAO = legalPropertyDetailDAO;
-	}
 
 	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method, String usrLanguage) {
 		if (auditDetails != null && auditDetails.size() > 0) {
@@ -105,12 +87,20 @@ public class LegalPropertyDetailService extends GenericService<LegalPropertyDeta
 		LegalPropertyDetail legalPropertyDetail = (LegalPropertyDetail) auditDetail.getModelData();
 		LegalPropertyDetail tempLegalPropertyDetail = null;
 
-		if (legalPropertyDetail.isWorkflow()) {
-			tempLegalPropertyDetail = getLegalPropertyDetailDAO().getLegalPropertyDetail(
-					legalPropertyDetail.getLegalId(), legalPropertyDetail.getLegalPropertyId(),
-					TableType.TEMP_TAB.getSuffix());
+		AuditHeader auditHeader = new AuditHeader();
+		auditHeader.setModelData(legalPropertyDetail);
+		auditHeader.setUsrLanguage(PennantConstants.default_Language);
+		List<ErrorDetail> errorDetails = doPostHookValidation(auditHeader);
+		if (errorDetails != null) {
+			errorDetails = ErrorUtil.getErrorDetails(errorDetails, auditHeader.getUsrLanguage());
+			auditDetail.getErrorDetails().addAll(errorDetails);
 		}
-		LegalPropertyDetail befApplicantDetail = getLegalPropertyDetailDAO().getLegalPropertyDetail(
+
+		if (legalPropertyDetail.isWorkflow()) {
+			tempLegalPropertyDetail = legalPropertyDetailDAO.getLegalPropertyDetail(legalPropertyDetail.getLegalId(),
+					legalPropertyDetail.getLegalPropertyId(), TableType.TEMP_TAB.getSuffix());
+		}
+		LegalPropertyDetail befApplicantDetail = legalPropertyDetailDAO.getLegalPropertyDetail(
 				legalPropertyDetail.getLegalId(), legalPropertyDetail.getLegalPropertyId(),
 				TableType.MAIN_TAB.getSuffix());
 		LegalPropertyDetail oldApplicantDetail = legalPropertyDetail.getBefImage();
@@ -289,15 +279,15 @@ public class LegalPropertyDetailService extends GenericService<LegalPropertyDeta
 				legalPropertyDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
 			if (saveRecord) {
-				getLegalPropertyDetailDAO().save(legalPropertyDetail, tableType);
+				legalPropertyDetailDAO.save(legalPropertyDetail, tableType);
 			}
 
 			if (updateRecord) {
-				getLegalPropertyDetailDAO().update(legalPropertyDetail, tableType);
+				legalPropertyDetailDAO.update(legalPropertyDetail, tableType);
 			}
 
 			if (deleteRecord) {
-				getLegalPropertyDetailDAO().delete(legalPropertyDetail, tableType);
+				legalPropertyDetailDAO.delete(legalPropertyDetail, tableType);
 			}
 
 			if (approveRec) {
@@ -323,12 +313,23 @@ public class LegalPropertyDetailService extends GenericService<LegalPropertyDeta
 			auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], propertyDetail.getBefImage(),
 					propertyDetail));
 		}
-		getLegalPropertyDetailDAO().deleteList(propertyDetail, tableType);
+		legalPropertyDetailDAO.deleteList(propertyDetail, tableType);
 		return auditList;
 	}
 
 	public List<LegalPropertyDetail> getPropertyDetailsList(long legalId, String tableType) {
-		return getLegalPropertyDetailDAO().getPropertyDetailsList(legalId, tableType);
+		return legalPropertyDetailDAO.getPropertyDetailsList(legalId, tableType);
+	}
+
+	public List<ErrorDetail> doPostHookValidation(AuditHeader auditHeader) {
+		return null;
+	}
+
+	/**
+	 * @param legalPropertyDetailDAO the legalPropertyDetailDAO to set
+	 */
+	public void setLegalPropertyDetailDAO(LegalPropertyDetailDAO legalPropertyDetailDAO) {
+		this.legalPropertyDetailDAO = legalPropertyDetailDAO;
 	}
 
 }

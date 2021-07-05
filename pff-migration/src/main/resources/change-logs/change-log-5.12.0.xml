@@ -266,21 +266,41 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="PSD#169840.1" author="sudheer.t">
-		<sql>
-			<![CDATA[
-				DELETE FROM CategoryWiseEvents where AeEventCode = 'INSPAY' and CategoryCode = 'C';
-    			DELETE FROM CategoryWiseEvents where AeEventCode = 'INSPAY' and CategoryCode = 'F';
-    			DELETE FROM CategoryWiseEvents where AeEventCode = 'INSPAY' and CategoryCode = 'O';
-    			DELETE FROM CategoryWiseEvents where AeEventCode = 'INSPAY' and CategoryCode = 'S';
-    
-    			INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('INSPAY', 'C', 1, 0, (select max(SeqOrder)+1 from CategoryWiseEvents));
-    			INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('INSPAY', 'F', 1, 0, (select max(SeqOrder)+2 from CategoryWiseEvents));
-    			INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('INSPAY', 'O', 1, 0, (select max(SeqOrder)+3 from CategoryWiseEvents));
-    			INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('INSPAY', 'S', 1, 0, (select max(SeqOrder)+4 from CategoryWiseEvents));
-			]]>
-		</sql>
-	</changeSet>
+	<changeSet id="PSD#169840.1.0_pre" author="sudheer.t" dbms="postgresql">
+        <sql>
+            <![CDATA[
+                select deps_save_and_drop_dependencies ('plf', 'categorywiseevents');
+             ]]>
+        </sql>
+    </changeSet>
+   
+    <changeSet id="PSD#169840.1.0" author="sudheer.t">
+        <modifyDataType tableName="CategoryWiseEvents" columnName="seqorder" newDataType="smallint" />
+    </changeSet>
+   
+    <changeSet id="PSD#169840.1.0_post" author="sudheer.t" dbms="postgresql">
+        <sql>
+            <![CDATA[
+                select deps_restore_dependencies ('plf', 'categorywiseevents');
+            ]]>
+        </sql>
+    </changeSet>
+	
+	<changeSet id="PSD#169840.1_pre" author="sudheer.t">
+        <sql>
+            <![CDATA[
+                DELETE FROM CategoryWiseEvents where AeEventCode = 'INSPAY' and CategoryCode = 'C';
+                DELETE FROM CategoryWiseEvents where AeEventCode = 'INSPAY' and CategoryCode = 'F';
+                DELETE FROM CategoryWiseEvents where AeEventCode = 'INSPAY' and CategoryCode = 'O';
+                DELETE FROM CategoryWiseEvents where AeEventCode = 'INSPAY' and CategoryCode = 'S';
+               
+                INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('INSPAY', 'C', 1, 0, (select max(SeqOrder)+1 from CategoryWiseEvents));
+                INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('INSPAY', 'F', 1, 0, (select max(SeqOrder)+1 from CategoryWiseEvents));
+                INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('INSPAY', 'O', 1, 0, (select max(SeqOrder)+1 from CategoryWiseEvents));
+                INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('INSPAY', 'S', 1, 0, (select max(SeqOrder)+1 from CategoryWiseEvents));
+            ]]>
+        </sql>
+    </changeSet>
 
 	<changeSet id="ST#214" author="naveenkumar.a">
 		<createTable tableName="Closure_Types">
@@ -2161,10 +2181,11 @@
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="ST#214.21.1" author="naveenkumar.a">
+	
+	<changeSet id="ST#214.21.2" author="naveenkumar.a">
 		<sql>
 			<![CDATA[
-				DELETE FROM CLOSURE_TYPES;
+				DELETE FROM CLOSURE_TYPES where code in ('DE');
 				INSERT INTO CLOSURE_TYPES (ID, CODE, DESCRIPTION, ACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES (1, 'DE', 'Default',1, 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 			]]>
 		</sql>
@@ -2194,9 +2215,10 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#229.1" author="Pavankalyan.s">
+	<changeSet id="ST#229.2" author="Pavankalyan.s">
 		<sql>
 		    <![CDATA[
+		    	Delete from secuseroperations where oprid=(select OprID from SecOperations WHERE OprCode='MATUREDLOAN_CLOSURE_ENQUIRY') and usrid=(select USRID from secusers where usrlogin='ADMIN');
                 Delete from SecGrouprights where rightid in (Select rightid from Secrights Where rightname = 'menuItem_MaturedLoanClosureEnquiry');
 			    Delete from SecOperationRoles where OprID = (select OprID from SecOperations WHERE OprCode='MATUREDLOAN_CLOSURE_ENQUIRY') and RoleID = (select RoleID from SecRoles where RoleCd='MATUREDLOAN_CLOSURE_ENQUIRY');
 			    Delete from SecOperations where OprCode = 'MATUREDLOAN_CLOSURE_ENQUIRY';
@@ -2219,6 +2241,8 @@
 			    INSERT INTO SECOPERATIONS (OPRID, OPRCODE, OPRDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select MAX(OprID)+1 from SecOperations), 'MATUREDLOAN_CLOSURE_ENQUIRY', 'Matured Loan Closure Enquiry', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
 			   
 			    INSERT INTO SECOPERATIONROLES (OPRROLEID, OPRID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select MAX(OprRoleID)+1 from SecOperationRoles), (select OprID from SecOperations WHERE OprCode='MATUREDLOAN_CLOSURE_ENQUIRY'), (select RoleID from SecRoles where RoleCd='MATUREDLOAN_CLOSURE_ENQUIRY'), 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				
+				INSERT INTO secuseroperations  values ((select MAX(USROPRID)+1 from secuseroperations), (select USRID from secusers where usrlogin='ADMIN'), (select OprID from SecOperations WHERE OprCode='MATUREDLOAN_CLOSURE_ENQUIRY'), 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
 			]]>
 		</sql>
 	</changeSet>

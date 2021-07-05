@@ -110,10 +110,8 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 	/**
 	 * Event listener that will be notified when the window created.
 	 * 
-	 * @param event
-	 *            The event being received.
-	 * @throws URISyntaxException
-	 *             If the default navigate URL is not a valid URI.
+	 * @param event The event being received.
+	 * @throws URISyntaxException If the default navigate URL is not a valid URI.
 	 */
 	public void onCreate$mainMenuWindow(ForwardEvent event) throws URISyntaxException {
 		logger.debug(Literal.ENTERING);
@@ -158,10 +156,8 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 	/**
 	 * Creates the main menu and navigate to the default page.
 	 * 
-	 * @param navigateToDefaultPage
-	 *            <code>true</code> to navigate to the default page.
-	 * @throws URISyntaxException
-	 *             If the default navigate URL is not a valid URI.
+	 * @param navigateToDefaultPage <code>true</code> to navigate to the default page.
+	 * @throws URISyntaxException If the default navigate URL is not a valid URI.
 	 */
 	private void createMenu(boolean navigateToDefaultPage) throws URISyntaxException {
 		logger.trace(Literal.ENTERING);
@@ -266,6 +262,14 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 			return ImplementationConstants.ALLOW_NON_LAN_RECEIPTS;
 		case "menu_Item_Restructure":
 			return ImplementationConstants.ALLOW_RESTRUCTURING;
+		case "menu_Item_subventionDeale":
+		case "menu_Item_subventionManufacturer":
+		case "menuItem_Subvention_knockoff_Upload":
+		case "menuItem_Subvention_Process_Upload":
+		case "menu_Item_SubventionUploadStsRpt":
+		case "menu_Item_SubventionMISReport":
+		case "menu_Item_SubventionAmortReport":
+			return ImplementationConstants.ALLOW_SUBVENTION;
 		default:
 			break;
 		}
@@ -275,8 +279,7 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 	/**
 	 * Event listener that will be notified when the menu clicked.
 	 * 
-	 * @param event
-	 *            The event being received.
+	 * @param event The event being received.
 	 */
 	public void onMenuClick(ForwardEvent event) {
 		logger.trace(Literal.ENTERING);
@@ -309,10 +312,8 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 	/**
 	 * Event listener that will be notified when the menu item clicked.
 	 * 
-	 * @param event
-	 *            The event being received.
-	 * @throws URISyntaxException
-	 *             If the navigate URL is not a valid URI.
+	 * @param event The event being received.
+	 * @throws URISyntaxException If the navigate URL is not a valid URI.
 	 */
 	public void onMenuItemClick(ForwardEvent event) throws URISyntaxException {
 		logger.trace(Literal.ENTERING);

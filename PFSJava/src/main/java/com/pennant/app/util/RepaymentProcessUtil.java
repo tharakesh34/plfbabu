@@ -266,6 +266,10 @@ public class RepaymentProcessUtil {
 				break;
 			}
 
+			if (schdDate.compareTo(presentmentSchDate) > 0) {
+				break;
+			}
+
 			schedules.add(schd);
 			if (schedules.size() > 100) {
 				financeScheduleDetailDAO.updateListForRpy(schedules);
@@ -1418,11 +1422,11 @@ public class RepaymentProcessUtil {
 							for (FinReceiptDetail rcd : rch.getReceiptDetails()) {
 								for (ManualAdviseMovements movement : rcd.getAdvMovements()) {
 									if (allocationTo == movement.getAdviseID()) {
-										//Paid Details
+										// Paid Details
 										ma.setPaidAmount(ma.getPaidAmount().add(movement.getPaidAmount()));
 										ma.setTdsPaid(ma.getTdsPaid().add(movement.getTdsPaid()));
-										//advise.setPaidAmount(advise.getPaidAmount().subtract(advise.getTdsPaid()));
-										//Waiver Details
+										// advise.setPaidAmount(advise.getPaidAmount().subtract(advise.getTdsPaid()));
+										// Waiver Details
 										ma.setWaivedAmount(ma.getWaivedAmount().add(movement.getWaivedAmount()));
 
 										TaxHeader taxHeader = movement.getTaxHeader();
@@ -2065,7 +2069,7 @@ public class RepaymentProcessUtil {
 				finRepayQueues.add(finRepayQueue);
 			}
 
-			//Setting Manual TDS to Map
+			// Setting Manual TDS to Map
 			extDataMap.put("ae_manualTds", rch.getTdsAmount());
 
 			BigDecimal totRecvAmount = BigDecimal.ZERO;
@@ -2110,7 +2114,7 @@ public class RepaymentProcessUtil {
 
 					rpyQueueHeader.setFutTds(rad.getTdsPaid());
 					rpyQueueHeader.setFutProfit(paidNow);
-					rpyQueueHeader.setPftWaived(rpyQueueHeader.getPftWaived().add(waivedNow));
+					rpyQueueHeader.setFutPftWaived(rpyQueueHeader.getFutPftWaived().add(waivedNow));
 					break;
 				case RepayConstants.ALLOCATION_LPFT:
 					rpyQueueHeader.setLateProfit(rpyQueueHeader.getLateProfit().add(paidNow));
@@ -2327,10 +2331,8 @@ public class RepaymentProcessUtil {
 	/**
 	 * Method to get Schedule related data.
 	 * 
-	 * @param finReference
-	 *            (String)
-	 * @param isWIF
-	 *            (boolean)
+	 * @param finReference (String)
+	 * @param isWIF        (boolean)
 	 **/
 	public FinScheduleData getFinSchDataByFinRef(String finReference, String type) {
 		FinScheduleData finSchData = new FinScheduleData();

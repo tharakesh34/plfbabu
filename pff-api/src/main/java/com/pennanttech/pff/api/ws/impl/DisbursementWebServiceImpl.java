@@ -107,6 +107,15 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 			return APIErrorHandlerService.getFailedStatus("RU0040", valueParm);
 		}
 
+		String finReference = finAdvancePayments.getFinReference();
+		if (StringUtils.isNotBlank(finReference)) {
+			if (financeMainDAO.getFinanceCountById(finReference, "", false) <= 0) {
+				String valueParm[] = new String[1];
+				valueParm[0] = finReference;
+				return APIErrorHandlerService.getFailedStatus("90201", valueParm);
+			}
+		}
+
 		/* Validate Partner Bank */
 		String partnerbankCode = finAdvancePayments.getPartnerbankCode();
 		if (StringUtils.isBlank(partnerbankCode)) {
@@ -350,7 +359,7 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 					return APIErrorHandlerService.getFailedStatus("30550", valueParm);
 				}
 			}
-			
+
 			String status = disbRequest.getStatus();
 			if (StringUtils.isBlank(status)) {
 				String[] valueParam = new String[1];
@@ -370,7 +379,7 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 				valueParam[0] = "RejectReason for Status R";
 				return APIErrorHandlerService.getFailedStatus("90502", valueParam);
 			}
-			
+
 			disbRequest.setPaymentType(disbRequest.getDisbType());
 			if (StringUtils.isBlank(disbRequest.getPaymentType())) {
 				String[] valueParam = new String[1];
@@ -470,9 +479,7 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 				return APIErrorHandlerService.getFailedStatus("RU0040", valueParm);
 			}
 		}
-		
-		
-		
+
 		logger.info(Literal.LEAVING);
 		return null;
 	}

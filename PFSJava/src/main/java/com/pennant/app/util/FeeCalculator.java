@@ -77,7 +77,7 @@ public class FeeCalculator implements Serializable {
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinanceMain fm = finScheduleData.getFinanceMain();
 		List<FinFeeDetail> feeList = new ArrayList<FinFeeDetail>();
-		
+
 		List<FinFeeConfig> feeConfigList = financeDetail.getFinFeeConfigList();
 
 		if (CollectionUtils.isNotEmpty(feeConfigList)) {
@@ -164,14 +164,13 @@ public class FeeCalculator implements Serializable {
 
 	private List<FinFeeDetail> calculateFeeOnRule(FinReceiptData receiptData) {
 		List<FinFeeDetail> list = new ArrayList<>();
-		
+
 		FinanceDetail fd = receiptData.getFinanceDetail();
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
-		
+
 		List<FinFeeConfig> feeConfigList = fd.getFinFeeConfigList();
 
-		
 		Map<String, Object> gstExecutionMap = new HashMap<>();
 		if (!schdData.getGstExecutionMap().isEmpty()) {
 			gstExecutionMap = schdData.getGstExecutionMap();
@@ -183,12 +182,11 @@ public class FeeCalculator implements Serializable {
 		int retailCount = 0;
 		int corpCount = 0;
 		int smeCount = 0;
-		
+
 		Map<String, Object> executionMap = new HashMap<String, Object>();
 		CustomerDetails customerDetails = fd.getCustomerDetails();
 		executionMap.put("custCtgCode", "");
-		
-		
+
 		if (customerDetails != null) {
 			Customer customer = customerDetails.getCustomer();
 			executionMap.put("custCtgCode", customer.getCustCtgCode());
@@ -201,7 +199,7 @@ public class FeeCalculator implements Serializable {
 				smeCount++;
 			}
 		}
-		
+
 		Map<String, Integer> custCtgCount = jointAccountDetailDAO.getCustCtgCount(fm.getFinReference());
 		if (custCtgCount != null) {
 			if (custCtgCount.containsKey(PennantConstants.PFF_CUSTCTG_INDIV)) {
@@ -216,12 +214,13 @@ public class FeeCalculator implements Serializable {
 		}
 
 		prepareExecutionMap(receiptData, fm, executionMap);
-		//To Be configured based on requirement. Merged from BHFL trunk revision : /Products/PFF/bajaj/BHFL/trunk/ 130332
+		// To Be configured based on requirement. Merged from BHFL trunk revision : /Products/PFF/bajaj/BHFL/trunk/
+		// 130332
 		BigDecimal dropLineAmt = finFeeDetailService.calDropLineLPOS(schdData, SysParamUtil.getAppDate());
 		executionMap.put("dropLineAmt", dropLineAmt);
 
 		objectList.add(fm);
-		
+
 		for (FinFeeConfig finFeeConfig : feeConfigList) {
 			FinFeeDetail fee = new FinFeeDetail();
 			fee.setNewRecord(true);
@@ -235,7 +234,7 @@ public class FeeCalculator implements Serializable {
 			fee.setFeeScheduleMethod(finFeeConfig.getFeeScheduleMethod());
 			fee.setCalculationType(finFeeConfig.getCalculationType());
 			fee.setRuleCode(finFeeConfig.getRuleCode());
-			//fee.setTdsReq(finFeeConfig.isTdsReq());
+			// fee.setTdsReq(finFeeConfig.isTdsReq());
 
 			BigDecimal finAmount = CalculationUtil.roundAmount(finFeeConfig.getAmount(), fm.getCalRoundingMode(),
 					fm.getRoundingTarget());
@@ -313,7 +312,7 @@ public class FeeCalculator implements Serializable {
 
 			list.add(fee);
 		}
-		
+
 		return list;
 	}
 
@@ -431,22 +430,30 @@ public class FeeCalculator implements Serializable {
 					ruleSqlMap.put(feeRule.getRuleCode(), feeRule.getSQLRule());
 				}
 
+				Date appDate = SysParamUtil.getAppDate();
 				if (financeMain != null && financeMain.getFinStartDate() != null) {
-					int finAge = DateUtility.getMonthsBetween(DateUtility.getAppDate(), financeMain.getFinStartDate());
+					int finAge = DateUtility.getMonthsBetween(appDate, financeMain.getFinStartDate());
 					executionMap.put("finAgetilldate", finAge);
 					executionMap.put("completedTenure", finAge);
 				}
 
 				int instNO = 0;
+				BigDecimal paidInst = BigDecimal.ZERO;
 				for (FinanceScheduleDetail detail : finScheduleData.getFinanceScheduleDetails()) {
-					if (detail.getSchDate().compareTo(DateUtility.getAppDate()) <= 0) {
-						instNO = detail.getInstNumber();
+					if (detail.getSchDate().compareTo(appDate) <= 0) {
+						if (detail.getInstNumber() > 0) {
+							instNO = detail.getInstNumber();
+						}
 					} else {
 						break;
+					}
+					if (detail.isSchPriPaid() == true && detail.isSchPftPaid() == true && detail.getInstNumber() > 0) {
+						paidInst = paidInst.add(BigDecimal.ONE);
 					}
 				}
 
 				executionMap.put("completedInstallments", instNO);
+				executionMap.put("PaidInstallments", paidInst);
 
 				if (financeMain != null && StringUtils.isNotBlank(financeMain.getFinReference())
 						&& StringUtils.isNotBlank(financeDetail.getModuleDefiner())) {
@@ -463,7 +470,8 @@ public class FeeCalculator implements Serializable {
 
 						executionMap.put("principalSchdOutstanding",
 								finProfitDetail.getTotalpriSchd().subtract(finProfitDetail.getTdSchdPri()));
-						// Fore closure charges calculation should be sum of principal amount and future principal amount.
+						// Fore closure charges calculation should be sum of principal amount and future principal
+						// amount.
 						executionMap.put("principalAmtFutPrincipalAmt", finProfitDetail.getTotalPriBal());
 						executionMap.put("totOSExcludeFees",
 								finProfitDetail.getTotalPftBal().add(finProfitDetail.getTotalPriBal()));
@@ -476,7 +484,8 @@ public class FeeCalculator implements Serializable {
 					if (receiptData.isForeClosureEnq()) {
 						executionMap.put("principalOutStanding", finProfitDetail.getTotalPriBal()
 								.subtract(receiptData.getOrgFinPftDtls().getTdSchdPriBal()));
-						// Fore closure charges calculation should be sum of principal amount and future principal amount.
+						// Fore closure charges calculation should be sum of principal amount and future principal
+						// amount.
 						executionMap.put("principalAmtFutPrincipalAmt", finProfitDetail.getTotalPriBal());
 					}
 				}
@@ -510,7 +519,7 @@ public class FeeCalculator implements Serializable {
 							financeMain.getFixedRateTenor());
 
 					if (financeMain.getFixedRateTenor() > 0
-							&& fixedTenorEndDate.compareTo(SysParamUtil.getAppDate()) > 0) {
+							&& fixedTenorEndDate.compareTo(appDate) > 0) {
 						executionMap.put("Finance_Fixed_Tenor", PennantConstants.YES);
 					} else {
 						executionMap.put("Finance_Fixed_Tenor", PennantConstants.NO);
@@ -793,7 +802,7 @@ public class FeeCalculator implements Serializable {
 		dataMap.put(feeTypeCode + "_UGST_W", ugstTax.getWaivedTax());
 		dataMap.put(feeTypeCode + "_CESS_W", cessTax.getWaivedTax());
 
-		//TDS
+		// TDS
 		dataMap.put(feeTypeCode + "_TDS_N", finFeeDetail.getNetTDS());
 		dataMap.put(feeTypeCode + "_TDS_P", finFeeDetail.getPaidTDS());
 
@@ -856,7 +865,7 @@ public class FeeCalculator implements Serializable {
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		String finType = financeMain.getFinType();
-		
+
 		List<FinTypeFees> feeTypes = finTypeFeesDAO.getFinTypeFeesList(finType, false, "_AView");
 
 		if (CollectionUtils.isEmpty(feeTypes)) {
@@ -897,11 +906,11 @@ public class FeeCalculator implements Serializable {
 					feeConfig.setPercRuleId(feeRules.getRuleId());
 				}
 			}
-			
+
 			feeConfig.setOriginationFee(feeType.isOriginationFee());
 			feeConfigList.add(feeConfig);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return feeConfigList;
 	}

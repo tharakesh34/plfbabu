@@ -63,6 +63,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.A;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Div;
@@ -121,6 +122,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 	protected Div finDocumentDiv;
 	private transient boolean validationOn;
 	protected Row rw_freqency;
+	protected Checkbox originalDocument;
 
 	private String userRole = "";
 	private CovenantDocument covenantDocument;
@@ -196,7 +198,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 				frequncy = arguments.get("frequency").toString();
 			}
 
-			//fillfrequencyDates();
+			// fillfrequencyDates();
 			this.covenantDocument.setWorkflowId(0);
 			doLoadWorkFlow(this.covenantDocument.isWorkflow(), this.covenantDocument.getWorkflowId(),
 					this.covenantDocument.getNextTaskId());
@@ -344,8 +346,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -435,14 +436,14 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinTypeExpense
-	 *            FinTypeExpense
+	 * @param aFinTypeExpense FinTypeExpense
 	 */
 	public void doWriteBeanToComponents(CovenantDocument aCovenantDocument) {
 		logger.debug(Literal.ENTERING);
 
 		this.docReceivedDate.setValue(aCovenantDocument.getDocumentReceivedDate());
 		this.documentName.setAttribute("data", aCovenantDocument.getDocumentDetail());
+		this.originalDocument.setChecked(aCovenantDocument.isOriginalDocument());
 		this.convDocType.setValue(StringUtils.trimToEmpty(aCovenantDocument.getDocCategory()));
 		if (aCovenantDocument.getDocumentDetail() != null
 				&& StringUtils.isNotEmpty(aCovenantDocument.getDocumentDetail().getDocName())) {
@@ -545,6 +546,13 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
+		try {
+			aCovenantDocument.setOriginalDocument(this.originalDocument.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		doRemoveValidation();
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];

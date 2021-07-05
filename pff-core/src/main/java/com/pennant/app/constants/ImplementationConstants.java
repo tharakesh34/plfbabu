@@ -73,7 +73,7 @@ public class ImplementationConstants {
 		ALLOW_EMIALTYPE_PRIORITY = getValueAsBoolean(extensions, "ALLOW_EMIALTYPE_PRIORITY", false);
 		ALLOW_PHONETYPE_PRIORITY = getValueAsBoolean(extensions, "ALLOW_PHONETYPE_PRIORITY", false);
 		EARLYPAY_ADJ_PRI = getValueAsBoolean(extensions, "EARLYPAY_ADJ_PRI", true);
-		//ALLOW_INSURANCE = getValueAsBoolean(extensions, "ALLOW_INSURANCE", false);
+		// ALLOW_INSURANCE = getValueAsBoolean(extensions, "ALLOW_INSURANCE", false);
 		ALLOW_RIA = getValueAsBoolean(extensions, "ALLOW_RIA", false);
 		ALLOW_ADDDBSF = getValueAsBoolean(extensions, "ALLOW_ADDDBSF", false);
 		UPFRONT_ADJUST_PAYABLEADVISE = getValueAsBoolean(extensions, "UPFRONT_ADJUST_PAYABLEADVISE", false);
@@ -178,7 +178,6 @@ public class ImplementationConstants {
 		CHEQUE_ALLOW_CO_APP = getValueAsBoolean(extensions, "CHEQUE_ALLOW_CO_APP", false);
 		FEE_SERVICEING_STAMPIN_ON_ORG = getValueAsBoolean(extensions, "FEE_SERVICEING_STAMPIN_ON_ORG", false);
 		ALW_VERIFICATION_SYNC = getValueAsBoolean(extensions, "ALW_VERIFICATION_SYNC", false);
-		SOA_SHOW_UNACCURED_PENALITY = getValueAsBoolean(extensions, "SOA_SHOW_UNACCURED_PENALITY", true); /* Default value should be "true" */
 		GROUP_BATCH_BY_PARTNERBANK = getValueAsBoolean(extensions, "GROUP_BATCH_BY_PARTNERBANK", false);
 		ALLOW_EOD_INTERVAL_VALIDATION = getValueAsBoolean(extensions, "ALLOW_EOD_INTERVAL_VALIDATION", false);
 		DEFAULT_VAS_MODE_OF_PAYMENT = getValueAsBoolean(extensions, "DEFAULT_VAS_MODE_OF_PAYMENT", false);
@@ -190,7 +189,6 @@ public class ImplementationConstants {
 		VER_INITATE_REMARKS_MANDATORY = getValueAsBoolean(extensions, "VER_INITATE_REMARKS_MANDATORY", false);
 		ALLOW_NEGATIVE_VALUES_EXTFIELDS = getValueAsBoolean(extensions, "ALLOW_NEGATIVE_VALUES_EXTFIELDS", false);
 		FINREFERENCE_ALW_SWIFT_CODE = getValueAsBoolean(extensions, "FINREFERENCE_ALW_SWIFT_CODE", false);
-		DEFAULT_PRESENTMENT_UPLOAD = getValueAsBoolean(extensions, "DEFAULT_PRESENTMENT_UPLOAD", true);
 		DISB_PAID_CANCELLATION_REQ = getValueAsBoolean(extensions, "DISB_PAID_CANCELLATION_REQ", false);
 		MANDATE_PTNRBNK_IN_DWNLD = getValueAsBoolean(extensions, "MANDATE_PTNRBNK_IN_DWNLD", false);
 		PRESENTMENT_STAGE_ACCOUNTING_REQ = getValueAsBoolean(extensions, "PRESENTMENT_STAGE_ACCOUNTING_REQ", false);
@@ -200,6 +198,11 @@ public class ImplementationConstants {
 		NON_FRQ_CAPITALISATION = getValueAsBoolean(extensions, "NON_FRQ_CAPITALISATION", false);
 		ALW_DOWNPAY_IN_LOANENQ_AND_SOA = getValueAsBoolean(extensions, "ALW_DOWNPAY_IN_LOANENQ_AND_SOA", false);
 		FA_CANCEL_CHEQUE_AUTO_OPEN = getValueAsBoolean(extensions, "FA_CANCEL_CHEQUE_AUTO_OPEN", false);
+		PRESENT_RECEIPTS_ON_RESP = getValueAsBoolean(extensions, "PRESENT_RECEIPTS_ON_RESP", false);
+		ALLOW_SUBVENTION = getValueAsBoolean(extensions, "ALLOW_SUBVENTION", false);
+		PRESENT_RESP_BOUNCE_REMARKS_MAN = getValueAsBoolean(extensions, "PRESENT_RESP_BOUNCE_REMARKS_MAN", false);
+		VAS_VALIDATION_FOR_PREMIUM_CALC = getValueAsBoolean(extensions, "VAS_VALIDATION_FOR_PREMIUM_CALC", false);
+		SNAP_SHOT_DATE_AS_CUR_BUS_DATE = getValueAsBoolean(extensions, "SNAP_SHOT_DATE_AS_CUR_BUS_DATE", false);
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
 		 * ALLOW_TV_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_TV_INITIATION_LOS", true);
@@ -260,7 +263,6 @@ public class ImplementationConstants {
 		ALLOW_AUTO_KNOCK_OFF = getValueAsBoolean(extensions, "ALLOW_AUTO_KNOCK_OFF", false);
 		SOA_SHOW_UNACCURED_PENALITY = getValueAsBoolean(extensions, "SOA_SHOW_UNACCURED_PENALITY", true);
 		COVENANT_ADTNL_REMARKS = getValueAsBoolean(extensions, "COVENANT_ADTNL_REMARKS", false);
-		PRESENT_RECEIPTS_ON_RESP = getValueAsBoolean(extensions, "PRESENT_RECEIPTS_ON_RESP", false);
 		HOLD_DISB_INST_POST = getValueAsBoolean(extensions, "HOLD_DISB_INST_POST", false);
 		VAS_INST_ON_DISB = getValueAsBoolean(extensions, "VAS_INST_ON_DISB", false);
 
@@ -419,7 +421,6 @@ public class ImplementationConstants {
 	public static boolean VER_INITATE_REMARKS_MANDATORY;
 	public static boolean ALLOW_NEGATIVE_VALUES_EXTFIELDS;
 	public static boolean FINREFERENCE_ALW_SWIFT_CODE;
-	public static boolean DEFAULT_PRESENTMENT_UPLOAD;
 
 	// Currency constants for Performance
 	public static boolean ALLOW_MULTI_CCY;
@@ -487,6 +488,11 @@ public class ImplementationConstants {
 	public static boolean PRESENT_RECEIPTS_ON_RESP;
 	public static boolean HOLD_DISB_INST_POST;
 	public static boolean VAS_INST_ON_DISB;
+	public static boolean ALLOW_SUBVENTION;
+	public static boolean PRESENT_RESP_BOUNCE_REMARKS_MAN;
+	public static boolean VAS_VALIDATION_FOR_PREMIUM_CALC;
+	public static boolean DISBURSEMENT_INSTRUCTIONS_OFF_LINE;
+	public static boolean SNAP_SHOT_DATE_AS_CUR_BUS_DATE;
 
 	private static Map<String, Object> getFeatureExtensions() {
 		IFeatureExtension featureExtension;
@@ -609,7 +615,8 @@ public class ImplementationConstants {
 		VER_INIT_AGENT_MANDATORY = getValueAsBoolean(extensions, "VER_INIT_AGENT_MANDATORY", false);
 		VER_AGENCY_FILTER_BY_CITY = getValueAsBoolean(extensions, "VER_AGENCY_FILTER_BY_CITY", true);
 
-		VER_TV_COLL_ED_ADDR_COLUMN = getValueAsString(extensions, "VER_TV_COLL_ED_ADDR_COLUMN", "PROPERTYCITY"); /* HL>>FIXME "CITY" for HL*/
+		VER_TV_COLL_ED_ADDR_COLUMN = getValueAsString(extensions, "VER_TV_COLL_ED_ADDR_COLUMN",
+				"PROPERTYCITY"); /* HL>>FIXME "CITY" for HL */
 		VER_TV_COLL_ED_PROP_VAL_COLUMN = getValueAsString(extensions, "VER_TV_COLL_ED_PROP_VAL_COLUMN",
 				"TOTALVALUATIONASPE"); // HL>>FIXME "DOCVALUE" for HL
 		VER_TV_COLL_ED_PROP_COST_COLUMN = getValueAsString(extensions, "VER_TV_COLL_ED_PROP_COST_COLUMN",

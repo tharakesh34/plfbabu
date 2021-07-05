@@ -27,9 +27,9 @@
 			Set search_path = plf,public,pg_catalog;
 		</sql>
 	</changeSet>
-	
+
 	<!-- post 5.13.0 sign off - Bug fixes from client level started -->
-	
+
 	<changeSet id="DE#59.1" author="GopalaSwamy.m">
 		<sql>
 			<![CDATA[
@@ -58,7 +58,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#165813" author="GopalaSwamy.m">
 		<sql>
 			<![CDATA[
@@ -67,7 +67,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#168870.2_pre" author="sivasai.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -75,9 +75,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#168870.2" author="sivasai.p">
-	<comment>Nationality Description is added in Customer Shareholder details</comment>
+		<comment>Nationality Description is added in Customer Shareholder details</comment>
 		<createView viewName="CUSTOMERS_AEVIEW" replaceIfExists="true">
 			<![CDATA[
 			 	SELECT T1.CUSTID,
@@ -137,8 +137,8 @@
 				select deps_restore_dependencies ('plf', 'customers_aeview');
 			]]>
 		</sql>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet id="DE#288.1" author="narendra.m">
 		<sql>
 			<![CDATA[
@@ -147,26 +147,26 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="DE#296.1" author="narendra.m">
-	    <sql>
+		<sql>
 			<![CDATA[
 			 	UPDATE CUSTOMERDOCUMENTS_TEMP SET DOCREFID = 0 WHERE DOCREFID is null;
 			 	UPDATE CUSTOMERDOCUMENTS SET DOCREFID = 0 WHERE DOCREFID is null;
 			]]>
-	    </sql>
-    </changeSet>
-	
+		</sql>
+	</changeSet>
+
 	<!-- post 5.13.0 sign off - Bug fixes from client level end -->
-	
+
 	<!-- ST#2031 - Step Loans based on Installment amount changes start -->
-	
+
 	<changeSet id="ST#2031.1" author="savitri.n">
 		<addColumn tableName="RMTFINANCETYPES">
 			<column name="CalcOfSteps" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.2" author="savitri.n">
 		<addColumn tableName="RMTFINANCETYPES">
 			<column name="StepsAppliedFor" type="varchar(8)" />
@@ -178,31 +178,31 @@
 			<column name="CalcOfSteps" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.4" author="savitri.n">
 		<addColumn tableName="RMTFINANCETYPES_TEMP">
 			<column name="StepsAppliedFor" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.5" author="savitri.n">
 		<addColumn tableName="FINANCEMAIN">
 			<column name="CalcOfSteps" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.6" author="savitri.n">
 		<addColumn tableName="FINANCEMAIN">
 			<column name="StepsAppliedFor" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.7" author="savitri.n">
 		<addColumn tableName="FINANCEMAIN">
 			<column name="NoOfGrcSteps" type="int" />
 		</addColumn>
 	</changeSet>
-		
+
 	<changeSet id="ST#2031.8" author="savitri.n">
 		<sql>
 			<![CDATA[
@@ -214,7 +214,7 @@
 	<changeSet id="ST#2031.9" author="savitri.n" dbms="postgresql, oracle">
 		<addDefaultValue columnName="NoOfGrcSteps" tableName="FINANCEMAIN" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.9" author="savitri.n" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -222,25 +222,25 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.10" author="savitri.n">
 		<addColumn tableName="FINANCEMAIN_TEMP">
 			<column name="CalcOfSteps" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.11" author="savitri.n">
 		<addColumn tableName="FINANCEMAIN_TEMP">
 			<column name="StepsAppliedFor" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.12" author="savitri.n">
 		<addColumn tableName="FINANCEMAIN_TEMP">
 			<column name="NoOfGrcSteps" type="int" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.13" author="savitri.n">
 		<sql>
 			<![CDATA[
@@ -248,7 +248,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.14" author="savitri.n" dbms="postgresql, oracle">
 		<addDefaultValue columnName="NoOfGrcSteps" tableName="FINANCEMAIN_TEMP" defaultValue="0" />
 	</changeSet>
@@ -260,25 +260,25 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.15" author="savitri.n">
 		<addColumn tableName="WIFFINANCEMAIN">
 			<column name="CalcOfSteps" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.16" author="savitri.n">
 		<addColumn tableName="WIFFINANCEMAIN">
 			<column name="StepsAppliedFor" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.17" author="savitri.n">
 		<addColumn tableName="WIFFINANCEMAIN">
 			<column name="NoOfGrcSteps" type="int" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.18" author="savitri.n">
 		<sql>
 			<![CDATA[
@@ -286,7 +286,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.19" author="savitri.n" dbms="postgresql, oracle">
 		<addDefaultValue columnName="NoOfGrcSteps" tableName="WIFFINANCEMAIN" defaultValue="0" />
 	</changeSet>
@@ -298,25 +298,25 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.20" author="savitri.n">
 		<addColumn tableName="WIFFINANCEMAIN_TEMP">
 			<column name="CalcOfSteps" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.21" author="savitri.n">
 		<addColumn tableName="WIFFINANCEMAIN_TEMP">
 			<column name="StepsAppliedFor" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.22" author="savitri.n">
 		<addColumn tableName="WIFFINANCEMAIN_TEMP">
 			<column name="NoOfGrcSteps" type="int" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.23" author="savitri.n">
 		<sql>
 			<![CDATA[
@@ -324,7 +324,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.24" author="savitri.n" dbms="postgresql, oracle">
 		<addDefaultValue columnName="NoOfGrcSteps" tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
 	</changeSet>
@@ -336,25 +336,25 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.25" author="savitri.n">
 		<addColumn tableName="REJECTFINANCEMAIN">
 			<column name="CalcOfSteps" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.26" author="savitri.n">
 		<addColumn tableName="REJECTFINANCEMAIN">
 			<column name="StepsAppliedFor" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.27" author="savitri.n">
 		<addColumn tableName="REJECTFINANCEMAIN">
 			<column name="NoOfGrcSteps" type="int" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.28" author="savitri.n">
 		<sql>
 			<![CDATA[
@@ -362,7 +362,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.29" author="savitri.n" dbms="postgresql, oracle">
 		<addDefaultValue columnName="NoOfGrcSteps" tableName="REJECTFINANCEMAIN" defaultValue="0" />
 	</changeSet>
@@ -374,31 +374,31 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.30" author="savitri.n">
 		<addColumn tableName="FINSTEPPOLICYDETAIL">
 			<column name="StepSpecifier" type="varchar(5)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.31" author="savitri.n">
 		<addColumn tableName="FINSTEPPOLICYDETAIL">
 			<column name="StepStart" type="datetime" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.32" author="savitri.n">
 		<addColumn tableName="FINSTEPPOLICYDETAIL">
 			<column name="StepEnd" type="datetime" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.33" author="savitri.n">
 		<addColumn tableName="FINSTEPPOLICYDETAIL">
 			<column name="AutoCal" type="smallint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.34" author="savitri.n">
 		<sql>
 			<![CDATA[
@@ -407,7 +407,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.35" author="savitri.n" dbms="postgresql, oracle">
 		<addDefaultValue columnName="StepSpecifier" tableName="FINSTEPPOLICYDETAIL" defaultValue="R" />
 		<addDefaultValue columnName="AutoCal" tableName="FINSTEPPOLICYDETAIL" defaultValue="0" />
@@ -421,31 +421,31 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.36" author="savitri.n">
 		<addColumn tableName="FINSTEPPOLICYDETAIL_TEMP">
 			<column name="StepSpecifier" type="varchar(5)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.37" author="savitri.n">
 		<addColumn tableName="FINSTEPPOLICYDETAIL_TEMP">
 			<column name="StepStart" type="datetime" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.38" author="savitri.n">
 		<addColumn tableName="FINSTEPPOLICYDETAIL_TEMP">
 			<column name="StepEnd" type="datetime" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.39" author="savitri.n">
 		<addColumn tableName="FINSTEPPOLICYDETAIL_TEMP">
 			<column name="AutoCal" type="smallint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.40" author="savitri.n">
 		<sql>
 			<![CDATA[
@@ -454,7 +454,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.41" author="savitri.n" dbms="postgresql, oracle">
 		<addDefaultValue columnName="StepSpecifier" tableName="FINSTEPPOLICYDETAIL_TEMP" defaultValue="R" />
 		<addDefaultValue columnName="AutoCal" tableName="FINSTEPPOLICYDETAIL_TEMP" defaultValue="0" />
@@ -468,31 +468,31 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.42" author="savitri.n">
 		<addColumn tableName="WIFFINSTEPPOLICYDETAIL">
 			<column name="StepSpecifier" type="varchar(5)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.43" author="savitri.n">
 		<addColumn tableName="WIFFINSTEPPOLICYDETAIL">
 			<column name="StepStart" type="datetime" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.44" author="savitri.n">
 		<addColumn tableName="WIFFINSTEPPOLICYDETAIL">
 			<column name="StepEnd" type="datetime" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.45" author="savitri.n">
 		<addColumn tableName="WIFFINSTEPPOLICYDETAIL">
-			<column name="AutoCal" type="smallint"  />
+			<column name="AutoCal" type="smallint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.46" author="savitri.n">
 		<sql>
 			<![CDATA[
@@ -501,7 +501,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.47" author="savitri.n" dbms="postgresql, oracle">
 		<addDefaultValue columnName="StepSpecifier" tableName="WIFFINSTEPPOLICYDETAIL" defaultValue="R" />
 		<addDefaultValue columnName="AutoCal" tableName="WIFFINSTEPPOLICYDETAIL" defaultValue="0" />
@@ -515,31 +515,31 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.48" author="savitri.n">
 		<addColumn tableName="WIFFINSTEPPOLICYDETAIL_TEMP">
 			<column name="StepSpecifier" type="varchar(5)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.49" author="savitri.n">
 		<addColumn tableName="WIFFINSTEPPOLICYDETAIL_TEMP">
 			<column name="StepStart" type="datetime" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.50" author="savitri.n">
 		<addColumn tableName="WIFFINSTEPPOLICYDETAIL_TEMP">
 			<column name="StepEnd" type="datetime" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.51" author="savitri.n">
 		<addColumn tableName="WIFFINSTEPPOLICYDETAIL_TEMP">
 			<column name="AutoCal" type="smallint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.52" author="savitri.n">
 		<sql>
 			<![CDATA[
@@ -548,9 +548,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.53" author="savitri.n" dbms="postgresql, oracle">
-		<addDefaultValue columnName="StepSpecifier" tableName="WIFFINSTEPPOLICYDETAIL_TEMP" defaultValue="R"/>
+		<addDefaultValue columnName="StepSpecifier" tableName="WIFFINSTEPPOLICYDETAIL_TEMP" defaultValue="R" />
 		<addDefaultValue columnName="AutoCal" tableName="WIFFINSTEPPOLICYDETAIL_TEMP" defaultValue="0" />
 	</changeSet>
 
@@ -562,59 +562,62 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.54" author="savitri.n">
-    	<dropPrimaryKey constraintName="pk_financesteppolicydetail" tableName="FINSTEPPOLICYDETAIL"/>
+		<dropPrimaryKey constraintName="pk_financesteppolicydetail" tableName="FINSTEPPOLICYDETAIL" />
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.55_Pre" author="savitri.n">
 		<addNotNullConstraint tableName="FINSTEPPOLICYDETAIL" columnName="StepSpecifier" columnDataType="varchar(5)" />
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.55" author="savitri.n">
-    	<addPrimaryKey columnNames="StepSpecifier,FinReference,StepNo" constraintName="pk_financesteppolicydetail"
-            tableName="FINSTEPPOLICYDETAIL"/>
+		<addPrimaryKey columnNames="StepSpecifier,FinReference,StepNo" constraintName="pk_financesteppolicydetail"
+			tableName="FINSTEPPOLICYDETAIL" />
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.56" author="savitri.n">
-    	<dropPrimaryKey constraintName="pk_finsteppolicydetail_temp" tableName="FINSTEPPOLICYDETAIL_TEMP"/>
+		<dropPrimaryKey constraintName="pk_finsteppolicydetail_temp" tableName="FINSTEPPOLICYDETAIL_TEMP" />
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.57_Pre" author="savitri.n">
-		<addNotNullConstraint tableName="FINSTEPPOLICYDETAIL_TEMP" columnName="StepSpecifier" columnDataType="varchar(5)" />
+		<addNotNullConstraint tableName="FINSTEPPOLICYDETAIL_TEMP" columnName="StepSpecifier"
+			columnDataType="varchar(5)" />
 	</changeSet>
-	 
+
 	<changeSet id="ST#2031.57" author="savitri.n">
-    	<addPrimaryKey columnNames="StepSpecifier,FinReference,StepNo" constraintName="pk_finsteppolicydetail_temp"
-            tableName="FINSTEPPOLICYDETAIL_TEMP"/>
+		<addPrimaryKey columnNames="StepSpecifier,FinReference,StepNo" constraintName="pk_finsteppolicydetail_temp"
+			tableName="FINSTEPPOLICYDETAIL_TEMP" />
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.58" author="savitri.n">
-    	<dropPrimaryKey constraintName="pk_wiffinancesteppolicydetail" tableName="WIFFINSTEPPOLICYDETAIL"/>
+		<dropPrimaryKey constraintName="pk_wiffinancesteppolicydetail" tableName="WIFFINSTEPPOLICYDETAIL" />
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.59_Pre" author="savitri.n">
-		<addNotNullConstraint tableName="WIFFINSTEPPOLICYDETAIL" columnName="StepSpecifier" columnDataType="varchar(5)" />
+		<addNotNullConstraint tableName="WIFFINSTEPPOLICYDETAIL" columnName="StepSpecifier"
+			columnDataType="varchar(5)" />
 	</changeSet>
-	 
+
 	<changeSet id="ST#2031.59" author="savitri.n">
-    	<addPrimaryKey columnNames="StepSpecifier,FinReference,StepNo" constraintName="pk_wiffinancesteppolicydetail"
-            tableName="WIFFINSTEPPOLICYDETAIL"/>
-    </changeSet>
-            
+		<addPrimaryKey columnNames="StepSpecifier,FinReference,StepNo" constraintName="pk_wiffinancesteppolicydetail"
+			tableName="WIFFINSTEPPOLICYDETAIL" />
+	</changeSet>
+
 	<changeSet id="ST#2031.60" author="savitri.n">
-    	<dropPrimaryKey constraintName="pk_wiffinsteppolicydetail_temp" tableName="WIFFINSTEPPOLICYDETAIL_TEMP"/>
-	</changeSet> 
-	
+		<dropPrimaryKey constraintName="pk_wiffinsteppolicydetail_temp" tableName="WIFFINSTEPPOLICYDETAIL_TEMP" />
+	</changeSet>
+
 	<changeSet id="ST#2031.61_Pre" author="savitri.n">
-		<addNotNullConstraint tableName="WIFFINSTEPPOLICYDETAIL_TEMP" columnName="StepSpecifier" columnDataType="varchar(5)" />
+		<addNotNullConstraint tableName="WIFFINSTEPPOLICYDETAIL_TEMP" columnName="StepSpecifier"
+			columnDataType="varchar(5)" />
 	</changeSet>
-	 
+
 	<changeSet id="ST#2031.61" author="savitri.n">
-    	<addPrimaryKey columnNames="StepSpecifier,FinReference,StepNo" constraintName="pk_wiffinsteppolicydetail_temp"
-            tableName="WIFFINSTEPPOLICYDETAIL_TEMP"/>
+		<addPrimaryKey columnNames="StepSpecifier,FinReference,StepNo" constraintName="pk_wiffinsteppolicydetail_temp"
+			tableName="WIFFINSTEPPOLICYDETAIL_TEMP" />
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.62" author="savitri.n">
 		<sql>
 			<![CDATA[
@@ -625,7 +628,7 @@
 				]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.63" author="savitri.n">
 		<sql>
 			<![CDATA[
@@ -643,7 +646,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.64_pre" author="savitri.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1173,7 +1176,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.65_pre" author="savitri.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1681,7 +1684,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.67_pre" author="savitri.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1738,7 +1741,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.68_pre" author="savitri.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2372,7 +2375,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.70_pre" author="savitri.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2417,7 +2420,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.71_pre" author="savitri.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2462,7 +2465,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.72_pre" author="savitri.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2532,7 +2535,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.73_pre" author="savitri.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2602,37 +2605,37 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<!-- ST#2031 - Step Loans based on Installment amount changes end -->
-	
+
 	<!--ST#2145 - Schedule version changes in LMS changes start -->
-	
+
 	<changeSet id="ST#2145.1" author="naveenkumar.a">
 		<addColumn tableName="FINANCEMAIN">
-			<column name="SchdVersion" type="int"/>
+			<column name="SchdVersion" type="int" />
 		</addColumn>
 	</changeSet>
-		
+
 	<changeSet id="ST#2145.2" author="naveenkumar.a">
 		<addColumn tableName="FINANCEMAIN_TEMP">
-			<column name="SchdVersion" type="int"/>
+			<column name="SchdVersion" type="int" />
 		</addColumn>
 	</changeSet>
-		
+
 	<changeSet id="ST#2145.3" author="naveenkumar.a">
 		<addColumn tableName="REJECTFINANCEMAIN">
-			<column name="SchdVersion" type="int"/>
+			<column name="SchdVersion" type="int" />
 		</addColumn>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet id="ST#2145.4" author="naveenkumar.a">
 		<sql>
 			<![CDATA[
 				UPDATE FINANCEMAIN Set SchdVersion = 0;
 			]]>
 		</sql>
-	</changeSet>			
-	
+	</changeSet>
+
 	<changeSet id="ST#2145.5" author="naveenkumar.a" dbms="postgresql, oracle">
 		<addDefaultValue columnName="SchdVersion" tableName="FINANCEMAIN" defaultValue="0" />
 		<addDefaultValue columnName="SchdVersion" tableName="FINANCEMAIN_TEMP" defaultValue="0" />
@@ -2650,9 +2653,9 @@
 	</changeSet>
 
 	<!--ST#2145 - Schedule version changes in LMS changes end -->
-	
-	<!--ST#2145, ST#2031 - Finance main related views are handle in single place start-->
-	
+
+	<!--ST#2145, ST#2031 - Finance main related views are handle in single place start -->
+
 	<changeSet id="ST#2031.74_pre" author="savitri.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2660,7 +2663,7 @@
 		 	]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.74" author="savitri.n">
 		<createView viewName="FINANCEMAIN_TVIEW" replaceIfExists="true">
 		   <![CDATA[
@@ -2969,7 +2972,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.74_post" author="savitri.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2977,7 +2980,7 @@
 		 	]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.75_pre" author="savitri.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -3304,7 +3307,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.76_pre" author="savitri.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -3934,7 +3937,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.77_pre" author="savitri.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4017,7 +4020,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.78_pre" author="savitri.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4049,15 +4052,15 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.78_post" author="savitri.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financemain_dataview');
 			]]>
 		</sql>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet id="ST#2031.79_pre" author="savitri.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4065,7 +4068,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.79" author="savitri.n">
 		<createView replaceIfExists="true" viewName="FINANCEMAIN_DVIEW">
 			<![CDATA[
@@ -4102,7 +4105,7 @@
 		  	]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.79_post" author="savitri.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4110,9 +4113,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<!--ST#2145, ST#2031 - Finance main related views are handle in single place end -->
-	
+
 	<changeSet id="PSD#172406" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -4120,7 +4123,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	 
+
 	<changeSet id="ST#2031.80" author="savitri.n">
 		<sql>
 			<![CDATA[
@@ -4140,7 +4143,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#2031.81" author="savitri.n">
 		<sql>
 			<![CDATA[
@@ -4149,5 +4152,5 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 </databaseChangeLog>

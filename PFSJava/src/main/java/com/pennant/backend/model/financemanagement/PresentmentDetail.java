@@ -55,7 +55,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -64,12 +63,13 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlType(propOrder = { "id", "finReference", "custCif", "finType", "schDate", "presentmentAmt", "presentmentRef",
 		"batchReference", "presentmentId", "status", "mandateType", })
 @XmlAccessorType(XmlAccessType.NONE)
-public class PresentmentDetail extends AbstractWorkflowEntity implements Entity {
+public class PresentmentDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 	@XmlElement(name = "presentmentId")
 	private long id = Long.MIN_VALUE;
 	@XmlElement(name = "presentmentHeaderId")
-	private long presentmentId = Long.MIN_VALUE;
+	private long headerId = Long.MIN_VALUE;
+	private long responseId;
 	@XmlElement
 	private String batchReference;
 
@@ -77,6 +77,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private String presentmentRef;
 	@XmlElement
 	private String finReference;
+	private String hostReference;
 	@XmlElement(name = "instDate")
 	private Date schDate;
 	private Date defSchdDate;
@@ -97,7 +98,8 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private int emiNo;
 	private int schSeq;
 	private long bounceID;
-	private String bounceReason;
+	private String bounceCode;
+	private String bounceRemarks;
 	private Long manualAdviseId;
 	@XmlElement(name = "presentmentStatus")
 	private String status;
@@ -140,13 +142,15 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private String bankCode;
 	private FinExcessAmount emiInAdvance;
 	private Long linkedTranId;
+	// Added to check presentment type in Presentment Receipt process
+	private String presentmentType;
+	private String utrNumber;
+	private String clearingStatus;
+	private boolean finisActive;
 
 	public PresentmentDetail() {
 		super();
 	}
-
-	//Added to check presentment type in Presentment Receipt process
-	private String presentmentType;
 
 	public String getMandateStatus() {
 		return mandateStatus;
@@ -159,10 +163,10 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	public PresentmentDetail copyEntity() {
 		PresentmentDetail entity = new PresentmentDetail();
 		entity.setId(this.id);
-		entity.setPresentmentId(this.presentmentId);
-		entity.setBatchReference(this.batchReference);
+		entity.setHeaderId(this.headerId);
 		entity.setPresentmentRef(this.presentmentRef);
 		entity.setFinReference(this.finReference);
+		entity.setHostReference(this.hostReference);
 		entity.setSchDate(this.schDate);
 		entity.setDefSchdDate(this.defSchdDate);
 		entity.setMandateId(this.mandateId);
@@ -181,12 +185,12 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		entity.setEmiNo(this.emiNo);
 		entity.setSchSeq(this.schSeq);
 		entity.setBounceID(this.bounceID);
-		entity.setBounceReason(this.bounceReason);
+		entity.setBounceCode(this.bounceCode);
+		entity.setBounceRemarks(this.bounceRemarks);
 		entity.setManualAdviseId(this.manualAdviseId);
 		entity.setStatus(this.status);
 		entity.setNewRecord(this.newRecord);
 		entity.setCustomerName(this.customerName);
-		entity.setCustCif(this.custCif);
 		entity.setFinType(this.finType);
 		entity.setFinTypeDesc(this.finTypeDesc);
 		entity.setMandateType(this.mandateType);
@@ -210,16 +214,10 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		entity.setAppDate(this.appDate);
 		entity.setBpiOrHoliday(this.bpiOrHoliday);
 		entity.setBpiTreatment(this.bpiTreatment);
-		entity.setExcessAmount(this.excessAmount == null ? null : this.excessAmount.copyEntity());
-		entity.setExcessAmountReversal(
-				this.excessAmountReversal == null ? null : this.excessAmountReversal.copyEntity());
-		this.presements.stream().forEach(e -> entity.getPresements().add(e == null ? null : e.copyEntity()));
-		entity.setBankCode(this.bankCode);
-		entity.setEmiInAdvance(this.emiInAdvance == null ? null : this.emiInAdvance.copyEntity());
-		entity.setLinkedTranId(this.linkedTranId);
-		entity.setPresentmentType(this.presentmentType);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
+		entity.setPresentmentType(this.presentmentType);
+		entity.setUtrNumber(this.utrNumber);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -248,12 +246,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		excludeFields.add("partnerBankId");
 		excludeFields.add("bpiOrHoliday");
 		excludeFields.add("bpiTreatment");
-		excludeFields.add("presentmentType");
 		excludeFields.add("excessAmount");
 		excludeFields.add("excessAmountReversal");
 		excludeFields.add("bankCode");
 		excludeFields.add("emiInAdvance");
 		excludeFields.add("linkedTranId");
+		excludeFields.add("presentmentType");
+		excludeFields.add("hostReference");
+
 		return excludeFields;
 	}
 
@@ -261,11 +261,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private PresentmentDetail befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
-
-	@Override
-	public boolean isNew() {
-		return false;
-	}
+	private String bounceReason;
 
 	public long getId() {
 		return id;
@@ -275,12 +271,20 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.id = id;
 	}
 
-	public long getPresentmentId() {
-		return presentmentId;
+	public long getHeaderId() {
+		return headerId;
 	}
 
-	public void setPresentmentId(long presentmentId) {
-		this.presentmentId = presentmentId;
+	public void setHeaderId(long headerId) {
+		this.headerId = headerId;
+	}
+
+	public long getResponseId() {
+		return responseId;
+	}
+
+	public void setResponseId(long responseId) {
+		this.responseId = responseId;
 	}
 
 	public String getBatchReference() {
@@ -419,12 +423,20 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.bounceID = bounceID;
 	}
 
-	public String getBounceReason() {
-		return bounceReason;
+	public String getBounceCode() {
+		return bounceCode;
 	}
 
-	public void setBounceReason(String bounceReason) {
-		this.bounceReason = bounceReason;
+	public void setBounceCode(String bounceCode) {
+		this.bounceCode = bounceCode;
+	}
+
+	public String getBounceRemarks() {
+		return bounceRemarks;
+	}
+
+	public void setBounceRemarks(String bounceRemarks) {
+		this.bounceRemarks = bounceRemarks;
 	}
 
 	public BigDecimal gettDSAmount() {
@@ -563,6 +575,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.receiptID = receiptID;
 	}
 
+	public String getBounceReason() {
+		return bounceReason;
+	}
+
+	public void setBounceReason(String bounceReason) {
+		this.bounceReason = bounceReason;
+	}
+
 	public String getAccountNo() {
 		return accountNo;
 	}
@@ -619,8 +639,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	}
 
 	/**
-	 * @param financeDetail
-	 *            the financeDetail to set
+	 * @param financeDetail the financeDetail to set
 	 */
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
@@ -698,14 +717,6 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.bpiTreatment = bpiTreatment;
 	}
 
-	public String getPresentmentType() {
-		return presentmentType;
-	}
-
-	public void setPresentmentType(String presentmentType) {
-		this.presentmentType = presentmentType;
-	}
-
 	public FinExcessAmount getExcessAmount() {
 		return excessAmount;
 	}
@@ -752,5 +763,45 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setLinkedTranId(Long linkedTranId) {
 		this.linkedTranId = linkedTranId;
+	}
+
+	public String getPresentmentType() {
+		return presentmentType;
+	}
+
+	public void setPresentmentType(String presentmentType) {
+		this.presentmentType = presentmentType;
+	}
+
+	public String getUtrNumber() {
+		return utrNumber;
+	}
+
+	public void setUtrNumber(String utrNumber) {
+		this.utrNumber = utrNumber;
+	}
+
+	public String getClearingStatus() {
+		return clearingStatus;
+	}
+
+	public void setClearingStatus(String clearingStatus) {
+		this.clearingStatus = clearingStatus;
+	}
+
+	public boolean isFinisActive() {
+		return finisActive;
+	}
+
+	public void setFinisActive(boolean finisActive) {
+		this.finisActive = finisActive;
+	}
+
+	public String getHostReference() {
+		return hostReference;
+	}
+
+	public void setHostReference(String hostReference) {
+		this.hostReference = hostReference;
 	}
 }

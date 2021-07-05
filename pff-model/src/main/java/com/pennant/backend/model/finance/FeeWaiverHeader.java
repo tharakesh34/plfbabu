@@ -8,6 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -18,25 +23,30 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>FeeWaiverHeader table</b>.<br>
  *
  */
-
+@XmlAccessorType(XmlAccessType.NONE)
 public class FeeWaiverHeader extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
 	private long waiverId = Long.MIN_VALUE;
+	@XmlElement
 	private String finReference;
 	private String event;
+	@XmlElement
 	private String remarks;
 	private Date postingDate;
+	@XmlElement
 	private Date valueDate;
 	private boolean newRecord;
 	private FeeWaiverHeader befImage;
 	private String lovValue;
 	private LoggedInUser userDetails;
 	private boolean isAlwtoProceed = true;
-
+	@XmlElementWrapper(name = "feeWaiverDetails")
+	@XmlElement
 	private List<FeeWaiverDetail> feeWaiverDetails = new ArrayList<FeeWaiverDetail>();
 	private List<FinanceRepayments> rpyList = new ArrayList<FinanceRepayments>();
 
+	private String finSourceID = null;
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 	public Set<String> getExcludeFields() {
@@ -45,6 +55,7 @@ public class FeeWaiverHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("auditDetailMap");
 		excludeFields.add("isAlwtoProceed");
 		excludeFields.add("rpyList");
+		excludeFields.add("finSourceID");
 		return excludeFields;
 	}
 
@@ -179,4 +190,11 @@ public class FeeWaiverHeader extends AbstractWorkflowEntity implements Entity {
 		this.rpyList = rpyList;
 	}
 
+	public String getFinSourceID() {
+		return finSourceID;
+	}
+
+	public void setFinSourceID(String finSourceID) {
+		this.finSourceID = finSourceID;
+	}
 }

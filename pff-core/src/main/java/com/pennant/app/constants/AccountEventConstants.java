@@ -122,7 +122,7 @@ public class AccountEventConstants {
 	public static final String ACCEVENT_INSPAY = "INSPAY";
 	public static final String ACCEVENT_CANINS = "CANINS";
 	public static final String ACCEVENT_RECIP = "RECIP";
-	public static final String ACCEVENT_WAIVER = "WAIVER"; //For Waivers
+	public static final String ACCEVENT_WAIVER = "WAIVER"; // For Waivers
 	public static final String ACCEVENT_ADVDUE = "ADVDUE";
 	public static final String ACCEVENT_OEMSBV = "OEMSBV";
 	public static final String ACCEVENT_EXPENSE = "EXPENSE";
@@ -131,12 +131,14 @@ public class AccountEventConstants {
 	public static final String ACCEVENT_PRSNTRSP = "PRSNTRSP";
 	public static final String PART_CANCELATION = "PARTCAN";
 	public static final String ACCEVENT_NLRCPT = "NLRCPT";
+	public static final String ACCEVENT_MANSUB = "MANSUB";
+
 	// Category Code Constants
 	public static final String EVENTCTG_FINANCE = "F";
 	public static final String EVENTCTG_OVERDRAFT = "O";
 	public static final String EVENTCTG_GOLD = "G";
 	public static final String EVENTCTG_CD = "C";
-	
+
 	public static boolean isDisbursementEvent(String eventCode) {
 		if (StringUtils.isEmpty(eventCode)) {
 			return false;

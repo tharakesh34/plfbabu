@@ -29,7 +29,8 @@
 	<!-- Finance Type Details -->
 	<bean id="financeTypeDAO" class="com.pennant.backend.dao.rmtmasters.impl.FinanceTypeDAOImpl" parent="basicDao" />
 
-	<bean id="finTypeAccountingDAO" class="com.pennant.backend.dao.rmtmasters.impl.FinTypeAccountingDAOImpl" parent="sequenceDao" />
+	<bean id="finTypeAccountingDAO" class="com.pennant.backend.dao.rmtmasters.impl.FinTypeAccountingDAOImpl"
+		parent="sequenceDao" />
 
 	<!-- Finance Main -->
 	<bean id="financeMainDAO" class="com.pennant.backend.dao.finance.impl.FinanceMainDAOImpl" parent="basicDao" />
@@ -38,10 +39,12 @@
 	<bean id="financeScheduleDetailDAO" class="com.pennant.backend.dao.finance.impl.FinanceScheduleDetailDAOImpl"
 		parent="basicDao" />
 
-	<bean id="irrScheduleDetailDAO" class="com.pennant.backend.dao.finance.impl.IRRScheduleDetailDAOImpl" parent="basicDao" />
+	<bean id="irrScheduleDetailDAO" class="com.pennant.backend.dao.finance.impl.IRRScheduleDetailDAOImpl"
+		parent="basicDao" />
 
 	<!-- Profit Details -->
-	<bean id="profitDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinanceProfitDetailDAOImpl" parent="basicDao" />
+	<bean id="profitDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinanceProfitDetailDAOImpl"
+		parent="basicDao" />
 
 	<!-- AEAmounts Util -->
 	<bean name="AEAmounts" class="com.pennant.app.util.AEAmounts">
@@ -50,19 +53,23 @@
 	</bean>
 
 	<!-- Repay Instructions -->
-	<bean id="repayInstructionDAO" class="com.pennant.backend.dao.finance.impl.RepayInstructionDAOImpl" parent="basicDao" />
+	<bean id="repayInstructionDAO" class="com.pennant.backend.dao.finance.impl.RepayInstructionDAOImpl"
+		parent="basicDao" />
 
 	<!-- Overdue Details -->
 	<bean id="finODDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinODDetailsDAOImpl" parent="basicDao" />
 
 	<!-- Finance Suspense Head -->
-	<bean id="financeSuspHeadDAO" class="com.pennant.backend.dao.finance.impl.FinanceSuspHeadDAOImpl" parent="basicDao" />
+	<bean id="financeSuspHeadDAO" class="com.pennant.backend.dao.finance.impl.FinanceSuspHeadDAOImpl"
+		parent="basicDao" />
 
 	<!-- Finance Status Details -->
-	<bean id="finStatusDetailDAO" class="com.pennant.backend.dao.finance.impl.FinStatusDetailDAOImpl" parent="basicDao" />
+	<bean id="finStatusDetailDAO" class="com.pennant.backend.dao.finance.impl.FinStatusDetailDAOImpl"
+		parent="basicDao" />
 
 	<!-- Finance Log Entry Details -->
-	<bean id="finLogEntryDetailDAO" class="com.pennant.backend.dao.finance.impl.FinLogEntryDetailDAOImpl" parent="sequenceDao" />
+	<bean id="finLogEntryDetailDAO" class="com.pennant.backend.dao.finance.impl.FinLogEntryDetailDAOImpl"
+		parent="sequenceDao" />
 
 	<!-- Postings -->
 	<bean id="postingsDAO" class="com.pennant.backend.dao.rulefactory.impl.PostingsDAOImpl" parent="sequenceDao" />
@@ -89,7 +96,8 @@
 
 	<bean name="ruleExecutionUtil" class="com.pennant.app.util.RuleExecutionUtil" />
 
-	<bean id="accountingSetDAO" class="com.pennant.backend.dao.rmtmasters.impl.AccountingSetDAOImpl" parent="sequenceDao" />
+	<bean id="accountingSetDAO" class="com.pennant.backend.dao.rmtmasters.impl.AccountingSetDAOImpl"
+		parent="sequenceDao" />
 
 	<bean id="financeReferenceDetailDAO" class="com.pennant.backend.dao.lmtmasters.impl.FinanceReferenceDetailDAOImpl"
 		parent="sequenceDao" />
@@ -98,16 +106,20 @@
 
 	<bean id="branchDAO" class="com.pennant.backend.dao.applicationmaster.impl.BranchDAOImpl" parent="basicDao" />
 
-	<bean id="financeTaxDetailDAO" class="com.pennant.backend.dao.finance.impl.FinanceTaxDetailDAOImpl" parent="basicDao" />
+	<bean id="financeTaxDetailDAO" class="com.pennant.backend.dao.finance.impl.FinanceTaxDetailDAOImpl"
+		parent="basicDao" />
 
-	<bean id="customerAddresDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerAddresDAOImpl" parent="sequenceDao" />
+	<bean id="customerAddresDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerAddresDAOImpl"
+		parent="sequenceDao" />
 
 	<!-- FeeType -->
 	<bean id="feeTypeDAO" class="com.pennant.backend.dao.feetype.impl.FeeTypeDAOImpl" parent="sequenceDao" />
 
-	<bean id="finODAmzTaxDetailDAO" class="com.pennant.backend.dao.finance.impl.FinODAmzTaxDetailDAOImpl" parent="sequenceDao" />
+	<bean id="finODAmzTaxDetailDAO" class="com.pennant.backend.dao.finance.impl.FinODAmzTaxDetailDAOImpl"
+		parent="sequenceDao" />
 
-	<bean id="collateralSetupDAO" class="com.pennant.backend.dao.collateral.impl.CollateralSetupDAOImpl" parent="basicDao" />
+	<bean id="collateralSetupDAO" class="com.pennant.backend.dao.collateral.impl.CollateralSetupDAOImpl"
+		parent="basicDao" />
 
 	<!-- Postings Preparation Util -->
 	<bean name="postingsPreparationUtil" class="com.pennant.app.util.PostingsPreparationUtil">
@@ -126,9 +138,11 @@
 
 	<bean id="commitmentDAO" class="com.pennant.backend.dao.commitment.impl.CommitmentDAOImpl" parent="basicDao" />
 
-	<bean id="commitmentMovementDAO" class="com.pennant.backend.dao.commitment.impl.CommitmentMovementDAOImpl" parent="basicDao" />
+	<bean id="commitmentMovementDAO" class="com.pennant.backend.dao.commitment.impl.CommitmentMovementDAOImpl"
+		parent="basicDao" />
 
-	<bean id="dailyDownloadInterfaceService" class="com.pennant.Interface.service.impl.DailyDownloadInterfaceServiceImpl">
+	<bean id="dailyDownloadInterfaceService"
+		class="com.pennant.Interface.service.impl.DailyDownloadInterfaceServiceImpl">
 		<property name="pFSParameterDAO" ref="pFSParameterDAO" />
 		<property name="customerInterfaceService" ref="customerInterfaceService" />
 	</bean>
@@ -143,7 +157,8 @@
 	<!-- Account Details -->
 	<bean id="accountsDAO" class="com.pennant.backend.dao.accounts.impl.AccountsDAOImpl" parent="basicDao" />
 
-	<bean id="accountsHistoryDAO" class="com.pennant.backend.dao.accounts.impl.AccountsHistoryDAOImpl" parent="basicDao" />
+	<bean id="accountsHistoryDAO" class="com.pennant.backend.dao.accounts.impl.AccountsHistoryDAOImpl"
+		parent="basicDao" />
 
 	<bean id="accountTypeDAO" class="com.pennant.backend.dao.rmtmasters.impl.AccountTypeDAOImpl" parent="basicDao" />
 
@@ -155,7 +170,8 @@
 	</bean>
 
 	<!-- Transaction Entry -->
-	<bean id="transactionEntryDAO" class="com.pennant.backend.dao.rmtmasters.impl.TransactionEntryDAOImpl" parent="basicDao" />
+	<bean id="transactionEntryDAO" class="com.pennant.backend.dao.rmtmasters.impl.TransactionEntryDAOImpl"
+		parent="basicDao" />
 
 	<!-- Rule -->
 	<bean id="ruleDAO" class="com.pennant.backend.dao.rulefactory.impl.RuleDAOImpl" parent="sequenceDao" />
@@ -195,10 +211,12 @@
 		parent="basicDao" />
 
 	<!-- Repay Queue -->
-	<bean id="finRepayQueueDAO" class="com.pennant.backend.dao.FinRepayQueue.impl.FinRepayQueueDAOImpl" parent="basicDao" />
+	<bean id="finRepayQueueDAO" class="com.pennant.backend.dao.FinRepayQueue.impl.FinRepayQueueDAOImpl"
+		parent="basicDao" />
 
 	<!-- Finance Repayment -->
-	<bean id="financeRepaymentsDAO" class="com.pennant.backend.dao.Repayments.impl.FinanceRepaymentsDAOImpl" parent="sequenceDao" />
+	<bean id="financeRepaymentsDAO" class="com.pennant.backend.dao.Repayments.impl.FinanceRepaymentsDAOImpl"
+		parent="sequenceDao" />
 	<bean id="advancePaymentDetailDAO" class="com.pennant.backend.dao.finance.impl.AdvancePaymentDetailDAOImpl"
 		parent="basicDao" />
 
@@ -215,8 +233,8 @@
 		parent="basicDao" />
 
 	<!-- Overdue Charge Recovery -->
-	<bean id="overdueChargeRecoveryDAO" class="com.pennant.backend.dao.financemanagement.impl.OverdueChargeRecoveryDAOImpl"
-		parent="basicDao" />
+	<bean id="overdueChargeRecoveryDAO"
+		class="com.pennant.backend.dao.financemanagement.impl.OverdueChargeRecoveryDAOImpl" parent="basicDao" />
 
 	<!-- Overdue Charge Recovery Posting Util -->
 	<bean id="recoveryPostingsUtil" class="com.pennant.app.util.OverDueRecoveryPostingsUtil">
@@ -234,7 +252,8 @@
 	</bean>
 
 	<!-- Finance Overdue penalty Rate Details -->
-	<bean id="finODPenaltyRateDAO" class="com.pennant.backend.dao.finance.impl.FinODPenaltyRateDAOImpl" parent="sequenceDao" />
+	<bean id="finODPenaltyRateDAO" class="com.pennant.backend.dao.finance.impl.FinODPenaltyRateDAOImpl"
+		parent="sequenceDao" />
 
 	<!-- Provision Details -->
 	<bean id="provisionDAO" class="com.pennant.backend.dao.financemanagement.impl.ProvisionDAOImpl" parent="basicDao" />
@@ -255,7 +274,8 @@
 	</bean>
 
 	<!-- Finance Disbursement Details -->
-	<bean id="financeDisbursementDAO" class="com.pennant.backend.dao.finance.impl.FinanceDisbursementDAOImpl" parent="basicDao" />
+	<bean id="financeDisbursementDAO" class="com.pennant.backend.dao.finance.impl.FinanceDisbursementDAOImpl"
+		parent="basicDao" />
 
 	<bean name="accountNumberUtil" class="com.pennant.app.util.AccountNumberUtil">
 		<property name="ruleDAO" ref="ruleDAO" />
@@ -278,14 +298,17 @@
 	<!-- Purging Process Decider -->
 	<bean id="purgingProcessDecider" class="com.pennant.backend.endofday.limitdecider.PurgingProcessDecider" />
 
-	<bean id="PFSJobParametersIncrementer" class="com.pennant.backend.endofday.jobparameter.PFSJobParametersIncrementer" />
+	<bean id="PFSJobParametersIncrementer"
+		class="com.pennant.backend.endofday.jobparameter.PFSJobParametersIncrementer" />
 
-	<bean id="collateralMarkDAO" class="com.pennant.backend.dao.collateralmark.impl.CollateralMarkDAOImpl" parent="sequenceDao" />
+	<bean id="collateralMarkDAO" class="com.pennant.backend.dao.collateralmark.impl.CollateralMarkDAOImpl"
+		parent="sequenceDao" />
 
 
 
 
-	<bean id="finSuspHoldDAO" class="com.pennant.backend.dao.financemanagement.impl.FinSuspHoldDAOImpl" parent="sequenceDao" />
+	<bean id="finSuspHoldDAO" class="com.pennant.backend.dao.financemanagement.impl.FinSuspHoldDAOImpl"
+		parent="sequenceDao" />
 
 
 
@@ -295,20 +318,24 @@
 		<property name="notificationsDAO" ref="notificationsDAO" />
 	</bean>
 
-	<bean id="notificationsDAO" class="com.pennant.backend.dao.notifications.impl.NotificationsDAOImpl" parent="sequenceDao" />
+	<bean id="notificationsDAO" class="com.pennant.backend.dao.notifications.impl.NotificationsDAOImpl"
+		parent="sequenceDao" />
 
-	<bean id="financeRateReviewDAO" class="com.pennant.backend.dao.finance.impl.FinanceRateReviewDAOImpl" parent="basicDao" />
+	<bean id="financeRateReviewDAO" class="com.pennant.backend.dao.finance.impl.FinanceRateReviewDAOImpl"
+		parent="basicDao" />
 
 	<!-- DPDBucketConfiguration -->
-	<bean id="dPDBucketConfigurationDAO" class="com.pennant.backend.dao.applicationmaster.impl.DPDBucketConfigurationDAOImpl"
+	<bean id="dPDBucketConfigurationDAO"
+		class="com.pennant.backend.dao.applicationmaster.impl.DPDBucketConfigurationDAOImpl" parent="sequenceDao" />
+
+	<bean id="dPDBucketDAO" class="com.pennant.backend.dao.applicationmaster.impl.DPDBucketDAOImpl"
 		parent="sequenceDao" />
 
-	<bean id="dPDBucketDAO" class="com.pennant.backend.dao.applicationmaster.impl.DPDBucketDAOImpl" parent="sequenceDao" />
+	<bean id="nPABucketConfigurationDAO"
+		class="com.pennant.backend.dao.applicationmaster.impl.NPABucketConfigurationDAOImpl" parent="sequenceDao" />
 
-	<bean id="nPABucketConfigurationDAO" class="com.pennant.backend.dao.applicationmaster.impl.NPABucketConfigurationDAOImpl"
+	<bean id="nPABucketDAO" class="com.pennant.backend.dao.applicationmaster.impl.NPABucketDAOImpl"
 		parent="sequenceDao" />
-
-	<bean id="nPABucketDAO" class="com.pennant.backend.dao.applicationmaster.impl.NPABucketDAOImpl" parent="sequenceDao" />
 	<bean id="receiptAllocationDetailDAO" class="com.pennant.backend.dao.receipts.impl.ReceiptAllocationDetailDAOImpl"
 		parent="sequenceDao" />
 
@@ -365,17 +392,22 @@
 		<property name="provisionDAO" ref="provisionDAO" />
 	</bean>
 
-	<bean id="assignmentDAO" class="com.pennant.backend.dao.applicationmaster.impl.AssignmentDAOImpl" parent="sequenceDao" />
-	<bean id="assignmentDealDAO" class="com.pennant.backend.dao.applicationmaster.impl.AssignmentDealDAOImpl" parent="sequenceDao" />
+	<bean id="assignmentDAO" class="com.pennant.backend.dao.applicationmaster.impl.AssignmentDAOImpl"
+		parent="sequenceDao" />
+	<bean id="assignmentDealDAO" class="com.pennant.backend.dao.applicationmaster.impl.AssignmentDealDAOImpl"
+		parent="sequenceDao" />
 
 	<!--============ Finance Excess Amounts Details ============== -->
-	<bean id="finExcessAmountDAO" class="com.pennant.backend.dao.receipts.impl.FinExcessAmountDAOImpl" parent="sequenceDao" />
+	<bean id="finExcessAmountDAO" class="com.pennant.backend.dao.receipts.impl.FinExcessAmountDAOImpl"
+		parent="sequenceDao" />
 
 	<!--============ Finance Receipt Header Details ============== -->
-	<bean id="finReceiptHeaderDAO" class="com.pennant.backend.dao.receipts.impl.FinReceiptHeaderDAOImpl" parent="sequenceDao" />
+	<bean id="finReceiptHeaderDAO" class="com.pennant.backend.dao.receipts.impl.FinReceiptHeaderDAOImpl"
+		parent="sequenceDao" />
 
 	<!--============ Finance Receipt Detail Details ============== -->
-	<bean id="finReceiptDetailDAO" class="com.pennant.backend.dao.receipts.impl.FinReceiptDetailDAOImpl" parent="sequenceDao" />
+	<bean id="finReceiptDetailDAO" class="com.pennant.backend.dao.receipts.impl.FinReceiptDetailDAOImpl"
+		parent="sequenceDao" />
 
 	<bean id="finFeeScheduleDetailDAO" class="com.pennant.backend.dao.rulefactory.impl.FinFeeScheduleDetailDAOImpl"
 		parent="basicDao" />
@@ -407,7 +439,8 @@
 
 	<bean id="limitGroupLinesDAO" class="com.pennant.backend.dao.limit.impl.LimitGroupLinesDAOImpl" parent="basicDao" />
 
-	<bean id="limitStructureDetailDAO" class="com.pennant.backend.dao.limit.impl.LimitStructureDetailDAOImpl" parent="sequenceDao" />
+	<bean id="limitStructureDetailDAO" class="com.pennant.backend.dao.limit.impl.LimitStructureDetailDAOImpl"
+		parent="sequenceDao" />
 
 	<bean id="limitRebuild" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
@@ -450,7 +483,8 @@
 
 	<bean id="finFeeDetailDAO" class="com.pennant.backend.dao.finance.impl.FinFeeDetailDAOImpl" parent="sequenceDao" />
 
-	<bean id="finExpenseDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinExpenseDetailsDAOImpl" parent="sequenceDao" />
+	<bean id="finExpenseDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinExpenseDetailsDAOImpl"
+		parent="sequenceDao" />
 
 	<!-- SnapShotConfiguration -->
 	<!-- <bean id="snapShotConfigurationDAO" class="com.pennant.backend.dao.eodsnapshot.impl.SnapShotConfigurationDAOImpl" parent="basicDao"/> 
@@ -471,7 +505,8 @@
 		<constructor-arg value="3" />
 	</bean>
 
-	<bean id="outgoingMailProperties" class="com.pennanttech.pennapps.notification.email.configuration.OutgoingMailProperties">
+	<bean id="outgoingMailProperties"
+		class="com.pennanttech.pennapps.notification.email.configuration.OutgoingMailProperties">
 		<property name="servreId" value="${notification.email.out.server.id}" />
 		<property name="user" value="${notification.email.out.user}" />
 		<property name="password" value="${notification.email.out.password}" />
@@ -568,7 +603,8 @@
 	</bean>
 
 	<!-- TaxDetail -->
-	<bean id="taxDetailDAO" class="com.pennant.backend.dao.applicationmaster.impl.TaxDetailDAOImpl" parent="sequenceDao" />
+	<bean id="taxDetailDAO" class="com.pennant.backend.dao.applicationmaster.impl.TaxDetailDAOImpl"
+		parent="sequenceDao" />
 
 	<bean id="taxDetailService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
@@ -588,7 +624,8 @@
 		</property>
 	</bean>
 
-	<bean name="taxDetailServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.TaxDetailServiceImpl">
+	<bean name="taxDetailServiceTarget"
+		class="com.pennant.backend.service.applicationmaster.impl.TaxDetailServiceImpl">
 		<property name="taxDetailDAO" ref="taxDetailDAO" />
 	</bean>
 
@@ -611,13 +648,15 @@
 		</property>
 	</bean>
 
-	<bean name="financeTaxDetailServiceTarget" class="com.pennant.backend.service.finance.impl.FinanceTaxDetailServiceImpl">
+	<bean name="financeTaxDetailServiceTarget"
+		class="com.pennant.backend.service.finance.impl.FinanceTaxDetailServiceImpl">
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 	</bean>
 
 	<bean id="vehicleDealerService" class="com.pennant.backend.service.amtmasters.impl.VehicleDealerServiceImpl" />
 
-	<bean id="financeReferenceDetailService" class="com.pennant.backend.service.lmtmasters.impl.FinanceReferenceDetailServiceImpl" />
+	<bean id="financeReferenceDetailService"
+		class="com.pennant.backend.service.lmtmasters.impl.FinanceReferenceDetailServiceImpl" />
 
 	<!--============ Customer Details ============== -->
 	<bean id="customerDetailsService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -639,7 +678,8 @@
 		</property>
 	</bean>
 
-	<bean name="customerDetailsServiceTarget" class="com.pennant.backend.service.customermasters.impl.CustomerDetailsServiceImpl">
+	<bean name="customerDetailsServiceTarget"
+		class="com.pennant.backend.service.customermasters.impl.CustomerDetailsServiceImpl">
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="customerEmploymentDetailDAO" ref="customerEmploymentDetailDAO" />
 		<property name="custEmployeeDetailDAO" ref="custEmployeeDetailDAO" />
@@ -660,20 +700,23 @@
 	<bean id="externalLiabilityDAO" class="com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAOImpl"
 		parent="sequenceDao" />
 
-	<bean id="customerExtLiabilityDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerExtLiabilityDAOImpl"
+	<bean id="customerExtLiabilityDAO"
+		class="com.pennant.backend.dao.customermasters.impl.CustomerExtLiabilityDAOImpl" parent="sequenceDao" />
+
+	<bean id="incomeDetailDAO" class="com.pennanttech.pff.dao.customer.income.IncomeDetailDAOImpl"
 		parent="sequenceDao" />
 
-	<bean id="incomeDetailDAO" class="com.pennanttech.pff.dao.customer.income.IncomeDetailDAOImpl" parent="sequenceDao" />
-
-	<bean id="customerEmploymentDetailDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerEmploymentDetailDAOImpl"
-		parent="sequenceDao" />
+	<bean id="customerEmploymentDetailDAO"
+		class="com.pennant.backend.dao.customermasters.impl.CustomerEmploymentDetailDAOImpl" parent="sequenceDao" />
 
 	<bean id="custEmployeeDetailDAO" class="com.pennant.backend.dao.customermasters.impl.CustEmployeeDetailDAOImpl"
 		parent="basicDao" />
 
-	<bean id="customerRatingDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerRatingDAOImpl" parent="basicDao" />
+	<bean id="customerRatingDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerRatingDAOImpl"
+		parent="basicDao" />
 
-	<bean id="customerEMailDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerEMailDAOImpl" parent="basicDao" />
+	<bean id="customerEMailDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerEMailDAOImpl"
+		parent="basicDao" />
 
 	<bean id="customerPhoneNumberDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerPhoneNumberDAOImpl"
 		parent="basicDao" />
@@ -687,7 +730,8 @@
 	<bean id="customerChequeInfoDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerChequeInfoDAOImpl"
 		parent="basicDao" />
 
-	<bean id="directorDetailDAO" class="com.pennant.backend.dao.customermasters.impl.DirectorDetailDAOImpl" parent="sequenceDao" />
+	<bean id="directorDetailDAO" class="com.pennant.backend.dao.customermasters.impl.DirectorDetailDAOImpl"
+		parent="sequenceDao" />
 
 	<bean id="customerService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
@@ -732,18 +776,23 @@
 		<property name="npaService" ref="npaService" />
 	</bean>
 
-	<bean id="freemarkerMailConfiguration" class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean" />
+	<bean id="freemarkerMailConfiguration"
+		class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean" />
 	<bean id="mailTemplateDAO" class="com.pennant.backend.dao.mail.impl.MailTemplateDAOImpl" parent="sequenceDao" />
 	<bean id="notesDAO" class="com.pennant.backend.dao.impl.NotesDAOImpl" parent="sequenceDao" />
-	<bean id="securityRoleDAO" class="com.pennant.backend.dao.administration.impl.SecurityRoleDAOImpl" parent="secSequenceDao" />
-	<bean id="securityUserDAO" class="com.pennant.backend.dao.administration.impl.SecurityUserDAOImpl" parent="secSequenceDao" />
+	<bean id="securityRoleDAO" class="com.pennant.backend.dao.administration.impl.SecurityRoleDAOImpl"
+		parent="secSequenceDao" />
+	<bean id="securityUserDAO" class="com.pennant.backend.dao.administration.impl.SecurityUserDAOImpl"
+		parent="secSequenceDao" />
 	<bean id="reportingManagerDAO" class="com.pennant.backend.dao.applicationmaster.impl.ReportingManagerDAOImpl"
 		parent="sequenceDao" />
 	<bean id="workFlowDetailsDAO" class="com.pennant.backend.dao.impl.WorkFlowDetailsDAOImpl" parent="sequenceDao" />
-	<bean id="securityUserOperationsDAO" class="com.pennant.backend.dao.administration.impl.SecurityUserOperationsDAOImpl"
-		parent="secSequenceDao" />
-	<bean id="documentManagerDAO" class="com.pennant.backend.dao.documentdetails.impl.DocumentManagerDAOImpl" parent="sequenceDao" />
-	<bean id="vehicleDealerDAO" class="com.pennant.backend.dao.amtmasters.impl.VehicleDealerDAOImpl" parent="sequenceDao" />
+	<bean id="securityUserOperationsDAO"
+		class="com.pennant.backend.dao.administration.impl.SecurityUserOperationsDAOImpl" parent="secSequenceDao" />
+	<bean id="documentManagerDAO" class="com.pennant.backend.dao.documentdetails.impl.DocumentManagerDAOImpl"
+		parent="sequenceDao" />
+	<bean id="vehicleDealerDAO" class="com.pennant.backend.dao.amtmasters.impl.VehicleDealerDAOImpl"
+		parent="sequenceDao" />
 
 	<bean id="notificationService" class="com.pennanttech.pff.notifications.service.NotificationService">
 		<property name="freemarkerMailConfiguration" ref="freemarkerMailConfiguration" />
@@ -778,16 +827,18 @@
 	<bean id="customerGstDetailDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerGstDetailDAOImpl"
 		parent="sequenceDao" />
 
-	<bean id="customerCardSalesInfoDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerCardSalesInfoDAOImpl"
-		parent="sequenceDao" />
+	<bean id="customerCardSalesInfoDAO"
+		class="com.pennant.backend.dao.customermasters.impl.CustomerCardSalesInfoDAOImpl" parent="sequenceDao" />
 
-	<bean id="primaryAccountDAO" class="com.pennanttech.pff.external.pan.dao.impl.PrimaryAccountDAOImpl" parent="basicDao" />
+	<bean id="primaryAccountDAO" class="com.pennanttech.pff.external.pan.dao.impl.PrimaryAccountDAOImpl"
+		parent="basicDao" />
 
 	<bean name="institutionLimitRebuild" class="com.pennant.backend.service.limitservice.impl.InstitutionLimitRebuild" />
 
 	<bean id="limitRuleDAO" class="com.pennant.backend.dao.rulefactory.impl.LimitRuleDAOImpl" parent="sequenceDao" />
 
-	<bean id="collectionDataDownloadProcess" class="com.pennanttech.pff.process.collection.CollectionDataDownloadProcessImpl">
+	<bean id="collectionDataDownloadProcess"
+		class="com.pennanttech.pff.process.collection.CollectionDataDownloadProcessImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
@@ -807,9 +858,11 @@
 
 	<bean id="documentFileSystem" class="com.pennanttech.pennapps.dms.filesystem.impl.DocumentFileSystemImpl" />
 
-	<bean id="vASRecordingDAO" class="com.pennant.backend.dao.configuration.impl.VASRecordingDAOImpl" parent="basicDao" />
+	<bean id="vASRecordingDAO" class="com.pennant.backend.dao.configuration.impl.VASRecordingDAOImpl"
+		parent="basicDao" />
 
-	<bean name="globalVariableService" class="com.pennant.backend.service.finance.globalvariable.GlobalVariableServiceImpl">
+	<bean name="globalVariableService"
+		class="com.pennant.backend.service.finance.globalvariable.GlobalVariableServiceImpl">
 		<property name="pFSParameterDAO" ref="pFSParameterDAO" />
 	</bean>
 
@@ -843,6 +896,11 @@
 
 	<bean id="cashFlowReportDAO" class="com.pennant.backend.dao.reports.impl.CashFlowReportDAOImpl" parent="basicDao" />
 	<bean id="externalInterfaceService" class="com.pennanttech.pff.external.service.impl.ExternalInterfaceServiceImpl" />
-	<bean id="mandateProcessdao" class="com.pennanttech.pff.external.mandate.dao.impl.MandateProcessDAOImpl" parent="sequenceDao" />
+	<bean id="mandateProcessdao" class="com.pennanttech.pff.external.mandate.dao.impl.MandateProcessDAOImpl"
+		parent="sequenceDao" />
 	<bean id="promotionDAO" class="com.pennant.backend.dao.rmtmasters.impl.PromotionDAOImpl" parent="sequenceDao" />
+	<bean id="linkedFinancesDAO" class="com.pennant.backend.dao.finance.impl.LinkedFinancesDAOImpl"
+		parent="sequenceDao" />
+	<bean id="finMaintainInstructionDAO" class="com.pennant.backend.dao.finance.impl.FinMaintainInstructionDAOImpl"
+		parent="sequenceDao" />
 </beans>

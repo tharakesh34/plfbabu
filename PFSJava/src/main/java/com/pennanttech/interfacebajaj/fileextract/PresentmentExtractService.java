@@ -5,8 +5,10 @@ import javax.sql.DataSource;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.interfacebajaj.fileextract.service.AbstractFileExtractService;
 import com.pennanttech.interfacebajaj.fileextract.service.FileExtractService;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class PresentmentExtractService extends AbstractFileExtractService
@@ -18,14 +20,17 @@ public class PresentmentExtractService extends AbstractFileExtractService
 
 	@Override
 	public PresentmentDetailExtract getFileExtract(long userId, String contentType) throws Exception {
-		PresentmentDetailExtract extractDetails = new PresentmentDetailExtract(dataSource, presentmentDetailService,
-				notificationService);
+		PresentmentDetailExtract extractDetails = new PresentmentDetailExtract(dataSource);
 		extractDetails.setDefaultDirectory(getLoacation("PRESENTMENT_RESPONSE_UPLOAD_FILEPATH"));
 		extractDetails.setFileExtension(contentType);
 		extractDetails.setFileNamePrefix("");
 		extractDetails.setBatchType("PRESENTMENT_RESPONSE_IMPORT");
 		extractDetails.setUserId(userId);
 		extractDetails.setLogStatus(false);
+		extractDetails.setUserDetails(new LoggedInUser());
+		extractDetails.setStatus(new DataEngineStatus());
+		extractDetails.setNotificationService(notificationService);
+		extractDetails.setPresentmentDetailService(presentmentDetailService);
 
 		return extractDetails;
 	}
@@ -55,8 +60,7 @@ public class PresentmentExtractService extends AbstractFileExtractService
 	}
 
 	/**
-	 * @param notificationService
-	 *            the notificationService to set
+	 * @param notificationService the notificationService to set
 	 */
 	public void setNotificationService(NotificationService notificationService) {
 		this.notificationService = notificationService;

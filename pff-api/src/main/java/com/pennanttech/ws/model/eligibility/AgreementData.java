@@ -2,16 +2,26 @@ package com.pennanttech.ws.model.eligibility;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+
 import com.pennant.backend.model.WSReturnStatus;
 
+@XmlAccessorType(XmlAccessType.NONE)
 public class AgreementData implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private String cif;
+	@XmlElement
+	private String finReference;
 	private String agreementName;
+	@XmlElement
 	private String agreementType;
 	private String reportName;
+	@XmlElement
 	private byte[] docContent;
+	@XmlElement
 	private WSReturnStatus returnStatus;
 
 	public AgreementData() {
@@ -66,4 +76,11 @@ public class AgreementData implements Serializable {
 		this.returnStatus = returnStatus;
 	}
 
+	public String getFinReference() {
+		return finReference;
+	}
+
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
+	}
 }

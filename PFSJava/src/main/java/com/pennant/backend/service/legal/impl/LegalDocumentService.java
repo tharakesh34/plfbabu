@@ -49,10 +49,13 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.legal.LegalDocumentDAO;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.legal.LegalDocument;
 import com.pennant.backend.service.GenericService;
@@ -61,6 +64,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -68,7 +72,9 @@ import com.pennanttech.pff.core.TableType;
  */
 public class LegalDocumentService extends GenericService<LegalDocument> {
 	private static final Logger logger = LogManager.getLogger(LegalDocumentService.class);
-
+	@Autowired(required = false)
+	@Qualifier("legalDocumentPostValidationHook")
+	private PostValidationHook postValidationHook;
 	private LegalDocumentDAO legalDocumentDAO;
 
 	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method, String usrLanguage) {
@@ -85,9 +91,17 @@ public class LegalDocumentService extends GenericService<LegalDocument> {
 	}
 
 	private AuditDetail validate(AuditDetail auditDetail, String method, String usrLanguage) {
-
 		LegalDocument legalDocument = (LegalDocument) auditDetail.getModelData();
 		LegalDocument tempLegalDocument = null;
+
+		AuditHeader auditHeader = new AuditHeader();
+		auditHeader.setModelData(legalDocument);
+		auditHeader.setUsrLanguage(PennantConstants.default_Language);
+		List<ErrorDetail> errorDetails = doPostHookValidation(auditHeader);
+		if (errorDetails != null) {
+			errorDetails = ErrorUtil.getErrorDetails(errorDetails, auditHeader.getUsrLanguage());
+			auditDetail.getErrorDetails().addAll(errorDetails);
+		}
 
 		if (legalDocument.isWorkflow()) {
 			tempLegalDocument = getLegalDocumentDAO().getLegalDocument(legalDocument.getLegalId(),
@@ -330,6 +344,14 @@ public class LegalDocumentService extends GenericService<LegalDocument> {
 			}
 		}
 		return documents;
+	}
+
+	public List<ErrorDetail> doPostHookValidation(AuditHeader auditHeader) {
+		List<ErrorDetail> errorDetails = null;
+		if (postValidationHook != null) {
+			errorDetails = postValidationHook.validation(auditHeader);
+		}
+		return errorDetails;
 	}
 
 	public LegalDocumentDAO getLegalDocumentDAO() {

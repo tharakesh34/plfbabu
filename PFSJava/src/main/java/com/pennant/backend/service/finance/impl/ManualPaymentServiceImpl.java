@@ -68,7 +68,6 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.RepayCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
-import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.FinRepayQueue.FinRepayQueueDAO;
@@ -81,8 +80,6 @@ import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.collateral.CollateralAssignment;
-import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -111,12 +108,10 @@ import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.service.rulefactory.RuleService;
-import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleConstants;
-import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
@@ -155,11 +150,11 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	public RepayData getRepayDataById(String finReference, String eventCode, String procEdtEvent, String userRole) {
 		logger.debug("Entering");
 
-		//Finance Details
+		// Finance Details
 		RepayData repayData = new RepayData();
 		repayData.setFinReference(finReference);
 
-		//Finance Details
+		// Finance Details
 		FinanceDetail financeDetail = new FinanceDetail();
 		repayData.setFinanceDetail(financeDetail);
 		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
@@ -169,19 +164,19 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 		if (financeMain != null) {
 
-			//Finance Schedule Details
+			// Finance Schedule Details
 			scheduleData.setFinanceScheduleDetails(
 					getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, "_View", false));
 
-			//Finance Disbursement Details
+			// Finance Disbursement Details
 			scheduleData.setDisbursementDetails(
 					getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, "_View", false));
 
-			//Finance Repayments Instruction Details
+			// Finance Repayments Instruction Details
 			scheduleData
 					.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, "_View", false));
 
-			//Finance Type Details
+			// Finance Type Details
 			FinanceType financeType = getFinanceTypeDAO().getFinanceTypeByID(financeMain.getFinType(), "_AView");
 			scheduleData.setFinanceType(financeType);
 
@@ -197,19 +192,19 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			scheduleData
 					.setFinFeeDetailList(getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView"));
 
-			//Finance Customer Details			
+			// Finance Customer Details
 			if (financeMain.getCustID() != 0 && financeMain.getCustID() != Long.MIN_VALUE) {
 				financeDetail.setCustomerDetails(
 						getCustomerDetailsService().getCustomerDetailsById(financeMain.getCustID(), true, "_View"));
 			}
 
-			// Finance Check List Details 
-			//=======================================
+			// Finance Check List Details
+			// =======================================
 			getCheckListDetailService().setFinanceCheckListDetails(repayData.getFinanceDetail(),
 					financeType.getFinType(), procEdtEvent, userRole);
 
-			//Finance Stage Accounting Posting Details 
-			//=======================================
+			// Finance Stage Accounting Posting Details
+			// =======================================
 			repayData.getFinanceDetail().setStageTransactionEntries(
 					getTransactionEntryDAO().getListTransactionEntryByRefType(financeType.getFinType(),
 							StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent,
@@ -217,30 +212,30 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 			if (StringUtils.isNotBlank(financeMain.getRecordType())) {
 
-				//Repay Header Details
+				// Repay Header Details
 				repayData.setFinRepayHeader(getFinanceRepaymentsDAO().getFinRepayHeader(finReference, "_Temp"));
 
-				//Repay Schedule Details
+				// Repay Schedule Details
 				repayData.setRepayScheduleDetails(getFinanceRepaymentsDAO().getRpySchdList(finReference, "_Temp"));
 
-				//Fee Rule Details
+				// Fee Rule Details
 				scheduleData.setFeeRules(
 						getFinFeeChargesDAO().getFeeChargesByFinRef(finReference, procEdtEvent, false, "_Temp"));
 
-				//Finance Document Details
+				// Finance Document Details
 				financeDetail.setDocumentDetailsList(getDocumentDetailsDAO().getDocumentDetailsByRef(finReference,
 						FinanceConstants.MODULE_NAME, procEdtEvent, "_Temp"));
 
 			} else {
 
-				//Repay Header Details
+				// Repay Header Details
 				repayData.setFinRepayHeader(null);
 
-				//Repay Schedule Details
+				// Repay Schedule Details
 				repayData.setRepayScheduleDetails(null);
 
-				//Finance Fee Charge Details
-				//=======================================
+				// Finance Fee Charge Details
+				// =======================================
 				List<Long> accSetIdList = new ArrayList<Long>();
 				Long accSetId = returnAccountingSetid(eventCode, financeType);
 				if (accSetId != Long.MIN_VALUE) {
@@ -327,8 +322,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	 * by using FinanceMainDAO's update method 3) Audit the record in to AuditHeader and AdtFinanceMain by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -352,8 +346,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 		RepayData repayData = (RepayData) auditHeader.getAuditDetail().getModelData();
 
-		//Finance Stage Accounting Process
-		//=======================================
+		// Finance Stage Accounting Process
+		// =======================================
 		auditHeader = executeStageAccounting(auditHeader);
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
@@ -394,7 +388,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			financeMain.setRcdMaintainSts("");
 		}
 
-		//Repayments Postings Details Process Execution
+		// Repayments Postings Details Process Execution
 		long linkedTranId = 0;
 		boolean partialPay = false;
 		FinanceProfitDetail profitDetail = null;
@@ -409,8 +403,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 			List<RepayScheduleDetail> repaySchdList = repayData.getRepayScheduleDetails();
 			List<Object> returnList = processRepaymentPostings(financeMain, scheduleData.getFinanceScheduleDetails(),
-					profitDetail, repaySchdList, repayData.getEventCodeRef(),
-					scheduleData.getFeeRules(), scheduleData.getFinanceType().getFinDivision());
+					profitDetail, repaySchdList, repayData.getEventCodeRef(), scheduleData.getFeeRules(),
+					scheduleData.getFinanceType().getFinDivision());
 
 			if (!(Boolean) returnList.get(0)) {
 				String errParm = (String) returnList.get(1);
@@ -424,21 +418,21 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// Finance Main Details Save And Update
-		//=======================================
+		// =======================================
 		if (financeMain.isNew()) {
 			getFinanceMainDAO().save(financeMain, tableType, false);
 
-			//Save FinRepayHeader Details
+			// Save FinRepayHeader Details
 			finRepayHeader.setLinkedTranId(linkedTranId);
 			getFinanceRepaymentsDAO().saveFinRepayHeader(finRepayHeader, TableType.MAIN_TAB);
 
-			//Save Repay Schedule Details
+			// Save Repay Schedule Details
 			getFinanceRepaymentsDAO().saveRpySchdList(repayData.getRepayScheduleDetails(), tableType);
 
 		} else {
 			getFinanceMainDAO().update(financeMain, tableType, false);
 
-			//Save/Update FinRepayHeader Details depends on Workflow
+			// Save/Update FinRepayHeader Details depends on Workflow
 			if (tableType == TableType.TEMP_TAB) {
 				finRepayHeader.setLinkedTranId(linkedTranId);
 				getFinanceRepaymentsDAO().updateFinRepayHeader(finRepayHeader, tableType.getSuffix());
@@ -448,12 +442,12 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// Save schedule details
-		//=======================================
+		// =======================================
 		if (!financeMain.isNewRecord()) {
 
 			if (tableType == TableType.MAIN_TAB
 					&& financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
-				//Fetch Existing data before Modification
+				// Fetch Existing data before Modification
 
 				FinScheduleData oldFinSchdData = null;
 				if (finRepayHeader.isSchdRegenerated()) {
@@ -462,7 +456,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 					oldFinSchdData.setFinReference(finReference);
 				}
 
-				//Create log entry for Action for Schedule Modification
+				// Create log entry for Action for Schedule Modification
 				FinLogEntryDetail entryDetail = new FinLogEntryDetail();
 				entryDetail.setFinReference(finReference);
 				entryDetail.setEventAction(finRepayHeader.getFinEvent());
@@ -471,18 +465,18 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				entryDetail.setReversalCompleted(false);
 				long logKey = getFinLogEntryDetailDAO().save(entryDetail);
 
-				//Save Schedule Details For Future Modifications
+				// Save Schedule Details For Future Modifications
 				if (finRepayHeader.isSchdRegenerated()) {
 					listSave(oldFinSchdData, "_Log", logKey);
 				}
 			}
 		}
 
-		//Finance Schedule Details
+		// Finance Schedule Details
 		listDeletion(finReference, tableType.getSuffix(), emptyRepayInstructions);
 		listSave(scheduleData, tableType.getSuffix(), 0);
 
-		//Fee Charge Details Clearing before 
+		// Fee Charge Details Clearing before
 		if (tableType == TableType.TEMP_TAB) {
 			getFinFeeChargesDAO().deleteChargesBatch(finReference, finRepayHeader.getFinEvent(), false,
 					tableType.getSuffix());
@@ -499,21 +493,21 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// set Finance Check List audit details to auditDetails
-		//=======================================
+		// =======================================
 		if (repayData.getFinanceDetail().getFinanceCheckList() != null
 				&& !repayData.getFinanceDetail().getFinanceCheckList().isEmpty()) {
 			auditDetails.addAll(getCheckListDetailService().saveOrUpdate(repayData.getFinanceDetail(),
 					tableType.getSuffix(), serviceUID));
 		}
 
-		//Process Updations For Postings
+		// Process Updations For Postings
 		if (!financeMain.isWorkflow()) {
 			getRepayPostingUtil().UpdateScreenPaymentsProcess(financeMain, scheduleData.getFinanceScheduleDetails(),
 					profitDetail, finRepayQueues, linkedTranId, partialPay, aeAmountCodes);
 
 			getFinanceRepaymentsDAO().saveFinRepayHeader(finRepayHeader, tableType);
 
-			//Update Linked Transaction ID after Repayments Postings Process if workflow not found
+			// Update Linked Transaction ID after Repayments Postings Process if workflow not found
 			for (RepayScheduleDetail rpySchd : repayData.getRepayScheduleDetails()) {
 				rpySchd.setLinkedTranId(linkedTranId);
 			}
@@ -555,8 +549,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	 * workFlow table by using getFinanceMainDAO().delete with parameters financeMain,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws InterfaceException
 	 * @throws InvocationTargetException
@@ -583,7 +576,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			serviceUID = finServInst.getInstructionUID();
 		}
 		// Cancel All Transactions done by Finance Reference
-		//=======================================
+		// =======================================
 		cancelStageAccounting(financeMain.getFinReference(), repayData.getFinRepayHeader().getFinEvent());
 
 		// ScheduleDetails deletion
@@ -592,7 +585,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				repayData.getFinRepayHeader().getFinEvent(), false, "_Temp");
 		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, false);
 
-		//Delete Finance Repay Header
+		// Delete Finance Repay Header
 		getFinanceRepaymentsDAO().deleteFinRepayHeader(repayData.getFinRepayHeader(), "_Temp");
 		getFinanceRepaymentsDAO().deleteRpySchdList(financeMain.getFinReference(), "_Temp");
 
@@ -614,7 +607,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				repayData.getFinanceDetail().getModuleDefiner(), false, "_Temp");
 
 		// Checklist Details delete
-		//=======================================
+		// =======================================
 		auditHeader.getAuditDetails()
 				.addAll(getCheckListDetailService().delete(repayData.getFinanceDetail(), "_Temp", tranType));
 
@@ -625,7 +618,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		auditHeader.setAuditModule("FinanceDetail");
 		getAuditHeaderDAO().addAudit(auditHeader);
 
-		//Reset Finance Detail Object for Service Task Verifications
+		// Reset Finance Detail Object for Service Task Verifications
 		auditHeader.getAuditDetail().setModelData(repayData);
 
 		logger.debug("Leaving");
@@ -643,8 +636,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtFinanceMain by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -669,21 +661,21 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		RepayData repayData = (RepayData) auditHeader.getAuditDetail().getModelData();
 		Date curBDay = DateUtility.getAppDate();
 
-		//Finance Stage Accounting Process
-		//=======================================
+		// Finance Stage Accounting Process
+		// =======================================
 		auditHeader = executeStageAccounting(auditHeader);
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
 		}
 
-		//Repayment Postings Details Process Execution
+		// Repayment Postings Details Process Execution
 		long linkedTranId = 0;
 		boolean partialPay = false;
 		FinanceProfitDetail profitDetail = null;
 		List<FinRepayQueue> finRepayQueues = new ArrayList<FinRepayQueue>();
 
-		//Execute Accounting Details Process
-		//=======================================
+		// Execute Accounting Details Process
+		// =======================================
 		FinScheduleData scheduleData = repayData.getFinanceDetail().getFinScheduleData();
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 		String finReference = financeMain.getFinReference();
@@ -707,14 +699,14 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		FinanceScheduleDetail orgNextSchd = getFinanceScheduleDetailDAO()
 				.getNextSchPayment(financeMain.getFinReference(), curBDay);
 
-		//Repayments Posting Process Execution
-		//=====================================
+		// Repayments Posting Process Execution
+		// =====================================
 		profitDetail = getProfitDetailsDAO().getFinProfitDetailsById(finReference);
 
 		List<RepayScheduleDetail> repaySchdList = repayData.getRepayScheduleDetails();
 		List<Object> returnList = processRepaymentPostings(financeMain, scheduleData.getFinanceScheduleDetails(),
-				profitDetail, repaySchdList, repayData.getEventCodeRef(),
-				scheduleData.getFeeRules(), scheduleData.getFinanceType().getFinDivision());
+				profitDetail, repaySchdList, repayData.getEventCodeRef(), scheduleData.getFeeRules(),
+				scheduleData.getFinanceType().getFinDivision());
 
 		if (!(Boolean) returnList.get(0)) {
 			String errParm = (String) returnList.get(1);
@@ -736,7 +728,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			oldFinSchdData.setFinReference(finReference);
 		}
 
-		//Create log entry for Action for Schedule Modification
+		// Create log entry for Action for Schedule Modification
 		FinLogEntryDetail entryDetail = new FinLogEntryDetail();
 		entryDetail.setFinReference(finReference);
 		entryDetail.setEventAction(finRepayHeader.getFinEvent());
@@ -745,36 +737,36 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		entryDetail.setReversalCompleted(false);
 		long logKey = getFinLogEntryDetailDAO().save(entryDetail);
 
-		//Save Schedule Details For Future Modifications
+		// Save Schedule Details For Future Modifications
 		if (finRepayHeader.isSchdRegenerated()) {
 			listSave(oldFinSchdData, "_Log", logKey);
 		}
 
-		//Repayment Postings Details Process
+		// Repayment Postings Details Process
 		returnList = getRepayPostingUtil().UpdateScreenPaymentsProcess(financeMain,
 				scheduleData.getFinanceScheduleDetails(), profitDetail, finRepayQueues, linkedTranId, partialPay,
 				aeAmountCodes);
 
-		//Finance Main Updation
-		//=======================================
+		// Finance Main Updation
+		// =======================================
 		financeMain = (FinanceMain) returnList.get(3);
 		getFinanceMainDAO().update(financeMain, TableType.MAIN_TAB, false);
 
 		// ScheduleDetails delete and save
-		//=======================================
+		// =======================================
 		listDeletion(finReference, "", emptyRepayInstructions);
 		scheduleData.setFinanceScheduleDetails((List<FinanceScheduleDetail>) returnList.get(4));
 		listSave(scheduleData, "", 0);
 
 		// Save Fee Charges List
-		//=======================================
+		// =======================================
 		saveFeeChargeList(repayData, repayData.getFinRepayHeader().getFinEvent(), "");
 
-		//Save Finance Repay Header Details
+		// Save Finance Repay Header Details
 		finRepayHeader.setLinkedTranId(linkedTranId);
 		getFinanceRepaymentsDAO().saveFinRepayHeader(finRepayHeader, TableType.MAIN_TAB);
 
-		//Update Linked Transaction ID after Repayment Postings Process if workflow not found
+		// Update Linked Transaction ID after Repayment Postings Process if workflow not found
 		for (RepayScheduleDetail rpySchd : repayData.getRepayScheduleDetails()) {
 			rpySchd.setLinkedTranId(linkedTranId);
 			rpySchd.setFinReference(repayData.getFinanceDetail().getFinScheduleData().getFinReference());
@@ -794,7 +786,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// set Check list details Audit
-			//=======================================
+			// =======================================
 			if (repayData.getFinanceDetail().getFinanceCheckList() != null
 					&& !repayData.getFinanceDetail().getFinanceCheckList().isEmpty()) {
 				auditDetails
@@ -804,7 +796,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
 
 			// ScheduleDetails delete
-			//=======================================
+			// =======================================
 			listDeletion(finReference, "_Temp", false);
 
 			// Fee charges deletion
@@ -813,15 +805,15 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 					repayData.getFinanceDetail().getModuleDefiner(), false, "_Temp");
 
 			// Checklist Details delete
-			//=======================================
+			// =======================================
 			tempAuditDetailList
 					.addAll(getCheckListDetailService().delete(repayData.getFinanceDetail(), "_Temp", tranType));
 
-			//Delete Finance Repay Header
+			// Delete Finance Repay Header
 			getFinanceRepaymentsDAO().deleteFinRepayHeader(repayData.getFinRepayHeader(), "_Temp");
 			getFinanceRepaymentsDAO().deleteRpySchdList(financeMain.getFinReference(), "_Temp");
 
-			//Reset Repay Account ID On Finance Main for Correcting Audit Data
+			// Reset Repay Account ID On Finance Main for Correcting Audit Data
 			getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, true);
 
 			RepayData tempRepayData = (RepayData) aAuditHeader.getAuditDetail().getModelData();
@@ -844,34 +836,18 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			getAuditHeaderDAO().addAudit(auditHeader);
 		}
 
-		//Reset Finance Detail Object for Service Task Verifications
+		// Reset Finance Detail Object for Service Task Verifications
 		auditHeader.getAuditDetail().setModelData(repayData);
 
-		//===========================================
-		//Fetch Total Repayment Amount till Maturity date for Early Settlement
+		// ===========================================
+		// Fetch Total Repayment Amount till Maturity date for Early Settlement
 		if (FinanceConstants.CLOSE_STATUS_MATURED.equals(financeMain.getClosingStatus())) {
 
 			// send Collateral DeMark request to Interface
-			//==========================================
+			// ==========================================
 			if (ImplementationConstants.COLLATERAL_INTERNAL) {
 				if (ImplementationConstants.COLLATERAL_DELINK_AUTO) {
-
-					List<CollateralAssignment> colAssignList = getCollateralAssignmentDAO()
-							.getCollateralAssignmentByFinRef(finReference, FinanceConstants.MODULE_NAME, "");
-					if (colAssignList != null && !colAssignList.isEmpty()) {
-						for (int i = 0; i < colAssignList.size(); i++) {
-							CollateralMovement movement = new CollateralMovement();
-							movement.setModule(FinanceConstants.MODULE_NAME);
-							movement.setCollateralRef(colAssignList.get(i).getCollateralRef());
-							movement.setReference(colAssignList.get(i).getReference());
-							movement.setAssignPerc(BigDecimal.ZERO);
-							movement.setValueDate(DateUtility.getAppDate());
-							movement.setProcess(CollateralConstants.PROCESS_AUTO);
-							getCollateralAssignmentDAO().save(movement);
-						}
-
-						getCollateralAssignmentDAO().deLinkCollateral(financeMain.getFinReference());
-					}
+					getCollateralAssignmentValidation().saveCollateralMovements(financeMain.getFinReference());
 				}
 			} else {
 				if (repayData.getFinanceDetail().getFinanceCollaterals() != null) {
@@ -881,7 +857,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// send Limit Amendment Request to ACP Interface and save log details
-		//=======================================
+		// =======================================
 
 		if (ImplementationConstants.LIMIT_INTERNAL) {
 
@@ -917,8 +893,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	 * @throws InvocationTargetException
 	 */
 	public List<Object> processRepaymentPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, 
-			String eventCodeRef, List<FeeRule> feeRuleList, String finDivision)
+			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String eventCodeRef,
+			List<FeeRule> feeRuleList, String finDivision)
 			throws IllegalAccessException, InterfaceException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -940,7 +916,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			FinanceRepayPriority repayPriority = getFinanceRepayPriorityDAO()
 					.getFinanceRepayPriorityById(financeMain.getFinType(), "");
 
-			//Check Finance is RIA Finance Type or Not
+			// Check Finance is RIA Finance Type or Not
 			BigDecimal totRpyPri = BigDecimal.ZERO;
 			BigDecimal totRpyPft = BigDecimal.ZERO;
 			BigDecimal totRpyTds = BigDecimal.ZERO;
@@ -967,13 +943,13 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 						repaySchdList.get(i).getPenaltyAmt().subtract(repaySchdList.get(i).getPenaltyPayNow()));
 				finRepayQueue.setChargeType(repaySchdList.get(i).getChargeType());
 
-				//Total Repayments Calculation for Principal, Profit & Refunds
+				// Total Repayments Calculation for Principal, Profit & Refunds
 				totRpyPri = totRpyPri.add(repaySchdList.get(i).getPrincipalSchdPayNow());
 				totRpyPft = totRpyPft.add(repaySchdList.get(i).getProfitSchdPayNow());
 				totRpyTds = totRpyTds.add(repaySchdList.get(i).getTdsSchdPayNow());
 				totRefund = totRefund.add(repaySchdList.get(i).getRefundReq());
 
-				//Fee Details
+				// Fee Details
 				totSchdFee = totSchdFee.add(repaySchdList.get(i).getSchdFeePayNow());
 
 				finRepayQueues.add(finRepayQueue);
@@ -985,12 +961,12 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			totalsMap.put("totRpyPft", totRpyPft);
 			totalsMap.put("totRpyTds", totRpyTds);
 			totalsMap.put("totRefund", totRefund);
-			//Schedule Early Settlement Insurance Refund
+			// Schedule Early Settlement Insurance Refund
 
-			//Fee Details
+			// Fee Details
 			totalsMap.put("schFeePay", totSchdFee);
 
-			//Repayments Process For Schedule Repay List			
+			// Repayments Process For Schedule Repay List
 			returnList = getRepayPostingUtil().postingsScreenRepayProcess(financeMain, scheduleDetails, profitDetail,
 					finRepayQueues, totalsMap, eventCodeRef, feeRuleDetailsMap, finDivision);
 
@@ -1044,7 +1020,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		finRepayQueue.setSchdPftPaid(rsd.getProfitSchdPaid());
 
 		// Fee Details
-		//	1. Schedule Fee Amount
+		// 1. Schedule Fee Amount
 		finRepayQueue.setSchdFee(rsd.getSchdFee());
 		finRepayQueue.setSchdFeeBal(rsd.getSchdFeeBal());
 		finRepayQueue.setSchdFeePayNow(rsd.getSchdFeePayNow());
@@ -1067,10 +1043,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	/**
 	 * Method to get Schedule related data.
 	 * 
-	 * @param finReference
-	 *            (String)
-	 * @param isWIF
-	 *            (boolean)
+	 * @param finReference (String)
+	 * @param isWIF        (boolean)
 	 **/
 	public FinScheduleData getFinSchDataByFinRef(String finReference, String type) {
 		logger.debug("Entering");
@@ -1091,7 +1065,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 		String finReference = scheduleData.getFinReference();
 		FinanceMain fm = scheduleData.getFinanceMain();
-		
+
 		// Finance Schedule Details
 		for (FinanceScheduleDetail curSchd : scheduleData.getFinanceScheduleDetails()) {
 			curSchd.setLastMntBy(fm.getLastMntBy());
@@ -1131,7 +1105,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 		}
 
-		//Finance Repay Instruction Details
+		// Finance Repay Instruction Details
 		if (scheduleData.getRepayInstructions() != null) {
 			for (RepayInstruction curSchd : scheduleData.getRepayInstructions()) {
 				curSchd.setFinReference(finReference);
@@ -1149,8 +1123,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	 * for any mismatch conditions Fetch the error details from getFinanceMainDAO().getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -1268,7 +1241,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 					new ErrorDetail(PennantConstants.KEY_FIELD, "60203", errParm, valueParm), usrLanguage));
 		}
 
-		//Checking For Commitment , Is it In Maintenance Or not
+		// Checking For Commitment , Is it In Maintenance Or not
 		if (StringUtils.trimToEmpty(financeMain.getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)
 				&& "doApprove".equals(method) && StringUtils.isNotEmpty(financeMain.getFinCommitmentRef())) {
 
@@ -1302,7 +1275,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		List<FeeRule> feeRuleList = repayData.getFinanceDetail().getFinScheduleData().getFeeRules();
 
 		if (feeRuleList != null && feeRuleList.size() > 0) {
-			//Finance Fee Charge Details
+			// Finance Fee Charge Details
 			for (int i = 0; i < feeRuleList.size(); i++) {
 				feeRuleList.get(i).setFinReference(finReference);
 				feeRuleList.get(i).setFinEvent(finEvent);
@@ -1334,14 +1307,14 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
-		//Finance Document Details
+		// Finance Document Details
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 			auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(financeDetail, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
 		}
 
-		//Finance Check List Details 
-		//=======================================
+		// Finance Check List Details
+		// =======================================
 		List<FinanceCheckListReference> financeCheckList = financeDetail.getFinanceCheckList();
 
 		if (StringUtils.equals(method, "saveOrUpdate")) {
@@ -1454,21 +1427,21 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 			try {
 				BeanUtils.copyProperties(subHeadRule, customer);
-				//subHeadRule.setReqFinCcy(financeType.getFinCcy());
+				// subHeadRule.setReqFinCcy(financeType.getFinCcy());
 				subHeadRule.setReqProduct(financeType.getFinCategory());
 				subHeadRule.setReqFinType(financeType.getFinType());
 				subHeadRule.setReqFinPurpose(financeMain.getFinPurpose());
 				subHeadRule.setReqFinDivision(financeType.getFinDivision());
 
-				//Profit Details
+				// Profit Details
 				subHeadRule.setTOTALPFT(repayData.getRepayMain().getProfit());
 				subHeadRule.setTOTALPFTBAL(repayData.getRepayMain().getProfitBalance());
 
-				//Check For Early Settlement Enquiry -- on Selecting Future Date
+				// Check For Early Settlement Enquiry -- on Selecting Future Date
 				BigDecimal accrueValue = getFinanceDetailService().getAccrueAmount(financeMain.getFinReference());
 				subHeadRule.setACCRUE(accrueValue);
 
-				//Total Tenure
+				// Total Tenure
 				int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate(),
 						false);
 				subHeadRule.setTenure(months);
@@ -1485,14 +1458,13 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		repayData = getRepayCalculator().initiateRepay(repayData, financeMain, finSchDetails, sqlRule, subHeadRule,
 				isReCal, method, finServiceInst.getFromDate(), moduleDefiner);
 
-		//Calculation for Insurance Refund
+		// Calculation for Insurance Refund
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)
 				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
-			int months = DateUtility
-					.getMonthsBetween(
-							financeMain.getMaturityDate(), repayData.getRepayMain().getRefundCalStartDate() == null
-									? financeMain.getMaturityDate() : repayData.getRepayMain().getRefundCalStartDate(),
-							true);
+			int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(),
+					repayData.getRepayMain().getRefundCalStartDate() == null ? financeMain.getMaturityDate()
+							: repayData.getRepayMain().getRefundCalStartDate(),
+					true);
 			subHeadRule.setRemTenure(months);
 		}
 
@@ -1508,7 +1480,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	public RepayData setEarlyRepayEffectOnSchedule(RepayData repayData, FinServiceInstruction finServiceInst) {
 		logger.debug("Entering");
 
-		//Schedule Recalculation Depends on Earlypay Effective Schedule method
+		// Schedule Recalculation Depends on Earlypay Effective Schedule method
 		FinanceDetail financeDetail = repayData.getFinanceDetail();
 		FinanceMain aFinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
@@ -1554,7 +1526,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			finScheduleData.setFinanceScheduleDetails(sortSchdDetails(finScheduleData.getFinanceScheduleDetails()));
 			finScheduleData.setFinanceType(repayData.getFinanceDetail().getFinScheduleData().getFinanceType());
 
-			//Calculation of Schedule Changes for Early Payment to change Schedule Effects Depends On Method
+			// Calculation of Schedule Changes for Early Payment to change Schedule Effects Depends On Method
 			finScheduleData = ScheduleCalculator.recalEarlyPaySchedule(finScheduleData,
 					repayData.getRepayMain().getEarlyPayOnSchDate(), repayData.getRepayMain().getEarlyPayNextSchDate(),
 					repayData.getRepayMain().getEarlyPayAmount(), method);
@@ -1563,7 +1535,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			aFinanceMain = finScheduleData.getFinanceMain();
 			aFinanceMain
 					.setWorkflowId(repayData.getFinanceDetail().getFinScheduleData().getFinanceMain().getWorkflowId());
-			repayData.setFinanceDetail(financeDetail);//Object Setting for Future save purpose
+			repayData.setFinanceDetail(financeDetail);// Object Setting for Future save purpose
 			repayData.setFinanceDetail(financeDetail);
 
 		}

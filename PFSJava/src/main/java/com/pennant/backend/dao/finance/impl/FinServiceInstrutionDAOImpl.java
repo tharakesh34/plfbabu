@@ -51,39 +51,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				FinServiceInstruction fsd = finServiceInstructionList.get(i);
 
-				int index = 1;
-				ps.setLong(index++, fsd.getServiceSeqId());
-				ps.setString(index++, fsd.getFinEvent());
-				ps.setString(index++, fsd.getFinReference());
-				ps.setDate(index++, JdbcUtil.getDate(fsd.getFromDate()));
-				ps.setDate(index++, JdbcUtil.getDate(fsd.getToDate()));
-				ps.setString(index++, fsd.getPftDaysBasis());
-				ps.setString(index++, fsd.getSchdMethod());
-				ps.setBigDecimal(index++, fsd.getActualRate());
-				ps.setString(index++, fsd.getBaseRate());
-				ps.setString(index++, fsd.getSplRate());
-				ps.setBigDecimal(index++, fsd.getMargin());
-				ps.setDate(index++, JdbcUtil.getDate(fsd.getGrcPeriodEndDate()));
-				ps.setString(index++, fsd.getRepayPftFrq());
-				ps.setString(index++, fsd.getRepayRvwFrq());
-				ps.setString(index++, fsd.getRepayCpzFrq());
-				ps.setString(index++, fsd.getGrcPftFrq());
-				ps.setString(index++, fsd.getGrcRvwFrq());
-				ps.setString(index++, fsd.getGrcCpzFrq());
-				ps.setDate(index++, JdbcUtil.getDate(fsd.getNextGrcRepayDate()));
-				ps.setString(index++, fsd.getRepayFrq());
-				ps.setDate(index++, JdbcUtil.getDate(fsd.getNextRepayDate()));
-				ps.setBigDecimal(index++, fsd.getAmount());
-				ps.setString(index++, fsd.getRecalType());
-				ps.setDate(index++, JdbcUtil.getDate(fsd.getRecalFromDate()));
-				ps.setDate(index++, JdbcUtil.getDate(fsd.getRecalToDate()));
-				ps.setBoolean(index++, fsd.isPftIntact());
-				ps.setInt(index++, fsd.getTerms());
-				ps.setString(index++, fsd.getServiceReqNo());
-				ps.setString(index++, fsd.getRemarks());
-				ps.setBigDecimal(index++, fsd.getPftChg());
-				ps.setLong(index++, fsd.getInstructionUID());
-				ps.setLong(index++, fsd.getLinkedTranID());
+				parameterizedSetter(ps, fsd);
 			}
 
 			@Override
@@ -91,6 +59,30 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 				return finServiceInstructionList.size();
 			}
 		}).length;
+	}
+
+	/**
+	 * 
+	 * @param finServiceInstruction
+	 * @param type
+	 */
+	public void save(FinServiceInstruction fsd, String type) {
+		if (fsd.getServiceSeqId() == Long.MIN_VALUE) {
+			fsd.setServiceSeqId(getNextValue("SeqFinInstruction"));
+		}
+
+		String sql = getInsertQuery(type);
+
+		logger.trace(Literal.SQL + sql);
+
+		try {
+			jdbcOperations.update(sql.toString(), ps -> {
+				parameterizedSetter(ps, fsd);
+			});
+		} catch (Exception e) {
+			logger.warn("");
+			throw e;
+		}
 	}
 
 	private String getInsertQuery(String type) {
@@ -102,71 +94,51 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		sql.append(", RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq");
 		sql.append(", NextGrcRepayDate, RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate");
 		sql.append(", RecalToDate, PftIntact, Terms, ServiceReqNo, Remarks, PftChg");
-		sql.append(", InstructionUID, LinkedTranID)");
+		sql.append(", InstructionUID, LinkedTranID, LogKey)");
 		sql.append(" values(");
 		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
 		return sql.toString();
 	}
 
-	/**
-	 * 
-	 * @param finServiceInstruction
-	 * @param type
-	 */
-	public void save(FinServiceInstruction sd, String type) {
-		if (sd.getServiceSeqId() == Long.MIN_VALUE) {
-			sd.setServiceSeqId(getNextValue("SeqFinInstruction"));
-		}
+	private void parameterizedSetter(PreparedStatement ps, FinServiceInstruction fsd) throws SQLException {
+		int index = 1;
 
-		String sql = getInsertQuery(type);
-
-		logger.trace(Literal.SQL + sql);
-
-		try {
-			jdbcOperations.update(sql.toString(), ps -> {
-				int index = 1;
-
-				ps.setLong(index++, JdbcUtil.setLong(sd.getServiceSeqId()));
-				ps.setString(index++, sd.getFinEvent());
-				ps.setString(index++, sd.getFinReference());
-				ps.setDate(index++, JdbcUtil.getDate(sd.getFromDate()));
-				ps.setDate(index++, JdbcUtil.getDate(sd.getToDate()));
-				ps.setString(index++, sd.getPftDaysBasis());
-				ps.setString(index++, sd.getSchdMethod());
-				ps.setBigDecimal(index++, sd.getActualRate());
-				ps.setString(index++, sd.getBaseRate());
-				ps.setString(index++, sd.getSplRate());
-				ps.setBigDecimal(index++, sd.getMargin());
-				ps.setDate(index++, JdbcUtil.getDate(sd.getGrcPeriodEndDate()));
-				ps.setString(index++, sd.getRepayPftFrq());
-				ps.setString(index++, sd.getRepayRvwFrq());
-				ps.setString(index++, sd.getRepayCpzFrq());
-				ps.setString(index++, sd.getGrcPftFrq());
-				ps.setString(index++, sd.getGrcRvwFrq());
-				ps.setString(index++, sd.getGrcCpzFrq());
-				ps.setDate(index++, JdbcUtil.getDate(sd.getNextGrcRepayDate()));
-				ps.setString(index++, sd.getRepayFrq());
-				ps.setDate(index++, JdbcUtil.getDate(sd.getNextRepayDate()));
-				ps.setBigDecimal(index++, sd.getAmount());
-				ps.setString(index++, sd.getRecalType());
-				ps.setDate(index++, JdbcUtil.getDate(sd.getRecalFromDate()));
-				ps.setDate(index++, JdbcUtil.getDate(sd.getRecalToDate()));
-				ps.setBoolean(index++, sd.isPftIntact());
-				ps.setInt(index++, sd.getTerms());
-				ps.setString(index++, sd.getServiceReqNo());
-				ps.setString(index++, sd.getRemarks());
-				ps.setBigDecimal(index++, sd.getPftChg());
-				ps.setLong(index++, JdbcUtil.setLong(sd.getInstructionUID()));
-				ps.setLong(index++, JdbcUtil.setLong(sd.getLinkedTranID()));
-			});
-		} catch (Exception e) {
-			logger.warn("");
-			throw e;
-		}
-
+		ps.setLong(index++, JdbcUtil.setLong(fsd.getServiceSeqId()));
+		ps.setString(index++, fsd.getFinEvent());
+		ps.setString(index++, fsd.getFinReference());
+		ps.setDate(index++, JdbcUtil.getDate(fsd.getFromDate()));
+		ps.setDate(index++, JdbcUtil.getDate(fsd.getToDate()));
+		ps.setString(index++, fsd.getPftDaysBasis());
+		ps.setString(index++, fsd.getSchdMethod());
+		ps.setBigDecimal(index++, fsd.getActualRate());
+		ps.setString(index++, fsd.getBaseRate());
+		ps.setString(index++, fsd.getSplRate());
+		ps.setBigDecimal(index++, fsd.getMargin());
+		ps.setDate(index++, JdbcUtil.getDate(fsd.getGrcPeriodEndDate()));
+		ps.setString(index++, fsd.getRepayPftFrq());
+		ps.setString(index++, fsd.getRepayRvwFrq());
+		ps.setString(index++, fsd.getRepayCpzFrq());
+		ps.setString(index++, fsd.getGrcPftFrq());
+		ps.setString(index++, fsd.getGrcRvwFrq());
+		ps.setString(index++, fsd.getGrcCpzFrq());
+		ps.setDate(index++, JdbcUtil.getDate(fsd.getNextGrcRepayDate()));
+		ps.setString(index++, fsd.getRepayFrq());
+		ps.setDate(index++, JdbcUtil.getDate(fsd.getNextRepayDate()));
+		ps.setBigDecimal(index++, fsd.getAmount());
+		ps.setString(index++, fsd.getRecalType());
+		ps.setDate(index++, JdbcUtil.getDate(fsd.getRecalFromDate()));
+		ps.setDate(index++, JdbcUtil.getDate(fsd.getRecalToDate()));
+		ps.setBoolean(index++, fsd.isPftIntact());
+		ps.setInt(index++, fsd.getTerms());
+		ps.setString(index++, fsd.getServiceReqNo());
+		ps.setString(index++, fsd.getRemarks());
+		ps.setBigDecimal(index++, fsd.getPftChg());
+		ps.setLong(index++, JdbcUtil.setLong(fsd.getInstructionUID()));
+		ps.setLong(index++, JdbcUtil.setLong(fsd.getLinkedTranID()));
+		ps.setObject(index++, JdbcUtil.getLong(fsd.getLogKey()));
 	}
 
 	@Override
@@ -187,10 +159,8 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 	/**
 	 * Fetch the Record Repay Instruction Detail details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return RepayInstruction
 	 */
 	@Override
@@ -362,10 +332,8 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 	/**
 	 * Fetch the Record Repay Instruction Detail details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return RepayInstruction
 	 */
 	@Override

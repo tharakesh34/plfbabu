@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_RescheduleMentReportGenerationDialogCtrl" border="normal" width="50%" height="40%" sizable="false" mode="embedded"
+		apply="${rescheduleReportGenerationDialogCtrl}">
+		<borderlayout id="borderlayout">
+			<north size="30px" border="none">
+				<div sclass="z-toolbar" style="padding:0">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start" />
+
+						<!-- SEARCH AREA -->
+						<toolbar align="center" sclass="toolbar-center">
+							<label value="${c:l('window_RescheduleMentReportGeneration.title')}" sclass="label-heading" />
+						</toolbar>
+
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnClose" label="${c:l('label_Close')}" tooltiptext="${c:l('btnClose.tooltiptext')}"
+								autodisable="btnGenereate,btnClose" sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+
+			<center border="none" autoscroll="true">
+				<groupbox id="gb_basicDetails" sclass="gb-dialog" height="97%" style="border:1px solid #F38C60;">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+						<columns>
+							<column width="15%" />
+							<column width="20%" />
+							<column width="35%" />
+							<column />
+						</columns>
+						<rows>
+							<row height="30px" />
+							<row>
+								<space />
+								<label id="label_RescheduleMentReportDialog_FinReference" value="${c:l('label_RescheduleMentReportDialog_FinReference.value')}" />
+								<extendedcombobox id="finReference" />
+							</row>
+							<row>
+								<space />
+								<label id="label_RescheduleMentReportDialog_FromDate" value="${c:l('label_RescheduleMentReportDialog_FromDate.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<datebox id="fromDate" width="100px" />
+								</hbox>
+							</row>
+							<row>
+								<space />
+								<label id="label_RescheduleMentReportDialog_ToDate" value="${c:l('label_RescheduleMentReportDialog_ToDate.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<datebox id="toDate" width="100px" />
+								</hbox>
+							</row>
+							<row spans="2">
+								<separator />
+							</row>
+							<row visible="true" spans="1,1">
+								<space />
+								<space />
+								<hbox align="start">
+									<button id="btnGenereate" style="float:left;" height="20" label="${c:l('btnGenerate.label')}"
+										tooltiptext="${c:l('btnGenerate.tooltiptext')}" sclass="z-toolbarbutton" autodisable="btnGenereate,btnClose" />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</center>
+			<south />
+		</borderlayout>
+	</window>
+</zk>

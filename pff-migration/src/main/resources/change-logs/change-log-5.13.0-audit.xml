@@ -237,6 +237,42 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="ST#1924_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plfaudit', 'adtrestructure_details');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1924.0" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE AdtRestructure_Details DROP  CONSTRAINT df_restruct_repayprofitrate;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1924" author="Gopal.p">
+		<modifyDataType tableName="AdtRestructure_Details" columnName="RepayProfitRate" newDataType="decimal(13,9)" />
+	</changeSet>
+	
+	<changeSet id="ST#1924.1" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE AdtRestructure_Details ADD  CONSTRAINT df_restruct_repayprofitrate  DEFAULT 0 FOR RepayProfitRate;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1924_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plfaudit', 'adtrestructure_details');
+			]]>
+		</sql>
+	</changeSet>
+
 	<!-- ST#1922 Restructure functionality in LMS "END" -->  
 	
 </databaseChangeLog>

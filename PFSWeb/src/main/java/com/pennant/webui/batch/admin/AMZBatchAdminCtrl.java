@@ -437,8 +437,7 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 	/**
 	 * This method render the Defined Executions for which value date matched with Current value date
 	 * 
-	 * @param ExecutionStatus
-	 *            (status)
+	 * @param ExecutionStatus (status)
 	 */
 	private void renderPanels(String stepName, DataEngineStatus status) {
 		AMZBatchProcess processName = null;
@@ -591,15 +590,15 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 			return;
 		}
 
-		boolean containsKey = status.getKeyAttributes().containsKey(AmortizationConstants.DATA_TOTALINCOMEAMZ);
+		boolean containsKey = status.getKeyAttributes().containsKey(AmortizationConstants.DATA_TOTALFINANCES);
 
 		if (!containsKey) {
 			return;
 		}
 
 		if (containsKey) {
-			noOfCustomer.setValue(Long
-					.parseLong(status.getKeyAttributes().get(AmortizationConstants.DATA_TOTALINCOMEAMZ).toString()));
+			noOfCustomer.setValue(
+					Long.parseLong(status.getKeyAttributes().get(AmortizationConstants.DATA_TOTALFINANCES).toString()));
 		}
 
 		noOfthread.setValue(threadCount);

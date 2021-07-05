@@ -66,6 +66,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
@@ -355,8 +356,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -515,8 +515,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFeeType
-	 *            FeeType
+	 * @param aFeeType FeeType
 	 */
 	public void doWriteBeanToComponents(FeeType aFeeType) {
 		logger.debug("Entering");
@@ -605,6 +604,15 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			}
 			this.active.setDisabled(true);
 			this.btnDelete.setVisible(false);
+		}
+
+		if (CalculationConstants.FEE_SUBVENTION.equals(aFeeType.getFeeTypeCode())) {
+			this.taxApplicable.setDisabled(false);
+			readOnlyComponent(false, this.taxComponent);
+			this.refundableFee.setDisabled(true);
+			this.tdsReq.setDisabled(true);
+			this.amortzReq.setDisabled(false);
+			this.btnSave.setVisible(true);
 		}
 
 		this.recordStatus.setValue(aFeeType.getRecordStatus());
@@ -1125,11 +1133,9 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1182,10 +1188,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

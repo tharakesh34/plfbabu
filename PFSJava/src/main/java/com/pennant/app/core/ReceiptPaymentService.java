@@ -137,7 +137,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 
 	}
 
-	private void processprestment(PresentmentDetail pd, FinEODEvent finEODEvent, Customer customer, Date businessDate,
+	public void processprestment(PresentmentDetail pd, FinEODEvent finEODEvent, Customer customer, Date businessDate,
 			boolean noReserve, boolean isPDetailsExits) throws Exception {
 
 		String finReference = pd.getFinReference();
@@ -183,7 +183,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		}
 
 		header.setLogSchInPresentment(true);
-		header.setPostBranch("EOD");// FIXME
+		header.setPostBranch("EOD");
 
 		// work flow details
 		header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -206,12 +206,12 @@ public class ReceiptPaymentService extends ServiceHelper {
 		}
 
 		if (ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
-			logger.debug("Receipts are not creating on EOD, Same will create on Response Upload.");
+			logger.info("Stop creating presentment receipts on EOD.");
 			return;
 		}
 
 		if (presentmentAmt.compareTo(BigDecimal.ZERO) <= 0) {
-			logger.debug("Presentment Receipts are not Creating, Due to Presentment Amount is ZERO");
+			logger.info("Presentment Receipts are not creating, due to presentment amount is ZERO");
 			return;
 		}
 
@@ -233,6 +233,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 				businessDate, businessDate);
 		financeMainDAO.updateSchdVersion(fm, true);
 		if (pd.getId() != Long.MIN_VALUE) {
+			pd.setReceiptID(header.getReceiptID());
 			presentmentDetailDAO.updateReceptId(pd.getId(), header.getReceiptID());
 		}
 	}

@@ -75,51 +75,35 @@ public interface FinanceMainDAO {
 	/**
 	 * Saves the record. If required, this will generate the identity sequence number for the record before saving.
 	 * 
-	 * @param financeMain
-	 *            The model object that contains the parameters.
-	 * @param tableType
-	 *            The type of the table.
-	 * @param wif
-	 *            Whether the record is for what-if or the loan.
+	 * @param financeMain The model object that contains the parameters.
+	 * @param tableType   The type of the table.
+	 * @param wif         Whether the record is for what-if or the loan.
 	 * @return Identity sequence number as string or primary key code of the saved record.
-	 * @throws DataAccessException
-	 *             If there is any problem issuing the save.
+	 * @throws DataAccessException If there is any problem issuing the save.
 	 */
 	String save(FinanceMain financeMain, TableType tableType, boolean wif);
 
 	/**
 	 * Updates the record.
 	 * 
-	 * @param financeMain
-	 *            The model object that contains the parameters.
-	 * @param tableType
-	 *            The type of the table.
-	 * @param wif
-	 *            Whether the record is for what-if or the loan.
-	 * @throws ConcurrencyException
-	 *             If failure due to concurrency.
-	 * @throws DataAccessException
-	 *             If there is any problem issuing the update.
+	 * @param financeMain The model object that contains the parameters.
+	 * @param tableType   The type of the table.
+	 * @param wif         Whether the record is for what-if or the loan.
+	 * @throws ConcurrencyException If failure due to concurrency.
+	 * @throws DataAccessException  If there is any problem issuing the update.
 	 */
 	void update(FinanceMain financeMain, TableType tableType, boolean wif);
 
 	/**
 	 * Deletes the record.
 	 * 
-	 * @param financeMain
-	 *            The model object that contains the parameters.
-	 * @param tableType
-	 *            The type of the table.
-	 * @param wif
-	 *            Whether the record is for what-if or the loan.
-	 * @param finalize
-	 *            Specifies whether the record was finalized or not.
-	 * @throws DependencyFoundException
-	 *             If there are any dependencies for the record.
-	 * @throws ConcurrencyException
-	 *             If failure due to concurrency.
-	 * @throws DataAccessException
-	 *             If there is any problem issuing the delete.
+	 * @param financeMain The model object that contains the parameters.
+	 * @param tableType   The type of the table.
+	 * @param wif         Whether the record is for what-if or the loan.
+	 * @param finalize    Specifies whether the record was finalized or not.
+	 * @throws DependencyFoundException If there are any dependencies for the record.
+	 * @throws ConcurrencyException     If failure due to concurrency.
+	 * @throws DataAccessException      If there is any problem issuing the delete.
 	 */
 	void delete(FinanceMain financeMain, TableType tableType, boolean wif, boolean finalize);
 
@@ -224,10 +208,8 @@ public interface FinanceMainDAO {
 	/**
 	 * Get the total maximum re-payment amount against the specified mandate excluding the finance.
 	 * 
-	 * @param mandateId
-	 *            Mandate id for which the total maximum re-payment amount to be fetched.
-	 * @param finReference
-	 *            Finance reference that need to be excluded.
+	 * @param mandateId    Mandate id for which the total maximum re-payment amount to be fetched.
+	 * @param finReference Finance reference that need to be excluded.
 	 * @return The total maximum re-payment amount against the specified mandate excluding the finance.
 	 */
 	BigDecimal getTotalMaxRepayAmount(long mandateId, String finReference);
@@ -286,7 +268,7 @@ public interface FinanceMainDAO {
 
 	long getPartnerBankIdByReference(String finReference, String paymentMode, String depositAc, String type,
 			String purpose, boolean wif);// ### 18-07-2018 Ticket ID :
-																																			// 124998,receipt upload
+											// 124998,receipt upload
 
 	boolean isFinReferenceExitsWithEntity(String finReference, String type, String entity);// ###
 																							// 12-07-2018
@@ -465,4 +447,7 @@ public interface FinanceMainDAO {
 
 	int getSchdVersion(String finReference);
 
+	Map<String, Object> getGSTDataMapForDealer(long manufacturerDealerId);
+
+	FinanceMain getFinMainLinkedFinancesByFinRef(String finReference, String string);
 }

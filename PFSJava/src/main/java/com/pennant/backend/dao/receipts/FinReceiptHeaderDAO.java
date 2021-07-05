@@ -19,7 +19,7 @@ public interface FinReceiptHeaderDAO {
 
 	long save(FinReceiptHeader receiptHeader, TableType tableType);
 
-	String getReceiptModeStatus(long receiptID, String type);
+	String getReceiptModeStatus(long receiptID);
 
 	void update(FinReceiptHeader receiptHeader, TableType tableType);
 
@@ -37,13 +37,15 @@ public interface FinReceiptHeaderDAO {
 
 	long generatedReceiptID(FinReceiptHeader receiptHeader);
 
-	void updateDepositProcessByReceiptID(long receiptID, boolean depositProcess, String type); //Cash Management Change
+	void updateDepositProcessByReceiptID(long receiptID, boolean depositProcess, String type); // Cash Management Change
 
-	void updateDepositBranchByReceiptID(long receiptID, String depositBranch, String type); //Cash Management Change
+	void updateDepositBranchByReceiptID(long receiptID, String depositBranch, String type); // Cash Management Change
 
-	BigDecimal getTotalCashReceiptAmount(String depositBranch, String type); //Cash Management Change
+	BigDecimal getTotalCashReceiptAmount(String depositBranch, String type); // Cash Management Change
 
-	boolean isReceiptCancelProcess(String depositBranch, List<String> paymentTypes, String type, long receiptId); //Cash Management Change
+	boolean isReceiptCancelProcess(String depositBranch, List<String> paymentTypes, String type, long receiptId); // Cash
+																													// Management
+																													// Change
 
 	List<FinReceiptHeader> getUpFrontReceiptHeaderByID(List<Long> receipts, String type);
 
@@ -66,7 +68,7 @@ public interface FinReceiptHeaderDAO {
 	boolean isReceiptDetailsExits(String reference, String paytypeCheque, String chequeNo, String favourNumber,
 			String type);
 
-	//### 29-10-2018, Ticket id:124998
+	// ### 29-10-2018, Ticket id:124998
 	void updateReceiptStatusAndRealizationDate(long receiptID, String status, Date realizationDate);
 
 	List<FinReceiptHeader> getInProcessReceipts(String Reference);
@@ -107,7 +109,7 @@ public interface FinReceiptHeaderDAO {
 
 	List<Long> isDedupReceiptExists(FinServiceInstruction fsi);
 
-	//### 15-12-2020, ST#1627
+	// ### 15-12-2020, ST#1627
 	FinReceiptHeader getNonLanReceiptHeader(long receiptID, String type);
 
 	long getCollectionAgencyId(String collectionAgency);

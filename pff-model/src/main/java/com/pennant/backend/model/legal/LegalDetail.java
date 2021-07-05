@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LegalDetail.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  16-06-2018    														*
- *                                                                  						*
- * Modified Date    :  16-06-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LegalDetail.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 16-06-2018 * * Modified Date :
+ * 16-06-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 16-06-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 16-06-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.model.legal;
 
 import java.math.BigDecimal;
@@ -144,6 +126,8 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 	private boolean modtDoc = false;
 	private String finTypeDesc;
 	private Long custId;
+	private String applicantName;
+	private String requestStage;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -183,6 +167,9 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("jointAccountDetailList");
 		excludeFields.add("legalSeq");
 		excludeFields.add("custId");
+		excludeFields.add("applicantName");
+		excludeFields.add("requestStage");
+
 		return excludeFields;
 	}
 
@@ -643,6 +630,22 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setCustId(Long custId) {
 		this.custId = custId;
+	}
+
+	public String getApplicantName() {
+		return applicantName;
+	}
+
+	public void setApplicantName(String applicantName) {
+		this.applicantName = applicantName;
+	}
+
+	public String getRequestStage() {
+		return requestStage;
+	}
+
+	public void setRequestStage(String requestStage) {
+		this.requestStage = requestStage;
 	}
 
 }

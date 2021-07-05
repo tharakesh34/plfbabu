@@ -2,11 +2,18 @@ package com.pennanttech.ws.model.customer;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+
+@XmlAccessorType(XmlAccessType.NONE)
 public class AgreementRequest implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	@XmlElement
 	private String finReference;
 	private String cif;
+	@XmlElement
 	private String agreementType;
 
 	public AgreementRequest() {

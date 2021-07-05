@@ -155,6 +155,8 @@ public class PennantConstants {
 	public static final String RCD_SAV = "SAVE";
 	public static final String RCD_UPD = "MAINTAIN";
 	public static final String RCD_DEL = "DELETE";
+	public static final String RCD_REM = "REMOVE";
+	public static final String RCD_EDT = "EDIT";
 
 	// WorkFlow Service Method Types
 	public static final String method_doFinnov = "doFinnovCheck";
@@ -583,7 +585,7 @@ public class PennantConstants {
 	public static final String SUBCATEGORY_NRI = "NRI"; // NRI
 	public static final String EMPLOYMENTTYPE_SEP = "SEP"; // Domestic
 	public static final String EMPLOYMENTTYPE_SENP = "SENP";
-	public static final String EMPLOYMENTTYPE_SALARIED = "SALARIED"; //Domestic
+	public static final String EMPLOYMENTTYPE_SALARIED = "SALARIED"; // Domestic
 	public static final String EMPLOYMENTTYPE_NONWORKING = "NON-WORKING";
 
 	// WorkFlow Fields
@@ -635,6 +637,7 @@ public class PennantConstants {
 	public static final String FEETYPE_PRI_EXEMPTED = "FEETYPE_PRI_EXEMPTED";
 	public static final String FEETYPE_FPFT_EXEMPTED = "FEETYPE_FPFT_EXEMPTED";
 	public static final String FEETYPE_FPRI_EXEMPTED = "FEETYPE_FPRI_EXEMPTED";
+	public static final String FEETYPE_SUBVENTION = "SUBVEN";
 
 	public static final String COLLATERAL_LTV_CHECK_DISBAMT = "LTVDISBAMT";
 	public static final String COLLATERAL_LTV_CHECK_FINAMT = "LTVFINAMT";
@@ -690,6 +693,7 @@ public class PennantConstants {
 	public static final String SUBVENTION_REQUEST_UPLOAD = "SUBVENTION_REQUEST_UPLOAD";
 	public static final String SUBVENTION_REQUEST_DOWNLOAD = "SUBVENTION_REQUEST_DOWNLOAD";
 	public static final String RATE_CHANGE_UPLOAD = "RATE_CHANGE_UPLOAD";
+	public static final String PAYMENT_METHOD_UPLOAD = "PAYMENT_METHOD_UPLOAD";
 
 	public static final String PROCESS_PRESENTMENT = "P";
 	public static final String PROCESS_REPRESENTMENT = "R";
@@ -760,7 +764,7 @@ public class PennantConstants {
 	public static final String OLD_CREDITREVIEWTAB = "OLDCREDITREVIEWTAB";
 	public static final String NEW_CREDITREVIEWTAB = "NEWCREDITREVIEWTAB";
 	public static final String EXT_CREDITREVIEWTAB = "EXTCREDITREVIEWTAB";
-	//Credit Review Inside Tab Names
+	// Credit Review Inside Tab Names
 	public static final String BALANCE_SHEET = "Balance Sheet";
 	public static final String PROFIT_AND_LOSS = "Profit and Loss";
 	public static final String SUMMARY_AND_RATIOS = "Summary and Ratios";
@@ -769,14 +773,14 @@ public class PennantConstants {
 	public static final String CHEQUE_AC_TYPE_NRO = "14";
 
 	public static final String FIN_CLOSE_STATUS_WRITEOFF = "W";
-	//CD Schemes
+	// CD Schemes
 	public static final String DBD_AND_MBD_SEPARATELY = "SEPRT";
 	public static final String DBD_AND_MBD_TOGETHER = "TOGTHR";
 	public static final String DBD_PERCENTAGE_CALCULATED_ON = "INVAMT";
 	public static final String NPA_PAYMENT_APPORTIONMENT_YES = "Y";
 	public static final String NPA_PAYMENT_APPORTIONMENT_NO = "N";
 	public static final String SELECT_LABEL = "---Select---";
-	//Emi Clearance
+	// Emi Clearance
 	public static final String WAITING_CLEARANCE = "WTCLR";
 	public static final String CLEARED = "CLRD";
 	public static final String BOUNCED = "BNCD";
@@ -797,7 +801,7 @@ public class PennantConstants {
 
 	public static final String MODULE_NAME = "Project";
 	public static final String PROJECT_DOC = "PROJECTDOC";
-	//Project Types
+	// Project Types
 	public static final String RESIDENTIAL = "Residential";
 	public static final String COMMERCIAL = "Commercial";
 	public static final String MIXED_USE = "Mixed Use";
@@ -806,7 +810,7 @@ public class PennantConstants {
 	public static final String PERC_TYPE_FIXED = "F";
 	public static final String PERC_TYPE_VARIABLE = "V";
 
-	//Unit Types
+	// Unit Types
 	public static final String FLAT = "Flat";
 	public static final String INDEPENDENTHOUSE = "Independent House";
 	public static final String CARPET_AREA = "Carpet Area";
@@ -819,32 +823,32 @@ public class PennantConstants {
 	public static final String COST_SHEET_RATE = "Rate as per Cost Sheet";
 	public static final String RATE_PER_SQUARE_FEET = "Recommended base rate per sq ft";
 
-	//Employer Category
+	// Employer Category
 	public static final String EMP_CATEGORY_NOTCAT = "NOTCAT";
 	public static final String EMP_CATEGORY_CATA = "CATA";
 	public static final String EMP_CATEGORY_CATB = "CATB";
 	public static final String EMP_CATEGORY_CATC = "CATC";
 	public static final String EMP_CATEGORY_CATD = "CATD";
-	//Type of APF
+	// Type of APF
 	public static final String AUTO = "Auto";
 	public static final String DEEMED = "Deemed";
 	public static final String GENERAL = "General";
 
-	//Piramal Page Ext
+	// Piramal Page Ext
 	public static final String PIRAMAL = "_Piramal";
 
-	//Income Categories
+	// Income Categories
 	public static final String INC_CATEGORY_SALARY = "SALARY";
 	public static final String INC_CATEGORY_OTHER = "OTHERS";
-	//De-dupe doc type codes 
+	// De-dupe doc type codes
 	public static final String VOTER_ID = "VOTER_ID";
 	public static final String DRIVING_LICENCE = "DRIVING_LICENCE";
 	public static final String DOC_TYPE = "DOC_TYPE";
-	//Loan purpose type codes 
+	// Loan purpose type codes
 	public static final String ALL = "ALL";
 	public static final String SPECIFIC = "SPECIFIC";
 	public static final String NOTREQUIRED = "NOTREQUIRED";
-	//Up front fee receipt cancel Doc module
+	// Up front fee receipt cancel Doc module
 	public static final String FEE_DOC_MODULE_NAME = "Fee Cancellation";
 	public static final String PAYABLE_ADVISE_DOC_MODULE_NAME = "Payable Advise";
 	public static final String BLACKLISTCUSTOMER = "BLACKLISTCUSTOMER";
@@ -866,12 +870,12 @@ public class PennantConstants {
 	public static final String method_Update = "UPDATE";
 	public static final int NUMBER_OF_TERMS_LENGTH = 4;
 
-	//TDS 
+	// TDS
 	public static final String TDS_AUTO = "AUTO";
 	public static final String TDS_MANUAL = "MANUAL";
 	public static final String TDS_USER_SELECTION = "USER";
 
-	//stepping details
+	// stepping details
 	public static final String STEPPING_CALC_AMT = "AMT";
 	public static final String STEPPING_CALC_PERC = "PERC";
 	public static final String STEPPING_APPLIED_GRC = "GRCPRD";

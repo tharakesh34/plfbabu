@@ -5,6 +5,10 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
@@ -15,6 +19,7 @@ import com.pennanttech.pff.core.disbursement.model.DisbursementRequest;
 
 public class OfflineDisbursementImpl implements OfflineDisbursement {
 	private DataSource dataSource;
+	private JdbcOperations jdbcOperations;
 
 	@Override
 	public DataEngineStatus downloadFile(String configName, DisbursementRequest request, PaymentType disbursementType) {
@@ -55,6 +60,11 @@ public class OfflineDisbursementImpl implements OfflineDisbursement {
 
 		try {
 
+			String configByPartnerBnak = getConfigByPartnerBnak(disbursementType.name(), request.getPartnerBankId());
+			if (configByPartnerBnak != null) {
+				configName = configByPartnerBnak;
+			}
+
 			export.setValueDate(request.getAppValueDate());
 			export.setFilterMap(filterMap);
 			export.setParameterMap(parameterMap);
@@ -68,7 +78,22 @@ public class OfflineDisbursementImpl implements OfflineDisbursement {
 		return export.getDataEngineStatus();
 	}
 
+	public String getConfigByPartnerBnak(String paymentType, long partnerBankId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select Config_Name from Partnerbanks_Data_Engine");
+		sql.append(" Where PaymentType = ? AND PartnerBankId= ?");
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), new Object[] { paymentType, partnerBankId },
+					String.class);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+		return null;
+	}
+
 	public void setDataSource(DataSource dataSource) {
+		jdbcOperations = new NamedParameterJdbcTemplate(dataSource).getJdbcOperations();
 		this.dataSource = dataSource;
 	}
 

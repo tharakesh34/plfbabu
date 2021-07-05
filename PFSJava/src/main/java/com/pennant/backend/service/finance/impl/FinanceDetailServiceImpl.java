@@ -199,6 +199,7 @@ import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.LMSServiceLog;
+import com.pennant.backend.model.finance.LinkedFinances;
 import com.pennant.backend.model.finance.LowerTaxDeduction;
 import com.pennant.backend.model.finance.OverdraftMovements;
 import com.pennant.backend.model.finance.PricingDetail;
@@ -254,6 +255,7 @@ import com.pennant.backend.service.finance.FinOCRHeaderService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
+import com.pennant.backend.service.finance.LinkedFinancesService;
 import com.pennant.backend.service.finance.PSLDetailService;
 import com.pennant.backend.service.finance.TaxHeaderDetailsService;
 import com.pennant.backend.service.finance.financialsummary.DealRecommendationMeritsService;
@@ -352,6 +354,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private PayOrderIssueHeaderDAO payOrderIssueHeaderDAO;
 	private TATDetailDAO tatDetailDAO;
 	private IRRScheduleDetailDAO irrScheduleDetailDAO;
+	private LinkedFinancesService linkedFinancesService;
 
 	private LimitManagement limitManagement;
 	private LimitCheckDetails limitCheckDetails;
@@ -546,12 +549,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	/**
 	 * getFinanceDetailById fetch the details by using FinanceMainDAO's getFinanceDetailsOrg method.
 	 * 
-	 * @param finReference
-	 *            (String)
-	 * @param procEdtEvent
-	 *            (String)
-	 * @param userrole
-	 *            (String)
+	 * @param finReference (String)
+	 * @param procEdtEvent (String)
+	 * @param userrole     (String)
 	 * @return FinanceDetail
 	 */
 	@Override
@@ -561,7 +561,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Finance Details
 		FinanceMain financeMain = getFinanceMainDAO().getFinanceMain(finReference, nextRoleCode, "_TView");
-		//Setting PMAY to financeMain
+		// Setting PMAY to financeMain
 		if (financeMain == null) {
 			return null;
 		}
@@ -603,7 +603,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		scheduleData.setFinReceiptDetails(
 				getFinFeeDetailService().getFinReceiptDetais(finReference, financeMain.getCustID()));
 		List<Long> feeIds = new ArrayList<Long>();
-		//to load Upfront Fee Details by LeadId 
+		// to load Upfront Fee Details by LeadId
 		if (StringUtils.isNotEmpty(financeMain.getOfferId())) {
 			// Finance Fee Details
 			List<FinReceiptDetail> finReceiptDetails = getFinFeeDetailService()
@@ -616,7 +616,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// Finance Fee Details by leadID
 			List<FinFeeDetail> feeDetails = finFeeDetailService.getFinFeeDetailById(financeMain.getOfferId(), false,
 					"_View");
-			//do check and override the fee's which are created against leadId
+			// do check and override the fee's which are created against leadId
 			scheduleData.setFinFeeDetailList(feeDetails);
 		}
 		for (FinFeeDetail finFeeDetail : scheduleData.getFinFeeDetailList()) {
@@ -743,6 +743,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				financeDetail.setLegalDetailsList(ligelDetailsList);
 			}
 		}
+
+		// Linked Finances
+		financeDetail.setLinkedFinancesList(linkedFinancesService.getLinkedFinancesByRef(finReference, "_TView"));
 
 		// Financial Summary RisksAndMitigants Details
 		List<RisksAndMitigants> risksAndMitigantsList = getRisksAndMitigantsDAO().getRisksAndMitigants(finReference);
@@ -935,20 +938,21 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				extFieldMap.remove("LastMntOn");
 				aExetendedFieldRender.setLastMntBy(Long.valueOf(extFieldMap.get("LastMntBy").toString()));
 				extFieldMap.remove("LastMntBy");
-				aExetendedFieldRender
-						.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null")
-								? "" : String.valueOf(extFieldMap.get("RecordStatus")));
+				aExetendedFieldRender.setRecordStatus(
+						StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null") ? ""
+								: String.valueOf(extFieldMap.get("RecordStatus")));
 				extFieldMap.remove("RecordStatus");
 				aExetendedFieldRender
 						.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null") ? ""
 								: String.valueOf(extFieldMap.get("RoleCode")));
 				extFieldMap.remove("RoleCode");
-				aExetendedFieldRender
-						.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null")
-								? "" : String.valueOf(extFieldMap.get("NextRoleCode")));
+				aExetendedFieldRender.setNextRoleCode(
+						StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null") ? ""
+								: String.valueOf(extFieldMap.get("NextRoleCode")));
 				extFieldMap.remove("NextRoleCode");
-				aExetendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null")
-						? "" : String.valueOf(extFieldMap.get("TaskId")));
+				aExetendedFieldRender
+						.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
+								: String.valueOf(extFieldMap.get("TaskId")));
 				extFieldMap.remove("TaskId");
 				aExetendedFieldRender
 						.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? ""
@@ -1028,8 +1032,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null") ? ""
 							: String.valueOf(extFieldMap.get("RecordStatus")));
 			extFieldMap.remove("RecordStatus");
-			aExetendedFieldRender.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null")
-					? "" : String.valueOf(extFieldMap.get("RoleCode")));
+			aExetendedFieldRender
+					.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null") ? ""
+							: String.valueOf(extFieldMap.get("RoleCode")));
 			extFieldMap.remove("RoleCode");
 			aExetendedFieldRender
 					.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null") ? ""
@@ -1213,12 +1218,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	/**
 	 * getFinanceDetailById fetch the details by using FinanceMainDAO's getFinanceDetailsWIF method.
 	 * 
-	 * @param finReference
-	 *            (String)
-	 * @param reqCustDetail
-	 *            (String)
-	 * @param procEdtEvent
-	 *            (boolean)
+	 * @param finReference  (String)
+	 * @param reqCustDetail (String)
+	 * @param procEdtEvent  (boolean)
 	 * @return FinanceDetail
 	 */
 	@Override
@@ -1322,8 +1324,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	/**
 	 * getFinanceDetailById fetch the details by using FinanceMainDAO's getFinanceDetailById method.
 	 * 
-	 * @param finReference
-	 *            (String)
+	 * @param finReference (String)
 	 * @return FinanceDetail
 	 */
 	@Override
@@ -1508,8 +1509,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	/**
 	 * getFinanceDetailById fetch the details by using FinanceMainDAO's getFinanceDetailById method.
 	 * 
-	 * @param finReference
-	 *            (String)
+	 * @param finReference (String)
 	 * @return FinanceDetail
 	 */
 	@Override
@@ -1608,8 +1608,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * getApprovedFinanceDetailById fetch the details by using FinanceMainDAO's getFinanceDetailById method . with
 	 * parameter id and type as blank. it fetches the approved records from the FinanceMain.
 	 * 
-	 * @param finReference
-	 *            (String)
+	 * @param finReference (String)
 	 * @return FinanceDetail
 	 */
 	@Override
@@ -1621,10 +1620,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	/**
 	 * Method to fetch finance details by id from given table type
 	 * 
-	 * @param finReference
-	 *            (String)
-	 * @param type
-	 *            (String)
+	 * @param finReference (String)
+	 * @param type         (String)
 	 * @return FinanceDetail
 	 */
 	@Override
@@ -1709,10 +1706,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	/**
 	 * Method to fetch finance details by id from given table type
 	 * 
-	 * @param finReference
-	 *            (String)
-	 * @param type
-	 *            (String)
+	 * @param finReference (String)
+	 * @param type         (String)
 	 * @return FinanceDetail
 	 */
 	@Override
@@ -2098,8 +2093,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * by using FinanceMainDAO's update method 3) Audit the record in to AuditHeader and AdtFinanceMain by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
@@ -2657,7 +2651,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// Verifications
 			saveOrUpdateVerifications(auditDetails, fd, financeMain, auditTranType);
 
-			//calling post hoot
+			// calling post hoot
 			if (postExteranalServiceHook != null) {
 				postExteranalServiceHook.doProcess(aAuditHeader, "saveOrUpdate");
 			}
@@ -2770,6 +2764,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (fd.getFinScheduleData().getRestructureDetail() != null) {
 			auditDetails
 					.add(restructureService.saveOrUpdateRestructureDetail(fd, table, auditHeader.getAuditTranType()));
+		}
+
+		// LinkedFinances
+		List<LinkedFinances> list = fd.getLinkedFinancesList();
+		if (CollectionUtils.isNotEmpty(list)) {
+			auditDetails.addAll(linkedFinancesService.saveOrUpdateLinkedFinanceList(fd, tableType.getSuffix()));
 		}
 
 		if (!isWIF) {
@@ -3599,8 +3599,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * FinanceMain by using FinanceMainDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -3662,8 +3661,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						"delete");
 				auditDetails.addAll(details);
 			}
-			//Fin OCR Details
-			//=========================
+			// Fin OCR Details
+			// =========================
 			if (financeDetail.getFinOCRHeader() != null && finOCRHeaderService != null) {
 				auditDetails.addAll(finOCRHeaderService.processFinOCRHeader(auditHeader, "delete"));
 			}
@@ -3765,8 +3764,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtFinanceMain by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws JaxenException
 	 * @throws DatatypeConfigurationException
@@ -3989,6 +3987,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			suspenseCheckProcess(financeMain, FinanceConstants.FINSER_EVENT_CHGFRQ, curBDay, financeMain.getFinStatus(),
 					0);
 
+		}
+
+		// LinkedFinances
+		List<LinkedFinances> list = fd.getLinkedFinancesList();
+		if (CollectionUtils.isNotEmpty(list)) {
+			auditDetails.addAll(linkedFinancesService.doApproveLinkedFinanceList(fd));
 		}
 
 		// Fetch Next Payment Details from Finance for Salaried Postings
@@ -4290,8 +4294,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					// =======================================
 					FinLogEntryDetail entryDetail = new FinLogEntryDetail();
 					entryDetail.setFinReference(finScheduleData.getFinReference());
-					entryDetail.setEventAction(StringUtils.isBlank(fd.getAccountingEventCode())
-							? AccountEventConstants.ACCEVENT_ADDDBSN : fd.getAccountingEventCode());
+					entryDetail.setEventAction(
+							StringUtils.isBlank(fd.getAccountingEventCode()) ? AccountEventConstants.ACCEVENT_ADDDBSN
+									: fd.getAccountingEventCode());
 					entryDetail.setSchdlRecal(finScheduleData.getFinanceMain().isScheduleRegenerated());
 					entryDetail.setPostDate(curBDay);
 					entryDetail.setReversalCompleted(false);
@@ -4480,14 +4485,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					getSynopsisDetailsService().doApprove(fd.getSynopsisDetails(), TableType.MAIN_TAB, tranType);
 				}
 
-				//Fin OCR Details
-				//=========================
+				// Fin OCR Details
+				// =========================
 				if (fd.getFinOCRHeader() != null && finOCRHeaderService != null) {
 					auditDetails.addAll(finOCRHeaderService.processFinOCRHeader(aAuditHeader, "doApprove"));
 				}
 
-				//PMAY
-				//=========================
+				// PMAY
+				// =========================
 				if (fd.getPmay() != null && pmayService != null) {
 					auditDetails.add(pmayService.doApprove(fd.getPmay(), TableType.MAIN_TAB, auditTranType));
 				}
@@ -4495,7 +4500,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// Verifications
 				saveOrUpdateVerifications(auditDetails, fd, financeMain, tranType);
 
-				//calling post hoot
+				// calling post hoot
 				if (postExteranalServiceHook != null) {
 					postExteranalServiceHook.doProcess(aAuditHeader, "doApprove");
 				}
@@ -5520,8 +5525,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtFinanceMain by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 */
@@ -6080,8 +6084,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * workFlow table by using getFinanceMainDAO().delete with parameters financeMain,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws JaxenException
 	 * @throws InvocationTargetException
@@ -6244,8 +6247,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
-		//Fin OCR Details
-		//=========================
+		// Fin OCR Details
+		// =========================
 		if (fm.isFinOcrRequired() && fd.getFinOCRHeader() != null && finOCRHeaderService != null) {
 			auditDetails.addAll(finOCRHeaderService.processFinOCRHeader(auditHeader, "doReject"));
 		}
@@ -6376,11 +6379,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), i + 1, blFields[0], blFields[1], null,
 						blackListData.get(i)));
 			}
-			//getBlacklistCustomerDAO().deleteList(finReference);
+			// getBlacklistCustomerDAO().deleteList(finReference);
 
 			// Delete Finance DeDup List Data
 			// =======================================
-			//getFinanceDedupeDAO().deleteList(finReference);
+			// getFinanceDedupeDAO().deleteList(finReference);
 
 			auditDetails.addAll(jointGuarantorDeletion(fd, "_Temp", auditHeader.getAuditTranType()));
 			auditDetails.addAll(checkListDetailService.delete(fd, "_Temp", auditHeader.getAuditTranType()));
@@ -6513,6 +6516,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Saving the reasons
 		saveReasonDetails(fd);
+
+		// LinkedFinances
+		List<LinkedFinances> list = fd.getLinkedFinancesList();
+		if (CollectionUtils.isNotEmpty(list)) {
+			auditDetails.addAll(linkedFinancesService.doRejectLinkedFinanceList(fd));
+		}
 
 		if (!isWIF) {
 			getAuditHeaderDAO().addAudit(auditHeader);
@@ -6666,8 +6675,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * for any mismatch conditions Fetch the error details from getFinanceMainDAO().getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method, boolean isWIF,
@@ -6690,8 +6698,27 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
+		// Linking De-linking Validations
+		String finReference = financeMain.getFinReference();
+		if (financeMain.isQuickDisb() && method.equals(PennantConstants.method_doReject)) {
+			List<LinkedFinances> lnkdFinance = linkedFinancesService.getLinkedFinancesByFinRef(finReference, "_AView");
+			for (LinkedFinances LinkedFinance : lnkdFinance) {
+				String[] parameters = new String[2];
+				parameters[0] = PennantJavaUtil.getLabel("label_LinkedRef") + ": " + finReference;
+				parameters[1] = PennantJavaUtil.getLabel("label_LinkedRef") + ": " + LinkedFinance.getFinReference();
+
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "90500", parameters, null));
+				auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+				auditHeader.setAuditDetail(auditDetail);
+				auditHeader.setErrorList(auditDetail.getErrorDetails());
+				auditHeader = nextProcess(auditHeader);
+				return auditHeader;
+			}
+		}
+
 		// Additional validations for CovanentTypes
-		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+		List<ErrorDetail> errorDetails = new ArrayList<>();
 		if (!isWIF) {
 			auditHeader = getAuditDetails(auditHeader, method);
 			if (!isAutoReject && (auditHeader.getApiHeader() == null || !financeDetail.isStp())) {
@@ -6877,8 +6904,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (ImplementationConstants.COVENANT_MODULE_NEW && CollectionUtils.isNotEmpty(covenats)) {
 				auditDetails.addAll(covenantsService.validate(covenats, financeMain.getWorkflowId(), method,
 						auditTranType, usrLanguage));
-				//commenting the below line since we are calling  covenantsService.validateOTC(financeDetail) method for new covenant module
-				//validateDisbursements(financeDetail, auditDetails);
+				// commenting the below line since we are calling covenantsService.validateOTC(financeDetail) method for
+				// new covenant module
+				// validateDisbursements(financeDetail, auditDetails);
 
 			}
 
@@ -6888,7 +6916,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					&& !financeMain.getRecordStatus().equals(PennantConstants.RCD_STATUS_DECLINED)) {
 
 				if (ImplementationConstants.COVENANT_MODULE_NEW) {
-					//Adding the audit details to display error's
+					// Adding the audit details to display error's
 					auditDetails.addAll(covenantsService.validateOTC(financeDetail));
 				} else {
 					validateOtcPayment(auditDetails, financeDetail);
@@ -7095,14 +7123,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// validate QueryModule
 		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES"))) {
 			if ("saveOrUpdate".equals(method) && isForwardCase(financeMain)) {
-				String finReference = financeMain.getFinReference();
 				String currentRole = financeMain.getRoleCode();
 				List<QueryDetail> qrysList = getQueryDetailService().getUnClosedQurysForGivenRole(finReference,
 						currentRole);
 				if (CollectionUtils.isNotEmpty(qrysList)) {
 					String[] errParm = new String[1];
 					String[] valueParm = new String[1];
-					valueParm[0] = financeMain.getFinReference();
+					valueParm[0] = finReference;
 					errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + valueParm[0];
 					List<ErrorDetail> errorDetailsList = new ArrayList<ErrorDetail>(1);
 					ErrorDetail errorDetail = ErrorUtil.getErrorDetail(ErrorUtil
@@ -7113,7 +7140,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
-		//OCR Details Validation
+		// OCR Details Validation
 
 		if (financeMain.isFinOcrRequired()) {
 			if (financeDetail.getFinOCRHeader() != null) {
@@ -7203,7 +7230,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private void doPostHookValidation(AuditHeader auditHeader, boolean isWIF) {
 		if (postValidationHook != null && !isWIF) {
 			List<ErrorDetail> errorDetails = postValidationHook.validation(auditHeader);
-			//Bugfix: API Validations are not showing
+			// Bugfix: API Validations are not showing
 			if (CollectionUtils.isNotEmpty(errorDetails)) {
 				errorDetails = ErrorUtil.getErrorDetails(errorDetails, auditHeader.getUsrLanguage());
 				if (auditHeader.getAuditDetail() != null) {
@@ -8043,10 +8070,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	/**
 	 * Method to get Schedule related data.
 	 * 
-	 * @param finReference
-	 *            (String)
-	 * @param isWIF
-	 *            (boolean)
+	 * @param finReference (String)
+	 * @param isWIF        (boolean)
 	 **/
 	public FinScheduleData getFinSchDataByFinRef(String finReference, String type, long logKey) {
 		logger.debug(Literal.ENTERING);
@@ -8152,10 +8177,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	/**
 	 * Method to get Schedule related data.
 	 * 
-	 * @param finReference
-	 *            (String)
-	 * @param isWIF
-	 *            (boolean)
+	 * @param finReference (String)
+	 * @param isWIF        (boolean)
 	 **/
 	public FinScheduleData getFinSchDataById(String finReference, String type, boolean summaryRequired) {
 		logger.debug(Literal.ENTERING);
@@ -8265,10 +8288,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	/**
 	 * Method to get Schedule related data.
 	 * 
-	 * @param finReference
-	 *            (String)
-	 * @param isWIF
-	 *            (boolean)
+	 * @param finReference (String)
+	 * @param isWIF        (boolean)
 	 **/
 	@Override
 	public FinScheduleData getFinSchDataForReceipt(String finReference, String type) {
@@ -8460,10 +8481,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * 
 	 * @param AuditHeader
 	 * 
-	 *            1. Check limit category exists or not for the account type, if not exists set limitValid = true other
-	 *            wise goto next step. 2. Fetch customer limits from core banking. 3. If the limits not available set
-	 *            the ErrMessage. 4. If available limit is less than finance amount, set warning message if the user
-	 *            have the permission 'override Limits' otherwise set Error message.
+	 *                    1. Check limit category exists or not for the account type, if not exists set limitValid =
+	 *                    true other wise goto next step. 2. Fetch customer limits from core banking. 3. If the limits
+	 *                    not available set the ErrMessage. 4. If available limit is less than finance amount, set
+	 *                    warning message if the user have the permission 'override Limits' otherwise set Error message.
 	 * 
 	 */
 	public AuditHeader doCheckLimits(AuditHeader auditHeader) {
@@ -9496,7 +9517,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	@Override
 	public String getFinanceMainByRcdMaintenance(String reference, String type) {
-		return getFinanceMainDAO().getFinanceMainByRcdMaintenance(reference, type);
+		return financeMainDAO.getFinanceMainByRcdMaintenance(reference, type);
 	}
 
 	@Override
@@ -9611,6 +9632,22 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				.getDocumentDetailsByRef(financeMain.getFinReference(), FinanceConstants.MODULE_NAME, "", ""));
 
 		return financeDetail;
+	}
+
+	@Override
+	public FinanceDetail getFinanceDetailForCollateral(FinanceMain fm) {
+		FinanceDetail fd = new FinanceDetail();
+		FinScheduleData schData = fd.getFinScheduleData();
+		String finReference = fm.getFinReference();
+
+		schData.setFinReference(finReference);
+		schData.setFinanceMain(fm);
+
+		fd.setCollateralAssignmentList(collateralAssignmentDAO.getCollateralAssignmentByFinRef(finReference,
+				FinanceConstants.MODULE_NAME, "_View"));
+		fd.setCustomerDetails(customerDetailsService.getCustomerAndCustomerDocsById(fm.getCustID(), ""));
+
+		return fd;
 	}
 
 	@Override
@@ -10029,7 +10066,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		financeMain.setScheduleMethod(financeType.getFinSchdMthd());
 		financeMain.setFinStartDate(SysParamUtil.getAppDate());
 		financeMain.setTDSApplicable(financeType.isTdsApplicable());
-		//Setting Default TDS Type
+		// Setting Default TDS Type
 		if (!PennantConstants.TDS_USER_SELECTION.equals(financeType.getTdsType())) {
 			financeMain.setTdsType(financeType.getTdsType());
 		}
@@ -10139,7 +10176,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			financeMain.setGrcSchdMthd(financeType.getFinGrcSchdMthd());
 			financeMain.setGrcMargin(financeType.getFinGrcMargin());
 		}
-		//Setting the Gestation Period default values to financemain  
+		// Setting the Gestation Period default values to financemain
 		financeMain.setAlwGrcAdj(financeType.isGrcAdjReq());
 		financeMain.setEndGrcPeriodAftrFullDisb(financeType.isGrcPeriodAftrFullDisb());
 		financeMain.setAutoIncGrcEndDate(financeType.isAutoIncrGrcEndDate());
@@ -10542,7 +10579,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				"_ORGView");
 		scheduleData.setFinanceType(financeType);
 
-		//Customer details
+		// Customer details
 		if (financeMain.getCustID() != 0 && financeMain.getCustID() != Long.MIN_VALUE) {
 			financeDetail.setCustomerDetails(
 					getCustomerDetailsService().getCustomerDetailsById(financeMain.getCustID(), true, "_AView"));
@@ -10735,6 +10772,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		restructureService.processRestructureAccounting(aeEvent, financeDetail);
 	}
 
+	@Override
+	public List<ReturnDataSet> prepareSubVenAccounting(AEEvent aeEvent, FinanceDetail financeDetail) {
+		return procesSubVenAccounting(aeEvent, financeDetail, false);
+	}
+
 	/**
 	 * Getting Fin details for rate report
 	 */
@@ -10826,10 +10868,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	/**
 	 * Method to fetch finance details by id from given table type
 	 * 
-	 * @param finReference
-	 *            (String)
-	 * @param type
-	 *            (String)
+	 * @param finReference (String)
+	 * @param type         (String)
 	 * @return FinanceDetail
 	 */
 	@Override
@@ -10865,7 +10905,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			scheduleData.setFinanceScheduleDetails(
 					getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, isWIF));
 
-			//Finance Disbursement Details
+			// Finance Disbursement Details
 			scheduleData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference,
 					isWIF ? "_View" : type, isWIF));
 
@@ -11445,6 +11485,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setTaxHeaderDetailsService(TaxHeaderDetailsService taxHeaderDetailsService) {
 		this.taxHeaderDetailsService = taxHeaderDetailsService;
+	}
+
+	public void setLinkedFinancesService(LinkedFinancesService linkedFinancesService) {
+		this.linkedFinancesService = linkedFinancesService;
 	}
 
 }

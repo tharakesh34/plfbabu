@@ -89,10 +89,8 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	/**
 	 * Fetch the Record Goods Details details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinFeeDetail
 	 */
 	@Override
@@ -105,13 +103,12 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		FinFeeDetailsRowMapper rowMapper = new FinFeeDetailsRowMapper(type, isWIF);
 
 		long feeID = finFeeDetail.getFeeID();
-		
-		if(feeID == Long.MIN_VALUE) {
+
+		if (feeID == Long.MIN_VALUE) {
 			logger.warn("Record not found with the below parameters.\nFeeID: {}", feeID);
 			return null;
 		}
-		
-		
+
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { feeID }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -361,8 +358,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	/**
 	 * This method refresh the Record.
 	 * 
-	 * @param finFeeDetail
-	 *            (FinFeeDetail)
+	 * @param finFeeDetail (FinFeeDetail)
 	 * @return void
 	 */
 	@Override
@@ -374,10 +370,8 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	 * This method Deletes the Record from the FinFeeDetail or FinFeeDetail_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Details by key LoanRefNumber
 	 * 
-	 * @param Goods
-	 *            Details (FinFeeDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Goods Details (FinFeeDetail)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -417,10 +411,8 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	 *
 	 * save Goods Details
 	 * 
-	 * @param Goods
-	 *            Details (FinFeeDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Goods Details (FinFeeDetail)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -538,10 +530,8 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	 * This method updates the Record FinFeeDetail or FinFeeDetail_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Details by key LoanRefNumber and Version
 	 * 
-	 * @param Goods
-	 *            Details (FinFeeDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Goods Details (FinFeeDetail)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -633,10 +623,8 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	 * This method updates the Record FinFeeDetail or FinFeeDetail_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Details by key LoanRefNumber and Version
 	 * 
-	 * @param Goods
-	 *            Details (FinFeeDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Goods Details (FinFeeDetail)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -736,10 +724,8 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	/**
 	 * Fetch the Record Goods Details details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinFeeDetail
 	 */
 	@Override
@@ -1138,4 +1124,24 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
+	public boolean isFinFeeDetailExists(FinFeeDetail ffd, String type) {
+		StringBuilder sql = new StringBuilder("Select count(*) from FinFeeDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinEvent  = ? and OriginationFee = ? and FinReference = ? and VasReference = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		Object[] args = new Object[] { ffd.getFinEvent(), ffd.isOriginationFee(), ffd.getFinReference(),
+				ffd.getVasReference() };
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), args, Integer.class) > 0;
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(
+					"Record is not found in FinFeeDetail{} for the specified FinEvent >> {} and OriginationFee >> {} and FinReference >> {} and VasReference >> {}",
+					type, args);
+		}
+
+		return false;
+	}
 }

@@ -55,6 +55,7 @@ import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Service declaration for methods that depends on <b>DedupParm</b>.<br>
@@ -99,4 +100,7 @@ public interface DedupParmService {
 			throws InterfaceException;
 
 	List<CollateralSetup> queryExecution(String query, Map<String, Object> fielValueMap);
+
+	List<CustomerDedup> doCustomerDedup(CustomerDetails customerDetails, LoggedInUser userDetails, String finType,
+			String role);
 }

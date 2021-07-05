@@ -56,6 +56,7 @@ import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.administration.SecurityUserHierarchy;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.administration.SecurityUserHierarchyService;
+import com.pennant.backend.util.PennantConstants;
 
 public class SecurityUserHierarchyServiceImpl extends GenericService<SecurityUserHierarchy>
 		implements SecurityUserHierarchyService {
@@ -102,7 +103,7 @@ public class SecurityUserHierarchyServiceImpl extends GenericService<SecurityUse
 			userHierarchy.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			userHierarchyies.add(userHierarchy);
 
-			if (reportingManager.getRecordType().equalsIgnoreCase("DELETE")) {
+			if (PennantConstants.RCD_DEL.equalsIgnoreCase(reportingManager.getRecordType())) {
 				List<SecurityUserHierarchy> childUsers = securityUserHierarchyDAO.getDownLevelUsers(userHierarchy);
 				for (SecurityUserHierarchy childUser : childUsers) {
 					securityUserHierarchyDAO.updateUserHierarchy(childUser, reportingManager);

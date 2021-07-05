@@ -102,7 +102,7 @@ public class PartitioningMasterAmortization implements Partitioner {
 				financeCount = projectedAmortizationDAO.updateThreadIDByRowNumber(amzMonth, noOfRows, i);
 			}
 
-			ExecutionContext execution = addExecution(i, financeCount, 0); // 0 -- totalCount
+			ExecutionContext execution = addExecution(i, financeCount, finsCount); // 0 -- totalCount
 			partitionData.put(Integer.toString(i), execution);
 
 			if (i == 1) {
@@ -129,7 +129,7 @@ public class PartitioningMasterAmortization implements Partitioner {
 		ExecutionContext execution = new ExecutionContext();
 
 		DataEngineStatus status = new DataEngineStatus("amzProcess:" + String.valueOf(threadID));
-		status.getKeyAttributes().put(AmortizationConstants.DATA_TOTALINCOMEAMZ, totalCount);
+		status.getKeyAttributes().put(AmortizationConstants.DATA_TOTALFINANCES, totalCount);
 
 		status.setTotalRecords(financeCount);
 		execution.put(status.getName(), status);

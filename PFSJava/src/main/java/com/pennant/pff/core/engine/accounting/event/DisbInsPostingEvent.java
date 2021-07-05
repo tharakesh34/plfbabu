@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -21,8 +22,6 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
-
-import AccountEventConstants.AccountingEvent;
 
 public class DisbInsPostingEvent extends PostingEvent {
 	private FinAdvancePaymentsService finAdvancePaymentsService;
@@ -153,14 +152,13 @@ public class DisbInsPostingEvent extends PostingEvent {
 			if (DisbursementConstants.PAYMENT_DETAIL_VAS.equals(fap.getPaymentDetail())) {
 				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSPAY);
 			} else {
-				//FIXME the below code needs to be moved to External layer 
+				// FIXME the below code needs to be moved to External layer
 				if (fd.getCustomerDetails() != null && fd.getFinScheduleData().getFinanceType() != null) {
 					dataMap.put("emptype", fd.getCustomerDetails().getCustomer().getSubCategory());
 					dataMap.put("fincollateralreq", fd.getFinScheduleData().getFinanceType().isFinCollateralReq());
 					dataMap.put("division", fd.getFinScheduleData().getFinanceType().getFinDivision());
 				}
-				
-				
+
 				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_DISBINS);
 			}
 

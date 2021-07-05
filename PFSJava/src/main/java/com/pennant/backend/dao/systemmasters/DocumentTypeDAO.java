@@ -60,10 +60,8 @@ public interface DocumentTypeDAO extends BasicCrudDao<DocumentType> {
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
-	 * @param docTypeCode
-	 *            docTypeCode of the documentType
-	 * @param tableType
-	 *            The type of the table.
+	 * @param docTypeCode docTypeCode of the documentType
+	 * @param tableType   The type of the table.
 	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(String docTypeCode, TableType tableType);
@@ -72,6 +70,6 @@ public interface DocumentTypeDAO extends BasicCrudDao<DocumentType> {
 
 	List<DocumentType> getDocumentTypes();
 
-	String getDocCategoryByDocType(String docTypeCode, String type);
+	String getDocCategoryByDocType(String dcode);
 
 }

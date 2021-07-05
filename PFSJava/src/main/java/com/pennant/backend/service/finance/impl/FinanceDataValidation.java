@@ -23,7 +23,6 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
@@ -318,11 +317,11 @@ public class FinanceDataValidation {
 			stp = finDetail.isStp();
 		}
 
-		//As per IMD Changes paid can be done through IMD only
+		// As per IMD Changes paid can be done through IMD only
 		List<FinFeeDetail> feeList = finScheduleData.getFinFeeDetailList();
 		if (PennantConstants.VLD_CRT_LOAN.equals(vldGroup) && !CollectionUtils.isEmpty(feeList)) {
 			for (FinFeeDetail feeDetail : feeList) {
-				//As per IMD Changes PAID can be happen through IMD only
+				// As per IMD Changes PAID can be happen through IMD only
 				if (feeDetail.getPaidAmount() != null && BigDecimal.ZERO.compareTo(feeDetail.getPaidAmount()) != 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = feeDetail.getFeeTypeCode();
@@ -334,7 +333,7 @@ public class FinanceDataValidation {
 		if (!errorDetails.isEmpty()) {
 			finScheduleData.setErrorDetails(errorDetails);
 			return finScheduleData;
-		} //IMD
+		} // IMD
 
 		errorDetails = doValidateFees(finScheduleData, stp);
 		if (!errorDetails.isEmpty()) {
@@ -395,7 +394,7 @@ public class FinanceDataValidation {
 		}
 
 		errorDetails.addAll(finODPenaltyRateValidation(finScheduleData));
-		//OCR Validations
+		// OCR Validations
 		errorDetails.addAll(finOCRValidation(finDetail));
 		if (!errorDetails.isEmpty()) {
 			finScheduleData.setErrorDetails(errorDetails);
@@ -418,35 +417,35 @@ public class FinanceDataValidation {
 			FinanceMain financeMain = finDetail.getFinScheduleData().getFinanceMain();
 			FinanceType financeType = finDetail.getFinScheduleData().getFinanceType();
 			if (financeMain != null) {
-				//check OCR Header details are passed over the request if it required?
+				// check OCR Header details are passed over the request if it required?
 				FinOCRHeader finOCRHeader = finDetail.getFinOCRHeader();
 				if (financeMain.isFinOcrRequired() && finOCRHeader == null) {
-					//check default OCR configured in the loan type or not
+					// check default OCR configured in the loan type or not
 					if (financeType != null && !StringUtils.isEmpty(financeType.getDefaultOCR())) {
-						//get default OCR header details from loan type
+						// get default OCR header details from loan type
 						OCRHeader ocrHeader = ocrHeaderService.getOCRHeaderByOCRId(financeType.getDefaultOCR(),
 								TableType.AVIEW.getSuffix());
 						finDetail.setFinOCRHeader(copyOCRHeaderProperties(ocrHeader));
 					} else {
-						//If default OCR not configured in Loan Type?
+						// If default OCR not configured in Loan Type?
 						valueParm[0] = "finOCRHeader";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 						return errorDetails;
 					}
 				} else if (!financeMain.isFinOcrRequired() && finOCRHeader != null) {
-					//If OCR required marked as false but passed OCR details in request
+					// If OCR required marked as false but passed OCR details in request
 					valueParm[0] = "finOcrRequired";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 					return errorDetails;
 				} else if (finOCRHeader != null) {
-					//OCR ID
+					// OCR ID
 					String ocrID = finOCRHeader.getOcrID();
 					if (StringUtils.isEmpty(ocrID)) {
 						valueParm[0] = "ocrID";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 						return errorDetails;
 					}
-					//Check OCR ID is available in Loan type allowed OCR's
+					// Check OCR ID is available in Loan type allowed OCR's
 					if (financeType != null && !StringUtils.isEmpty(financeType.getAllowedOCRS())) {
 						List<String> detailsList = Arrays.asList(financeType.getAllowedOCRS().split(","));
 						if (detailsList != null && !detailsList.contains(ocrID)) {
@@ -456,44 +455,44 @@ public class FinanceDataValidation {
 							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90285", valueParm)));
 							return errorDetails;
 						} else if (detailsList != null && detailsList.contains(ocrID)) {
-							//get  OCR header details
+							// get OCR header details
 							OCRHeader ocrHeader = ocrHeaderService.getOCRHeaderByOCRId(ocrID,
 									TableType.AVIEW.getSuffix());
-							//Overriding with Master Data 
+							// Overriding with Master Data
 							FinOCRHeader finOCRHeaderTemp = copyOCRHeaderProperties(ocrHeader);
-							//check OCR Description is Passed in the request if not override with Master Data 
+							// check OCR Description is Passed in the request if not override with Master Data
 							if (StringUtils.isEmpty(finOCRHeader.getOcrDescription())) {
 								finOCRHeader.setOcrDescription(finOCRHeaderTemp.getOcrDescription());
 							}
-							//check CustomerPorsion is Passed in the request if not override with Master Data 
+							// check CustomerPorsion is Passed in the request if not override with Master Data
 							if (finOCRHeader.getCustomerPortion().compareTo(BigDecimal.ZERO) <= 0) {
 								finOCRHeader.setCustomerPortion(finOCRHeaderTemp.getCustomerPortion());
 							}
-							//check OCR Type is Passed in the request if not override with Master Data 
+							// check OCR Type is Passed in the request if not override with Master Data
 							if (StringUtils.isEmpty(finOCRHeader.getOcrType())) {
 								finOCRHeader.setOcrType(finOCRHeaderTemp.getOcrType());
 							}
 
-							//check totalDemand is Passed in the request if not override with Master Data  
+							// check totalDemand is Passed in the request if not override with Master Data
 							if (BigDecimal.ZERO.compareTo(finOCRHeader.getTotalDemand()) >= 0) {
 								finOCRHeader.setTotalDemand(finOCRHeaderTemp.getTotalDemand());
 							}
 
 							if (PennantConstants.SEGMENTED_VALUE.equals(finOCRHeader.getOcrType())) {
-								//OCR Step details are overriding with Master data if not available in the request
+								// OCR Step details are overriding with Master data if not available in the request
 								if (CollectionUtils.isEmpty(finOCRHeader.getOcrDetailList())) {
 									finOCRHeader.setOcrDetailList(finOCRHeaderTemp.getOcrDetailList());
 								}
 							}
 						}
 					}
-					//customerPortion
+					// customerPortion
 					if (finOCRHeader.getCustomerPortion().compareTo(BigDecimal.ZERO) <= 0) {
 						valueParm[0] = "customerPortion";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 						return errorDetails;
 					}
-					//ocrType
+					// ocrType
 					if (StringUtils.isEmpty(finOCRHeader.getOcrType())) {
 						valueParm[0] = "ocrType";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
@@ -523,7 +522,7 @@ public class FinanceDataValidation {
 							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90264", valueParm)));
 							return errorDetails;
 						}
-						//totalDemand
+						// totalDemand
 						if (BigDecimal.ZERO.compareTo(finOCRHeader.getTotalDemand()) >= 0) {
 							valueParm = new String[2];
 							valueParm[0] = "totalDemand";
@@ -532,9 +531,9 @@ public class FinanceDataValidation {
 							return errorDetails;
 						}
 
-						//OCR Definition Validations
+						// OCR Definition Validations
 						if (PennantConstants.SEGMENTED_VALUE.equals(finOCRHeader.getOcrType())) {
-							//OCR Step details
+							// OCR Step details
 							if (CollectionUtils.isEmpty(finOCRHeader.getOcrDetailList())) {
 								valueParm = new String[1];
 								valueParm[0] = "ocrDetailList";
@@ -542,7 +541,7 @@ public class FinanceDataValidation {
 								return errorDetails;
 							} else {
 								final Set<Integer> duplicate = new HashSet<>();
-								//check step sequence for definition
+								// check step sequence for definition
 								for (FinOCRDetail finOCRDetail : finOCRHeader.getOcrDetailList()) {
 									int stepSequence = finOCRDetail.getStepSequence();
 									if (stepSequence > 0 && !duplicate.add(stepSequence)) {
@@ -560,7 +559,7 @@ public class FinanceDataValidation {
 									}
 								}
 							}
-							//Can OCR Step details are acceptable for Prorata?	
+							// Can OCR Step details are acceptable for Prorata?
 						} else if (PennantConstants.PRORATA_VALUE.equals(finOCRHeader.getOcrType())) {
 							if (!CollectionUtils.isEmpty(finOCRHeader.getOcrDetailList())) {
 								valueParm = new String[2];
@@ -571,10 +570,10 @@ public class FinanceDataValidation {
 							}
 						}
 
-						//OCR Capture validations
+						// OCR Capture validations
 						if (CollectionUtils.isNotEmpty(finOCRHeader.getFinOCRCapturesList())) {
 							final Set<Integer> duplicate = new HashSet<>();
-							//check step sequence for definition
+							// check step sequence for definition
 							for (FinOCRCapture finOCRCapture : finOCRHeader.getFinOCRCapturesList()) {
 								int receiptSequence = finOCRCapture.getDisbSeq();
 								if (receiptSequence > 0 && !duplicate.add(receiptSequence)) {
@@ -590,7 +589,7 @@ public class FinanceDataValidation {
 									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90205", valueParm)));
 									return errorDetails;
 								}
-								//Demand Amount
+								// Demand Amount
 								if (BigDecimal.ZERO.compareTo(finOCRCapture.getDemandAmount()) >= 0) {
 									valueParm = new String[2];
 									valueParm[0] = "demandAmount in finOCRCapturesList";
@@ -598,7 +597,7 @@ public class FinanceDataValidation {
 									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
 									return errorDetails;
 								}
-								//Paid amount
+								// Paid amount
 								if (BigDecimal.ZERO.compareTo(finOCRCapture.getPaidAmount()) >= 0) {
 									valueParm = new String[2];
 									valueParm[0] = "paidAmount in finOCRCapturesList";
@@ -606,7 +605,7 @@ public class FinanceDataValidation {
 									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
 									return errorDetails;
 								}
-								//Receipt date
+								// Receipt date
 								if (finOCRCapture.getReceiptDate() == null) {
 									valueParm = new String[1];
 									valueParm[0] = "receiptDate in finOCRCapturesList";
@@ -641,7 +640,7 @@ public class FinanceDataValidation {
 				finOCRHeader.setVersion(finOCRHeader.getVersion() + 1);
 				finOCRHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			}
-			//setting the work flow values for 
+			// setting the work flow values for
 			if (!CollectionUtils.isEmpty(ocrHeader.getOcrDetailList())) {
 				for (OCRDetail ocrDetail : ocrHeader.getOcrDetailList()) {
 					FinOCRDetail finOCRDetail = new FinOCRDetail();
@@ -680,7 +679,7 @@ public class FinanceDataValidation {
 				}
 			}
 
-			//Duplicate Fee Code check
+			// Duplicate Fee Code check
 			for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
 				int count = 0;
 				String feeTypeCode2 = feeDetail.getFeeTypeCode();
@@ -710,7 +709,7 @@ public class FinanceDataValidation {
 				return errorDetails;
 			}
 		} else {
-			//setting validation for vas fees which are available in vas Block
+			// setting validation for vas fees which are available in vas Block
 			if (finScheduleData.getVasRecordingList().size() != vasFeeCount) {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90328", null)));
 				return errorDetails;
@@ -826,7 +825,7 @@ public class FinanceDataValidation {
 			finScheduleData.setFinanceType(financeType);
 		}
 		List<FinTypeVASProducts> finTypeVASProductsList = finScheduleData.getFinanceType().getFinTypeVASProductsList();
-		//Vas Products configured in FinType
+		// Vas Products configured in FinType
 		if (CollectionUtils.isNotEmpty(finTypeVASProductsList)) {
 			for (FinTypeVASProducts finTypeVASProducts : finTypeVASProductsList) {
 				feeCodes.add(finTypeVASProducts.getVasProduct());
@@ -1187,7 +1186,7 @@ public class FinanceDataValidation {
 			}
 		}
 
-		//Validating duplicate product codes in vas recording
+		// Validating duplicate product codes in vas recording
 		List<VASRecording> vasRecordingList = finScheduleData.getVasRecordingList();
 		if (CollectionUtils.isNotEmpty(vasRecordingList)) {
 			for (VASRecording vasRecording : vasRecordingList) {
@@ -1496,7 +1495,7 @@ public class FinanceDataValidation {
 			}
 		}
 
-		//FIXME: PV 28AUG19: Already taken care in defaulting?
+		// FIXME: PV 28AUG19: Already taken care in defaulting?
 		/*
 		 * // Validate customer if ((isCreateLoan || StringUtils.isNotBlank(finMain.getLovDescCustCIF()))) { Customer
 		 * customer = customerDAO.getCustomerByCIF(finMain.getLovDescCustCIF(), ""); if (customer == null) { String[]
@@ -2136,7 +2135,7 @@ public class FinanceDataValidation {
 
 						BigDecimal totAssignedPerc = collateralSetupService
 								.getAssignedPerc(collateralSetup.getCollateralRef(), "");// TODO:Add
-																																	// reference
+																							// reference
 						curAssignValue = curAssignValue.add(collateralSetup.getBankValuation()
 								.multiply(collateralAssignment.getAssignPerc() == null ? BigDecimal.ZERO
 										: collateralAssignment.getAssignPerc())
@@ -3474,10 +3473,10 @@ public class FinanceDataValidation {
 						}
 					}
 
-					//Validating Vas Disb Instructions
+					// Validating Vas Disb Instructions
 					if (PennantConstants.FINSOURCE_ID_API.equals(financeMain.getFinSourceID())) {
 						if (DisbursementConstants.PAYMENT_DETAIL_VAS.equals(advPayment.getPaymentDetail())) {
-							//Product code is mandatory when disbParty is VAS
+							// Product code is mandatory when disbParty is VAS
 							if (StringUtils.isBlank(advPayment.getVasProductCode())
 									&& advPayment.getVasProductCode() == null) {
 								String[] valueParm = new String[2];
@@ -3493,7 +3492,7 @@ public class FinanceDataValidation {
 								for (VASRecording vasRecording : vasRecordingList) {
 									if (advPayment.getVasProductCode().equals(vasRecording.getProductCode())) {
 										if (vasRecording.getFee().compareTo(advPayment.getAmtToBeReleased()) != 0) {
-											//Validating VAS Disbursement Amount and configured VAS Amount equal r not
+											// Validating VAS Disbursement Amount and configured VAS Amount equal r not
 											String[] valueParm = new String[2];
 											valueParm[0] = " VAS Disbursement Amount";
 											valueParm[1] = " configured VAS Amount";
@@ -3513,7 +3512,7 @@ public class FinanceDataValidation {
 								valueParm[1] = advPayment.getVasProductCode();
 								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", valueParm)));
 							}
-							//Validating duplicate product codes in Disbursement Instruction
+							// Validating duplicate product codes in Disbursement Instruction
 							int duplicateCount = 0;
 							if (CollectionUtils.isNotEmpty(finAdvPayments)) {
 								for (FinAdvancePayments finAdvancePayments : finAdvPayments) {
@@ -3773,28 +3772,28 @@ public class FinanceDataValidation {
 		}
 		String tdsType = finMain.getTdsType();
 		if (finMain.isTDSApplicable()) {
-			//Loan Queue TDS is Applicable but in Loan Type it is marked as False
+			// Loan Queue TDS is Applicable but in Loan Type it is marked as False
 			if (!financeType.isTdsApplicable()) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "tds";
 				valueParm[1] = financeType.getFinType();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
 			}
-			//Validating TDS Type
+			// Validating TDS Type
 			String loanTypeTdsType = financeType.getTdsType();
 			if (StringUtils.isNotBlank(tdsType)) {
-				//Loan type TDS Type as USER or AUTO or MANUAL
+				// Loan type TDS Type as USER or AUTO or MANUAL
 				if (!"#".equals(loanTypeTdsType)) {
-					//If TDS Type is not != User selection 
+					// If TDS Type is not != User selection
 					if (!PennantConstants.TDS_USER_SELECTION.equals(loanTypeTdsType)) {
-						//Loan Type value and Loan Queue Value should be same
+						// Loan Type value and Loan Queue Value should be same
 						if (!StringUtils.equals(tdsType, loanTypeTdsType)) {
 							String[] valueParm = new String[2];
 							valueParm[0] = "tdsType";
 							valueParm[1] = loanTypeTdsType;
 							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
 						}
-						//From Loan Queue passing Different Values
+						// From Loan Queue passing Different Values
 					} else if (!(StringUtils.equalsIgnoreCase(tdsType, PennantConstants.TDS_AUTO)
 							|| StringUtils.equalsIgnoreCase(tdsType, PennantConstants.TDS_MANUAL))) {
 						String[] valueParm = new String[2];
@@ -3803,13 +3802,13 @@ public class FinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
 					}
 				}
-				//With out passing TDS Type in Loan Queue but in Loan Type TDS type is USER or AUTO or MANUAL	
+				// With out passing TDS Type in Loan Queue but in Loan Type TDS type is USER or AUTO or MANUAL
 			} else if (StringUtils.isBlank(tdsType) && !"#".equals(loanTypeTdsType)) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "tdsType";
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", valueParm)));
 			}
-			//TDS is not applicable in loan queue but passing TDS Type value from API	
+			// TDS is not applicable in loan queue but passing TDS Type value from API
 		} else if (StringUtils.isNotBlank(tdsType) && !"#".equals(tdsType)) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "tdsType";
@@ -3991,6 +3990,46 @@ public class FinanceDataValidation {
 			}
 		}
 
+		if (financeType.isSubventionReq()) {
+
+			if (StringUtils.isBlank(finMain.getSubVentionFrom())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "subVentionFrom";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				return errorDetails;
+			}
+
+			if (StringUtils.isNotBlank(finMain.getSubVentionFrom()) && finMain.getManufacturerDealerId() == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "ManufacturerDealerId";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				return errorDetails;
+			}
+
+			List<ValueLabel> subVenFrom = PennantStaticListUtil.getSubVentionFrom();
+			boolean isSubVenFrom = false;
+			for (ValueLabel value : subVenFrom) {
+				if (StringUtils.equals(value.getValue(), finMain.getSubVentionFrom())) {
+					isSubVenFrom = true;
+					break;
+				}
+			}
+			if (!isSubVenFrom) {
+				String[] valueParm = new String[2];
+				valueParm[0] = App.getLabel("label_ApplicableFor");
+				valueParm[1] = Labels.getLabel("label_Dealer") + "," + Labels.getLabel("label_Manufacturer");
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90281", valueParm)));
+			}
+
+			int count = vehicleDealerService.getApprovedVehicleDealerCountById(finMain.getManufacturerDealerId(),
+					finMain.getSubVentionFrom().equals("DSM") ? "DSM" : "MANF");
+			if (count <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finMain.getDmaCode();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
+				return errorDetails;
+			}
+		}
 		// Repay Rate Validations
 		errorDetails = repayRateValidation(finScheduleData);
 
@@ -5189,11 +5228,11 @@ public class FinanceDataValidation {
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90271", valueParm)));
 		}
 
-		//Interest Days Basis should be 15E/360 ISDA OR Actual/365 Fixed when 
+		// Interest Days Basis should be 15E/360 ISDA OR Actual/365 Fixed when
 		if (ImplementationConstants.FRQ_15DAYS_REQ) {
 			String repay = FrequencyUtil.getFrequencyCode(finMain.getRepayFrq());
 			if (StringUtils.isNotEmpty(repay)) {
-				//Frequency Code
+				// Frequency Code
 				if (!FrequencyCodeTypes.FRQ_15DAYS.equals(repay)
 						&& CalculationConstants.IDB_15E360IA.equals(finMain.getProfitDaysBasis())) {
 					String frqCode = Labels.getLabel("label_Select_15DAYS");
@@ -5204,7 +5243,7 @@ public class FinanceDataValidation {
 					return errorDetails;
 				}
 
-				//Interest Days Basis
+				// Interest Days Basis
 				if (!CalculationConstants.IDB_15E360IA.equals(finMain.getProfitDaysBasis())
 						&& FrequencyCodeTypes.FRQ_15DAYS.equals(repay)) {
 					String profitDaysBasis = Labels.getLabel("label_ProfitDaysBasis_15E_360IA");//
@@ -5715,26 +5754,26 @@ public class FinanceDataValidation {
 				return errorDetails;
 			}
 		} else {
-			//If we pass vas FEES details with out Loan type FEES configuration and VAS details in VAS block
+			// If we pass vas FEES details with out Loan type FEES configuration and VAS details in VAS block
 			List<VASRecording> vasRecordingList = finSchdData.getVasRecordingList();
 			List<String> feeCodes = getVasFeeCodes(finSchdData);
 			if (CollectionUtils.isEmpty(vasRecordingList) && CollectionUtils.isNotEmpty(feeCodes)) {
 				for (FinFeeDetail finFeeDetail : finSchdData.getFinFeeDetailList()) {
-					//Setting validation for vas recording and fees block
+					// Setting validation for vas recording and fees block
 					String feeTypeCode = finFeeDetail.getFeeTypeCode();
 					feeTypeCode = extractFeeCode(feeTypeCode);
 					if (feeCodes.contains(feeTypeCode)) {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90328", null)));
 						return errorDetails;
 					} else {
-						//Setting validation fees
+						// Setting validation fees
 						String[] valueParm = new String[1];
 						valueParm[0] = finSchdData.getFinanceMain().getFinType();
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90245", valueParm)));
 						return errorDetails;
 					}
 				}
-				//Validation if no Fee configured in Loan type except vas and providing invalid fee code in Fee Block
+				// Validation if no Fee configured in Loan type except vas and providing invalid fee code in Fee Block
 			} else if (CollectionUtils.isNotEmpty(feeCodes)) {
 				for (FinFeeDetail finFeeDetail : finSchdData.getFinFeeDetailList()) {
 					String feeTypeCode = finFeeDetail.getFeeTypeCode();
@@ -7528,14 +7567,14 @@ public class FinanceDataValidation {
 		return false;
 	}
 
-	//CovenantValidations
+	// CovenantValidations
 	public List<ErrorDetail> covenantValidation(FinanceMain financeMain, List<Covenant> covenantsList, String module) {
 		logger.debug(Literal.ENTERING);
-		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+		List<ErrorDetail> errorDetails = new ArrayList<>();
 		CovenantType aCovenantType = null;
-		//Category Validations
+		// Category Validations
 		if (covenantsList.size() > 1) {
-			Set<String> uniqueCovenantSet = new HashSet<String>();
+			Set<String> uniqueCovenantSet = new HashSet<>();
 			long count = covenantsList.stream()
 					.filter(covenant -> uniqueCovenantSet.add(covenant.getCategory() + covenant.getCovenantTypeId()))
 					.count();
@@ -7547,7 +7586,6 @@ public class FinanceDataValidation {
 			}
 		}
 		for (Covenant covenant : covenantsList) {
-
 			List<CovenantType> covenantTypeList = covenantTypeDAO.getCvntTypesByCatgy(covenant.getCategory(), "");
 
 			if (StringUtils.isBlank(covenant.getCategory())) {
@@ -7557,7 +7595,7 @@ public class FinanceDataValidation {
 				return errorDetails;
 			} else {
 				List<Property> covenantCategories = AppStaticList.getCovenantCategories();
-				List<Object> keys = new ArrayList<Object>();
+				List<Object> keys = new ArrayList<>();
 				for (Property property : covenantCategories) {
 					keys.add(property.getKey());
 				}
@@ -7568,8 +7606,7 @@ public class FinanceDataValidation {
 					return errorDetails;
 				}
 			}
-
-			//validating the covenant Id
+			// validating the covenant Id
 			if (covenant.getCovenantTypeId() <= 0) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "CovenantTypeId";
@@ -7584,7 +7621,6 @@ public class FinanceDataValidation {
 					return errorDetails;
 				}
 			}
-
 			long count = covenantTypeList.stream()
 					.filter(covenantType -> covenantType.getId() == covenant.getCovenantTypeId()).count();
 			covenant.setCovenantType(aCovenantType.getCovenantType());
@@ -7621,7 +7657,7 @@ public class FinanceDataValidation {
 			boolean isPdd = StringUtils.equals("Y", covenant.getStrPdd());
 			boolean isOtc = StringUtils.equals("Y", covenant.getStrOtc());
 
-			//validating the PDD 
+			// validating the PDD
 			if (covenant.getStrPdd() != null && !(isPdd || StringUtils.equals("N", covenant.getStrPdd()))) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Pdd";
@@ -7630,7 +7666,7 @@ public class FinanceDataValidation {
 				return errorDetails;
 			}
 
-			//validating the OTC
+			// validating the OTC
 			if (covenant.getStrOtc() != null && !(isOtc || StringUtils.equals("N", covenant.getStrOtc()))) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Otc";
@@ -7697,9 +7733,8 @@ public class FinanceDataValidation {
 
 				}
 			}
-
 			if (StringUtils.isNotBlank(covenant.getMandatoryRole())) {
-				SecurityRole secRole = finCovenantTypeDAO.isMandRoleExists(covenant.getMandatoryRole());
+				SecurityRole secRole = finCovenantTypeDAO.isMandRoleExists(covenant.getMandatoryRole(), null);
 				if (secRole == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "MandatoryRole";
@@ -7716,7 +7751,7 @@ public class FinanceDataValidation {
 				maturityDate = financeMain.getMaturityDate();
 			Date loanStartDate = financeMain.getFinStartDate();
 
-			//validating the Receivable Date
+			// validating the Receivable Date
 			if (isPdd) {
 				if (covenant.getReceivableDate() == null) {
 					String[] valueParm = new String[2];
@@ -7754,8 +7789,7 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
 				return errorDetails;
 			}
-
-			//validating the Frequency
+			// validating the Frequency
 			if (StringUtils.isNotBlank(covenant.getFrequency())) {
 				List<Property> listFrequency = AppStaticList.getFrequencies();
 				List<Object> Frequency = new ArrayList<Object>();
@@ -7770,7 +7804,7 @@ public class FinanceDataValidation {
 				}
 			}
 
-			//validating the Alerts
+			// validating the Alerts
 			boolean alertReqd = StringUtils.equals("Y", covenant.getStrAlertsRequired());
 			if (covenant.getFrequency() == null && covenant.getStrAlertsRequired() != null) {
 				String[] valueParm = new String[2];
@@ -7788,7 +7822,7 @@ public class FinanceDataValidation {
 				return errorDetails;
 			}
 
-			//validating the alerts required fields---non mandatory field
+			// validating the alerts required fields---non mandatory field
 			if (alertReqd && StringUtils.isNotBlank(covenant.getAlertType())) {
 				List<Property> listAlertType = AppStaticList.getAlertsFor();
 				List<Object> alertUsers = new ArrayList<Object>();
@@ -7810,7 +7844,7 @@ public class FinanceDataValidation {
 			}
 
 			boolean isExist;
-			//validating the alerts required field
+			// validating the alerts required field
 			if (alertReqd && StringUtils.isNotBlank(covenant.getNotifyTo())
 					&& !StringUtils.equals(covenant.getAlertType(), "Customer")) {
 				String[] roles = covenant.getNotifyTo().split(",");
@@ -7851,7 +7885,6 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91132", valueParm)));
 				return errorDetails;
 			}
-
 			// grace days
 			if (alertReqd && covenant.getlGraceDays() != null) {
 				if (covenant.getlGraceDays() >= 30) {
@@ -7878,7 +7911,6 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90220", valueParm)));
 					return errorDetails;
 				}
-
 			} else if (covenant.getlAlertDays() != null) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "AlertDays";
@@ -7886,8 +7918,7 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
 				return errorDetails;
 			}
-
-			//validating the CovenantDocuments
+			// validating the CovenantDocuments
 			List<CovenantDocument> covenantDocumentsList = covenant.getCovenantDocuments();
 			for (CovenantDocument covenantDocument : covenantDocumentsList) {
 
@@ -7897,8 +7928,8 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 					return errorDetails;
 				}
-				String category = documentTypeDAO.getDocCategoryByDocType(covenantDocument.getDoctype(), "_aView");
-				if (!StringUtils.equals(category, DocumentCategories.COVENANT.getKey())) {
+				String category = documentTypeDAO.getDocCategoryByDocType(covenantDocument.getDoctype());
+				if (category == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "DocType";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
@@ -8011,9 +8042,8 @@ public class FinanceDataValidation {
 					}
 
 				}
-
 			}
-			Set<String> documentTypeSet = new HashSet<String>();
+			Set<String> documentTypeSet = new HashSet<>();
 
 			long uniqueCount = covenantDocumentsList.stream()
 					.filter(covenantDocument -> documentTypeSet.add(covenantDocument.getDoctype())).count();
@@ -8024,7 +8054,6 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90273", valueParm)));
 				return errorDetails;
 			}
-
 			if (StringUtils.isNotBlank(covenant.getAdditionalField2())
 					&& covenant.getAdditionalField2().toCharArray().length > 500) {
 				String[] valueParm = new String[2];
@@ -8033,7 +8062,6 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90220", valueParm)));
 				return errorDetails;
 			}
-
 			if (StringUtils.isNotBlank(covenant.getAdditionalField3())
 					&& covenant.getAdditionalField3().toCharArray().length > 500) {
 				String[] valueParm = new String[2];
@@ -8042,7 +8070,6 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90220", valueParm)));
 				return errorDetails;
 			}
-
 			if (!StringUtils.equals(module, "LOS")) {
 
 				if (covenant.getStrAllowPostPonement() != null
@@ -8084,6 +8111,7 @@ public class FinanceDataValidation {
 					return errorDetails;
 				}
 			}
+
 		}
 		if (errorDetails.isEmpty()) {
 			processCovenantDetails(covenantsList, financeMain, aCovenantType);
@@ -8129,7 +8157,7 @@ public class FinanceDataValidation {
 		Date tempEndDate = (Date) endDate.clone();
 
 		while (DateUtility.compare(tempStartDate, tempEndDate) <= 0) {
-			//			String key = DateUtil.format(tempStartDate, DateFormat.LONG_DATE);
+			// String key = DateUtil.format(tempStartDate, DateFormat.LONG_DATE);
 			list.add(tempStartDate);
 			tempStartDate = DateUtil.addMonths(tempStartDate, frequency);
 		}
@@ -8435,8 +8463,7 @@ public class FinanceDataValidation {
 	}
 
 	/**
-	 * @param extendedFieldDetailsService
-	 *            the extendedFieldDetailsService to set
+	 * @param extendedFieldDetailsService the extendedFieldDetailsService to set
 	 */
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;

@@ -69,7 +69,6 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -135,25 +134,7 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 
 	@Override
 	protected void doAddFilters() {
-		if (module.equals("DSA")) {
-			super.moduleCode = "DSA";
-		} else if (module.equals("DMA")) {
-			super.moduleCode = "DMA";
-		} else if (module.equals("TVAGENCY")) {
-			super.moduleCode = "TVAGENCY";
-		} else if (module.equals("RCUVAGENCY")) {
-			super.moduleCode = "RCUVAGENCY";
-		} else if (module.equals("LVAGENCY")) {
-			super.moduleCode = "LVAGENCY";
-		} else if (module.equals("FIAGENCY")) {
-			super.moduleCode = "FIAGENCY";
-		} else if (module.equals("CONN")) {
-			super.moduleCode = "CONN";
-		} else if (module.equals("PDAGENCY")) {
-			super.moduleCode = "PDAGENCY";
-		} else if (Agencies.SVDM.getKey().equals(module)) {
-			super.moduleCode = Agencies.SVDM.getKey();
-		}
+		super.moduleCode = module;
 		super.doAddFilters();
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("DealerType", this.module, Filter.OP_EQUAL);
@@ -163,14 +144,17 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_VehicleDealerList(Event event) {
 		// Set the page level components.
 		setPageComponents(window_VehicleDealerList, borderLayout_VehicleDealerList, listBoxVehicleDealer,
 				pagingVehicleDealerList);
 		setItemRender(new VehicleDealerListModelItemRenderer());
+
+		if (module.equals("MANF")) {
+			this.listheader_DealerName.setLabel("Manufacturer Name");
+		}
 
 		// Register buttons and fields.
 		registerButton(button_VehicleDealerList_NewVehicleDealer, "button_VehicleDealerList_NewVehicleDealer", true);
@@ -202,8 +186,7 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_VehicleDealerList_VehicleDealerSearchDialog(Event event) {
 		search();
@@ -212,8 +195,7 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -223,8 +205,7 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_VehicleDealerList_NewVehicleDealer(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -244,8 +225,7 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onVehicleDealerItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -280,8 +260,7 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param vehicleDealer
-	 *            The entity that need to be passed to the dialog.
+	 * @param vehicleDealer The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(VehicleDealer vehicleDealer) {
 		logger.debug(Literal.ENTERING);
@@ -316,8 +295,7 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -326,8 +304,7 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

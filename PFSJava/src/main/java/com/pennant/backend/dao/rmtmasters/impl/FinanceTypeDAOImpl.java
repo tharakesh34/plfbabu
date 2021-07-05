@@ -82,10 +82,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	/**
 	 * Fetch the Record Finance Types details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceType
 	 */
 	@Override
@@ -123,7 +121,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", FixedRateTenor, EligibilityMethods, ODRuleCode, AlwZeroIntAcc, AutoRejectionDays");
 		sql.append(", TaxNoMand, PutCallRequired, GrcAdvIntersetReq, GrcAdvType, GrcAdvMinTerms, GrcAdvMaxTerms");
 		sql.append(", GrcAdvDefaultTerms, AdvIntersetReq, AdvType, AdvMaxTerms, AdvMinTerms, AdvDefaultTerms");
-		sql.append(", AdvStage, DsfReq, CashCollateralReq, TdsAllowToModify, TdsApplicableTo, AlwVan");
+		sql.append(", AdvStage, DsfReq, CashCollateralReq, TdsAllowToModify, TdsApplicableTo, AlwVan, SubventionReq");
 		sql.append(", VanAllocationMethod, AllowDrawingPower, AllowRevolving, AlwSanctionAmt");
 		sql.append(", AlwSanctionAmtOverride, SanBsdSchdle");
 		sql.append(", OcrRequired, AllowedOCRS, DefaultOCR, AllowedLoanPurposes, SpecificLoanPurposes");
@@ -315,6 +313,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				ft.setTdsAllowToModify(rs.getBoolean("TdsAllowToModify"));
 				ft.setTdsApplicableTo(rs.getString("TdsApplicableTo"));
 				ft.setAlwVan(rs.getBoolean("AlwVan"));
+				ft.setSubventionReq(rs.getBoolean("SubventionReq"));
 				ft.setVanAllocationMethod(rs.getString("VanAllocationMethod"));
 				ft.setAllowDrawingPower(rs.getBoolean("AllowDrawingPower"));
 				ft.setAllowRevolving(rs.getBoolean("AllowRevolving"));
@@ -373,10 +372,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	/**
 	 * Fetch the Record Finance Types details by key field
 	 * 
-	 * @param finType
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param finType (String)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return FinanceType
 	 */
 	@Override
@@ -416,10 +413,10 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", AdvStage, DsfReq, CashCollateralReq, TdsAllowToModify, TdsApplicableTo, AlwVan");
 		sql.append(", VanAllocationMethod, AllowDrawingPower, AllowRevolving, AlwSanctionAmt");
 		sql.append(", AlwSanctionAmtOverride, SanBsdSchdle");
-		sql.append(", OcrRequired, AllowedOCRS, DefaultOCR, AllowedLoanPurposes, SpecificLoanPurposes"); //HL- merging
+		sql.append(", OcrRequired, AllowedOCRS, DefaultOCR, AllowedLoanPurposes, SpecificLoanPurposes"); // HL- merging
 		sql.append(", GrcAdjReq, GrcPeriodAftrFullDisb, AutoIncrGrcEndDate, GrcAutoIncrMonths, MaxAutoIncrAllowed");
 		sql.append(", ThrldtoMaintainGrcPrd, CalcOfSteps, StepsAppliedFor, AlwLoanSplit, SplitLoanType");
-		sql.append(", InstBasedSchd, TdsType");
+		sql.append(", InstBasedSchd, TdsType, SubventionReq");
 		if (StringUtils.trimToEmpty(type).contains("ORGView")) {
 			sql.append(", DownPayRuleCode, DownPayRuleDesc, LovDescFinDivisionName, LovDescPromoFinTypeDesc");
 			sql.append(", LovDescDftStepPolicyName, GrcPricingMethodDesc, RpyPricingMethodDesc, DftStepPolicyType");
@@ -597,7 +594,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 							ft.setAlwSanctionAmtOverride(rs.getBoolean("AlwSanctionAmtOverride"));
 							ft.setSanBsdSchdle(rs.getBoolean("SanBsdSchdle"));
 							ft.setDefaultOCR(rs.getString("DefaultOCR"));
-							//HL Merging
+							// HL Merging
 							ft.setOcrRequired(rs.getBoolean("OcrRequired"));
 							ft.setAllowedLoanPurposes(rs.getString("AllowedLoanPurposes"));
 							ft.setAllowedOCRS(rs.getString("AllowedOCRS"));
@@ -614,6 +611,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 							ft.setThrldtoMaintainGrcPrd(rs.getInt("ThrldtoMaintainGrcPrd"));
 							ft.setCalcOfSteps(rs.getString("CalcOfSteps"));
 							ft.setStepsAppliedFor(rs.getString("StepsAppliedFor"));
+							ft.setSubventionReq(rs.getBoolean("SubventionReq"));
 
 							if (StringUtils.trimToEmpty(type).contains("ORGView")) {
 								ft.setDownPayRuleCode(rs.getString("DownPayRuleCode"));
@@ -644,10 +642,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	/**
 	 * Fetch the Record Finance Types details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceType
 	 */
 	@Override
@@ -662,7 +658,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				" PastduePftCalMthd, PastduePftMargin,alwMultiPartyDisb, alwMaxDisbCheckReq, CostOfFunds, FinLTVCheck, PartiallySecured , AlwVan, vanAllocationMethod, AlwSanctionAmt, AlwSanctionAmtOverride, AutoApprove  ");
 		selectSql.append(
 				" GrcAdjReq, GrcPeriodAftrFullDisb, AutoIncrGrcEndDate, GrcAutoIncrMonths, MaxAutoIncrAllowed ");
-		selectSql.append(" , ThrldtoMaintainGrcPrd, TdsType ");
+		selectSql.append(" , ThrldtoMaintainGrcPrd, TdsType, SubventionReq");
 		selectSql.append(" FROM RMTFinanceTypes");
 		selectSql.append(" Where FinType = :FinType");
 
@@ -707,10 +703,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	 * This method Deletes the Record from the RMTFinanceTypes or RMTFinanceTypes_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Finance Types by key FinType
 	 * 
-	 * @param Finance
-	 *            Types (financeType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Types (financeType)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -746,10 +740,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	 * 
 	 * save Finance Types
 	 * 
-	 * @param Finance
-	 *            Types (financeType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Types (financeType)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -760,8 +752,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = new StringBuilder("Insert Into RMTFinanceTypes");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(
-				"(FinType, Product, FinCategory,FinTypeDesc, FinCcy,  FinDaysCalType, ");
+		sql.append("(FinType, Product, FinCategory,FinTypeDesc, FinCcy,  FinDaysCalType, ");
 		sql.append(" FinIsGenRef,");
 		sql.append(" FinMaxAmount, FinMinAmount,  FinDftStmtFrq,  FinIsAlwMD,");
 		sql.append(" FinSchdMthd, FInIsAlwGrace, FinHistRetension, EqualRepayment, SchdOnPMTCal, FinRateType,");
@@ -777,8 +768,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(" FinIsDwPayRequired, FinRvwRateApplFor,FinIsIntCpzAtGrcEnd, FinIsRateRvwAtGrcEnd, ");
 		sql.append(" FinAlwRateChangeAnyDate, ");
 		sql.append(" FinSchCalCodeOnRvw,FinAssetType ,");
-		sql.append(
-				" FinIsActive, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
+		sql.append(" FinIsActive, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
 		sql.append(" NextTaskId, RecordType, WorkflowId ,FinGrcSchdMthd,FinIsAlwGrcRepay,");
 		sql.append("	FinCommitmentReq,FinCollateralReq,");
 		sql.append(" FinMargin,FinGrcMargin,FinScheduleOn,FinGrcScheduleOn, ");
@@ -809,9 +799,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", OcrRequired, AllowedOCRS, DefaultOCR, AllowedLoanPurposes, SpecificLoanPurposes");
 		sql.append(", GrcAdjReq, GrcPeriodAftrFullDisb, AutoIncrGrcEndDate, GrcAutoIncrMonths ");
 		sql.append(
-				", MaxAutoIncrAllowed, ThrldtoMaintainGrcPrd, CalcOfSteps, StepsAppliedFor, AlwLoanSplit, SplitLoanType,InstBasedSchd, TdsType) ");
-		sql.append(
-				" Values(:FinType, :Product, :FinCategory,:FinTypeDesc, :FinCcy,  :FinDaysCalType, ");
+				", MaxAutoIncrAllowed, ThrldtoMaintainGrcPrd, CalcOfSteps, StepsAppliedFor, AlwLoanSplit, SplitLoanType,InstBasedSchd, TdsType, SubventionReq) ");
+		sql.append(" Values(:FinType, :Product, :FinCategory,:FinTypeDesc, :FinCcy,  :FinDaysCalType, ");
 		sql.append(" :FinIsGenRef,");
 		sql.append(" :FinMaxAmount, :FinMinAmount,  :FinDftStmtFrq,  :FinIsAlwMD,");
 		sql.append(" :FinSchdMthd, :FInIsAlwGrace, :FinHistRetension, :EqualRepayment, :SchdOnPMTCal, :FinRateType,");
@@ -862,7 +851,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", :OcrRequired, :AllowedOCRS, :DefaultOCR, :AllowedLoanPurposes, :SpecificLoanPurposes ");
 		sql.append(", :GrcAdjReq, :GrcPeriodAftrFullDisb, :AutoIncrGrcEndDate, :GrcAutoIncrMonths ");
 		sql.append(
-				", :MaxAutoIncrAllowed, :ThrldtoMaintainGrcPrd, :CalcOfSteps, :StepsAppliedFor, :AlwLoanSplit, :SplitLoanType,:InstBasedSchd, :TdsType) ");
+				", :MaxAutoIncrAllowed, :ThrldtoMaintainGrcPrd, :CalcOfSteps, :StepsAppliedFor, :AlwLoanSplit, :SplitLoanType,:InstBasedSchd, :TdsType, :SubventionReq) ");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 		financeType.getFinMaxAmount();
@@ -876,10 +865,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	 * This method updates the Record RMTFinanceTypes or RMTFinanceTypes_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Finance Types by key FinType and Version
 	 * 
-	 * @param Finance
-	 *            Types (financeType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Types (financeType)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -893,8 +880,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(
 				" Set Product = :Product,  FinTypeDesc = :FinTypeDesc, FinCategory =:FinCategory, FinCcy = :FinCcy,");
-		sql.append(
-				" FinDaysCalType = :FinDaysCalType,");
+		sql.append(" FinDaysCalType = :FinDaysCalType,");
 		sql.append(" FinIsGenRef = :FinIsGenRef, FinMaxAmount = :FinMaxAmount,FinMinAmount = :FinMinAmount,");
 		sql.append(" FinDftStmtFrq = :FinDftStmtFrq,FinIsAlwMD = :FinIsAlwMD,");
 		sql.append(
@@ -923,8 +909,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				" FinRvwRateApplFor = :FinRvwRateApplFor,FinIsIntCpzAtGrcEnd = :FinIsIntCpzAtGrcEnd,FinAlwRateChangeAnyDate = :FinAlwRateChangeAnyDate, FinIsRateRvwAtGrcEnd = :FinIsRateRvwAtGrcEnd, ");
 		sql.append(" FinSchCalCodeOnRvw = :FinSchCalCodeOnRvw,FinAssetType=:FinAssetType,");
 		sql.append(" FinIsActive = :FinIsActive,");
-		sql.append(
-				" Version = :Version ,LastMntBy = :LastMntBy,LastMntOn = :LastMntOn,");
+		sql.append(" Version = :Version ,LastMntBy = :LastMntBy,LastMntOn = :LastMntOn,");
 		sql.append(
 				" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		sql.append(
@@ -932,8 +917,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				" FinIsAlwGrcRepay=:FinIsAlwGrcRepay,FinScheduleOn=:FinScheduleOn,FinGrcScheduleOn=:FinGrcScheduleOn,");
 		sql.append(" FinMargin=:FinMargin,FinGrcMargin=:FinGrcMargin,");
-		sql.append(
-				" FinCommitmentReq=:FinCommitmentReq ,FinCollateralReq=:FinCollateralReq ,");
+		sql.append(" FinCommitmentReq=:FinCommitmentReq ,FinCollateralReq=:FinCollateralReq ,");
 		sql.append(" FinPftUnChanged=:FinPftUnChanged ,ManualSchedule = :ManualSchedule,");
 		sql.append(" AllowRIAInvestment =:AllowRIAInvestment , OverrideLimit=:OverrideLimit, ");
 		sql.append(
@@ -984,7 +968,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				", ThrldtoMaintainGrcPrd = :ThrldtoMaintainGrcPrd, CalcOfSteps = :CalcOfSteps, StepsAppliedFor = :StepsAppliedFor ");
 		sql.append(
-				", AlwLoanSplit = :AlwLoanSplit, SplitLoanType = :SplitLoanType,InstBasedSchd=:InstBasedSchd, TdsType = :TdsType");
+				", AlwLoanSplit = :AlwLoanSplit, SplitLoanType = :SplitLoanType,InstBasedSchd=:InstBasedSchd, TdsType = :TdsType, SubventionReq =:SubventionReq");
 		sql.append(" Where FinType =:FinType");
 
 		if (!type.endsWith("_Temp")) {

@@ -55,6 +55,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
@@ -69,6 +70,7 @@ import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.covenant.CovenantDocument;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -170,8 +172,7 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 		sql.append(", :ReceivableDate, :AllowWaiver, :MaxAllowedDays, :DocumentReceived, :DocumentReceivedDate");
 		sql.append(", :allowPostPonement, :ExtendedDate, :AllowedPaymentModes, :Frequency, :NextFrequencyDate");
 		sql.append(", :GraceDays, :GraceDueDate, :alertsRequired, :alertType, :AlertToRoles, :AlertDays");
-		sql.append(
-				", :InternalUse, :Remarks, :Remarks1, :AdditionalField1, :AdditionalField2, :AdditionalField3");
+		sql.append(", :InternalUse, :Remarks, :Remarks1, :AdditionalField1, :AdditionalField2, :AdditionalField3");
 		sql.append(", :AdditionalField4, :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode");
 		sql.append(", :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -188,34 +189,57 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 	}
 
 	@Override
-	public void saveDocuments(List<CovenantDocument> covenantDocuments, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-		StringBuilder sql = new StringBuilder();
-
-		sql.append(" Insert Into Covenant_Documents");
+	public void saveDocuments(List<CovenantDocument> documents, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Insert Into");
+		sql.append(" Covenant_Documents");
 		sql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
-		sql.append(" (Id, CovenantId, CovenantType, ReceivableDate, FrequencyDate, DocumentReceivedDate, DocumentId");
-		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkFlowId)");
-		sql.append(" values(:Id, :CovenantId, :CovenantType, :ReceivableDate, :frequencyDate, :DocumentReceivedDate");
-		sql.append(", :DocumentId, :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
-		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" (Id, CovenantId, CovenantType, ReceivableDate, FrequencyDate, DocumentReceivedDate");
+		sql.append(", DocumentId, OriginalDocument, Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkFlowId)");
+		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		for (CovenantDocument covenantDocument : covenantDocuments) {
+		for (CovenantDocument covenantDocument : documents) {
 			if (covenantDocument.getId() == Long.MIN_VALUE) {
 				covenantDocument.setId(getNextValue("SEQCOVENANT_DOCUMENTS"));
 			}
 		}
 
 		try {
-			jdbcTemplate.batchUpdate(sql.toString(), SqlParameterSourceUtils.createBatch(covenantDocuments.toArray()));
+			jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps, int i) throws SQLException {
+					CovenantDocument cd = documents.get(i);
+					int index = 1;
+					ps.setLong(index++, cd.getId());
+					ps.setLong(index++, cd.getCovenantId());
+					ps.setString(index++, cd.getCovenantType());
+					ps.setDate(index++, JdbcUtil.getDate(cd.getReceivableDate()));
+					ps.setDate(index++, JdbcUtil.getDate(cd.getFrequencyDate()));
+					ps.setDate(index++, JdbcUtil.getDate(cd.getDocumentReceivedDate()));
+					ps.setObject(index++, cd.getDocumentId());
+					ps.setBoolean(index++, cd.isOriginalDocument());
+					ps.setInt(index++, cd.getVersion());
+					ps.setLong(index++, JdbcUtil.setLong(cd.getLastMntBy()));
+					ps.setTimestamp(index++, cd.getLastMntOn());
+					ps.setString(index++, cd.getRecordStatus());
+					ps.setString(index++, cd.getRoleCode());
+					ps.setString(index++, cd.getNextRoleCode());
+					ps.setString(index++, cd.getTaskId());
+					ps.setString(index++, cd.getNextTaskId());
+					ps.setString(index++, cd.getRecordType());
+					ps.setLong(index, JdbcUtil.setLong(cd.getWorkflowId()));
+				}
+
+				@Override
+				public int getBatchSize() {
+					return documents.size();
+				}
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
@@ -244,7 +268,7 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 		sql.append("  Where Id = :Id And Module = :Module ");
 
 		if (!tableType.name().endsWith("_Temp")) {
-			//sql.append("  AND Version= :Version-1");
+			// sql.append(" AND Version= :Version-1");
 		}
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -259,37 +283,58 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 	}
 
 	@Override
-	public void updateDocuments(List<CovenantDocument> covenantDocuments, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
+	public void updateDocuments(List<CovenantDocument> documents, TableType tableType) {
 		StringBuilder sql = new StringBuilder("Update Covenant_Documents");
 		sql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
-
-		sql.append(" set ReceivableDate = :ReceivableDate, FrequencyDate = :frequencyDate");
-		sql.append(", DocumentReceivedDate = :DocumentReceivedDate, DocumentId = :DocumentId");
-		sql.append(", Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
-		sql.append(", RecordStatus = :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode");
-		sql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkFlowId = :WorkflowId");
-		sql.append("  Where Id = :Id and CovenantType = :CovenantType");
-
-		if (!tableType.name().endsWith("_Temp")) {
-			//sql.append("  AND Version= :Version-1");
-		}
+		sql.append(" Set");
+		sql.append(" ReceivableDate = ?, FrequencyDate = ?, DocumentReceivedDate = ?");
+		sql.append(", DocumentId = ?, OriginalDocument= ?, Version = ?, LastMntBy = ?");
+		sql.append(", LastMntOn = ?, RecordStatus = ?, RoleCode = ?, NextRoleCode = ?");
+		sql.append(", TaskId = ?, NextTaskId = ?, RecordType = ?, WorkFlowId = ?");
+		sql.append(" Where Id = ? and CovenantType = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		int[] recordCount;
 		try {
-			recordCount = jdbcTemplate.batchUpdate(sql.toString(),
-					SqlParameterSourceUtils.createBatch(covenantDocuments.toArray()));
+			int[] recordCount = jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps, int i) throws SQLException {
+					CovenantDocument cd = documents.get(i);
+					int index = 1;
+					ps.setDate(index++, JdbcUtil.getDate(cd.getReceivableDate()));
+					ps.setDate(index++, JdbcUtil.getDate(cd.getFrequencyDate()));
+					ps.setDate(index++, JdbcUtil.getDate(cd.getDocumentReceivedDate()));
+					ps.setObject(index++, cd.getDocumentId());
+					ps.setBoolean(index++, cd.isOriginalDocument());
+					ps.setInt(index++, cd.getVersion());
+					ps.setLong(index++, JdbcUtil.setLong(cd.getLastMntBy()));
+					ps.setTimestamp(index++, cd.getLastMntOn());
+					ps.setString(index++, cd.getRecordStatus());
+					ps.setString(index++, cd.getRoleCode());
+					ps.setString(index++, cd.getNextRoleCode());
+					ps.setString(index++, cd.getTaskId());
+					ps.setString(index++, cd.getNextTaskId());
+					ps.setString(index++, cd.getRecordType());
+					ps.setLong(index++, JdbcUtil.setLong(cd.getWorkflowId()));
+
+					ps.setLong(index++, cd.getId());
+					ps.setString(index, cd.getCovenantType());
+				}
+
+				@Override
+				public int getBatchSize() {
+					return documents.size();
+				}
+			});
+
+			if (recordCount.length <= 0) {
+				throw new ConcurrencyException();
+			}
+
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-
-		if (recordCount.length <= 0) {
-			throw new ConcurrencyException();
-		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override

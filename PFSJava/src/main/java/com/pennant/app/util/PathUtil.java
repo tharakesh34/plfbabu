@@ -63,8 +63,9 @@ public class PathUtil {
 
 	// Agreement Detail Paths
 	public static final String FINANCE_AGREEMENTS = "Agreements";
-	public static final String FINANCE_INTERESTCERTIFICATE = "/Agreements/InterestCertificate";
+	public static final String FINANCE_INTERESTCERTIFICATE = "Agreements/InterestCertificate";
 	public static final String FINANCE_LOANCLOSURE = "Agreements/LoanClosureLetter";
+	public static final String CovenantStatusReport = "Agreements/LOD";
 
 	// Report Detail paths
 	public static final String REPORTS_CHECKS = "Reports/Checks";
@@ -100,7 +101,7 @@ public class PathUtil {
 	public static final String TEMPLATES = "Templates";
 	public static final String FILE_UPLOADS_PATH = "FileUploads";
 
-	public static final String REPORTS_FINANCIALS_SPREADSHEETS = "Financials/SpreadSheets"; //For Credit Review Details
+	public static final String REPORTS_FINANCIALS_SPREADSHEETS = "Financials/SpreadSheets"; // For Credit Review Details
 	public static final String ExtLiability = "ExtLiability";
 	public static final String LoanReport = "LoanReport";
 

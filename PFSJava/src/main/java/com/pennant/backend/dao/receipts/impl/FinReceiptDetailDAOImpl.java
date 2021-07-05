@@ -232,20 +232,16 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 
 	@Override
 	public void updateReceiptStatus(long receiptID, long receiptSeqID, String status) {
-		logger.debug("Entering");
+		String sql = "Update FinReceiptDetail Set Status = ? Where ReceiptID = ? And ReceiptSeqID = ?";
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ReceiptID", receiptID);
-		source.addValue("ReceiptSeqID", receiptSeqID);
-		source.addValue("Status", status);
+		logger.debug(Literal.SQL + sql);
 
-		StringBuilder updateSql = new StringBuilder("Update FinReceiptDetail");
-		updateSql.append(" Set Status=:Status ");
-		updateSql.append(" Where ReceiptID = :ReceiptID AND ReceiptSeqID = :ReceiptSeqID ");
-
-		logger.debug("updateSql: " + updateSql.toString());
-		this.jdbcTemplate.update(updateSql.toString(), source);
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
+			ps.setString(index++, status);
+			ps.setLong(index++, receiptID);
+			ps.setLong(index++, receiptSeqID);
+		});
 	}
 
 	@Override
@@ -313,8 +309,8 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 	@Override
 	public List<RepayScheduleDetail> fetchRepaySchduleList(long receiptSeqId) {
 		StringBuilder selectSql = new StringBuilder();
-		selectSql
-				.append("select  a.SCHDATE,a.WAIVEDAMT from FINREPAYSCHEDULEDETAIL  a,FINREPAYHEADER b where a.repayID=b.REPAYID and b.RECEIPTSEQID="
+		selectSql.append(
+				"select  a.SCHDATE,a.WAIVEDAMT from FINREPAYSCHEDULEDETAIL  a,FINREPAYHEADER b where a.repayID=b.REPAYID and b.RECEIPTSEQID="
 						+ receiptSeqId);
 
 		BeanPropertySqlParameterSource beanParamSource = new BeanPropertySqlParameterSource(new FinReceiptDetail());
@@ -599,19 +595,14 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 	 */
 	@Override
 	public void updateReceiptStatusByReceiptId(long receiptID, String status) {
-		logger.debug("Entering");
+		String sql = "Update FinReceiptDetail Set Status = ? Where ReceiptID = ?";
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ReceiptID", receiptID);
-		source.addValue("Status", status);
+		logger.debug(Literal.SQL + sql);
 
-		StringBuilder updateSql = new StringBuilder("Update FinReceiptDetail");
-		updateSql.append(" Set Status=:Status ");
-		updateSql.append(" Where ReceiptID =:ReceiptID");
-
-		logger.debug("updateSql: " + updateSql.toString());
-		this.jdbcTemplate.update(updateSql.toString(), source);
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setString(1, status);
+			ps.setLong(2, receiptID);
+		});
 	}
 
 	@Override

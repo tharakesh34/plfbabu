@@ -105,8 +105,7 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @return
 	 * @throws InterfaceException
 	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 *             List<Object>
+	 * @throws InvocationTargetException List<Object>
 	 */
 	public AEEvent processCmtPostingDetails(Commitment commitment, Date dateAppDate, String acSetEvent)
 			throws InterfaceException, IllegalAccessException, InvocationTargetException {
@@ -300,14 +299,10 @@ public class PostingsPreparationUtil implements Serializable {
 	/**
 	 * Method to prepare accounting entries for FinancePostings
 	 * 
-	 * @param JVPostingEntry
-	 *            (List)
-	 * @param Base
-	 *            Currency (String)
-	 * @param Base
-	 *            Currency Number (String)
-	 * @param Base
-	 *            Currency Edit Field (int)
+	 * @param JVPostingEntry (List)
+	 * @param Base           Currency (String)
+	 * @param Base           Currency Number (String)
+	 * @param Base           Currency Edit Field (int)
 	 */
 	private List<JVPostingEntry> procJVPostings(List<JVPostingEntry> jvPostings, String baseCcy, String baseCcyNumber,
 			int baseCcyEditField) {
@@ -358,9 +353,10 @@ public class PostingsPreparationUtil implements Serializable {
 			internalAcEntryOne.setAcEntryRef(2);
 			internalAcEntryOne.setTxnCode(drCrTranCode);
 			internalAcEntryOne.setRevTxnCode(crDrTranCode);
-			internalAcEntryOne.setAccount((externalAcEntry.getAccount().length() > 4
-					? externalAcEntry.getAccount().substring(0, 4) : externalAcEntry.getAccount()) + "881"
-					+ CurrencyUtil.getFormat(externalAcEntry.getAccCCy()) + baseCcyNumber);
+			internalAcEntryOne.setAccount(
+					(externalAcEntry.getAccount().length() > 4 ? externalAcEntry.getAccount().substring(0, 4)
+							: externalAcEntry.getAccount()) + "881"
+							+ CurrencyUtil.getFormat(externalAcEntry.getAccCCy()) + baseCcyNumber);
 			internalAcEntryOne.setAcType("");
 			internalAcEntryOne.setTxnAmount_Batch(CalculationUtil.getConvertedAmount(internalAcEntryOne.getTxnCCy(),
 					baseCcy, internalAcEntryOne.getTxnAmount()));
@@ -374,9 +370,10 @@ public class PostingsPreparationUtil implements Serializable {
 			internalAcEntryTwo.setAcEntryRef(3);
 			internalAcEntryTwo.setTxnCode(crDrTranCode);
 			internalAcEntryTwo.setRevTxnCode(drCrTranCode);
-			internalAcEntryTwo.setAccount((externalAcEntry.getAccount().length() > 4
-					? externalAcEntry.getAccount().substring(0, 4) : externalAcEntry.getAccount()) + "881"
-					+ baseCcyNumber + CurrencyUtil.getFormat(externalAcEntry.getAccCCy()));
+			internalAcEntryTwo.setAccount(
+					(externalAcEntry.getAccount().length() > 4 ? externalAcEntry.getAccount().substring(0, 4)
+							: externalAcEntry.getAccount()) + "881" + baseCcyNumber
+							+ CurrencyUtil.getFormat(externalAcEntry.getAccCCy()));
 			internalAcEntryTwo.setAcType("");
 			internalAcEntryTwo.setTxnAmount_Batch(CalculationUtil.getConvertedAmount(internalAcEntryOne.getTxnCCy(),
 					baseCcy, internalAcEntryOne.getTxnAmount()));
@@ -625,10 +622,10 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws InterfaceException
 	 */
-	public List<ReturnDataSet> postReversalsByPostRef(long postRef, long postingId) {
+	public List<ReturnDataSet> postReversalsByPostRef(String postRef, long postingId, Date appDate) {
 		logger.debug(Literal.ENTERING);
 
-		List<ReturnDataSet> returnDataSets = getReversalsByPostRef(postRef, postingId);
+		List<ReturnDataSet> returnDataSets = getReversalsByPostRef(postRef, postingId, appDate);
 
 		postingsDAO.updateStatusByPostRef(postRef, AccountConstants.POSTINGS_REVERSE);
 
@@ -669,7 +666,7 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws InterfaceException
 	 */
-	public List<ReturnDataSet> getReversalsByPostRef(long postRef, long postingId) {
+	public List<ReturnDataSet> getReversalsByPostRef(String postRef, long postingId, Date appDate) {
 		logger.debug(Literal.ENTERING);
 
 		long newLinkedTranID = postingsDAO.getLinkedTransId();
@@ -681,7 +678,7 @@ public class PostingsPreparationUtil implements Serializable {
 			return returnDataSets;
 		}
 
-		engineExecution.getReversePostings(returnDataSets, newLinkedTranID, postingId);
+		engineExecution.getReversePostings(returnDataSets, newLinkedTranID, postingId, appDate);
 
 		logger.debug(Literal.LEAVING);
 		return returnDataSets;

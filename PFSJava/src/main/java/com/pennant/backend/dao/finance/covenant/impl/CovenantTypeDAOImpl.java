@@ -42,7 +42,6 @@
 */
 package com.pennant.backend.dao.finance.covenant.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -271,37 +270,69 @@ public class CovenantTypeDAOImpl extends SequenceDao<CovenantType> implements Co
 	}
 
 	@Override
-	public List<CovenantType> getCvntTypesByCatgy(String CategoryName, String type) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("Select Id, Code, Description, CovenantType, Category, DocType");
+	public List<CovenantType> getCvntTypesByCatgy(String categoryName, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, Code, Description, CovenantType, Category, DocType");
 		sql.append(", AllowPostPonement, MaxAllowedDays, AllowedPaymentModes");
 		sql.append(", AlertsRequired, Frequency, GraceDays, AlertDays, AlertType");
 		sql.append(", AlertToRoles, UserTemplate, CustomerTemplate");
 
 		if (type.contains("View")) {
-			sql.append(", DocTypeName, UserTemplateName, CustomerTemplateName, userTemplateCode, customerTemplateCode");
+			sql.append(", DocTypeName, UserTemplateName, CustomerTemplateName, UserTemplateCode, CustomerTemplateCode");
 		}
 
 		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From COVENANT_TYPES");
 		sql.append(type);
-		sql.append(" Where Category = :Category");
+		sql.append(" Where Category = ?");
 
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("Category", CategoryName);
+		logger.debug(Literal.SQL + sql.toString());
 
-		RowMapper<CovenantType> rowMapper = BeanPropertyRowMapper.newInstance(CovenantType.class);
-		List<CovenantType> covenantType = new ArrayList<>();
-		try {
-			covenantType = jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return covenantType;
+		return jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, categoryName);
+		}, (rs, i) -> {
+			CovenantType ct = new CovenantType();
+
+			ct.setId(rs.getLong("Id"));
+			ct.setCode(rs.getString("Code"));
+			ct.setDescription(rs.getString("Description"));
+			ct.setCovenantType(rs.getString("CovenantType"));
+			ct.setCategory(rs.getString("Category"));
+			ct.setDocType(rs.getString("DocType"));
+			ct.setAllowPostPonement(rs.getBoolean("AllowPostPonement"));
+			ct.setMaxAllowedDays(rs.getInt("MaxAllowedDays"));
+			ct.setAllowedPaymentModes(rs.getString("AllowedPaymentModes"));
+			ct.setAlertsRequired(rs.getBoolean("AlertsRequired"));
+			ct.setFrequency(rs.getString("Frequency"));
+			ct.setGraceDays(rs.getInt("GraceDays"));
+			ct.setAlertDays(rs.getInt("AlertDays"));
+			ct.setAlertType(rs.getString("AlertType"));
+			ct.setAlertToRoles(rs.getString("AlertToRoles"));
+			ct.setUserTemplate(rs.getLong("UserTemplate"));
+			ct.setCustomerTemplate(rs.getLong("CustomerTemplate"));
+			
+			if (type.contains("View")) {
+			ct.setDocTypeName(rs.getString("DocTypeName"));
+			ct.setUserTemplateName(rs.getString("UserTemplateName"));
+			ct.setCustomerTemplateName(rs.getString("CustomerTemplateName"));
+			ct.setUserTemplateCode(rs.getString("UserTemplateCode"));
+			ct.setCustomerTemplateCode(rs.getString("CustomerTemplateCode"));
+			}
+			
+			ct.setVersion(rs.getInt("Version"));
+			ct.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			ct.setLastMntBy(rs.getLong("LastMntBy"));
+			ct.setRecordStatus(rs.getString("RecordStatus"));
+			ct.setRoleCode(rs.getString("RoleCode"));
+			ct.setNextRoleCode(rs.getString("NextRoleCode"));
+			ct.setTaskId(rs.getString("TaskId"));
+			ct.setNextTaskId(rs.getString("NextTaskId"));
+			ct.setRecordType(rs.getString("RecordType"));
+			ct.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return ct;
+		});
 	}
 
 	@Override

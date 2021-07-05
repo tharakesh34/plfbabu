@@ -541,8 +541,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	 * based on the module workFlow Configuration. by using FeeWaiverHeaderDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtBMTFeeWaiverHeader by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -697,8 +696,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	 * FeeWaiverHeader by using FeeWaiverHeaderDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtFeeWaiverHeader by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -733,8 +731,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	 * AuditHeader and AdtBMTFeeWaiverHeader by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
 	 * Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws Exception
 	 */
@@ -768,6 +765,16 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			feeWaiverHeader.setNextTaskId("");
 			feeWaiverHeader.setWorkflowId(0);
 
+			if (PennantConstants.RECORD_TYPE_NEW.equals(feeWaiverHeader.getRecordType())) {
+				tranType = PennantConstants.TRAN_ADD;
+				feeWaiverHeaderDAO.save(feeWaiverHeader, TableType.MAIN_TAB);
+				feeWaiverHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+				feeWaiverHeader.setRecordType("");
+				feeWaiverHeaderDAO.update(feeWaiverHeader, TableType.MAIN_TAB);
+			}
+
 			// Fee Waivers List
 			if (CollectionUtils.isNotEmpty(feeWaiverHeader.getFeeWaiverDetails())) {
 				for (FeeWaiverDetail details : feeWaiverHeader.getFeeWaiverDetails()) {
@@ -780,29 +787,28 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					}
 
 					if (feeWaiverHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-						getFeeWaiverDetailDAO().save(details, TableType.MAIN_TAB);
+						feeWaiverDetailDAO.save(details, TableType.MAIN_TAB);
+						feeWaiverHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					} else {
-						getFeeWaiverDetailDAO().update(details, TableType.MAIN_TAB);
+						feeWaiverDetailDAO.update(details, TableType.MAIN_TAB);
 					}
-					getFeeWaiverDetailDAO().delete(details, TableType.TEMP_TAB);
+					if (!PennantConstants.FINSOURCE_ID_API.equals(feeWaiverHeader.getFinSourceID())) {
+						feeWaiverDetailDAO.delete(details, TableType.TEMP_TAB);
+					}
 				}
+
 			}
 
-			if (feeWaiverHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-				tranType = PennantConstants.TRAN_ADD;
-				feeWaiverHeader.setRecordType("");
-				getFeeWaiverHeaderDAO().save(feeWaiverHeader, TableType.MAIN_TAB);
-			} else {
-				tranType = PennantConstants.TRAN_UPD;
-				feeWaiverHeader.setRecordType("");
-				getFeeWaiverHeaderDAO().update(feeWaiverHeader, TableType.MAIN_TAB);
-			}
+			feeWaiverHeader.setRecordType("");
 
 			// update the waiver amounts to the respective tables
 			allocateWaiverAmounts(feeWaiverHeader);
 		}
 
-		feeWaiverHeaderDAO.delete(feeWaiverHeader, TableType.TEMP_TAB);
+		if (!PennantConstants.FINSOURCE_ID_API.equals(feeWaiverHeader.getFinSourceID())) {
+			feeWaiverHeaderDAO.delete(feeWaiverHeader, TableType.TEMP_TAB);
+		}
+
 		financeMainDAO.updateMaintainceStatus(feeWaiverHeader.getFinReference(), "");
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
@@ -2024,8 +2030,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	 * workFlow table by using getFeeWaiverHeaderDAO().delete with parameters FeeWaiverHeader,"_Temp" 3) Audit the
 	 * record in to AuditHeader and AdtBMTFeeWaiverHeader by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -2122,8 +2127,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

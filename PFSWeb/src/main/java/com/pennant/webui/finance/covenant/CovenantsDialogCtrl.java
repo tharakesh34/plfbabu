@@ -344,8 +344,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -354,8 +353,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -465,7 +463,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		readOnlyComponent(isReadOnly("CovenantDialog_Alertdays"), this.alertDays);
 		readOnlyComponent(isReadOnly("CovenantDialog_Internaluse"), this.internalUse);
 		this.description.setReadonly(true);
-		//readOnlyComponent(isReadOnly("CovenantDialog_Description"), this.description);
+		// readOnlyComponent(isReadOnly("CovenantDialog_Description"), this.description);
 		readOnlyComponent(isReadOnly("CovenantDialog_Remarks"), this.remarks);
 		readOnlyComponent(isReadOnly("CovenantDialog_AdditionalRemarks"), this.additionalRemarks);
 		readOnlyComponent(isReadOnly("CovenantDialog_StandardValue"), this.standardValue);
@@ -611,7 +609,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		this.description.setMaxlength(500);
 		this.alertDays.setMaxlength(3);
 		this.covenantGraceDays.setMaxlength(3);
-		this.description.setWidth("850px");	
+		this.description.setWidth("850px");
 		this.remarks.setWidth("850px");
 		this.remarks.setMaxlength(500);
 
@@ -644,8 +642,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinCovenantType
-	 *            FinCovenantTypeDetail
+	 * @param aFinCovenantType FinCovenantTypeDetail
 	 */
 	public void doWriteBeanToComponents(Covenant covenant) {
 		logger.debug(Literal.ENTERING);
@@ -883,7 +880,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			covenant.setAllowWaiver(this.alwWaiver.isChecked());
 		} catch (WrongValueException we) {
@@ -1093,11 +1090,10 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			this.description.setConstraint(new PTStringValidator(Labels.getLabel("label_Covenant_Description.value"),
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-		
+
 		if (!this.additionalRemarks.isReadonly()) {
-			this.additionalRemarks.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_CovenantsDialog_AdditionalRemarks.value"),
-							null, false));
+			this.additionalRemarks.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CovenantsDialog_AdditionalRemarks.value"), null, false));
 		}
 
 		if (!this.receivableDate.isReadonly() && this.pdd.isChecked()) {
@@ -2019,6 +2015,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		map.put("nextFrequecnyDate", this.covenantNextFrequencyDate.getValue());
 		map.put("loanStartDate", loanStartDt);
 		map.put("loanMaturityDate", maturityDate);
+		map.put("originalDocument", covenantDocument.isOriginalDocument());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/Covenant/CovenantDocumentDialog.zul", null, map);
@@ -2215,7 +2212,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 
 		this.covenantType.setValue(covenantTypeObject.getCode());
 		this.covenantType.setDescription(covenantTypeObject.getDescription());
-		//setting the covenant type(master) payment methods to covenant object
+		// setting the covenant type(master) payment methods to covenant object
 		if (this.covenant != null) {
 			this.covenant.setAllowedPaymentModes(covenantType.getAllowedPaymentModes());
 		}

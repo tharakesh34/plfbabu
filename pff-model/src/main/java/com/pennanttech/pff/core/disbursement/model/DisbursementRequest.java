@@ -143,6 +143,8 @@ public class DisbursementRequest implements Serializable {
 	@XmlElement // FIXME This field needs to be included in API Specification
 	private String disbParty;
 	private Date downloadedOn;
+	private String downloadType;
+	private BigDecimal loanAmount;
 
 	public DisbursementRequest() {
 		super();
@@ -906,5 +908,21 @@ public class DisbursementRequest implements Serializable {
 
 	public void setDownloadedOn(Date downloadedOn) {
 		this.downloadedOn = downloadedOn;
+	}
+
+	public String getDownloadType() {
+		return downloadType;
+	}
+
+	public void setDownloadType(String downloadType) {
+		this.downloadType = downloadType;
+	}
+
+	public BigDecimal getLoanAmount() {
+		return loanAmount;
+	}
+
+	public void setLoanAmount(BigDecimal loanAmount) {
+		this.loanAmount = loanAmount;
 	}
 }

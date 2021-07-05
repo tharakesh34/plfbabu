@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.dataengine.Event;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
@@ -27,6 +28,7 @@ public class DisbursementServiceImpl implements DisbursementService {
 
 	private OfflineDisbursement offlineDisbursement;
 	private OfflineDisbursement customOfflineDisbursement;
+	private OnlineDisbursement onlineDisbursement;
 	@SuppressWarnings("unused")
 	private IMPSDisbursement impsDisbursement;
 
@@ -35,7 +37,30 @@ public class DisbursementServiceImpl implements DisbursementService {
 		logger.info(Literal.ENTERING);
 		logger.info("Reuested user Id {}", request.getUserId());
 		logger.info(Literal.LEAVING);
-		return generateRequest(request);
+		if (PennantConstants.ONLINE.equals(request.getDownloadType())) {
+			return generateOnlineRequest(request);
+		} else {
+			return generateRequest(request);
+		}
+	}
+
+	private List<DataEngineStatus> generateOnlineRequest(DisbursementRequest request) {
+		logger.debug(Literal.ENTERING);
+
+		List<DataEngineStatus> statusList = new ArrayList<>();
+		DataEngineStatus status = new DataEngineStatus();
+
+		if (onlineDisbursement != null) {
+			try {
+				status = onlineDisbursement.processRequest(request);
+			} catch (Exception e) {
+				logger.debug(Literal.EXCEPTION, e);
+			}
+		}
+		statusList.add(status);
+
+		logger.debug(Literal.LEAVING);
+		return statusList;
 	}
 
 	private List<DataEngineStatus> generateRequest(DisbursementRequest request) {
@@ -174,6 +199,16 @@ public class DisbursementServiceImpl implements DisbursementService {
 
 	private OfflineDisbursement getOfflineDisbursement() {
 		return customOfflineDisbursement == null ? offlineDisbursement : customOfflineDisbursement;
+	}
+
+	public OnlineDisbursement getOnlineDisbursement() {
+		return onlineDisbursement;
+	}
+
+	@Autowired(required = false)
+	@Qualifier(value = "onlineDisbursement")
+	public void setOnlineDisbursement(OnlineDisbursement onlineDisbursement) {
+		this.onlineDisbursement = onlineDisbursement;
 	}
 
 }

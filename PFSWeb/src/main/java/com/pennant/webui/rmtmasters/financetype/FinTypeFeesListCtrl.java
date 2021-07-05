@@ -89,7 +89,7 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 	protected Window window_FinTypeFeesList;
 
 	private Component parent = null;
-	//private Tab parentTab = null;
+	// private Tab parentTab = null;
 	protected Listbox listBoxFinTypeFeesListOrigination;
 	protected Listbox listBoxFinTypeFeesListServicing;
 
@@ -198,7 +198,7 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		//getUserWorkspace().allocateAuthorities(super.pageRightName, roleCode);
+		// getUserWorkspace().allocateAuthorities(super.pageRightName, roleCode);
 		this.btnNew_FinTypeFeesList_Origination.setVisible(!isCompReadonly);
 		this.btnNew_FinTypeFeesList_Servicing.setVisible(!isCompReadonly);
 
@@ -400,10 +400,11 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 		map.put("excludeAppFeeCodes", this.excludeAppFeeCodes);
 
 		String feeTypeCode = finTypeFees.getFeeTypeCode();
+		String subventionFeeCode = PennantConstants.FEETYPE_SUBVENTION;
 
 		if ((AdvanceRuleCode.ADVINT.name().equals(feeTypeCode) || AdvanceRuleCode.ADVEMI.name().equals(feeTypeCode)
-				|| AdvanceRuleCode.CASHCLT.name().equals(feeTypeCode)
-				|| AdvanceRuleCode.DSF.name().equals(feeTypeCode))) {
+				|| AdvanceRuleCode.CASHCLT.name().equals(feeTypeCode) || AdvanceRuleCode.DSF.name().equals(feeTypeCode)
+				|| subventionFeeCode.equals(feeTypeCode))) {
 			map.put("enqiryModule", enqiryModule);
 		}
 		// call the ZUL-file with the parameters packed in a map

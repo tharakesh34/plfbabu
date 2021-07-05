@@ -44,6 +44,7 @@ package com.pennant.webui.legal.legaldetail.model;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -71,6 +72,12 @@ public class LegalDetailListModelItemRenderer implements ListitemRenderer<LegalD
 
 		Listcell lc;
 		lc = new Listcell(legalDetail.getLoanReference());
+		lc.setParent(item);
+
+		lc = new Listcell(StringUtils.trimToEmpty(legalDetail.getApplicantName()));
+		lc.setParent(item);
+
+		lc = new Listcell(StringUtils.trimToEmpty(legalDetail.getRequestStage()));
 		lc.setParent(item);
 
 		lc = new Listcell(legalDetail.getCollateralReference());

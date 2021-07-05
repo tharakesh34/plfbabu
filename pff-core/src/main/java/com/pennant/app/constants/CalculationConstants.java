@@ -58,11 +58,11 @@ public class CalculationConstants {
 	public static final String IDB_ACT_365LEAP = "A/A_365L";
 	public static final String IDB_ACT_365LEAPS = "A/A365LS";
 	public static final String IDB_BY_PERIOD = "P/360";
-	//30E/360 ISDA OR Actual/365
+	// 30E/360 ISDA OR Actual/365
 	public static final String IDB_30E360IH = "30E360IH";
-	//30E/360 ISDA OR Actual/365 Fixed
+	// 30E/360 ISDA OR Actual/365 Fixed
 	public static final String IDB_30E360IA = "30E360IA";
-	//15E/360 ISDA OR Actual/365 Fixed
+	// 15E/360 ISDA OR Actual/365 Fixed
 	public static final String IDB_15E360IA = "15E360IA";
 
 	// Schedule Calculations constants
@@ -121,7 +121,7 @@ public class CalculationConstants {
 	public static final String RPYCHG_STEPPOS = "STEPPOS";
 	public static final String RPYCHG_STEPINST = "STEPINST";
 
-	//Step Loan Recal Types
+	// Step Loan Recal Types
 	public static final String RPYCHG_STEPADJTNR = "SADJTNR";
 	public static final String RPYCHG_STEPADJEMI = "SADJEMI";
 
@@ -147,6 +147,8 @@ public class CalculationConstants {
 	public static final String REMFEE_SCHD_TO_N_INSTALLMENTS = "STNI";
 	public static final String REMFEE_PAID_BY_CUSTOMER = "PBCU";
 	public static final String REMFEE_WAIVED_BY_BANK = "WVEB";
+	// SUBVENTION FEE SCHEDULE METHOD
+	public static final String FEE_SUBVENTION = "SUBVEN";
 
 	// PAST DUE PROFIT CALCULATION METHODS
 	public static final String PDPFTCAL_NOTAPP = "N";

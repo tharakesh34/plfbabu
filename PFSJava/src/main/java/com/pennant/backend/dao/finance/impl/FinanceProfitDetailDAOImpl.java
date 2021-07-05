@@ -238,8 +238,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		sql.append(", PrvRpySchPft, LatestRpyDate, LatestRpyPri, LatestRpyPft, TotalWriteoff, FirstODDate");
 		sql.append(", PrvODDate, ODPrincipal, ODProfit, CurODDays, ActualODDays, FinStartDate, FullPaidDate");
 		sql.append(", ExcessAmt, EmiInAdvance, PayableAdvise, ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv");
-		sql.append(
-				", AMZMethod, GapIntAmz, GapIntAmzLbd, SvAmount, CbAmount, NOPaidInst, NOAutoIncGrcEnd, WriteoffLoan");
+		sql.append(", AMZMethod, GapIntAmz, GapIntAmzLbd, SvAmount, CbAmount, NOPaidInst");
+		sql.append(", NOAutoIncGrcEnd, WriteoffLoan");
 		sql.append(" from FinPftDetails");
 		return sql;
 	}
@@ -263,6 +263,17 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		ProfitDetailRowMapper rowMapper = new ProfitDetailRowMapper();
 		return this.jdbcTemplate.getJdbcOperations().queryForObject(sql.toString(),
 				new Object[] { finReference, isActive }, rowMapper);
+	}
+
+	@Override
+	public FinanceProfitDetail getFinProfitDetailsByFinRef(String finReference) {
+		StringBuilder sql = getProfitDetailQuery();
+		sql.append(" Where FinReference = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		ProfitDetailRowMapper rowMapper = new ProfitDetailRowMapper();
+		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, rowMapper);
 	}
 
 	/**
@@ -460,60 +471,125 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	}
 
 	@Override
-	public void update(FinanceProfitDetail finProfitDetails, boolean isRpyProcess) {
-		logger.debug("Entering");
+	public void update(FinanceProfitDetail pd, boolean isRpyProcess) {
+		StringBuilder sql = new StringBuilder("Update FinPftDetails");
+		sql.append(" Set");
+		sql.append(" PftAccrued = ?, PftAccrueSusp = ?, PftAmz = ?, PftAmzSusp = ?, PftAmzNormal = ?");
+		sql.append(", PftAmzPD = ?, PftInSusp = ?, CurFlatRate = ?, CurReducingRate = ?, TotalPftSchd = ?");
+		sql.append(", TotalPftCpz = ?, TotalPftPaid = ?, TotalPftBal = ?, TdSchdPft = ?, TdPftCpz = ?");
+		sql.append(", TdSchdPftPaid = ?, TdSchdPftBal = ?, TotalpriSchd = ?, TotalPriPaid = ?, TotalPriBal = ?");
+		sql.append(", TdSchdPri = ?, TdSchdPriPaid = ?, TdSchdPriBal = ?, CalPftOnPD = ?, PftOnPDMethod = ?");
+		sql.append(", PftOnPDMrg = ?, TotPftOnPD = ?, TotPftOnPDPaid = ?, TotPftOnPDWaived = ?, TotPftOnPDDue = ?");
+		sql.append(", NOInst = ?, NOPaidInst = ?, NOODInst = ?, FutureInst = ?, RemainingTenor = ?");
+		sql.append(", TotalTenor = ?, ODPrincipal = ?, ODProfit = ?, CurODDays = ?, MaxODDays = ?");
+		sql.append(", FirstODDate = ?, PrvODDate = ?, PenaltyPaid = ?, PenaltyDue = ?, PenaltyWaived = ?");
+		sql.append(", FirstRepayDate = ?, FirstRepayAmt = ?, FinalRepayAmt = ?, FirstDisbDate = ?");
+		sql.append(", LatestDisbDate = ?, FullPaidDate = ?, PrvRpySchDate = ?, PrvRpySchPri = ?");
+		sql.append(", PrvRpySchPft = ?, RepayFrq = ?, NSchdDate = ?, NSchdPri = ?, NSchdPft = ?");
+		sql.append(", NSchdPriDue = ?, NSchdPftDue = ?, AccumulatedDepPri = ?, DepreciatePri = ?");
+		sql.append(", TotalPriPaidInAdv = ?, TotalPftPaidInAdv = ?, LastMdfDate = ?, MaturityDate = ?");
+		sql.append(", FinIsActive = ?, ClosingStatus = ?, FinStatus = ?, ActualODDays = ?, AmzTillLBD = ?");
+		sql.append(", LpiTillLBD = ?, LppTillLBD = ?, GstLpiTillLBD = ?, GstLppTillLBD = ?");
+		sql.append(", GapIntAmz = ?, GapIntAmzLbd = ?");
 
-		StringBuilder updateSql = new StringBuilder("Update FinPftDetails Set");
-		updateSql.append(" PftAccrued = :PftAccrued, PftAccrueSusp = :PftAccrueSusp, PftAmz = :PftAmz,");
-		updateSql.append(" PftAmzSusp = :PftAmzSusp, PftAmzNormal = :PftAmzNormal, PftAmzPD = :PftAmzPD,");
-		updateSql.append(" PftInSusp = :PftInSusp, CurFlatRate = :CurFlatRate, CurReducingRate = :CurReducingRate,");
-		updateSql.append(" TotalPftSchd = :TotalPftSchd, TotalPftCpz = :TotalPftCpz, TotalPftPaid = :TotalPftPaid,");
-		updateSql.append(" TotalPftBal = :TotalPftBal, TdSchdPft = :TdSchdPft, TdPftCpz = :TdPftCpz,");
-		updateSql.append(" TdSchdPftPaid = :TdSchdPftPaid, TdSchdPftBal = :TdSchdPftBal,");
-		updateSql.append(" TotalpriSchd = :TotalpriSchd,TotalPriPaid = :TotalPriPaid, TotalPriBal = :TotalPriBal,");
-		updateSql.append(" TdSchdPri = :TdSchdPri, TdSchdPriPaid = :TdSchdPriPaid, TdSchdPriBal = :TdSchdPriBal,");
-		updateSql.append(" CalPftOnPD = :CalPftOnPD, PftOnPDMethod = :PftOnPDMethod, PftOnPDMrg = :PftOnPDMrg,");
-		updateSql.append(" TotPftOnPD = :TotPftOnPD,TotPftOnPDPaid = :TotPftOnPDPaid,");
-		updateSql.append(" TotPftOnPDWaived = :TotPftOnPDWaived, TotPftOnPDDue = :TotPftOnPDDue,");
-		updateSql.append(" NOInst = :NOInst, NOPaidInst = :NOPaidInst, NOODInst = :NOODInst,");
-		updateSql.append(" FutureInst = :FutureInst, RemainingTenor = :RemainingTenor, TotalTenor = :TotalTenor,");
-		updateSql.append(" ODPrincipal = :ODPrincipal, ODProfit = :ODProfit, CurODDays = :CurODDays,");
-		updateSql.append(" MaxODDays = :MaxODDays, FirstODDate = :FirstODDate, PrvODDate = :PrvODDate,");
-		updateSql.append(" PenaltyPaid = :PenaltyPaid, PenaltyDue = :PenaltyDue, PenaltyWaived = :PenaltyWaived,");
-		updateSql.append(" FirstRepayDate = :FirstRepayDate, FirstRepayAmt = :FirstRepayAmt,");
-		updateSql.append(" FinalRepayAmt = :FinalRepayAmt, FirstDisbDate = :FirstDisbDate,");
-		updateSql.append(" LatestDisbDate = :LatestDisbDate, FullPaidDate = :FullPaidDate,");
-		updateSql.append(" PrvRpySchDate = :PrvRpySchDate, PrvRpySchPri = :PrvRpySchPri,");
-		updateSql.append(" PrvRpySchPft = :PrvRpySchPft, RepayFrq=:RepayFrq,");
-		updateSql.append(" NSchdDate = :NSchdDate, NSchdPri = :NSchdPri, NSchdPft = :NSchdPft, ");
-		updateSql.append(" NSchdPriDue = :NSchdPriDue, NSchdPftDue = :NSchdPftDue,");
-		updateSql.append(" AccumulatedDepPri = :AccumulatedDepPri, DepreciatePri = :DepreciatePri,");
-		updateSql.append(" TotalPriPaidInAdv = :TotalPriPaidInAdv,");
-		updateSql.append(
-				" TotalPftPaidInAdv = :TotalPftPaidInAdv, LastMdfDate = :LastMdfDate,MaturityDate=:MaturityDate, ");
-		updateSql.append(
-				" FinIsActive = :FinIsActive, ClosingStatus = :ClosingStatus,FinStatus=:FinStatus, ActualODDays = :ActualODDays,");
-		updateSql.append(
-				" AmzTillLBD=:AmzTillLBD, LpiTillLBD=:LpiTillLBD, LppTillLBD=:LppTillLBD,GstLpiTillLBD=:GstLpiTillLBD, GstLppTillLBD=:GstLppTillLBD ");
-		updateSql.append(",GapIntAmz = :GapIntAmz, GapIntAmzLbd = :GapIntAmzLbd");
-		/*
-		 * updateSql.append(" ExcessAmt = :ExcessAmt, "); updateSql.
-		 * append(" EmiInAdvance = :EmiInAdvance, PayableAdvise = :PayableAdvise, " ); updateSql.
-		 * append(" ExcessAmtResv = :ExcessAmtResv,  EmiInAdvanceResv = :EmiInAdvanceResv, " ); updateSql.
-		 * append("  PayableAdviseResv = :PayableAdviseResv,  LastMdfDate = :LastMdfDate" );
-		 */
 		if (isRpyProcess) {
-			updateSql.append(" ,LatestRpyDate = :LatestRpyDate, ");
-			updateSql.append(" LatestRpyPri =:LatestRpyPri, LatestRpyPft = :LatestRpyPft ");
+			sql.append(", LatestRpyDate = ?, LatestRpyPri = ?, LatestRpyPft = ?");
 		}
 
-		updateSql.append(" Where FinReference =:FinReference");
+		sql.append(" Where FinReference = ?");
 
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug(Literal.SQL + sql);
 
-		logger.debug("Leaving");
+		jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setBigDecimal(index++, pd.getPftAccrued());
+			ps.setBigDecimal(index++, pd.getPftAccrueSusp());
+			ps.setBigDecimal(index++, pd.getPftAmz());
+			ps.setBigDecimal(index++, pd.getPftAmzSusp());
+			ps.setBigDecimal(index++, pd.getPftAmzNormal());
+			ps.setBigDecimal(index++, pd.getPftAmzPD());
+			ps.setBoolean(index++, pd.isPftInSusp());
+			ps.setBigDecimal(index++, pd.getCurFlatRate());
+			ps.setBigDecimal(index++, pd.getCurReducingRate());
+			ps.setBigDecimal(index++, pd.getTotalPftSchd());
+			ps.setBigDecimal(index++, pd.getTotalPftCpz());
+			ps.setBigDecimal(index++, pd.getTotalPftPaid());
+			ps.setBigDecimal(index++, pd.getTotalPftBal());
+			ps.setBigDecimal(index++, pd.getTdSchdPft());
+			ps.setBigDecimal(index++, pd.getTdPftCpz());
+			ps.setBigDecimal(index++, pd.getTdSchdPftPaid());
+			ps.setBigDecimal(index++, pd.getTdSchdPftBal());
+			ps.setBigDecimal(index++, pd.getTotalpriSchd());
+			ps.setBigDecimal(index++, pd.getTotalPriPaid());
+			ps.setBigDecimal(index++, pd.getTotalPriBal());
+			ps.setBigDecimal(index++, pd.getTdSchdPri());
+			ps.setBigDecimal(index++, pd.getTdSchdPriPaid());
+			ps.setBigDecimal(index++, pd.getTdSchdPriBal());
+			ps.setBoolean(index++, pd.isCalPftOnPD());
+			ps.setString(index++, pd.getPftOnPDMethod());
+			ps.setBigDecimal(index++, pd.getPftOnPDMrg());
+			ps.setBigDecimal(index++, pd.getTotPftOnPD());
+			ps.setBigDecimal(index++, pd.getTotPftOnPDPaid());
+			ps.setBigDecimal(index++, pd.getTotPftOnPDWaived());
+			ps.setBigDecimal(index++, pd.getTotPftOnPDDue());
+			ps.setInt(index++, pd.getNOInst());
+			ps.setInt(index++, pd.getNOPaidInst());
+			ps.setInt(index++, pd.getNOODInst());
+			ps.setInt(index++, pd.getFutureInst());
+			ps.setInt(index++, pd.getRemainingTenor());
+			ps.setInt(index++, pd.getTotalTenor());
+			ps.setBigDecimal(index++, pd.getODPrincipal());
+			ps.setBigDecimal(index++, pd.getODProfit());
+			ps.setInt(index++, pd.getCurODDays());
+			ps.setInt(index++, pd.getMaxODDays());
+			ps.setDate(index++, JdbcUtil.getDate(pd.getFirstODDate()));
+			ps.setDate(index++, JdbcUtil.getDate(pd.getPrvODDate()));
+			ps.setBigDecimal(index++, pd.getPenaltyPaid());
+			ps.setBigDecimal(index++, pd.getPenaltyDue());
+			ps.setBigDecimal(index++, pd.getPenaltyWaived());
+			ps.setDate(index++, JdbcUtil.getDate(pd.getFirstRepayDate()));
+			ps.setBigDecimal(index++, pd.getFirstRepayAmt());
+			ps.setBigDecimal(index++, pd.getFinalRepayAmt());
+			ps.setDate(index++, JdbcUtil.getDate(pd.getFirstDisbDate()));
+			ps.setDate(index++, JdbcUtil.getDate(pd.getLatestDisbDate()));
+			ps.setDate(index++, JdbcUtil.getDate(pd.getFullPaidDate()));
+			ps.setDate(index++, JdbcUtil.getDate(pd.getPrvRpySchDate()));
+			ps.setBigDecimal(index++, pd.getPrvRpySchPri());
+			ps.setBigDecimal(index++, pd.getPrvRpySchPft());
+			ps.setString(index++, pd.getRepayFrq());
+			ps.setDate(index++, JdbcUtil.getDate(pd.getNSchdDate()));
+			ps.setBigDecimal(index++, pd.getNSchdPri());
+			ps.setBigDecimal(index++, pd.getNSchdPft());
+			ps.setBigDecimal(index++, pd.getNSchdPriDue());
+			ps.setBigDecimal(index++, pd.getNSchdPftDue());
+			ps.setBigDecimal(index++, pd.getAccumulatedDepPri());
+			ps.setBigDecimal(index++, pd.getDepreciatePri());
+			ps.setBigDecimal(index++, pd.getTotalPriPaidInAdv());
+			ps.setBigDecimal(index++, pd.getTotalPftPaidInAdv());
+			ps.setDate(index++, JdbcUtil.getDate(pd.getLastMdfDate()));
+			ps.setDate(index++, JdbcUtil.getDate(pd.getMaturityDate()));
+			ps.setBoolean(index++, pd.getFinIsActive());
+			ps.setString(index++, pd.getClosingStatus());
+			ps.setString(index++, pd.getFinStatus());
+			ps.setInt(index++, pd.getActualODDays());
+			ps.setBigDecimal(index++, pd.getAmzTillLBD());
+			ps.setBigDecimal(index++, pd.getLpiTillLBD());
+			ps.setBigDecimal(index++, pd.getLppTillLBD());
+			ps.setBigDecimal(index++, pd.getGstLpiTillLBD());
+			ps.setBigDecimal(index++, pd.getGstLppTillLBD());
+			ps.setBigDecimal(index++, pd.getGapIntAmz());
+			ps.setBigDecimal(index++, pd.getGapIntAmzLbd());
+
+			if (isRpyProcess) {
+				ps.setDate(index++, JdbcUtil.getDate(pd.getLatestRpyDate()));
+				ps.setBigDecimal(index++, pd.getLatestRpyPri());
+				ps.setBigDecimal(index++, pd.getLatestRpyPft());
+			}
+
+			ps.setString(index, pd.getFinReference());
+		});
+
 	}
 
 	@Override
@@ -1049,7 +1125,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	 * @param finReference
 	 * @param type
 	 * 
-	 *            method return curOddays from FinPFtDetails Based On Reference
+	 *                     method return curOddays from FinPFtDetails Based On Reference
 	 */
 	@Override
 	public int getCurOddays(String finReference, String type) {
@@ -1075,7 +1151,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	 * @param finReference
 	 * @param type
 	 * 
-	 *            method return PFTINSUSP from FinPFtDetails Based On Reference
+	 *                     method return PFTINSUSP from FinPFtDetails Based On Reference
 	 */
 	@Override
 	public boolean isSuspenseFinance(String finReference) {
@@ -1576,17 +1652,14 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	}
 
 	@Override
-	public void UpdateClosingSts(String finReference, boolean writeoffLoan) {
-		StringBuilder sql = new StringBuilder("Update FinPftDetails");
-		sql.append(" Set WriteoffLoan = ?");
-		sql.append(" Where FinReference = ?");
+	public void updateClosingSts(String finReference, boolean writeoffLoan) {
+		String sql = "Update FinPftDetails Set WriteoffLoan = ? Where FinReference = ?";
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		this.jdbcOperations.update(sql.toString(), ps -> {
-			int index = 1;
-			ps.setBoolean(index++, writeoffLoan);
-			ps.setString(index++, finReference);
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setBoolean(1, writeoffLoan);
+			ps.setString(2, finReference);
 		});
 	}
 

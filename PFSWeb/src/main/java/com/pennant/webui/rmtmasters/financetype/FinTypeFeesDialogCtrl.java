@@ -1,42 +1,24 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinTypeFeesDialogCtrl.java                                           * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  04-12-2013    														*
- *                                                                  						*
- * Modified Date    :  04-12-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinTypeFeesDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 04-12-2013 * *
+ * Modified Date : 04-12-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 04-12-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 04-12-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.rmtmasters.financetype;
@@ -138,7 +120,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	private transient boolean validationOn;
 
 	private String userRole = "";
-	//private FinanceTypeDialogCtrl financeTypeDialogCtrl;
+	// private FinanceTypeDialogCtrl financeTypeDialogCtrl;
 	private FinTypeFeesListCtrl finTypeFeesListCtrl;
 	private List<FinTypeFees> finTypeFeesList;
 	private int ccyFormat = 0;
@@ -382,8 +364,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -406,8 +387,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinTypeFees
-	 *            FinTypeFees
+	 * @param aFinTypeFees FinTypeFees
 	 */
 	public void doWriteBeanToComponents(FinTypeFees aFinTypeFees) {
 		logger.debug("Entering");
@@ -467,7 +447,8 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			excluedeFields = getExcludeFields();
 		}
 
-		if (!ImplementationConstants.ALLOW_PAID_FEE_SCHEDULE_METHOD) { //Paid by customer and waived by bank has been excluded
+		if (!ImplementationConstants.ALLOW_PAID_FEE_SCHEDULE_METHOD) { // Paid by customer and waived by bank has been
+																		// excluded
 			excluedeFields = excluedeFields + "," + CalculationConstants.REMFEE_PAID_BY_CUSTOMER + ","
 					+ CalculationConstants.REMFEE_WAIVED_BY_BANK + ",";
 		}
@@ -494,7 +475,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		doSetConditionalProp();
 		doSetCalculationTypeProp();
 		doSetFeeSchdMethodProp();
-		//CR : Deduct fee at the time of additional disbursal
+		// CR : Deduct fee at the time of additional disbursal
 		doSetFeeSchdMethod(aFinTypeFees.getFinEvent());
 		doSetPercTypeProp();
 		logger.debug("Leaving");
@@ -1090,7 +1071,8 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 							finTypeFeesList.add(aFinTypeFees);
 						} else if (aFinTypeFees.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
 							recordAdded = true;
-							//List<FinTypeFees> savedList = getFinTypeFeesListCtrl().getFinanceType().getFinTypeFeesList();
+							// List<FinTypeFees> savedList =
+							// getFinTypeFeesListCtrl().getFinanceType().getFinTypeFeesList();
 							List<FinTypeFees> savedList = getFinTypeFeesListCtrl().getFinTypeFeesList();
 							for (int j = 0; j < savedList.size(); j++) {
 								FinTypeFees accType = savedList.get(j);
@@ -1188,7 +1170,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		this.percentage.setValue(BigDecimal.ZERO);
 		this.calculationOn.setValue("");
 		doSetCalculationTypeProp();
-		//Fees allowed zero when calculation type is Fixed Amount
+		// Fees allowed zero when calculation type is Fixed Amount
 		if (StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT,
 				this.calculationType.getSelectedItem().getValue().toString())
 				&& StringUtils.equals("Y", allowFeeZero)) {
@@ -1340,26 +1322,42 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 
 	private void doSetFeeSchdMethodProp() {
 		String feeScheduleMethodValue = this.feeScheduleMethod.getSelectedItem().getValue();
-		if (StringUtils.equals(CalculationConstants.REMFEE_PAID_BY_CUSTOMER, feeScheduleMethodValue)) {
+		switch (feeScheduleMethodValue) {
+		case CalculationConstants.REMFEE_PAID_BY_CUSTOMER:
 			readOnlyComponent(true, this.maxWaiver);
 			this.maxWaiver.setValue(BigDecimal.ZERO);
 			this.alwDeviation.setDisabled(true);
 			this.alwDeviation.setChecked(false);
 			this.alwModifyFeeSchdMthd.setDisabled(true);
 			this.alwModifyFeeSchdMthd.setChecked(true);
-		} else if (StringUtils.equals(CalculationConstants.REMFEE_WAIVED_BY_BANK, feeScheduleMethodValue)) {
+			break;
+		case CalculationConstants.REMFEE_WAIVED_BY_BANK:
 			readOnlyComponent(true, this.maxWaiver);
 			this.maxWaiver.setValue(BigDecimal.valueOf(100));
 			this.alwDeviation.setDisabled(true);
 			this.alwDeviation.setChecked(false);
 			this.alwModifyFeeSchdMthd.setDisabled(true);
 			this.alwModifyFeeSchdMthd.setChecked(true);
-		} else {
+			break;
+		case CalculationConstants.FEE_SUBVENTION:
+			this.alwPreIncomization.setDisabled(true);
+			this.calculationType.setDisabled(false);
+			this.amount.setReadonly(false);
+			this.ruleCode.setReadonly(false);
+			this.percentage.setReadonly(false);
+			this.feeScheduleMethod.setDisabled(false);
+			this.alwModifyFee.setDisabled(isReadOnly("FinTypeFeesDialog_alwModifyFee"));
+			this.alwDeviation.setChecked(false);
+			this.btnSave.setDisabled(false);
+
+			break;
+		default:
 			readOnlyComponent(isReadOnly("FinTypeFeesDialog_maxWaiver"), this.maxWaiver);
 			this.maxWaiver.setValue(getFinTypeFees().getMaxWaiverPerc());
 			this.alwModifyFee.setDisabled(isReadOnly("FinTypeFeesDialog_alwModifyFee"));
 			this.alwModifyFeeSchdMthd.setDisabled(isReadOnly("FinTypeFeesDialog_alwModifyFeeSchdMthd"));
 			this.alwDeviation.setDisabled(isReadOnly("FinTypeFeesDialog_alwDeviation"));
+			break;
 		}
 	}
 
@@ -1404,12 +1402,15 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		this.alwModifyFeeSchdMthd.setVisible(false);
 		this.label_FinTypeFeesDialog_AlwModifyFeeSchdMthd.setVisible(false);
 		this.feeScheduleMethod.setReadonly(isReadOnly("FinTypeFeesDialog_feeScheduleMethod"));
-		if (StringUtils.equals(finEventValue, AccountEventConstants.ACCEVENT_CMTDISB)) {
+		if (AccountEventConstants.ACCEVENT_CMTDISB.equals(finEventValue)) {
 			excluedeFields = getExcludeFields();
 		}
 		fillComboBox(this.feeScheduleMethod, getFinTypeFees().getFeeScheduleMethod(),
 				PennantStaticListUtil.getRemFeeSchdMethods(), excluedeFields);
-
+		if (CalculationConstants.FEE_SUBVENTION.equals(this.feeType.getValue())) {
+			this.feeScheduleMethod.setValue(Labels.getLabel("label_Fee_Subvention"));
+			this.feeScheduleMethod.setReadonly(true);
+		}
 	}
 
 	// ******************************************************//

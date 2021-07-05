@@ -120,8 +120,7 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 	 * based on the module workFlow Configuration. by using VehicleDealerDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtAMTVehicleDealer by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -159,8 +158,7 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 	 * AMTVehicleDealer by using VehicleDealerDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtAMTVehicleDealer by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -183,10 +181,8 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 	/**
 	 * getVehicleDealerById fetch the details by using VehicleDealerDAO's getVehicleDealerById method.
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return VehicleDealer
 	 */
 	@Override
@@ -208,8 +204,7 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 	 * getApprovedVehicleDealerById fetch the details by using VehicleDealerDAO's getVehicleDealerById method . with
 	 * parameter id and type as blank. it fetches the approved records from the AMTVehicleDealer.
 	 * 
-	 * @param id
-	 *            (int)
+	 * @param id (int)
 	 * @return VehicleDealer
 	 */
 	public VehicleDealer getApprovedVehicleDealerById(long id) {
@@ -237,8 +232,7 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtAMTVehicleDealer
 	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -302,8 +296,7 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 	 * workFlow table by using getVehicleDealerDAO().delete with parameters vehicleDealer,"_Temp" 3) Audit the record in
 	 * to AuditHeader and AdtAMTVehicleDealer by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -330,8 +323,7 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -562,7 +554,7 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
 		}
 
-		//validate FromState
+		// validate FromState
 		if (StringUtils.isNotBlank(vehicleDealer.getFromprovince())) {
 			Province province = this.provinceDAO.getProvinceById(vehicleDealer.getFromprovince(), "");
 
@@ -573,7 +565,7 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 			}
 		}
 
-		//validate ToState
+		// validate ToState
 		if (StringUtils.isNotBlank(vehicleDealer.getToprovince())) {
 			Province province = this.provinceDAO.getProvinceById(vehicleDealer.getToprovince(), "");
 
@@ -612,7 +604,7 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 			}
 		}
 
-		//validate account no
+		// validate account no
 		if (!StringUtils.equals(vehicleDealer.getDealerType(), "DST")) {
 			if (StringUtils.isBlank(vehicleDealer.getAccountNo())) {
 				String[] valueParm = new String[1];
@@ -647,6 +639,16 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 		return vehicleDealerDAO.getVehicleDealerById(ids);
 	}
 
+	@Override
+	public VehicleDealer getApprovedVehicleDealerById(String code, String delarType, String type) {
+		return vehicleDealerDAO.getVehicleDealerById(code, delarType, type);
+	}
+
+	@Override
+	public int getApprovedVehicleDealerCountById(long manufacturerDealerId, String delarType) {
+		return vehicleDealerDAO.getApprovedVehicleDealerCountById(manufacturerDealerId, delarType);
+	}
+
 	public CustomerDAO getCustomerDAO() {
 		return customerDAO;
 	}
@@ -677,11 +679,6 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 
 	public void setBankBranchService(BankBranchService bankBranchService) {
 		this.bankBranchService = bankBranchService;
-	}
-
-	@Override
-	public VehicleDealer getApprovedVehicleDealerById(String code, String delarType, String type) {
-		return vehicleDealerDAO.getVehicleDealerById(code, delarType, type);
 	}
 
 }

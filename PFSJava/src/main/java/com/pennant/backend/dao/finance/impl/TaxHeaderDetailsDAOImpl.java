@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -169,12 +170,25 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 
 	@Override
 	public void saveTaxes(List<Taxes> taxes, String tableType) {
-		for (Taxes tax : taxes) {
-			if (tax.getId() == Long.MIN_VALUE) {
-				tax.setId(getNextValue("SeqTax_Details"));
-			}
-		}
+		String sql = getInsertSqlQuery(tableType);
 
+		logger.trace(Literal.SQL + sql);
+
+		jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				Taxes td = taxes.get(i);
+				setparameters(ps, td);
+			}
+
+			@Override
+			public int getBatchSize() {
+				return taxes.size();
+			}
+		});
+	}
+
+	private String getInsertSqlQuery(String tableType) {
 		StringBuilder sql = new StringBuilder("Insert into");
 		sql.append(" TAX_DETAILS").append(StringUtils.trimToEmpty(tableType));
 		sql.append(" (Id, ReferenceId, TaxType, TaxPerc, ActualTax, PaidTax, NetTax, RemFeeTax, WaivedTax");
@@ -183,43 +197,52 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 		sql.append(") values(");
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
-		logger.trace(Literal.SQL + sql.toString());
+		return sql.toString();
+	}
 
-		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+	private void setparameters(PreparedStatement ps, Taxes td) throws SQLException {
+		int index = 1;
 
-			@Override
-			public void setValues(PreparedStatement ps, int i) throws SQLException {
-				Taxes td = taxes.get(i);
+		if (td.getId() == Long.MIN_VALUE) {
+			td.setId(getNextValue("SeqTax_Details"));
+		}
 
-				int index = 1;
+		ps.setLong(index++, JdbcUtil.setLong(td.getId()));
+		ps.setLong(index++, JdbcUtil.setLong(td.getReferenceId()));
+		ps.setString(index++, td.getTaxType());
+		ps.setBigDecimal(index++, td.getTaxPerc());
+		ps.setBigDecimal(index++, td.getActualTax());
+		ps.setBigDecimal(index++, td.getPaidTax());
+		ps.setBigDecimal(index++, td.getNetTax());
+		ps.setBigDecimal(index++, td.getRemFeeTax());
+		ps.setBigDecimal(index++, td.getWaivedTax());
+		ps.setInt(index++, td.getVersion());
+		ps.setLong(index++, JdbcUtil.setLong(td.getLastMntBy()));
+		ps.setTimestamp(index++, td.getLastMntOn());
+		ps.setString(index++, td.getRecordStatus());
+		ps.setString(index++, td.getRoleCode());
+		ps.setString(index++, td.getNextRoleCode());
+		ps.setString(index++, td.getTaskId());
+		ps.setString(index++, td.getNextTaskId());
+		ps.setString(index++, td.getRecordType());
+		ps.setLong(index++, JdbcUtil.setLong(td.getWorkflowId()));
+	}
 
-				ps.setLong(index++, JdbcUtil.setLong(td.getId()));
-				ps.setLong(index++, JdbcUtil.setLong(td.getReferenceId()));
-				ps.setString(index++, td.getTaxType());
-				ps.setBigDecimal(index++, td.getTaxPerc());
-				ps.setBigDecimal(index++, td.getActualTax());
-				ps.setBigDecimal(index++, td.getPaidTax());
-				ps.setBigDecimal(index++, td.getNetTax());
-				ps.setBigDecimal(index++, td.getRemFeeTax());
-				ps.setBigDecimal(index++, td.getWaivedTax());
-				ps.setInt(index++, td.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(td.getLastMntBy()));
-				ps.setTimestamp(index++, td.getLastMntOn());
-				ps.setString(index++, td.getRecordStatus());
-				ps.setString(index++, td.getRoleCode());
-				ps.setString(index++, td.getNextRoleCode());
-				ps.setString(index++, td.getTaskId());
-				ps.setString(index++, td.getNextTaskId());
-				ps.setString(index++, td.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(td.getWorkflowId()));
-			}
+	@Override
+	public long save(Taxes taxes, String type) {
+		String sql = getInsertSqlQuery(type);
 
-			@Override
-			public int getBatchSize() {
-				return taxes.size();
-			}
-		});
+		logger.trace(Literal.SQL + sql);
 
+		try {
+			jdbcOperations.update(sql, ps -> {
+				setparameters(ps, taxes);
+			});
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+
+		return taxes.getId();
 	}
 
 	@Override

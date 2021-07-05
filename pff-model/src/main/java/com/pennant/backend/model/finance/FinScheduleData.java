@@ -77,9 +77,9 @@ import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 @XmlType(propOrder = { "finReference", "financeMain", "repayInstructions", "rateInstruction", "finFeeDetailList",
-		"feeDues", "foreClosureFees", "stepPolicyDetails", "financeScheduleDetails",
-		"finODPenaltyRate", "apiPlanEMIHmonths", "apiPlanEMIHDates", "finODDetails", "financeSummary",
-		"vasRecordingList", "outstandingPri", "subventionDetail", "receiptAllocations", "returnStatus" })
+		"feeDues", "foreClosureFees", "stepPolicyDetails", "financeScheduleDetails", "finODPenaltyRate",
+		"apiPlanEMIHmonths", "apiPlanEMIHDates", "finODDetails", "financeSummary", "vasRecordingList", "outstandingPri",
+		"subventionDetail", "receiptAllocations", "returnStatus" })
 @XmlRootElement(name = "financeSchedule")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinScheduleData implements Serializable {
@@ -162,7 +162,7 @@ public class FinScheduleData implements Serializable {
 	@XmlElement
 	private WSReturnStatus returnStatus;
 
-	//SubventionDetail
+	// SubventionDetail
 	@XmlElement
 	private SubventionDetail subventionDetail;
 
@@ -192,11 +192,12 @@ public class FinScheduleData implements Serializable {
 	@XmlElement(name = "allocation")
 	private List<ReceiptAllocationDetail> receiptAllocationList;
 
-	//GST Tax Map
+	// GST Tax Map
 	private Map<String, Object> gstExecutionMap = new HashMap<>();
 
 	private List<LowerTaxDeduction> lowerTaxDeductionDetails = new ArrayList<>();
 	private List<IRRScheduleDetail> irrSDList = new ArrayList<>(1);
+	private FinMaintainInstruction finMaintainInstruction = new FinMaintainInstruction();
 
 	@XmlElement(name = "hostReference")
 	private String oldFinReference;
@@ -736,6 +737,14 @@ public class FinScheduleData implements Serializable {
 
 	public void setRestructureDetail(RestructureDetail restructureDetail) {
 		this.restructureDetail = restructureDetail;
+	}
+
+	public FinMaintainInstruction getFinMaintainInstruction() {
+		return finMaintainInstruction;
+	}
+
+	public void setFinMaintainInstruction(FinMaintainInstruction finMaintainInstruction) {
+		this.finMaintainInstruction = finMaintainInstruction;
 	}
 
 }

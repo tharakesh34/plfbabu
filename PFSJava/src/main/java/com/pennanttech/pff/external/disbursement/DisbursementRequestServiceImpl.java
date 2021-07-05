@@ -55,8 +55,8 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 	private IMPSDisbursement impsDisbursement;
 	private DataEngineConfig dataEngineConfig;
 	private PlatformTransactionManager transactionManager;
-
 	private static Map<Long, Map<String, EventProperties>> eventProperties = new HashMap<>();
+	private static String ONLINE = "ONLINE";
 
 	protected Map<String, String> inserQueryMap = new HashMap<>();
 
@@ -90,7 +90,11 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 
 			logger.info("Processing the disbursement requests");
 			list = disbursementService.sendReqest(request);
-			updateBatchStatus(request, list);
+			if (PennantConstants.ONLINE.equals(request.getDownloadType())) {
+				updateOnlineBatchStatus(request, list);
+			} else {
+				updateBatchStatus(request, list);
+			}
 
 		} catch (AppException e) {
 			list = null;
@@ -116,6 +120,90 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 
 		logger.info(Literal.LEAVING);
 		return status;
+	}
+
+	private void updateOnlineBatchStatus(DisbursementRequest disbursementRequest, List<DataEngineStatus> list) {
+		logger.info("Updating batch status...");
+
+		for (DataEngineStatus dataEngineStatus : list) {
+			List<DisbursementRequest> disbursementRequests = disbursementRequest.getDisbursementRequests();
+			if (!"S".equals(dataEngineStatus.getStatus())) {
+				boolean disbursements = false;
+				boolean payments = false;
+
+				long btachId = dataEngineStatus.getId();
+				String disbursementType = dataEngineStatus.getKeyAttributes().get("DISBURSEMENT_TYPE").toString();
+
+				for (DisbursementRequest request : disbursementRequests) {
+					if (PaymentChannel.Disbursement.getValue().equals(request.getChannel())) {
+						disbursements = true;
+					} else if (PaymentChannel.Payment.getValue().equals(request.getChannel())) {
+						payments = true;
+					}
+				}
+
+				DisbursementRequest req = new DisbursementRequest();
+				req.setHeaderId(disbursementRequest.getHeaderId());
+				req.setBatchId(btachId);
+				req.setDisbursementType(disbursementType);
+				req.setDisbursements(disbursements);
+				req.setPayments(payments);
+				req.setUserId(disbursementRequest.getUserId());
+				req.setStatus(PennantConstants.RCD_STATUS_APPROVED);
+
+				updateStatus(req);
+
+				throw new AppException("Unable to process the disbursement requests, please contact administrator.");
+
+			} else {
+				DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+				def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+				def.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
+				TransactionStatus transactionStatus = transactionManager.getTransaction(def);
+
+				try {
+
+					for (DataEngineStatus ds : list) {
+						Long btachId = ds.getId();
+						boolean disbursements = false;
+						boolean payments = false;
+						String disbursementType = ds.getKeyAttributes().get("DISBURSEMENT_TYPE").toString();
+						for (DisbursementRequest request : disbursementRequests) {
+							if (PaymentChannel.Disbursement.getValue().equals(request.getChannel())) {
+								disbursements = true;
+							} else if (PaymentChannel.Payment.getValue().equals(request.getChannel())) {
+								payments = true;
+							}
+						}
+
+						DisbursementRequest req = new DisbursementRequest();
+						req.setHeaderId(disbursementRequest.getHeaderId());
+						req.setBatchId(btachId);
+						req.setDisbursementType(disbursementType);
+						req.setDisbursements(disbursements);
+						req.setPayments(payments);
+						req.setUserId(disbursementRequest.getUserId());
+						req.setCreatedOn(DateUtility.getSysDate());
+						req.setStatus(DisbursementConstants.STATUS_PAID);
+
+						int count = disbursementRequestDAO.updateBatchStatus(req);
+
+						disbursementRequestDAO.logDisbursementMovement(req, false);
+						logger.info("{} disbursements processed successfully  with {} batch Id", count, btachId);
+					}
+
+					transactionManager.commit(transactionStatus);
+
+				} catch (Exception e) {
+					transactionManager.rollback(transactionStatus);
+					disbursementRequestDAO.deleteDisbursementBatch(disbursementRequest.getHeaderId());
+					throw new AppException(
+							"Unable to process the disbursement requests, please contact administrator.");
+				}
+
+			}
+		}
+
 	}
 
 	private void updateBatchStatus(DisbursementRequest disbursementRequest, List<DataEngineStatus> list) {
@@ -509,7 +597,6 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 		if (job) {
 			fileLocation = fileLocation.concat("Repository");
 			fileLocation = fileLocation.concat(File.separator);
-			// fileLocation = fileLocation.concat(DateUtil.format(DateUtil.getSysDate(), "yyyyMMdd"));
 		}
 
 		request.setLocalRepLocation(fileLocation);
@@ -705,6 +792,12 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 		Map<String, List<FinAdvancePayments>> dataMap = new HashMap<>();
 
 		for (FinAdvancePayments advancePmt : disbInstructios) {
+			if (PennantConstants.ONLINE.equals(advancePmt.getDownloadType())) {
+				dataMap.computeIfAbsent(ONLINE, ft -> getAdvType());
+				dataMap.get(ONLINE).add(advancePmt);
+				continue;
+			}
+
 			long partnerBankID = advancePmt.getPartnerBankID();
 			String entityCode = advancePmt.getEntityCode();
 			String finType = advancePmt.getFinType();
@@ -719,7 +812,7 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 		for (Entry<String, List<FinAdvancePayments>> finAdvancePayments : dataMap.entrySet()) {
 			FinAdvancePayments finAdvancePayment = finAdvancePayments.getValue().get(0);
 
-			com.pennanttech.pff.core.disbursement.model.DisbursementRequest request = new com.pennanttech.pff.core.disbursement.model.DisbursementRequest();
+			DisbursementRequest request = new DisbursementRequest();
 			request.setFinType(finAdvancePayment.getFinType());
 			request.setPartnerBankCode(finAdvancePayment.getPartnerbankCode());
 			request.setFinAdvancePayments(finAdvancePayments.getValue());
@@ -729,6 +822,7 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 			request.setAutoDownload(true);
 			request.setChannel(finAdvancePayment.getChannel());
 			request.setAppValueDate(SysParamUtil.getAppValueDate());
+			request.setDownloadType(finAdvancePayment.getDownloadType());
 
 			try {
 				prepareRequest(request);

@@ -192,7 +192,6 @@ public class SMTParameterConstants {
 																			// Fee
 																			// Waivers
 
-
 	// Put-call Default value need or not
 	public static final String PUTCALL_DEFAULT_ALERTDAYS_REQUIRED = "PUTCALL_DEFAULT_ALERTDAYS_REQUIRED";
 
@@ -332,13 +331,13 @@ public class SMTParameterConstants {
 	public static final String ALLOW_MULITIPLE_EODS_ON_SAME_DAY = "ALLOW_MULITIPLE_EODS_ON_SAME_DAY";
 	public static final String AUTO_KNOCKOFF_THRESHOLD = "AUTO_KNOCKOFF_THRESHOLD";
 
-	//Parameter to configure the loan types for provisional certificate
+	// Parameter to configure the loan types for provisional certificate
 	public static final String PROVCERT_LOANTYPES = "PROVCERT_LOANTYPES";
 
-	//Allow Instruction Based Schedule
+	// Allow Instruction Based Schedule
 	public static final String IS_INST_BASED_SCHD_REQ = "IS_INST_BASED_SCHD_REQ";
 
-	//External BRE credit review details 
+	// External BRE credit review details
 	public static final String EXTCREDITREVIEW_TAB = "EXTCREDITREVIEW_TAB";
 	public static final String PDF_OWNER_PASSWORD = "PDF_OWNER_PASSWORD";
 	public static final String PDF_PASSWORD_FORMAT = "PDF_PASSWORD_FORMAT";
@@ -348,7 +347,7 @@ public class SMTParameterConstants {
 	public static final String PROVISION_BOOKS = "PROVISION_BOOKS";
 	public static final String PROVISION_EFF_POSTDATE = "PROVISION_EFF_POSTDATE";
 
-	//TODO:GANESH need to Remove once provide the data in Finadvpayments
+	// TODO:GANESH need to Remove once provide the data in Finadvpayments
 	public static final String INSURANCE_INST_ON_INSPAYINST = "INSURANCE_INST_ON_INSPAYINST";
 	public static final String ALW_ALGOFUSION_DATA_EXTRACTION = "ALW_ALGOFUSION_DATA_EXTRACTION";
 	public static final String CHEQUE_MODE_SCHDPAY_EFFT_ON_REALIZATION = "CHEQUE_MODE_SCHDPAY_EFFT_ON_REALIZATION";
@@ -356,10 +355,10 @@ public class SMTParameterConstants {
 	public static final String PURG_CONFIG_JOB_REQUIRED = "PURG_CONFIG_JOB_REQUIRED";
 	public static final String PURG_CONFIG_CRON_EXPRESSION = "PURG_CONFIG_CRON_EXPRESSION";
 
-	//	FORECLOSURE_VALIDITY_DAYS
-	//	To define number of calendar days that foreclosure letter will be valid from the date of generation.
+	// FORECLOSURE_VALIDITY_DAYS
+	// To define number of calendar days that foreclosure letter will be valid from the date of generation.
 	public static final String FORECLOSURE_VALIDITY_DAYS = "FORECLOSURE_VALIDITY_DAYS";
-	//Update the Manual Cheque Receipt status as paid at Deposit approver
+	// Update the Manual Cheque Receipt status as paid at Deposit approver
 	public static final String CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER = "CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER";
 	public static final String EOD_INTERVAL_TIME = "EOD_INTERVAL_TIME";
 	public static final String EOD_SKIP_LATE_PAY_MARKING = "EOD_SKIP_LATE_PAY_MARKING";
@@ -381,4 +380,6 @@ public class SMTParameterConstants {
 	public static final String REPAY_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL = "REPAY_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL";
 	public static final String CHECK_COLL_MAINTENANCE = "CHECK_COLL_MAINTENANCE";
 	public static final String CIBIL_DEFAULT_AMOUNT = "CIBIL_DEFAULT_AMOUNT";
+	public static final String FEE_LOS_PROCESSING = "FEE_LOS_PROCESSING";
+	public static final String PRESENTMENT_RESP_PROCESS_THREAD_COUNT = "PRESENTMENT_RESP_PROCESS_THREAD_COUNT";
 }

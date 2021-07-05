@@ -144,6 +144,10 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.cache.util.FinanceConfigCache;
+import com.pennant.pff.eod.cache.BounceConfigCache;
+import com.pennant.pff.eod.cache.FeeTypeConfigCache;
+import com.pennant.pff.eod.cache.RuleConfigCache;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -285,8 +289,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * table. based on the module workFlow Configuration. by using FinReceiptHeaderDAO's update method 3) Audit the
 	 * record in to AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -355,8 +358,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * workFlow table by using finReceiptHeaderDAO.delete with parameters finReceiptHeader,"_Temp" 3) Audit the record
 	 * in to AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws InterfaceException
 	 */
@@ -409,8 +411,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * FinReceiptHeader. Audit the record in to AuditHeader and AdtFinReceiptHeader by using
 	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws Exception
 	 * @throws AccountNotFoundException
@@ -691,8 +692,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * for any mismatch conditions Fetch the error details from finReceiptHeaderDAO.getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -737,12 +737,12 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		errParm[0] = PennantJavaUtil.getLabel("label_ReceiptID") + ":" + valueParm[0];
 
 		if (receiptHeader.isNew()) { // for New record or new record into work
-											// flow
+										// flow
 
 			if (!receiptHeader.isWorkflow()) {// With out Work flow only new
 				// records
 				if (beFinReceiptHeader != null) { // Record Already Exists in
-														// the
+													// the
 													// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
@@ -769,7 +769,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				// and delete
 
 				if (beFinReceiptHeader == null) { // if records not exists in
-														// the
+													// the
 													// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
@@ -856,30 +856,27 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		return auditDetail;
 	}
 
-	/**
-	 * Method for Canceling the Presentment
-	 * 
-	 * @param receiptId
-	 * @param returnCode
-	 * @return errorMsg
-	 * @throws Exception
-	 */
 	@Override
-	public PresentmentDetail presentmentCancellation(PresentmentDetail presentmentDetail, String returnCode)
-			throws Exception {
+	public PresentmentDetail presentmentCancellation(PresentmentDetail pd, CustEODEvent custEODEvent) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		FinReceiptHeader receiptHeader = getFinReceiptHeaderById(presentmentDetail.getReceiptID(), false);
+		FinanceMain fm = custEODEvent.getFinEODEvents().get(0).getFinanceMain();
+		Customer customer = custEODEvent.getCustomer();
+
+		String bounceCode = pd.getBounceCode();
+		String bounceRemarks = pd.getBounceRemarks();
+
+		FinReceiptHeader receiptHeader = getFinReceiptHeaderById(pd.getReceiptID(), false);
 
 		if (receiptHeader == null) {
-			presentmentDetail.setErrorDesc(PennantJavaUtil.getLabel("label_FinReceiptHeader_Notavailable"));
-			return presentmentDetail;
+			pd.setErrorDesc(PennantJavaUtil.getLabel("label_FinReceiptHeader_Notavailable"));
+			return pd;
 		}
 
-		BounceReason bounceReason = bounceReasonDAO.getBounceReasonByReturnCode(returnCode, "");
+		BounceReason bounceReason = BounceConfigCache.getCacheBounceReason(bounceCode);
 		if (bounceReason == null) {
-			presentmentDetail.setErrorDesc(PennantJavaUtil.getLabel("label_BounceReason_Notavailable") + returnCode);
-			return presentmentDetail;
+			pd.setErrorDesc(PennantJavaUtil.getLabel("label_BounceReason_Notavailable") + bounceCode);
+			return pd;
 		}
 
 		FinReceiptDetail finReceiptDetail = null;
@@ -893,34 +890,30 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		}
 
 		if (finReceiptDetail == null) {
-			presentmentDetail.setErrorDesc(PennantJavaUtil.getLabel("label_FinReceiptDetails_Notavailable")
-					+ presentmentDetail.getMandateType());
-			return presentmentDetail;
+			pd.setErrorDesc(PennantJavaUtil.getLabel("label_FinReceiptDetails_Notavailable") + pd.getMandateType());
+			return pd;
 		}
 
 		ManualAdvise manualAdvise = getManualAdvise(receiptHeader, bounceReason, finReceiptDetail,
-				presentmentDetail.getPresentmentType());
+				pd.getPresentmentType(), bounceRemarks, pd.getAppDate());
 
 		if (manualAdvise == null) {
-			presentmentDetail.setErrorDesc(
-					PennantJavaUtil.getLabel("label_ManualAdvise_Notavailable") + presentmentDetail.getMandateType());
-			return presentmentDetail;
+			pd.setErrorDesc(PennantJavaUtil.getLabel("label_ManualAdvise_Notavailable") + pd.getMandateType());
+			return pd;
 		}
 		manualAdvise.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		manualAdvise.setLastMntBy(presentmentDetail.getLastMntBy());
+		manualAdvise.setLastMntBy(pd.getLastMntBy());
 		manualAdvise.setVersion(manualAdvise.getVersion() + 1);
 
 		receiptHeader.setManualAdvise(manualAdvise);
 		receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_BOUNCE);
-		receiptHeader.setBounceDate(SysParamUtil.getAppDate());
+		receiptHeader.setBounceDate(pd.getAppDate());
 		receiptHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		receiptHeader.setLastMntBy(presentmentDetail.getLastMntBy());
+		receiptHeader.setLastMntBy(pd.getLastMntBy());
 		receiptHeader.setVersion(receiptHeader.getVersion() + 1);
 
-		FinanceMain financeMain = financeMainDAO.getFinanceMainForBatch(receiptHeader.getReference());
-
 		// Receipts Cancellation Process
-		String errorMsg = procReceiptCancellation(receiptHeader, PennantConstants.APP_PHASE_EOD, financeMain);
+		String errorMsg = procReceiptCancellation(receiptHeader, PennantConstants.APP_PHASE_EOD, fm);
 
 		if (StringUtils.trimToNull(errorMsg) == null) {
 
@@ -938,25 +931,21 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					}
 				}
 				if (priAmt.compareTo(BigDecimal.ZERO) > 0) {
-
-					FinanceMain main = financeMainDAO.getFinanceMainForBatch(receiptHeader.getReference());
-					Customer customer = customerDAO.getCustomerByID(main.getCustID());
-
 					// Update Limit Exposures
-					limitManagement.processLoanRepayCancel(main, customer, priAmt,
-							StringUtils.trimToEmpty(main.getProductCategory()));
+					String pc = StringUtils.trimToEmpty(fm.getProductCategory());
+					limitManagement.processLoanRepayCancel(fm, customer, priAmt, pc);
 				}
 			}
 		}
 
-		presentmentDetail.setErrorDesc(errorMsg);
+		pd.setErrorDesc(errorMsg);
 		manualAdvise = receiptHeader.getManualAdvise();
-		presentmentDetail.setBounceID(manualAdvise.getBounceID());
-		presentmentDetail.setBounceReason(bounceReason.getReason());
-		presentmentDetail.setManualAdviseId(manualAdvise.getAdviseID());
+		pd.setBounceID(manualAdvise.getBounceID());
+		pd.setBounceCode(bounceReason.getReason());
+		pd.setManualAdviseId(manualAdvise.getAdviseID());
 
 		logger.debug(Literal.LEAVING);
-		return presentmentDetail;
+		return pd;
 	}
 
 	/**
@@ -968,21 +957,27 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * @return ManualAdvise
 	 */
 	private ManualAdvise getManualAdvise(FinReceiptHeader receiptHeader, BounceReason bounceReason,
-			FinReceiptDetail finReceiptDetail, String presentmentType) {
+			FinReceiptDetail finReceiptDetail, String presentmentType, String bounceRemarks, Date appDate) {
 		logger.debug(Literal.ENTERING);
 
-		Date appDate = SysParamUtil.getAppDate();
+		Rule rule = RuleConfigCache.getCacheRule(bounceReason.getRuleID());
 
-		Rule rule = ruleDAO.getRuleByID(bounceReason.getRuleID(), "");
 		BigDecimal bounceAmt = BigDecimal.ZERO;
 
-		Map<String, Object> eventMapping = null;
 		Map<String, Object> fieldsAndValues = finReceiptDetail.getDeclaredFieldValues();
 		bounceReason.getDeclaredFieldValues(fieldsAndValues);
 
-		eventMapping = financeMainDAO.getGLSubHeadCodes(receiptHeader.getReference());
-
 		if (rule != null) {
+			Map<String, Object> eventMapping = null;
+			String sqlRule = StringUtils.trimToEmpty(rule.getSQLRule());
+
+			if (sqlRule.contains("emptype") || sqlRule.contains("branchcity") || sqlRule.contains("fincollateralreq")
+					|| sqlRule.contains("btloan") || sqlRule.contains("ae_businessvertical")
+					|| sqlRule.contains("ae_alwflexi") || sqlRule.contains("ae_finbranch")
+					|| sqlRule.contains("ae_entitycode")) {
+				eventMapping = financeMainDAO.getGLSubHeadCodes(receiptHeader.getReference());
+
+			}
 			fieldsAndValues.put("br_finType", receiptHeader.getFinType());
 			fieldsAndValues.put("br_presentmentType", presentmentType);
 			if (eventMapping != null && eventMapping.size() > 0) {
@@ -996,8 +991,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				fieldsAndValues.put("ae_entitycode", eventMapping.get("ENTITYCODE"));
 			}
 
-			bounceAmt = (BigDecimal) RuleExecutionUtil.executeRule(rule.getSQLRule(), fieldsAndValues,
-					receiptHeader.getFinCcy(), RuleReturnType.DECIMAL);
+			bounceAmt = (BigDecimal) RuleExecutionUtil.executeRule(sqlRule, fieldsAndValues, receiptHeader.getFinCcy(),
+					RuleReturnType.DECIMAL);
 		}
 
 		ManualAdvise manualAdvise = new ManualAdvise();
@@ -1009,7 +1004,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				PennantApplicationUtil.unFormateAmount(bounceAmt, CurrencyUtil.getFormat(receiptHeader.getFinCcy())));
 		manualAdvise.setPaidAmount(BigDecimal.ZERO);
 		manualAdvise.setWaivedAmount(BigDecimal.ZERO);
-		manualAdvise.setRemarks("");
+		manualAdvise.setRemarks(bounceRemarks);
 		manualAdvise.setReceiptID(receiptHeader.getReceiptID());
 		manualAdvise.setBounceID(bounceReason.getBounceID());
 		manualAdvise.setValueDate(appDate);
@@ -1036,8 +1031,16 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		boolean alwSchdReversalByLog = false;
 		long postingId = postingsDAO.getPostingId();
 		long receiptID = receiptHeader.getReceiptID();
-		String curStatus = finReceiptHeaderDAO.getReceiptModeStatus(receiptID, "");
-		Date appDate = SysParamUtil.getAppDate();
+		String curStatus = finReceiptHeaderDAO.getReceiptModeStatus(receiptID);
+		Date appDate = null;
+		EventProperties eventProperties = financeMain.getEventProperties();
+		if (eventProperties.isParameterLoaded()) {
+			appDate = eventProperties.getAppDate();
+		}
+
+		if (appDate == null) {
+			appDate = SysParamUtil.getAppDate();
+		}
 
 		// Valid Check for Finance Reversal On Active Finance Or not with
 		// ValueDate CheckUp
@@ -1051,8 +1054,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		boolean isRcdFound = false;
 		boolean isBounceProcess = false;
-		FeeType boucneFeeType = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
-		if (StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)) {
+		if (RepayConstants.PAYSTATUS_BOUNCE.equals(receiptHeader.getReceiptModeStatus())) {
 			isBounceProcess = true;
 		}
 
@@ -1069,7 +1071,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		if (!ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
 			List<ReturnDataSet> returnDataSets = null;
-			returnDataSets = postingsPreparationUtil.postReversalsByPostRef(receiptID, postingId);
+			returnDataSets = postingsPreparationUtil.postReversalsByPostRef(String.valueOf(receiptID), postingId,
+					appDate);
 			if (CollectionUtils.isNotEmpty(returnDataSets)) {
 				linkedTranID = returnDataSets.get(0).getLinkedTranId();
 			}
@@ -1323,6 +1326,16 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 						boolean dueCreated = false;
 						if (StringUtils.isBlank(manualAdvise.getFeeTypeCode()) && manualAdvise.getBounceID() > 0) {
+							FeeType boucneFeeType = null;
+
+							if (eventProperties.isCacheLoaded()) {
+								boucneFeeType = FeeTypeConfigCache
+										.getCacheFeeTypeByCode(PennantConstants.FEETYPE_BOUNCE);
+							} else {
+								boucneFeeType = getFeeTypeDAO()
+										.getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
+							}
+
 							if (boucneFeeType == null) {
 								throw new AppException(String.format(
 										"Fee Type code %s not found, please conatact system admin to configure.",
@@ -1460,7 +1473,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					scheduleData = new FinScheduleData();
 					scheduleData.setFinanceScheduleDetails(
 							financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false));
-					scheduleData.setFinanceType(financeTypeDAO.getFinanceTypeByFinType(financeMain.getFinType()));
+					scheduleData.setFinanceType(FinanceConfigCache.getFinanceType(financeMain.getFinType()));
 					scheduleData.setFinanceScheduleDetails(sortSchdDetails(scheduleData.getFinanceScheduleDetails()));
 
 					for (FinanceScheduleDetail schd : scheduleData.getFinanceScheduleDetails()) {
@@ -1618,9 +1631,13 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 				// Check whether Accrual Reversal required for LPP or not
 				if (unRealizeLpp.compareTo(BigDecimal.ZERO) > 0) {
-
 					// prepare GST Invoice Report for Penalty reversal
-					penalityFeeType = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_ODC);
+					if (eventProperties.isCacheLoaded()) {
+						penalityFeeType = FeeTypeConfigCache.getCacheFeeTypeByCode(PennantConstants.FEETYPE_ODC);
+					} else {
+						penalityFeeType = feeTypeDAO.getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_ODC);
+					}
+
 					if (penalityFeeType == null) {
 						throw new AppException(
 								String.format("Fee Type code %s not found, please conatact system admin to configure.",
@@ -2032,7 +2049,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		// ============================================
 		long postingId = postingsDAO.getPostingId();
 		List<ReturnDataSet> returnDataSetList = postingsPreparationUtil
-				.postReversalsByPostRef(receiptHeader.getReceiptID(), postingId);
+				.postReversalsByPostRef(String.valueOf(receiptHeader.getReceiptID()), postingId, null);
 
 		for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
 			for (ReturnDataSet returnDataSet : returnDataSetList) {
@@ -2140,7 +2157,13 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			Map<String, BigDecimal> taxPercmap = GSTCalculator.getTaxPercentages(gstExecutionMap,
 					financeMain.getFinCcy());
 
-			FeeType lppFeeType = getFeeTypeDAO().getTaxDetailByCode(RepayConstants.ALLOCATION_ODC);
+			FeeType lppFeeType = null;
+
+			if (eventProperties.isCacheLoaded()) {
+				lppFeeType = FeeTypeConfigCache.getCacheFeeTypeByCode(RepayConstants.ALLOCATION_ODC);
+			} else {
+				lppFeeType = getFeeTypeDAO().getTaxDetailByCode(RepayConstants.ALLOCATION_ODC);
+			}
 
 			// Calculate LPP GST Amount
 			if (profitDetail.getLppAmount().compareTo(BigDecimal.ZERO) > 0 && lppFeeType != null
@@ -2459,10 +2482,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	/**
 	 * Method to get Schedule related data.
 	 * 
-	 * @param finReference
-	 *            (String)
-	 * @param isWIF
-	 *            (boolean)
+	 * @param finReference (String)
+	 * @param isWIF        (boolean)
 	 **/
 	private FinScheduleData getFinSchDataByFinRef(String finReference, long logKey, String type) {
 		logger.debug("Entering");
@@ -3137,6 +3158,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		logger.debug("Entering");
 
 		String tranType = "";
+		Date appDate = SysParamUtil.getAppDate();
 		aAuditHeader = businessValidation(aAuditHeader, "doApprove");
 		if (!aAuditHeader.isNextProcess()) {
 			return aAuditHeader;
@@ -3151,7 +3173,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		// Finance Repayment Cancellation Posting Process Execution
 		// =====================================
 		long postingId = getPostingsDAO().getPostingId();
-		getPostingsPreparationUtil().postReversalsByPostRef(receiptHeader.getReceiptID(), postingId);
+		postingsPreparationUtil.postReversalsByPostRef(String.valueOf(receiptHeader.getReceiptID()), postingId,
+				appDate);
 		String errorCode = "";
 		long recSeqId = 0;
 
@@ -3297,6 +3320,12 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+
+	@Override
+	public PresentmentDetail presentmentCancellation(PresentmentDetail presentmentDetail, String returnCode,
+			String bounceRemarks) throws Exception {
+		return null;
 	}
 
 }

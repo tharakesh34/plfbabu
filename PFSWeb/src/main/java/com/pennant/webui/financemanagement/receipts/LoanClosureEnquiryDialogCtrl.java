@@ -131,6 +131,7 @@ import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainService;
+import com.pennant.backend.service.finance.LinkedFinancesService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -317,6 +318,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	protected boolean isModelWindow = false;
 	private boolean isMatured = false;
 	private boolean isWIF = false;
+	private LinkedFinancesService linkedFinancesService;
 
 	/**
 	 * default constructor.<br>
@@ -652,8 +654,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(true);
@@ -884,8 +885,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	/**
 	 * Method to fill the Finance Schedule Detail List
 	 * 
-	 * @param aFinScheduleData
-	 *            (FinScheduleData)
+	 * @param aFinScheduleData (FinScheduleData)
 	 * 
 	 */
 	public void doFillScheduleList(FinScheduleData aFinScheduleData) {
@@ -1157,7 +1157,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		try {
 			// FinanceDetail
 			List<ReceiptAllocationDetail> allocationListData = null;
-			//feature date amount is not calculated
+			// feature date amount is not calculated
 			if (receiptData != null) {
 				allocationListData = receiptData.getReceiptHeader().getAllocations();
 			}
@@ -1192,7 +1192,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 			Cloner cloner = new Cloner();
 			orgFinanceDetail = cloner.deepClone(receiptData.getFinanceDetail());
-			//FIXME SMT parameter need to be removed
+			// FIXME SMT parameter need to be removed
 			if (allocationListData != null
 					&& SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_FEE_WAIVER_IN_FORECLOSURE_ENQ)) {
 				receiptData.getReceiptHeader().setAllocationsSummary(allocationListData);
@@ -1414,7 +1414,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			}
 			if (allocate.isEditable()) {
 				totRecv = totRecv.add(allocate.getTotRecv());
-				totDue = totDue.add(allocate.getTotRecv().add(allocate.getTotalPaid()));//getTotalDue
+				totDue = totDue.add(allocate.getTotRecv().add(allocate.getTotalPaid()));// getTotalDue
 				inProc = inProc.add(allocate.getInProcess());
 				paid = paid.add(allocate.getPaidAmount());
 				waived = waived.add(allocate.getWaivedAmount());
@@ -2026,7 +2026,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			BigDecimal penaltyUGSTPaid = BigDecimal.ZERO;
 			BigDecimal penaltyCESSPaid = BigDecimal.ZERO;
 
-			//Penality Waiver GST Details
+			// Penality Waiver GST Details
 			BigDecimal penaltyCGSTWaived = BigDecimal.ZERO;
 			BigDecimal penaltySGSTWaived = BigDecimal.ZERO;
 			BigDecimal penaltyIGSTWaived = BigDecimal.ZERO;
@@ -2046,7 +2046,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 				// Penalties
 				amountCodes.setPenaltyPaid(amountCodes.getPenaltyPaid().add(rsd.getPenaltyPayNow()));
-				amountCodes.setPenaltyWaived(amountCodes.getPenaltyWaived().add(rsd.getWaivedAmt())); //Check here once for Exclusive GST case
+				amountCodes.setPenaltyWaived(amountCodes.getPenaltyWaived().add(rsd.getWaivedAmt())); // Check here once
+																										// for Exclusive
+																										// GST case
 
 				TaxHeader taxHeader = rsd.getTaxHeader();
 				List<Taxes> taxDetails = taxHeader.getTaxDetails();
@@ -2430,7 +2432,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				aeEvent.getDataMap().put("LPP_IGST_P", penaltyUGSTPaid);
 				aeEvent.getDataMap().put("LPP_CESS_P", penaltyCESSPaid);
 
-				//GST Waivers Details
+				// GST Waivers Details
 				aeEvent.getDataMap().put("LPP_CGST_W", penaltyCGSTWaived);
 				aeEvent.getDataMap().put("LPP_SGST_W", penaltySGSTWaived);
 				aeEvent.getDataMap().put("LPP_UGST_W", penaltyUGSTWaived);
@@ -2523,7 +2525,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					}
 
 					// Tax Details
-					//Paid GST Details
+					// Paid GST Details
 					amount = BigDecimal.ZERO;
 					if (movementMap.containsKey(keyCode + "_CGST_P")) {
 						amount = movementMap.get(keyCode + "_CGST_P");
@@ -2554,7 +2556,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					}
 					movementMap.put(keyCode + "_CESS_P", amount.add(cessTax.getPaidTax()));
 
-					//Waiver GST Details
+					// Waiver GST Details
 					amount = BigDecimal.ZERO;
 					if (movementMap.containsKey(keyCode + "_CGST_W")) {
 						amount = movementMap.get(keyCode + "_CGST_W");
@@ -3127,7 +3129,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 		ReceiptAllocationDetail xcess = receiptData.getReceiptHeader().getTotalXcess();
 
-		//Issue Fixed 141140
+		// Issue Fixed 141140
 
 		addAmountCell(item, xcess.getTotalDue(), null, true);
 		addAmountCell(item, BigDecimal.ZERO, null, true);
@@ -3562,7 +3564,27 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	// Printer integration starts
 
 	public void onClick$btnPrint(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
+
+		List<String> finReferences = linkedFinancesService.getFinReferences(finReference.getValue());
+		if (CollectionUtils.isNotEmpty(finReferences)) {
+
+			String[] args = new String[2];
+			StringBuilder ref = new StringBuilder();
+
+			finReferences.forEach(l1 -> ref.append(l1 + ","));
+			ref.deleteCharAt(ref.length() - 1);
+
+			args[0] = finReference.getValue();
+			args[1] = ref.toString();
+
+			String message = args[0] + " is Linked with " + args[1] + " . Please Delink the loan first then Proceed ";
+			if (MessageUtil.confirm(message, MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
+				ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+				wve.add(new WrongValueException("Please Delink the loan first then Proceed "));
+				showErrorDetails(wve);
+			}
+		}
 
 		// String reportName = "Foreclosure Letter";
 		ForeClosureReport closureReport = new ForeClosureReport();
@@ -3570,7 +3592,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		closureReport.setProductDesc(getFinanceDetail().getFinScheduleData().getFinanceType().getFinTypeDesc());
 
-		//Setting Actual Percentage in Fore closure Letter Report.
+		// Setting Actual Percentage in Fore closure Letter Report.
 		if (CollectionUtils.isNotEmpty(receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList())) {
 			FinFeeDetail finFeeDetail = receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList()
 					.get(0);
@@ -3726,7 +3748,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 							RepayConstants.ALLOCATION_BOUNCE)) {
 						bncCharge = receiptAllocationDetail.getTotRecv();
 					}
-					//Issue Fixed 141089
+					// Issue Fixed 141089
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
 							RepayConstants.ALLOCATION_MANADV)) {
 						receivableAmt = receivableAmt.add(receiptAllocationDetail.getTotRecv());
@@ -3772,10 +3794,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				}
 
 				setOrgReceiptData(receiptData);
-				//Other Charges
+				// Other Charges
 				closureReport.setManualAdviceAmt(PennantApplicationUtil.formateAmount(receivableAmt, formatter));
 
-				// Cheque Bounce Charges 
+				// Cheque Bounce Charges
 				closureReport.setCheqBncCharges(PennantApplicationUtil.formateAmount(bncCharge, formatter));
 
 				// Pending Installments
@@ -3817,7 +3839,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					closureReport
 							.setIntPerday(closureReport.getInstForTheMonth().divide(new BigDecimal(noOfIntDays), 2));
 				}
-				//Issue Fixed 141142
+				// Issue Fixed 141142
 				List<ManualAdvise> payableList = receiptData.getReceiptHeader().getPayableAdvises();
 				BigDecimal payableAmt = BigDecimal.ZERO;
 				for (ManualAdvise manualAdvise : payableList) {
@@ -4566,6 +4588,18 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		return oneDayIntrst;
 	}
 
+	private void showErrorDetails(ArrayList<WrongValueException> wve) {
+		if (wve.size() > 0) {
+			logger.info("Throwing occured Errors By using WrongValueException");
+
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
+		}
+	}
+
 	public Map<String, BigDecimal> getTaxPercMap() {
 		return taxPercMap;
 	}
@@ -4608,5 +4642,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 	public void setFinSchedData(FinScheduleData finSchedData) {
 		this.finSchedData = finSchedData;
+	}
+
+	public void setLinkedFinancesService(LinkedFinancesService linkedFinancesService) {
+		this.linkedFinancesService = linkedFinancesService;
 	}
 }

@@ -389,4 +389,22 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 		logger.debug("Leaving");
 		return new ArrayList<>();
 	}
+
+	@Override
+	public int getEntityCount(String entityCode) {
+		String sql = "Select EntityCode FROM Entity Where EntityCode = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			String code = this.jdbcOperations.queryForObject(sql, new Object[] { entityCode }, String.class);
+
+			if (code != null) {
+				return 1;
+			}
+		} catch (EmptyResultDataAccessException e) {
+			return 0;
+		}
+		return 0;
+	}
 }

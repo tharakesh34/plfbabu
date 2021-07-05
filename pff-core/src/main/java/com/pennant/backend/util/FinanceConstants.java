@@ -160,6 +160,7 @@ public class FinanceConstants {
 	public static final String FINSER_EVENT_INSCHANGE = "InsuranceChange";
 	public static final String FINSER_EVENT_RECEIPT = "Receipt";
 	public static final String FINSER_EVENT_COVENANT = "Covenants";
+	public static final String FINSER_EVENT_COLLATERAL = "Collaterals";
 	public static final String FINSER_EVENT_RECEIPTFORECLOSURE = "ReceiptForeClosure";
 	public static final String FINSER_EVENT_SCHDRPY = "SchdlRepayment";
 	public static final String FINSER_EVENT_EARLYRPY = "EarlyPayment";
@@ -196,6 +197,7 @@ public class FinanceConstants {
 	public static final String FINSER_EVENT_HOLDDISB = "HoldDisbursement";
 	public static final String FINSER_EVENT_STARTPERIODHDAY = "StartPeriodHoliday";
 	public static final String FINSER_EVENT_LOANDOWNSIZING = "LoanDownsizing";
+	public static final String FINSER_EVENT_LINKDELINK = "LinkDelink";
 	public static final String PART_CANCELLATION = "PartCancellation";
 	// This value is Hard coded in View "CovenantsMaintenance_View"
 	public static final String FINSER_EVENT_COVENANTS = "Covenants";
@@ -321,6 +323,11 @@ public class FinanceConstants {
 	public static final String PLANEMIHMETHOD_FRQ = "F";
 	public static final String PLANEMIHMETHOD_ADHOC = "A";
 
+	// Subvention From Method
+	public static final String SUBVN_FROM_MANUFACTURER = "MANF";
+	public static final String SUBVN_FROM_DEALER = "DSM";
+	public static final String SUBVEN_FEE = "SUBVEN";
+
 	// ModuleId Constants
 	public static final int MODULEID_FINTYPE = 1; // FinType
 	public static final int MODULEID_PROMOTION = 2; // Promotions
@@ -350,9 +357,9 @@ public class FinanceConstants {
 	// Fee Type Tax
 	public static final String FEE_TAXCOMPONENT_INCLUSIVE = "I"; // Inclusive
 	public static final String FEE_TAXCOMPONENT_EXCLUSIVE = "E"; // Exclusive
-	
+
 	public static final String OTHERS = "OTH";
-	
+
 	// GDR Availablity Check Rule
 	public static final String FEETYPE_GDR = "GDR";
 
@@ -456,7 +463,7 @@ public class FinanceConstants {
 	public static final String GST_SCHD_CAL_ON_PRI = "P";
 	public static final String GST_SCHD_CAL_ON_EMI = "E";
 
-	//PMAY Validation
+	// PMAY Validation
 	public static final String PMAY_VALIDATION = "PMAYVALD";
 
 	public static final String PAYABLE_ADVISE = "PayableAdvises";

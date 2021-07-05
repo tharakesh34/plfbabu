@@ -8,6 +8,7 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennant.pff.model.subvention.SubventionHeader;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.finance.DisbRequest;
 import com.pennanttech.ws.model.finance.FinAdvPaymentDetail;
@@ -62,4 +63,6 @@ public interface FinServiceInstSOAPService {
 	@WebResult(name = "finance")
 	public FinanceDetail partCancellation(@WebParam(name = "finance") FinServiceInstruction finServiceInstruction)
 			throws ServiceException;
+
+	public WSReturnStatus subventionKnockOff(SubventionHeader subventionHead) throws ServiceException;
 }

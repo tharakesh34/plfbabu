@@ -47,7 +47,7 @@ public class CustomerDedup implements Serializable {
 	private String likeCustMName;
 	private String likeCustLName;
 
-	//Audit Purpose Fields
+	// Audit Purpose Fields
 	private long lastMntBy;
 	private String roleCode;
 	private String recordStatus;
@@ -96,12 +96,13 @@ public class CustomerDedup implements Serializable {
 	private String lpgNumber;
 	@XmlElement(name = "drivingLicense")
 	private String drivingLicenceNo;
+	private String finType;
 
 	public CustomerDedup() {
 		super();
 	}
 
-	//Getter and Setter methods
+	// Getter and Setter methods
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("custId");
@@ -147,6 +148,7 @@ public class CustomerDedup implements Serializable {
 		excludeFields.add("custPassportNo");
 		excludeFields.add("drivingLicenceNo");
 		excludeFields.add("address");
+		excludeFields.add("finType");
 		return excludeFields;
 	}
 
@@ -658,5 +660,13 @@ public class CustomerDedup implements Serializable {
 
 	public void setMotherName(String motherName) {
 		this.motherName = motherName;
+	}
+
+	public String getFinType() {
+		return finType;
+	}
+
+	public void setFinType(String finType) {
+		this.finType = finType;
 	}
 }

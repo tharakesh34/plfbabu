@@ -53,10 +53,8 @@ public interface EntityDAO extends BasicCrudDao<Entity> {
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
-	 * @param entityCode
-	 *            entityCode of the Entity.
-	 * @param tableType
-	 *            The type of the table.
+	 * @param entityCode entityCode of the Entity.
+	 * @param tableType  The type of the table.
 	 * @return Entity
 	 */
 	Entity getEntity(String entityCode, String type);
@@ -70,5 +68,7 @@ public interface EntityDAO extends BasicCrudDao<Entity> {
 	Entity getEntityByFinType(String finType, String type);
 
 	List<Entity> getEntites();
+
+	int getEntityCount(String entityCode);
 
 }

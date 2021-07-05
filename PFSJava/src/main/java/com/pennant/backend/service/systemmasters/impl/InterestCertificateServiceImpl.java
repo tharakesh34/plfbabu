@@ -69,6 +69,7 @@ import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
 import com.pennant.backend.dao.systemmasters.InterestCertificateDAO;
+import com.pennant.backend.model.agreement.CovenantAggrement;
 import com.pennant.backend.model.agreement.InterestCertificate;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
@@ -237,7 +238,7 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 
 		}
 
-		//Grace repay Details
+		// Grace repay Details
 		Map<String, Object> graceRepayMap = interestCertificateDAO.getTotalGrcRepayProfit(finReference, startDate,
 				endDate);
 
@@ -294,7 +295,7 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 		}
 		calculatePPAmounts(intCert, finReference, startDate, endDate, isProvCert);
 
-		//Ratio based division for Loan repay amount and Insurance amount.
+		// Ratio based division for Loan repay amount and Insurance amount.
 		if (ImplementationConstants.ALLOW_LOAN_VAS_RATIO_CALC) {
 			List<BigDecimal> amountsByRef = getAmountsByRef(finReference, intCert.getFinCurrAssetvalue(), startDate,
 					endDate, totalvasAmt, totalLoanAmt, totalDisbAmt, loanRatio, vasRatio);
@@ -361,9 +362,9 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 		BigDecimal rcPmayAmount = BigDecimal.ZERO;
 		BigDecimal rpSchdPriPaid = BigDecimal.ZERO;
 		BigDecimal rpSchdPftPaid = BigDecimal.ZERO;
-		
+
 		String exGratiaTxt = SysParamUtil.getValueAsString(SMTParameterConstants.TRANSACTIONREF_TXT_IN_RECEIPT);
-	
+
 		if (finReceiptHeaderDAO != null && finReceiptDetailDAO != null) {
 			List<FinReceiptHeader> frhs = finReceiptHeaderDAO.getReceiptHeaderByID(finReference,
 					FinanceConstants.FINSER_EVENT_EARLYRPY, fromDate, toDate, "");
@@ -373,7 +374,7 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 					// Receipt Details
 					long receiptID = frh.getReceiptID();
 					List<FinReceiptDetail> frds = finReceiptDetailDAO.getReceiptHeaderByID(receiptID, "");
-					
+
 					if (CollectionUtils.isNotEmpty(frds)) {
 						for (FinReceiptDetail frd : frds) {
 							// EX Gratia
@@ -442,7 +443,7 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 			Date endDate, BigDecimal totalvasAmt, BigDecimal totalLoanAmt, BigDecimal totalDisbAmt,
 			BigDecimal loanRatio, BigDecimal vasRatio) {
 		logger.debug(Literal.ENTERING);
-		//total disbursement amount
+		// total disbursement amount
 		totalDisbAmt = PennantApplicationUtil.formateAmount(finCurrAssetValue, 2);
 		totalvasAmt = processVasRecordingDetails(finReference, startDate, endDate, totalvasAmt);
 		List<BigDecimal> calculateRatio = calculateRatio(totalvasAmt, totalLoanAmt, totalDisbAmt, loanRatio, vasRatio);
@@ -453,16 +454,16 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 	private List<BigDecimal> calculateRatio(BigDecimal totalvasAmt, BigDecimal totalLoanAmt, BigDecimal totalDisbAmt,
 			BigDecimal loanRatio, BigDecimal vasRatio) {
 		List<BigDecimal> list = new ArrayList<>();
-		//Considering the total loan amount as totalDisbAmt + totalvasAmt for calculation
+		// Considering the total loan amount as totalDisbAmt + totalvasAmt for calculation
 		totalLoanAmt = totalDisbAmt.add(totalvasAmt);
-		//calculating the total loan ratio from total loan amount including VAS amount
+		// calculating the total loan ratio from total loan amount including VAS amount
 		if (totalvasAmt.compareTo(BigDecimal.ZERO) > 0 && totalLoanAmt.compareTo(BigDecimal.ZERO) > 0) {
-			//vas ratio
+			// vas ratio
 			vasRatio = totalvasAmt.divide(totalLoanAmt, 2, RoundingMode.HALF_UP);
 		}
-		//calculating the total loan ratio from total loan amount including VAS
+		// calculating the total loan ratio from total loan amount including VAS
 		if (totalDisbAmt.compareTo(BigDecimal.ZERO) > 0 && totalLoanAmt.compareTo(BigDecimal.ZERO) > 0) {
-			//loan ratio
+			// loan ratio
 			loanRatio = totalDisbAmt.divide(totalLoanAmt, 2, RoundingMode.HALF_UP);
 		}
 		list.add(totalLoanAmt);
@@ -476,18 +477,18 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 			BigDecimal totalvasAmt) {
 		logger.debug(Literal.ENTERING);
 		List<VASRecording> recordings = vASRecordingDAO.getVASRecordingsByLinkRef(finReference, "");
-		//calculate totalVasAmt
+		// calculate totalVasAmt
 		if (CollectionUtils.isNotEmpty(recordings)) {
 			for (VASRecording vasRecording : recordings) {
 				totalvasAmt = totalvasAmt.add(PennantApplicationUtil.formateAmount(vasRecording.getFee(), 2));
 			}
 		}
-		//Get VAS Movements
+		// Get VAS Movements
 		BigDecimal movementAmount = vasMovementDetailDAO.getVasMovementDetailByRef(finReference, startDate, endDate,
 				"");
 		if (movementAmount.compareTo(BigDecimal.ZERO) > 0 && totalvasAmt.compareTo(BigDecimal.ZERO) > 0) {
 			movementAmount = PennantApplicationUtil.formateAmount(movementAmount, 2);
-			//Reduce the movement amount from total VAS outstanding amount.
+			// Reduce the movement amount from total VAS outstanding amount.
 			totalvasAmt = totalvasAmt.subtract(movementAmount);
 		}
 		logger.debug(Literal.LEAVING);
@@ -497,6 +498,11 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 	@Override
 	public FinanceMain getFinanceMain(String finReference, String[] columns, String type) {
 		return financeMainDAO.getFinanceMain(finReference, columns, type);
+	}
+
+	@Override
+	public List<CovenantAggrement> getCovenantReportStatus(String finreference) {
+		return interestCertificateDAO.getCovenantReportStatus(finreference);
 	}
 
 	public void setInterestCertificateDAO(InterestCertificateDAO interestCertificateDAO) {

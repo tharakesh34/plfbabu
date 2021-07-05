@@ -507,6 +507,15 @@
 														<checkbox id="finIsRateRvwAtGrcEnd" checked="false" />
 													</hbox>
 												</row>
+												<row id="row_Subvention">
+													<label id="label_FinanceMainDialog_SubventionFrom" value="${c:l('label_FinanceMainDialog_SubventionFrom.value')}"/>
+													<hbox>
+														<space spacing="2px" id="space_subVentionFrom" sclass="mandatory" />
+														<combobox id="subVentionFrom" width="200px" />
+													</hbox>
+													<label id="label_FinanceMainDialog_ManufacturerDealer" value="${c:l('label_FinanceMainDialog_ManufacturerDealer.value')}"/>
+													<extendedcombobox id="manufacturerDealer" />
+												</row>
 												<row id="rowFinOCRrequired">
 													<label id="labelFinanceMainDialogFinOCRRequired" value="${c:l('label_FinanceMainDialog_FinOCRRequired.value')}" />
 													<hbox id="hboxFinOCRRequired">

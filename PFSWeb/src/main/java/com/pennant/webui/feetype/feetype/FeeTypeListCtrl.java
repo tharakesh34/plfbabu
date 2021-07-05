@@ -62,6 +62,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.service.feetype.FeeTypeService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.webui.feetype.feetype.model.FeeTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -118,8 +119,7 @@ public class FeeTypeListCtrl extends GFCBaseListCtrl<FeeType> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_FeeTypeList(Event event) {
 		// Set the page level components.
@@ -145,8 +145,7 @@ public class FeeTypeListCtrl extends GFCBaseListCtrl<FeeType> {
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_FeeTypeList_FeeTypeSearch(Event event) {
 		search();
@@ -155,8 +154,7 @@ public class FeeTypeListCtrl extends GFCBaseListCtrl<FeeType> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -166,8 +164,7 @@ public class FeeTypeListCtrl extends GFCBaseListCtrl<FeeType> {
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_FeeTypeList_NewFeeType(Event event) {
 		logger.debug("Entering");
@@ -187,8 +184,7 @@ public class FeeTypeListCtrl extends GFCBaseListCtrl<FeeType> {
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onFeeTypeItemDoubleClicked(Event event) {
 		logger.debug("Entering");
@@ -225,8 +221,7 @@ public class FeeTypeListCtrl extends GFCBaseListCtrl<FeeType> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param feeType
-	 *            The entity that need to be passed to the dialog.
+	 * @param feeType The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(FeeType feeType) {
 		logger.debug("Entering");
@@ -238,8 +233,8 @@ public class FeeTypeListCtrl extends GFCBaseListCtrl<FeeType> {
 		String feeTypeCode = feeType.getFeeTypeCode();
 
 		if ((AdvanceRuleCode.ADVINT.name().equals(feeTypeCode) || AdvanceRuleCode.ADVEMI.name().equals(feeTypeCode)
-				|| AdvanceRuleCode.CASHCLT.name().equals(feeTypeCode)
-				|| AdvanceRuleCode.DSF.name().equals(feeTypeCode))) {
+				|| AdvanceRuleCode.CASHCLT.name().equals(feeTypeCode) || AdvanceRuleCode.DSF.name().equals(feeTypeCode)
+				|| FinanceConstants.SUBVEN_FEE.equals(feeTypeCode))) {
 			arg.put("feeTypeEnquiry", enqiryModule);
 		}
 
@@ -255,8 +250,7 @@ public class FeeTypeListCtrl extends GFCBaseListCtrl<FeeType> {
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -265,8 +259,7 @@ public class FeeTypeListCtrl extends GFCBaseListCtrl<FeeType> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

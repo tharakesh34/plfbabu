@@ -69,6 +69,10 @@ public class DisbursementController extends ExtendedTestClass {
 			dr.setFromDate(fap.getFromDate());
 		}
 
+		if (fap.getFinReference() != null) {
+			dr.setFinReference(fap.getFinReference());
+		}
+
 		List<DisbursementRequest> disbRequests = disbursementDAO.getDisbursementInstructions(dr);
 
 		logger.info("{} disbursemet instructions found for the specified request", disbRequests.size());

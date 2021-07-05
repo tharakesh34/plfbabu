@@ -4216,4 +4216,46 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	
+	<changeSet id="ST#1922.23_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'restructure_details');
+				select deps_save_and_drop_dependencies ('plf', 'restructure_details_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1922.23.0" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE Restructure_Details DROP  CONSTRAINT df_rd_repayprofitrate;
+				ALTER TABLE Restructure_Details_Temp DROP  CONSTRAINT df_rd_t_repayprofitrate;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1922.23" author="Gopal.p">
+		<modifyDataType tableName="Restructure_Details" columnName="RepayProfitRate" newDataType="decimal(13,9)" />
+		<modifyDataType tableName="Restructure_Details_Temp" columnName="RepayProfitRate" newDataType="decimal(13,9)" />
+	</changeSet>
+	
+	<changeSet id="ST#1922.23.1" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE Restructure_Details ADD  CONSTRAINT df_rd_repayprofitrate  DEFAULT 0 FOR RepayProfitRate;
+				ALTER TABLE Restructure_Details_Temp ADD  CONSTRAINT df_rd_t_repayprofitrate  DEFAULT 0 FOR RepayProfitRate;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1922.23_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'restructure_details');
+				select deps_restore_dependencies ('plf', 'restructure_details_temp');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

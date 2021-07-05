@@ -1009,6 +1009,29 @@
 										</rows>
 									</grid>
 								</groupbox>
+								<groupbox id="gb_subventionReq" visible="false">
+									<caption
+										label="${c:l('label_FinanceTypeDialog_Subvention')}" />
+									<grid sclass="GridLayoutNoBorder">
+										<columns>
+											<column width="260px" />
+											<column />
+											<column width="260px" />
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<label
+													value="${c:l('label_FinanceTypeDialog_SubventionRequired.value')}" />
+												<hbox>
+													<space id="space_subventionReq" spacing="2px" />
+													<checkbox
+														id="subventionReq" />
+												</hbox>
+											</row>
+											</rows>
+										</grid>
+							  </groupbox>
 							</div>
 						</tabpanel>
 						<tabpanel style="overflow:auto" ca:data-scrollable="true">

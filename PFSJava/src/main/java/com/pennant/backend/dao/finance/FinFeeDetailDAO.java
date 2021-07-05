@@ -106,4 +106,6 @@ public interface FinFeeDetailDAO {
 	void updateFeesFromUpfront(FinFeeDetail finFeeDetail, String type);
 
 	void deleteByTransactionId(String transactionId, boolean isWIF, String tableType);
+
+	boolean isFinFeeDetailExists(FinFeeDetail finFeeDetail, String tableType);
 }

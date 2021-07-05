@@ -328,8 +328,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
@@ -428,8 +427,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		doEdit();
@@ -438,8 +436,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		MessageUtil.showHelpWindow(event, super.window);
@@ -448,8 +445,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 * @throws InterfaceException
 	 * @throws InvocationTargetException
@@ -463,8 +459,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 * @throws ParseException
 	 * @throws ScriptException
@@ -476,8 +471,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -498,8 +492,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -580,7 +573,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 						this.btnDelete.setVisible(true);
 					} else {
 						this.btnDelete.setVisible(false);
-						//Added provision to enable delete button based on right.
+						// Added provision to enable delete button based on right.
 						this.btnDelete.setVisible(!isReadOnly("button_VASRecordingDialog_btnDelete"));
 					}
 				}
@@ -967,11 +960,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * @throws InterfaceException
@@ -1136,10 +1127,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * @throws InterfaceException
 	 * @throws InvocationTargetException
@@ -1719,7 +1708,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				List<ScriptError> defaultList = defaults.getAll();
 				for (int i = 0; i < defaultList.size(); i++) {
 					ScriptError dftKeyValue = defaultList.get(i);
-					//if VAS is a new record we have to set the default values
+					// if VAS is a new record we have to set the default values
 					if (StringUtils.trimToNull(this.vASRecording.getVasReference()) == null
 							&& aVASRecording.isNewRecord()) {
 						ExtendedFieldDetail detail = getFieldDetail(dftKeyValue.getProperty(), extendedFieldDetails);
@@ -1729,7 +1718,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 							}
 							fieldValuesMap.put(dftKeyValue.getProperty(), dftKeyValue.getValue());
 						}
-					} else { //Is VAS record is saved in DB or memory? then we have to set the saved data to extended fields
+					} else { // Is VAS record is saved in DB or memory? then we have to set the saved data to extended
+								// fields
 						ExtendedFieldDetail detail = getFieldDetail(dftKeyValue.getProperty(), extendedFieldDetails);
 						if (detail.isValFromScript()) {
 							detail.setFieldList(dftKeyValue.getValue());
@@ -1747,7 +1737,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				logger.error("Exception: ", e);
 			}
 
-			//Enable and disabling the Premium amount Button 
+			// Enable and disabling the Premium amount Button
 			setPremiumCalcButton(aVASRecording);
 		}
 		logger.debug(Literal.LEAVING);
@@ -3480,6 +3470,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				this.fee.setValue(vasFee);
 			}
 
+			setVASPremiumCalc(false);
+
 		} catch (Exception e) {
 			{
 				if (e.getLocalizedMessage() != null) {
@@ -3570,6 +3562,16 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 		if (MapUtils.isNotEmpty(fielValueMap)) {
 			generator.setValues(getExtendedFieldHeader().getExtendedFieldDetails(), fielValueMap);
+		}
+	}
+
+	private void setVASPremiumCalc(boolean isPremiumCalculated) {
+		try {
+			// Fetch FinanceMain Base Controller
+			FinanceMainBaseCtrl mainBaseCtrl = (FinanceMainBaseCtrl) finVasRecordingDialogCtrl.getClass()
+					.getMethod("getFinanceMainDialogCtrl").invoke(finVasRecordingDialogCtrl);
+			mainBaseCtrl.vasPremiumErrMsgReq = isPremiumCalculated;
+		} catch (Exception e) {
 		}
 	}
 

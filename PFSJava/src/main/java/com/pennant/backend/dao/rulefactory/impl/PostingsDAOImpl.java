@@ -249,26 +249,51 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	}
 
 	@Override
-	public List<ReturnDataSet> getPostingsByPostRef(Long postref) {
-		logger.debug("Entering");
+	public List<ReturnDataSet> getPostingsByPostRef(String postref) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" LinkedTranId, Postref, PostingId, FinReference, FinEvent, PostDate, ValueDate");
+		sql.append(", TranCode, TranDesc, RevTranCode, DrOrCr, Account, ShadowPosting, PostAmount");
+		sql.append(", AmountType, PostStatus, ErrorId, ErrorMsg, AcCcy, TranOrderId, PostToSys");
+		sql.append(", ExchangeRate, PostBranch, AppDate, AppValueDate, UserBranch");
+		sql.append(" From Postings");
+		sql.append(" Where Postref  = ?");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Postref", postref);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent, PostDate,ValueDate,TranCode, ");
-		selectSql.append(
-				" TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting, PostAmount,AmountType,PostStatus,ErrorId, ");
-		selectSql.append(
-				" ErrorMsg, AcCcy, TranOrderId, PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate, UserBranch ");
-		selectSql.append(" FROM Postings");
-		selectSql.append(" Where Postref  =:Postref) ");
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, postref);
+		}, (rs, i) -> {
+			ReturnDataSet dataSet = new ReturnDataSet();
 
-		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ReturnDataSet> typeRowMapper = BeanPropertyRowMapper.newInstance(ReturnDataSet.class);
-		List<ReturnDataSet> postings = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		logger.debug("Leaving");
-		return postings;
+			dataSet.setLinkedTranId(rs.getLong("LinkedTranId"));
+			dataSet.setPostref(rs.getString("Postref"));
+			dataSet.setPostingId(rs.getString("PostingId"));
+			dataSet.setFinReference(rs.getString("FinReference"));
+			dataSet.setFinEvent(rs.getString("FinEvent"));
+			dataSet.setPostDate(rs.getTimestamp("PostDate"));
+			dataSet.setValueDate(rs.getTimestamp("ValueDate"));
+			dataSet.setTranCode(rs.getString("TranCode"));
+			dataSet.setTranDesc(rs.getString("TranDesc"));
+			dataSet.setRevTranCode(rs.getString("RevTranCode"));
+			dataSet.setDrOrCr(rs.getString("DrOrCr"));
+			dataSet.setAccount(rs.getString("Account"));
+			dataSet.setShadowPosting(rs.getBoolean("ShadowPosting"));
+			dataSet.setPostAmount(rs.getBigDecimal("PostAmount"));
+			dataSet.setAmountType(rs.getString("AmountType"));
+			dataSet.setPostStatus(rs.getString("PostStatus"));
+			dataSet.setErrorId(rs.getString("ErrorId"));
+			dataSet.setErrorMsg(rs.getString("ErrorMsg"));
+			dataSet.setAcCcy(rs.getString("AcCcy"));
+			dataSet.setTranOrderId(rs.getString("TranOrderId"));
+			dataSet.setPostToSys(rs.getString("PostToSys"));
+			dataSet.setExchangeRate(rs.getBigDecimal("ExchangeRate"));
+			dataSet.setPostBranch(rs.getString("PostBranch"));
+			dataSet.setAppDate(rs.getTimestamp("AppDate"));
+			dataSet.setAppValueDate(rs.getTimestamp("AppValueDate"));
+			dataSet.setUserBranch(rs.getString("UserBranch"));
+
+			return dataSet;
+		});
 	}
 
 	@Override
@@ -380,7 +405,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		}
 	}
 
-	//FIXME CH to be changed to Batch Update
+	// FIXME CH to be changed to Batch Update
 	@Override
 	public void updateStatusByLinkedTranId(long linkedTranId, String postStatus) {
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
@@ -395,7 +420,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		this.jdbcTemplate.update(insertSql.toString(), paramSource);
 	}
 
-	//FIXME CH to be changed to Batch Update
+	// FIXME CH to be changed to Batch Update
 	@Override
 	public void updateStatusByFinRef(String finReference, String postStatus) {
 		logger.debug("Entering");
@@ -600,7 +625,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		dataSet.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
 
 		StringBuilder selectSql = new StringBuilder();
-		//FIX version 1.0
+		// FIX version 1.0
 		selectSql.append(
 				" SELECT T1.LinkedTranId, T1.Postref, T1.PostingId, T1.finReference, T1.FinEvent, T1.PostAmountLcCcy, T1.CustAppDate,");
 		selectSql.append(
@@ -715,21 +740,15 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	}
 
 	@Override
-	public void updateStatusByPostRef(long postRef, String postStatus) {
-		logger.debug("Entering");
+	public void updateStatusByPostRef(String postRef, String postStatus) {
+		String sql = "Update Postings SET PostStatus = ? where PostRef = ?";
 
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("PostRef", String.valueOf(postRef));
-		paramSource.addValue("PostStatus", postStatus);
+		logger.debug(Literal.SQL + sql);
 
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append(" Update Postings SET ");
-		insertSql.append(" PostStatus = :PostStatus where PostRef = :PostRef");
-
-		logger.debug("insertSql: " + insertSql.toString());
-		this.jdbcTemplate.update(insertSql.toString(), paramSource);
-		logger.debug("Leaving");
-
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setString(1, postStatus);
+			ps.setString(2, postRef);
+		});
 	}
 
 	@Override

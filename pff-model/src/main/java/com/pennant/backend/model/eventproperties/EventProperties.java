@@ -64,6 +64,7 @@ public class EventProperties implements Serializable {
 	private boolean covenantModule;
 
 	private boolean parameterLoaded;
+	private boolean cacheLoaded;
 
 	public EventProperties() {
 		super();
@@ -576,6 +577,14 @@ public class EventProperties implements Serializable {
 
 	public void setParameterLoaded(boolean parameterLoaded) {
 		this.parameterLoaded = parameterLoaded;
+	}
+
+	public boolean isCacheLoaded() {
+		return cacheLoaded;
+	}
+
+	public void setCacheLoaded(boolean cacheLoaded) {
+		this.cacheLoaded = cacheLoaded;
 	}
 
 }

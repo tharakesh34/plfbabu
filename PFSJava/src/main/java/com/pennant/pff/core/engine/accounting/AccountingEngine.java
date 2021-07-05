@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -13,8 +14,6 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.pff.core.engine.accounting.event.PostingEvent;
 import com.pennanttech.pennapps.core.AppException;
-
-import AccountEventConstants.AccountingEvent;
 
 public class AccountingEngine {
 	private static final Logger logger = LogManager.getLogger(AccountingEngine.class);
@@ -39,7 +38,6 @@ public class AccountingEngine {
 
 		List<ReturnDataSet> transactions = new ArrayList<>();
 
-
 		events.stream().forEach(aeEvent -> {
 			long linkedTranId = postingsDAO.getLinkedTransId();
 			String acEvent = aeEvent.getAccountingEvent();
@@ -48,7 +46,6 @@ public class AccountingEngine {
 			aeEvent.getReturnDataSet().stream().forEach(rds -> rds.setLinkedTranId(linkedTranId));
 			transactions.addAll(aeEvent.getReturnDataSet());
 		});
-
 
 		PostingEvent postingEvent = getPostingEvent(event);
 		postingEvent.setEventDetails(events, fd);

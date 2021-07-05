@@ -57,6 +57,9 @@
 								<row>
 									<label value="${c:l('label_CovenantDocumentDialog_ConvDocType.value')}" />
 									<extendedcombobox id="convDocType" />
+									<label id="label_CovenantDocumentDialog_OriginalDocument"
+										value="${c:l('label_CovenantDocumentDialog_OriginalDocument.value')}" />
+									<checkbox id="originalDocument" />
 								</row>
 								<row>
 									<label value="${c:l('label_CovenantDocumentDialog_ReceivedDate.value')}" />

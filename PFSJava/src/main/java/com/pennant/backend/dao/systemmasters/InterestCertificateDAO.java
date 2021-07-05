@@ -48,6 +48,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.pennant.backend.model.agreement.CovenantAggrement;
 import com.pennant.backend.model.agreement.InterestCertificate;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -82,10 +83,11 @@ public interface InterestCertificateDAO {
 
 	InterestCertificate getSchedPrinicipalAndProfit(String finReference, Date finStartDate, Date finEndDate)
 			throws ParseException;
-	
-	FinanceScheduleDetail getScheduleDetailsByFinReference(String finReference, Date finStartDate,
-			Date finEndDate);
+
+	FinanceScheduleDetail getScheduleDetailsByFinReference(String finReference, Date finStartDate, Date finEndDate);
 
 	InterestCertificate getRepayDetails(String finReference, Date startDate, Date endDate);
+
+	List<CovenantAggrement> getCovenantReportStatus(String finreference);
 
 }

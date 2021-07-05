@@ -43,22 +43,21 @@
 
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.FinMaintainInstructionDAO;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -79,100 +78,103 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 	/**
 	 * Fetch the Record FinMaintainInstruction details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinMaintainInstruction
 	 */
 	@Override
 	public FinMaintainInstruction getFinMaintainInstructionById(long finMaintainId, String type) {
-		logger.debug("Entering");
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where FinMaintainId = ?");
 
-		FinMaintainInstruction finMaintainInstruction = new FinMaintainInstruction();
-		finMaintainInstruction.setFinMaintainId(finMaintainId);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select FinMaintainId, FinReference, Event, ");
-		selectSql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append("");
-		}
-		selectSql.append(" From FinMaintainInstructions");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinMaintainId = :FinMaintainId");
-
-		logger.debug("sql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finMaintainInstruction);
-		RowMapper<FinMaintainInstruction> typeRowMapper = BeanPropertyRowMapper
-				.newInstance(FinMaintainInstruction.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			finMaintainInstruction = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finMaintainId }, (rs, i) -> {
+				return getRowMapper(rs);
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			finMaintainInstruction = null;
+			logger.warn("Record is not found in FinMaintainInstructions{} for the specified FinMaintainId >> {}", type,
+					finMaintainId);
 		}
 
-		logger.debug("Leaving");
-		return finMaintainInstruction;
+		return null;
 	}
 
 	/**
 	 * Fetch the Record FinMaintainInstruction details by finReference and event
 	 * 
-	 * @param feeTypeCode
-	 *            (String)
+	 * @param feeTypeCode (String)
 	 * @return FinMaintainInstruction
 	 */
 	@Override
 	public FinMaintainInstruction getFinMaintainInstructionByFinRef(String finReference, String event, String type) {
-		logger.debug("Entering");
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where FinReference = ? and Event = ?");
 
-		FinMaintainInstruction finMaintainInstruction = new FinMaintainInstruction();
-		finMaintainInstruction.setFinReference(finReference);
-		finMaintainInstruction.setEvent(event);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
-				" Select FinMaintainId, FinReference, Event, TDSApplicable, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimit,");
-		selectSql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append("");
-		}
-		selectSql.append(" From FinMaintainInstructions");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference = :FinReference AND Event = :Event ");
-
-		logger.debug("sql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finMaintainInstruction);
-		RowMapper<FinMaintainInstruction> typeRowMapper = BeanPropertyRowMapper
-				.newInstance(FinMaintainInstruction.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			finMaintainInstruction = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, event }, (rs, i) -> {
+				return getRowMapper(rs);
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			finMaintainInstruction = null;
+			logger.warn(
+					"Record is not found in FinMaintainInstructions{} for the specified FinReference >> {} and Event >> {}",
+					type, finReference, event);
 		}
-		logger.debug("Leaving");
-		return finMaintainInstruction;
+
+		return null;
+	}
+
+	private StringBuilder getSqlQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinMaintainId, FinReference, Event, TDSApplicable, TdsPercentage, TdsStartDate");
+		sql.append(", TdsEndDate, TdsLimit, Version, LastMntOn, LastMntBy, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append("");
+		}
+		sql.append(" From FinMaintainInstructions");
+		sql.append(StringUtils.trimToEmpty(type));
+		return sql;
+	}
+
+	private FinMaintainInstruction getRowMapper(ResultSet rs) throws SQLException {
+		FinMaintainInstruction fmi = new FinMaintainInstruction();
+
+		fmi.setFinMaintainId(rs.getLong("FinMaintainId"));
+		fmi.setFinReference(rs.getString("FinReference"));
+		fmi.setEvent(rs.getString("Event"));
+		fmi.settDSApplicable(rs.getBoolean("TDSApplicable"));
+		fmi.setTdsPercentage(rs.getBigDecimal("TdsPercentage"));
+		fmi.setTdsStartDate(JdbcUtil.getDate(rs.getDate("TdsStartDate")));
+		fmi.setTdsEndDate(JdbcUtil.getDate(rs.getDate("TdsEndDate")));
+		fmi.setTdsLimit(rs.getBigDecimal("TdsLimit"));
+		fmi.setVersion(rs.getInt("Version"));
+		fmi.setLastMntBy(rs.getLong("LastMntBy"));
+		fmi.setLastMntOn(rs.getTimestamp("LastMntOn"));
+		fmi.setRecordStatus(rs.getString("RecordStatus"));
+		fmi.setRoleCode(rs.getString("RoleCode"));
+		fmi.setNextRoleCode(rs.getString("NextRoleCode"));
+		fmi.setTaskId(rs.getString("TaskId"));
+		fmi.setNextTaskId(rs.getString("NextTaskId"));
+		fmi.setRecordType(rs.getString("RecordType"));
+		fmi.setWorkflowId(rs.getLong("WorkflowId"));
+
+		return fmi;
 	}
 
 	@Override
 	public boolean isDuplicateKey(String event, String finReference, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
 		String sql;
-		String whereClause = "Event = :Event and FinReference = :FinReference";
+		String whereClause = "Event = ? and FinReference = ?";
+		Object[] args = new Object[] { event, finReference };
+
 		switch (tableType) {
 		case MAIN_TAB:
 			sql = QueryUtil.getCountQuery("FinMaintainInstructions", whereClause);
+
 			break;
 		case TEMP_TAB:
 			sql = QueryUtil.getCountQuery("FinMaintainInstructions_Temp", whereClause);
@@ -180,122 +182,127 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 		default:
 			sql = QueryUtil.getCountQuery(new String[] { "FinMaintainInstructions_Temp", "FinMaintainInstructions" },
 					whereClause);
+
+			args = new Object[] { event, finReference, event, finReference };
 			break;
 		}
 
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql);
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("Event", event);
-		paramSource.addValue("FinReference", finReference);
 
-		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
-
-		boolean exists = false;
-		if (count > 0) {
-			exists = true;
-		}
-
-		logger.debug(Literal.LEAVING);
-		return exists;
+		return jdbcOperations.queryForObject(sql, args, Integer.class) > 0;
 	}
 
 	@Override
-	public String save(FinMaintainInstruction finMaintainInstruction, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("Insert into FinMaintainInstructions");
-		sql.append(tableType.getSuffix());
-		sql.append(
-				" (FinMaintainId, FinReference, Event, TDSApplicable, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimit,");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(
-				" values(:FinMaintainId, :FinReference, :Event, :TDSApplicable, :TdsPercentage, :TdsStartDate, :TdsEndDate, :TdsLimit,");
-		sql.append(
-				" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-
-		// Get the identity sequence number.
-		if (finMaintainInstruction.getFinMaintainId() == Long.MIN_VALUE) {
-			finMaintainInstruction.setFinMaintainId(getNextValue("SeqFinMaintainInstructions"));
+	public String save(FinMaintainInstruction fmi, TableType tableType) {
+		if (fmi.getFinMaintainId() == Long.MIN_VALUE) {
+			fmi.setFinMaintainId(getNextValue("SeqFinMaintainInstructions"));
 		}
 
-		// Execute the SQL, binding the arguments.
+		StringBuilder sql = new StringBuilder("Insert into FinMaintainInstructions");
+		sql.append(tableType.getSuffix());
+		sql.append(" (FinMaintainId, FinReference, Event, TDSApplicable, TdsPercentage, TdsStartDate");
+		sql.append(", TdsEndDate, TdsLimit, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finMaintainInstruction);
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+				ps.setLong(index++, fmi.getFinMaintainId());
+				ps.setString(index++, fmi.getFinReference());
+				ps.setString(index++, fmi.getEvent());
+				ps.setBoolean(index++, fmi.istDSApplicable());
+				ps.setBigDecimal(index++, fmi.getTdsPercentage());
+				ps.setDate(index++, JdbcUtil.getDate(fmi.getTdsStartDate()));
+				ps.setDate(index++, JdbcUtil.getDate(fmi.getTdsEndDate()));
+				ps.setBigDecimal(index++, fmi.getTdsLimit());
+				ps.setInt(index++, fmi.getVersion());
+				ps.setLong(index++, JdbcUtil.setLong(fmi.getLastMntBy()));
+				ps.setTimestamp(index++, fmi.getLastMntOn());
+				ps.setString(index++, fmi.getRecordStatus());
+				ps.setString(index++, fmi.getRoleCode());
+				ps.setString(index++, fmi.getNextRoleCode());
+				ps.setString(index++, fmi.getTaskId());
+				ps.setString(index++, fmi.getNextTaskId());
+				ps.setString(index++, fmi.getRecordType());
+				ps.setLong(index, JdbcUtil.setLong(fmi.getWorkflowId()));
+
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
-		logger.debug("Leaving");
-		return String.valueOf(finMaintainInstruction.getFinMaintainId());
+		return String.valueOf(fmi.getFinMaintainId());
 	}
 
 	/**
 	 * 
 	 */
 	@Override
-	public void update(FinMaintainInstruction finMaintainInstruction, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
+	public void update(FinMaintainInstruction fmi, TableType tableType) {
 		StringBuilder sql = new StringBuilder("update FinMaintainInstructions");
 		sql.append(tableType.getSuffix());
-		sql.append(
-				" set FinMaintainId = :FinMaintainId, FinReference = :FinReference, Event = :Event, TDSApplicable = :TDSApplicable, TdsPercentage = :TdsPercentage,");
-		sql.append(" TdsStartDate = :TdsStartDate, TdsEndDate = :TdsEndDate, TdsLimit = :TdsLimit,");
-		sql.append(
-				" Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
-		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" set ");
+		sql.append(" FinReference = ?, Event = ?, TDSApplicable = ?, TdsPercentage = ?, TdsStartDate = ?");
+		sql.append(", TdsEndDate = ?, TdsLimit = ?, Version= ? , LastMntBy = ?, LastMntOn = ?, RecordStatus= ?");
+		sql.append(", RoleCode = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where FinMaintainId = ?");
 
-		sql.append(" where FinMaintainId = :FinMaintainId");
-		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
-
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finMaintainInstruction);
-		int recordCount = jdbcTemplate.update(sql.toString(), beanParameters);
 
-		// Check for the concurrency failure.
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, fmi.getFinReference());
+			ps.setString(index++, fmi.getEvent());
+			ps.setBoolean(index++, fmi.istDSApplicable());
+			ps.setBigDecimal(index++, fmi.getTdsPercentage());
+			ps.setDate(index++, JdbcUtil.getDate(fmi.getTdsStartDate()));
+			ps.setDate(index++, JdbcUtil.getDate(fmi.getTdsEndDate()));
+			ps.setBigDecimal(index++, fmi.getTdsLimit());
+			ps.setInt(index++, fmi.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(fmi.getLastMntBy()));
+			ps.setTimestamp(index++, fmi.getLastMntOn());
+			ps.setString(index++, fmi.getRecordStatus());
+			ps.setString(index++, fmi.getRoleCode());
+			ps.setString(index++, fmi.getNextRoleCode());
+			ps.setString(index++, fmi.getTaskId());
+			ps.setString(index++, fmi.getNextTaskId());
+			ps.setString(index++, fmi.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(fmi.getWorkflowId()));
+
+			ps.setLong(index, fmi.getFinMaintainId());
+		});
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * 
 	 */
 	@Override
-	public void delete(FinMaintainInstruction finMaintainInstruction, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("delete From FinMaintainInstructions");
+	public void delete(FinMaintainInstruction fmi, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Delete From FinMaintainInstructions");
 		sql.append(tableType.getSuffix());
-		sql.append(" where FinMaintainId = :FinMaintainId");
-		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(" Where FinMaintainId = ?");
 
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finMaintainInstruction);
-		int recordCount = 0;
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), beanParameters);
+			int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+				ps.setLong(1, fmi.getFinMaintainId());
+			});
+
+			if (recordCount == 0) {
+				throw new ConcurrencyException();
+			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 }

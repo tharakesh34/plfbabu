@@ -1,3 +1,579 @@
+PLF-Release-5.15.0 2021-06-14
+--------------------------------------------------------------------------------------------------------
+Enhancements: 
+------------
+1. ST#2511 - New screen for fore-closure simulation report for mature loans.
+2. ST#2416 - New screen to de-assign the collateral assignment percentage for active loans.
+3. ST#2418 - New report to get the current outstanding interest accrual
+4. ST#2523 - New report to show the loan wise mandate details
+5. ST#2524 - Provisions of bulk upload to change the “Repayment Method” of loan.
+6. ST#2525 - New report to display the rescheduled loan details.
+7. ST#2526 - Provision to link the loans for a particular customer, to display in SOA, Receipt and NOC report
+8. ST#2528 - New API to waive the Fees & Charges [Extend API]
+9. ST#2531 - New Reports for Covenants.
+10. ST#2409	- Provision to configure the successful repayment count of a loan in fore-closure charges rule.
+11. ST#2419	- Provision to configure the Subvention fees
+12. ST#2421 -  PSD#168631	Provision to capture the UTR_NUMBER (Unique transaction reference number) through presentment response
+13. ST#2423	- Loan by Maturity report enhanced to display additional fields.
+14. ST#2425	- Receipt details report enhanced to show allocation details.
+15. ST#2429	- Provision to configure the multiple disbursement instruction file formats for each partner bank against to payment type
+16. ST#2495	- Fine-tuning the presentment response process
+17. ST#2509	- Auto-populate the EMI amount and EMI date in the Cheque Maintenance screen.
+18. ST#2510	- Print button enabled for effective schedules in closure maker screen.
+19. ST#2512	- Provision to capture the “Closer Type” in the closer maker screen
+20. ST#2513	- Hyper link “Loan Closure Enquiry” added in closure maker screen to navigate to “Loan Closure Enquiry” screen.
+21. ST#2514	- Hyper link “Generate Statement of Account” added in closure maker screen to download Statement of Account.
+22. ST#2515	- New validation added to recalculate the VAS premium when premium calculation attributes (Tenure, Loan Amount, Customer Age, ROI, and Loan Start Date) are changed.
+23. ST#2516	- Provision to configure the individual account for each VAS product in accounting configuration by configuring the sub head rule.
+24. ST#2517	- Provision to capture bounce remarks in presentment response process
+25. ST#2518	- Display the bounce remarks captured through presentment response in Statement of Account
+26. ST#2519	- Stop downloading disbursement instructions (for which download type is mentioned as “Online” in corresponding partner bank) through screen and API
+27. ST#2520	- Provision to send the disbursement instructions (for which download type is mentioned as “Online” in corresponding partner bank) through third party API
+28. ST#2521	- The below fields made non mandatory in “Legal Module”
+		1.Document Holder and Property Address fields under “ Legal document details” tab
+		2.“Schedule Level Area”  in  Property Details tab
+		3.“Property Details (MODT”  in Title tab
+		4.“EC Date” and “EC Property Owner Name” in Encumbrance certification/search report tab
+29. ST#2522	- “Applicant Name” and “Request Stage” fields are added in legal details list screen
+30. ST#2532	- Presentment receipt creation on presentment response process based on the implementation constant
+-------------------------------------------------------------------------------------------------------------------
+Bug Fixes: 
+-------------
+1. DE#2526 - PSD#173289 : Waived Bounce charges are not reflecting in SOA
+2. DE#1623 - PSD#169958	: Unable to waive Principal and Future Principal through early settlement API
+3. DE#2527 - PSD#171119	: In fee waiver screen, waived partial LPP amount and remaining balance is not showing correctly.
+4. DE#2528 - PSD#172602 : Unable to delete the cancel cheque document from Loan Basic Details Screen.
+5. DE#2529 - Getting 850 blocker while approving loan through loan queue incase of documents are updated through update-Loan API
+----------------------------------------------------------------------------------------------------------------------------------
+
+PLF-Release-5.14.0 2021-05-03
+----------------------------------------------------------------------------------------------------------------------
+Enhancements: 
+-------------
+1. ST#2031 - PSD#161489 - Step Loans based on Installment amount - System should be able to generate the RPS as per the installment plan captured by user
+2. ST#2145 - Schedule version changes in LMS
+----------------------------------------------------------------------------------------------------------------------
+
+PLF-Release-5.13.0 2021-03-29
+----------------------------------------------------------------------------------------------------------------------
+Enhancements: 
+-------------
+1. ST#1922 - Restructuring functionality in LMS
+2. ST#1924 - Special Rate Upload functionality
+3. Support for observability tool
+4. ST#192 - Write off accounting changes
+5. ST#195 - Receipt upload enhancements
+6. ST#195 - Aspose-Words component upgrade
+7. ST#201 - Remove itext dependency and handle the merge PDF using apache PDF box
+----------------------------------------------------------------------------------------------------------------------
+
+PLF-Release-5.12.0 2021-03-15
+----------------------------------------------------------------------------------------------------------------------
+Enhancements: 
+-------------
+1. ST#1925 - Presentment API’s
+2. ST#1926 - Disbursement API's
+3. ST#1928 - Mandate Download based on Entity Code and Partner bank
+4. ST#1929 - Stage Accounting to be implemented for Presentation
+5. ST#1930 - Paid disbursement instructions cancellation
+6. ST#1931 - Provision to upload a document while creating Disbursement instructions
+7. ST#1935 - Disbursal instruction creation for VAS, through API
+----------------------------------------------------------------------------------------------------------------------
+
+PLF-Release-5.11.1 2021-03-01
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes: 
+-------------
+1. PSD#168755	- In Receipt Details screen the External Reference Field is not getting save
+2. PSD#165096	- System is allowing to cancel/modify the receipts created through Presentment
+3. PSD#165602	- Create Loan schedule API is not working when “Number of Terms” is given a large value
+4. PSD#165107	- System is not creating the receipts for BPI payment automatically during EOD
+5. PSD#165107	- System is fetching the BPI schedules which are marked as deduct from disbursement into presentment file.
+6. PSD#166569	- While trying to reject the LMS event through loan maintenance screen getting 900 blocker for the loans having covenants
+7. PSD#164828	- Number of Terms are not displaying correctly in “Loan Basic Details” list screen.
+8. PSD#165793  - While creating the loans through API, duplicate fees are getting created or fees have been mapping wrongly (one loan to another loan).	
+9. PSD#165975	- While doing “Remove Terms” LMS event with “Recalculation Type” as “Till maturity”  Installment amount is  not calculating properly
+10. PSD#164718	- System is not displaying the pre-matured loans in “Write Off” list
+11. PSD#165975	- While presentment extraction system is displaying wrong bank name when the user have multiple mandates and presentment extraction is based on group by partner bank
+12. PSD#167372	- DPD days mismatch between NPA provision report & application.
+13. PSD#167188	- Even after waiving OD penalty amount still system is showing penalty amount in Receipt Maker Screen
+14. PSD#167890	- While performing the write off on loan, system is not being post the write of transactions in postings
+15. PSD#167438	- While extracting the SOA through API’s(both bean and PDF report) amounts  are displaying wrongly (displaying major currency instead of minor currency in PDF)
+16. PSD#163538	- TDS is calculating for LPP charges even if the TDS is not applicable for the loan
+17. PSD#164121 - While doing “Part Payment” with more than the due, getting debits credits mismatch when TDS applicable for part payment fee and if there is any excess amount present.	
+18. PSD#164147 - When Paying partial payment through receipt maker with more than due amount, then the excess amount is not displaying under excess, but the same is adjusted against the schedule in effective schedule tab.	
+19. PSD#164129	- System is allowing “Early Settlement” even the receipt date is before latest Waiver date.
+20. PSD#165871	- System is not considering last paid installment and allowing to do back dated “Early Settlement”
+21. PSD#157632	- In Institutional limit canceled loans are also reflecting
+22. PSD#159897	- While doing “Early Settlement” getting one day accrual amount difference for the Advance Interest Loan
+23. PSD#168158	- When the loan is in grace period, while trying to do “Add Disbursement” getting, 900 blocker instead of throwing validation.
+24. PSD#165442 - Even after “Early settlement” loan is in active state, when profit amount calculated and/or scheduled is 1/- and with TDS applicable, TDS calculated also will be Rs 1/-.
+25. PSD#167397	- After Early Settlement, Loan is in still in active state due to interest and TDS amounts are pending.
+26. PSD#162555	- While creating the receipt for the below receipt purpose, getting debit and credits mismatch in case of any charges are applicable and the Fees is having TDS
+		a.Early Settlement
+		b.Part Payment
+		c.Schedule Payment
+27. In Posting Future Principal Amount not displayed
+28. Even though the LPI amount is paid, system is displaying the balance due at loan summary section in SOA report
+29. Overdue days are not getting effect in loan summary details screen, even after paid all the overdue amounts through receipt maker screen
+30. System is displaying dates which are crossed the installment date under “Recal. From” drop down In “Remove Terms” screen
+31. Value Date is not displaying in posting enquiry screen for the fin Event FEEREFUND – (Upfront fee refund).
+32. In Payment Instruction screen, Payable Advice amount is displaying as excess amount in Postings.
+33. In foreclosure enquiry screen “Bounce Charges” and “Manual Advice(Receivables) “ amounts are displaying incorrectly
+34. While approving the receipts  for “Early Settlement” or “Part Payment” or “Schedule Payment” getting debits credits mismatch in case of any fees with exclusive GST
+35. System not allowing “Part Payment” and “Early Settlement” on same day
+36. While creating “Manual Advices” system is calculating TDS even the loan is not created without TDS applicable and Fee applicable for TDS.
+37. Receipt entry doesn’t showing any Penalty interest entry, whereas Waiver screen is showing
+38. Partial payable advice is not available for refund in the “Payment Instructions” screener
+39. Loan not getting closed; only waive the penalty through fee-waiver, but loan getting closed when we waive penalty along with interest
+40. System is allowing to create multiple payment instructions simultaneously
+41. System is allowing to do payment instruction more than the payable advices
+42. While doing the “Early Settlement” Loan is not getting closed, if the user did the “Part Payment” within the grace period and does the “Early Settlement” on same day.
+43. System is allowing approve “Part Payment” receipts which are created before installment date and trying to approve after installment date is crossed.
+44. While waiving the fees completely and loan is having principal dues also system is closing the loan.
+45. System is allowing to create duplicate receipts on the following fields Fin-Reference, Receipt-Amount, Value-Date and Transaction Reference
+46. While doing “Early Settlement” if there is any LPI amount LATEPAY event entries are not posted in postings
+47. In SOA report system is displaying the presented installment number even though the extracted presentment is adjusted to oldest dues when “Oldest due knock-off” is enabled.
+48. TDS on Fees accounting entries are not getting posted  even TDS is applicable for the Fees
+49. Getting unhandled exception in Verification Enquiry in Loan Basic Details
+50. Part payment charges are not auto recalculating when user adjusted the allocations manually.
+
+---------------------------------------------------------------------------------------------------------------------
+
+PLF-Release-5.11.0 2021-01-28
+----------------------------------------------------------------------------------------------------------------------
+Enhancements: 
+-------------
+1. ST#1786 - Remove the log4j 1.2 bridge
+2. ST#1791 - Migrate Sequence table to Sequence Objects
+3. ST#1792 - "EOD Performance Changes
+	1. Change the single insert/update to bulk wherever applicable.
+	2. ParameterizedBeanPropertyRowMapper to Custom RowMapper
+	3. Insert or update changed from BeanPropertySqlParameterSource to Custom PreparedStatement
+	4. Stop loading SMT parameters multiple times
+	5. Avoid the Reflection to get the declared fields from the bean
+	6. Introduce copyEntity method in required beans to get the cloned object instead of using cloner"
+4. ST#1802 - JavaScript Engine migration from Nashorn to GraalVM
+5. ST#1083 - Separate Log file for EOD
+-------------------------------------------------------
+Bug Fixes:
+-----------
+1. DE#1802	- EOD is not working if there are no loans in the system
+2. PSD#167260	- System allowing to map the inactive “Knockoff master” record in “Knockoff Loan Type Master”
+3. PSD#167391	- While creating the receipt for the EMI in Advance case through EOD, TDS amount is posting double time in postings table.
+4. PSD#167451	- System is allowing to canceling the Receipts created through “Auto Knockoff” even application date is crossed the month.
+5. PSD#167525	- System is allowing to canceling the Receipts created through “Auto Knockoff” even the schedule is affected after creation of receipt.
+6. PSD#167578	- The added extended fields in the below modules are disappearing while opening the records.
+		1. VAS Products
+		2. Extended Fields
+7. PSD#167702 - System not allowing to create new  Institution Limit Check Filter
+8. PSD#167703 - While double click on records under  Re-Assignment list screen getting 900 blocker
+9. PSD#167705 - While doing Early Settlement for the below scenario Loan is not getting closed
+		1.Loan scheduling method is “Cal. & Capitalize Interest From Last Schedule”
+		2.Early Settling on schedule date
+10. PSD#167706	- If Schedule already paid system is not allowing to do early settlement on the below scenarios
+		1.Schedule payment received date
+		2.The payment received date  is within grace period 
+		3.No profit payment case
+11. PSD#167745	- In Cheque Maintenance menu after delete one existing and save the after open the saved record previous deleted data still populating in the screen
+12. PSD#167633	- In the Covenants details menu  after save the record Selected Covenants details Description is disappear 
+13. PSD#167639 - While Save the Record in WIF Loan Details menu getting 900 error
+14. PSD#167769	- In Upfront Fee Receipt Enquiry list screen while trying to sort on Receipt Date Getting 900 blocker
+15. PSD#167770	- System is not calculating LPI properly
+16. PSD#167804	- While trying to opening some of the records in   Write-off getting 900 blocker.
+17. PSD#167798 - In the Manual Advise Enquiry screen Paid GST amount not displaying 
+18. PSD#167891 - In Presentment File Import Menu the search is not working while trying to search with ID or File Name.
+19. PSD#167905 - In the Manual Advise Enquiry screen Waived GST amount not displaying
+20. PSD#168023 - In Customer KYC details screen while Clear the Country Field the below corresponding fields not clearing
+			 1. Province 
+			 2. State 
+			 3. City 
+			 4. PIN Code
+21. PSD#168177 - While trying to search the Fee waiver through CIF getting 900 blocker
+22. PSD#168169 - While trying to save the existing WIF Loan getting 900 blocker 
+23. PSD#168174 - In Fee waiver enquiry screen Filter the record with the Customer CIF getting 900 error
+----------------------------------------------------------------------------------------------------------------------
+
+PLF-Release-5.10.1 2020-12-31
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes:
+---------
+1.  OD Loan type issues
+----------------------------------------------------------------------------------------------------------------------
+
+PLF-Release-5.3.7 2020-11-19
+-----------------------------------------------------------------------------------------------------------------------
+Bugs:
+---------------
+1	DE#1622 - While doing re-scheduling in the grace period schedule not getting plotted incorrectly
+2	DE#1621 - PSD#143113 while doing the early settlement loan not getting closed when Future Principle adjusted using excess amount and waived the Interest, Penalty and all other charges
+3	DE#1620 - Schedule interest accrued amount is showing wrongly in foreclosure report.
+4	DE#1619 - While doing the Change-Payment in LOS after saving the loan in maker queue, original ending balance getting changed, because of     this, we are getting issues while doing Add-Disbursement and Part-Prepayment LMS actions.
+5	DE#1618 - Received amount not displaying properly in “Fee Waiver Enquiry” screen.
+6	DE#1617 - Incorrect Received amount and net balance on waiver enquiry screen.
+7	ST#1616 - Stop populating rate review dates (From-Date and To-Date) while doing “Change Payment” operation in both LOS and LMS module.
+8	DE#1615 - Stop changing the “Profit Days Basis” in “Rate Change” LMS operation.
+9	DE#1614 - Added additional validation to stop creating/approving the Part Payment receipt in case of Part payment date is less than the Waiver Date."
+10	DE#1602 - PSD#162633 Mandate file is not getting display in mandate file control screen after mandate download
+11	DE#1601 - PSD#161631 Loans showing as locked in admin after moved from AFX to pennant
+12	DE#1599 - PSD#163113 While creating the mandates through API system is not validation the UMR Numbers system is creating duplicate UMR numbers
+13	DE#1582 - System is storing the Repayment instruction Schedule details in FinRepayInstructions table for maturity date as well
+14	ST#1520 - PSD#152367  Customer validation API modification
+15	DE#1512 - Zero interest scheme issue(Paisa adjustment)  when the CD Product.
+16	DE#1589 - While crating the receipts through receipt upload screen with different Fee Code and same allocation system is throwing the duplicate allocation messages.
+17	ST#1590 - Add the new tag “overdue Balance” in Finance Enquiry API
+18	DE#1591 - PSD# 158297 Received Amount not showing properly in fee-waiver screens
+19	DE#1592 - While crating the receipts through receipt upload screen, system is throwing the “Allocation Sheet: Minor Currency (Decimals) in [PAIDAMOUNT]” message when the paid amount value contains decimal portion.
+20	DE#1593 - Down Payment Amount not displaying properly in SOA
+21	DE#1594 - PSD#157075 Payable adjustment not reacting in SOA
+22	ST#1595 - Added New Tag “Closed Date” in Finance Enquiry API.
+23	DE#1596 - While doing presentment upload for last installment loan closed date is updating as application date instead of last schedule date.
+24	DE#1597 - While creating the receipts through knock-off for “Payable Advices” transaction details are not displaying properly in SOA
+25	DE#1598 - Loan not getting closed while doing the fee waiver even there is no outstanding balances
+26	DE#1521 - PSD#160608 Duplicate records displaying in presentment approver screen
+27	DE#1583 - Paid amount not displaying correctly In Fee Waiver screen
+28	DE#1581 - System while doing the Schedule change operations through LOS system is not logging the details in FINSERVICEINSTRUCTION table.
+29	DE#1580 - Payment instructions getting rejected by CMS
+30	DE#1579 - System is validating the cheque amount during cheque maintenance screen even the Cheque is realized, presented and bounced
+31	DE#1577 - PSD#161448 - System is not triggering the MODT Rule while changing the “payment mode” in next stages of LOS.
+32	DE#1573 - While doing the BPI refund through payment instruction screen, accounting entries are not getting posted properly.
+33	DE#1574 - Unable to download mandate documents through mandate enquiry screen.
+
+-----------------------------------------------------------------------------------------------------------------------
+PLF-Release-5.10.0 2020-11-18
+----------------------------------------------------------------------------------------------------------------------
+Enhancements: 
+-------------
+1	ST#1607 - While creating the receipt for Part Payment, added the new validation “Partial settlement amount should be less than closing balance”.
+2	ST#1442 - PSD#150379 - Bank Account number validation based on the configuration in bank master.
+3	ST#1567 - Auto Grace extension
+4	ST#1544 - Loan Downsizing
+5	ST#1576 - Online mode added in Upfront Fee screen
+------------------------------------------------------
+Bug Fixes:
+----------
+1	DE#1624 - PSD#160822 - While doing Early Settlement with foreclosure charges system is allowing even the receipt amount is less than due amount (Including foreclosure charges).
+2	DE#1609 - Even after uploading the presentment status as “SUCCESS”, receipt mode as showing as “DEPOSITED” instead of “REALIZED“in receipt enquiry screen.
+3	DE#1610 - PSD#159369 - BPI Payments which are deducted from disbursement should not come into presentment extraction.
+4	DE#1612 - GST amount is displaying twice in foreclosure enquiry screen for foreclosure fees.
+5	DE#1613 - While adding the account details in VAS Provider account details screen system is not displaying the corresponding VAS provider names.
+6	DE#1623 - Unable to waive Principal and Future Principal through early settlement API
+----------------------------------------------------------------------------------------------------------------------
+
+PLF-Release-5.9.1 2020-10-17
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes :
+----------
+1. 5.3.6 bug fixes. (All the items needs to be validate).
+2. DE#1249 - Accounting Simulation Tab Missing in Receipt Approver Screen
+3. System should not allow to do the transaction in the previous month if month end is run.
+4. System should not allow to take/approve the partial payment/Early settlement receipt before the last due date.
+5. System should not allow to take/approve the partial payment/Early settlement receipt before the last schedule change date(Rate Change, Partial payment,        Disbursal) .
+6. System should validate Closing balance in case of partial settlement. (Partial settlement amount should be less than closing balance).
+-----------------------------------------------------------------------------------------------------------------------
+
+PLF-Release-5.3.6 2020-10-06
+-----------------------------------------------------------------------------------------------------------------------
+Bugs:
+---------------
+1	DE#1475	- In case Changes done on  any records are taking default values in Misc Postings if it is Resubmitted replace old values
+2	DE#1474	- In Manual advice under Movement amount getting wrong value in case of doing waiver
+3	DE#1473	- Rounding mode system parameters length increased
+4	DE#1472	- Unaccrued Penalty due till date entry in SOA report displayed based on implementation constants.
+5	DE#1471	- PSD#156449 Loan not getting closed while doing fore
+6	ST#1407	- Moving Columns from Receipt Details to Receipt Header
+7	ST#1407	- Moving Columns from Receipt Details to Receipt Header
+8	ST#1407	- Moving Columns from Receipt Details to Receipt Header
+9	DE#1100	- PSD #156860 Systems is calculating the TDS for past schedules also while doing schedule change LMS activities when the TDS flag is enable in loan type.
+10	DE#1140	- Overdue Details are getting negative while doing the interest waiver.
+11	DE#1141	- Next Review Reset: All next review dates resetting while approving the loan for backdated loans.
+12	DE#1180	- Fee Waiver: While doing interest waiver, system is not posting the accounting entries when waiver amount is equal to scheduled
+13	DE#1191	- PSD#158509 Interest amount not getting calculated correctly for quarterly compounding loans
+14	DE#1197	- Write off payment : While doing the write off payment, application throws the validation like “Loan is in inactive state. Please check and cancel the basic details action”, if loan is in inactive state.
+15	DE#1397	- Moratorium Period End Date: Moratorium Period End Date coming wrongly, while doing the rebuild schedule in loan queue.
+16	ST#1407	- Moving Columns from Receipt Details to Receipt Header
+17	ST#1446	- Part Payment Receipt: Additional Validation to stop the part payment in case of current part payment date is less than earlier part payment date.
+18	DE#1447	- TDS Amount is showing as negative in schedule details Screen after waiving
+19	DE#1448	- System is not giving effect of Add term in Schedule. It is increasing the no of days only.
+20	DE#1452	- Installment due date (INSTDATE) postings getting posted on capitalization date.
+21	DE#1454	- LPP charges are not calculating properly
+22	DE#1455	- GET Statement API : System is not displaying Repayment Schedule and Other Financial Details sections in SOA through get statement API.
+23	DE#1459	- Change payment: Remove the rate
+24	DE#1460	- PSD#160396 Balance in EMI Receivable & Loans advances account even after fore close the loan.
+25	DE#1461	- PSD#156013 
+26	DE#1462	- PSD#156621 Overdue Enquiry All the Overdue details are getting updated with latest overdue payment date.
+27	DE#1463	- Grace days penlaty calculation issue
+28	DE#1464	- PSD #157134 
+29	DE#1466	- 151769 Loan is not getting closed through the closure screen.
+30	DE#1467	- DE#217 PSD#155962 Loan status is Active even after foreclosureRCA overdue details not getting update through  presentment upload.
+31	DE#1470	- PSD#156372 GST amounts are not calculated for fore closure charges while creating early settlement receipt.
+32	DE#1476	- PSD 
+33	DE#1477	- PSD#158509 Quarterly Compounding Loans: INSTDATE event is getting posted on capitalization date
+34	DE#1479	- In waiver inquiry screen  closed loans records are not showing
+35	DE#1482	- In Loan Queue We have entered Moratorium Period End Date saved the record and again change the Moratorium end Date after Moratorium terms are not updated
+36	DE#1483	- Loan Enquiry :In overdue Interest while tick on work flow getting Java Error
+37	DE#1484	- After Write off while doing write_off payment getting error Loan is in inactive state. Please check and cancel the basic details
+38	DE#1494	- GLEMS EOD Failed, application not able to show the Re
+
+----------------------------------------------------------------------------------------------------------------------
+PLF-Release-5.9.0 2020-08-31
+-----------------------------------------------------------------------------------------------------------------------
+Enhancements:
+---------------
+1	ST#919 IMD Change in Product
+2	ST#540 NPA & Provision
+3	ST#1250 Pin Code Master enhancements
+------------------------------------------------
+Bug Fixes:
+-----------
+1. DE#1242 PSD#151678 Foreclosure charges shown in the foreclosure enquiry and in the receipt screen are different.
+2. DE#1247 IND AS Accounting should be based on the Implementation constant
+3. DE#1249 Accounting Simulation Tab Missing in Receipt Approver Screen
+4. DE#1248 Loans Auto Rejection in EOD
+
+-----------------------------------------------------------------------------------------------------------------------
+
+PLF-Release-5.8.0 2020-06-28
+-----------------------------------------------------------------------------------------------------------------------
+Enhancements:
+---------------
+1. ST#531 Goods and Services Tax (GST) for the Financial Services
+-----------------------------------------------------------------------------------------------------------------------
+
+PLF-Release-5.7.0 2020-06-18
+-----------------------------------------------------------------------------------------------------------------------
+Enhancements:
+---------------
+1. ST#880 TDS On Fees
+-----------------------------------------------------------------------------------------------------------------------
+
+PLF-Release-5.6.0 2020-06-06
+-----------------------------------------------------------------------------------------------------------------------
+Enhancements:
+---------------
+1.  ST#811 - Add Rate Change: When we are changing from 3 month to 6 month MCLR cycle.  System is calculating rate against the base rate dates. Now we are changing basis on frequency basis.
+2.  ST#524 - Planned EMI Holiday on Grace Period
+3.  ST#609 - Debit Service Fund  & Cash collateral features in pennant
+4.  ST#810 - Add Rate Change: When we are changing the one base rate code to another base rate code, system is considering the spread rate. Now Modified, if base rate codes are same then only we consider the spread rate.  
+5.  ST#811 - Add Rate Change: When we are changing from 3 month to 6 month MCLR cycle.  System is calculating rate against the base rate dates. Now we are changing basis on frequency basis.
+6.  ST#812 - PSD#153557 New Interest rate not reflecting in printed RPS when rate Change is done
+7.  ST#813 - In GetSOA API the amounts we are showing in minor currency units
+8.  ST#814 - PSD#155534 In Receipt Header table transaction date and value date are not updating correctly.
+9.  ST#815 - New Fields(Opening Principal, Rate of Interest) added in Agreement bean to show the same in Agreement
+10. ST#816 - Handling of Multi Entity for mandates and presentments
+11. ST#817 - Automation for Presentment download and upload processes
+12. ST#819 - PSD 155589 GetSOA API: Principal Component, Future Interest Component, Future Installment Amount missing in response
+13. ST#820 - New API's for  DSA and Relation ship officers
+14. ST#235 - EOD Automation
+15. ST#903 - System taking time while calculating the GST
+16. ST#235 - Add a new condition on EOD Reminder and Alert mails.
+17. ST#714 - New Covenants upload functionality.
+18. ST#930 - Accounting on Amortization Process and Expense Upload
+19. ST#978 - Oldest Due_Knock Off - Payment apportionment logic - Oldest dues and Auto knock off - Excess
+20. ST#979 - Snapshot for customer wise and bulk snapshot for pending customer after micro EOD complete
+21. ST#350 - Auto Knock Off
+22. ST#980 - Snapshot Enabled for FinExcessAmounts table
+23. ST#70  - EOD validation:  While execution of EOD system will compare the current system time and time of last EOD execution. If it’s equal to or more than the hours define at system parameter level, user will able to execute EOD for specific business date otherwise system will give error and it will stop the EOD process.
+-----------------------------------------------------------------
+
+Bugs:
+-------
+1   DE#742 -  Accounting Issue while doing early settlement
+2	DE#676 -  Fee Waiver : Bucket Update, Loan status Update, customer status update, TDS impacts with wrong payments display, Profit Details paid updates.
+3	DE#797 -  LPP Incomization amount setting wrongly by using ReceiptID instead of RepayID while doing Receipts - Impacts on SOA
+4	DE#832 -  PSD 154044 Partner Bank not Updating in Receipt Detail Table when presentment is done
+5	DE#710 -  getSRMDetails API service suppose to send all the LAN (from LOS and LMS) however it’s returning LAN from LOS only(Godrej)
+6	DE#737 -  In Disbursement Download file partner bank account number is missing.
+7	DE#699 -  While approving the record in covenants(Post Disbursement Edit) screen getting 900 blocker.(GS)
+8	DE#479 -  Import button getting disabled when Mandate file uploaded successfully, for first time and again when try to upload new mandate file. 
+9	DE#738 -  While creating the loan through API guarantor is not getting updated.When bankcustomer = False,it is working fine & when bankcustomer=True ,guarantor name and emailid is not updating
+10	DE#916 -  As per UD system should allow Either amount or percentage is accepted not both. But system validating if any once is blank.
+11	DE#915 -  As per UD Expense Type Description allowed only 100 characters but system allowing 200 char and it must start with Characters in Expense types screen
+12	DE#914 -  Expense Type Description allowed only characters, system is allowing the Numbers also
+13	DE#913 -  We are getting 900 blocker in Amortization method rule screen
+14	DE#67  -  While creating new loan type in menu  CDloan type  in core QC getting 900 Error.
+15	DE#54  -  Unable to save branches for users
+16	DE#24  -  PSD 155543 Post Cash Back (auto knocked off ) for over due loans user is still allowed to manual knock off for the same amount
+17	DE#25  -  Receipt Payment through payable mode details are not shown in SOA
+18	DE#26  -  Penalty form customer waived of Zero entries are Shown in SOA 
+19	DE#27  -  Cash Back Payable Advice are shown in Payment instructions screen
+20	DE#877 -  New covenant details are not reflecting in CAM report.
+21	DE#929 -  Moratorium: BPI schedule case on Moratorium effect
+22	DE#960 -  PSD 155992 Wrong calculation of LPP charges for CD Loan Type
+23	DE#942 -  PSD 156243 Files are not displaying in decending order in Disbursement control screen.
+24	DE#946 -  Unable to update the customer details through API  with Income & External Liabilities
+25	DE#955 -  While creating the loan through API with STP BPI Amount is not considering for disbursement instructions.
+26	DE#945 -  API observations for Approval App mobility
+27	DE#964 -  PSD 154224 Unable to add Customer GST details as per financial year
+28	DE#965 -  PSD 155587 Unable to create OD Loan Type
+29	DE#1084-  Setting the value for ROI and Date of Reported for Retail CIBIL Report.
+30	DE#1084-  Two new fields added to getFinanceSummary for Retail CIBIL Report.
+31	DE#1080-  PSD#146052 Penalty interest calculation which is calculated back dated
+32	DE#1069-  Unable to open the submitted record in realization approval queue.
+33	DE#1071-  PSD 157134 Total partial paid charges are displayed incorrectly in received amount in fee waiver screen.
+34	DE#67  -  Moratorium issue: While doing moratorium if the schedule method is “Calculated Interest on Frequency”, maturity date schedule (Old maturity i.e before moratorium)  principal amount is not getting zero, it’s  like old maturity date schedule, if the maturity date is instalment date or non-instalment date.
+35	DE#67  -  Moratorium issue: While doing moratorium if the schedule method is “Calculated Interest on Frequency”, maturity date schedule (Old maturity i.e before moratorium)  principal amount is not getting zero, it’s  like old maturity date schedule, if the maturity date is instalment date or non-instalment date.
+36	DE#60  -  In Corporate CIBIL Report CR,GS,RS segments fields changes.
+37	DE#66  -  Early Settlement: Post early settlement instalment , interest is getting capitalized negatively.
+38	DE#65  -  In Corporate CIBIL Report CR,GS,RS segments fields changes.
+39	DE#1066-  Covenant File Upload issues. file Upload fails while doing new covenant upload functionality
+
+-----------------------------------------------------------------------------------------------------------------------
+
+PLF-Release-5.5.0 2020-05-08
+-----------------------------------------------------------------------------------------------------------------------
+Enhancements:
+---------------
+1	ST#433 - Provision to mark the disbursement instruction as AC (awaiting   confirmation) through “Crete Loan API”.
+2	ST#395 - Provision to capture the customer other loan details throng external liability screen.
+3	ST#394 - Enhance the customer banking information screen to capture the negative amounts for OD/CC accounts and add two non mandatory fields to capture Settlement No and Settlement Credits.
+4	ST#435 - Provision to select existing customer as shareholder in shareholding details tab in loan origination screen.
+
+-----------------------------------------------------------------------------------------------------------------------
+
+PLF-Release-5.4.0
+-----------------------------------------------------------------------------------------------------------------------
+Enhancements:
+---------------
+1	ST#341 - Loan Closure Enquiries API with Component breakdown.
+2	ST#398 - Provision for manual allocation in “Early Settlement API” to waive the Fee/charges.
+3	ST#410 - Provision to add PSL details through ""Create Loan API.
+4	ST#291 - New API “UpdateMandateStatus” to update the mandate status.
+5	DE#363 - Name and gender not getting saved for the guarantor details through “CreateFinance” API
+
+----------------------------------------------------------------------------------------------------------------------
+PLF-Release-5.3.5 2020-05-24
+-----------------------------------------------------------------------------------------------------------------------
+
+Enhancements:
+------------------
+1. ST#545 - ADD Rate Change:  In EOD auto rate review happened. With the same date user want to do the add rate change with the margin rate, system considering  previous date rate(Previous schedule rate) with current margin rate and plotted the schedule accordingly. Now it will changed to, system will consider the last rate change with margin rate and plot the schedule accordingly.  EX:    16-Aug-2020:  Auto rate review happened at EOD.Same date user want to do the Rate change using Add Rate Screen : In this system is taking 15-Aug-2020 rate and plotted schedule accordingly.Now we will changed to, 16-Aug-2020 rate plotted schedule accordingly.
+---------------------------------------------------------------
+Bugs:
+---------------
+1	DE#742 - Accounting Issue while doing early settlement
+2	DE#549 - In Email Notifications Tds alert is not working (ONLY KOTAK)
+3	DE#595 - PSD 153085 Paid overdue penalty is displayed in Fee waivers screen
+4	DE#594 - PSD 151769 Early Settlement: Payment is not reflecting for cheque mode in Loan basic details after realizing the receipt
+5	DE#593 - PSD 153884 The Overdue amount and DPD is not cleared in Loan Basic details if wePSD  Extract the Re presentment file for that LAN
+6	ST#482 - Customer Migration Process For Portal.
+7	DE#542 - PAN no. dedupe logic is not working. If we have created one customer in Retail Category the same PAN no can be used for creating a customer in Corporate Category.
+8	DE#543 - While clicking the save button in closure maker screen getting alert "invalid receipt mode #" in godrej.
+9	DE#548 - In Receipt  we are getting the credits and debits mismatch validation while approving the receipt.
+10	ST#550 - While cancel the receipt in relization bounce maker screen(receipt from presentment) getting invalid receipt mode alert.
+11	DE#510 - CIBIL State mapping issue
+12	DE#557 - While click on proceed button in receipt maker screen getting 900 blocker
+13	DE#558 - PSD#151769 Early Settlement:Payment is not reflecting for cheque mode in Loan basic details after realizing the receipt
+14	DE#561 - Issue in re-initiate API
+15	DE#562 - Default mandate linkage issue
+16	ST#523 - AppDate Changes to Increase Performance on Schedule Calculations
+17	DE#597 - System is not showing accounting entries of Excess/Unadjusted amount which is balance after Upfront fees allocation. Example- If we collect 23,600 as upfront fee and adjusted 18,880 as processing fee at the time of disbursement, balance4,720 should show in excess account.
+18	DE#598 - We observe an issue in schedule plotting while doing the planned EMI holiday change. change the planned EMI holiday from June to Oct. and recalculate the schedule, Now see the revised schedule, in July month, interest calculation is coming in negative.
+19	DE#552 - Email Template not saving properly when XSS Security Filter is enabling
+20	DE#607 - Error 900, While saving put call, if the  put call notice period days as empty.
+21	DE#608 - While creating loan along with mandate details if MANDATE_ALW_PARTNER_BANK system parameter is Y then partnerBankId validation is not coming.
+
+
+pff.properties:
+-------------
+Internal Customer Portal Enable/Disable, Cron exceprission.
+
+-----------------------------------------------------------------------------------------------------------------------
+
+PLF-Release-5.3.4 2020-05-15
+-----------------------------------------------------------------------------------------------------------------------
+Bugs:
+---------------
+1	DE#539 - Extended fields post script validations are not triggered when we submit the loan in loan origination. 
+2	DE#537 - PSD# 153323 Penalty amount is calculating within grace days.
+3	ST#538 - EOD Tasklet changes:  In EOD we have LEDGER_DOWNLOAD , GST_DOWNLOAD with same execution order. If Ledger process fails, EOD process also failed. If GST fails, EOD process will continue.  Now we changed the execution order, first GST_DOWNLOAD process after LEDGER_DOWNLOAD with same success and failure dependency on EOD process.
+4	DE#529 - Add Rate Change: When we are changing Benchmark from MCLR3M to MCLR6M system plotting the schedule based on MCLR3M frequency but it should be plotted based on MCLR6M.
+5	DE#528 - Sec Users  When we are deleting user, system throwing 900 error, because if the deleted user have branches.
+6	ST#523 - Implemantation Constants  Extendability.
+7	DE#521 - Remarks filed for Guarantor Detail not available in “Create Loan API”
+8	DE#520 - Address Line1, Address Line2 and City fields are made non mandatory for “Guarantor Detail” through customer creation API.
+9	DE#519 - Removed the mandatory checking for the field “Flat Number” while creating the customer through API since the same field is non mandatory through the screen.
+10	DE#518 - While creating the customer through API guarantor is not getting updated.
+11	DE#517 - While creating the customer through API gender is made mandatory, since the same is mandatory in the screen
+12	DE#510 - 900 error while doing change moratorium: While doing the change moratorium, if the base rate code is not configured and if we decrease moratorium terms in this case system not plotted schedule.
+13	DE#500 - TDS Paid and Due Amounts calculations Issue in schedule payments: While doing Schedule payments, system calculating  differently for TDS paid amounts and TDS due amounts.
+14	DE#447 - Retail CIBIL mapping issues for the fields CRIF, Equifax, and Experian.
+15	DE#446 - Write-off details should be available in the Retail CIBIL report when the loan closing status is W-write off only.
+16	DE#445 - PSD 153832 GST accounting entries not getting post for upfront process fee (IMD).
+17	DE#486 - While clicking view button in “Co-applicant & Guarantors” screen getting error system is throwing error message even the uploaded valid proof.
+18	DE#483 - While doing “Early Settlement” System is allocating USGT to IGST and IGST to UGST.
+19	DE#448 - Presentation issue in “Co-Applicant & Guarantors” list screen addressed by increasing the list box size.
+20	DE#441 - Duplicate reversal posting posted through CMS job for disbursement instructions in case of disbursement instruction rejected. (Only KOTAK This will be available in KOTAK release notes Only.
+21	DE#440 - Net balance is showing in negative in “Fee Waiver Enquiry” screen.
+22	DE#420 - While doing add/remove “Grace Terms”, system is considering “Base Rate Code” against the schedule date
+23	DE#411 - Unable to configure LPPAMZ accounting set in Loan Type screen. (Only GS) This will be available in GS release notes Only.
+24	DE#415 - Currently system is doing capitalization on LPP for all the frequencies (Repay/Interest). Now capitalization will be applied on LPP only on interest frequency.
+25	DE#414 - Missing rights for “Value Date” and “Remarks” fields in Fee Waiver screen added
+26	DE#408 - While doing rate change with back dated system is updating the previous installments also, even the “Rate Review Applied For” filed is configured as “ALL FUTURE PERIODS” in the loan type.
+27	DE#404 - While trying to close the loan through closer maker screen, system is allowing even the excess amount is less than the due amount
+
+-----------------------------------------------------------------------------------------------------------------------
+PLF-Release-5.3.3 2020-05-08
+-----------------------------------------------------------------------------------------------------------------------
+Bugs:
+---------------
+1	DE#423 - Issue in RPS profit Days calculation Basis when rescheduling is done in LMS
+2	DE#413 - PSD 153520 In CreateLoan API, Fees is not getting saved when VAS Details comes along with API request.
+3	DE#393 - PSD 150205 OverDue Amount is displaying even though if user paid schedule amount in grace period.
+4	DE#414 - PSD 153701 In query management, record is not getting saved when user tries to resolve the Query.
+5	DE#414 - In query management, record is not getting saved when user tries to resolve the Query
+6	DE#460 - Non-revolving customer limits are not updating properly while doing the limit rebuild.
+7	DE#459 - System is not showing the accounting posting for advance interest cases.
+8	DE#432 - PSD#153686 Knock off screen entries accounting not passing in posting. 
+
+-----------------------------------------------------------------------------------------------------------------------
+PLF-Release-5.3.2 2020-04-29
+-----------------------------------------------------------------------------------------------------------------------
+Bugs:
+---------------
+1	DE#412 - Login API is not working as expected
+1	DE#420 - While restarting the EOD for failure case system is not considering the pending threads due to bu in the thread allocation logic.
+3	DE#416 - Validation message displayed against "Guarantor Contact Number" is not appropriate and cannot be understood in Guarantor details screen.
+4	DE#419 - PSD# 153272 Post EOD step "Collection Download" getting fail due to customer short name length mismatch in the interface tables and customer table.
+5	DE#417 - Interest rate review correction for frequency as same month.
+6	DE#429 - Expense Upload MENU missing.
+7	DE#430 - Partial settlement not working through API for CASH/ ONLINE payment modes.
+8	DE#435 - In Fee Waivers screen, Total Net Balance showing wrong in Totals row resolved.
+9	DE#439 - While cancel loan GST Rates are not calculated as Expect.
+10	DE#444 - Cancelled loans are considered under the total total utilized amount.
+-------------------------
+REPORTS: 
+------
+Fee Amortization Reports 
+Expense Upload Status Reports
+
+Templates
+--------
+Expense_Upload_Loan.xlsx
+Expense_Upload_LoanType.xlsx
+
+-----------------------------------------------------------------------------------------------------------------------
+PLF-Release-5.3.1 2020-04-23
+-----------------------------------------------------------------------------------------------------------------------
+Bugs:
+---------------
+1. On logout system is not navigating to login page.
+2. System is not allowing to upload .jpg documents in Customer Document and Query Dialog screens
+3. Fund-out amount is wrong in disbursement amount due to amount format is missing
+4. .CSV file are not allowing to upload in linux environments in misc postings and Advice upload screens
+5. PSD# 153275 PL Welcome Letter Tenure, EMI, RPS is not populating in download welcome letter
+
+-----------------------------------------------------------------------------------------------------------------------
+
+PLF-Release-5.3.0 2020-02-12
+-----------------------------------------------------------------------------------------------------------------------
+Bugs:
+---------------
+1. Handled Double disbursement issue
+2. Automation of disbursement download and uploads. 
+-----------------------------------------------------------------------------------------------------------------------
+----------------------------------------Core is upgraded to 5.3.0------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------
 PLF-Release-5.1.14 2020-04-21
 -----------------------------------------------------------------------------------------------------------------------
 Bugs:

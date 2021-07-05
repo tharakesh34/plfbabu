@@ -85,10 +85,8 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 	/**
 	 * Fetch the Record FeeType details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FeeType
 	 */
 	@Override
@@ -262,8 +260,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 	/**
 	 * Fetch the Record FeeType details by Fee code
 	 * 
-	 * @param feeTypeCode
-	 *            (String)
+	 * @param feeTypeCode (String)
 	 * @return FeeType
 	 */
 	@Override
@@ -335,30 +332,28 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 
 	@Override
 	public Long getFinFeeTypeIdByFeeType(String feeTypeCode, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" feeTypeID from FeeTypes");
+		sql.append(" FeeTypeID From FeeTypes");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FeeTypeCode = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
-
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { feeTypeCode }, Long.class);
+			return jdbcOperations.queryForObject(sql.toString(), new Object[] { feeTypeCode }, Long.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("fee type is not available for the fee type code {}", feeTypeCode);
+			logger.warn("Fee is not found in FeeTypes{} for the specified FeeTypeCode >> {}", type, feeTypeCode);
 		}
 
-		return null;
+		return Long.MIN_VALUE;
 	}
 
 	@Override
 	public FeeType getTaxDetailByCode(final String feeTypeCode) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" TaxComponent, TaxApplicable, AmortzReq, AccountSetId");
+		sql.append(" FeeTypeID, Active, ManualAdvice, AdviseType");
+		sql.append(", HostFeeTypeCode, DueAccReq, DueAccSet");
+		sql.append(", TaxComponent, TaxApplicable, AmortzReq, AccountSetId");
 		sql.append(", FeeTypeCode, FeeTypeDesc, Refundable, TdsReq");
 		sql.append(" From FeeTypes");
 		sql.append(" Where FeeTypeCode = ?");
@@ -369,6 +364,13 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 			return jdbcOperations.queryForObject(sql.toString(), new Object[] { feeTypeCode }, (rs, rowNum) -> {
 				FeeType f = new FeeType();
 
+				f.setFeeTypeID(rs.getLong("FeeTypeID"));
+				f.setActive(rs.getBoolean("Active"));
+				f.setManualAdvice(rs.getBoolean("ManualAdvice"));
+				f.setAdviseType(rs.getInt("AdviseType"));
+				f.setHostFeeTypeCode(rs.getString("HostFeeTypeCode"));
+				f.setDueAccReq(rs.getBoolean("DueAccReq"));
+				f.setDueAccSet(rs.getLong("DueAccSet"));
 				f.setTaxComponent(rs.getString("TaxComponent"));
 				f.setTaxApplicable(rs.getBoolean("TaxApplicable"));
 				f.setAmortzReq(rs.getBoolean("AmortzReq"));

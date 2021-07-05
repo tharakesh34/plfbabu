@@ -203,6 +203,7 @@ import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FeeWaiverHeaderService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.finance.LinkedFinancesService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
@@ -436,7 +437,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Button btnReceipt;
 	protected Button btnChangeReceipt;
 	protected Button btnCalcReceipts;
-	//Auto Knock Off Details
+	// Auto Knock Off Details
 	protected Textbox knockOffType;
 	protected Space space_transactionRef;
 
@@ -528,8 +529,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private boolean isAccountingExecuted = false;
 	private boolean isWIF = false;
 	private transient SOAReportGenerationService soaReportGenerationService;
-
-	//ClosureType
+	private LinkedFinancesService linkedFinancesService;
+	// ClosureType
 	protected ExtendedCombobox closureType;
 
 	/**
@@ -893,8 +894,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 */
 	private void setClosedLoanDetails(String finReference) {
 		FinanceMain fm = receiptService.getClosingStatus(finReference, TableType.MAIN_TAB, false);
-		if (StringUtils.isNotEmpty(fm.getClosingStatus())
-				&& !StringUtils.equals(fm.getClosingStatus(), FinanceConstants.CLOSE_STATUS_CANCELLED)
+		String closingSts = StringUtils.trimToNull(fm.getClosingStatus());
+		if (closingSts != null && !FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())
 				&& !fm.isWriteoffLoan()) {
 			fillComboBox(this.receiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY,
 					PennantStaticListUtil.getReceiptPurpose(), ",FeePayment,EarlySettlement,EarlyPayment,");
@@ -938,9 +939,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.bounceCode.setModuleName("BounceReason");
 		this.bounceCode.setMandatoryStyle(true);
 		this.bounceCode.setValueColumn("BounceCode");
-		//this.bounceCode.setValueType(DataType.LONG);
+		// this.bounceCode.setValueType(DataType.LONG);
 		this.bounceCode.setDescColumn("Reason");
-		//this.bounceCode.setDisplayStyle(2);
+		// this.bounceCode.setDisplayStyle(2);
 		this.bounceCode.setValidateColumns(new String[] { "BounceCode", "Lovdesccategory", "Reason" });
 		this.bounceCharge.setProperties(false, formatter);
 		this.bounceRemarks.setMaxlength(100);
@@ -1222,11 +1223,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		List<FinReceiptDetail> receiptDetails = rch.getReceiptDetails();
 		if (CollectionUtils.isNotEmpty(receiptDetails)) {
 			for (FinReceiptDetail receiptDetail : receiptDetails) {
-				//long id = receiptService.getRepayID();
+				// long id = receiptService.getRepayID();
 				FinRepayHeader repayHeader = new FinRepayHeader();
 				repayHeader.setRepayScheduleDetails(receiptDetail.getRepayHeader().getRepayScheduleDetails());
 				receiptDetail.setRepayHeader(repayHeader);
-				//receiptDetail.getRepayHeader().setRepayID(id);
+				// receiptDetail.getRepayHeader().setRepayID(id);
 			}
 		}
 
@@ -1485,8 +1486,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnReceipt.isVisible());
@@ -2140,8 +2140,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	/**
 	 * Method to fill the Finance Schedule Detail List
 	 * 
-	 * @param aFinScheduleData
-	 *            (FinScheduleData)
+	 * @param aFinScheduleData (FinScheduleData)
 	 * 
 	 */
 	public void doFillScheduleList(FinScheduleData aFinScheduleData) {
@@ -2397,7 +2396,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				payAdvMovement.setPaidAmount(payable.getPaidNow());
 				payAdvMovement.setFeeTypeCode(payable.getFeeTypeCode());
 
-				//GST Calculations
+				// GST Calculations
 				if (StringUtils.isNotBlank(payable.getTaxType())) {
 
 					if (taxPercMap == null) {
@@ -2683,7 +2682,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					if (!StringUtils.equals(RepayConstants.RECEIPTMODE_EXCESS, rch.getReceiptMode())
 							&& StringUtils.equals(receiptDetail.getPaymentType(), rch.getReceiptMode())) {
 						receiptDetail.setFavourNumber(this.favourNo.getValue());
-						//PSD#165780
+						// PSD#165780
 						if ((StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE,
 								data.getReceiptHeader().getReceiptMode())
 								|| StringUtils.equals(RepayConstants.RECEIPTMODE_DD,
@@ -2891,6 +2890,33 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			aReceiptData.getFinanceDetail().setDocumentDetailsList(null);
 		}
 
+		String roleCode = rch.getRoleCode();
+		if (FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(rch.getReceiptPurpose())
+				&& (FinanceConstants.RECEIPT_MAKER.equals(roleCode)
+						|| FinanceConstants.CLOSURE_MAKER.equals(roleCode))) {
+			List<String> finReferences = linkedFinancesService.getFinReferences(rch.getReference());
+
+			if (CollectionUtils.isNotEmpty(finReferences)) {
+				String[] args = new String[2];
+				StringBuilder ref = new StringBuilder();
+
+				finReferences.forEach(l1 -> ref.append(l1 + ","));
+				ref.deleteCharAt(ref.length() - 1);
+
+				args[0] = rch.getReference();
+				args[1] = ref.toString();
+
+				String message = args[0] + " is Linked with " + args[1]
+						+ " . Please Delink the loan first then Proceed ";
+
+				if (MessageUtil.confirm(message, MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
+					List<WrongValueException> wve = new ArrayList<>();
+					wve.add(new WrongValueException("Please Delink the loan first then Proceed "));
+					showErrorDetails(wve);
+				}
+			}
+		}
+
 		// Finance Stage Accounting Details Tab
 		if (!recSave && getStageAccountingDetailDialogCtrl() != null) {
 			// check if accounting rules executed or not
@@ -2959,8 +2985,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 				}
 
-				String msg = PennantApplicationUtil.getSavingStatus(rch.getRoleCode(), rch.getNextRoleCode(),
-						rch.getReference(), " Loan ", rch.getRecordStatus());
+				String msg = PennantApplicationUtil.getSavingStatus(roleCode, rch.getNextRoleCode(), rch.getReference(),
+						" Loan ", rch.getRecordStatus());
 				Clients.showNotification(msg, "info", null, null, -1);
 
 				if (!("Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
@@ -3158,8 +3184,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						&& !StringUtils.equals(rcd.getPaymentType(), RepayConstants.RECEIPTMODE_ADVINT)) {
 					this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(rcd.getAmount(), formatter));
 					this.favourNo.setValue(rcd.getFavourNumber());
-					//PSD#165780
-					//this.valueDate.setValue(rcd.getValueDate());
+					// PSD#165780
+					// this.valueDate.setValue(rcd.getValueDate());
 					this.bankCode.setValue(rcd.getBankCode());
 					this.bankCode.setDescription(rcd.getBankCodeDesc());
 					this.favourName.setValue(rcd.getFavourName());
@@ -3539,7 +3565,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		if (StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_MANUAL)) {
 			allocationNetPaid.setReadonly(!getUserWorkspace().isAllowed("ReceiptDialog_PaidAmount"));
-			//allocationPaid.setReadonly(!getUserWorkspace().isAllowed("ReceiptDialog_PaidAmount"));
+			// allocationPaid.setReadonly(!getUserWorkspace().isAllowed("ReceiptDialog_PaidAmount"));
 		}
 
 		// Balance Due AMount
@@ -3849,7 +3875,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		BigDecimal totalPaid = getReceiptCalculator().getPaidAmount(allocate, paidAmount);
 		allocate.setTotalPaid(paidAmount);
 		allocate.setPaidAmount(paidAmount);
-		//allocate.setPaidAmount(allocate.getTotRecv());
+		// allocate.setPaidAmount(allocate.getTotRecv());
 
 		// GST Calculations
 		if (StringUtils.isNotBlank(allocate.getTaxType())) {
@@ -4497,8 +4523,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//if no right given to receiptModeStatus component  will be read only mode.
-		//to enable the receiptModeStatus component we are forcing to give right to combobox in knockoff cancel maker screen
+		// if no right given to receiptModeStatus component will be read only mode.
+		// to enable the receiptModeStatus component we are forcing to give right to combobox in knockoff cancel maker
+		// screen
 		try {
 			if ((StringUtils.equals(module, FinanceConstants.KNOCKOFFCAN_MAKER))) {
 				if (!isReadOnly("ReceiptDialog_receiptModeStatus") && !this.receiptModeStatus.isDisabled()
@@ -4711,7 +4738,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			wve.add(we);
 		}
 
-		//RecAppDate 
+		// RecAppDate
 		if (header.getRecAppDate() == null) {
 			header.setRecAppDate(curBussDate);
 		}
@@ -5247,7 +5274,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				// UnAccrual Calculation
 				BigDecimal unaccrue = BigDecimal.ZERO;
 
-				// Without Recalculation of Unaccrue to make exact value , subtracting total previous month accrual from actual total profit
+				// Without Recalculation of Unaccrue to make exact value , subtracting total previous month accrual from
+				// actual total profit
 				unaccrue = totalPftSchdNew.subtract(newProfitDetail.getAmzTillLBD());
 
 				// UnAccrue Paid
@@ -6595,8 +6623,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 		// validation throw in manuval advice payable in receipts
-		//Commented because of when we are trying to move this receipt amount to 'EMI in Advance' from 'Excess amount', application is showing the " No dues to knock off.(Below message)"
-		//As per the discussion with team this valid scenario, commented the below error.
+		// Commented because of when we are trying to move this receipt amount to 'EMI in Advance' from 'Excess amount',
+		// application is showing the " No dues to knock off.(Below message)"
+		// As per the discussion with team this valid scenario, commented the below error.
 		/*
 		 * if (receiptData.getPaidNow().compareTo(BigDecimal.ZERO) <= 0 && isKnockOff && receiptPurposeCtg == 0) {
 		 * MessageUtil.showError(Labels.getLabel("label_Allocation_No_Due_KnockedOff")); return false; }
@@ -6961,6 +6990,18 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private void showErrorDetails(List<WrongValueException> wve) {
+		if (wve.size() > 0) {
+			logger.debug("Throwing occured Errors By using WrongValueException");
+
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
+		}
+	}
+
 	/**
 	 * onChanging fundingAccount details
 	 * 
@@ -7189,7 +7230,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		receipt.setAppDate(DateUtility.formatToLongDate(SysParamUtil.getAppDate()));
 		receipt.setPaymentMode(this.receiptMode.getSelectedItem().getLabel().toString());
 		receipt.setReceiptDate(DateUtil.formatToLongDate(receiptDate.getValue()));
-		//receipt.setReceivedDate(DateUtil.formatToLongDate(receivedDate.getValue()));
+		// receipt.setReceivedDate(DateUtil.formatToLongDate(receivedDate.getValue()));
 
 		engine.mergeFields(receipt);
 
@@ -7730,7 +7771,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		list.add(soa.getInterestRateDetails());
 
 		String userName = getUserWorkspace().getLoggedInUser().getFullName();
-		byte[] buf = ReportsUtil.generatePDF("FINENQ_StatementOfAccount", soa, list,	userName);
+		byte[] buf = ReportsUtil.generatePDF("FINENQ_StatementOfAccount", soa, list, userName);
 
 		Filedownload.save(new AMedia("StatementOfAccount", "pdf", "application/pdf", buf));
 
@@ -7838,6 +7879,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	public void setSoaReportGenerationService(SOAReportGenerationService soaReportGenerationService) {
 		this.soaReportGenerationService = soaReportGenerationService;
+	}
+
+	public void setLinkedFinancesService(LinkedFinancesService linkedFinancesService) {
+		this.linkedFinancesService = linkedFinancesService;
 	}
 
 }

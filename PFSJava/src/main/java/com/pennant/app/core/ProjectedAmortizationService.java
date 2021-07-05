@@ -911,7 +911,7 @@ public class ProjectedAmortizationService {
 			aeEvent.setFinReference(amz.getFinReference());
 			aeEvent.setEntityCode(amz.getEntityCode());
 			aeEvent.setFinType(amz.getFinType());
-			dataMap.put(amz.getFeeTypeCode() + "_AMZ", amz.getAmortizedAmount());
+			dataMap.put(amz.getFeeTypeCode() + "_AMZ", amz.getCurMonthAmz());
 			aeEvent.setDataMap(dataMap);
 
 			try {
@@ -1169,7 +1169,7 @@ public class ProjectedAmortizationService {
 					// SCREEN : appDate - DateUtil.getAppDate() ; EOM : amzMonth
 					incomeAMZ.setCalculatedOn(appDate);
 
-					// For WRITEOFF mark as inactive 
+					// For WRITEOFF mark as inactive
 					if (finMain.isWriteoffLoan()) {
 						incomeAMZ.setActive(false);
 					} else {

@@ -65,6 +65,7 @@ public class RuleExecutionUtil implements Serializable {
 	private static final Logger logger = LogManager.getLogger(RuleExecutionUtil.class);
 
 	public static final Map<String, ScriptEngine> EOD_SCRIPT_ENGINE_MAP = new HashMap<>();
+	public static final Map<String, ScriptEngine> PRESENTMENT_RESP_SCRIPT_ENGINE_MAP = new HashMap<>();
 	private boolean splRule = false;
 
 	private RuleExecutionUtil() {
@@ -85,7 +86,7 @@ public class RuleExecutionUtil implements Serializable {
 
 		return result;
 	}
-	
+
 	public static Object executeRule(String rule, Map<String, Object> dataMap, RuleReturnType returnType) {
 		if (dataMap == null) {
 			dataMap = new HashMap<String, Object>();
@@ -130,14 +131,13 @@ public class RuleExecutionUtil implements Serializable {
 		}
 
 		return result;
-	
+
 	}
 
 	public static Object executeRule(String rule, Map<String, Object> dataMap, String finccy,
 			RuleReturnType returnType) {
 		rule = replaceCurrencyCode(rule, finccy);
 
-		
 		rule = StringUtils.replace(rule, "{BLANK}", "");
 		return executeRule(rule, dataMap, returnType);
 
@@ -235,6 +235,11 @@ public class RuleExecutionUtil implements Serializable {
 
 		if (threadName.startsWith("PLF_EOD_THREAD_")) {
 			return EOD_SCRIPT_ENGINE_MAP.computeIfAbsent(threadName, abc -> getScriptEngine(threadName, true));
+		}
+
+		if (threadName.startsWith("PLF_PRESENTMENT_RESP_THREAD_")) {
+			return PRESENTMENT_RESP_SCRIPT_ENGINE_MAP.computeIfAbsent(threadName,
+					abc -> getScriptEngine(threadName, true));
 		}
 
 		return getScriptEngine(threadName);

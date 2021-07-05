@@ -98,7 +98,7 @@ public class FeeScheduleCalculator {
 			return finScheduleData;
 		}
 
-		//Event From Date
+		// Event From Date
 		if (isNewLoan) {
 			evtFromDate = financeMain.getFinStartDate();
 		} else {
@@ -114,7 +114,7 @@ public class FeeScheduleCalculator {
 			}
 		}
 
-		//Fill Repayments Schedules to Map to simplify the schedule search
+		// Fill Repayments Schedules to Map to simplify the schedule search
 		Map<Date, Integer> avlSchdMap = fillSchdMap(finScheduleData, evtFromDate, rpySchdMap, hldSchdMap);
 		String feeScheduleMethod;
 
@@ -127,11 +127,12 @@ public class FeeScheduleCalculator {
 				continue;
 			}
 
-			//If Not Schedule Fee method Clear the Fee Schedule Details
+			// If Not Schedule Fee method Clear the Fee Schedule Details
 			feeScheduleMethod = finFeeDetail.getFeeScheduleMethod();
 			if (!finFeeDetail.isOriginationFee()
-					|| feeScheduleMethod.equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)
-					|| feeScheduleMethod.equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
+					|| CalculationConstants.REMFEE_PART_OF_DISBURSE.equals(feeScheduleMethod)
+					|| CalculationConstants.REMFEE_PART_OF_SALE_PRICE.equals(feeScheduleMethod)
+					|| CalculationConstants.FEE_SUBVENTION.equals(feeScheduleMethod)) {
 
 				if (finFeeDetail.getFinFeeScheduleDetailList() != null) {
 					finFeeDetail.getFinFeeScheduleDetailList().clear();
@@ -169,7 +170,7 @@ public class FeeScheduleCalculator {
 
 		int recalTerms = 0;
 		BigDecimal recalFee = BigDecimal.ZERO;
-		//GST fields
+		// GST fields
 
 		int avalableTerms = rpySchdMap.size();
 
@@ -180,7 +181,7 @@ public class FeeScheduleCalculator {
 			recalTerms = feeDetail.getTerms();
 			if (avalableTerms < recalTerms) {
 				recalTerms = avalableTerms;
-				//throw new WrongValueException("Number of Terms not matching the Available terms ");
+				// throw new WrongValueException("Number of Terms not matching the Available terms ");
 			}
 		} else {
 			recalTerms = avalableTerms;
@@ -211,20 +212,20 @@ public class FeeScheduleCalculator {
 		int availableTerms = 0;
 		int recalTerms = 0;
 		BigDecimal recalFee = BigDecimal.ZERO;
-		//GST Fields
+		// GST Fields
 		BigDecimal recalCGSTFee = BigDecimal.ZERO;
 		BigDecimal recalIGSTFee = BigDecimal.ZERO;
 		BigDecimal recalSGSTFee = BigDecimal.ZERO;
 		BigDecimal recalUGSTFee = BigDecimal.ZERO;
 
-		//Loop through all Fee schedules of a specific fee
+		// Loop through all Fee schedules of a specific fee
 		for (int i = 0; i < feeSchdDetails.size(); i++) {
 			feeSchdDetail = feeSchdDetails.get(i);
 			Date feeSchdDate = feeSchdDetail.getSchDate();
 
 			totalSchdFee = totalSchdFee.add(feeSchdDetail.getSchAmount());
 
-			//Fee Schedule date is before event from date
+			// Fee Schedule date is before event from date
 			if (feeSchdDate.compareTo(evtFromDate) < 0) {
 				feeSchdDate = DateUtility.getDBDate(DateUtility.format(feeSchdDate, PennantConstants.DBDateFormat));
 				if (!avlSchdMap.containsKey(feeSchdDate)) {
@@ -235,23 +236,24 @@ public class FeeScheduleCalculator {
 				continue;
 			}
 
-			//Find O/S Fee excluding written-off fee.
+			// Find O/S Fee excluding written-off fee.
 			BigDecimal osFee = feeSchdDetail.getSchAmount().subtract(feeSchdDetail.getPaidAmount())
 					.subtract(feeSchdDetail.getWaiverAmount());
 
-			//No Fees are due, so no postpone required
+			// No Fees are due, so no postpone required
 			if (osFee.compareTo(BigDecimal.ZERO) <= 0) {
 				continue;
 			}
 
-			//Fee paid partially or Fully cannot be rescheduled (Reason after recalculation if Paid becomes > calSchdFee it fails)
+			// Fee paid partially or Fully cannot be rescheduled (Reason after recalculation if Paid becomes >
+			// calSchdFee it fails)
 			if (feeSchdDetail.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
 				continue;
 			}
 
 			recalFee = recalFee.add(feeSchdDetail.getSchAmount());
 
-			//GST fields
+			// GST fields
 			recalCGSTFee = recalCGSTFee.add(feeSchdDetail.getCGST());
 			recalIGSTFee = recalIGSTFee.add(feeSchdDetail.getIGST());
 			recalSGSTFee = recalSGSTFee.add(feeSchdDetail.getSGST());
@@ -262,7 +264,7 @@ public class FeeScheduleCalculator {
 			i = i - 1;
 		}
 
-		//Find Total Available Repayment Schedules for Fee Recalculation
+		// Find Total Available Repayment Schedules for Fee Recalculation
 		List<Date> rpySchdList = new ArrayList<>(rpySchdMap.keySet());
 		Collections.sort(rpySchdList);
 
@@ -286,7 +288,8 @@ public class FeeScheduleCalculator {
 			}
 		}
 
-		//Rare case if original maturity date is declared as holiday and recalculation triggers after last but one installment
+		// Rare case if original maturity date is declared as holiday and recalculation triggers after last but one
+		// installment
 		if (availableTerms == 0) {
 			availableTerms = 1;
 		}
@@ -299,7 +302,7 @@ public class FeeScheduleCalculator {
 		financeMain.setRecalTerms(recalTerms);
 		financeMain.setRecalFee(recalFee);
 
-		//GST fields
+		// GST fields
 		financeMain.setRecalCGSTFee(recalCGSTFee);
 		financeMain.setRecalIGSTFee(recalIGSTFee);
 		financeMain.setRecalSGSTFee(recalSGSTFee);
@@ -355,7 +358,7 @@ public class FeeScheduleCalculator {
 
 		BigDecimal totalNewSchdFee = BigDecimal.ZERO;
 
-		//GST fields
+		// GST fields
 		BigDecimal totalcgstAmount = BigDecimal.ZERO;
 		BigDecimal totaligstAmount = BigDecimal.ZERO;
 		BigDecimal totalsgstAmount = BigDecimal.ZERO;
@@ -370,7 +373,7 @@ public class FeeScheduleCalculator {
 		BigDecimal tgstPercent = cgstTax.getTaxPerc().add(sgstTax.getTaxPerc()).add(igstTax.getTaxPerc())
 				.add(ugstTax.getTaxPerc()).add(cessTax.getTaxPerc());
 
-		//Find Total Available Repayment Schedules for Fee Recalculation
+		// Find Total Available Repayment Schedules for Fee Recalculation
 		List<Date> rpySchdList = new ArrayList<>(rpySchdMap.keySet());
 		Collections.sort(rpySchdList);
 		boolean totFeeAdjusted = false;
@@ -405,7 +408,7 @@ public class FeeScheduleCalculator {
 				newSchdFee = recalFee.subtract(totalNewSchdFee);
 			}
 
-			//GST code
+			// GST code
 			BigDecimal cgstAmount = BigDecimal.ZERO;
 			BigDecimal igstAmount = BigDecimal.ZERO;
 			BigDecimal sgstAmount = BigDecimal.ZERO;
@@ -482,7 +485,7 @@ public class FeeScheduleCalculator {
 			feeSchdDetail.setSchDate(schdDate);
 			feeSchdDetail.setSchAmount(newSchdFee);
 
-			//GST fields
+			// GST fields
 			feeSchdDetail.setCGST(cgstAmount);
 			feeSchdDetail.setIGST(igstAmount);
 			feeSchdDetail.setSGST(sgstAmount);
@@ -509,10 +512,10 @@ public class FeeScheduleCalculator {
 	 */
 	private static BigDecimal calculateInclusivePercentage(BigDecimal amount, BigDecimal gstPercentage, int formatter) {
 
-		//adding 100
+		// adding 100
 		BigDecimal percentage = gstPercentage.add(new BigDecimal(100));
 
-		//divide by 100
+		// divide by 100
 		percentage = percentage.divide(BigDecimal.valueOf(100), formatter, RoundingMode.HALF_DOWN);
 
 		return amount.divide(percentage, formatter, RoundingMode.HALF_DOWN);
@@ -526,7 +529,7 @@ public class FeeScheduleCalculator {
 		FinanceScheduleDetail curSchd;
 		Map<Date, Integer> avlSchdMap = new HashMap<>();
 
-		//Place Repayment Schedule dates and Holiday Schedule Dates to respective maps
+		// Place Repayment Schedule dates and Holiday Schedule Dates to respective maps
 		for (int i = 0; i < finSchdDetails.size(); i++) {
 			curSchd = finSchdDetails.get(i);
 
@@ -534,8 +537,8 @@ public class FeeScheduleCalculator {
 				avlSchdMap.put(curSchd.getSchDate(), i);
 				continue;
 			}
-			curSchd.setFeeSchd(BigDecimal.ZERO); //This might cause issue  in servicing
-			curSchd.setFeeTax(BigDecimal.ZERO); //GST Fee Tax
+			curSchd.setFeeSchd(BigDecimal.ZERO); // This might cause issue in servicing
+			curSchd.setFeeTax(BigDecimal.ZERO); // GST Fee Tax
 
 			if (!curSchd.isRepayOnSchDate() && !curSchd.isPftOnSchDate()) {
 				continue;
@@ -575,7 +578,7 @@ public class FeeScheduleCalculator {
 		List<Date> rpySchdList = new ArrayList<>(rpySchdMap.keySet());
 		Collections.sort(rpySchdList);
 
-		//Loop through all Fees and set fees in installment schedules
+		// Loop through all Fees and set fees in installment schedules
 		for (int i = 0; i < feeDetails.size(); i++) {
 			List<FinFeeScheduleDetail> feeSchdDetails = feeDetails.get(i).getFinFeeScheduleDetailList();
 			for (int j = 0; j < feeSchdDetails.size(); j++) {
@@ -592,7 +595,7 @@ public class FeeScheduleCalculator {
 
 				FinanceScheduleDetail curSchd = finSchdDetails.get(schdIdx);
 				curSchd.setFeeSchd(curSchd.getFeeSchd().add(feeSchdDetail.getSchAmount()));
-				curSchd.setFeeTax(curSchd.getFeeTax().add(feeSchdDetail.getTGST())); //GST Fee Tax
+				curSchd.setFeeTax(curSchd.getFeeTax().add(feeSchdDetail.getTGST())); // GST Fee Tax
 			}
 		}
 

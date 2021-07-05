@@ -88,6 +88,7 @@
 		scope="prototype">
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="accrualService" ref="accrualService" />
+		<property name="feeWaiverHeaderService" ref="feeWaiverHeaderService" />
 	</bean>
 
 	<!-- FinanceType/LoanType controller -->
@@ -182,7 +183,6 @@
 	<bean id="presentmentServiceController" class="com.pennanttech.controller.PresentmentServiceController" autowire="byName"
 		scope="prototype">
 		<property name="presentmentDetailService" ref="presentmentDetailService" />
-		<property name="notificationService" ref="notificationService" />
 		<property name="dataSource" ref="dataSource" />
 		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />

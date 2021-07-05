@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PresentmentDetailServiceImpl.java                                    * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  01-05-2017    														*
- *                                                                  						*
- * Modified Date    :  01-05-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PresentmentDetailServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 01-05-2017 * *
+ * Modified Date : 01-05-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 01-05-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 01-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.financemanagement.impl;
@@ -58,10 +40,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.core.ReceiptPaymentService;
+import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
 import com.pennant.app.util.RepaymentProcessUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -70,13 +55,14 @@ import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
+import com.pennant.backend.eventproperties.service.EventPropertiesService;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessMovement;
-import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -97,12 +83,14 @@ import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.external.PresentmentImportProcess;
 import com.pennanttech.pff.external.PresentmentRequest;
+import com.pennanttech.pff.notifications.service.NotificationService;
 
 /**
  * Service implementation for methods that depends on <b>PresentmentHeader</b>.<br>
@@ -125,10 +113,17 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	private PresentmentRequest presentmentRequest;
 	private RepaymentProcessUtil repaymentProcessUtil;
 	private CustomerDetailsService customerDetailsService;
-	private FinanceProfitDetailDAO profitDetailsDAO;
 	private FinanceTypeDAO financeTypeDAO;
 	private FinODDetailsDAO finODDetailsDAO;
 	private CustomerDAO customerDAO;
+	private FinanceRepaymentsDAO financeRepaymentsDAO;
+	private PostingsPreparationUtil postingsPreparationUtil;
+	private FinanceProfitDetailDAO financeProfitDetailDAO;
+	private FinReceiptDetailDAO finReceiptDetailDAO;
+	private NotificationService notificationService;
+	private ReceiptPaymentService receiptPaymentService;
+	private PresentmentImportProcess presentmentImportProcess;
+	private EventPropertiesService eventPropertiesService;
 
 	@Override
 	public PresentmentHeader getPresentmentHeader(long id) {
@@ -139,20 +134,6 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	public List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, boolean isApprove,
 			String type) {
 		return presentmentDetailDAO.getPresentmentDetailsList(presentmentId, isExclude, isApprove, type);
-	}
-
-	@Override
-	public void updatePresentmentDetails(String presentmentRef, String status, long bounceId, long manualAdviseId,
-			String errorDesc) {
-		presentmentDetailDAO.updatePresentmentDetails(presentmentRef, status, bounceId, manualAdviseId, errorDesc);
-	}
-
-	@Override
-	public void updatePresentmentDetails(String presentmentRef, String status, String errorCode, String errorDesc) {
-		if (StringUtils.trimToNull(errorDesc) != null) {
-			errorDesc = (errorDesc.length() >= 1000) ? errorDesc.substring(0, 988) : errorDesc;
-		}
-		presentmentDetailDAO.updatePresentmentDetails(presentmentRef, status, errorCode, errorDesc);
 	}
 
 	@Override
@@ -183,51 +164,6 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	@Override
 	public String getPaymenyMode(String presentmentRef) {
 		return presentmentDetailDAO.getPaymenyMode(presentmentRef);
-	}
-
-	@Override
-	public void updateFinanceDetails(String presentmentRef) {
-		PresentmentDetail detail = this.presentmentDetailDAO.getPresentmentDetail(presentmentRef, "");
-		String finReference = detail.getFinReference();
-		FinanceMain financeMain = financeMainDAO.getFinanceDetailsByFinRefence(finReference, "");
-		List<FinODDetails> overDueList = finODDetailsDAO.getFinODBalByFinRef(finReference);
-		List<FinanceScheduleDetail> fsd = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false);
-		FinanceProfitDetail pftDetail = profitDetailsDAO.getFinProfitDetailsById(finReference);
-		Date appDate = SysParamUtil.getAppDate();
-
-		try {
-			financeMain = repaymentPostingsUtil.updateStatus(financeMain, appDate, fsd, pftDetail, overDueList, null,
-					false);
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-
-		if (!financeMain.isFinIsActive()) {
-			financeMainDAO.updateMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false,
-					detail.getSchDate());
-			profitDetailsDAO.updateFinPftMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false);
-		}
-
-		if (CollectionUtils.isNotEmpty(overDueList)) {
-			FinScheduleData scheduleData = new FinScheduleData();
-			scheduleData.setFinanceMain(financeMain);
-			scheduleData.setFinanceScheduleDetails(fsd);
-			overDueList = receiptCalculator.calPenalty(scheduleData, null, appDate, overDueList);
-			finODDetailsDAO.updateList(overDueList);
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public PresentmentDetail getPresentmentDetailsByMode(String presentmentRef, String paymentMode) {
-		PresentmentDetail presentmentDetail;
-		if (MandateConstants.TYPE_PDC.equals(paymentMode)) {
-			presentmentDetail = this.presentmentDetailDAO.getPresentmentDetail(presentmentRef, "_PDCview");
-		} else {
-			presentmentDetail = this.presentmentDetailDAO.getPresentmentDetail(presentmentRef, "_View");
-		}
-		return presentmentDetail;
 	}
 
 	private void updateChequeStatus(long chequeDetailsId, String status) {
@@ -423,34 +359,6 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	}
 
 	@Override
-	public PresentmentDetail presentmentCancellation(String presentmentRef, String returnCode) throws Exception {
-		logger.debug(Literal.ENTERING);
-
-		PresentmentDetail presentmentDetail = null;
-		try {
-			String paymentMode = this.presentmentDetailDAO.getPaymenyMode(presentmentRef);
-			presentmentDetail = getPresentmentDetailsByMode(presentmentRef, paymentMode);
-
-			if (presentmentDetail == null) {
-				throw new Exception(PennantJavaUtil.getLabel("label_Presentmentdetails_Notavailable") + presentmentRef);
-			}
-			updatePresentmentIdAsZero(presentmentDetail.getId());
-			if (MandateConstants.TYPE_PDC.equals(paymentMode)) {
-				updateChequeStatus(presentmentDetail.getMandateId(), PennantConstants.CHEQUESTATUS_BOUNCE);
-			}
-			String presentmentType = this.presentmentDetailDAO.getPresentmentType(presentmentDetail.getId());
-			presentmentDetail.setPresentmentType(presentmentType);
-			presentmentDetail = this.receiptCancellationService.presentmentCancellation(presentmentDetail, returnCode);
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-			throw e;
-		}
-		logger.debug(Literal.LEAVING);
-
-		return presentmentDetail;
-	}
-
-	@Override
 	public String savePresentmentDetails(PresentmentHeader ph) {
 		if (MandateConstants.TYPE_PDC.equals(ph.getMandateType())) {
 			return savePDCPresentments(ph);
@@ -473,11 +381,11 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	private void processDetails(PresentmentHeader presentmentHeader) {
 		logger.debug(Literal.ENTERING);
 
-		long presentmentId = presentmentHeader.getId();
+		long headerId = presentmentHeader.getId();
 
-		List<PresentmentDetail> detailList = presentmentDetailDAO.getPresentmentDetail(presentmentId, true);
+		List<PresentmentDetail> presements = presentmentDetailDAO.getPresentmentDetail(headerId, true);
 
-		if (CollectionUtils.isEmpty(detailList)) {
+		if (CollectionUtils.isEmpty(presements)) {
 			return;
 		}
 
@@ -488,23 +396,23 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 
 		Date appDate = SysParamUtil.getAppDate();
 
-		for (PresentmentDetail detail : detailList) {
-			long detailID = detail.getId();
-			detail.setAppDate(appDate);
+		for (PresentmentDetail pd : presements) {
+			long detailID = pd.getId();
+			pd.setAppDate(appDate);
 
-			if (DateUtil.compare(appDate, detail.getSchDate()) >= 0) {
+			if (DateUtil.compare(appDate, pd.getSchDate()) >= 0) {
 				try {
 
-					if (detail.getExcludeReason() == RepayConstants.PEXC_EMIINADVANCE) {
-						processAdvaceEMI(detail, false);
+					if (pd.getExcludeReason() == RepayConstants.PEXC_EMIINADVANCE) {
+						processAdvaceEMI(pd, false);
 						idExcludeEmiList.add(detailID);
 					} else {
 						if (!ImplementationConstants.PRESENT_RECEIPTS_ON_RESP
-								&& detail.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
-							processReceipts(detail, false);
+								&& pd.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
+							processReceipts(pd, false);
 						}
-						if (detail.getAdvanceAmt().compareTo(BigDecimal.ZERO) > 0) {
-							processAdvaceEMI(detail, false);
+						if (pd.getAdvanceAmt().compareTo(BigDecimal.ZERO) > 0) {
+							processAdvaceEMI(pd, false);
 						}
 
 						idList.add(detailID);
@@ -516,7 +424,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 				}
 
 			} else {
-				if (detail.getExcludeReason() == RepayConstants.PEXC_EMIINADVANCE) {
+				if (pd.getExcludeReason() == RepayConstants.PEXC_EMIINADVANCE) {
 					idExcludeEmiList.add(detailID);
 				} else {
 					idList.add(detailID);
@@ -529,7 +437,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			String bankAccNo = presentmentHeader.getPartnerAcctNumber();
 			boolean isPDC = MandateConstants.TYPE_PDC.equals(presentmentHeader.getMandateType());
 
-			getPresentmentRequest().sendReqest(idList, idExcludeEmiList, presentmentId, isError, isPDC, presentmentRef,
+			getPresentmentRequest().sendReqest(idList, idExcludeEmiList, headerId, isError, isPDC, presentmentRef,
 					bankAccNo);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -660,7 +568,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		FinanceMain fm = financeMainDAO.getFinanceMainById(finReference, "_AView", false);
 		Customer customer = customerDAO.getCustomerForPresentment(fm.getCustID());
 		scheduleDetails = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false);
-		FinanceProfitDetail profitDetail = profitDetailsDAO.getFinProfitDetailsById(finReference);
+		FinanceProfitDetail profitDetail = financeProfitDetailDAO.getFinProfitDetailsById(finReference);
 		String repayHierarchy = financeTypeDAO.getRepayHierarchy(fm.getFinType());
 
 		repaymentProcessUtil.calcualteAndPayReceipt(fm, customer, scheduleDetails, null, profitDetail, header,
@@ -731,24 +639,33 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		FinanceMain financeMain = financeMainDAO.getFinanceMainById(finReference, "_AView", false);
 		Customer customer = customerDAO.getCustomerForPresentment(financeMain.getCustID());
 		scheduleDetails = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false);
-		FinanceProfitDetail profitDetail = profitDetailsDAO.getFinProfitDetailsById(finReference);
+		FinanceProfitDetail profitDetail = financeProfitDetailDAO.getFinProfitDetailsById(finReference);
 		String repayHierarchy = financeTypeDAO.getRepayHierarchy(financeMain.getFinType());
 
 		repaymentProcessUtil.calcualteAndPayReceipt(financeMain, customer, scheduleDetails, null, profitDetail, header,
 				repayHierarchy, schDate, appDate);
 	}
 
-	private void processEmiInAdvance(PresentmentDetail presentmentDetail, boolean isExcessNoReserve,
-			boolean updateReceiptId) throws Exception {
+	private void processEmiInAdvance(PresentmentDetail pd, boolean isExcessNoReserve, boolean updateReceiptId)
+			throws Exception {
 
 		FinReceiptData finReceiptData = new FinReceiptData();
 		FinReceiptHeader header = new FinReceiptHeader();
 
 		Date appDate = SysParamUtil.getAppDate();
+		Date valueDate = pd.getSchDate();
 
 		long receiptId = finReceiptHeaderDAO.generatedReceiptID(header);
-		header.setReference(presentmentDetail.getFinReference());
-		header.setReceiptDate(presentmentDetail.getSchDate());
+		header.setReference(pd.getFinReference());
+		header.setPresentmentSchDate(pd.getSchDate());
+		if (ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
+			header.setReceiptDate(appDate);
+			if (PennantConstants.PROCESS_REPRESENTMENT.equals(pd.getPresentmentType())) {
+				valueDate = appDate;
+			}
+		} else {
+			header.setReceiptDate(pd.getSchDate());
+		}
 		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 		header.setReceiptID(receiptId);
@@ -756,40 +673,47 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		header.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
 		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
 		header.setReceivedFrom(RepayConstants.RECEIVED_CUSTOMER);
-		header.setReceiptAmount(presentmentDetail.getPresentmentAmt());
+		header.setReceiptAmount(pd.getPresentmentAmt());
 		header.setEffectSchdMethod(PennantConstants.List_Select);
 		header.setReceiptMode(RepayConstants.RECEIPTMODE_EXCESS);
 		header.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
 		header.setRealizationDate(appDate);
 		header.setLogSchInPresentment(true);
 		header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		header.setTransactionRef(pd.getUtrNumber());
 
 		List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
 
 		FinReceiptDetail receiptDetail = new FinReceiptDetail();
 
-		if (presentmentDetail.getAdvanceAmt().compareTo(BigDecimal.ZERO) > 0) {
+		if (pd.getAdvanceAmt().compareTo(BigDecimal.ZERO) > 0) {
 			receiptDetail = new FinReceiptDetail();
 			receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 			receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
 			receiptDetail.setPaymentType(RepayConstants.RECEIPTMODE_EMIINADV);
 			header.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
-			receiptDetail.setPayAgainstID(presentmentDetail.getExcessID());
-			receiptDetail.setAmount(presentmentDetail.getAdvanceAmt());
-			receiptDetail.setDueAmount(presentmentDetail.getAdvanceAmt());
+			receiptDetail.setPayAgainstID(pd.getExcessID());
+			receiptDetail.setAmount(pd.getAdvanceAmt());
+			receiptDetail.setDueAmount(pd.getAdvanceAmt());
 			XcessPayables xcessPayable = new XcessPayables();
 			xcessPayable.setPayableType(RepayConstants.EXAMOUNTTYPE_EMIINADV);
-			xcessPayable.setAmount(presentmentDetail.getAdvanceAmt());
-			xcessPayable.setTotPaidNow(presentmentDetail.getAdvanceAmt());
+			xcessPayable.setAmount(pd.getAdvanceAmt());
+			xcessPayable.setTotPaidNow(pd.getAdvanceAmt());
 			header.getXcessPayables().add(xcessPayable);
-			header.setReceiptAmount(presentmentDetail.getAdvanceAmt());
+			header.setReceiptAmount(pd.getAdvanceAmt());
 			header.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
-			receiptDetail.setValueDate(presentmentDetail.getSchDate());
-			receiptDetail.setReceivedDate(presentmentDetail.getSchDate());
-			receiptDetail.setValueDate(presentmentDetail.getSchDate());
-			receiptDetail.setPartnerBankAc(presentmentDetail.getAccountNo());
-			receiptDetail.setPartnerBankAcType(presentmentDetail.getAcType());
+			receiptDetail.setValueDate(pd.getSchDate());
+			if (ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
+				receiptDetail.setValueDate(pd.getSchDate());
+			} else if (StringUtils.equals(pd.getPresentmentType(), PennantConstants.PROCESS_REPRESENTMENT)) {
+				receiptDetail.setValueDate(appDate);
+			}
+			receiptDetail.setReceivedDate(receiptDetail.getValueDate());
+			receiptDetail.setValueDate(pd.getSchDate());
+			receiptDetail.setPartnerBankAc(pd.getAccountNo());
+			receiptDetail.setPartnerBankAcType(pd.getAcType());
 			receiptDetail.setNoReserve(isExcessNoReserve);
+			receiptDetail.setTransactionRef(pd.getUtrNumber());
 			receiptDetails.add(receiptDetail);
 
 		}
@@ -798,54 +722,41 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 
 		header.setRemarks("");
 		finReceiptData.setReceiptHeader(header);
-		finReceiptData.setFinReference(presentmentDetail.getFinReference());
+		finReceiptData.setFinReference(pd.getFinReference());
 		finReceiptData.setSourceId("");
-		FinanceMain financeMain = financeMainDAO.getFinanceMainById(presentmentDetail.getFinReference(), "_AView",
-				false);
+		FinanceMain financeMain = financeMainDAO.getFinanceMainById(pd.getFinReference(), "_AView", false);
 		CustomerDetails custDetails = customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true,
 				"_AView");
 		List<FinanceScheduleDetail> scheduleDetails = financeScheduleDetailDAO
-				.getFinScheduleDetails(presentmentDetail.getFinReference(), "_AView", false);
-		FinanceProfitDetail profitDetail = profitDetailsDAO
-				.getFinProfitDetailsById(presentmentDetail.getFinReference());
+				.getFinScheduleDetails(pd.getFinReference(), "_AView", false);
+		FinanceProfitDetail profitDetail = financeProfitDetailDAO.getFinProfitDetailsById(pd.getFinReference());
 		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(financeMain.getFinType(), "_AView");
 		repaymentProcessUtil.calcualteAndPayReceipt(financeMain, custDetails.getCustomer(), scheduleDetails, null,
-				profitDetail, header, financeType.getRpyHierarchy(), presentmentDetail.getSchDate(), appDate);
-		if (presentmentDetail.getId() != Long.MIN_VALUE && updateReceiptId) {
-			presentmentDetailDAO.updateReceptId(presentmentDetail.getId(), header.getReceiptID());
+				profitDetail, header, financeType.getRpyHierarchy(), valueDate, appDate);
+		if (pd.getId() != Long.MIN_VALUE && updateReceiptId) {
+			presentmentDetailDAO.updateReceptId(pd.getId(), header.getReceiptID());
 		}
 	}
 
-	@Override
-	public void executeReceipts(PresentmentDetail detail, boolean isExcessNoReserve, boolean isRealized)
-			throws Exception {
-		if (detail.getAdvanceAmt().compareTo(BigDecimal.ZERO) > 0) {
-			processEmiInAdvance(detail, false, false);
-		}
-		if (detail.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
-			processReceipts(detail, false, true, isRealized);
-		}
-	}
-
-	private void processReceipts(PresentmentDetail presentmentDetail, boolean isExcessNoReserve,
-			boolean updateReceiptId, boolean isRealized) throws Exception {
+	private void processReceipts(PresentmentDetail pd, boolean isExcessNoReserve, boolean updateReceiptId,
+			boolean isRealized) throws Exception {
 
 		FinReceiptData finReceiptData = new FinReceiptData();
 		FinReceiptHeader header = new FinReceiptHeader();
 
 		Date appDate = SysParamUtil.getAppDate();
-		Date valueDate = presentmentDetail.getSchDate();
+		Date valueDate = pd.getSchDate();
 
 		long receiptId = finReceiptHeaderDAO.generatedReceiptID(header);
-		header.setReference(presentmentDetail.getFinReference());
-		header.setPresentmentSchDate(presentmentDetail.getSchDate());
+		header.setReference(pd.getFinReference());
+		header.setPresentmentSchDate(pd.getSchDate());
 		if (ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
 			header.setReceiptDate(appDate);
-			if (PennantConstants.PROCESS_REPRESENTMENT.equals(presentmentDetail.getPresentmentType())) {
+			if (PennantConstants.PROCESS_REPRESENTMENT.equals(pd.getPresentmentType())) {
 				valueDate = appDate;
 			}
 		} else {
-			header.setReceiptDate(presentmentDetail.getSchDate());
+			header.setReceiptDate(pd.getSchDate());
 		}
 		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
@@ -854,7 +765,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		header.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
 		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
 		header.setReceivedFrom(RepayConstants.RECEIVED_CUSTOMER);
-		header.setReceiptAmount(presentmentDetail.getPresentmentAmt());
+		header.setReceiptAmount(pd.getPresentmentAmt());
 		header.setEffectSchdMethod(PennantConstants.List_Select);
 		header.setReceiptMode(RepayConstants.PAYTYPE_PRESENTMENT);
 		if (isRealized) {
@@ -864,31 +775,32 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		}
 		header.setLogSchInPresentment(true);
 		header.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		header.setLastMntBy(presentmentDetail.getLastMntBy());
+		header.setLastMntBy(pd.getLastMntBy());
 		header.setVersion(header.getVersion() + 1);
 
 		List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
 
 		FinReceiptDetail receiptDetail = new FinReceiptDetail();
 
-		if (presentmentDetail.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
+		if (pd.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
 			receiptDetail = new FinReceiptDetail();
-			header.setReceiptAmount(presentmentDetail.getPresentmentAmt());
+			header.setReceiptAmount(pd.getPresentmentAmt());
 			receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 			receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
 			receiptDetail.setPaymentType(RepayConstants.PAYTYPE_PRESENTMENT);
-			receiptDetail.setPayAgainstID(presentmentDetail.getExcessID());
-			receiptDetail.setAmount(presentmentDetail.getPresentmentAmt());
-			receiptDetail.setDueAmount(presentmentDetail.getPresentmentAmt());
-			receiptDetail.setValueDate(presentmentDetail.getSchDate());
+			receiptDetail.setPayAgainstID(pd.getExcessID());
+			receiptDetail.setAmount(pd.getPresentmentAmt());
+			receiptDetail.setDueAmount(pd.getPresentmentAmt());
+			receiptDetail.setValueDate(pd.getSchDate());
 			if (!ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
-				receiptDetail.setValueDate(presentmentDetail.getSchDate());
-			} else if (PennantConstants.PROCESS_REPRESENTMENT.equals(presentmentDetail.getPresentmentType())) {
+				receiptDetail.setValueDate(pd.getSchDate());
+			} else if (PennantConstants.PROCESS_REPRESENTMENT.equals(pd.getPresentmentType())) {
 				receiptDetail.setValueDate(appDate);
 			}
 			receiptDetail.setReceivedDate(receiptDetail.getValueDate());
-			receiptDetail.setPartnerBankAc(presentmentDetail.getAccountNo());
-			receiptDetail.setPartnerBankAcType(presentmentDetail.getAcType());
+			receiptDetail.setPartnerBankAc(pd.getAccountNo());
+			receiptDetail.setPartnerBankAcType(pd.getAcType());
+			receiptDetail.setTransactionRef(pd.getUtrNumber());
 			receiptDetails.add(receiptDetail);
 
 		}
@@ -897,32 +809,25 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 
 		header.setRemarks("");
 		finReceiptData.setReceiptHeader(header);
-		finReceiptData.setFinReference(presentmentDetail.getFinReference());
+		finReceiptData.setFinReference(pd.getFinReference());
 		finReceiptData.setSourceId("");
-		FinanceMain financeMain = financeMainDAO.getFinanceMainById(presentmentDetail.getFinReference(), "_AView",
-				false);
+		FinanceMain financeMain = financeMainDAO.getFinanceMainById(pd.getFinReference(), "_AView", false);
 		CustomerDetails custDetails = customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true,
 				"_AView");
 		List<FinanceScheduleDetail> scheduleDetails = financeScheduleDetailDAO
-				.getFinScheduleDetails(presentmentDetail.getFinReference(), "_AView", false);
-		FinanceProfitDetail profitDetail = profitDetailsDAO
-				.getFinProfitDetailsById(presentmentDetail.getFinReference());
+				.getFinScheduleDetails(pd.getFinReference(), "_AView", false);
+		FinanceProfitDetail profitDetail = financeProfitDetailDAO.getFinProfitDetailsById(pd.getFinReference());
 		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(financeMain.getFinType(), "_AView");
 		repaymentProcessUtil.calcualteAndPayReceipt(financeMain, custDetails.getCustomer(), scheduleDetails, null,
 				profitDetail, header, financeType.getRpyHierarchy(), valueDate, appDate);
-		if (presentmentDetail.getId() != Long.MIN_VALUE && updateReceiptId) {
-			presentmentDetailDAO.updateReceptId(presentmentDetail.getId(), header.getReceiptID());
+		if (pd.getId() != Long.MIN_VALUE && updateReceiptId) {
+			presentmentDetailDAO.updateReceptId(pd.getId(), header.getReceiptID());
 		}
 	}
 
 	@Override
 	public FinanceMain getDefualtPostingDetails(String finReference, Date schDate) {
 		return presentmentDetailDAO.getDefualtPostingDetails(finReference, schDate);
-	}
-
-	@Override
-	public PresentmentDetail getPresentmentDetail(String presentmentRef) {
-		return presentmentDetailDAO.getPresentmentDetail(presentmentRef, "");
 	}
 
 	private PresentmentRequest getPresentmentRequest() {
@@ -942,7 +847,75 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	@Override
 	public List<Long> getExcludePresentmentDetailIdList(long presentmentId, boolean isExclude) {
 		return presentmentDetailDAO.getExcludePresentmentDetailIdList(presentmentId, isExclude);
+	}
 
+	@Override
+	public List<PresentmentHeader> getPresenmentHeaderList(Date fromDate, Date toDate, int status) {
+		return this.presentmentDetailDAO.getPresentmentHeaderList(fromDate, toDate, status);
+	}
+
+	@Override
+	public List<Long> getIncludeList(long id) {
+		return this.presentmentDetailDAO.getIncludeList(id);
+	}
+
+	@Override
+	public void processSuccessPresentments(long receiptId) {
+		repaymentProcessUtil.processSuccessPresentment(receiptId);
+	}
+
+	@Override
+	public void executeReceipts(PresentmentDetail detail, boolean isExcessNoReserve, boolean isRealized)
+			throws Exception {
+		if (detail.getAdvanceAmt().compareTo(BigDecimal.ZERO) > 0) {
+			processEmiInAdvance(detail, false, false);
+		}
+		if (detail.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
+			processReceipts(detail, false, true, isRealized);
+		}
+
+	}
+
+	@Override
+	public List<Long> getExcludeList(long id) {
+		return this.presentmentDetailDAO.getExcludeList(id);
+	}
+
+	@Override
+	public void updatePresentmentDetail(long id, String pexcSuccess, String utrNumber) {
+		presentmentDetailDAO.updatePresentmentDetail(id, pexcSuccess, utrNumber);
+	}
+
+	@Override
+	public void updatePresentmentDetail(long id, String status, Long linkedTranId, String utrNumber) {
+		presentmentDetailDAO.updatePresentmentDetail(id, status, linkedTranId, utrNumber);
+	}
+
+	@Override
+	public void setProperties(PresentmentDetailExtract pde) {
+
+		/* DAO's */
+		pde.setFinanceRepaymentsDAO(financeRepaymentsDAO);
+		pde.setPostingsPreparationUtil(postingsPreparationUtil);
+		pde.setPresentmentDetailDAO(presentmentDetailDAO);
+		pde.setFinReceiptHeaderDAO(finReceiptHeaderDAO);
+		pde.setFinanceMainDAO(financeMainDAO);
+		pde.setCustomerDAO(customerDAO);
+		pde.setFinanceScheduleDetailDAO(financeScheduleDetailDAO);
+		pde.setFinanceProfitDetailDAO(financeProfitDetailDAO);
+		pde.setFinODDetailsDAO(finODDetailsDAO);
+		pde.setFinReceiptDetailDAO(finReceiptDetailDAO);
+		pde.setFinExcessAmountDAO(finExcessAmountDAO);
+
+		/* Service's */
+		pde.setPresentmentDetailService(this);
+		pde.setNotificationService(notificationService);
+		pde.setRepaymentPostingsUtil(repaymentPostingsUtil);
+		pde.setReceiptCalculator(receiptCalculator);
+		pde.setReceiptPaymentService(receiptPaymentService);
+		pde.setReceiptCancellationService(receiptCancellationService);
+		pde.setPresentmentImportProcess(presentmentImportProcess);
+		pde.setEventPropertiesService(eventPropertiesService);
 	}
 
 	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
@@ -1004,60 +977,50 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		this.customerDetailsService = customerDetailsService;
 	}
 
-	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
-		this.profitDetailsDAO = profitDetailsDAO;
-	}
-
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
 	}
 
-	@Override
-	public List<PresentmentHeader> getPresenmentHeaderList(Date fromDate, Date toDate, int status) {
-		return this.presentmentDetailDAO.getPresentmentHeaderList(fromDate, toDate, status);
-	}
-
-	@Override
-	public List<Long> getIncludeList(long id) {
-		return this.presentmentDetailDAO.getIncludeList(id);
-	}
-
-	@Override
-	public void processSuccessPresentments(long receiptId) {
-		repaymentProcessUtil.processSuccessPresentment(receiptId);
-	}
-
-	@Override
-	public List<Long> getExcludeList(long id) {
-		return this.presentmentDetailDAO.getExcludeList(id);
-	}
-
-	@Override
-	public void updatePresentmentDetail(String batchId, String pexcSuccess) {
-		presentmentDetailDAO.updatePresentmentDetail(batchId, pexcSuccess);
-	}
-
-	@Override
-	public String getPresementStatus(String presentmentRef) {
-		return presentmentDetailDAO.getPresementStatus(presentmentRef);
-	}
-
-	@Override
-	public long getPresentmentId(String presentmentRef) {
-		return presentmentDetailDAO.getPresentmentId(presentmentRef);
-	}
-
-	@Override
-	public void updatePresentmentDetail(String presentmentRef, String status, Long linkedTranId) {
-		presentmentDetailDAO.updatePresentmentDetail(presentmentRef, status, linkedTranId);
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
 	}
 
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
 	}
 
-	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
-		this.finODDetailsDAO = finODDetailsDAO;
+	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
+		this.financeRepaymentsDAO = financeRepaymentsDAO;
+	}
+
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+
+	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
+		this.financeProfitDetailDAO = financeProfitDetailDAO;
+	}
+
+	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
+		this.finReceiptDetailDAO = finReceiptDetailDAO;
+	}
+
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
+	}
+
+	public void setReceiptPaymentService(ReceiptPaymentService receiptPaymentService) {
+		this.receiptPaymentService = receiptPaymentService;
+	}
+
+	@Autowired(required = false)
+	@Qualifier(value = "presentmentImportProcess")
+	public void setPresentmentImportProcess(PresentmentImportProcess presentmentImportProcess) {
+		this.presentmentImportProcess = presentmentImportProcess;
+	}
+
+	public void setEventPropertiesService(EventPropertiesService eventPropertiesService) {
+		this.eventPropertiesService = eventPropertiesService;
 	}
 
 }

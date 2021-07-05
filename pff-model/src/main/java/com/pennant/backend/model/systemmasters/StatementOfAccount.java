@@ -119,8 +119,8 @@ public class StatementOfAccount {
 	// Finance Profit Details
 	private String finPurpose;
 	private Date finStartDate;
-	private BigDecimal linkedFinRef = BigDecimal.ZERO;
-	private BigDecimal closedlinkedFinRef = BigDecimal.ZERO;
+	private String linkedFinRef;
+	private String closedlinkedFinRef;
 	private int activeCnt;
 	private int closeCnt;
 	private int tot;
@@ -655,29 +655,19 @@ public class StatementOfAccount {
 		this.finStartDate = finStartDate;
 	}
 
-	public BigDecimal getLinkedFinRef() {
-		return this.linkedFinRef;
+	public String getLinkedFinRef() {
+		return linkedFinRef;
 	}
 
-	public void setLinkedFinRef(BigDecimal linkedFinRef) {
-
-		if (linkedFinRef == null) {
-			linkedFinRef = BigDecimal.ZERO;
-		}
-
+	public void setLinkedFinRef(String linkedFinRef) {
 		this.linkedFinRef = linkedFinRef;
 	}
 
-	public BigDecimal getClosedlinkedFinRef() {
-		return this.closedlinkedFinRef;
+	public String getClosedlinkedFinRef() {
+		return closedlinkedFinRef;
 	}
 
-	public void setClosedlinkedFinRef(BigDecimal closedlinkedFinRef) {
-
-		if (closedlinkedFinRef == null) {
-			closedlinkedFinRef = BigDecimal.ZERO;
-		}
-
+	public void setClosedlinkedFinRef(String closedlinkedFinRef) {
 		this.closedlinkedFinRef = closedlinkedFinRef;
 	}
 
@@ -1435,7 +1425,7 @@ public class StatementOfAccount {
 	public void setNetRcvbleInWords(String netRcvbleInWords) {
 		this.netRcvbleInWords = netRcvbleInWords;
 	}
-	
+
 	public BigDecimal getDownPayment() {
 		return downPayment;
 	}

@@ -238,8 +238,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	 * by using FinanceMainDAO's update method 3) Audit the record in to AuditHeader and AdtFinanceMain by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -435,8 +434,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	 * workFlow table by using getFinanceMainDAO().delete with parameters financeMain,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws InterfaceException
 	 * @throws InvocationTargetException
@@ -519,8 +517,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtFinanceMain by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -545,8 +542,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		Date appDate = SysParamUtil.getAppDate();
 		Date curBDay = appDate;
 
-		//Execute Accounting Details Process
-		//=======================================
+		// Execute Accounting Details Process
+		// =======================================
 		FinanceDetail financeDetail = header.getFinanceDetail();
 		FinanceMain fm = financeDetail.getFinScheduleData().getFinanceMain();
 		String finReference = fm.getFinReference();
@@ -621,7 +618,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		fm.setRecordType("");
 		fm.setFinIsActive(true);
 		financeMainDAO.updateWriteOffStatus(finReference, true);
-		profitDetailsDAO.UpdateClosingSts(finReference, true);
+		profitDetailsDAO.updateClosingSts(finReference, true);
 
 		// Save Finance WriteOff Details
 		FinanceWriteoff financeWriteoff = header.getFinanceWriteoff();
@@ -643,8 +640,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		 * listSave(old_finSchdData, "_Log", logKey); }
 		 */
 
-		//ScheduleDetails delete and save
-		//=======================================
+		// ScheduleDetails delete and save
+		// =======================================
 		listDeletion(finReference, "");
 		listSave(scheduleData, "", 0);
 
@@ -669,8 +666,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			auditDetails.addAll(checkListDetailService.doApprove(header.getFinanceDetail(), "", serviceUID));
 		}
 
-		//Update Profit Details 
-		//	getProfitDetailsDAO().update(profitDetail, false);
+		// Update Profit Details
+		// getProfitDetailsDAO().update(profitDetail, false);
 
 		// Schedule Details delete
 		// =======================================
@@ -757,7 +754,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		Map<String, Object> dataMap = aeEvent.getDataMap();
-		//set for WriteOff
+		// set for WriteOff
 		amountCodes.setWriteOff(true);
 		aeEvent.getAeAmountCodes().setTotalWriteoff(financeWriteoff.getWriteoffPrincipal()
 				.add(financeWriteoff.getWriteoffProfit().add(financeWriteoff.getWrittenoffSchFee())));
@@ -857,7 +854,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		if (finMain.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(finMain.getRecordType())) {
 			aeEvent.setNewRecord(true);
 		}
-		//setting entity code
+		// setting entity code
 		aeEvent.setEntityCode(finMain.getEntityCode());
 		return aeEvent;
 	}
@@ -922,8 +919,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	 * for any mismatch conditions Fetch the error details from getFinanceMainDAO().getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

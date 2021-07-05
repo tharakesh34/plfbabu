@@ -12,7 +12,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.amtmasters.VehicleDealerService;
 
-import AccountEventConstants.AccountingEvent;
+import com.pennant.app.constants.AccountingEvent;
 
 public class VASFeePostingEvent extends PostingEvent {
 

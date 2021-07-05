@@ -1,7 +1,9 @@
 package com.pennanttech.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Service;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
@@ -41,6 +45,8 @@ public class PresentmentWebServiceImpl extends ExtendedTestClass
 	private PresentmentServiceController presentmentServiceController;
 	private PartnerBankService partnerBankService;
 	private BounceReasonDAO bounceReasonDAO;
+	private FinanceMainDAO financeMainDAO;
+	private PresentmentDetailDAO presentmentDetailDAO;
 
 	@Override
 	public PresentmentResponse extractPresentmentDetails(PresentmentHeader header) throws ServiceException {
@@ -353,6 +359,41 @@ public class PresentmentWebServiceImpl extends ExtendedTestClass
 		return wsReturnStatus;
 	}
 
+	@Override
+	public PresentmentResponse getPresentmentStatus(String finReference) throws ServiceException {
+		PresentmentResponse response = new PresentmentResponse();
+
+		if (StringUtils.isBlank(finReference)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "FinReference";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		}
+
+		if (financeMainDAO.getFinanceCountById(finReference, "", false) <= 0) {
+			String valueParm[] = new String[2];
+			valueParm[0] = finReference;
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+			return response;
+		}
+		List<PresentmentDetail> statusByFinRef = presentmentDetailDAO.getPresentmentStatusByFinRef(finReference);
+
+		if (CollectionUtils.isEmpty(statusByFinRef)) {
+			String[] valueParm = new String[4];
+			valueParm[0] = "No";
+			valueParm[1] = "Presentments";
+			valueParm[2] = "should be";
+			valueParm[3] = "Avaiable with Finreference: " + finReference;
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30550", valueParm));
+			return response;
+		} else {
+			response.setPresentmentDetails(statusByFinRef);
+		}
+
+		response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		return response;
+	}
+
 	@Autowired
 	public void setPresentmentDetailService(PresentmentDetailService presentmentDetailService) {
 		this.presentmentDetailService = presentmentDetailService;
@@ -373,4 +414,13 @@ public class PresentmentWebServiceImpl extends ExtendedTestClass
 		this.bounceReasonDAO = bounceReasonDAO;
 	}
 
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
+	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
+		this.presentmentDetailDAO = presentmentDetailDAO;
+	}
 }

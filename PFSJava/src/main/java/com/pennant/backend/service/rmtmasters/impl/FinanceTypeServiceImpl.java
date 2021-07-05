@@ -174,8 +174,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 * based on the module workFlow Configuration. by using FinanceTypeDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtRMTFinanceTypes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -275,8 +274,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 * RMTFinanceTypes by using FinanceTypeDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
 	 * and AdtRMTFinanceTypes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -305,10 +303,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 * It fetches the records from RMTFinanceType_View and other details
 	 * 
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceType
 	 */
 	@Override
@@ -355,8 +351,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	/**
 	 * It fetches the approved records from RMTFinanceTypesa and other details
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return FinanceType
 	 */
 	@Override
@@ -388,8 +383,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 * getApprovedFinanceTypeById fetch the details by using FinanceTypeDAO's getFinanceTypeById method . with parameter
 	 * id and type as blank. it fetches the approved records from the RMTFinanceTypes.
 	 * 
-	 * @param finType
-	 *            (String)
+	 * @param finType (String)
 	 * @return FinanceType
 	 */
 	@Override
@@ -405,8 +399,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	/**
 	 * It fetches the approved records from RMTFinanceTypes
 	 * 
-	 * @param String
-	 *            finType
+	 * @param String finType
 	 * @return FinanceType
 	 */
 	@Override
@@ -425,8 +418,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtRMTFinanceTypes
 	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -807,6 +799,55 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				}
 			}
 		}
+
+		// ************************** SUBVN
+		String subventionFeeCode = PennantConstants.FEETYPE_SUBVENTION;
+		feeTypeId = feeTypeService.getFinFeeTypeIdByFeeType(subventionFeeCode);
+
+		boolean feeTypeOrg = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
+		boolean feeTypeNonOrg = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
+		if (financeType.isSubventionReq()) {
+			if (!feeTypeOrg) {
+				finTypeFee = getFinTypeFee(feeTypeId, subventionFeeCode, orgFinEvent, true);
+				finTypeFee.setFeeOrder(++orgFeeOrder);
+				finTypeFee.setFeeScheduleMethod(CalculationConstants.FEE_SUBVENTION);
+				finTypeFee.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
+				finTypeFee.setAlwModifyFee(true);
+				finTypeFee.setAlwDeviation(false);
+				finTypeFee.setMaxWaiverPerc(BigDecimal.ZERO);
+				finTypeFee.setActive(true);
+				finTypeFee.setAlwModifyFeeSchdMthd(false);
+				finTypeFee.setNextRoleCode("");
+				fees.add(finTypeFee);
+			}
+
+			if (!feeTypeNonOrg) {
+				finTypeFee = getFinTypeFee(feeTypeId, subventionFeeCode, serFinEvent, false);
+				finTypeFee.setFeeOrder(++servFeeOrder);
+				finTypeFee.setFeeScheduleMethod(CalculationConstants.FEE_SUBVENTION);
+				finTypeFee.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
+				finTypeFee.setAlwModifyFee(true);
+				finTypeFee.setAlwDeviation(false);
+				finTypeFee.setMaxWaiverPerc(BigDecimal.ZERO);
+				finTypeFee.setActive(true);
+				finTypeFee.setAlwModifyFeeSchdMthd(false);
+				finTypeFee.setNextRoleCode("");
+				fees.add(finTypeFee);
+			}
+		} else {
+			for (FinTypeFees fee : fees) {
+				if (fee.getFeeTypeID() != feeTypeId) {
+					continue;
+				}
+
+				boolean feeTypeCode = subventionFeeCode.equals(fee.getFeeTypeCode());
+				boolean orgFee = fee.isOriginationFee() && fee.getModuleId() == moduleId;
+
+				if ((feeTypeOrg || feeTypeNonOrg) && feeTypeCode && orgFee) {
+					fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				}
+			}
+		}
 	}
 
 	private FinTypeFees getFinTypeFee(Long feeTypeId, String feeTypeCode, String finEvent, boolean originationFee) {
@@ -837,8 +878,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 * workFlow table by using getFinanceTypeDAO().delete with parameters financeType,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtRMTFinanceTypes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -869,8 +909,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -946,21 +985,21 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		errParm[0] = PennantJavaUtil.getLabel("label_FinType") + ":" + valueParm[0];
 
 		if (financeType.isNew()) { // for New record or new record into work
-										// flow
+									// flow
 			if (!financeType.isWorkflow()) {// With out Work flow only new
-												// records
+											// records
 				if (befFinanceType != null) { // Record Already Exists in the
-													// table then error
+												// table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 				if (financeType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																								// records
+																							// records
 																							// type
 																							// is
 																							// new
 					if (befFinanceType != null || tempFinanceType != null) { // if
-																					// records
+																				// records
 																				// already
 																				// exists
 																				// in
@@ -979,9 +1018,9 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!financeType.isWorkflow()) { // With out Work flow for update
-													// and delete
+												// and delete
 				if (befFinanceType == null) { // if records not exists in the
-													// main table
+												// main table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 					if (oldFinanceType != null
@@ -998,7 +1037,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				}
 			} else {
 				if (tempFinanceType == null) { // if records not exists in the
-													// Work flow table
+												// Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 				if (tempFinanceType != null && oldFinanceType != null

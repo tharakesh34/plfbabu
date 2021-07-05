@@ -63,12 +63,10 @@ public class GSTCalculator {
 	/**
 	 * This method will calculate the total GST on the specified taxableAmount by executing the GST rules configured.
 	 * 
-	 * @param finReference
-	 *            The finRefernce to prepare the data map required to execute the GST rules.
-	 * @param taxableAmount
-	 *            The amount in which the GST will be calculated.
-	 * @param taxComponent
-	 *            The taxable component either whether the GST is include in <code>taxableAmount</code> or exclude.
+	 * @param finReference  The finRefernce to prepare the data map required to execute the GST rules.
+	 * @param taxableAmount The amount in which the GST will be calculated.
+	 * @param taxComponent  The taxable component either whether the GST is include in <code>taxableAmount</code> or
+	 *                      exclude.
 	 * @return The total calculated GST.
 	 */
 	public static BigDecimal getTotalGST(String finReference, BigDecimal taxableAmount, String taxComponent) {
@@ -79,12 +77,10 @@ public class GSTCalculator {
 	/**
 	 * This method will calculate the total GST on the specified taxableAmount by executing the GST rules configured.
 	 * 
-	 * @param taxableAmount
-	 *            The amount in which the GST will be calculated.
-	 * @param gstPercentages
-	 *            The GST percentages
-	 * @param taxComponent
-	 *            The taxable component either whether the GST is include in <code>taxableAmount</code> or exclude.
+	 * @param taxableAmount  The amount in which the GST will be calculated.
+	 * @param gstPercentages The GST percentages
+	 * @param taxComponent   The taxable component either whether the GST is include in <code>taxableAmount</code> or
+	 *                       exclude.
 	 * @return The total calculated GST.
 	 */
 	public static BigDecimal getTotalGST(BigDecimal taxableAmount, Map<String, BigDecimal> taxPercentages,
@@ -114,11 +110,11 @@ public class GSTCalculator {
 
 	public static TaxAmountSplit getExclusiveGST(BigDecimal taxableAmount, Map<String, BigDecimal> taxPercentages) {
 		TaxAmountSplit taxSplit = new TaxAmountSplit();
-		taxSplit.setcGST(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_CGST))); //CGST Amount
-		taxSplit.setsGST(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_SGST))); //SGST Amount
-		taxSplit.setuGST(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_UGST))); //UGST Amount
-		taxSplit.setiGST(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_IGST))); //IGST Amount
-		taxSplit.setCess(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_CESS)));//CESS Amount
+		taxSplit.setcGST(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_CGST))); // CGST Amount
+		taxSplit.setsGST(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_SGST))); // SGST Amount
+		taxSplit.setuGST(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_UGST))); // UGST Amount
+		taxSplit.setiGST(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_IGST))); // IGST Amount
+		taxSplit.setCess(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_CESS)));// CESS Amount
 		taxSplit.settGST(taxSplit.getcGST().add(taxSplit.getsGST()).add(taxSplit.getuGST())
 				.add(taxSplit.getiGST().add(taxSplit.getCess())));
 		taxSplit.setNetAmount(taxableAmount.add(taxSplit.gettGST()));
@@ -135,22 +131,22 @@ public class GSTCalculator {
 		TaxAmountSplit taxSplit = new TaxAmountSplit();
 
 		BigDecimal netAmount = getInclusiveAmount(taxableAmount.subtract(waivedAmount),
-				taxPercentages.get(RuleConstants.CODE_TOTAL_GST));//Fee factor
+				taxPercentages.get(RuleConstants.CODE_TOTAL_GST));// Fee factor
 
-		taxSplit.setcGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_CGST))); //CGST Amount
-		taxSplit.setsGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_SGST))); //SGST Amount
-		taxSplit.setuGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_UGST))); //UGST Amount
-		taxSplit.setiGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_IGST))); //IGST Amount
-		taxSplit.setCess(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_CESS))); //CESS Amount
+		taxSplit.setcGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_CGST))); // CGST Amount
+		taxSplit.setsGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_SGST))); // SGST Amount
+		taxSplit.setuGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_UGST))); // UGST Amount
+		taxSplit.setiGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_IGST))); // IGST Amount
+		taxSplit.setCess(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_CESS))); // CESS Amount
 		taxSplit.settGST(taxSplit.getcGST().add(taxSplit.getsGST()).add(taxSplit.getuGST())
 				.add(taxSplit.getiGST().add(taxSplit.getCess())));
 
-		taxSplit.setNetAmount(taxableAmount); //FeeFactor + GST Factor
+		taxSplit.setNetAmount(taxableAmount); // FeeFactor + GST Factor
 
 		return taxSplit;
 	}
 
-	//TODO:GANESH need to check FinanceTaxDetail
+	// TODO:GANESH need to check FinanceTaxDetail
 	public static Map<String, BigDecimal> getTaxPercentages(long custId, String finCCY, String userBranch,
 			String finBranch) {
 		return getTaxPercentages(custId, finCCY, userBranch, finBranch, null);
@@ -211,8 +207,91 @@ public class GSTCalculator {
 		}
 
 		dataMap = getGSTDataMap(finBranch, custBranch, custProvince, custResdSts, custCountry, financeTaxDetail);
-		//setting the customer residential status
+		// setting the customer residential status
 		dataMap.put("custResidentialSts", custResdSts);
+		String ruleCode;
+		BigDecimal totalGST = BigDecimal.ZERO;
+		if (isGSTCalculationOnMaster()) {
+			totalGST = BigDecimal.ZERO;
+			if (dataMap.containsKey("fromState") && dataMap.containsKey("toState")) {
+				String fromState = (String) dataMap.get("fromState");
+				String toState = (String) dataMap.get("toState");
+				if (StringUtils.isNotBlank(fromState) && StringUtils.isNotBlank(toState)) {
+					List<GSTRate> gstRateDetailList = gstRateDAO.getGSTRateByStates(fromState, toState, "_AView");
+					if (CollectionUtils.isNotEmpty(gstRateDetailList)) {
+						for (GSTRate gstRate : gstRateDetailList) {
+							BigDecimal taxPerc = gstRate.getPercentage();
+							totalGST = totalGST.add(taxPerc);
+							taxPercentages.put(gstRate.getTaxType(), gstRate.getPercentage());
+						}
+					}
+				}
+
+			}
+		} else {
+			List<Rule> rules = ruleDAO.getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
+
+			for (Rule rule : rules) {
+				BigDecimal taxPerc = BigDecimal.ZERO;
+				ruleCode = rule.getRuleCode();
+
+				taxPerc = getRuleResult(rule.getSQLRule(), dataMap, finCCY);
+				totalGST = totalGST.add(taxPerc);
+				taxPercentages.put(ruleCode, taxPerc);
+			}
+
+		}
+
+		taxPercentages.put(RuleConstants.CODE_TOTAL_GST, totalGST);
+
+		return taxPercentages;
+	}
+
+	public static Map<String, BigDecimal> getDealerTaxPercentages(Long manufacturerDealerId, String finCCY,
+			String userBranch, String finBranch, FinanceTaxDetail financeTaxDetail) {
+
+		Map<String, BigDecimal> taxPercentages = new HashMap<>();
+
+		taxPercentages.put(RuleConstants.CODE_CGST, BigDecimal.ZERO);
+		taxPercentages.put(RuleConstants.CODE_IGST, BigDecimal.ZERO);
+		taxPercentages.put(RuleConstants.CODE_SGST, BigDecimal.ZERO);
+		taxPercentages.put(RuleConstants.CODE_UGST, BigDecimal.ZERO);
+		taxPercentages.put(RuleConstants.CODE_CESS, BigDecimal.ZERO);
+		taxPercentages.put(RuleConstants.CODE_TOTAL_GST, BigDecimal.ZERO);
+
+		Map<String, Object> dataMap = null;
+		String custBranch = null;
+		String custProvince = null;
+		String custCountry = null;
+		String custResdSts = null;
+
+		if (manufacturerDealerId != null && manufacturerDealerId > 0) {
+			dataMap = financeMainDAO.getGSTDataMapForDealer(manufacturerDealerId);
+
+			dataMap.put("CustBranch", "MUM");// FIXME
+			if (dataMap.get("CustBranch") != null) {
+				custBranch = dataMap.get("CustBranch").toString();
+			}
+
+			if (dataMap.get("CustProvince") != null) {
+				custProvince = dataMap.get("CustProvince").toString();
+			}
+
+			if (dataMap.get("CustCountry") != null) {
+				custCountry = dataMap.get("CustCountry").toString();
+			}
+
+			// FIXME
+			if (dataMap.get("ResidentialStatus") == null) {
+				dataMap.put("ResidentialStatus", PennantConstants.RESIDENT);
+			}
+
+			custResdSts = dataMap.get("ResidentialStatus").toString();
+		} else {
+			custBranch = userBranch;
+		}
+
+		dataMap = getDealerGSTDataMap(finBranch, custBranch, custProvince, custResdSts, custCountry, financeTaxDetail);
 		String ruleCode;
 		BigDecimal totalGST = BigDecimal.ZERO;
 		if (isGSTCalculationOnMaster()) {
@@ -376,7 +455,7 @@ public class GSTCalculator {
 		FinanceTaxDetail financeTaxDetail = financeTaxDetailDAO.getFinanceTaxDetail(finReference, "_View");
 
 		dataMap = getGSTDataMap(finBranch, custBranch, custProvince, custResdSts, custCountry, financeTaxDetail);
-		//setting the customer residential status
+		// setting the customer residential status
 		dataMap.put("custResidentialSts", custResdSts);
 		return dataMap;
 	}
@@ -390,7 +469,7 @@ public class GSTCalculator {
 		if (StringUtils.isBlank(custBranch)) {
 			return gstExecutionMap;
 		}
-		//getting empty string for some cases
+		// getting empty string for some cases
 		if (StringUtils.isEmpty(finBranch)) {
 			finBranch = custBranch;
 		}
@@ -429,7 +508,7 @@ public class GSTCalculator {
 			toCountryCode = custCountry;
 		}
 
-		if (StringUtils.isBlank(toCountryCode) || StringUtils.isBlank(toStateCode)) { // if toCountry is not available 
+		if (StringUtils.isBlank(toCountryCode) || StringUtils.isBlank(toStateCode)) { // if toCountry is not available
 			gstExecutionMap.put("toState", "");
 			gstExecutionMap.put("toUnionTerritory", 2);
 			gstExecutionMap.put("toStateGstExempted", "");
@@ -453,6 +532,36 @@ public class GSTCalculator {
 		gstExecutionMap.put("customerUnRegistered", gstNumber);
 
 		return gstExecutionMap;
+	}
+
+	public static Map<String, Object> getDealerGSTDataMap(long dealerId, String userBranch, String finBranch) {
+		Map<String, Object> dataMap = new HashMap<>();
+		String custBranch = null;
+		String custProvince = null;
+		String custCountry = null;
+		String custResdSts = null;
+
+		if (dealerId > 0) {
+			dataMap = financeMainDAO.getGSTDataMapForDealer(dealerId);
+
+			if (dataMap.get("CustProvince") != null) {
+				custProvince = dataMap.get("CustProvince").toString();
+			}
+
+			if (dataMap.get("CustCountry") != null) {
+				custCountry = dataMap.get("CustCountry").toString();
+			}
+
+			dataMap.put("ResidentialStatus", PennantConstants.RESIDENT);// Default Value
+		} else {
+			custBranch = userBranch;
+		}
+
+		if (StringUtils.isNotBlank(finBranch)) {
+			dataMap = getGSTDataMap(finBranch, custBranch, custProvince, custResdSts, custCountry, null);
+		}
+
+		return dataMap;
 	}
 
 	private static Branch deriveGSTBranch(String finBranch) {
@@ -553,6 +662,80 @@ public class GSTCalculator {
 		}
 
 		return gstAmount;
+	}
+
+	public static Map<String, Object> getDealerGSTDataMap(String finBranch, String custBranch, String custState,
+			String custResdType, String custCountry, FinanceTaxDetail td) {
+
+		Map<String, Object> gstExecutionMap = new HashMap<>();
+		boolean gstExempted = false;
+
+		if (StringUtils.isBlank(custBranch)) {
+			return gstExecutionMap;
+		}
+
+		if (finBranch == null) {
+			finBranch = custBranch;
+		}
+
+		Branch branch = deriveGSTBranch(finBranch);
+
+		Province toState = provinceDAO.getProvinceById(branch.getBranchCountry(), branch.getBranchProvince(), "");
+
+		if (toState != null) {
+			gstExecutionMap.put("toState", toState.getCPProvince());
+			gstExecutionMap.put("toUnionTerritory", toState.isUnionTerritory());
+			gstExecutionMap.put("toStateGstExempted", toState.isTaxExempted());
+		}
+
+		String fromStateCode = "";
+		String fromCountryCode = "";
+		boolean sezCustomer = false;
+		boolean gstNumber = true;
+
+		if (td != null && StringUtils.isNotBlank(td.getApplicableFor())
+				&& !PennantConstants.List_Select.equals(td.getApplicableFor())
+				&& StringUtils.isNotBlank(td.getProvince()) && StringUtils.isNotBlank(td.getCountry())) {
+			fromStateCode = td.getProvince();
+			fromCountryCode = td.getCountry();
+			gstExempted = td.isTaxExempted();
+
+			if (StringUtils.isNotBlank(td.getSezCertificateNo())) {
+				sezCustomer = true;
+			}
+			if (StringUtils.isNotBlank(td.getTaxNumber())) {
+				gstNumber = false;
+			}
+		} else {
+			fromStateCode = custState;
+			fromCountryCode = custCountry;
+		}
+
+		if (StringUtils.isBlank(fromCountryCode) || StringUtils.isBlank(fromStateCode)) { // if toCountry is not
+																							// available
+			gstExecutionMap.put("toState", "");
+			gstExecutionMap.put("toUnionTerritory", 2);
+			gstExecutionMap.put("toStateGstExempted", "");
+		} else {
+			Province fromState = provinceDAO.getProvinceById(fromCountryCode, fromStateCode, "");
+
+			if (fromState == null) {
+				gstExecutionMap.put("fromState", "");
+				gstExecutionMap.put("fromUnionTerritory", 2);
+				gstExecutionMap.put("fromStateGstExempted", "");
+			} else {
+				gstExecutionMap.put("fromState", fromState.getCPProvince());
+				gstExecutionMap.put("fromUnionTerritory", fromState.isUnionTerritory());
+				gstExecutionMap.put("fromStateGstExempted", fromState.isTaxExempted());
+			}
+		}
+
+		gstExecutionMap.put("gstExempted", gstExempted);
+		gstExecutionMap.put("sezCertificateNo", sezCustomer);
+		gstExecutionMap.put("residentialStatus", custResdType);
+		gstExecutionMap.put("customerUnRegistered", gstNumber);
+
+		return gstExecutionMap;
 	}
 
 	public static void calculateActualGST(FeeWaiverDetail detail, TaxAmountSplit taxSplit,

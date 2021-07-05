@@ -7093,4 +7093,920 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#217" author="Pavankalyan.s">
+	<sql>
+		<![CDATA[
+			Delete from DATA_ENGINE_COLUMN where tableid=(Select Id from DATA_ENGINE_TABLE Where ConfigId = (Select id from Data_Engine_Config Where Name =
+            'PRESENTMENT_RESPONSE')) AND NAME='BOUNCE_REMARKS'
+            
+            Delete from DATA_ENGINE_COLUMN where tableid=(Select Id from DATA_ENGINE_TABLE Where ConfigId = (Select id from Data_Engine_Config Where Name =
+            'PRESENTMENT_RESPONSE_ECS')) AND NAME='BOUNCE_REMARKS'
+            
+            Delete from DATA_ENGINE_COLUMN where tableid=(Select Id from DATA_ENGINE_TABLE Where ConfigId = (Select id from Data_Engine_Config Where Name =
+            'PRESENTMENT_RESPONSE_PDC')) AND NAME='BOUNCE_REMARKS'
+            
+            Delete from DATA_ENGINE_COLUMN where tableid=(Select Id from DATA_ENGINE_TABLE Where ConfigId = (Select id from Data_Engine_Config Where Name =
+            'PRESENTMENT_RESPONSE_NACH')) AND NAME='BOUNCE_REMARKS'
+            
+            Delete from DATA_ENGINE_COLUMN where tableid=(Select Id from DATA_ENGINE_TABLE Where ConfigId = (Select id from Data_Engine_Config Where Name =
+            'PRESENTMENT_RESPONSE_DDM')) AND NAME='BOUNCE_REMARKS'
+            
+            Insert into DATA_ENGINE_COLUMN Values ((Select max(id)+1 from
+            DATA_ENGINE_COLUMN),(Select Id from DATA_ENGINE_TABLE Where ConfigId = (Select id from Data_Engine_Config Where Name =
+            'PRESENTMENT_RESPONSE')),'BOUNCE_REMARKS',0,'N',null,null,null,null,11,null,null,null,null,'O');
+            
+            Insert into DATA_ENGINE_COLUMN Values ((Select max(id)+1 from
+            DATA_ENGINE_COLUMN),(Select Id from DATA_ENGINE_TABLE Where ConfigId = (Select id from Data_Engine_Config Where Name =
+            'PRESENTMENT_RESPONSE_ECS')),'BOUNCE_REMARKS',0,'N',null,null,null,null,14,null,null,null,null,'O');
+            
+            Insert into DATA_ENGINE_COLUMN Values ((Select max(id)+1 from
+            DATA_ENGINE_COLUMN),(Select Id from DATA_ENGINE_TABLE Where ConfigId = (Select id from Data_Engine_Config Where Name =
+            'PRESENTMENT_RESPONSE_PDC')),'BOUNCE_REMARKS',0,'N',null,null,null,null,13,null,null,null,null,'O');
+            
+            Insert into DATA_ENGINE_COLUMN Values ((Select max(id)+1 from
+            DATA_ENGINE_COLUMN),(Select Id from DATA_ENGINE_TABLE Where ConfigId = (Select id from Data_Engine_Config Where Name =
+            'PRESENTMENT_RESPONSE_NACH')),'BOUNCE_REMARKS',0,'N',null,null,null,null,14,null,null,null,null,'O');
+            
+            Insert into DATA_ENGINE_COLUMN Values ((Select max(id)+1 from
+            DATA_ENGINE_COLUMN),(Select Id from DATA_ENGINE_TABLE Where ConfigId = (Select id from Data_Engine_Config Where Name =
+            'PRESENTMENT_RESPONSE_DDM')),'BOUNCE_REMARKS',0,'N',null,null,null,null,14,null,null,null,null,'O');
+		]]>
+	</sql>
+   </changeSet>
+   <changeSet id="ST#217.1" author="Pavankalyan.s">
+	<sql>
+		<![CDATA[
+			Alter table PRESENTMENT_FILEIMPORT drop column IF EXISTS BOUNCE_REMARKS;
+
+            Alter table PRESENTMENT_FILEIMPORT add  BOUNCE_REMARKS varchar(200);
+		]]>
+	</sql>
+    </changeSet>
+    <changeSet id="ST#217.2" author="Pavankalyan.s">
+	<sql>
+		<![CDATA[
+			Alter table PRESENTMENT_FILEIMPORT drop column IF EXISTS BOUNCE_REMARKS;
+
+            Alter table PRESENTMENT_FILEIMPORT add  BOUNCE_REMARKS varchar(100);
+		]]>
+	</sql>
+</changeSet>
+
+
+  <changeSet id="BP#269.1" author="Durgaprasad.G">
+	<sql>
+		<![CDATA[
+			update SMTparameters set sysparmvalue = 'N' where SysParmCode = 'DISBURSEMENT_AUTO_DOWNLOAD_JOB_ENABLED';
+			update SMTparameters set sysparmvalue = 'N' where SysParmCode = 'DISBURSEMENT_AUTO_DOWNLOAD';
+		]]>
+	</sql>
+</changeSet>
+
+  <changeSet id="BP#269.2" author="Durgaprasad.G">
+  	<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+  		<![CDATA[
+  				SELECT 
+				FA.PAYMENTID,
+				FA.FINREFERENCE,
+				'D' CHANNEL,
+				0 PROVIDERID,
+				CASE
+				WHEN FA.PAYMENTTYPE = 'NEFT'
+				THEN 'N'
+				WHEN FA.PAYMENTTYPE = 'RTGS'
+				THEN 'R'
+				WHEN
+				FA.PAYMENTTYPE = 'DD'
+				THEN 'D'
+				WHEN FA.PAYMENTTYPE = 'CHEQUE'
+				THEN 'C'
+				WHEN FA.PAYMENTTYPE = 'IFT'
+				THEN 'I'
+				ELSE FA.PAYMENTTYPE
+				END DISBURSEMENT_TYPE,
+				FA.AMTTOBERELEASED,
+				FA.DISBDATE,
+				FA.LLDATE,
+				FA.PAYABLELOC,
+				FA.PRINTINGLOC,
+				CU.CUSTCIF,
+				CU.CUSTSHRTNAME,
+				'' CUSTOMER_MOBILE,
+				CE.CUSTEMAIL CUSTOMER_EMAIL,
+				CS.CPPROVINCENAME CUSTOMER_STATE,
+				CC.PCCITYNAME CUSTOMER_CITY,
+				'' CUSTOMER_ADDRESS1,
+				'' CUSTOMER_ADDRESS2,
+				'' CUSTOMER_ADDRESS3,
+				'' CUSTOMER_ADDRESS4,
+				'' CUSTOMER_ADDRESS5,
+				BD.BANKNAME,
+				BB.BRANCHCODE,
+				BB.BRANCHDESC,
+				PBD.CPPROVINCENAME BENFICIARY_BRANCH_STATE,
+				PBD.PCCITYNAME BENFICIARY_BRANCH_CITY,
+				BB.MICR MICR_CODE,
+				BB.IFSC IFSC_CODE,
+				FA.BENEFICIARYACCNO,
+				CASE
+				WHEN FA.PAYMENTTYPE = 'CHEQUE'
+				OR FA.PAYMENTTYPE = 'DD'
+				THEN
+				FA.LIABILITYHOLDNAME
+				ELSE FA.BENEFICIARYNAME
+				END BENEFICIARYNAME,
+				(FA.PHONECOUNTRYCODE + FA.PHONEAREACODE) + FA.PHONENUMBER BENEFICIARY_MOBILE,
+				BCE.CUSTEMAIL BENFICIRY_EMAIL,
+				BRS.CPPROVINCENAME BENFICIARY_STATE,
+				BRC.PCCITYNAME BENFICIARY_CITY,
+				BRCA.CustAddrHNbr +','+ BRCA.CustAddrStreet +','+ BRC.PCCITYNAME +','+ BRS.CPPROVINCENAME  BENFICIARY_ADDRESS1,
+				'' BENFICIARY_ADDRESS2,
+				'' BENFICIARY_ADDRESS3,
+				'' BENFICIARY_ADDRESS4,
+				'' BENFICIARY_ADDRESS5,
+				'' PAYMENT_DETAIL1,
+				'' PAYMENT_DETAIL2,
+				'' PAYMENT_DETAIL3,
+				'' PAYMENT_DETAIL4,
+				'' PAYMENT_DETAIL5,
+				'' PAYMENT_DETAIL6,
+				'' PAYMENT_DETAIL7,
+				FA.STATUS,
+				FA.DESCRIPTION REMARKS,
+				FA.PAYMENTTYPE,
+				FM.FINTYPE,
+				PB.PARTNERBANKID
+				PARTNERBANK_ID,
+				PB.PARTNERBANKCODE PARTNERBANK_CODE,
+				FA.INPUTDATE,
+				PB.ALWFILEDOWNLOAD,
+				PB.DOWNLOADTYPE,
+				PB.FILENAME,
+				FM.FINISACTIVE,
+				FM.FINAMOUNT,
+				SMD.ENTITYCODE,
+				FA.HOLDDISBURSEMENT HOLDDISBURSEMENT,
+				PB.ACCOUNTNO PARTNERBANK_ACCOUNT,
+				CASE WHEN FA.PAYMENTTYPE = 'NEFT' OR FA.PAYMENTTYPE   = 'RTGS' THEN 'LBT'
+				WHEN FA.PAYMENTTYPE = 'IMPS' THEN 'BT' ELSE ''
+			  		END TRANSACTION_TYPE_CODE
+				FROM FINADVANCEPAYMENTS FA
+				JOIN
+				(SELECT FINANCEMAIN_TEMP.CUSTID,
+				FINANCEMAIN_TEMP.FINREFERENCE,
+				FINANCEMAIN_TEMP.FINTYPE,
+				FINANCEMAIN_TEMP.FINISACTIVE,
+				FINANCEMAIN_TEMP.FINAMOUNT
+				FROM FINANCEMAIN_TEMP
+				UNION ALL
+				SELECT T2.CUSTID,
+				T2.FINREFERENCE,
+				T2.FINTYPE,
+				T2.FINISACTIVE,
+				T2.FINAMOUNT
+				FROM FINANCEMAIN T2
+				WHERE NOT (EXISTS
+				( SELECT 1 FROM
+				FINANCEMAIN_TEMP T3 WHERE T3.FINREFERENCE = T2.FINREFERENCE))) FM
+				ON FM.FINREFERENCE = FA.FINREFERENCE
+				JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID	
+				JOIN RMTCURRENCIES CCY ON CCY.CCYCODE	= FA.DISBCCY
+				JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = FA.PARTNERBANKID
+				LEFT JOIN CUSTOMEREMAILS CE	ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 5
+				LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID	AND CA.CUSTADDRPRIORITY = 5
+				LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE
+				LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = FA.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE =	BB.BANKCODE
+				LEFT JOIN ( SELECT PB_1.PARTNERBANKID,	
+				PBD_1.BANKNAME,
+				PBB.BRANCHDESC,
+				PBBRC.PCCITYNAME,
+				PBBRS.CPPROVINCENAME FROM PARTNERBANKS PB_1
+				JOIN BANKBRANCHES PBB ON PBB.BRANCHCODE = PB_1.BANKBRANCHCODE AND PBB.BANKCODE = PB_1.BANKCODE
+				JOIN BMTBANKDETAIL PBD_1 ON PBD_1.BANKCODE = PBB.BANKCODE
+				LEFT JOIN RMTPROVINCEVSCITY PBBRC ON PBBRC.PCCITY = PBB.CITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE PBBRS ON PBBRS.CPPROVINCE = PBBRC.PCPROVINCE
+				) PBD ON PBD.PARTNERBANKID = PB.PARTNERBANKID
+				LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = FA.BANKBRANCHID AND
+				BR.ACCNUMBER = FA.BENEFICIARYACCNO AND BR.CUSTID = FM.CUSTID
+				LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+				LEFT JOIN CUSTOMEREMAILS BCE ON BCE.CUSTID = CU.CUSTID
+				AND BCE.CUSTEMAILPRIORITY = 5
+				LEFT JOIN CUSTOMERADDRESSES	BRCA ON	BRCA.CUSTID = BR.CUSTID
+				AND BRCA.CUSTADDRPRIORITY = 5
+				LEFT JOIN RMTPROVINCEVSCITY BRC	ON BRC.PCCITY =	BRCA.CUSTADDRCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				LEFT JOIN RMTFINANCETYPES RFT ON FM.FINTYPE = RFT.FINTYPE
+				LEFT JOIN SMTDIVISIONDETAIL SMD	ON RFT.FINDIVISION = SMD.DIVISIONCODE
+				WHERE FA.STATUS = 'APPROVED' AND NOT (FA.PAYMENTID IN ( 
+				SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS))
+				AND NOT	(FA.PAYMENTID IN ( SELECT FINADVANCEPAYMENTS_TEMP.PAYMENTID FROM FINADVANCEPAYMENTS_TEMP))
+				UNION ALL
+				SELECT
+				PI.PAYMENTINSTRUCTIONID PAYMENTID,
+				PH.FINREFERENCE,
+				PH.PAYMENTTYPE CHANNEL,
+				0 PROVIDERID,
+				CASE
+				WHEN PI.PAYMENTTYPE =
+				'NEFT'
+				THEN 'N'
+				WHEN PI.PAYMENTTYPE = 'RTGS'
+				THEN 'R'
+				WHEN PI.PAYMENTTYPE = 'DD'
+				THEN 'D'
+				WHEN PI.PAYMENTTYPE = 'CHEQUE'
+				THEN 'C'
+				WHEN PI.PAYMENTTYPE = 'IFT'
+				THEN 'I'
+				ELSE PI.PAYMENTTYPE
+				END DISBURSEMENT_TYPE,
+				PI.PAYMENTAMOUNT  AMTTOBERELEASED,
+				PI.POSTDATE
+				DISBDATE,
+				PI.POSTDATE LLDATE,
+				PI.PAYABLELOC,
+				PI.PRINTINGLOC,
+				CU.CUSTCIF,
+				CU.CUSTSHRTNAME,
+				'' CUSTOMER_MOBILE,
+				CE.CUSTEMAIL
+				CUSTOMER_EMAIL,
+				CS.CPPROVINCENAME CUSTOMER_STATE,
+				CC.PCCITYNAME CUSTOMER_CITY,
+				'' CUSTOMER_ADDRESS1,
+				'' CUSTOMER_ADDRESS2,
+				'' CUSTOMER_ADDRESS3,
+				'' CUSTOMER_ADDRESS4,
+				'' CUSTOMER_ADDRESS5,
+				BD.BANKNAME,
+				BB.BRANCHCODE,
+				BB.BRANCHDESC,
+				BBRS.CPPROVINCENAME BENFICIARY_BRANCH_STATE,
+				BBRC.PCCITYNAME BENFICIARY_BRANCH_CITY,
+				BB.MICR MICR_CODE,
+				BB.IFSC IFSC_CODE,
+				PI.ACCOUNTNO BENEFICIARYACCNO,
+				CASE
+				WHEN PI.PAYMENTTYPE = 'CHEQUE'
+				OR PI.PAYMENTTYPE = 'DD'
+				THEN
+				PI.FAVOURNAME
+				ELSE PI.ACCTHOLDERNAME
+				END BENEFICIARYNAME,
+				PI.PHONECOUNTRYCODE + PI.PHONENUMBER BENEFICIARY_MOBILE,
+				BCE.CUSTEMAIL BENFICIRY_EMAIL,
+				BRS.CPPROVINCENAME BENFICIARY_STATE,
+				BRC.PCCITYNAME BENFICIARY_CITY,
+				'' BENFICIARY_ADDRESS1,
+				'' BENFICIARY_ADDRESS2,
+				'' BENFICIARY_ADDRESS3,
+				'' BENFICIARY_ADDRESS4,
+				'' BENFICIARY_ADDRESS5,
+				'' PAYMENT_DETAIL1,
+				'' PAYMENT_DETAIL2,
+				'' PAYMENT_DETAIL3,
+				'' PAYMENT_DETAIL4,
+				'' PAYMENT_DETAIL5,
+				'' PAYMENT_DETAIL6,
+				'' PAYMENT_DETAIL7,
+				PI.STATUS,
+				PI.REMARKS,
+				PI.PAYMENTTYPE,
+				FM.FINTYPE,
+				PB.PARTNERBANKID PARTNERBANK_ID,
+				PB.PARTNERBANKCODE
+				PARTNERBANK_CODE,
+				PI.POSTDATE INPUTDATE,
+				PB.ALWFILEDOWNLOAD,
+				PB.DOWNLOADTYPE,
+				PB.FILENAME,
+				FM.FINISACTIVE,
+				FM.FINAMOUNT,
+				SMD.ENTITYCODE,
+				0 HOLDDISBURSEMENT,
+				PB.ACCOUNTNO
+				PARTNERBANK_ACCOUNTNO,
+				CASE WHEN PI.PAYMENTTYPE = 'NEFT' OR PI.PAYMENTTYPE   = 'RTGS' THEN 'LBT'
+					WHEN PI.PAYMENTTYPE = 'IMPS' THEN 'BT' ELSE '' 
+					END TRANSACTION_TYPE_CODE
+				FROM PAYMENTINSTRUCTIONS PI
+				JOIN PAYMENTHEADER PH ON PH.PAYMENTID = PI.PAYMENTID
+				JOIN (SELECT
+				FINANCEMAIN.CUSTID,
+				FINANCEMAIN.FINREFERENCE,
+				FINANCEMAIN.FINTYPE,
+				FINANCEMAIN.FINISACTIVE,
+				FINANCEMAIN.FINAMOUNT
+				FROM FINANCEMAIN
+				UNION ALL
+				SELECT T2.CUSTID,
+				T2.FINREFERENCE,
+				T2.FINTYPE,
+				T2.FINISACTIVE,
+				T2.FINAMOUNT
+				FROM FINANCEMAIN_TEMP T2
+				WHERE NOT (EXISTS
+				( SELECT 1 FROM
+				FINANCEMAIN_TEMP T3 WHERE T3.FINREFERENCE = T2.FINREFERENCE))) FM ON FM.FINREFERENCE = PH.FINREFERENCE
+				JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID
+				JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = PI.PAYMENTCCY
+				JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PI.PARTNERBANKID
+				LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 5
+				LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID AND CA.CUSTADDRPRIORITY = 5
+				LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE
+				LEFT JOIN CUSTOMERPHONENUMBERS CM ON CM.PHONECUSTID = CU.CUSTID
+				AND CM.PHONETYPECODE = 'MOBILE1' AND CM.PHONETYPEPRIORITY = 5
+				LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = PI.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+				LEFT JOIN RMTPROVINCEVSCITY	BBRC ON BBRC.PCCITY = BB.CITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BBRS	ON BBRS.CPPROVINCE = BBRC.PCPROVINCE
+				LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = PI.BANKBRANCHID
+				AND BR.ACCNUMBER = PI.ACCOUNTNO	AND BR.CUSTID = FM.CUSTID
+				LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+				LEFT JOIN CUSTOMEREMAILS BCE ON	BCE.CUSTID = CU.CUSTID AND BCE.CUSTEMAILPRIORITY = 5
+				LEFT JOIN CUSTOMERADDRESSES BRCA ON BRCA.CUSTID = BR.CUSTID	AND	BRCA.CUSTADDRPRIORITY = 5
+				LEFT JOIN RMTPROVINCEVSCITY BRC	ON BRC.PCCITY = BRCA.CUSTADDRCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				LEFT JOIN RMTFINANCETYPES RFT ON FM.FINTYPE = RFT.FINTYPE
+				LEFT JOIN SMTDIVISIONDETAIL SMD	ON RFT.FINDIVISION = SMD.DIVISIONCODE
+				WHERE PI.STATUS = 'APPROVED'
+				AND NOT
+				(PI.PAYMENTINSTRUCTIONID IN
+				( SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM
+				DISBURSEMENT_REQUESTS
+				))
+				UNION ALL
+				SELECT PI.ID PAYMENTID,
+				VR.PRIMARYLINKREF FINREFERENCE,
+				'I' CHANNEL,
+				PI.PROVIDERID,
+				CASE
+				WHEN
+				PI.PAYMENTTYPE = 'NEFT'
+				THEN 'N'
+				WHEN PI.PAYMENTTYPE = 'RTGS'
+				THEN 'R'
+				WHEN PI.PAYMENTTYPE = 'DD'
+				THEN 'D'
+				WHEN
+				PI.PAYMENTTYPE = 'CHEQUE'
+				THEN 'C'
+				WHEN PI.PAYMENTTYPE = 'IFT'
+				THEN 'I'
+				ELSE PI.PAYMENTTYPE
+				END DISBURSEMENT_TYPE,
+				PI.PAYMENTAMOUNT  AMTTOBERELEASED,
+				PI.PAYMENTDATE DISBDATE,
+				PI.PAYMENTDATE LLDATE,
+				'' PAYABLELOC,
+				'' PRINTINGLOC,
+				C.CustCIF CUSTCIF,
+				'' CUSTSHRTNAME,
+				'' CUSTOMER_MOBILE,
+				'' CUSTOMER_EMAIL,
+				'' CUSTOMER_STATE,
+				'' CUSTOMER_CITY,
+				'' CUSTOMER_ADDRESS1,
+				'' CUSTOMER_ADDRESS2,
+				'' CUSTOMER_ADDRESS3,
+				'' CUSTOMER_ADDRESS4,
+				'' CUSTOMER_ADDRESS5,
+				BD.BANKNAME,
+				BB.BRANCHCODE,
+				BB.BRANCHDESC,
+				BBRS.CPPROVINCENAME BENFICIARY_BRANCH_STATE,
+				BBRC.PCCITYNAME BENFICIARY_BRANCH_CITY,
+				BB.MICR MICR_CODE,
+				BB.IFSC IFSC_CODE,
+				VPA.ACCOUNTNUMBER BENEFICIARYACCNO,
+				AVD.DEALERNAME BENEFICIARYNAME,
+				AVD.DEALERTELEPHONE
+				BENEFICIARY_MOBILE,
+				AVD.EMAIL BENFICIRY_EMAIL,
+				BRS.CPPROVINCENAME BENFICIARY_STATE,
+				BRC.PCCITYNAME BENFICIARY_CITY,
+				AVD.DEALERADDRESS1 BENFICIARY_ADDRESS1,
+				AVD.DEALERADDRESS2 BENFICIARY_ADDRESS2,
+				AVD.DEALERADDRESS3 BENFICIARY_ADDRESS3,
+				'' BENFICIARY_ADDRESS4,
+				'' BENFICIARY_ADDRESS5,
+				'' PAYMENT_DETAIL1,
+				'' PAYMENT_DETAIL2,
+				'' PAYMENT_DETAIL3,
+				'' PAYMENT_DETAIL4,
+				'' PAYMENT_DETAIL5,
+				'' PAYMENT_DETAIL6,
+				'' PAYMENT_DETAIL7,
+				PI.STATUS,
+				PI.REMARKS,
+				PI.PAYMENTTYPE,
+				'' FINTYPE,
+				PB.PARTNERBANKID PARTNERBANK_ID,
+				PB.PARTNERBANKCODE PARTNERBANK_CODE,
+				PI.PAYMENTDATE INPUTDATE,
+				PB.ALWFILEDOWNLOAD,
+				PB.DOWNLOADTYPE,
+				PB.FILENAME,
+				1 FINISACTIVE,
+				0 FINAMOUNT,
+				PI.ENTITYCODE,
+				0 HOLDDISBURSEMENT,
+				PB.ACCOUNTNO PARTNERBANK_ACCOUNT,
+				CASE WHEN PI.PAYMENTTYPE = 'NEFT' OR PI.PAYMENTTYPE   = 'RTGS' THEN 'LBT'
+				WHEN PI.PAYMENTTYPE = 'IMPS' THEN 'BT' ELSE ''
+			  		END TRANSACTION_TYPE_CODE
+				FROM INSURANCEPAYMENTINSTRUCTIONS PI
+				JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = PI.PAYMENTCCY
+				JOIN PARTNERBANKS PB ON	PB.PARTNERBANKID = PI.PARTNERBANKID
+				JOIN VASPROVIDERACCDETAIL VPA ON VPA.PROVIDERID = PI.PROVIDERID
+				JOIN AMTVEHICLEDEALER AVD ON AVD.DEALERID = VPA.PROVIDERID
+				JOIN VASRECORDING VR ON VR.PAYMENTINSID = PI.ID
+				LEFT JOIN FinanceMain FM on FM.finreference = VR.PrimaryLinkRef
+				LEFT JOIN Customers C on FM.CustID = C.CustID
+				LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = VPA.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+				LEFT JOIN RMTPROVINCEVSCITY BBRC ON BBRC.PCCITY	= BB.CITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BBRS	ON BBRS.CPPROVINCE = BBRC.PCPROVINCE
+				LEFT JOIN RMTPROVINCEVSCITY BRC	ON BRC.PCCITY =	AVD.DEALERCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				WHERE PI.STATUS = 'APPROVED' AND PI.PAYMENTAMOUNT > 0
+				AND NOT (PI.ID IN( SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS))
+			]]>
+  	</createView>
+</changeSet>
+	<changeSet id="ST#278.1_pre" author="Ahmad.S" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'legaldetails_tview');
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#278.1" author="Ahmad.S">
+		<createView viewName="LegalDetails_TView" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.LegalId, 
+					T1.LegalReference, 
+					T1.LoanReference, 
+					T1.CollateralReference, 
+					T1.Branch, 
+					T1.LegalDate, 
+					T1.SchedulelevelArea, 
+					T1.LegalDecision, 
+					T1.LegalRemarks,
+					T1.PropertyDetailModt, 
+					T1.PropertyDetailECDate, 
+					T1.EcPropertyOwnerName, 
+					T1.Active, 
+					T1.Module, 
+					T1.Version , 
+					T1.LastMntBy, 
+					T1.LastMntOn,
+					T1.RecordStatus, 
+					T1.RoleCode, 
+					T1.NextRoleCode, 
+					T1.TaskId, 
+					T1.NextTaskId, 
+					T1.RecordType, 
+					T1.WorkflowId,
+					T2.BranchDesc, 
+					T3.FinBranch, 
+					T4.FinDivision,
+					COALESCE(T5.ROLEDESC, ${add.schema}FN_GET_ROLEDESC(T1.NEXTROLECODE)) RequestStage,
+					COALESCE(T6.PropertyOwnersName, T7.CustShrtName) ApplicantName
+				FROM LegalDetails_Temp T1 
+				Inner Join RMTBranches T2 ON T1.Branch = T2.BranchCode
+				Inner Join FinanceMain_Temp T3 ON T3.FinReference = T1.LoanReference
+				Inner Join RMTFinanceTypes T4 ON T4.fintype = T3.fintype
+				Inner Join SecRoles T5 ON T5.ROLECD = T1.NEXTROLECODE
+				left join (Select PropertyOwnersName, LegalId From Legalapplicantdetails_temp LDT1 Where LDT1.LegalApplicantId = (Select min(LDT2.LegalApplicantId) From Legalapplicantdetails_temp LDT2 where LDT2.legalId = LDT1.legalId)) T6 on T6.LegalId = T1.LegalId
+				Inner join Customers T7 on T7.CustID = T3.CustID
+			]]>          		
+        </createView>
+	</changeSet>
+	<changeSet id="ST#278.1_post" author="Ahmad.S" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'legaldetails_tview');
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#278.2_pre" author="Ahmad.S" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'legaldetails_view');
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#278.2" author="Ahmad.S">
+		<createView viewName="LegalDetails_View" replaceIfExists="true">
+			<![CDATA[
+				SELECT t1.legalid,
+						t1.legalreference,
+						t1.loanreference,
+						t1.collateralreference,
+						t1.branch,
+						t1.legaldate,
+						t1.schedulelevelarea,
+						t1.legaldecision,
+						t1.legalremarks,
+						t1.propertydetailmodt,
+						t1.propertydetailecdate,
+						t1.ecpropertyownername,
+						t1.active,
+						t1.module,
+						t1.version,
+						t1.lastmntby,
+						t1.lastmnton,
+						t1.recordstatus,
+						t1.rolecode,
+						t1.nextrolecode,
+						t1.taskid,
+						t1.nexttaskid,
+						t1.recordtype,
+						t1.workflowid,
+						t2.branchdesc,
+						t3.finbranch,
+						t4.findivision,
+						COALESCE(T5.ROLEDESC, ${add.schema}FN_GET_ROLEDESC(T1.NEXTROLECODE)) RequestStage,
+						COALESCE(T6.PropertyOwnersName, T7.CustShrtName) ApplicantName
+					FROM legaldetails_temp t1
+					JOIN rmtbranches t2 ON t1.branch = t2.branchcode
+					JOIN financemain_temp t3 ON t3.finreference = t1.loanreference
+					JOIN rmtfinancetypes t4 ON t4.fintype = t3.fintype
+					Inner Join SecRoles T5 ON T5.ROLECD = T1.NEXTROLECODE
+					left join (Select PropertyOwnersName, LegalId From Legalapplicantdetails_temp LDT1 Where LDT1.LegalApplicantId = (Select min(LDT2.LegalApplicantId) From Legalapplicantdetails_temp LDT2 where LDT2.legalId = LDT1.legalId)) T6 on T6.LegalId = T1.LegalId
+					Inner join Customers T7 on T7.CustID = T3.CustID
+				UNION ALL
+				SELECT t1.legalid,
+						t1.legalreference,
+						t1.loanreference,
+						t1.collateralreference,
+						t1.branch,
+						t1.legaldate,
+						t1.schedulelevelarea,
+						t1.legaldecision,
+						t1.legalremarks,
+						t1.propertydetailmodt,
+						t1.propertydetailecdate,
+						t1.ecpropertyownername,
+						t1.active,
+						t1.module,
+						t1.version,
+						t1.lastmntby,
+						t1.lastmnton,
+						t1.recordstatus,
+						t1.rolecode,
+						t1.nextrolecode,
+						t1.taskid,
+						t1.nexttaskid,
+						t1.recordtype,
+						t1.workflowid,
+						t2.branchdesc,
+						t3.finbranch,
+						t4.findivision,
+						COALESCE(T5.ROLEDESC, ${add.schema}FN_GET_ROLEDESC(T1.NEXTROLECODE)) RequestStage,
+						COALESCE(T6.PropertyOwnersName, T7.CustShrtName) ApplicantName
+					FROM legaldetails t1
+					JOIN rmtbranches t2 ON t1.branch = t2.branchcode
+					JOIN financemain_view t3 ON t3.finreference = t1.loanreference
+					JOIN rmtfinancetypes t4 ON t4.fintype = t3.fintype
+					Inner Join SecRoles T5 ON T5.ROLECD = T1.NEXTROLECODE
+					left join (Select PropertyOwnersName, LegalId From Legalapplicantdetails LDT1 Where LDT1.LegalApplicantId = (Select min(LDT2.LegalApplicantId) From Legalapplicantdetails LDT2 where LDT2.legalId = LDT1.legalId)) T6 on T6.LegalId = T1.LegalId
+					Inner join Customers T7 on T7.CustID = T3.CustID
+					WHERE NOT (EXISTS ( SELECT 1 FROM legaldetails_temp WHERE legaldetails_temp.legalid = t1.legalid))
+			]]>          		
+        </createView>
+	</changeSet>
+	<changeSet id="ST#278.2_post" author="Ahmad.S" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'legaldetails_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#282.1" author="Durgaprasad.G">
+			<dropTable tableName="SeqDeviations" />
+	</changeSet>
+	
+	<changeSet id="DE#282.2" author="Durgaprasad.G" dbms="oracle">
+		<sql splitStatements="false">
+		<![CDATA[
+			declare
+			v_maxval INTEGER;
+			begin
+			select COALESCE(max(T.DEVIATIONID),0)+1 into v_maxval from
+			(select DEVIATIONID from FinanceDeviations union all select DEVIATIONID from FinanceDeviations_temp) T;
+			EXECUTE IMMEDIATE 'alter sequence SeqDeviations
+			restart
+			start with ' || v_maxval;
+			end;
+		]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#282.3" author="Durgaprasad.G" dbms="postgresql">
+		<sql splitStatements="false">
+		<![CDATA[
+			do $$
+			declare
+			v_maxval INTEGER;
+			begin
+			select COALESCE(max(T.DEVIATIONID),0)+1 into v_maxval from
+			(select DEVIATIONID from FinanceDeviations union all select DEVIATIONID from FinanceDeviations_temp) T;
+			EXECUTE 'alter sequence SeqDeviations restart
+			start
+			with ' || v_maxval;
+			end;
+			$$;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#282.4" author="Durgaprasad.G" dbms="mssql">
+		<sql splitStatements="false">
+			<![CDATA[
+			DECLARE @SQLCmd NVARCHAR(MAX);
+			DECLARE @MAXNO BIGINT;
+			SELECT @MAXNO=COALESCE(max(T.DEVIATIONID),0)+1
+			from
+			(select DEVIATIONID from FinanceDeviations union all select DEVIATIONID from FinanceDeviations_temp) T;
+
+			SET @SQLCmd = '
+			CREATE SEQUENCE
+			[dbo].[SeqDeviations]
+			AS [bigint]
+			START WITH '
+			+ CAST( @MAXNO AS VARCHAR(30)) +
+			'INCREMENT BY 1
+			MINVALUE
+			-9223372036854775808
+			MAXVALUE 9223372036854775807
+			CACHE ';
+
+
+			EXEC
+			SP_EXECUTESQL @SQLCmd;
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="DE#283" author="Venkatesh.CH">
+		<createView viewName="FinanceDedup_View" replaceIfExists="true">
+		SELECT  T1.FinReference, T1.FinReference DupReference, T1.CustId,
+	            T2.CustCIF, T2.CustFName, T2.CustLName, T2.CustMName, T2.CustShrtName, T2.CustDOB, T2.CustNationality, 
+                T2.CustParentCountry, T2.CustCRCPR, T1.FinStartDate StartDate, T1.FinAmount FinanceAmount, 
+                T1.TotalGrossPft ProfitAmount, T1.NextRoleCode Stage, T4.RoleDesc StageDesc, '' DedupeRule, T1.FinType FinanceType, 
+                T2.CustTradeLicenceNum TradeLicenceNo ,T1.FinLimitRef, 
+                        COALESCE(
+		        CASE
+		            WHEN T2.phonenumber = ' ' THEN NULL
+		            ELSE T2.phonenumber
+		        END, t3.phonenumber) AS mobilenumber,
+                    T2.custmothermaiden AS fathername, 
+                    T2.custshrtnamelcllng AS mothername,
+                    cda.custdoctitle AS aadharnumber,
+		            cdp.custdoctitle AS pannumber,
+                    cdvi.custdoctitle AS voterid,
+                    cdrc.custdoctitle AS rationcard,
+                    cdlpg.custdoctitle AS lpgnumber,
+                    cdpp.custdoctitle AS custpassportno, 
+                    cddl.custdoctitle AS drivinglicenceno
+			FROM    FinanceMain_Temp T1 
+           INNER JOIN Customers T2 ON T1.CustId = T2.CustId  
+           LEFT OUTER JOIN SecRoles T4 ON T1.NextRoleCode = T4.RoleCd
+           LEFT JOIN customerdocuments cda ON cda.custid = T2.custid AND cda.custdoccategory = ((( SELECT master_def.key_code
+		           FROM master_def
+		          WHERE master_def.master_type = 'DOC_TYPE' AND master_def.key_type = 'AADHAAR')))
+           LEFT JOIN customerdocuments cdp ON cdp.custid = T2.custid AND cdp.custdoccategory = ((( SELECT master_def.key_code
+		           FROM master_def
+		          WHERE master_def.master_type = 'DOC_TYPE' AND master_def.key_type = 'PAN')))
+	       LEFT JOIN customerdocuments cdpp ON cdpp.custid = T2.custid AND cdpp.custdoccategory = ((( SELECT master_def.key_code
+		           FROM master_def
+		          WHERE master_def.master_type = 'DOC_TYPE' AND master_def.key_type = 'PASSPORT')))
+           LEFT JOIN customerdocuments cdvi ON cdvi.custid = T2.custid AND cdvi.custdoccategory = ((( SELECT master_def.key_code
+		           FROM master_def
+		          WHERE master_def.master_type = 'DOC_TYPE' AND master_def.key_type = 'VOTER_ID')))
+           LEFT JOIN customerdocuments cdrc ON cdrc.custid = T2.custid AND cdrc.custdoccategory = ((( SELECT master_def.key_code
+		           FROM master_def
+		          WHERE master_def.master_type = 'DOC_TYPE' AND master_def.key_type = 'RATION_CARD')))
+           LEFT JOIN customerdocuments cdlpg ON cdlpg.custid = T2.custid AND cdlpg.custdoccategory = ((( SELECT master_def.key_code
+		           FROM master_def
+		          WHERE master_def.master_type = 'DOC_TYPE' AND master_def.key_type = 'LPG_NUMBER')))
+           LEFT JOIN customerdocuments cddl ON cddl.custid = T2.custid AND cddl.custdoccategory = ((( SELECT master_def.key_code
+		           FROM master_def
+		          WHERE master_def.master_type = 'DOC_TYPE' AND master_def.key_type = 'DRIVING_LICENCE')))
+           LEFT JOIN customerphonenumbers t3 ON T2.custid = t3.phonecustid
+       </createView>
+	</changeSet>
+	
+	<changeSet id="ST#279" author="venkatesh.CH">
+		<createTable tableName="PAYMENTMETHOD_UPLOAD_HEADER">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false"/>
+			</column>
+			<column name="FileName" type="varchar(100)"/>
+			<column name="TotalRecords" type="int" />
+			<column name="SucessRecords" type="int" />
+			<column name="FailureRecords" type="int" />
+			<column name="Status" type="char(1)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#279.1" author="venkatesh.CH">
+		<addPrimaryKey tableName="PAYMENTMETHOD_UPLOAD_HEADER" constraintName="PK_PAYMENTMETHOD_UPLD_HDR_ID" columnNames="Id"/>
+	</changeSet>
+	
+	<changeSet id="ST#279.2" author="venkatesh.CH">
+		<addUniqueConstraint tableName="PAYMENTMETHOD_UPLOAD_HEADER" constraintName="UK_PAYMENTMETHOD_UPLD_HDR_FN" columnNames="FileName"/>
+	</changeSet>
+	
+	<changeSet id="ST#279.3" author="venkatesh.CH">
+		<createTable tableName="PAYMENTMETHOD_UPLOAD_DETAIL">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="BatchId" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="MandateId" type="bigint" />
+			<column name="FinRepayMethod" type="varchar(8)" />
+			<column name="Status" type="char(1)" />
+			<column name="UploadStatusRemarks" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#279.4" author="venkatesh.CH">
+		<addPrimaryKey tableName="PAYMENTMETHOD_UPLOAD_DETAIL" constraintName="PK_PAYMENTMETHOD_UPLD_DTL_ID" columnNames="Id"/>
+	</changeSet>
+	
+	<changeSet id="ST#279.5" author="venkatesh.CH">
+		<addForeignKeyConstraint constraintName="FK_PAYMENTMETHOD_UPLD_BATCHID"
+			baseTableName="PAYMENTMETHOD_UPLOAD_DETAIL" baseColumnNames="BatchId" referencedColumnNames="Id"
+			referencedTableName="PAYMENTMETHOD_UPLOAD_HEADER" />
+	</changeSet>
+	
+	<changeSet id="ST#279.6" author="venkatesh.CH">
+		<createIndex indexName="IDX_SR_FinRef" tableName="PAYMENTMETHOD_UPLOAD_DETAIL"> <column name="FinReference" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#279.7" author="venkatesh.CH">
+		<createIndex indexName="IDX_SR_BatchId" tableName="PAYMENTMETHOD_UPLOAD_DETAIL">
+			<column name="BatchId" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="ST#279.8" author="venkatesh.CH">
+		<createTable tableName="PAYMENTMETHOD_UPLOAD_LOG">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="DetailId" type="bigint" />
+			<column name="ErrorCode" type="varchar(10)" />
+			<column name="ErrorDescription" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#279.9" author="venkatesh.CH">
+		<addPrimaryKey tableName="PAYMENTMETHOD_UPLOAD_LOG" constraintName="PK_PAYMENTMETHOD_UPLOAD_LOG_ID" columnNames="Id"/>
+	</changeSet>
+	
+	<changeSet id="ST#279.10" author="venkatesh.CH">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_COLUMN where TABLEID IN (select ID from DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from DATA_ENGINE_CONFIG where Name = 'PAYMENT_METHOD_UPLOAD'));
+				DELETE FROM DATA_ENGINE_TABLE where CONFIGID IN (select ID from DATA_ENGINE_CONFIG where Name = 'PAYMENT_METHOD_UPLOAD');
+				DELETE FROM DATA_ENGINE_CONFIG where Name = 'PAYMENT_METHOD_UPLOAD';
+	
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'PAYMENT_METHOD_UPLOAD', 'CHANGE_PAYMENT_UPLOAD', 12, 'ChangePaymentUpload', '', '', '', 0, 1, '', 'Loan Reference,Mandate ID,Repay Method', '', 'C', '/opt/Veritas/PFF/ChangePaymentUpload', 'ChangePaymnetUplaodReq', '.xlsx', 0,current_timestamp, '${SEQ_FILE},_${yyyyMMddHHmmss}', '', 0, '', 1, 1);
+	 
+				INSERT INTO DATA_ENGINE_TABLE  (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select ID FROM DATA_ENGINE_CONFIG WHERE Name = 'PAYMENT_METHOD_UPLOAD'), 'PAYMENTMETHOD_UPLOAD_DETAIL', 1, ' ', null, null, null, null, null, null, null, 3, 0, 0);
+		
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'PAYMENTMETHOD_UPLOAD_DETAIL' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'PAYMENT_METHOD_UPLOAD')), 'BATCHID', 0, 'N', null, null, '${BATCHID}', null, 0, null,null, null, null, 'M');
+	
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'PAYMENTMETHOD_UPLOAD_DETAIL' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'PAYMENT_METHOD_UPLOAD')), 'FINREFERENCE', 0, 'N', null, null, null, null, 0, null,null, null, null, 'M');
+	
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'PAYMENTMETHOD_UPLOAD_DETAIL' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'PAYMENT_METHOD_UPLOAD')), 'MANDATEID', 0, 'N', null, null, null,  null, 1, null,null, null, null, 'O');
+	
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'PAYMENTMETHOD_UPLOAD_DETAIL' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'PAYMENT_METHOD_UPLOAD')), 'FinRepayMethod', 0, 'N', null, null, null,  null, 2, null,null, null, null, 'M'); 
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#279.11" author="venkatesh.CH">
+		<sql>
+		  <![CDATA[
+		 		Delete from SecOperationRoles where OprID = (select OprID from SecOperations WHERE OprCode='PAYMENTMETHOD_UPLOAD_DETAILS') and RoleID = (select RoleID from SecRoles where RoleCd='PAYMENTMETHOD_UPLOAD_DETAILS');
+				Delete from SecOperations where OprCode = 'PAYMENTMETHOD_UPLOAD_DETAILS';
+				Delete from SecRoleGroups where GrpID = (select grpId from SecGroups WHERE GrpCode='PAYMENTMETHOD_UPLOAD_DETAILS') and RoleID = (select RoleID from SecRoles where RoleCd='PAYMENTMETHOD_UPLOAD_DETAILS');
+				Delete from SecRoles where  RoleCd = 'PAYMENTMETHOD_UPLOAD_DETAILS';	
+				DELETE FROM SECGROUPRIGHTS WHERE rightid in (Select rightid from Secrights Where rightname = 'menu_Item_PaymentMethodUpload');			
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'PAYMENTMETHOD_UPLOAD_DETAILS';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_PaymentMethodUpload';
+					
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 0, 'menu_Item_PaymentMethodUpload', 'MENU', 0, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+	
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((Select MAX(GrpID)+1 From SecGroups), 'PAYMENTMETHOD_UPLOAD_DETAILS', 'ChangePayment upload details', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+					
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTMETHOD_UPLOAD_DETAILS'), (Select RightID from SecRights where RightName = 'menu_Item_PaymentMethodUpload'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+	
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles),1,'PAYMENTMETHOD_UPLOAD_DETAILS','Change Payment upload details','',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0) ;
+	
+				INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='PAYMENTMETHOD_UPLOAD_DETAILS'), (Select  RoleID  From SecRoles Where RoleCd='PAYMENTMETHOD_UPLOAD_DETAILS'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+								
+				INSERT INTO SecOperations values ((select MAX(OprID)+1 from SecOperations),'PAYMENTMETHOD_UPLOAD_DETAILS','Change Payment upload details',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+	
+				INSERT INTO SecOperationRoles values ((select MAX(OprRoleID)+1 from SecOperationRoles), (select OprID from SecOperations WHERE OprCode='PAYMENTMETHOD_UPLOAD_DETAILS'), (select RoleID from SecRoles where RoleCd='PAYMENTMETHOD_UPLOAD_DETAILS'),1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		  ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#280" author="venkatesh.CH">
+		<sql>
+           <![CDATA[
+           		DELETE from REPORTFILTERFIELDS where reportid in (select reportid from REPORTCONFIGURATION where MENUITEMCODE='menu_Item_LoanWiseMandateDetails');
+		   		DELETE from REPORTCONFIGURATION where MENUITEMCODE='menu_Item_LoanWiseMandateDetails'
+
+           		INSERT into REPORTCONFIGURATION values((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Loan Wise Mandate Details','Loan Wise Mandate Details',1,'LoanWiseMandateDetails','dataSource',1,'menu_Item_LoanWiseMandateDetails',1,1000,'','','','','','',0,CURRENT_TIMESTAMP,0,1,0);
+          	    INSERT into REPORTFILTERFIELDS values((select reportid from REPORTCONFIGURATION where MENUITEMCODE='menu_Item_LoanWiseMandateDetails'),1,'FinReference','LOVSEARCH','Loan Reference','finreference','','FinanceMain','getFinReference','getFinReference',1,0,0,0,1,0,'','','','',250,0,'=',1,1000,'','','','','','',0,CURRENT_TIMESTAMP,'');
+           ]]>
+	   </sql>
+	</changeSet>
+	
+	<changeSet id="ST#280.1" author="venkatesh.CH">
+		<sql>
+			<![CDATA[
+				Delete from SecOperationRoles where OprID = (select OprID from SecOperations WHERE OprCode='REPORTS_LOANWISE_MANDATE_DETAILS') and RoleID = (select RoleID from SecRoles where RoleCd='REPORTS_LOANWISE_MANDATE_DETAILS');
+				Delete from SecOperations where OprCode = 'REPORTS_LOANWISE_MANDATE_DETAILS';
+				Delete from SecRoleGroups where GrpID = (select grpId from SecGroups WHERE GrpCode='REPORTS_LOANWISE_MANDATE_DETAILS') and RoleID = (select RoleID from SecRoles where RoleCd='REPORTS_LOANWISE_MANDATE_DETAILS');
+				Delete from SecRoles where  RoleCd = 'REPORTS_LOANWISE_MANDATE_DETAILS';
+				Delete from SecGrouprights where rightid in (Select rightid from Secrights Where rightname = 'menu_Item_LoanWise_MandateDetails');
+				Delete from SecGroups where GrpCode = 'REPORTS_LOANWISE_MANDATE_DETAILS';
+				Delete from SECRIGHTS where RIGHTNAME = 'menu_Item_LoanWise_MandateDetails';									
+												
+				INSERT into SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ((select max(RIGHTID)+1 from SECRIGHTS),0,'menu_Item_LoanWise_MandateDetails','MENU',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT into SECGROUPS (GRPID,GRPCODE,GRPDESC,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ((select max(GRPID)+1 from SECGROUPS),'REPORTS_LOANWISE_MANDATE_DETAILS','LoanWise Mandate Details',0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0);
+				INSERT into SECGROUPRIGHTS(GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE, TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS),(Select GRPID from SECGROUPS where GRPCODE='REPORTS_LOANWISE_MANDATE_DETAILS'), (Select RIGHTID from SECRIGHTS where RIGHTNAME='menu_Item_LoanWise_MandateDetails'),1,0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles),1,'REPORTS_LOANWISE_MANDATE_DETAILS','LoanWise Mandate Details','',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0) ;
+				INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='REPORTS_LOANWISE_MANDATE_DETAILS'), (Select  RoleID  From SecRoles Where RoleCd='REPORTS_LOANWISE_MANDATE_DETAILS'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 			
+				INSERT INTO SecOperations values ((select MAX(OprID)+1 from SecOperations),'REPORTS_LOANWISE_MANDATE_DETAILS','LoanWise Mandate Details',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecOperationRoles values ((select MAX(OprRoleID)+1 from SecOperationRoles), (select OprID from SecOperations WHERE OprCode='REPORTS_LOANWISE_MANDATE_DETAILS'), (select RoleID from SecRoles where RoleCd='REPORTS_LOANWISE_MANDATE_DETAILS'),1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#281.1" author="Pavankalyan.s">
+	<sql>
+	    <![CDATA[
+		    Delete from secuseroperations where oprid=(select OprID from SecOperations WHERE OprCode='Reschedule_Report_Details') and usrid=(select USRID from secusers where usrlogin='ADMIN');
+	        Delete from SecGrouprights where rightid in (Select rightid from Secrights Where rightname = 'menuItem_RescheduleReport');
+		    Delete from SecOperationRoles where OprID = (select OprID from SecOperations WHERE OprCode='Reschedule_Report_Details') and RoleID = (select RoleID from SecRoles where RoleCd='Reschedule_Report_Details');
+		    Delete from SecOperations where OprCode = 'Reschedule_Report_Details';
+		    Delete from SecRoleGroups where GrpID = (select grpId from SecGroups WHERE GrpCode='Reschedule_Report_Details') and RoleID = (select RoleID from SecRoles where RoleCd='Reschedule_Report_Details');
+		    Delete from SecRoles where  RoleCd = 'Reschedule_Report_Details';
+		    Delete from SecGroupRights where grpId = (select grpId from SecGroups WHERE GrpCode='Reschedule_Report_Details') and RightID = (select RightID from SecRights where RightName='menuItem_RescheduleReport');
+		    Delete from SecGroups where GrpCode = 'Reschedule_Report_Details';
+		    Delete from SECRIGHTS where RIGHTNAME = 'menuItem_RescheduleReport';
+		    									
+		    Insert INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(RIGHTID)+1 from SECRIGHTS), 0, 'menuItem_RescheduleReport', 'MENU', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+		    
+		    Insert INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPID)+1 from SECGROUPS), 'Reschedule_Report_Details', 'Reschedule Report Details Screen', 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+		    
+		    Insert INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (Select GRPID from SECGROUPS where GRPCODE = 'Reschedule_Report_Details'), (Select RIGHTID from SECRIGHTS where RIGHTNAME = 'menuItem_RescheduleReport'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+		    
+		    INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(roleid)+1 from secroles), 1, 'Reschedule_Report_Details', 'Reschedule Report Details Screen', '', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+		   
+		    INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values((Select MAX(RoleGrpID)+1 From SecRoleGroups), (Select GrpId  From SecGroups Where GrpCode = 'Reschedule_Report_Details'), (Select RoleID From SecRoles Where RoleCd = 'Reschedule_Report_Details'), 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0); 
+		    				
+		    INSERT INTO SECOPERATIONS (OPRID, OPRCODE, OPRDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select MAX(OprID)+1 from SecOperations), 'Reschedule_Report_Details', 'Reschedule Report Details Screen', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+		   
+		    INSERT INTO SECOPERATIONROLES (OPRROLEID, OPRID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select MAX(OprRoleID)+1 from SecOperationRoles), (select OprID from SecOperations WHERE OprCode='Reschedule_Report_Details'), (select RoleID from SecRoles where RoleCd='Reschedule_Report_Details'), 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+		    
+		    INSERT INTO secuseroperations  values ((select MAX(USROPRID)+1 from secuseroperations), (select USRID from secusers where usrlogin='ADMIN'), (select OprID from SecOperations WHERE OprCode='Reschedule_Report_Details'), 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+	    ]]>
+	</sql>
+    </changeSet>
+	
+   <changeSet id="ST#281.2" author="Pavankalyan.s">
+	<addColumn tableName="FinServiceInstruction_Temp">
+		<column name="LogKey" type="bigint" />
+	</addColumn>
+    </changeSet>
+		
+    <changeSet id="ST#281.3" author="Pavankalyan.s">
+	<addColumn tableName="FinServiceInstruction">
+		<column name="LogKey" type="bigint" />
+	</addColumn>
+    </changeSet>
+    <changeSet id="DE#285" author="Pavankalyan.s">
+	<sql>
+	    <![CDATA[   
+            UPDATE DATA_ENGINE_CONFIG SET FILEPREFIXNAME='' WHERE NAME='PRESENTMENT_RESPONSE_PDC';
+            UPDATE DATA_ENGINE_CONFIG SET FILEPREFIXNAME='' WHERE NAME='PRESENTMENT_RESPONSE_DDM';
+            UPDATE DATA_ENGINE_CONFIG SET FILEPREFIXNAME='' WHERE NAME='PRESENTMENT_RESPONSE_NACH';
+            UPDATE DATA_ENGINE_CONFIG SET FILEPREFIXNAME='' WHERE NAME='PRESENTMENT_RESPONSE_ECS'; 
+	    ]]>
+	</sql>
+    </changeSet>
 </databaseChangeLog>

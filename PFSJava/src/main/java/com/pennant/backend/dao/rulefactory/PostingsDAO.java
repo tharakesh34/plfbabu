@@ -56,7 +56,7 @@ public interface PostingsDAO {
 
 	void updateStatusByLinkedTranId(long linkedTranId, String postStatus);
 
-	void updateStatusByPostRef(long postingId, String postStatus);
+	void updateStatusByPostRef(String postRef, String postStatus);
 
 	void updateStatusByFinRef(String finReference, String postStatus);
 
@@ -64,7 +64,7 @@ public interface PostingsDAO {
 
 	long getPostingId();
 
-	List<ReturnDataSet> getPostingsByPostRef(Long postref);
+	List<ReturnDataSet> getPostingsByPostRef(String postref);
 
 	List<ReturnDataSet> getPostingsByLinkTransId(long linkedTranId);
 
@@ -100,6 +100,6 @@ public interface PostingsDAO {
 	List<ReturnDataSet> getPostingsByLinkedTranId(List<Long> linkedTranId, boolean reversal);
 
 	List<ReturnDataSet> getPostings(String postRef, String finEvent);
-	
+
 	List<ReturnDataSet> getDisbursementPostings(String FinReference);
 }

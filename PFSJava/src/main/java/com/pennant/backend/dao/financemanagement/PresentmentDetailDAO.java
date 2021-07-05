@@ -50,6 +50,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.service.financemanagement.impl.PresentmentDetailExtractService;
+import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.model.presentment.Presentment;
 
 public interface PresentmentDetailDAO extends BasicCrudDao<PresentmentHeader> {
@@ -81,11 +82,6 @@ public interface PresentmentDetailDAO extends BasicCrudDao<PresentmentHeader> {
 
 	List<PresentmentDetail> getPresentmentDetail(long presentmentId, boolean includeData);
 
-	void updatePresentmentDetails(String presentmentRef, String status, long bounceId, long manualAdviseId,
-			String errorDesc);
-
-	void updatePresentmentDetails(String presentmentRef, String status, String errorCode, String errorDesc);
-
 	int getAssignedPartnerBankCount(long partnerBankId, String type);
 
 	String getPaymenyMode(String presentmentRef);
@@ -110,8 +106,6 @@ public interface PresentmentDetailDAO extends BasicCrudDao<PresentmentHeader> {
 
 	boolean isPresentmentInProcess(String finReference);
 
-	String getPresentmentReference(long presentmentid, String finreference);
-
 	Long getApprovedPresentmentCount(long presentmentId);
 
 	Presentment getPresentmentByBatchId(String batchId, String type);
@@ -132,15 +126,62 @@ public interface PresentmentDetailDAO extends BasicCrudDao<PresentmentHeader> {
 
 	FinanceMain getDefualtPostingDetails(String finReference, Date schDates);
 
-	String getPresementStatus(String presentmentRef);
+	void updatePresentmentDetail(long id, String status, String urtNumber);
 
-	PresentmentDetail getPresentmentDetail(String batchId);
+	void updatePresentmentDetail(long id, String status, Long linkedTranId, String urtNumber);
 
-	void updatePresentmentDetail(String presentmentRef, String status);
+	void updatePresentmentDetail(PresentmentDetail pd);
 
-	void updatePresentmentDetail(String presentmentRef, String status, Long linkedTranId);
+	int updateChequeStatus(long chequeDetailsId, String chequestatus);
 
-	long getPresentmentId(String presentmentRef);
+	long logHeader(String fileName, String entityCode, String event, int totalRecords);
+
+	void updateHeader(long headerId, long deExecutionId, int totalRecords, int successRecords, int failedRecords,
+			String status, String remarks);
+
+	int logRespDetails(long importHeaderId, long headerId);
+
+	int getMinIDByHeaderID(long headerId);
+
+	int getMaxIDByHeaderID(long headerId);
+
+	int updateThreadID(long headerId, long from, long to, int i);
+
+	List<Integer> getThreads(long headerId);
+
+	List<PresentmentDetail> getPresentmentDetails(long headerId, int threadId);
+
+	void logRespDetailError(long headerId, long detailId, String errorCode, String errorDesc);
+
+	void updateDataEngineLog(long id, String presentmentRef, String errorCode, String errorDesc);
+
+	List<DataEngineLog> getDEExceptions(long id);
+
+	int logRespDetailsLog(long headerId);
+
+	List<Long> getPresentmentHeaderIdsByHeaderId(long headerId);
+
+	List<String> getStatusListByHeader(Long id);
+
+	void updateHeaderCounts(Long id, int successCount, int failedCount);
+
+	void updateHeaderStatus(Long id, int status);
+
+	void truncate(String tableName);
+
+	List<String> getUnProcessedPrentmntRef(long headerId);
+
+	List<PresentmentDetail> getPresentmentStatusByFinRef(String finreference);
+
+	void deleteByHeaderId(long headerId);
+
+	void logRequest(long headerId, Presentment presentment);
+
+	PresentmentDetail getPresentmentByRef(String batchId);
+
+	PresentmentDetail getPresentmentById(long presentmentId);
+
+	boolean isFileProcessed(String fileName);
 
 	String getPresentmentType(long id);
 

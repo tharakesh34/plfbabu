@@ -264,14 +264,13 @@ public class CreateFinanceController extends SummaryDetailService {
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinanceMain fm = finScheduleData.getFinanceMain();
 		FinanceType financeType = finScheduleData.getFinanceType();
-		
+
 		String finEvent = FinanceConstants.FINSER_EVENT_ORG;
 		String finType = financeType.getFinType();
 		String entityCode = financeType.getLovDescEntityCode();
-		
+
 		fm.setFinType(finType);
 		fm.setLovDescEntityCode(entityCode);
-		
 
 		try {
 
@@ -648,7 +647,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		return null;
 	}
 
-	//cheque Validations for schedule
+	// cheque Validations for schedule
 	private FinScheduleData validateChequeDetails(FinanceDetail financeDetail) {
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		ChequeHeader chequeHeader = financeDetail.getChequeHeader();
@@ -841,7 +840,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 				if (exstDetails != null) {
 					if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype())) {
-						//setting password to agreements
+						// setting password to agreements
 						exstDetails.setDocImage(engine.getDocumentInByteArrayWithPwd(reportName,
 								agreementDefinition.isPwdProtected(), financeDetail));
 					} else {
@@ -862,7 +861,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 				details.setReferenceId(finReference);
 				if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype())) {
-					//setting password to agreements
+					// setting password to agreements
 					details.setDocImage(engine.getDocumentInByteArrayWithPwd(reportName,
 							agreementDefinition.isPwdProtected(), financeDetail));
 				} else {
@@ -1188,7 +1187,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 		}
 
-		//Setting Default TDS Type
+		// Setting Default TDS Type
 		if (StringUtils.isBlank(financeMain.getTdsType())
 				&& !PennantConstants.TDS_USER_SELECTION.equals(finType.getTdsType())) {
 			financeMain.setTdsType(finType.getTdsType());
@@ -1544,7 +1543,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			for (VASRecording vasRecording : finScheduleData.getVasRecordingList()) {
 				String feeTypeCode = feeDetail.getFeeTypeCode();
 				String productCode = vasRecording.getProductCode();
-				//Extracting feetypecode and productcode by excluding('{' and '}')
+				// Extracting feetypecode and productcode by excluding('{' and '}')
 				feeTypeCode = extractFeeCode(feeTypeCode);
 				productCode = extractFeeCode(productCode);
 
@@ -1739,7 +1738,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 		doProcessOCRDetails(financeDetail, userDetails);
 
-		//Covenants
+		// Covenants
 		if (CollectionUtils.isNotEmpty(financeDetail.getCovenants())) {
 			Date appDate = SysParamUtil.getAppDate();
 			for (Covenant detail : financeDetail.getCovenants()) {
@@ -1758,7 +1757,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				detail.setUserDetails(financeMain.getUserDetails());
 				detail.setVersion(1);
 				detail.setModule(APIConstants.COVENANT_MODULE_NAME);
-				//setting the CovenantTypeId based on the category and the Code
+				// setting the CovenantTypeId based on the category and the Code
 				CovenantType covenantType = covenantTypeDAO.getCovenantType(detail.getCovenantTypeId(), "");
 				{
 					detail.setCovenantTypeId(covenantType.getId());
@@ -1778,7 +1777,8 @@ public class CreateFinanceController extends SummaryDetailService {
 							covenantDocument.setNewRecord(true);
 							documentDetails.setNewRecord(true);
 						}
-						//DocumentType docType = documentTypeService.getDocumentTypeById(covenantDocument.getDoctype());
+						// DocumentType docType =
+						// documentTypeService.getDocumentTypeById(covenantDocument.getDoctype());
 						covenantDocument.setLastMntBy(userDetails.getUserId());
 						covenantDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 						covenantDocument.setRecordStatus(moveLoanStage ? financeMain.getRecordStatus()
@@ -1835,7 +1835,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			FinOCRHeader finOCRHeader = financeDetail.getFinOCRHeader();
 			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 			if (finOCRHeader != null && financeMain != null) {
-				//do set workflow details
+				// do set workflow details
 				finOCRHeader.setFinReference(financeMain.getFinReference());
 				finOCRHeader.setLastMntBy(userDetails.getUserId());
 				finOCRHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -1849,7 +1849,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				finOCRHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				finOCRHeader.setVersion(finOCRHeader.getVersion() + 1);
 				financeDetail.setFinOCRHeader(finOCRHeader);
-				//OCR Definition
+				// OCR Definition
 				if (CollectionUtils.isNotEmpty(finOCRHeader.getOcrDetailList())) {
 					for (FinOCRDetail finOCRDetail : finOCRHeader.getOcrDetailList()) {
 						finOCRDetail.setNewRecord(true);
@@ -1865,7 +1865,7 @@ public class CreateFinanceController extends SummaryDetailService {
 						finOCRDetail.setVersion(finOCRDetail.getVersion() + 1);
 					}
 				}
-				//OCR Capture Details
+				// OCR Capture Details
 				if (CollectionUtils.isNotEmpty(finOCRHeader.getFinOCRCapturesList())) {
 					for (FinOCRCapture finOCRCapture : finOCRHeader.getFinOCRCapturesList()) {
 						finOCRCapture.setNewRecord(true);
@@ -2905,6 +2905,10 @@ public class CreateFinanceController extends SummaryDetailService {
 			if (extDocDetail != null) {
 				detail.setDocId(extDocDetail.getDocId());
 				detail.setNewRecord(false);
+				if (!PennantConstants.RECORD_TYPE_NEW.equals(extDocDetail.getRecordType())) {
+					detail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+				detail.setVersion(extDocDetail.getVersion() + 1);
 			}
 
 			detail.setDocModule(FinanceConstants.MODULE_NAME);
@@ -3151,7 +3155,7 @@ public class CreateFinanceController extends SummaryDetailService {
 					}
 					BigDecimal tdsAmount = BigDecimal.ZERO;
 
-					// if tds applicable					
+					// if tds applicable
 					if (TDSCalculator.isTDSApplicable(fm, advisedFees.isTdsReq())) {
 						BigDecimal taxableAmount = BigDecimal.ZERO;
 
@@ -3331,7 +3335,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				receiptHeaderMap.put(header.getReceiptID(), header);
 			}
 			for (FinFeeDetail feeDtl : detail.getFinFeeDetailList()) {// iterating
-																			// existing
+																		// existing
 																		// finfee
 																		// details
 																		// list
@@ -3342,7 +3346,7 @@ public class CreateFinanceController extends SummaryDetailService {
 					if (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
 						if (finFeeDetail.getFinFeeReceipts() != null && finFeeDetail.getFinFeeReceipts().size() > 0) {
 							for (FinFeeReceipt feeReceipt : finFeeDetail.getFinFeeReceipts()) {// iterating
-																									// receipt
+																								// receipt
 																								// details
 								if (receiptHeaderMap.containsKey(feeReceipt.getReceiptID())) {
 
@@ -3449,7 +3453,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		if (detail.getFinFeeDetailList() != null && detail.getFinFeeDetailList().size() > 0 && errorDetails.isEmpty()) {
 			for (FinFeeDetail feeDtl : detail.getFinFeeDetailList()) {// iterating
-																			// existing
+																		// existing
 																		// finfee
 																		// details
 																		// list

@@ -15,7 +15,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -49,8 +48,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.AbstractInterface;
-import com.pennanttech.pff.external.PresentmentImportProcess;
-import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class PresentmentJobService extends AbstractInterface {
 	protected final Logger logger = LogManager.getLogger(getClass());
@@ -59,8 +56,6 @@ public class PresentmentJobService extends AbstractInterface {
 	public static final String STATUS_APPROVE = "Approve";
 
 	private PresentmentDetailService presentmentDetailService;
-	private PresentmentImportProcess presentmentImportProcess;
-	private NotificationService notificationService;
 	private DataEngineConfig dataEngineConfig;
 	private static List<Configuration> PRESENTMENT_CONFIG = new ArrayList<>();
 	private static Map<Long, Map<String, EventProperties>> eventProperties = new HashMap<>();
@@ -353,12 +348,11 @@ public class PresentmentJobService extends AbstractInterface {
 	private void upload(Media aMedia, String instrumentType, DataEngineStatus status) {
 		logger.debug(Literal.ENTERING);
 
-		PresentmentDetailExtract detailExtract = new PresentmentDetailExtract(dataSource, presentmentDetailService,
-				notificationService);
+		PresentmentDetailExtract detailExtract = new PresentmentDetailExtract(dataSource);
 		detailExtract.setInstrumentType(instrumentType);
 		detailExtract.setUserDetails(new LoggedInUser());
 		detailExtract.setStatus(status);
-		detailExtract.setPresentmentImportProcess(presentmentImportProcess);
+		presentmentDetailService.setProperties(detailExtract);
 		try {
 			detailExtract.setMediaOnly(aMedia);
 		} catch (Exception e) {
@@ -449,15 +443,5 @@ public class PresentmentJobService extends AbstractInterface {
 	@Autowired
 	public void setDataEngineConfig(DataEngineConfig dataEngineConfig) {
 		this.dataEngineConfig = dataEngineConfig;
-	}
-
-	public void setNotificationService(NotificationService notificationService) {
-		this.notificationService = notificationService;
-	}
-
-	@Autowired(required = false)
-	@Qualifier(value = "presentmentImportProcess")
-	public void setPresentmentImportProcess(PresentmentImportProcess presentmentImportProcess) {
-		this.presentmentImportProcess = presentmentImportProcess;
 	}
 }

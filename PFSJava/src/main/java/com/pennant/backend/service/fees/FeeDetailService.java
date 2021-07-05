@@ -1,48 +1,35 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  *******************************************************************************************************
- *                                 FILE HEADER                                              			*
+ * FILE HEADER *
  *******************************************************************************************************
  *
- * FileName    		:  FeeDetailService.java															*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES															*
- *                                                                  
- * Creation Date    :  11-07-2017																		*
- *                                                                  
- * Modified Date    :  11-07-2018																		*
- *                                                                  
- * Description 		:												 									*                                 
- *                                                                                          
+ * FileName : FeeDetailService.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 11-07-2017 *
+ * 
+ * Modified Date : 11-07-2018 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************************
- * Date             Author                   Version      Comments                          			*
+ * Date Author Version Comments *
  ********************************************************************************************************
- * 11-07-2018       Pennant	                 0.1                                            			*	 
- *                                                                                          			* 
- * 11-07-2018       Satya	                 0.2          PSD - Ticket : 127846							*
- * 														  Changes related to Fees calculation for the 	*
- * 														  selection type DropLinePOS.			 		*
- * 																										* 
- *                                                                                          			* 
- *                                                                                          			* 
- *                                                                                          			* 
- *                                                                                          			* 
- *                                                                                          			* 
- *                                                                                   					*
- *                                                                                          			*
- *                                                                                          			* 
+ * 11-07-2018 Pennant 0.1 * * 11-07-2018 Satya 0.2 PSD - Ticket : 127846 * Changes related to Fees calculation for the *
+ * selection type DropLinePOS. * * * * * * * * * *
  ********************************************************************************************************
  */
 package com.pennant.backend.service.fees;
@@ -121,7 +108,9 @@ public class FeeDetailService {
 		List<FinFeeDetail> finFeeDetailList = new ArrayList<>();
 
 		// set FinType fees details
-		String finReference = finScheduleData.getFinanceMain().getFinReference();
+		FinanceMain fm = finScheduleData.getFinanceMain();
+		String finReference = fm.getFinReference();
+
 		finFeeDetailList = convertToFinanceFees(financeDetail, finReference);
 
 		finFeeDetailList = prepareActualFinFees(finFeeDetailList, finScheduleData.getFinFeeDetailList());
@@ -135,7 +124,7 @@ public class FeeDetailService {
 
 		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
 			finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
-			finFeeDetail.setFinReference(finScheduleData.getFinanceMain().getFinReference());
+			finFeeDetail.setFinReference(finReference);
 			finFeeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			finFeeDetail.setLastMntBy(financeDetail.getFinScheduleData().getFinanceMain().getLastMntBy());
@@ -164,9 +153,14 @@ public class FeeDetailService {
 		validateFeeConfig(finFeeDetailList, finScheduleData);
 
 		// Calculating GST
+		String subventionFeeCode = PennantConstants.FEETYPE_SUBVENTION;
 		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-			this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData.getFinanceMain(),
-					getGSTPercentages(financeDetail));
+			if (subventionFeeCode.equals(finFeeDetail.getFeeTypeCode())) {
+				this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData,
+						getDealerTaxPercentages(financeDetail));
+			} else {
+				this.finFeeDetailService.calculateFees(finFeeDetail, fm, getGSTPercentages(financeDetail));
+			}
 		}
 
 		// add vas recording fees into actual list
@@ -195,22 +189,15 @@ public class FeeDetailService {
 
 		// Calculating GST
 		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-			this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData.getFinanceMain(),
-					getGSTPercentages(financeDetail));
+			if (subventionFeeCode.equals(finFeeDetail.getFeeTypeCode())) {
+				this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData,
+						getDealerTaxPercentages(financeDetail));
+			} else {
+				this.finFeeDetailService.calculateFees(finFeeDetail, fm, getGSTPercentages(financeDetail));
+			}
 		}
 
-		// Insurance Amounts calculation
-		BigDecimal insAddToDisb = BigDecimal.ZERO;
-		BigDecimal deductInsFromDisb = BigDecimal.ZERO;
-
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		Customer customer = null;
-		if (financeDetail.getCustomerDetails() != null) {
-			customer = financeDetail.getCustomerDetails().getCustomer();
-		}
-		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
-
-		if (AccountEventConstants.ACCEVENT_EARLYSTL.equals(finScheduleData.getFinanceMain().getFinSourceID())) {
+		if (AccountEventConstants.ACCEVENT_EARLYSTL.equals(fm.getFinSourceID())) {
 			finScheduleData.setFinFeeDetailList(finFeeDetailList);
 		}
 
@@ -252,8 +239,8 @@ public class FeeDetailService {
 
 			// Excluding GST & TDS -- SO COMMENTED
 			// fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));
-			//BUG FIX RELATED TO FEE IN CASE OF WAIVE REMAINING AMT RELATED
-			//TODO:GANESH Need to move to core.
+			// BUG FIX RELATED TO FEE IN CASE OF WAIVE REMAINING AMT RELATED
+			// TODO:GANESH Need to move to core.
 			fee.setRemainingFee(fee.getNetAmount().subtract(fee.getPaidAmount())
 					.subtract(fee.getWaivedAmount().add(fee.getWaivedGST())));
 		}
@@ -371,7 +358,7 @@ public class FeeDetailService {
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
-		//PSD# to fix the concurrent issue
+		// PSD# to fix the concurrent issue
 		List<FinFeeDetail> finFeeDetailList = new ArrayList<>();
 
 		if (StringUtils.isBlank(financeMain.getPromotionCode()) || financeMain.getPromotionSeqId() == 0) {
@@ -418,9 +405,15 @@ public class FeeDetailService {
 		// calculate fee percentage if exists
 		calculateFeePercentageAmount(finScheduleData, financeDetail, enquiry, gstPercentages, finFeeDetailList);
 
+		String subventionFeeCode = PennantConstants.FEETYPE_SUBVENTION;
 		// Calculating GST
 		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-			this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, getGSTPercentages(financeDetail));
+			if (subventionFeeCode.equals(finFeeDetail.getFeeTypeCode())) {
+				this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData,
+						getDealerTaxPercentages(financeDetail));
+			} else {
+				this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, getGSTPercentages(financeDetail));
+			}
 		}
 
 		// set Actual calculated values into feeDetails for Inquiry purpose
@@ -450,8 +443,13 @@ public class FeeDetailService {
 		finScheduleData.getFinFeeDetailList().addAll(finFeeDetailList);
 
 		// Calculating GST
-		for (FinFeeDetail finFeeDetail : finScheduleData.getFinFeeDetailList()) {
-			this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, gstPercentages);
+		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
+			if (StringUtils.equals(subventionFeeCode, finFeeDetail.getFeeTypeCode())) {
+				this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData,
+						getDealerTaxPercentages(financeDetail));
+			} else {
+				this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, getGSTPercentages(financeDetail));
+			}
 		}
 
 		logger.debug("Leaving");
@@ -610,7 +608,8 @@ public class FeeDetailService {
 
 		int formatter = CurrencyUtil.getFormat(finScheduleData.getFinanceMain().getFinCcy());
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
-		//FIXME:removed the && StringUtils.isNotBlank(finMain.getRcdMaintainSts()) condition for calculate Fees's through API
+		// FIXME:removed the && StringUtils.isNotBlank(finMain.getRcdMaintainSts()) condition for calculate Fees's
+		// through API
 		if (finMain != null && StringUtils.isNotBlank(finMain.getFinReference())) {
 			FinanceProfitDetail finProfitDetail = financeDetailService
 					.getFinProfitDetailsById(finMain.getFinReference());
@@ -1221,6 +1220,21 @@ public class FeeDetailService {
 
 		return GSTCalculator.getTaxPercentages(custId, finCCY, userBranch, finBranch,
 				financeDetail.getFinanceTaxDetail());
+	}
+
+	private Map<String, BigDecimal> getDealerTaxPercentages(FinanceDetail financeDetail) {
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+		String userBranch = userDetails.getBranchCode();
+		String finBranch = financeMain.getFinBranch();
+		String finCCY = financeMain.getFinCcy();
+
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getDealerTaxPercentages(
+				financeMain.getManufacturerDealerId(), finCCY, userBranch, finBranch,
+				financeDetail.getFinanceTaxDetail());
+
+		return taxPercentages;
 	}
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
