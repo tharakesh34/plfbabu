@@ -400,6 +400,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 		excludeFields.add("userId");
 		excludeFields.add("disbResponseBatchId");
 		excludeFields.add("clearingStatus");
+		excludeFields.add("downloadType");
 
 		return excludeFields;
 	}

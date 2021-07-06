@@ -33,6 +33,8 @@
 		<dropNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="alwadvancerent"/>
 		<dropNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="rolloverfinance"/>
 		<dropNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="FINDEPRECIATIONREQ"/>
+		<dropNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="finisopenpftpayacc"/>
+		<dropNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="finisopennewfinac"/>
 	</changeSet>
 	
 	<changeSet id="ST#2361.2" author="Gopal.p">
@@ -40,6 +42,8 @@
 		<dropNotNullConstraint tableName="RMTFINANCETYPES" columnName="alwadvancerent"/>
 		<dropNotNullConstraint tableName="RMTFINANCETYPES" columnName="rolloverfinance"/>
 		<dropNotNullConstraint tableName="RMTFINANCETYPES" columnName="FINDEPRECIATIONREQ"/>
+		<dropNotNullConstraint tableName="RMTFINANCETYPES" columnName="finisopenpftpayacc"/>
+		<dropNotNullConstraint tableName="RMTFINANCETYPES" columnName="finisopennewfinac"/>
 	</changeSet>
 	
 	<changeSet id="ST#2361.3" author="Gireesh.G">

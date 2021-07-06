@@ -43,6 +43,8 @@
 		<dropNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="allowdownpaypgm"/>
 		<dropNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="alwadvancerent"/>
 		<dropNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="rolloverfinance"/>
+		<dropNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="finisopenpftpayacc"/>
+		<dropNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="finisopennewfinac"/>
 	</changeSet>
 	
 	<changeSet id="ST#2361.2" author="Gireesh.G">

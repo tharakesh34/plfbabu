@@ -54,7 +54,7 @@ public class InstBasedSchdDetailDAOImpl extends SequenceDao<InstBasedSchdDetails
 					ps.setString(index++, instBasedSchd.getStatus());
 					ps.setString(index++, instBasedSchd.getErrorDesc());
 					ps.setLong(index++, instBasedSchd.getUserId());
-					ps.setDate(index, JdbcUtil.getDate(instBasedSchd.getDownloadedOn()));
+					ps.setDate(index++, JdbcUtil.getDate(instBasedSchd.getDownloadedOn()));
 					ps.setBigDecimal(index++, instBasedSchd.getDisbAmount());
 					ps.setLong(index, instBasedSchd.getLinkedTranId());
 
