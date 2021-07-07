@@ -2900,14 +2900,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				String[] args = new String[2];
 				StringBuilder ref = new StringBuilder();
 
-				finReferences.forEach(l1 -> ref.append(l1 + ","));
-				ref.deleteCharAt(ref.length() - 1);
+				finReferences.forEach(l1 -> ref.append(l1 + "\n"));
 
 				args[0] = rch.getReference();
 				args[1] = ref.toString();
 
-				String message = args[0] + " is Linked with " + args[1]
-						+ " . Please Delink the loan first then Proceed ";
+				String message = args[0] + " is Linked with " + "\n" + args[1] + "\n"
+						+ "Please Delink the loan first then Proceed. ";
 
 				if (MessageUtil.confirm(message, MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
 					List<WrongValueException> wve = new ArrayList<>();

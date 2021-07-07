@@ -3338,6 +3338,17 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
 
+		int actualFeeTypeCode = feeWaiver.getFeeWaiverDetails().size();
+		int feeTypeCode = feeWaiverHeader.getFeeWaiverDetails().size();
+		if (actualFeeTypeCode != feeTypeCode) {
+			String valueParm[] = new String[4];
+			valueParm[0] = "FeeType Codes";
+			valueParm[1] = "Should";
+			valueParm[2] = "be Matched With Existing: ";
+			valueParm[3] = finReference;
+			return APIErrorHandlerService.getFailedStatus("30550", valueParm);
+		}
+
 		financeMain = financeMainDAO.getFinanceMain(finReference,
 				new String[] { "FinIsActive", "FinReference", "CustID" }, "_View");
 		if (financeMain == null || !financeMain.isFinIsActive()) {
@@ -3398,6 +3409,17 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		for (FeeWaiverDetail fwd : feeWaiver.getFeeWaiverDetails()) {
+			if (StringUtils.isBlank(fwd.getFeeTypeCode())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "FeeType Code";
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+			if (fwd.getCurrWaiverAmount() == null || fwd.getBalanceAmount().compareTo(BigDecimal.ZERO) < 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "WaiverAmount";
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+
 			if (fwd.getBalanceAmount() != null && fwd.getBalanceAmount().compareTo(BigDecimal.ZERO) > 0) {
 				actaulfeeWaiverDetails.add(fwd);
 			}
@@ -3405,30 +3427,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		// Setting the actual feewaiver values to the feewaiver
 		feeWaiver.setFeeWaiverDetails(actaulfeeWaiverDetails);
 
-		int actualFeeTypeCode = feeWaiver.getFeeWaiverDetails().size();
-		int feeTypeCode = feeWaiverHeader.getFeeWaiverDetails().size();
-		if (actualFeeTypeCode != feeTypeCode) {
-			String valueParm[] = new String[4];
-			valueParm[0] = "FeeType Codes";
-			valueParm[1] = "Should";
-			valueParm[2] = "be Matched With Existing: ";
-			valueParm[3] = finReference;
-			return APIErrorHandlerService.getFailedStatus("30550", valueParm);
-		}
-
 		List<FeeWaiverDetail> feeWaiverDetails = feeWaiverHeader.getFeeWaiverDetails();
-		for (FeeWaiverDetail feeWaiverDetail : feeWaiverDetails) {
-			if (StringUtils.isBlank(feeWaiverDetail.getFeeTypeCode())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "FeeType Code";
-				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
-			}
-			if (feeWaiverDetail.getCurrWaiverAmount() == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "WaiverAmount";
-				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
-			}
-		}
 
 		// Validating The Waiver amount with the Balance
 		for (FeeWaiverDetail fwd : feeWaiverDetails) {

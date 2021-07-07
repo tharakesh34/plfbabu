@@ -104,8 +104,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	 * based on the module workFlow Configuration. by using verification_fiDAO's update method 3) Audit the record in to
 	 * AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -159,7 +158,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			auditDetails.addAll(details);
 		}
 
-		//One Pager Extended field Details
+		// One Pager Extended field Details
 		if (tv.getOnePagerExtRender() != null) {
 			List<AuditDetail> details = tv.getAuditDetailMap().get("OnePagerExtFieldDetails");
 			StringBuilder tableName = new StringBuilder();
@@ -174,7 +173,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
-		//calling post hoot
+		// calling post hoot
 		if (postExteranalServiceHook != null) {
 			postExteranalServiceHook.doProcess(auditHeader, "saveOrUpdate");
 		}
@@ -188,8 +187,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	 * verification_fi by using verification_fiDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -276,8 +274,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	/**
 	 * getverification_fi fetch the details by using verification_fiDAO's getverification_fiById method.
 	 * 
-	 * @param id
-	 *            id of the TechnicalVerification.
+	 * @param id id of the TechnicalVerification.
 	 * @return verification_fi
 	 */
 	@Override
@@ -300,8 +297,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	 * getApprovedverification_fiById fetch the details by using verification_fiDAO's getverification_fiById method .
 	 * with parameter id and type as blank. it fetches the approved records from the verification_fi.
 	 * 
-	 * @param id
-	 *            id of the TechnicalVerification. (String)
+	 * @param id id of the TechnicalVerification. (String)
 	 * @return verification_fi
 	 */
 	@Override
@@ -321,8 +317,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	 * record in to AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) based on the
 	 * transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -427,7 +422,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 				new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1], tv.getBefImage(), tv));
 		auditHeader.setAuditDetails(auditDetailList);
 		auditHeaderDAO.addAudit(auditHeader);
-		//calling post hoot
+		// calling post hoot
 		if (postExteranalServiceHook != null) {
 			postExteranalServiceHook.doProcess(aAuditHeader, "doApprove");
 		}
@@ -443,8 +438,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	 * workFlow table by using technicalVerificationDAO.delete with parameters technicalVerification,"_Temp" 3) Audit
 	 * the record in to AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -474,8 +468,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -741,8 +734,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	@Override
 	public void save(Verification item) {
 		if ((item.getRequestType() == RequestType.INITIATE.getKey()
-				|| item.getDecision() == Decision.RE_INITIATE.getKey()
-				|| item.getRequestType() == RequestType.NOT_REQUIRED.getKey())) {
+				|| item.getDecision() == Decision.RE_INITIATE.getKey())) {
 			setTvFields(item);
 			save(item.getTechnicalVerification(), TableType.TEMP_TAB);
 		}

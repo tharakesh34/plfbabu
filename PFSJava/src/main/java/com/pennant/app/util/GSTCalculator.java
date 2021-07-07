@@ -408,6 +408,8 @@ public class GSTCalculator {
 		taxPercMap.put(RuleConstants.CODE_SGST, BigDecimal.ZERO);
 		taxPercMap.put(RuleConstants.CODE_UGST, BigDecimal.ZERO);
 		taxPercMap.put(RuleConstants.CODE_CESS, BigDecimal.ZERO);
+		taxPercMap.put(RuleConstants.CODE_TOTAL_GST, BigDecimal.ZERO);
+		taxPercMap.put(RuleConstants.CODE_TOTAL_AMOUNT_INCLUDINGGST, BigDecimal.ZERO);
 
 		for (Rule rule : rules) {
 			BigDecimal taxPerc = BigDecimal.ZERO;

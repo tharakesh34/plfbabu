@@ -1440,7 +1440,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		financeDetail.getFinScheduleData().setFinanceScheduleDetails(scheduleDetails);
 
 		List<FinODDetails> overdueList = this.receiptCalculator.getValueDatePenalties(
-				financeDetail.getFinScheduleData(), BigDecimal.ZERO, SysParamUtil.getAppDate(), null, true);
+				financeDetail.getFinScheduleData(), BigDecimal.ZERO, appDate, null, true, scheduleDetails);
 
 		if (CollectionUtils.isNotEmpty(overdueList)) {
 			finODDetailsDAO.updateList(overdueList);

@@ -1428,7 +1428,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	 * @param feeTypeCode
 	 * @param type
 	 * 
-	 *            Ticket id:12499
+	 *                     Ticket id:12499
 	 */
 	@Override
 	public List<ManualAdvise> getManualAdviseByRef(String finReference, String feeTypeCode, String type) {
@@ -1952,7 +1952,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				ps.setBigDecimal(index++, adt.getIGST());
 				ps.setBigDecimal(index++, adt.getCESS());
 				ps.setBigDecimal(index++, adt.getTotalGST());
-				ps.setLong(index, adt.getInvoiceID());
+				ps.setObject(index, JdbcUtil.getLong(adt.getInvoiceID()));
 			}
 		});
 

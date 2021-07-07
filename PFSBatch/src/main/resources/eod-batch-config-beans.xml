@@ -763,7 +763,7 @@
 		<property name="financeDetailService" ref="financeDetailService" />
 	</bean>
 
-	<bean name="receiptCalculator" class="com.pennant.app.util.ReceiptCalculator" scope="prototype">
+	<bean name="receiptCalculator" class="com.pennant.app.util.ReceiptCalculator">
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />

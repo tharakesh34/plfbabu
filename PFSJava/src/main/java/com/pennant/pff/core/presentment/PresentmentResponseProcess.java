@@ -146,7 +146,7 @@ public class PresentmentResponseProcess implements Runnable {
 		String bounceRemarks = pd.getBounceRemarks();
 		boolean finIsActive = pd.isFinisActive();
 		String status = RepayConstants.PEXC_SUCCESS;
-		
+
 		if (presentmentImportProcess != null) {
 			presentmentReference = presentmentImportProcess.getPresentmentRef(presentmentReference);
 			status = presentmentImportProcess.getStatus(status);
@@ -157,7 +157,6 @@ public class PresentmentResponseProcess implements Runnable {
 				status = "S";
 			}
 		}
-		
 
 		StringBuilder info = new StringBuilder();
 		info.append("\nPresement Reference: ").append(presentmentReference);
@@ -248,6 +247,7 @@ public class PresentmentResponseProcess implements Runnable {
 				pd = receiptCancellationService.presentmentCancellation(pd, custEODEvent);
 
 				if (StringUtils.trimToNull(pd.getErrorDesc()) != null) {
+					updatePresentmentDetail(pd);
 					throw new AppException(pd.getErrorDesc());
 				}
 
@@ -257,6 +257,13 @@ public class PresentmentResponseProcess implements Runnable {
 			if (MandateConstants.TYPE_PDC.equals(mandateType) && checkStatus != null) {
 				presentmentDetailDAO.updateChequeStatus(mandateID, checkStatus);
 			}
+
+			String errorCode = StringUtils.trimToEmpty(bounceCode);
+			if (StringUtils.isNotEmpty(bounceRemarks)) {
+				errorCode = errorCode.concat("-").concat(bounceRemarks);
+			}
+
+			pd.setErrorDesc(errorCode);
 
 			updatePresentmentDetail(pd);
 			PresentmentDetailExtract.successCount.incrementAndGet();

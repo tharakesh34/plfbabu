@@ -208,7 +208,7 @@ public class FinStatementController extends SummaryDetailService {
 				if (StringUtils.equals(APIConstants.STMT_FORECLOSURE, serviceName)) {
 					Cloner cloner = new Cloner();
 					FinanceDetail aFinanceDetail = cloner.deepClone(financeDetail);
-					//get FinODDetails
+					// get FinODDetails
 					List<FinODDetails> finODDetailsList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
 					aFinanceDetail.getFinScheduleData().setFinODDetails(finODDetailsList);
 					financeDetail.getFinScheduleData().setFinODDetails(finODDetailsList);
@@ -400,7 +400,7 @@ public class FinStatementController extends SummaryDetailService {
 		financeDetail.setDocumentDetailsList(null);
 		financeDetail.setCollateralAssignmentList(null);
 
-		//disbursement Dates
+		// disbursement Dates
 		List<FinanceDisbursement> disbList = financeDetail.getFinScheduleData().getDisbursementDetails();
 		Collections.sort(disbList, new Comparator<FinanceDisbursement>() {
 			@Override
@@ -485,8 +485,8 @@ public class FinStatementController extends SummaryDetailService {
 
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 
-		//Repayments Posting Process Execution
-		//=====================================
+		// Repayments Posting Process Execution
+		// =====================================
 		Date valueDate = finServiceInst.getFromDate();
 
 		List<ReceiptAllocationDetail> allocations = calEarlySettleAmount(finScheduleData, valueDate);
@@ -710,13 +710,11 @@ public class FinStatementController extends SummaryDetailService {
 
 							if (jointAccountDetail.getCustomerDetails() != null
 									&& jointAccountDetail.getCustomerDetails().getCustomer() != null) {
-								nameString = nameString + (StringUtils
-										.trimToEmpty(jointAccountDetail.getCustomerDetails().getCustomer()
-												.getLovDescCustSalutationCodeName())
+								nameString = nameString + (StringUtils.trimToEmpty(jointAccountDetail
+										.getCustomerDetails().getCustomer().getLovDescCustSalutationCodeName())
 										.equals("")
-												? StringUtils.trimToEmpty(
-														jointAccountDetail.getCustomerDetails().getCustomer()
-																.getCustShrtName())
+												? StringUtils.trimToEmpty(jointAccountDetail.getCustomerDetails()
+														.getCustomer().getCustShrtName())
 												: StringUtils
 														.trimToEmpty(jointAccountDetail.getCustomerDetails()
 																.getCustomer().getLovDescCustSalutationCodeName())
@@ -1156,10 +1154,10 @@ public class FinStatementController extends SummaryDetailService {
 	 * @return stmtResponse
 	 */
 	public FinStatementResponse getReportSatatement(FinStatementRequest statementRequest) {
-		//TODO FIXME
+		// TODO FIXME
 		logger.debug(Literal.ENTERING);
 
-		//Temporary FIX
+		// Temporary FIX
 		FinStatementResponse stmtResponse;
 		try {
 			String finRefernce = statementRequest.getFinReference();
@@ -1194,7 +1192,8 @@ public class FinStatementController extends SummaryDetailService {
 					if (document != null) {
 						String location = null;
 						if (StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA)) {
-							//location = moveToS3Bucket(document, finReference, statementRequest.getType(), soa.getFinDivision());
+							// location = moveToS3Bucket(document, finReference, statementRequest.getType(),
+							// soa.getFinDivision());
 						}
 						stmtResponse = new FinStatementResponse();
 
@@ -1207,7 +1206,7 @@ public class FinStatementController extends SummaryDetailService {
 						if (StringUtils.isNotBlank(location)) {
 							logger.debug("prepare response");
 							stmtResponse.setFinReference(finReference);
-							//stmtResponse.setLocation(location);
+							// stmtResponse.setLocation(location);
 							stmtResponse.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 						} else {
 							stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -1262,7 +1261,8 @@ public class FinStatementController extends SummaryDetailService {
 				if (StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA)
 						|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_REPAY_SCHD)
 						|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_NOC)) {
-					//location = moveToS3Bucket(document, statementRequest.getFinReference(), statementRequest.getType(), null);
+					// location = moveToS3Bucket(document, statementRequest.getFinReference(),
+					// statementRequest.getType(), null);
 				}
 
 				if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_NOC_REPORT)
@@ -1276,7 +1276,7 @@ public class FinStatementController extends SummaryDetailService {
 
 				if (StringUtils.isNotBlank(location)) {
 					stmtResponse.setFinReference(statementRequest.getFinReference());
-					//stmtResponse.setLocation(location);
+					// stmtResponse.setLocation(location);
 					stmtResponse.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 				} else {
 					stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -1319,8 +1319,7 @@ public class FinStatementController extends SummaryDetailService {
 	/**
 	 * This method generates a {@link ByteArrayOutputStream}, compatible for re-use
 	 * 
-	 * @param statementRequest
-	 *            - {@link FinStatementRequest}
+	 * @param statementRequest - {@link FinStatementRequest}
 	 * @return {@link ByteArrayOutputStream}
 	 */
 	private ByteArrayOutputStream doProcessInterestCertificate(FinStatementRequest statementRequest) {
@@ -1455,7 +1454,8 @@ public class FinStatementController extends SummaryDetailService {
 	@Qualifier("dataSource")
 	JndiObjectFactoryBean jndiObjectFactoryBean;
 
-	private byte[] doShowReport(String whereCond, String whereCond1, Date fromDate, Date toDate, String finRefernce) {
+	private byte[] doShowReport(String whereCond, String whereCond1, Date fromDate, Date toDate, String finRefernce)
+			throws Exception {
 
 		logger.debug(Literal.ENTERING);
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
@@ -1467,7 +1467,7 @@ public class FinStatementController extends SummaryDetailService {
 		reportArgumentsMap.put("userName", userDetails.getUserId());
 		reportArgumentsMap.put("reportHeading", reportConfiguration.getReportHeading());
 		reportArgumentsMap.put("reportGeneratedBy", "Report Generated by penApps PFF");// Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));
-		reportArgumentsMap.put("appDate", DateUtility.getAppDate());
+		reportArgumentsMap.put("appDate", SysParamUtil.getAppDate());
 		reportArgumentsMap.put("appCcy", SysParamUtil.getAppCurrency());
 		reportArgumentsMap.put("appccyEditField", SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT));
 		reportArgumentsMap.put("unitParam", "PFF");
@@ -1519,6 +1519,13 @@ public class FinStatementController extends SummaryDetailService {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			if (con != null) {
+				con.close();
+			}
+			con = null;
+			reportDataSourceObj = null;
+			buf = null;
 		}
 		return buf;
 	}

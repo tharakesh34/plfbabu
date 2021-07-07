@@ -133,6 +133,7 @@ import com.pennant.RateBox;
 import com.pennant.Interface.service.CustomerInterfaceService;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.HolidayHandlerTypes;
@@ -222,6 +223,7 @@ import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennant.backend.model.finance.PMAY;
 import com.pennant.backend.model.finance.PricingDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
+import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.SubventionDetail;
 import com.pennant.backend.model.finance.TATDetail;
 import com.pennant.backend.model.finance.TaxHeader;
@@ -363,8 +365,6 @@ import com.pennanttech.webui.verification.PDVerificationDialogCtrl;
 import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
 import com.pennanttech.webui.verification.TVerificationDialogCtrl;
 import com.rits.cloning.Cloner;
-
-import com.pennant.app.constants.AccountingEvent;
 
 /**
  * Base controller for creating the controllers of the zul files with the spring framework.
@@ -1125,7 +1125,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnEdit"));
 		this.btnDelete.setVisible(false);
-		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnSave"));
+		this.btnSave.setVisible(true);
 		this.btnCancel.setVisible(false);
 
 		// Schedule related buttons
@@ -7511,7 +7511,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				// check if accounting rules executed or not
 				if (accountingDetailDialogCtrl == null || (!accountingDetailDialogCtrl.isAccountingsExecuted())) {
 					// ### 10-05-2018---- PSD TCT No :124885
-					if (!ImplementationConstants.CLIENT_NFL) {
+					boolean proceed = false;
+
+					if (ImplementationConstants.CLIENT_NFL) {
+						proceed = true;
+					} else if (FinanceConstants.FINSER_EVENT_RESTRUCTURE.equalsIgnoreCase(moduleDefiner)) {
+						RestructureDetail restructureDetail = getFinanceDetail().getFinScheduleData()
+								.getRestructureDetail();
+						Date appDate = restructureDetail.getAppDate();
+						Date restructureDate = restructureDetail.getRestructureDate();
+
+						if (appDate.compareTo(restructureDate) < 0) {
+							proceed = true;
+						}
+					}
+
+					if (!proceed) {
 						MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 						ComponentsCtrl.applyForward(getTab(AssetConstants.UNIQUE_ID_ACCOUNTING), "onSelectTab");
 						return;
@@ -14809,6 +14824,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			dataMap = amountCodes.getDeclaredFieldValues(dataMap);
+			setVASAcctCodes(dataMap);
 			aeEvent.setDataMap(dataMap);
 
 			engineExecution.getAccEngineExecResults(aeEvent);
@@ -14842,6 +14858,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (inst.getFromDate() != null) {
 					aeEvent.setValueDate(inst.getFromDate());
 				}
+
+				setVASAcctCodes(dataMap);
 				aeEvent.setDataMap(dataMap);
 
 				if (FinanceConstants.FINSER_EVENT_RESTRUCTURE.equals(moduleDefiner)) {
@@ -14878,6 +14896,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void setVASAcctCodes(Map<String, Object> dataMap) {
+		List<VASRecording> vasRecordingList = financeDetail.getFinScheduleData().getVasRecordingList();
+		if (CollectionUtils.isNotEmpty(vasRecordingList)) {
+			VASRecording vasRecording = vasRecordingList.get(0);
+			if (vasRecording != null) {
+				// For GL Code
+				VehicleDealer vehicleDealer = vehicleDealerService.getDealerShortCodes(vasRecording.getProductCode());
+				dataMap.put("ae_productCode", vehicleDealer.getProductShortCode());
+				dataMap.put("ae_dealerCode", vehicleDealer.getDealerShortCode());
+				dataMap.put("ae_vasProdCategory", vasRecording.getProductCode());
+			}
+		}
 	}
 
 	private AEEvent prepareAccountingData(boolean onLoadProcess, FinanceProfitDetail profitDetail)

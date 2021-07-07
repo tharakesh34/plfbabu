@@ -64,6 +64,7 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
@@ -131,12 +132,14 @@ import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.financeservice.RestructureService;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.commitment.CommitmentMovement;
+import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -216,8 +219,6 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
-
-import com.pennant.app.constants.AccountingEvent;
 
 public abstract class GenericFinanceDetailService extends GenericService<FinanceDetail> {
 	private static final Logger logger = LogManager.getLogger(GenericFinanceDetailService.class);
@@ -1696,6 +1697,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					}
 				}
 			}
+
+			setVASAcctCodes(financeDetail, dataMap);
+
 			aeEvent.setDataMap(dataMap);
 
 			// Prepared Postings execution
@@ -1756,6 +1760,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				}
 
 				dataMap = tempAmountCodes.getDeclaredFieldValues(dataMap);
+
+				setVASAcctCodes(financeDetail, dataMap);
 
 				aeEvent.setDataMap(dataMap);
 
@@ -1920,6 +1926,20 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		return subventionExists;
+	}
+
+	private void setVASAcctCodes(FinanceDetail financeDetail, Map<String, Object> dataMap) {
+		List<VASRecording> vasRecordingList = financeDetail.getFinScheduleData().getVasRecordingList();
+		if (CollectionUtils.isNotEmpty(vasRecordingList)) {
+			VASRecording vasRecording = vasRecordingList.get(0);
+			if (vasRecording != null) {
+				// For GL Code
+				VehicleDealer vehicleDealer = vehicleDealerService.getDealerShortCodes(vasRecording.getProductCode());
+				dataMap.put("ae_productCode", vehicleDealer.getProductShortCode());
+				dataMap.put("ae_dealerCode", vehicleDealer.getDealerShortCode());
+				dataMap.put("ae_vasProdCategory", vasRecording.getProductCode());
+			}
+		}
 	}
 
 	/**

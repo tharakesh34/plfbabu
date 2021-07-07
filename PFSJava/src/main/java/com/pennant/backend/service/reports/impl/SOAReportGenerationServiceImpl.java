@@ -1988,11 +1988,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 														.concat(String.valueOf(finSchdDetail.getInstNumber()));
 											}
 											manualAdvPrentmentIn = manualAdvPrentmentIn.concat(finRef);
-											if (ImplementationConstants.PRESENT_RESP_BOUNCE_REMARKS_MAN) {
-												if (manualAdvise.getRemarks() != null) {
-													manualAdvPrentmentIn = manualAdvPrentmentIn.concat(
-															" and Bounce Remarks: " + manualAdvise.getRemarks());
-												}
+											if (manualAdvise.getRemarks() != null) {
+												manualAdvPrentmentIn = manualAdvPrentmentIn
+														.concat(" and Bounce Remarks: " + manualAdvise.getRemarks());
 											}
 											soaTranReport.setEvent(manualAdvPrentmentIn);
 											soaTranReport.setTransactionDate(manualAdvise.getPostDate());

@@ -143,7 +143,7 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	private List<CollateralAssignment> collateralAssignments = null;
 	private boolean isNotFinanceProcess = false;
 	private String moduleName;
-	//### 10-05-2018 Start Development Item 82
+	// ### 10-05-2018 Start Development Item 82
 	private Map<String, Object> rules = new HashMap<>();
 
 	public Map<String, Object> getRules() {
@@ -156,7 +156,7 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		this.rules = rules;
 	}
 
-	//### 10-05-2018 End Development Item 82
+	// ### 10-05-2018 End Development Item 82
 	/**
 	 * default constructor.<br>
 	 */
@@ -258,7 +258,7 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 		if (isNotFinanceProcess) {
-			//window__title.setVisible(false);
+			// window__title.setVisible(false);
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -306,7 +306,6 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			north.setVisible(true);
 			south.setVisible(true);
 			setDialog(DialogType.EMBEDDED);
-
 
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
@@ -401,10 +400,10 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 
 				String msg = PennantApplicationUtil.getSavingStatus(aFinMaintainInstruction.getRoleCode(),
 						aFinMaintainInstruction.getNextRoleCode(), aFinMaintainInstruction.getFinReference() + "",
-						" Covenant Details ", aFinMaintainInstruction.getRecordStatus());
+						" Collateral Release ", aFinMaintainInstruction.getRecordStatus());
 				if (StringUtils.equals(aFinMaintainInstruction.getRecordStatus(),
 						PennantConstants.RCD_STATUS_APPROVED)) {
-					msg = " Covenant Detail with Reference " + aFinMaintainInstruction.getFinReference()
+					msg = " Collateral Release with Reference " + aFinMaintainInstruction.getFinReference()
 							+ " Approved Succesfully.";
 				}
 				Clients.showNotification(msg, "info", null, null, -1);
@@ -632,17 +631,17 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			SecurityException {
 		logger.debug("Entering");
 
-		//### 10-05-2018 Start Development Item 82
+		// ### 10-05-2018 Start Development Item 82
 		BigDecimal totalBankValuation = new BigDecimal(0);
 		BigDecimal balanceAssignedValue = new BigDecimal(0);
 		BigDecimal totalAssignedValue = new BigDecimal(0);
 
-		//### 10-05-2018 End Development Item 82
+		// ### 10-05-2018 End Development Item 82
 
-		//### 16-05-2018 Start Development Item 82
+		// ### 16-05-2018 Start Development Item 82
 		BigDecimal totalLtv = new BigDecimal(0);
 		int assignedCount = 0;
-		//### 16-05-2018 End Development Item 82
+		// ### 16-05-2018 End Development Item 82
 
 		int totCollateralCount = 0;
 		BigDecimal totAssignedColValue = BigDecimal.ZERO;
@@ -681,7 +680,7 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				listcell.setStyle("text-align:right;");
 				listitem.appendChild(listcell);
 
-				// Available Assignment value 
+				// Available Assignment value
 				BigDecimal totAssignedValue = collateralAssignment.getBankValuation()
 						.multiply(collateralAssignment.getTotAssignedPerc())
 						.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
@@ -722,7 +721,7 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				ComponentsCtrl.applyForward(listitem, "onDoubleClick=onCollateralAssignItemDoubleClicked");
 				this.listBoxCollateralAssignments.appendChild(listitem);
 
-				//### 16-05-2018 Start Development Item 82
+				// ### 16-05-2018 Start Development Item 82
 				if ((StringUtils.equals(collateralAssignment.getRecordType(), PennantConstants.RECORD_TYPE_DEL)
 						|| StringUtils.equals(collateralAssignment.getRecordType(),
 								PennantConstants.RECORD_TYPE_CAN))) {
@@ -742,7 +741,7 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 						totalLtv = totalLtv.add(collateralAssignment.getSpecialLTV());
 					}
 				}
-				//### 16-05-2018 End Development Item 82
+				// ### 16-05-2018 End Development Item 82
 			}
 		}
 
@@ -767,14 +766,14 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			this.availableCollateral.setStyle("color:Green;font-weight:bold;");
 		}
 
-		//### 10-05-2018 Start Development Item 82
+		// ### 10-05-2018 Start Development Item 82
 
 		rules.put("Collaterals_Total_Assigned", totalAssignedValue);
 		rules.put("Collaterals_Total_UN_Assigned", balanceAssignedValue);
 		rules.put("Collateral_Bank_Valuation", totalBankValuation);
 
-		//### 10-05-2018 End  Development Item 82
-		//### 16-05-2018 Development Item 82
+		// ### 10-05-2018 End Development Item 82
+		// ### 16-05-2018 Development Item 82
 		rules.put("Collateral_Average_LTV", totalLtv);
 
 		logger.debug("Leaving");

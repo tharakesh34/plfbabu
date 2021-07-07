@@ -125,6 +125,10 @@ public class FinReceiptData implements Serializable {
 	private BigDecimal tdPriBal = BigDecimal.ZERO;
 	private FeeType lppFeeType = null;
 	private boolean isForeClosureEnq = false;
+	private List<FinanceScheduleDetail> schedules = new ArrayList<>();
+	private List<Long> inProcessReceipts = new ArrayList<>();
+	private BigDecimal actualOdPaid = BigDecimal.ZERO;
+	private int rcdIdx = -1;
 
 	public FinReceiptData() {
 		super();
@@ -196,6 +200,11 @@ public class FinReceiptData implements Serializable {
 		entity.setTdPriBal(this.tdPriBal);
 		entity.setLppFeeType(this.lppFeeType == null ? null : this.lppFeeType.copyEntity());
 		entity.setForeClosureEnq(this.isForeClosureEnq);
+		this.schedules.forEach(e -> entity.getSchedules().add(e == null ? null : e.copyEntity()));
+		entity.getInProcessReceipts().addAll(this.inProcessReceipts);
+		entity.setActualOdPaid(this.actualOdPaid);
+		entity.setRcdIdx(this.rcdIdx);
+		
 		return entity;
 	}
 
@@ -645,6 +654,38 @@ public class FinReceiptData implements Serializable {
 
 	public void setForeClosureEnq(boolean isForeClosureEnq) {
 		this.isForeClosureEnq = isForeClosureEnq;
+	}
+
+	public List<FinanceScheduleDetail> getSchedules() {
+		return schedules;
+	}
+
+	public void setSchedules(List<FinanceScheduleDetail> schedules) {
+		this.schedules = schedules;
+	}
+
+	public int getRcdIdx() {
+		return rcdIdx;
+	}
+
+	public void setRcdIdx(int rcdIdx) {
+		this.rcdIdx = rcdIdx;
+	}
+
+	public List<Long> getInProcessReceipts() {
+		return inProcessReceipts;
+	}
+
+	public void setInProcessReceipts(List<Long> inProcessReceipts) {
+		this.inProcessReceipts = inProcessReceipts;
+	}
+
+	public BigDecimal getActualOdPaid() {
+		return actualOdPaid;
+	}
+
+	public void setActualOdPaid(BigDecimal actualOdPaid) {
+		this.actualOdPaid = actualOdPaid;
 	}
 
 }

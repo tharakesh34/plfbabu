@@ -1843,7 +1843,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		sql.append(", CLEARING_DATE, CLEARING_STATUS, BOUNCE_CODE, BOUNCE_REMARKS, REASON_CODE, BANK_CODE, BANK_NAME");
 		sql.append(", BRANCH_CODE, BRANCH_NAME, PARTNER_BANK_CODE, PARTNER_BANK_NAME");
 		sql.append(", BANK_ADDRESS, ACCOUNT_NUMBER, IFSC_CODE, UMRN_NO, MICR_CODE, CHEQUE_SERIAL_NO");
-		sql.append(", CORPORATE_USER_NO, CORPORATE_USER_NAME, DEST_ACC_HOLDER, DEBIT_CREDIT_FLAG )");
+		sql.append(", CORPORATE_USER_NO, CORPORATE_USER_NAME, DEST_ACC_HOLDER, DEBIT_CREDIT_FLAG, UTR_Number )");
 		sql.append(" SELECT ?, BatchID, AgreementNo, BFLReferenceNo, InstalmentNo, AmountCleared, ClearingDate");
 		sql.append(", Status, ReasonCode, Bounce_Remarks, ReasonCode, NULL, BANK_NAME");
 		sql.append(", BranchCode, BranchCode, Partner_Bank, Partner_Bank");
@@ -1999,6 +1999,12 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	public int logRespDetailsLog(long headerId) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("INSERT INTO PRESENTMENT_RESP_DTLS_LOG");
+		sql.append("(HEADER_ID, PRESENTMENT_REFERENCE, FINREFERENCE, HOST_REFERENCE, INSTALMENT_NO, AMOUNT_CLEARED");
+		sql.append(", CLEARING_DATE, CLEARING_STATUS, BOUNCE_CODE, BOUNCE_REMARKS, REASON_CODE, BANK_CODE, BANK_NAME");
+		sql.append(", BRANCH_CODE, BRANCH_NAME, PARTNER_BANK_CODE, PARTNER_BANK_NAME");
+		sql.append(", BANK_ADDRESS, ACCOUNT_NUMBER, IFSC_CODE, UMRN_NO, MICR_CODE, CHEQUE_SERIAL_NO");
+		sql.append(", CORPORATE_USER_NO, CORPORATE_USER_NAME, DEST_ACC_HOLDER, DEBIT_CREDIT_FLAG, PROCESS_FLAG");
+		sql.append(", THREAD_ID, UTR_Number)");
 		sql.append(" SELECT HEADER_ID, PRESENTMENT_REFERENCE, FINREFERENCE, HOST_REFERENCE, INSTALMENT_NO ");
 		sql.append(", AMOUNT_CLEARED, CLEARING_DATE, CLEARING_STATUS, BOUNCE_CODE, BOUNCE_REMARKS, REASON_CODE");
 		sql.append(", BANK_CODE, BANK_NAME, BRANCH_CODE, BRANCH_NAME, PARTNER_BANK_CODE, PARTNER_BANK_NAME");

@@ -30,7 +30,7 @@
 
 						<!-- SEARCH AREA -->
 						<toolbar align="center" sclass="toolbar-center">
-							<label value="${c:l('window_finCovenantMaintanceDialog.title')}" sclass="label-heading" />
+							<label value="${c:l('window_CollateralDelinkList.title')}" sclass="label-heading" />
 						</toolbar>
 
 						<!-- CRUD BUTTONS -->

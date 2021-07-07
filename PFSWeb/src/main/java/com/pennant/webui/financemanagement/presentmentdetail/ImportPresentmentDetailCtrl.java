@@ -18,6 +18,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Row;
@@ -116,7 +117,6 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	private Configuration config = null;
 	private DataEngineStatus PRSENTMENT_FILE_IMPORT_STATUS = null;
 	private ProcessExecution processExecution = null;
-	private PresentmentDetailExtract fileImport;
 	private String errorMsg = null;
 	private boolean allowInstrumentType;
 	private Media media = null;
@@ -162,13 +162,16 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 			this.panelRows.setVisible(false);
 		}
 
+		if (PRSENTMENT_FILE_IMPORT_STATUS == null)
+			setDEStatus("");
+
 		if (!allowInstrumentType) {
 			if (processExecution == null) {
 				processExecution = new ProcessExecution();
-				createPanel(processExecution, PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT);
+				createPanel(processExecution, PRSENTMENT_FILE_IMPORT_STATUS);
 			}
-			processExecution.setProcess(PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT);
-			String status = PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.getStatus();
+			processExecution.setProcess(PRSENTMENT_FILE_IMPORT_STATUS);
+			String status = PRSENTMENT_FILE_IMPORT_STATUS.getStatus();
 			timer.start();
 			processExecution.render();
 
@@ -198,10 +201,21 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		String instType = this.instrumentType.getSelectedItem().getValue();
 		this.txtFileName.setValue("");
 
-		String instrumentTypeConfigName = "PRESENTMENT_RESPONSE_";
-		instrumentTypeConfigName = instrumentTypeConfigName.concat(instType);
+		setDEStatus(instType);
 
-		String configName = SysParamUtil.getValueAsString(instrumentTypeConfigName);
+		logger.debug(Literal.LEAVING + event.toString());
+	}
+
+	private void setDEStatus(String instType) {
+		String configName = null;
+
+		if (instType != null) {
+			String instrumentTypeConfigName = "PRESENTMENT_RESPONSE_";
+			instrumentTypeConfigName = instrumentTypeConfigName.concat(instType);
+
+			configName = SysParamUtil.getValueAsString(instrumentTypeConfigName);
+		}
+
 		if (configName == null) {
 			configName = "PRESENTMENT_RESPONSE";
 		}
@@ -216,8 +230,6 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		PRSENTMENT_FILE_IMPORT_STATUS = dataEngineConfig.getLatestExecution(configName);
 
 		doFillPanel(config, PRSENTMENT_FILE_IMPORT_STATUS);
-
-		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -301,77 +313,30 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		}
 		txtFileName.setText(media.getName());
 
-		if (allowInstrumentType) {
-			String mediaName = media.getName();
-			String prefix = config.getFilePrefixName();
-			String extension = config.getFileExtension();
+		String mediaName = media.getName();
+		String prefix = config.getFilePrefixName();
+		String extension = config.getFileExtension();
 
-			if (!(StringUtils.endsWithIgnoreCase(mediaName, extension))) {
-				MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
+		if (!(StringUtils.endsWithIgnoreCase(mediaName, extension))) {
+			MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
 
-				media = null;
-				return;
-			}
-			// Validate the file prefix.
-			if (prefix != null && !(StringUtils.startsWith(mediaName, prefix))) {
-				MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
-
-				media = null;
-				return;
-			}
-
-			if (presentmentDetailDAO.isFileProcessed(mediaName)) {
-				MessageUtil.showError("Selected file already processed");
-
-				media = null;
-				return;
-			}
-
-		} else {
-			int row_NumberOfCells = 14;
-			Object valu = SysParamUtil.getValue(SMTParameterConstants.PRESENTMENT_RESPONSE_ROW_LENGTH);
-			if (valu != null) {
-				row_NumberOfCells = Integer.parseInt(valu.toString());
-			}
-
-			try {
-				String fileName = StringUtils.lowerCase(media.getName());
-				if (fileName.endsWith(".xlsx") || fileName.endsWith(".xls")) {
-					fileImport = null;
-					txtFileName.setText(media.getName());
-					setFileImportData(media.getName().substring(media.getName().lastIndexOf('.')));
-					fileImport.row_NumberOfCells = row_NumberOfCells;
-					fileImport.setExcelMedia(media);
-					fileImport.loadExcelFile(true);
-					renderPannel();
-				} else {
-					throw new Exception("Invalid file format.");
-				}
-
-			} catch (Exception e) {
-				errorMsg = e.getMessage();
-				MessageUtil.showError(e.getMessage());
-			}
+			media = null;
+			return;
 		}
-		logger.debug(Literal.LEAVING);
-	}
+		// Validate the file prefix.
+		if (prefix != null && !(StringUtils.startsWith(mediaName, prefix))) {
+			MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
 
-	private void setFileImportData(String contentType) throws Exception {
-		logger.debug(Literal.ENTERING);
-
-		if (fileImport == null) {
-			fileImport = presentmentExtractService.getFileExtract(getUserWorkspace().getLoggedInUser().getUserId(),
-					contentType);
+			media = null;
+			return;
 		}
 
-		logger.debug(Literal.LEAVING);
-	}
+		if (presentmentDetailDAO.isFileProcessed(mediaName)) {
+			MessageUtil.showError("Selected file already processed");
 
-	private void renderPannel() {
-		logger.debug(Literal.ENTERING);
-
-		presentmentExtractService.renderPannel(fileImport);
-		processExecution.render();
+			media = null;
+			return;
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -415,7 +380,16 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		LoggedInUser loggedInUser = getUserWorkspace().getLoggedInUser();
 		PresentmentDetailExtract pde = new PresentmentDetailExtract(this.dataSource);
 		/* Data */
-		pde.setInstrumentType(this.instrumentType.getSelectedItem().getValue());
+		String instType = null;
+		Comboitem selectedItem = this.instrumentType.getSelectedItem();
+
+		if (selectedItem != null) {
+			instType = selectedItem.getValue();
+			pde.setInstrumentType(instType);
+		} else {
+			setDEStatus(instType);
+		}
+
 		pde.setUserDetails(loggedInUser);
 		pde.setStatus(PRSENTMENT_FILE_IMPORT_STATUS);
 		pde.setMediaOnly(getMedia());

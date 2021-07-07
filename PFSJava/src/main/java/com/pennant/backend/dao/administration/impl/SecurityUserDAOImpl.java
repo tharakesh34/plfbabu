@@ -94,10 +94,8 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 	/**
 	 * Fetch the Record Security Users details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return SecurityUsers
 	 */
 	@Override
@@ -117,7 +115,8 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		return null;
 	}
 
-	//DE#374 :User Creation : After approving the user, work-flow before and after image values not coming properly in audit table.
+	// DE#374 :User Creation : After approving the user, work-flow before and after image values not coming properly in
+	// audit table.
 	private StringBuilder getSecurityUserQuery(String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" UsrID, UsrLogin, UsrPwd, UserStaffID, UsrFName, UsrMName, UsrLName, UsrMobile");
@@ -142,10 +141,8 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 	/**
 	 * Fetch the Record Security Users details by key field
 	 * 
-	 * @param usrLogin
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param usrLogin (String)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return SecurityUsers
 	 */
 	@Override
@@ -170,10 +167,8 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 	 * This method Deletes the Record from the SecUsers or SecUsers_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Security Users by key UsrID
 	 * 
-	 * @param Security
-	 *            Users (securityUsers)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Security Users (securityUsers)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -214,10 +209,8 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 	 *
 	 * save Security Users
 	 * 
-	 * @param Security
-	 *            Users (securityUsers)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Security Users (securityUsers)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -261,10 +254,8 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 	 * This method updates the Record SecUsers or SecUsers_Temp. if Record not updated then throws DataAccessException
 	 * with error 41004. update Security Users by key UsrID and Version
 	 * 
-	 * @param SecurityUsers
-	 *            (securityUser)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param SecurityUsers (securityUser)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -317,8 +308,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 	 * This method updates the UsrPwd,UsrToken,UsrAcExpDt fields of securityUser record if Record not updated then
 	 * throws DataAccessException
 	 * 
-	 * @param securityUser
-	 *            (SecurityUsers)
+	 * @param securityUser (SecurityUsers)
 	 */
 	public void changePassword(SecurityUser securityUser) {
 		logger.debug(Literal.ENTERING);
@@ -448,11 +438,11 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		StringBuilder sql = new StringBuilder("Update SecurityUserDivBranch");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Set Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
-		sql.append(", RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
+		sql.append(", RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode");
 		sql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where UsrID = :UsrID and UserDivision = :UserDivision");
 		sql.append(" and UserBranch =:UserBranch");
-		sql.append(" and entity = :entity");
+		// sql.append(" and entity = :entity");
 
 		logger.debug("updateSql:" + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUserDivBranch);

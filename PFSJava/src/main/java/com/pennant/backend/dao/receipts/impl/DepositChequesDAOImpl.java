@@ -62,6 +62,7 @@ import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.util.CashManagementConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -124,7 +125,7 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where MovementId = :MovementId AND Id = :Id");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -148,7 +149,7 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		StringBuilder sql = new StringBuilder("delete from DepositCheques");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" where Id = :Id");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -179,7 +180,7 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		StringBuilder sql = new StringBuilder("delete from DepositCheques");
 		sql.append(type);
 		sql.append(" where MovementId = :MovementId");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -227,32 +228,34 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 
 	@Override
 	public List<DepositCheques> getDepositChequesList(String branchCode) {
-		logger.debug(Literal.ENTERING);
 		List<DepositCheques> list;
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder();
-		sql.append(
-				" SELECT ReceiptId, Receiptpurpose, ReceiptMode, Remarks, TransactionRef, ReceivedDate, FundingAc, Amount, FinReference, CustShrtName");
-		sql.append(" FROM FinReceiptHeader_DView");
-		sql.append(" WHERE DepositBranch = :DepositBranch");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ReceiptId, Receiptpurpose, ReceiptMode, Remarks, TransactionRef FavourNumber");
+		sql.append(", ReceivedDate, FundingAc, Amount, FinReference, CustShrtName");
+		sql.append(" From FinReceiptHeader_DView");
+		sql.append(" Where DepositBranch = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("DepositBranch", branchCode);
-		RowMapper<DepositCheques> typeRowMapper = BeanPropertyRowMapper.newInstance(DepositCheques.class);
+		return jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, branchCode);
+		}, (rs, i) -> {
+			DepositCheques dc = new DepositCheques();
 
-		try {
-			list = jdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(Literal.EXCEPTION, dae);
-			return null;
-		}
+			dc.setReceiptId(JdbcUtil.getLong(rs.getLong("ReceiptId")));
+			dc.setReceiptpurpose(rs.getString("Receiptpurpose"));
+			dc.setReceiptMode(rs.getString("ReceiptMode"));
+			dc.setRemarks(rs.getString("Remarks"));
+			dc.setFavourNumber(rs.getString("FavourNumber"));
+			dc.setReceivedDate(JdbcUtil.getDate(rs.getDate("ReceivedDate")));
+			dc.setFundingAc(JdbcUtil.getLong(rs.getLong("FundingAc")));
+			dc.setAmount(rs.getBigDecimal("Amount"));
+			dc.setFinReference(rs.getString("FinReference"));
+			dc.setCustShrtName(rs.getString("CustShrtName"));
 
-		logger.debug(Literal.LEAVING);
-		return list;
+			return dc;
+		});
 	}
 
 	@Override

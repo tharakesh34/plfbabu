@@ -5223,7 +5223,7 @@
 	</bean>
 
 	<!--============ Receipt Calculator Util ============== -->
-	<bean name="receiptCalculator" class="com.pennant.app.util.ReceiptCalculator" scope="prototype">
+	<bean name="receiptCalculator" class="com.pennant.app.util.ReceiptCalculator">
 		<aop:scoped-proxy />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />

@@ -92,12 +92,10 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Vbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.AccountSelectionBox;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
 import com.pennant.RateBox;
-import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.ImplementationConstants;
@@ -202,7 +200,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected Row defermentsRow; // autoWired
 	protected Intbox defferments; // autoWired
 	protected Intbox planDeferCount; // autoWired
-	protected Hbox hbox_PlanDeferCount; // autoWired	
+	protected Hbox hbox_PlanDeferCount; // autoWired
 	protected ExtendedCombobox commitmentRef; // autoWired
 	protected ExtendedCombobox finLimitRef; // autoWired
 	protected Textbox finRemarks; // autoWired
@@ -210,7 +208,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected ExtendedCombobox finPurpose; // autoWired
 	protected Row row_accountsOfficer; // autowired
 	protected Row row_ReferralId; // autowired
-	protected Row row_salesDept; //autowired
+	protected Row row_salesDept; // autowired
 	protected ExtendedCombobox accountsOfficer; // autowired
 	protected ExtendedCombobox dsaCode; // autowired
 	protected Hbox hbox_tdsApplicable;
@@ -238,9 +236,9 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected Intbox noOfSteps; // autoWired
 	protected Row row_stepFinance; // autoWired
 	protected Row row_manualSteps; // autoWired
-	protected Space space_StepPolicy; // autoWired  
-	protected Space space_noOfSteps; // autoWired 
-	protected Hbox hbox_numberOfSteps; // autoWired 
+	protected Space space_StepPolicy; // autoWired
+	protected Space space_noOfSteps; // autoWired
+	protected Hbox hbox_numberOfSteps; // autoWired
 	protected Combobox stepType;
 	protected Space space_stepType;
 	protected Row row_stepType;
@@ -249,7 +247,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected ExtendedCombobox dmaCode;
 	protected ExtendedCombobox salesDepartment;
 	protected Checkbox quickDisb;
-	//Finance Main Details Tab---> 2. Grace Period Details
+	// Finance Main Details Tab---> 2. Grace Period Details
 
 	protected Groupbox gb_gracePeriodDetails; // autoWired
 
@@ -261,7 +259,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected Datebox gracePeriodEndDate_two; // autoWired
 	protected Combobox grcRateBasis; // autoWired
 	protected Decimalbox gracePftRate; // autoWired
-	//protected Decimalbox 	grcEffectiveRate; 						// autoWired
+	// protected Decimalbox grcEffectiveRate; // autoWired
 	protected RateBox graceRate; // autoWired
 	protected Row row_FinGrcRates; // autoWired
 	protected Decimalbox finGrcMinRate; // autoWired
@@ -275,7 +273,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected FrequencyBox gracePftRvwFrq; // autoWired
 	protected Datebox nextGrcPftRvwDate; // autoWired
 	protected Datebox nextGrcPftRvwDate_two; // autoWired
-	protected Row grcCpzFrqRow; // autoWired	  
+	protected Row grcCpzFrqRow; // autoWired
 	protected FrequencyBox graceCpzFrq; // autoWired
 	protected Datebox nextGrcCpzDate; // autoWired
 	protected Datebox nextGrcCpzDate_two; // autoWired
@@ -284,21 +282,21 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected Combobox cbGrcSchdMthd; // autoWired
 	protected Space space_GrcSchdMthd; // autoWired
 	protected Row grcBaseRateRow; // autoWired
-	//Finance Main Details Tab---> 3. Repayment Period Details
+	// Finance Main Details Tab---> 3. Repayment Period Details
 
 	protected Groupbox gb_repaymentDetails; // autoWired
 
 	protected Intbox numberOfTerms; // autoWired
 	protected Intbox numberOfTerms_two; // autoWired
 	protected Decimalbox finRepaymentAmount; // autoWire
-	protected Combobox repayRateBasis; // autoWired	
+	protected Combobox repayRateBasis; // autoWired
 	protected Decimalbox repayProfitRate; // autoWired
-	//protected Decimalbox 	repayEffectiveRate; 					// autoWired
+	// protected Decimalbox repayEffectiveRate; // autoWired
 	protected Row repayBaseRateRow; // autoWired
 	protected RateBox repayRate; // autoWired
 
 	protected Row row_FinRepRates; // autoWired
-	protected Decimalbox finMinRate; // autoWired	
+	protected Decimalbox finMinRate; // autoWired
 	protected Decimalbox finMaxRate; // autoWired
 	protected Combobox cbScheduleMethod; // autoWired
 	protected Row rpyPftFrqRow; // autoWired
@@ -354,7 +352,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected FrequencyBox odRepayFrq;
 	protected FrequencyBox odRepayRvwFrq;
 
-	//Finance Main Details Tab---> 4. Overdue Penalty Details
+	// Finance Main Details Tab---> 4. Overdue Penalty Details
 	protected Groupbox gb_OverDuePenalty; // autoWired
 	protected Checkbox applyODPenalty; // autoWired
 	protected Checkbox oDIncGrcDays; // autoWired
@@ -377,10 +375,10 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	private Label label_FinanceMainDialog_PlanEmiHolidayMethod;
 	private Label label_FinanceMainDialog_PlanEmiHolidayLockPeriod;
 
-	//DIV Components for Showing Finance basic Details in Each tab
+	// DIV Components for Showing Finance basic Details in Each tab
 	protected Div basicDetailTabDiv;
 
-	//Search Button for value Selection
+	// Search Button for value Selection
 	protected Button btnSearchFinType; // autoWired
 	protected Textbox lovDescFinTypeName; // autoWired
 
@@ -388,10 +386,10 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected Button btnBuildSchedule; // autoWired
 	protected Button btnSearchCustCIF; // autoWired
 
-	// old value variables for edit mode. that we can check if something 
+	// old value variables for edit mode. that we can check if something
 	// on the values are edited since the last initialization.
 
-	//Finance Main Details Tab---> 1. Key Details
+	// Finance Main Details Tab---> 1. Key Details
 
 	protected transient String oldVar_finType;
 	protected transient String oldVar_lovDescFinTypeName;
@@ -426,7 +424,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected transient int oldVar_stepType;
 	protected transient List<FinanceStepPolicyDetail> oldVar_finStepPolicyList;
 
-	//Finance Main Details Tab---> 2. Grace Period Details 
+	// Finance Main Details Tab---> 2. Grace Period Details
 
 	protected transient boolean oldVar_allowGrace;
 	protected transient int oldVar_graceTerms;
@@ -448,7 +446,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected transient boolean oldVar_allowGrcRepay;
 	protected transient int oldVar_grcSchdMthd;
 
-	//Finance Main Details Tab---> 3. Repayment Period Details 
+	// Finance Main Details Tab---> 3. Repayment Period Details
 
 	protected transient int oldVar_numberOfTerms;
 	protected transient BigDecimal oldVar_finRepaymentAmount;
@@ -473,7 +471,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected transient int oldVar_finRepayMethod;
 	protected transient int oldVar_tenureInMonths;
 
-	//Finance Main Details Tab---> 4. Overdue Penalty Details
+	// Finance Main Details Tab---> 4. Overdue Penalty Details
 	protected transient boolean oldVar_applyODPenalty;
 	protected transient boolean oldVar_oDIncGrcDays;
 	protected transient String oldVar_oDChargeType;
@@ -487,7 +485,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 	protected Vbox discrepancies; // autoWired
 
-	//Main Tab Details
+	// Main Tab Details
 
 	protected Tabs tabsIndexCenter;
 	protected Tabpanels tabpanelsBoxIndexCenter;
@@ -496,7 +494,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected Tab custDetailTab;
 	protected Rows additionalDetails;
 
-	//External Fields usage for Individuals ---->  Schedule Details
+	// External Fields usage for Individuals ----> Schedule Details
 
 	protected boolean recSave = false;
 	protected boolean buildEvent = false;
@@ -507,7 +505,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected Component customerWindow = null;
 	protected Component collateralAssignmentWindow = null;
 
-	//Sub Window Child Details Dialog Controllers
+	// Sub Window Child Details Dialog Controllers
 	private transient ScheduleDetailDialogCtrl scheduleDetailDialogCtrl = null;
 	private transient EligibilityDetailDialogCtrl eligibilityDetailDialogCtrl = null;
 	private transient DocumentDetailDialogCtrl documentDetailDialogCtrl = null;
@@ -530,7 +528,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected ExtendedFieldCtrl extendedFieldCtrl = null;
 	private String pdfExtTabPanelId;
 
-	//Bean Setters  by application Context
+	// Bean Setters by application Context
 	private FinanceDetailService financeDetailService;
 	private AccountsService accountsService;
 	private AccountEngineExecution engineExecution;
@@ -673,7 +671,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.downPayBank.setScale(finFormatter);
 		this.downPayBank.setTextBoxWidth(200);
 
-		// Step Finance Field Properties       		
+		// Step Finance Field Properties
 		this.noOfSteps.setMaxlength(2);
 		this.stepPolicy.setMaxlength(8);
 		this.stepPolicy.setMandatoryStyle(true);
@@ -792,7 +790,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			this.row_salesDept.setVisible(false);
 		}
 
-		//TODO: SET SECURITY RIGHT
+		// TODO: SET SECURITY RIGHT
 		// !isReadOnly("FinanceMainDialog_AlwAdvEMI")
 
 		if (isWorkFlowEnabled()) {
@@ -858,7 +856,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		//Open Window For maintenance
+		// Open Window For maintenance
 		if (StringUtils.isNotEmpty(moduleDefiner)) {
 
 			if ((getFinanceDetail().getFinScheduleData().getFeeRules() != null
@@ -944,7 +942,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		if (elgRuleList != null && !elgRuleList.isEmpty()) {
 
-			//Eligibility Detail Tab
+			// Eligibility Detail Tab
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/EligibilityDetailDialog.zul", tabpanel,
 					getDefaultArguments());
 
@@ -1003,7 +1001,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		if (scoringGroupList != null && !scoringGroupList.isEmpty()) {
 
-			//Scoring Detail Tab
+			// Scoring Detail Tab
 			final Map<String, Object> map = getDefaultArguments();
 			map.put("userRole", getRole());
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/ScoringDetailDialog.zul", tabpanel, map);
@@ -1054,7 +1052,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			tabpanel.setHeight(this.borderLayoutHeight - 100 - 30 + "px");
 			ComponentsCtrl.applyForward(tab, "onSelect=onSelectJointGuarantorDetailsTab");
 
-			//Joint Account Detail & Guarantor Detail Tab
+			// Joint Account Detail & Guarantor Detail Tab
 			final Map<String, Object> map = getDefaultArguments();
 			map.put("isFinanceProcess", true);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/JointAccountDetailDialog.zul", tabpanel,
@@ -1109,7 +1107,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		if (getFinanceDetail().getAggrementList() != null && getFinanceDetail().getAggrementList().size() > 0) {
 
-			//Agreement Detail Tab
+			// Agreement Detail Tab
 			final Map<String, Object> map = getDefaultArguments();
 			map.put("financeMainDialogCtrl", this);
 			map.put("financeDetail", getFinanceDetail());
@@ -1535,7 +1533,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		if (!onLoadProcess) {
 
-			//Accounting Detail Tab
+			// Accounting Detail Tab
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AccountingDetailDialog.zul", tabpanel,
 					getDefaultArguments());
 
@@ -1563,8 +1561,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	public void appendRecommendDetailTab(boolean onLoadProcess) throws InterruptedException {
 		logger.debug("Entering");
 
-		//Memo Tab Details --  Comments or Recommendations
-		//this.btnNotes.setVisible(false);
+		// Memo Tab Details -- Comments or Recommendations
+		// this.btnNotes.setVisible(false);
 
 		if (onLoadProcess) {
 
@@ -1668,7 +1666,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		arrayList.add(4,
 				this.cbProfitDaysBasis == null ? ""
 						: (this.cbProfitDaysBasis.getItemCount() > 0
-								? this.cbProfitDaysBasis.getSelectedItem().getLabel().toString() : ""));
+								? this.cbProfitDaysBasis.getSelectedItem().getLabel().toString()
+								: ""));
 		arrayList.add(5, this.gracePeriodEndDate_two == null ? null : this.gracePeriodEndDate_two.getValue());
 		arrayList.add(6, allowGrace == null ? false : this.allowGrace.isChecked());
 		FinanceType fianncetype = getFinanceDetail().getFinScheduleData().getFinanceType();
@@ -1798,7 +1797,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			extendedFieldCtrl.setReadOnly(/* isReadOnly("CustomerDialog_custFirstName") */false);
 			extendedFieldCtrl.setWindow(getMainWindow());
 			extendedFieldCtrl.setTabHeight(this.borderLayoutHeight - 100);
-			//for getting rights in ExtendeFieldGenerator these two fields required.
+			// for getting rights in ExtendeFieldGenerator these two fields required.
 			/*
 			 * extendedFieldCtrl.setUserWorkspace(getUserWorkspace()); extendedFieldCtrl.setUserRole(getRole());
 			 */
@@ -1821,8 +1820,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceMain
-	 *            financeMain
+	 * @param aFinanceMain financeMain
 	 * @throws ParseException
 	 * @throws InterruptedException
 	 * @throws InvocationTargetException
@@ -1844,7 +1842,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			isOverdraft = true;
 		}
 
-		//Showing Product Details for Promotion Type
+		// Showing Product Details for Promotion Type
 		if (StringUtils.isNotBlank(financeType.getProduct())) {
 
 			String finCategory = String.valueOf(financeType.getFinCategory().charAt(0))
@@ -1915,7 +1913,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		//Commitment Override option
+		// Commitment Override option
 		if (financeType.isFinCommitmentReq()) {
 			this.commitmentRef.setMandatoryStyle(true);
 		} else {
@@ -1924,7 +1922,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		this.finIsActive.setChecked(aFinanceMain.isFinIsActive());
 		this.tDSApplicable.setChecked(aFinanceMain.isTDSApplicable());
-		//TDSApplicable Visiblitly based on Financetype Selection
+		// TDSApplicable Visiblitly based on Financetype Selection
 		if (financeType.isTdsApplicable()) {
 			this.row_odAllowTDS.setVisible(ImplementationConstants.ALLOW_TDS_ON_FEE);
 			this.hbox_tdsApplicable.setVisible(true);
@@ -1965,7 +1963,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				this.row_downPayBank.setVisible(false);
 			}
 		}
-		
+
 		this.finPurpose.setValue(aFinanceMain.getFinPurpose());
 		if (StringUtils.isNotBlank(aFinanceMain.getFinPurpose())) {
 			this.finPurpose.setDescription(aFinanceMain.getLovDescFinPurposeName());
@@ -2417,7 +2415,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		if (!isOverdraft && (!aFinanceMain.isNew() || StringUtils.isNotBlank(aFinanceMain.getFinReference()))) {
 			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
-				//this.nextRepayDate.setValue(aFinanceMain.getNextRepayDate());
+				// this.nextRepayDate.setValue(aFinanceMain.getNextRepayDate());
 				this.nextRepayCpzDate.setValue(aFinanceMain.getNextRepayCpzDate());
 				this.nextRepayRvwDate.setValue(aFinanceMain.getNextRepayRvwDate());
 				this.nextRepayPftDate.setValue(aFinanceMain.getNextRepayPftDate());
@@ -2451,7 +2449,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		this.planDeferCount.setValue(aFinanceMain.getPlanDeferCount());
 
-		//FinanceMain Details Tab ---> 4. Overdue Penalty Details
+		// FinanceMain Details Tab ---> 4. Overdue Penalty Details
 		if (financeType.isApplyODPenalty()) {
 
 			FinODPenaltyRate penaltyRate = aFinanceDetail.getFinScheduleData().getFinODPenaltyRate();
@@ -2498,7 +2496,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		setReadOnlyForCombobox();
-		//onCheckDiffDisbCcy(false);
+		// onCheckDiffDisbCcy(false);
 		setRepayAccMandatory();
 
 		logger.debug("Leaving");
@@ -2779,9 +2777,9 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	// *************** OnSelect ComboBox Events *************//
 	// ******************************************************//
 
-	//FinanceMain Details Tab ---> 1. Basic Details
+	// FinanceMain Details Tab ---> 1. Basic Details
 
-	//On Change Event for Finance Start Date
+	// On Change Event for Finance Start Date
 	public void onChange$finStartDate(Event event) {
 		logger.debug("Entering" + event.toString());
 		if (this.finStartDate.getValue() != null) {
@@ -2836,7 +2834,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	//Change all the Frequencies 
+	// Change all the Frequencies
 	public void changeFrequencies() {
 		logger.debug("Entering");
 		if (StringUtils.isNotBlank(this.gracePftFrq.getValue())) {
@@ -3132,19 +3130,20 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	public void onFulfill$accountsOfficer(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		Object dataObject = accountsOfficer.getObject();
-		if (dataObject instanceof String) {
-			this.accountsOfficer.setValue(dataObject.toString());
+		if (dataObject == null && dataObject instanceof String) {
+			this.accountsOfficer.setValue("");
 			this.accountsOfficer.setDescription("");
+			this.accountsOfficer.setAttribute("DealerId", null);
 		} else {
 			VehicleDealer details = (VehicleDealer) dataObject;
 			if (details != null) {
 				this.accountsOfficer.setAttribute("DealerId", details.getDealerId());
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/*
@@ -3180,7 +3179,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			tabStepDetailsTab.setVisible(this.stepFinance.isChecked());
 		}
 
-		//Clear Step Details Tab Data on User Action
+		// Clear Step Details Tab Data on User Action
 		if (isAction) {
 			getFinanceDetail().getFinScheduleData().getStepPolicyDetails().clear();
 			if (getStepDetailDialogCtrl() != null) {
@@ -3209,7 +3208,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			this.space_stepType.setSclass("");
 			this.stepType.setDisabled(true);
 
-			//Filling Step Policy Details List
+			// Filling Step Policy Details List
 			if (isAction) {
 				List<StepPolicyDetail> policyList = getStepPolicyService()
 						.getStepPolicyDetailsById(this.stepPolicy.getValue());
@@ -3273,7 +3272,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			getStepDetailDialogCtrl().setAllowedManualSteps(this.alwManualSteps.isChecked());
 		}
 
-		//Filling Step Policy Details List
+		// Filling Step Policy Details List
 		if (isAction && StringUtils.isNotEmpty(this.stepPolicy.getValue())) {
 			List<StepPolicyDetail> policyList = getStepPolicyService()
 					.getStepPolicyDetailsById(this.stepPolicy.getValue());
@@ -3385,8 +3384,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	/**
 	 * Method to validate the data before generating the schedule
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 */
 	protected boolean doValidation(AuditHeader auditHeader) throws InterruptedException {
 		logger.debug("Entering");
@@ -3398,7 +3396,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 			ArrayList<ErrorDetail> errorList = new ArrayList<ErrorDetail>();
 
-			//FinanceMain Details Tab ---> 1. Basic Details
+			// FinanceMain Details Tab ---> 1. Basic Details
 
 			// validate finance currency
 			if (!this.finCcy.isReadonly()) {
@@ -3481,7 +3479,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 
-			//FinanceMain Details Tab ---> 2. Grace Period Details
+			// FinanceMain Details Tab ---> 2. Grace Period Details
 
 			if (getFinanceDetail().getFinScheduleData().getFinanceMain().isAllowGrcPeriod()) {
 
@@ -3605,7 +3603,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 						 * PennantAppUtil.formateDate(this.nextGrcCpzDate_two.getValue(), ""),
 						 * PennantAppUtil.formateDate(this.nextGrcPftDate_two.getValue(), "") }, new String[] {}));
 						 */
-						//(validation not required:Instruction given by pradeep)
+						// (validation not required:Instruction given by pradeep)
 					}
 
 					if (this.nextGrcCpzDate_two.getValue().after(this.gracePeriodEndDate_two.getValue())) {
@@ -3624,7 +3622,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 
-			//FinanceMain Details Tab ---> 3. Repayment Period Details
+			// FinanceMain Details Tab ---> 3. Repayment Period Details
 
 			if (!this.repayRate.isBaseReadonly() && StringUtils.isEmpty(this.repayRate.getBaseValue())) {
 				errorList.add(new ErrorDetail("repayBaseRate", "30513", new String[] {}, null));
@@ -3634,8 +3632,10 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			// frequency or not
 			if (!this.repayFrq.validateFrquency(this.nextRepayDate_two.getValue(),
 					this.gracePeriodEndDate.getValue())) {
-				errorList.add(new ErrorDetail("nextRepayDate_two", "65004",
-						new String[] { Labels.getLabel("label_FinanceMainDialog_NextRepayDate.value"),
+				errorList.add(new ErrorDetail(
+						"nextRepayDate_two", "65004",
+						new String[] {
+								Labels.getLabel("label_FinanceMainDialog_NextRepayDate.value"),
 								Labels.getLabel("label_FinanceMainDialog_RepayFrq.value"),
 								Labels.getLabel("finRepaymentDetails") },
 						new String[] { this.nextRepayDate_two.getValue().toString(), this.repayFrq.getValue() }));
@@ -3660,8 +3660,10 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			// profit frequency or not
 			if (!this.repayPftFrq.validateFrquency(this.nextRepayPftDate_two.getValue(),
 					this.gracePeriodEndDate.getValue())) {
-				errorList.add(new ErrorDetail("nextRepayPftDate_two", "65004",
-						new String[] { Labels.getLabel("label_FinanceMainDialog_NextRepayPftDate.value"),
+				errorList.add(new ErrorDetail(
+						"nextRepayPftDate_two", "65004",
+						new String[] {
+								Labels.getLabel("label_FinanceMainDialog_NextRepayPftDate.value"),
 								Labels.getLabel("label_FinanceMainDialog_RepayPftFrq.value"),
 								Labels.getLabel("WIFinRepaymentDetails") },
 						new String[] { this.nextRepayPftDate_two.getValue().toString(), this.repayPftFrq.getValue() }));
@@ -3680,8 +3682,10 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			// review frequency or not
 			if (!this.repayRvwFrq.validateFrquency(this.nextRepayRvwDate_two.getValue(),
 					this.gracePeriodEndDate.getValue())) {
-				errorList.add(new ErrorDetail("nextRepayRvwDate_two", "65004",
-						new String[] { Labels.getLabel("label_FinanceMainDialog_NextRepayRvwDate.value"),
+				errorList.add(new ErrorDetail(
+						"nextRepayRvwDate_two", "65004",
+						new String[] {
+								Labels.getLabel("label_FinanceMainDialog_NextRepayRvwDate.value"),
 								Labels.getLabel("label_FinanceMainDialog_RepayRvwFrq.value"),
 								Labels.getLabel("finRepaymentDetails") },
 						new String[] { this.nextRepayRvwDate_two.getValue().toString(), this.repayRvwFrq.getValue() }));
@@ -3700,8 +3704,10 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			// capital frequency or not
 			if (!this.repayCpzFrq.validateFrquency(this.nextRepayCpzDate_two.getValue(),
 					this.gracePeriodEndDate.getValue())) {
-				errorList.add(new ErrorDetail("nextRepayCpzDate_two", "65004",
-						new String[] { Labels.getLabel("label_FinanceMainDialog_NextRepayCpzDate.value"),
+				errorList.add(new ErrorDetail(
+						"nextRepayCpzDate_two", "65004",
+						new String[] {
+								Labels.getLabel("label_FinanceMainDialog_NextRepayCpzDate.value"),
 								Labels.getLabel("label_FinanceMainDialog_RepayCpzFrq.value"),
 								Labels.getLabel("finRepaymentDetails") },
 						new String[] { this.nextRepayCpzDate_two.getValue().toString(), this.repayCpzFrq.getValue() }));
@@ -3785,7 +3791,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 			}
-			//Step Policy Conditions Verification
+			// Step Policy Conditions Verification
 			if (this.stepFinance.isChecked()) {
 				String schdMethod = this.cbScheduleMethod.getSelectedItem().getValue().toString();
 
@@ -3806,7 +3812,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 			}
 
-			//Setting Step Policy Details Installments & Validations
+			// Setting Step Policy Details Installments & Validations
 			if (this.stepFinance.isChecked()) {
 				if (getStepDetailDialogCtrl() != null) {
 					errorList.addAll(getStepDetailDialogCtrl().doValidateStepDetails(
@@ -3884,7 +3890,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		return notes;
 	}
 
-
 	public void setDisableCbFrqs(boolean isReadOnly, Combobox cbFrq1, Combobox cbFrq2, Combobox cbFrq3) {
 		readOnlyComponent(isReadOnly, cbFrq1);
 		readOnlyComponent(isReadOnly, cbFrq2);
@@ -3915,8 +3920,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
-	 * @param aFinanceSchData
-	 *            (FinScheduleData)
+	 * @param aFinanceSchData (FinScheduleData)
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 * @throws InterruptedException
@@ -3929,7 +3933,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		boolean isFrqDateValReq = SysParamUtil.isAllowed("FRQ_DATE_VALIDATION_REQ");
 
-		//FinanceMain Detail Tab ---> 1. Basic Details
+		// FinanceMain Detail Tab ---> 1. Basic Details
 		FinanceMain aFinanceMain = aFinanceSchData.getFinanceMain();
 		Date financeDate = null;
 		boolean isOverdraft = false;
@@ -4183,7 +4187,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			wve.add(we);
 		}
 
-		//FinanceMain Details tab ---> 2. Grace Period Details
+		// FinanceMain Details tab ---> 2. Grace Period Details
 
 		try {
 			if (this.gracePeriodEndDate.getValue() != null) {
@@ -4340,7 +4344,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 						aFinanceMain.setNextGrcPftDate(DateUtility.getDate(
 								DateUtility.format(this.nextGrcPftDate_two.getValue(), PennantConstants.dateFormat)));
 					}
-					//Validation Against the Repay Frequency and the next Frequency Date
+					// Validation Against the Repay Frequency and the next Frequency Date
 					if (isFrqDateValReq && this.nextGrcPftDate.getValue() != null
 							&& !FrequencyUtil.isFrqDate(this.gracePftFrq.getValue(), this.nextGrcPftDate.getValue())) {
 						throw new WrongValueException(this.nextGrcPftDate,
@@ -4371,7 +4375,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 						aFinanceMain.setNextGrcPftRvwDate(DateUtility.getDate(DateUtility
 								.format(this.nextGrcPftRvwDate_two.getValue(), PennantConstants.dateFormat)));
 					}
-					//Validation Against the Repay Frequency and the next Frequency Date
+					// Validation Against the Repay Frequency and the next Frequency Date
 					if (isFrqDateValReq && this.nextGrcPftRvwDate.getValue() != null && !FrequencyUtil
 							.isFrqDate(this.gracePftRvwFrq.getValue(), this.nextGrcPftRvwDate.getValue())) {
 						throw new WrongValueException(this.nextGrcPftRvwDate,
@@ -4406,7 +4410,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 						aFinanceMain.setNextGrcCpzDate(DateUtility.getDate(
 								DateUtility.format(this.nextGrcCpzDate_two.getValue(), PennantConstants.dateFormat)));
 					}
-					//Validation Against the Repay Frequency and the next Frequency Date
+					// Validation Against the Repay Frequency and the next Frequency Date
 					if (isFrqDateValReq && this.nextGrcCpzDate.getValue() != null
 							&& !FrequencyUtil.isFrqDate(this.graceCpzFrq.getValue(), this.nextGrcCpzDate.getValue())) {
 						throw new WrongValueException(this.nextGrcCpzDate,
@@ -4464,7 +4468,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			aFinanceMain.setGraceTerms(0);
 		}
 
-		//FinanceMain Details tab ---> 3. Repayment Period Details
+		// FinanceMain Details tab ---> 3. Repayment Period Details
 
 		try {
 			aFinanceMain.setFinRepaymentAmount(aFinanceMain.getFinRepaymentAmount() == null ? BigDecimal.ZERO
@@ -4557,7 +4561,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 					aFinanceMain.setNextRepayPftDate(DateUtility.getDate(
 							DateUtility.format(this.nextRepayPftDate_two.getValue(), PennantConstants.dateFormat)));
 				}
-				//Validation Against the Repay Frequency and the next Frequency Date
+				// Validation Against the Repay Frequency and the next Frequency Date
 				if (isFrqDateValReq && this.nextRepayPftDate.getValue() != null
 						&& !FrequencyUtil.isFrqDate(this.repayPftFrq.getValue(), this.nextRepayPftDate.getValue())) {
 					throw new WrongValueException(this.nextRepayPftDate,
@@ -4594,7 +4598,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 					aFinanceMain.setNextRepayRvwDate(DateUtility.getDate(
 							DateUtility.format(this.nextRepayRvwDate_two.getValue(), PennantConstants.dateFormat)));
 				}
-				//Validation Against the Repay Frequency and the next Frequency Date
+				// Validation Against the Repay Frequency and the next Frequency Date
 				if (isFrqDateValReq && this.nextRepayRvwDate.getValue() != null
 						&& !FrequencyUtil.isFrqDate(this.repayRvwFrq.getValue(), this.nextRepayRvwDate.getValue())) {
 					throw new WrongValueException(this.nextRepayRvwDate,
@@ -4625,7 +4629,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 					aFinanceMain.setNextRepayCpzDate(DateUtility.getDate(
 							DateUtility.format(this.nextRepayCpzDate_two.getValue(), PennantConstants.dateFormat)));
 				}
-				//Validation Against the Repay Frequency and the next Frequency Date
+				// Validation Against the Repay Frequency and the next Frequency Date
 				if (isFrqDateValReq && this.nextRepayCpzDate.getValue() != null
 						&& !FrequencyUtil.isFrqDate(this.repayCpzFrq.getValue(), this.nextRepayCpzDate.getValue())) {
 					throw new WrongValueException(this.nextRepayCpzDate,
@@ -4672,7 +4676,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 					aFinanceMain.setNextRepayDate(DateUtility.getDate(
 							DateUtility.format(this.nextRepayDate_two.getValue(), PennantConstants.dateFormat)));
 				}
-				//Validation Against the Repay Frequency and the next Frequency Date
+				// Validation Against the Repay Frequency and the next Frequency Date
 				if (isFrqDateValReq && this.nextRepayDate.getValue() != null
 						&& !FrequencyUtil.isFrqDate(this.repayFrq.getValue(), this.nextRepayDate.getValue())) {
 					throw new WrongValueException(this.nextRepayDate,
@@ -4708,7 +4712,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 					&& this.maturityDate_two.getValue() != null) {
 
 				if (financeType.getFinMinTerm() == 1 && financeType.getFinMaxTerm() == 1) {
-					//Do Nothing
+					// Do Nothing
 				} else {
 					throw new WrongValueException(this.numberOfTerms,
 							Labels.getLabel("EITHER_OR",
@@ -4873,7 +4877,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			wve.add(we);
 		}
 
-		//FinanceMain Details Tab ---> 4. Overdue Penalty Details
+		// FinanceMain Details Tab ---> 4. Overdue Penalty Details
 
 		FinODPenaltyRate penaltyRate = null;
 		if (this.applyODPenalty.isChecked()) {
@@ -4972,7 +4976,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		if (wve.isEmpty()) {
 
-			//Finance Overdue Details set to Penalty Rate Object
+			// Finance Overdue Details set to Penalty Rate Object
 			aFinanceSchData.setFinODPenaltyRate(penaltyRate);
 
 			aFinanceMain.setAllowGrcPftRvw(getFinanceDetail().getFinScheduleData().getFinanceMain().isAllowGrcPftRvw());
@@ -5007,13 +5011,13 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 
-			//Reset Maturity Date for maintainance purpose
+			// Reset Maturity Date for maintainance purpose
 			if (!buildEvent && aFinanceSchData.getFinanceScheduleDetails() != null
 					&& !aFinanceSchData.getFinanceScheduleDetails().isEmpty()) {
 				int size = aFinanceSchData.getFinanceScheduleDetails().size();
 				aFinanceMain.setMaturityDate(aFinanceSchData.getFinanceScheduleDetails().get(size - 1).getSchDate());
 
-				//Reset Grace period End Date while Change Frequency Option
+				// Reset Grace period End Date while Change Frequency Option
 				if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGFRQ)) {
 					for (int i = 0; i < aFinanceSchData.getFinanceScheduleDetails().size(); i++) {
 						FinanceScheduleDetail curSchd = aFinanceSchData.getFinanceScheduleDetails().get(i);
@@ -5034,7 +5038,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				aFinanceMain.setFinSourceID(App.CODE);
 			}
 
-			//Maturity Calculation for Commercial 
+			// Maturity Calculation for Commercial
 			int months = DateUtility.getMonthsBetween(aFinanceMain.getFinStartDate(), aFinanceMain.getMaturityDate(),
 					true);
 			if (months > 0) {
@@ -5136,7 +5140,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		//FinanceMain Details Tab ---> 1. Basic Details
+		// FinanceMain Details Tab ---> 1. Basic Details
 		if (this.oldVar_finReference != null && this.finReference.getValue() != null) {
 			if (!this.oldVar_finReference.equals(this.finReference.getValue())) {
 				return true;
@@ -5235,7 +5239,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			return true;
 		}
 
-		//FinanceMain Details Tab ---> 2. Grace Period Details
+		// FinanceMain Details Tab ---> 2. Grace Period Details
 
 		if (this.gracePeriodEndDate.getValue() != null && !close) {
 			if (DateUtility.compare(this.oldVar_gracePeriodEndDate, this.gracePeriodEndDate.getValue()) != 0) {
@@ -5312,7 +5316,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		//FinanceMain Details Tab ---> 3. Repayment Period Details
+		// FinanceMain Details Tab ---> 3. Repayment Period Details
 
 		if (this.numberOfTerms.intValue() != 0 && !close) {
 			if (this.oldVar_numberOfTerms != this.numberOfTerms.intValue()) {
@@ -5401,7 +5405,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			return true;
 		}
 
-		//FinanceMain Details Tab ---> 4. Overdue Penalty Details
+		// FinanceMain Details Tab ---> 4. Overdue Penalty Details
 
 		if (gb_OverDuePenalty.isVisible() && close) {
 
@@ -5446,7 +5450,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 
-		//FinanceMain Details Tab ---> 1. Basic Details
+		// FinanceMain Details Tab ---> 1. Basic Details
 
 		if (this.finStartDate.getValue() == null) {
 			this.finStartDate.setValue(DateUtility.getAppDate());
@@ -5477,7 +5481,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			setRepayAccMandatory();
 		}
 
-		//FinanceMain Details Tab ---> 2. Grace Period Details
+		// FinanceMain Details Tab ---> 2. Grace Period Details
 		getFinanceDetail().getFinScheduleData().getFinanceMain().setAllowGrcPeriod(this.allowGrace.isChecked());
 
 		if (this.graceTerms.intValue() == 0 && this.gracePeriodEndDate.getValue() == null) {
@@ -5647,7 +5651,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		//FinanceMain Details Tab ---> 3. Repayment Period Details
+		// FinanceMain Details Tab ---> 3. Repayment Period Details
 
 		if (this.repayRate.getMarginValue() == null) {
 			this.repayRate.setMarginValue(financeType.getFinMargin());
@@ -5916,7 +5920,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	public void doEdit() {
 		logger.debug("Entering");
 
-		//FinanceMain Details Tab ---> 1. Basic Details
+		// FinanceMain Details Tab ---> 1. Basic Details
 
 		if (getFinanceDetail().getFinScheduleData().getFinanceMain().isNewRecord()) {
 			this.finReference.setReadonly(false);
@@ -5948,7 +5952,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.commitmentRef.setReadonly(isReadOnly("FinanceMainDialog_commitmentRef"));
 		this.finLimitRef.setReadonly(isReadOnly("FinanceMainDialog_commitmentRef"));
 		this.tDSApplicable.setDisabled(isReadOnly("FinanceMainDialog_tDSApplicable"));
-		//this.odTDSApplicable.setDisabled(isReadOnly("FinanceMainDialog_tDSApplicable"));
+		// this.odTDSApplicable.setDisabled(isReadOnly("FinanceMainDialog_tDSApplicable"));
 		this.accountsOfficer.setReadonly(isReadOnly("FinanceMainDialog_accountsOfficer"));
 		this.dsaCode.setReadonly(isReadOnly("FinanceMainDialog_dsaCode"));
 		if (!getFinanceDetail().getFinScheduleData().getFinanceType().isTdsApplicable()) {
@@ -5971,7 +5975,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.salesDepartment.setReadonly(isReadOnly("FinanceMainDialog_salesDepartment"));
 		this.quickDisb.setDisabled(true);
 
-		//FinanceMain Details Tab ---> 2. Grace Period Details
+		// FinanceMain Details Tab ---> 2. Grace Period Details
 
 		readOnlyComponent(isReadOnly("FinanceMainDialog_allowGrace"), this.allowGrace);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_graceRateBasis"), this.grcRateBasis);
@@ -5993,9 +5997,9 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.graceCpzFrq.setDisabled(isReadOnly("FinanceMainDialog_graceCpzFrq"));
 		readOnlyComponent(isReadOnly("FinanceMainDialog_nextGrcCpzDate"), this.nextGrcCpzDate);
 		this.graceTerms.setReadonly(isReadOnly("FinanceMainDialog_graceTerms"));
-		//FinanceMain Details Tab ---> 2. Grace Period Details
+		// FinanceMain Details Tab ---> 2. Grace Period Details
 		doEditGrace(getFinanceDetail().getFinScheduleData());
-		//Drop Line
+		// Drop Line
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
 				getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory())) {
 			if (getFinanceDetail().getFinScheduleData().getFinanceType().isDroplineOD()) {
@@ -6019,7 +6023,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			this.odMnthlyTerms.setReadonly(true);
 		}
 
-		//FinanceMain Details Tab ---> 3. Repayment Period Details
+		// FinanceMain Details Tab ---> 3. Repayment Period Details
 
 		readOnlyComponent(isReadOnly("FinanceMainDialog_repayRateBasis"), this.repayRateBasis);
 		this.numberOfTerms.setReadonly(isReadOnly("FinanceMainDialog_numberOfTerms"));
@@ -6063,7 +6067,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		readOnlyComponent(isReadOnly("FinanceMainDialog_CpzAtReAge"), this.cpzAtReAge);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_RoundingMode"), this.roundingMode);
 
-		//FinanceMain Details Tab ---> 4. Overdue Penalty Details
+		// FinanceMain Details Tab ---> 4. Overdue Penalty Details
 		readOnlyComponent(isReadOnly("FinanceMainDialog_applyODPenalty"), this.applyODPenalty);
 
 		this.custCIF.setReadonly(true);
@@ -6100,11 +6104,12 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				.equals(finScheduleData.getFinanceMain().getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			isAllowGrace = finScheduleData.getFinanceType().isFInIsAlwGrace();
 		}
-		//FIXME (KS) TO be fixed for record type empty.logic needs to be relooked in case of orgination and servicing are different
-		//		if (!StringUtils.equals(finScheduleData.getFinanceMain().getRecordType(), PennantConstants.RECORD_TYPE_NEW)
-		//				|| (finScheduleData.getFinanceMain().isNewRecord() && StringUtils.equals(finScheduleData
-		//						.getFinanceMain().getRecordType(), PennantConstants.RECORD_TYPE_NEW))) {
-		//			isAllowGrace = finScheduleData.getFinanceMain().isAllowGrcPeriod();		}
+		// FIXME (KS) TO be fixed for record type empty.logic needs to be relooked in case of orgination and servicing
+		// are different
+		// if (!StringUtils.equals(finScheduleData.getFinanceMain().getRecordType(), PennantConstants.RECORD_TYPE_NEW)
+		// || (finScheduleData.getFinanceMain().isNewRecord() && StringUtils.equals(finScheduleData
+		// .getFinanceMain().getRecordType(), PennantConstants.RECORD_TYPE_NEW))) {
+		// isAllowGrace = finScheduleData.getFinanceMain().isAllowGrcPeriod(); }
 
 		if (isAllowGrace) {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_allowGrace"), this.allowGrace);
@@ -6144,7 +6149,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		readOnlyComponent(isReadOnly("FinanceMainDialog_grcSchdMthd"), this.cbGrcSchdMthd);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_allowGrcRepay"), this.allowGrcRepay);
 
-		//FIXME: Should we give access rights to individual components OR main componet OR base component is enough
+		// FIXME: Should we give access rights to individual components OR main componet OR base component is enough
 		/*
 		 * readOnlyComponent(isReadOnly("FinanceMainDialog_graceBaseRate"), this.graceRate.getBaseComp());
 		 * readOnlyComponent(isReadOnly("FinanceMainDialog_graceSpecialRate"), this.graceRate.getSpecialComp());
@@ -6158,8 +6163,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		readOnlyComponent(isReadOnly("FinanceMainDialog_graceBaseRate"), this.finGrcMinRate);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_graceBaseRate"), this.finGrcMaxRate);
 
-		//FIXME: We are not giving grace interest days seprately
-		//readOnlyComponent(isReadOnly("FinanceMainDialog_grcPftDaysBasis"), this.grcPftDaysBasis);
+		// FIXME: We are not giving grace interest days seprately
+		// readOnlyComponent(isReadOnly("FinanceMainDialog_grcPftDaysBasis"), this.grcPftDaysBasis);
 
 		readOnlyComponent(isReadOnly("FinanceMainDialog_gracePftFrq"), this.gracePftFrq);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_nextGrcPftDate"), this.nextGrcPftDate);
@@ -6176,7 +6181,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected void doClearMessage() {
 		logger.debug("Entering");
 
-		//FinanceMain Details Tab ---> 1. Basic Details
+		// FinanceMain Details Tab ---> 1. Basic Details
 
 		this.finReference.setErrorMessage("");
 		this.lovDescFinTypeName.setErrorMessage("");
@@ -6186,7 +6191,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.finContractDate.setErrorMessage("");
 		this.finAmount.setErrorMessage("");
 		this.downPayBank.setErrorMessage("");
-		//M_ this.custID.setErrorMessage("");
+		// M_ this.custID.setErrorMessage("");
 		this.defferments.setErrorMessage("");
 		this.planDeferCount.setErrorMessage("");
 		this.finBranch.setErrorMessage("");
@@ -6204,7 +6209,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.dmaCode.setErrorMessage("");
 		this.salesDepartment.setErrorMessage("");
 
-		//FinanceMain Details Tab ---> 2. Grace Period Details
+		// FinanceMain Details Tab ---> 2. Grace Period Details
 
 		this.grcRateBasis.setErrorMessage("");
 		this.gracePeriodEndDate.setErrorMessage("");
@@ -6222,7 +6227,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.nextGrcCpzDate.setErrorMessage("");
 		this.cbGrcSchdMthd.setErrorMessage("");
 		this.graceTerms.setErrorMessage("");
-		//FinanceMain Details Tab ---> 3. Repayments Period Details
+		// FinanceMain Details Tab ---> 3. Repayments Period Details
 
 		this.numberOfTerms.setErrorMessage("");
 		this.repayRateBasis.setErrorMessage("");
@@ -6245,7 +6250,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.finRepaymentAmount.setErrorMessage("");
 		this.finRepayMethod.setErrorMessage("");
 
-		//FinanceMain Details Tab ---> 4. Overdue Penalty Details
+		// FinanceMain Details Tab ---> 4. Overdue Penalty Details
 		this.oDChargeCalOn.setErrorMessage("");
 		this.oDChargeType.setErrorMessage("");
 		this.oDChargeAmtOrPerc.setErrorMessage("");
@@ -6260,7 +6265,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	public void doReadOnly() {
 		logger.debug("Entering");
 
-		//FinanceMain Details Tab ---> 1. Basic Details
+		// FinanceMain Details Tab ---> 1. Basic Details
 		this.custCIF.setReadonly(true);
 		this.btnSearchCustCIF.setVisible(false);
 		this.finReference.setReadonly(true);
@@ -6297,7 +6302,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.salesDepartment.setReadonly(true);
 		this.quickDisb.setDisabled(true);
 
-		//FinanceMain Details Tab ---> 2. Grace Period Details
+		// FinanceMain Details Tab ---> 2. Grace Period Details
 
 		this.allowGrace.setDisabled(true);
 		readOnlyComponent(true, this.gracePeriodEndDate);
@@ -6319,7 +6324,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		this.graceTerms.setReadonly(true);
 
-		//FinanceMain Details Tab ---> 3. Repayment Period Details
+		// FinanceMain Details Tab ---> 3. Repayment Period Details
 
 		this.numberOfTerms.setReadonly(true);
 		readOnlyComponent(true, this.repayRateBasis);
@@ -6352,7 +6357,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		readOnlyComponent(true, this.cpzAtUnPlannedEmi);
 		readOnlyComponent(true, this.cpzAtReAge);
 
-		//FinanceMain Details Tab ---> 4. Overdue Penalty Details
+		// FinanceMain Details Tab ---> 4. Overdue Penalty Details
 		readOnlyComponent(true, this.applyODPenalty);
 		readOnlyComponent(true, this.oDIncGrcDays);
 		readOnlyComponent(true, this.oDChargeType);
@@ -6382,7 +6387,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 		// remove validation, if there are a save before
 
-		//FinanceMain Details Tab ---> 1. Basic Details
+		// FinanceMain Details Tab ---> 1. Basic Details
 
 		this.finReference.setValue("");
 		this.finType.setValue("");
@@ -6404,7 +6409,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.finPurpose.setValue("");
 		this.finPurpose.setDescription("");
 
-		//FinanceMain Details Tab ---> 2. Grace Period Details
+		// FinanceMain Details Tab ---> 2. Grace Period Details
 
 		this.grcRateBasis.setSelectedIndex(0);
 		this.gracePeriodEndDate.setText("");
@@ -6422,7 +6427,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.graceCpzFrq.setValue("");
 		this.nextGrcCpzDate.setText("");
 		this.graceTerms.setText("");
-		//FinanceMain Details Tab ---> 3. Repayment Period Details
+		// FinanceMain Details Tab ---> 3. Repayment Period Details
 
 		this.numberOfTerms.setText("");
 		this.repayRateBasis.setSelectedIndex(0);
@@ -6445,7 +6450,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.finRepaymentAmount.setValue("");
 		this.finRepayMethod.setSelectedIndex(0);
 
-		//FinanceMain Details Tab ---> 4. Overdue Penalty Details
+		// FinanceMain Details Tab ---> 4. Overdue Penalty Details
 		this.applyODPenalty.setChecked(false);
 		this.oDIncGrcDays.setChecked(false);
 		this.oDChargeType.setSelectedIndex(0);
@@ -6490,7 +6495,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				if (commitment == null) {
 					commitment = getCommitmentService().getApprovedCommitmentById(finMain.getFinCommitmentRef());
 				}
-				//Commitment Stop draw down when rate Out of rage:
+				// Commitment Stop draw down when rate Out of rage:
 				BigDecimal effRate = finMain.getEffectiveRateOfReturn() == null ? BigDecimal.ZERO
 						: finMain.getEffectiveRateOfReturn();
 				if (BigDecimal.ZERO.compareTo(new BigDecimal(
@@ -6510,21 +6515,21 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 
-				//Commitment Expire date should be greater than finance start data
+				// Commitment Expire date should be greater than finance start data
 				if (commitment.getCmtExpDate().compareTo(finMain.getFinStartDate()) < 0) {
 					MessageUtil.showError(Labels.getLabel("label_Finance_CommitExpiryDateCheck",
 							new String[] { DateUtility.formatToLongDate(commitment.getCmtExpDate()) }));
 					return false;
 				}
 
-				//MultiBranch Utilization
+				// MultiBranch Utilization
 				if (!commitment.isMultiBranch() && !finMain.getFinBranch().equals(commitment.getCmtBranch())) {
 					MessageUtil.showError(Labels.getLabel("label_Finance_MultiBranchCheck",
 							new String[] { commitment.getCmtBranch() }));
 					return false;
 				}
 
-				//Shared Commitment Amount Check
+				// Shared Commitment Amount Check
 				if (!commitment.isSharedCmt() && commitment.getCmtUtilizedAmount().compareTo(BigDecimal.ZERO) > 0) {
 					MessageUtil.showError(Labels.getLabel("label_Finance_MultiFinanceCheck"));
 					return false;
@@ -6648,14 +6653,14 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 
 		FinanceDetail detail = getFinanceDetail();
-		//Stop Resetting data multiple times on Load Processing on Record or Double click the record
+		// Stop Resetting data multiple times on Load Processing on Record or Double click the record
 		if (isLoadProcess && getFinanceDetail().getCustomerEligibilityCheck() != null) {
 			return detail;
 		}
 
 		FinanceMain financeMain = detail.getFinScheduleData().getFinanceMain();
 		customer = detail.getCustomerDetails().getCustomer();
-		//Current Finance Monthly Installment Calculation
+		// Current Finance Monthly Installment Calculation
 		BigDecimal totalRepayAmount = financeMain.getTotalRepayAmt();
 		int installmentMnts = DateUtility.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate(),
 				false);
@@ -6663,12 +6668,12 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		BigDecimal curFinRepayAmt = totalRepayAmount.divide(new BigDecimal(installmentMnts), 0, RoundingMode.HALF_DOWN);
 		int months = DateUtility.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate());
 
-		//Customer Data Fetching
+		// Customer Data Fetching
 		if (customer == null) {
 			customer = getCustomerService().getCustomerById(financeMain.getCustID());
 		}
 
-		//Get Customer Employee Designation
+		// Get Customer Employee Designation
 		String custEmpDesg = "";
 		String custEmpSector = "";
 		String custEmpAlocType = "";
@@ -6857,7 +6862,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		aFinanceDetail.setUserAction(aFinanceMain.getUserAction());
 
-		//Finance CheckList Details Tab
+		// Finance CheckList Details Tab
 		if (checkListChildWindow != null) {
 			boolean validationSuccess = doSave_CheckList(aFinanceDetail, true);
 			if (!validationSuccess) {
@@ -6872,19 +6877,19 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		// get the selected branch object from the box
 		// Do data level validations here
 
-		//Finance Eligibility Details Tab
+		// Finance Eligibility Details Tab
 		if (getEligibilityDetailDialogCtrl() != null) {
 			aFinanceDetail = getEligibilityDetailDialogCtrl().doSave_EligibilityList(aFinanceDetail);
 		}
 
-		//Finance Scoring Details Tab
+		// Finance Scoring Details Tab
 		if (getScoringDetailDialogCtrl() != null) {
 			getScoringDetailDialogCtrl().doSave_ScoreDetail(aFinanceDetail);
 		} else {
 			aFinanceDetail.setFinScoreHeaderList(null);
 		}
 
-		// Guaranteer Details Tab ---> Guaranteer Details 
+		// Guaranteer Details Tab ---> Guaranteer Details
 		if (getJointAccountDetailDialogCtrl() != null) {
 			if (getJointAccountDetailDialogCtrl().getGuarantorDetailList() != null
 					&& getJointAccountDetailDialogCtrl().getGuarantorDetailList().size() > 0) {

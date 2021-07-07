@@ -159,10 +159,16 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 	@Override
 	public List<LinkedFinances> getFinIsLinkedActive(String finReference) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" T1.FinIsActive, T2.LinkedReference, T2.FinReference, T2.Status");
+		sql.append(" T1.FinIsActive, T2.LinkedReference,T2.FinReference, T2.Status");
 		sql.append(" From Financemain T1");
 		sql.append(" Inner Join Linkedfinances T2 on T1.FinReference = T2.LinkedReference");
-		sql.append(" Where T2.FinReference = ? or T2.LinkedReference = ?");
+		sql.append(" Where T2.FinReference = ?");
+		sql.append(" UNION");
+		sql.append(" select");
+		sql.append(" T1.FinIsActive, T2.LinkedReference,T2.FinReference, T2.Status");
+		sql.append(" From Financemain T1");
+		sql.append(" Inner Join Linkedfinances T2 on T1.FinReference = T2.FinReference");
+		sql.append(" Where T2.LinkedReference = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -224,11 +230,17 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 
 	@Override
 	public List<String> getFinReferences(String reference) {
-		String sql = "Select Distinct FinReference From LinkedFinances Where (FinReference = ? or LinkedReference = ?)";
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Distinct LinkedReference From LinkedFinances");
+		sql.append(" Where FinReference = ?");
+		sql.append(" union");
+		sql.append(" Select");
+		sql.append(" Distinct FinReference From LinkedFinances");
+		sql.append(" Where LinkedReference = ?");
 
 		logger.debug(Literal.SQL + sql);
 
-		return jdbcOperations.query(sql, ps -> {
+		return jdbcOperations.query(sql.toString(), ps -> {
 			ps.setString(1, reference);
 			ps.setString(2, reference);
 		}, (rs, i) -> {

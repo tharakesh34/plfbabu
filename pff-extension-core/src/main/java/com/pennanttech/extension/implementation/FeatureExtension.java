@@ -74,6 +74,12 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("SCHD_INST_CAL_ON_DISB_RELIZATION", true);
 
+		customConstants.put("ALLOW_SUBVENTION", true);
+
+		customConstants.put("PRESENT_RECEIPTS_ON_RESP", true);
+
+		customConstants.put("PRESENT_RESP_BOUNCE_REMARKS_MAN", true);
+
 		// Temporary Enabled, need to disable once the testing is done
 		customConstants.put("MANDATE_ALLOW_CO_APP", true);
 		customConstants.put("DISBURSEMENT_ALLOW_CO_APP", true);

@@ -110,8 +110,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	 * module workFlow Configuration. by using SecurityUsersDAO's update method 4) Audit the record in to AuditHeader
 	 * and AdtSecUsers by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -190,8 +189,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	 * SecUsers by using SecurityUsersDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtSecUsers by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -217,10 +215,8 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	/**
 	 * getSecurityUsersById fetch the details by using SecurityUsersDAO's getSecurityUsersById method.
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return SecurityUsers
 	 */
 
@@ -290,7 +286,13 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			} else if (securityUserDivBranch.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
 				updateRecord = true;
 			} else if (securityUserDivBranch.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-				deleteRecord = true;
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (securityUserDivBranch.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
 			}
 
 			SecurityUserDivBranch tempDetail = new SecurityUserDivBranch();
@@ -338,17 +340,17 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		logger.debug("Leaving ");
 		return list;
 	}
-	//	/**
-	//	 * getApprovedSecurityUsersById fetch the details by using SecurityUsersDAO's getSecurityUsersById method .
-	//	 * with parameter id and type as blank. it fetches the approved records from the SecUsers.
-	//	 * @param id (int)
-	//	 * @return SecurityUsers
-	//	 */
+	// /**
+	// * getApprovedSecurityUsersById fetch the details by using SecurityUsersDAO's getSecurityUsersById method .
+	// * with parameter id and type as blank. it fetches the approved records from the SecUsers.
+	// * @param id (int)
+	// * @return SecurityUsers
+	// */
 	//
-	//	public SecurityUser getApprovedSecurityUserById(long id) {
-	//		logger.debug("Entering ");
-	//		return securityUsersDAO.getSecurityUserById(id,"_AView");
-	//	}
+	// public SecurityUser getApprovedSecurityUserById(long id) {
+	// logger.debug("Entering ");
+	// return securityUsersDAO.getSecurityUserById(id,"_AView");
+	// }
 
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
@@ -361,8 +363,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	 * Audit the record in to AuditHeader and AdtSecUsers by using auditHeaderDAO.addAudit(auditHeader) based on the
 	 * transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -419,10 +420,10 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 				securityUsersDAO.update(securityUser, "");
 			}
 
-			List<SecurityUserDivBranch> divBranches = securityUser.getSecurityUserDivBranchList();
-			if (CollectionUtils.isNotEmpty(divBranches)) {
+			List<AuditDetail> userDivBranchs = securityUser.getAuditDetailMap().get("UserDivBranchs");
+			if (CollectionUtils.isNotEmpty(userDivBranchs)) {
 				securityUsersDAO.deleteBranchs(securityUser, "_temp");
-				saveUserDivisions(securityUser, "", "doApprove");
+				auditDetails.addAll(processingDetailList(userDivBranchs, "", securityUser));
 			}
 
 			List<AuditDetail> reportingManagers = securityUser.getAuditDetailMap().get("reportingManagers");
@@ -474,8 +475,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	 * workFlow table by using securityUsersDAO.delete with parameters securityUsers,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtSecUsers by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -507,8 +507,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -522,7 +521,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		SecurityUser securityUser = (SecurityUser) auditHeader.getAuditDetail().getModelData();
 		String usrLanguage = securityUser.getUserDetails().getLanguage();
 
-		//for reporting manager
+		// for reporting manager
 		List<ReportingManager> reportingmangerlist = securityUser.getReportingManagersList();
 		if (CollectionUtils.isNotEmpty(reportingmangerlist)) {
 			auditDetails = getAuditUserReportingmanagers(securityUser, auditTranType, method, usrLanguage, false);
@@ -571,7 +570,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		if (securityUser.isWorkflow()) {
 			tempSecurityUser = securityUsersDAO.getSecurityUserByLogin(securityUser.getUsrLogin(), "_Temp");
 		}
-		//SecurityUser aBefSecurityUser= securityUsersDAO.getSecurityUserByLogin(securityUser.getUsrLogin(), "");
+		// SecurityUser aBefSecurityUser= securityUsersDAO.getSecurityUserByLogin(securityUser.getUsrLogin(), "");
 		SecurityUser oldSecurityUser = securityUser.getBefImage();
 
 		String[] errParm = new String[4];
@@ -588,8 +587,8 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 
 		if (securityUser.isNewRecord()) { // for New record or new record into work flow
 
-			if (!securityUser.isWorkflow()) {// With out Work flow only new records  
-				if (befSecurityUser != null) { // Record Already Exists in the table with same userID then error  
+			if (!securityUser.isWorkflow()) {// With out Work flow only new records
+				if (befSecurityUser != null) { // Record Already Exists in the table with same userID then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 
 				}
@@ -601,8 +600,8 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 				 * }
 				 */
 			} else { // with work flow
-				if (tempSecurityUser != null) { // if records already exists in the Work flow table 
-					//auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
+				if (tempSecurityUser != null) { // if records already exists in the Work flow table
+					// auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 
 				}
@@ -647,7 +646,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 
 			} else {
 
-				if (tempSecurityUser == null) { // if records not exists in the Work flow table 
+				if (tempSecurityUser == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 
 				}
@@ -691,8 +690,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	 * 4.If records are more than USR_MAX_PWD_BACKUP for single user delete the oldest record by calling
 	 * SecurityUsersDAO' deleteOldestPassword
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * @return auditHeaders (AuditHeader)
 	 *
 	 */
@@ -711,7 +709,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			// Change Password: Save the password to maintain history.
 			getSecurityUserPasswordsDAO().save(securityUser);
 		} else {
-			// Reset Password: Set the password expire date, so that system will prompt the user to change his 
+			// Reset Password: Set the password expire date, so that system will prompt the user to change his
 			// password on his next login.
 			securityUser.setPwdExpDt(DateUtil.addDays(new Date(System.currentTimeMillis()), -1));
 		}
@@ -755,7 +753,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		return securityUserPasswordsDAO;
 	}
 
-	// Security User Division Branch Details	
+	// Security User Division Branch Details
 
 	/**
 	 * This method is to fetch division branch details for current user
@@ -975,8 +973,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	 * getApprovedSecurityUsersById fetch the details by using SecurityUsersDAO's getSecurityUsersById method . with
 	 * parameter id and type as blank. it fetches the approved records from the SecUsers.
 	 * 
-	 * @param id
-	 *            (int)
+	 * @param id (int)
 	 * @return SecurityUsers
 	 */
 	@Override
@@ -1108,7 +1105,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 
 		List<ReportingManager> list = reportingManagerDAO.getReportingManagers(securityUser.getUsrID(), tableType);
 		if (!list.isEmpty()) {
-			//getSecurityUserDAO().deleteBranchs(securityUser, tableType);
+			// getSecurityUserDAO().deleteBranchs(securityUser, tableType);
 		}
 
 		for (ReportingManager reportingmanager : reportmanagerList) {

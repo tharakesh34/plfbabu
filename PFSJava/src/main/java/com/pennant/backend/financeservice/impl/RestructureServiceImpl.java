@@ -386,8 +386,9 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 					}
 					curSchd.setBaseRate(StringUtils.trimToNull(finServiceInstruction.getBaseRate()));
 					curSchd.setSplRate(StringUtils.trimToNull(finServiceInstruction.getSplRate()));
-					curSchd.setMrgRate(StringUtils.trimToNull(finServiceInstruction.getBaseRate()) == null
-							? BigDecimal.ZERO : finServiceInstruction.getMargin());
+					curSchd.setMrgRate(
+							StringUtils.trimToNull(finServiceInstruction.getBaseRate()) == null ? BigDecimal.ZERO
+									: finServiceInstruction.getMargin());
 					curSchd.setActRate(finServiceInstruction.getActualRate());
 				}
 			}
@@ -895,9 +896,11 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 		} else {
 			resEndDate = rsd.getEmiHldEndDate();
 		}
-		/*
-		 * if (DateUtil.compare(resEndDate, SysParamUtil.getAppDate()) > 0) { resEndDate = SysParamUtil.getAppDate(); }
-		 */
+
+		Date appDate = SysParamUtil.getAppDate();
+		if (DateUtil.compare(resEndDate, appDate) > 0) {
+			resEndDate = appDate;
+		}
 
 		// Previous
 		for (FinanceScheduleDetail prvsSchd : prvsSchedules) {
@@ -926,7 +929,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 		// accrue
 		BigDecimal totProfitCalc = BigDecimal.ZERO;
 		for (FinanceScheduleDetail prvsSchd : prvsSchedules) {
-			if (DateUtil.compare(prvsSchd.getSchDate(), SysParamUtil.getAppDate()) > 0) {
+			if (DateUtil.compare(prvsSchd.getSchDate(), appDate) > 0) {
 				break;
 			}
 			totProfitCalc = totProfitCalc.add(prvsSchd.getProfitCalc());

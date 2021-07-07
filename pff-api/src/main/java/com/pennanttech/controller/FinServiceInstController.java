@@ -4508,11 +4508,15 @@ public class FinServiceInstController extends SummaryDetailService {
 	}
 
 	private List<RepayInstruction> sortRepayInstructions(List<RepayInstruction> ri) {
-		if (CollectionUtils.isEmpty(ri)) {
-			return ri;
+		if (CollectionUtils.isNotEmpty(ri)) {
+			Collections.sort(ri, new Comparator<RepayInstruction>() {
+				@Override
+				public int compare(RepayInstruction detail1, RepayInstruction detail2) {
+					return DateUtil.compare(detail1.getRepayDate(), detail2.getRepayDate());
+				}
+			});
 		}
-		return ri.stream().sorted((l1, l2) -> DateUtil.compare(l1.getRepayDate(), l2.getRepayDate()))
-				.collect(Collectors.toList());
+		return ri;
 	}
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {

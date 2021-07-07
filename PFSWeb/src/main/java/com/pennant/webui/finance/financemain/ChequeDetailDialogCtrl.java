@@ -1347,7 +1347,6 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			int chequeSerialNum = this.chequeSerialNo.intValue();
 			int numberofCheques = this.noOfCheques.getValue();
 			int prvsNoOfCheques = this.totNoOfCheques.getValue();
-			BigDecimal totalChequeAmt = this.totAmount.getActualValue();
 			String chequeType = this.chequeType.getSelectedItem().getValue().toString();
 			int emiNum = 0;
 
@@ -1371,7 +1370,6 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 						FinanceConstants.REPAYMTH_PDC)) {
 					cheqDetails.setAmount(
 							PennantApplicationUtil.unFormateAmount(this.amount.getActualValue(), ccyEditField));
-					totalChequeAmt = totalChequeAmt.add(this.amount.getActualValue());
 				} else {
 					cheqDetails.setAmount(PennantApplicationUtil.unFormateAmount(BigDecimal.ZERO, ccyEditField));
 				}
@@ -1397,7 +1395,6 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 			if (wve.isEmpty()) {
 				this.totNoOfCheques.setValue(prvsNoOfCheques + numberofCheques);
-				this.totAmount.setValue(totalChequeAmt);
 
 				doFillChequeDetails(this.listBoxChequeDetail, chequeDetails);
 			} else {
@@ -1459,6 +1456,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 	private BigDecimal getSchdAmount(Combobox scheduleComboBox) {
 		BigDecimal emiAmount = BigDecimal.ZERO;
+		BigDecimal totalChequeAmt = this.totAmount.getActualValue();
 
 		if (PennantConstants.SELECT_LABEL.equals(scheduleComboBox.getValue())) {
 			return emiAmount;
@@ -1479,6 +1477,12 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				emiAmount = fsd.getRepayAmount();
 				if (fsd.getTDSAmount() != null && fsd.getTDSAmount().compareTo(BigDecimal.ZERO) > 0) {
 					emiAmount = emiAmount.subtract(fsd.getTDSAmount());
+					if (fsd.getTDSAmount() != null && fsd.getTDSAmount().compareTo(BigDecimal.ZERO) > 0) {
+						emiAmount = emiAmount.subtract(fsd.getTDSAmount());
+						totalChequeAmt = PennantApplicationUtil.unFormateAmount(totalChequeAmt, ccyEditField)
+								.add(emiAmount);
+						this.totAmount.setValue(PennantApplicationUtil.formateAmount(totalChequeAmt, ccyEditField));
+					}
 				}
 				break;
 			}

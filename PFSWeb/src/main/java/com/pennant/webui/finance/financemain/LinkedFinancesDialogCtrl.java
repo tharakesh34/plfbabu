@@ -330,6 +330,12 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 			throw new WrongValueException(this.finReference, Labels.getLabel("invalid_reference"));
 		}
 
+		// Lan Linking should allow to link/De link the closed loans as well.
+
+		if (!financeMain.isFinIsActive()) {
+			throw new WrongValueException(this.finReference, Labels.getLabel("label_Loan_Inactive"));
+		}
+
 		// Entity Code Validation
 		if (!StringUtils.equals(entityCode, financeMain.getEntityCode())) {
 			throw new WrongValueException(this.finReference, Labels.getLabel("is_Entity_matching"));
@@ -500,8 +506,7 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 		}
 
 		List<LinkedFinances> list = aFinanceDetail.getLinkedFinancesList();
-		
-		
+
 		if (CollectionUtils.isNotEmpty(list)) {
 			Collections.sort(list, new Comparator<LinkedFinances>() {
 
@@ -1049,7 +1054,6 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 		this.linkedFinancesService = linkedFinancesService;
 	}
 
-
 	public void setFinanceMainBaseCtrl(FinanceMainBaseCtrl financeMainBaseCtrl) {
 		this.financeMainBaseCtrl = financeMainBaseCtrl;
 	}
@@ -1057,7 +1061,6 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
 	}
-
 
 	public void setFinanceSelectCtrl(FinanceSelectCtrl financeSelectCtrl) {
 		this.financeSelectCtrl = financeSelectCtrl;

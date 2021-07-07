@@ -5331,17 +5331,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public FinanceMain getFinanceMain(String finReference, String[] columns, String type) {
+		String field = String.join(", ", columns).substring(0);
+
 		StringBuilder sql = new StringBuilder("select ");
-		StringBuilder fields = new StringBuilder();
-
-		for (String column : columns) {
-			if (fields.length() > 0) {
-				fields.append(",");
-			}
-
-			fields.append(column);
-		}
-		sql.append(fields.toString());
+		sql.append(field);
 		sql.append(" From");
 		sql.append(" FinanceMain");
 		sql.append(StringUtils.trimToEmpty(type));

@@ -553,8 +553,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -586,8 +585,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aSecurityUser
-	 *            SecurityUser
+	 * @param aSecurityUser SecurityUser
 	 */
 	public void doWriteBeanToComponents(SecurityUser aSecurityUser) {
 		logger.debug(Literal.ENTERING);
@@ -1025,8 +1023,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	}
 
 	/**
-	 * @param usrLogin
-	 *            authType disable when double click on ADMIN_MAKER or ADMIN_APPROVER
+	 * @param usrLogin authType disable when double click on ADMIN_MAKER or ADMIN_APPROVER
 	 */
 	private void doSetAuthType(String userType) {
 		if (StringUtils.contains(userType, UserType.ADMIN.name())) {
@@ -1843,8 +1840,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	/**
 	 * This method displays passwordStatusMeter and label_PwdStatus
 	 * 
-	 * @param pwdstatusCode
-	 *            (int)
+	 * @param pwdstatusCode (int)
 	 */
 	public void showPasswordStatusMeter(int pwdstatusCode) {
 		switch (pwdstatusCode) {
@@ -2200,9 +2196,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 					}
 				}
 			}
-			if (!secUsrDivBranchsList.isEmpty()) {
-				securityUser.setSecurityUserDivBranchList(newDivBranchsProcess(secUsrDivBranchsList));
-			}
+			securityUser.setSecurityUserDivBranchList(newDivBranchsProcess(secUsrDivBranchsList));
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			this.befImgUsrDivBranchsList.clear();
@@ -2450,7 +2444,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 */
 	public List<SecurityUserDivBranch> newDivBranchsProcess(List<SecurityUserDivBranch> selectedUsrDivBranchsList) {
 		logger.debug(Literal.ENTERING);
-		List<SecurityUserDivBranch> newSecUsrDivBranchsList = new ArrayList<SecurityUserDivBranch>();
+		List<SecurityUserDivBranch> newSecUsrDivBranchsList = new ArrayList<>();
 		// if(!isNewRecord()){
 		// Below loop is to check deleted branchs from existing branchs
 		for (SecurityUserDivBranch asecurityUserDivBranch : getBefImgUsrDivBranchsList()) {
@@ -2461,11 +2455,17 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 					recordExists = true;
 					securityUserDivBranch2.setNewRecord(true);
 					securityUserDivBranch2.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+
+					if (PennantConstants.RECORD_TYPE_DEL.equals(asecurityUserDivBranch.getRecordType())) {
+						securityUserDivBranch2.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+						securityUserDivBranch2.setNewRecord(false);
+					}
+
 					newSecUsrDivBranchsList.add(securityUserDivBranch2);
 				}
 			}
 			if (!recordExists && !isNewRecord()) {
-				asecurityUserDivBranch.setNewRecord(false);
+				asecurityUserDivBranch.setNewRecord(true);
 				asecurityUserDivBranch.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				newSecUsrDivBranchsList.add(asecurityUserDivBranch);
 			}
@@ -2521,7 +2521,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		}
 	}
 
-	//Organisation Structure Hierarchy
+	// Organisation Structure Hierarchy
 
 	private static List<Property> getAccessTypes() {
 		List<Property> list = new ArrayList<>();
@@ -2978,7 +2978,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 		cluster.setParent(hbox);
 		cluster.setMandatoryStyle(true);
-		//cluster.setInputAllowed(false);
+		// cluster.setInputAllowed(false);
 
 		Cluster cl = new Cluster();
 		if (division.getParentCluster() != null) {
@@ -3056,7 +3056,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		entities.setValueColumn("EntityCode");
 		entities.setDescColumn("EntityDesc");
 		entities.setValidateColumns(new String[] { "EntityCode" });
-		//entities.setWhereClause(" entitycode in (select entity from rmtBranches)");
+		// entities.setWhereClause(" entitycode in (select entity from rmtBranches)");
 		entities.setWhereClause(" entitycode in (select s.entitycode from smtdivisiondetail s" + " where divisioncode ="
 				+ "'" + division.getUserDivision() + "'" + ") ");
 		logger.debug(Literal.LEAVING);
@@ -3174,7 +3174,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		logger.debug(Literal.LEAVING);
 	}
 
-	//For ReportingManagerList
+	// For ReportingManagerList
 
 	public void onClick$btnNewReportingManagerList(Event event) throws Exception {
 

@@ -2,6 +2,8 @@ package com.pennant.backend.model.finance;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TaxAmountSplit implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -19,9 +21,18 @@ public class TaxAmountSplit implements Serializable {
 	private BigDecimal inProcAmount = BigDecimal.ZERO;
 	private String taxType = null;
 	private Taxes taxes;
+	private Map<String, BigDecimal> taxPercMap = new HashMap<>();
 
 	public TaxAmountSplit() {
 		super();
+		this.taxPercMap.put("CGST", BigDecimal.ZERO);
+		this.taxPercMap.put("SGST", BigDecimal.ZERO);
+		this.taxPercMap.put("UGST", BigDecimal.ZERO);
+		this.taxPercMap.put("IGST", BigDecimal.ZERO);
+		this.taxPercMap.put("CESS", BigDecimal.ZERO);
+		this.taxPercMap.put("CESS", BigDecimal.ZERO);
+		this.taxPercMap.put("TOTAL_GST", BigDecimal.ZERO);
+		this.taxPercMap.put("TOTAL_IGST", BigDecimal.ZERO);
 	}
 
 	public BigDecimal getAmount() {
@@ -126,6 +137,14 @@ public class TaxAmountSplit implements Serializable {
 
 	public void setCess(BigDecimal cess) {
 		this.cess = cess;
+	}
+
+	public Map<String, BigDecimal> getTaxPercMap() {
+		return taxPercMap;
+	}
+
+	public void setTaxPercMap(Map<String, BigDecimal> taxPercMap) {
+		this.taxPercMap = taxPercMap;
 	}
 
 }

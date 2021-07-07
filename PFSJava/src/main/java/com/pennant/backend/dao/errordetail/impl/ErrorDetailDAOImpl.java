@@ -51,6 +51,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -78,10 +79,8 @@ public class ErrorDetailDAOImpl extends BasicDao<ErrorDetail> implements ErrorDe
 	/**
 	 * Fetch the Record Error Detail details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ErrorDetail
 	 */
 	@Override
@@ -96,36 +95,41 @@ public class ErrorDetailDAOImpl extends BasicDao<ErrorDetail> implements ErrorDe
 		sql.append(" Where Code = ?");
 
 		log.trace(Literal.SQL + sql.toString());
-		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
-			ErrorDetail ed = new ErrorDetail();
-			ed.setCode(rs.getString("Code"));
-			ed.setLanguage(rs.getString("Language"));
-			ed.setSeverity(rs.getString("Severity"));
-			ed.setMessage(rs.getString("Message"));
-			ed.setExtendedMessage(rs.getString("ExtendedMessage"));
-			ed.setVersion(rs.getInt("Version"));
-			ed.setLastMntBy(rs.getLong("LastMntBy"));
-			ed.setLastMntOn(rs.getTimestamp("LastMntOn"));
-			ed.setRecordStatus(rs.getString("RecordStatus"));
-			ed.setRoleCode(rs.getString("RoleCode"));
-			ed.setNextRoleCode(rs.getString("NextRoleCode"));
-			ed.setTaskId(rs.getString("TaskId"));
-			ed.setNextTaskId(rs.getString("NextTaskId"));
-			ed.setRecordType(rs.getString("RecordType"));
-			ed.setWorkflowId(rs.getLong("WorkflowId"));
 
-			return ed;
-		});
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+				ErrorDetail ed = new ErrorDetail();
+				ed.setCode(rs.getString("Code"));
+				ed.setLanguage(rs.getString("Language"));
+				ed.setSeverity(rs.getString("Severity"));
+				ed.setMessage(rs.getString("Message"));
+				ed.setExtendedMessage(rs.getString("ExtendedMessage"));
+				ed.setVersion(rs.getInt("Version"));
+				ed.setLastMntBy(rs.getLong("LastMntBy"));
+				ed.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				ed.setRecordStatus(rs.getString("RecordStatus"));
+				ed.setRoleCode(rs.getString("RoleCode"));
+				ed.setNextRoleCode(rs.getString("NextRoleCode"));
+				ed.setTaskId(rs.getString("TaskId"));
+				ed.setNextTaskId(rs.getString("NextTaskId"));
+				ed.setRecordType(rs.getString("RecordType"));
+				ed.setWorkflowId(rs.getLong("WorkflowId"));
+
+				return ed;
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Records are not found in ErrorDetails{} for the specified Code >> {}", type, id);
+		}
+
+		return null;
 	}
 
 	/**
 	 * This method Deletes the Record from the ErrorDetails or ErrorDetails_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Error Detail by key ErrorCode
 	 * 
-	 * @param Error
-	 *            Detail (errorDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Error Detail (errorDetail)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -157,10 +161,8 @@ public class ErrorDetailDAOImpl extends BasicDao<ErrorDetail> implements ErrorDe
 	 *
 	 * save Error Detail
 	 * 
-	 * @param Error
-	 *            Detail (errorDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Error Detail (errorDetail)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -191,10 +193,8 @@ public class ErrorDetailDAOImpl extends BasicDao<ErrorDetail> implements ErrorDe
 	 * This method updates the Record ErrorDetails or ErrorDetails_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Error Detail by key ErrorCode and Version
 	 * 
-	 * @param Error
-	 *            Detail (errorDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Error Detail (errorDetail)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
