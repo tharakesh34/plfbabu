@@ -196,7 +196,6 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private RelationshipOfficerService relationshipOfficerService;
 	private BranchService branchService;
 	private CustomerTypeService customerTypeService;
-	private com.pennant.Interface.service.CustomerInterfaceService customerInterfaceService;
 	private PagedListService pagedListService;
 	@Autowired(required = false)
 	private CustomerDedupCheckService customerDedupService;
@@ -1007,9 +1006,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		// Workflow Details Verification and initiation, if not found
 		if (this.financeWorkFlow == null) {
-			FinanceWorkFlow financeWorkFlow = this.financeWorkFlowService
-					.getApprovedFinanceWorkFlowById(financeType.getFinType(), financeEvent, promotionFlag
-							? PennantConstants.WORFLOW_MODULE_PROMOTION : PennantConstants.WORFLOW_MODULE_FINANCE);
+			FinanceWorkFlow financeWorkFlow = this.financeWorkFlowService.getApprovedFinanceWorkFlowById(
+					financeType.getFinType(), financeEvent, promotionFlag ? PennantConstants.WORFLOW_MODULE_PROMOTION
+							: PennantConstants.WORFLOW_MODULE_FINANCE);
 			setFinanceWorkFlow(financeWorkFlow);
 		}
 
@@ -1663,6 +1662,10 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 				}
 
+				if (customer == null) {
+					throw new InterfaceException("----", "Customer Not found.");
+				}
+
 			} else if (this.newCust.isChecked()) {
 				customerDetails = getNewCustomerDetail(customerDetails);
 			}
@@ -1821,11 +1824,12 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		// when WIF reference is selected
 		if (StringUtils.isNotBlank(this.wIfFinaceRef.getValue())) {
-			WIFCustomer wCustomer = getWifCustomers(false, isRetailCustomer
-					? PennantApplicationUtil.unFormatEIDNumber(this.eidNumber.getValue()) : this.eidNumber.getValue());
+			WIFCustomer wCustomer = getWifCustomers(false,
+					isRetailCustomer ? PennantApplicationUtil.unFormatEIDNumber(this.eidNumber.getValue())
+							: this.eidNumber.getValue());
 			processWIFCustomerData(wCustomer, customerDetails);
 		}
-		//preparing default income and expense list for new customer
+		// preparing default income and expense list for new customer
 		customerDetailsService.prepareDefaultIncomeExpenseList(customerDetails);
 		return customerDetails;
 
@@ -1896,9 +1900,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		Map<String, String> attributes = PennantApplicationUtil.getPrimaryIdAttributes(getComboboxValue(custCtgType));
 
 		primaryIdLabel = attributes.get("LABEL");
-		//Using for PAN
+		// Using for PAN
 		primaryIdMandatory = Boolean.valueOf(attributes.get("MANDATORY"));
-		//Using for Mobile Number
+		// Using for Mobile Number
 		primaryIdMOBMandatory = Boolean.valueOf(attributes.get("MOBILEMANDATORY"));
 		primaryIdRegex = attributes.get("REGEX");
 		int maxLength = Integer.valueOf(attributes.get("LENGTH"));
@@ -2010,11 +2014,6 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	public void setRelationshipOfficerService(RelationshipOfficerService relationshipOfficerService) {
 		this.relationshipOfficerService = relationshipOfficerService;
-	}
-
-	public void setCustomerInterfaceService(
-			com.pennant.Interface.service.CustomerInterfaceService customerInterfaceService) {
-		this.customerInterfaceService = customerInterfaceService;
 	}
 
 	public void setBranchService(BranchService branchService) {
