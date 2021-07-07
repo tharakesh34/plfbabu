@@ -3580,7 +3580,8 @@ public class FinServiceInstController extends SummaryDetailService {
 				} else {
 					finAdv.setStatus(DisbursementConstants.STATUS_AWAITCON);
 				}
-				fm.setLovDescEntityCode(financeMainDAO.getLovDescEntityCode(fm.getFinReference(), "_View"));
+				fm.setEntityCode(financeMainDAO.getLovDescEntityCode(fm.getFinReference(), "_View"));
+				fm.setLovDescEntityCode(fm.getEntityCode());
 				FinanceDetail financeDetail = new FinanceDetail();
 				List<FinAdvancePayments> finAdvList = new ArrayList<FinAdvancePayments>();
 

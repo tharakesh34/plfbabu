@@ -241,8 +241,11 @@ public class FeeDetailService {
 			// fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));
 			// BUG FIX RELATED TO FEE IN CASE OF WAIVE REMAINING AMT RELATED
 			// TODO:GANESH Need to move to core.
-			fee.setRemainingFee(fee.getNetAmount().subtract(fee.getPaidAmount())
+			fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount())
 					.subtract(fee.getWaivedAmount().add(fee.getWaivedGST())));
+			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(fee.getTaxComponent())) {
+				fee.setRemainingFee(fee.getRemainingFee().subtract(fee.getRemTDS()));
+			}
 		}
 
 		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, moduleDefiner)) {

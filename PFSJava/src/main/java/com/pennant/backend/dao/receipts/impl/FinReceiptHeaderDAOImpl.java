@@ -1436,10 +1436,13 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		logger.info("Checking for duplicate receipt...");
 
 		boolean isOnline = StringUtils.isNotBlank(fsi.getTransactionRef());
+		boolean isChequeOrDD = StringUtils.isNotBlank(fsi.getFavourNumber());
+
 		StringBuilder sql = new StringBuilder("Select ReceiptID From FinReceiptHeader");
 		sql.append(" Where Reference = ? and ValueDate = ? and ReceiptModeStatus = ?");
+		sql.append(" and ReceiptAmount = ?");
 
-		if (isOnline) {
+		if (isOnline || isChequeOrDD) {
 			sql.append(" and TransactionRef = ?");
 		}
 		logger.trace(Literal.SQL + sql);
@@ -1449,14 +1452,16 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setString(index++, fsi.getFinReference());
 			ps.setDate(index++, JdbcUtil.getDate(fsi.getValueDate()));
 			ps.setString(index++, RepayConstants.PAYSTATUS_REALIZED);
+			ps.setBigDecimal(index++, fsi.getAmount());
 			if (isOnline) {
 				ps.setString(index++, fsi.getTransactionRef());
+			} else if (isChequeOrDD) {
+				ps.setString(index++, fsi.getFavourNumber());
 			}
 
 		}, (rs, roNum) -> {
 			return rs.getLong(1);
 		});
-
 	}
 
 	@Override

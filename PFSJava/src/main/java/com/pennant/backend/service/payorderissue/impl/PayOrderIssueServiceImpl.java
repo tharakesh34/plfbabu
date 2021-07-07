@@ -1,43 +1,26 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related PayOrderIssueHeaders. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related PayOrderIssueHeaders. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * RepayOrderIssueHeaderion or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. RepayOrderIssueHeaderion or retransmission of
+ * the materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PayOrderIssueHeaderServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-08-2011    														*
- *                                                                  						*
- * Modified Date    :  12-08-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PayOrderIssueHeaderServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-08-2011 *
+ * * Modified Date : 12-08-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-08-2011       Pennant	                 0.1                                            * 
- * 16-05-2018       Madhubabu                  0.2          added the validation for        * 
- *                                                        disbursement  by checking Otc/PDD * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-08-2011 Pennant 0.1 * 16-05-2018 Madhubabu 0.2 added the validation for * disbursement by checking Otc/PDD * * * *
+ * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.payorderissue.impl;
@@ -57,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -102,8 +86,6 @@ import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.BankAccountValidationService;
-
-import com.pennant.app.constants.AccountingEvent;
 
 /**
  * Service implementation for methods that depends on <b>PayOrderIssueHeader</b>.<br>
@@ -182,8 +164,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	 * Record in the table. based on the module workFlow Configuration. by using PayOrderIssueHeaderDAO's update method
 	 * 3) Audit the record in to AuditHeader and AdtBMTPayOrderIssueHeader by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -232,8 +213,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	 * BMTPayOrderIssueHeader by using PayOrderIssueHeaderDAO's delete method with type as Blank 3) Audit the record in
 	 * to AuditHeader and AdtBMTPayOrderIssueHeader by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -261,10 +241,8 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	/**
 	 * getPayOrderIssueHeaderById fetch the details by using PayOrderIssueHeaderDAO's getPayOrderIssueHeaderById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return PayOrderIssueHeader
 	 */
 
@@ -340,10 +318,11 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		issueHeader.setFinFeeDetailList(finFeeDetailList);
 
 		if (ImplementationConstants.VAS_INST_ON_DISB) {
-			finMian.setLovDescEntityCode(financeMainDAO.getLovDescEntityCode(finMian.getFinReference(), "_View"));
+			finMian.setEntityCode(financeMainDAO.getLovDescEntityCode(finMian.getFinReference(), "_View"));
+			finMian.setLovDescEntityCode(finMian.getEntityCode());
 			issueHeader.setvASRecordings(vasRecordingDAO.getVASRecordingsByLinkRef(finMian.getFinReference(), ""));
 		}
-		//Getting the JoinAccount Details
+		// Getting the JoinAccount Details
 		if (getJointAccountDetailDAO() != null) {
 			issueHeader.setJointAccountDetails(
 					getJointAccountDetailDAO().getJointAccountDetailByFinRef(id, TableType.MAIN_TAB.getSuffix()));
@@ -356,8 +335,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	 * getApprovedPayOrderIssueHeaderById fetch the details by using PayOrderIssueHeaderDAO's getPayOrderIssueHeaderById
 	 * method . with parameter id and type as blank. it fetches the approved records from the BMTPayOrderIssueHeader.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return PayOrderIssueHeader
 	 */
 
@@ -380,8 +358,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and
 	 * AdtBMTPayOrderIssueHeader by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -509,7 +486,8 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			BigDecimal totIssuedPOAmt = payOrderIssueHeader.getIssuedPOAmount();
 			int totIssuedPOCount = payOrderIssueHeader.getIssuedPOCount();
 			for (FinAdvancePayments finAdvancePayments : payOrderIssueHeader.getFinAdvancePaymentsList()) {
-				if (StringUtils.equals(PennantConstants.PO_STATUS_ISSUE, finAdvancePayments.getStatus())) { //FIXME MURTHY
+				if (StringUtils.equals(PennantConstants.PO_STATUS_ISSUE, finAdvancePayments.getStatus())) { // FIXME
+																											// MURTHY
 					totIssuedPOAmt = totIssuedPOAmt.add(finAdvancePayments.getAmtToBeReleased());
 					totIssuedPOCount++;
 				}
@@ -530,8 +508,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	 * Audit the record in to AuditHeader and AdtBMTPayOrderIssueHeader by using auditHeaderDAO.addAudit(auditHeader)
 	 * for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -568,8 +545,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -620,12 +596,12 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
 		if (payOrderIssueHeader.isNew()) { // for New record or new record into
-												// work flow
+											// work flow
 
 			if (!payOrderIssueHeader.isWorkflow()) {// With out Work flow only
-														// new records
+													// new records
 				if (befPayOrderIssueHeader != null) { // Record Already Exists
-															// in the table then
+														// in the table then
 														// error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
@@ -633,12 +609,12 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 				}
 			} else { // with work flow
 				if (payOrderIssueHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																										// records
+																									// records
 																									// type
 																									// is
 																									// new
 					if (befPayOrderIssueHeader != null || tempPayOrderIssueHeader != null) { // if
-																									// records
+																								// records
 																								// already
 																								// exists
 																								// in
@@ -660,10 +636,10 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!payOrderIssueHeader.isWorkflow()) { // With out Work flow for
-															// update and delete
+														// update and delete
 
 				if (befPayOrderIssueHeader == null) { // if records not exists
-															// in the main table
+														// in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
@@ -684,7 +660,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			} else {
 
 				if (tempPayOrderIssueHeader == null) { // if records not exists
-															// in the Work flow
+														// in the Work flow
 														// table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));

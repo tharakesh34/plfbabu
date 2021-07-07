@@ -33560,4 +33560,37 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#166668_Pre" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financemain_dataview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#166668" author="gopal.p">
+		<createView viewName="FINANCEMAIN_DATAVIEW" replaceIfExists="true"> 
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+					T1.FINTYPE,
+					T2.CUSTCIF LOVDESCCUSTCIF,
+					T1.CUSTID,
+					T1.CLOSINGSTATUS,
+					T1.FINISACTIVE,
+					T1.MATURITYDATE,
+					T1.PRODUCTCATEGORY,
+					T1.WRITEOFFLOAN
+				FROM FINANCEMAIN T1
+				JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="PSD#166668_Post" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financemain_dataview');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  RepaymentPostingsUtil.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : RepaymentPostingsUtil.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.util;
@@ -210,8 +201,7 @@ public class RepaymentPostingsUtil implements Serializable {
 
 		BigDecimal totalWaivedAmount = rpyQueueHeader.getPriWaived().add(rpyQueueHeader.getPftWaived())
 				.add(rpyQueueHeader.getLatePftWaived()).add(rpyQueueHeader.getFeeWaived())
-				.add(rpyQueueHeader.getPenaltyWaived())
-				.add(rpyQueueHeader.getAdviseAmount());
+				.add(rpyQueueHeader.getPenaltyWaived()).add(rpyQueueHeader.getAdviseAmount());
 
 		boolean bouncePaidExists = true;
 
@@ -802,9 +792,12 @@ public class RepaymentPostingsUtil implements Serializable {
 			// Previous Month Amortization reset to Total Profit to avoid posting on closing Month End
 			pftDetail.setPrvMthAmz(pftDetail.getTotalPftSchd());
 
-		} else if (StringUtils.equals(financeMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_WRITEOFF)) {
+		} else if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(financeMain.getClosingStatus())) {
 			financeMain.setFinIsActive(false);
 			financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_WRITEOFF);
+		} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(financeMain.getClosingStatus())) {
+			financeMain.setFinIsActive(false);
+			financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_CANCELLED);
 		} else {
 			financeMain.setFinIsActive(true);
 			financeMain.setClosedDate(null);

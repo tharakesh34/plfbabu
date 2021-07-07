@@ -277,6 +277,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setLovDescCustShrtName(rs.getString("CustShrtName"));
 				fm.setAlwMultiDisb(rs.getBoolean("AlwMultiPartyDisb"));
 				fm.setLovDescFinTypeName(rs.getString("FinTypeDesc"));
+				fm.setEntityCode(rs.getString("EntityCode"));
 				fm.setLovDescEntityCode(rs.getString("EntityCode"));
 				fm.setPromotionCode(rs.getString("PromotionCode"));
 
@@ -5988,6 +5989,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					fm.setEmployeeNameDesc(rs.getString("EmployeeNameDesc"));
 					fm.setDmaCodeDesc(rs.getString("DmaCodeDesc"));
 					fm.setSalesDepartmentDesc(rs.getString("SalesDepartmentDesc"));
+					fm.setEntityCode(rs.getString("LovDescEntityCode"));
 					fm.setLovDescEntityCode(rs.getString("LovDescEntityCode"));
 					fm.setLovEligibilityMethod(rs.getString("LovEligibilityMethod"));
 					fm.setLovDescEligibilityMethod(rs.getString("LovDescEligibilityMethod"));

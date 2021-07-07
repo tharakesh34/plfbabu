@@ -17,6 +17,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.zkoss.util.media.Media;
 
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -52,8 +53,6 @@ import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pff.settlement.dao.SettlementProcessDAO;
 import com.pennanttech.pff.settlementprocess.model.SettlementProcess;
-
-import com.pennant.app.constants.AccountingEvent;
 
 public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess> implements ProcessRecord {
 	private SettlementProcessDAO settlementProcessDAO;
@@ -147,7 +146,7 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 			settlementMapdata.addValue("EMIOffer", (String) record.getValue("EMIOffer"));
 
 			String subPayByManufacturer = ((String) record.getValue("SubPayByManfacturer")).replace(" %", "");
-			// 144663,144664 ticket issues 			
+			// 144663,144664 ticket issues
 			if (!StringUtils.isEmpty(record.getValue("SubPayByManfacturer").toString())) {
 				settlementMapdata.addValue("SubPayByManfacturer", new BigDecimal(subPayByManufacturer));
 			} else {
@@ -208,16 +207,18 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 
 			// Upload Details Validation
 			validate(settlementMapdata);
-			//Saving the Settlement file Details
+			// Saving the Settlement file Details
 			settlementProcessDAO.saveSettlementProcessRequest(settlementMapdata);
 
 			FinanceMain finMain = financeMainDAO
 					.getFinanceMainByHostReference(String.valueOf(settlementMapdata.getValue("HostReference")), true);
 
 			if (!ImplementationConstants.HOLD_DISB_INST_POST) {
-				List<FinAdvancePayments> advPayments = finAdvancePaymentsDAO
-						.getFinAdvancePaymentsByFinRef(finMain.getFinReference(), "_AView");
-				finMain.setLovDescEntityCode(financeMainDAO.getLovDescEntityCode(finMain.getFinReference(), "_View"));
+				String finReference = finMain.getFinReference();
+				List<FinAdvancePayments> advPayments = finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(finReference,
+						"_AView");
+				finMain.setEntityCode(financeMainDAO.getLovDescEntityCode(finReference, "_View"));
+				finMain.setLovDescEntityCode(finMain.getEntityCode());
 
 				FinanceDetail fd = new FinanceDetail();
 				fd.setAdvancePaymentsList(advPayments);

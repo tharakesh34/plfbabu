@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LimitHeaderDialogCtrl.java                                           * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-03-2016    														*
- *                                                                  						*
- * Modified Date    :  31-03-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LimitHeaderDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-03-2016 * *
+ * Modified Date : 31-03-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-03-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-03-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -112,6 +94,7 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -346,8 +329,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -356,8 +338,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.limitHeader);
@@ -437,7 +418,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 					getLimitHeader().setLimitStructureCode(details.getStructureCode());
 					doFillStructureDetails(details.getStructureCode());
 				} else {
-					//this.limitStructureCode.setValue("");
+					// this.limitStructureCode.setValue("");
 					this.limitStructureCode.setDescription("");
 					getLimitHeader().setLimitStructureCode("");
 					doFillLimitDetailslistbox(new ArrayList<LimitDetails>());
@@ -506,7 +487,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		logger.debug("Leaving" + event.toString());
 	}
 
-	//===================
+	// ===================
 	public void onClickBankAggrmt(ForwardEvent event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		Listitem item = (Listitem) event.getOrigin().getTarget().getParent().getParent();
@@ -683,7 +664,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		Filter[] filters = null;
 		if (getLimitHeader().isNew()) {
 			filters = new Filter[1];
-			//filters[1] = new Filter("Active", "1");
+			// filters[1] = new Filter("Active", "1");
 		} else {
 			filters = new Filter[1];
 		}
@@ -696,7 +677,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 			this.limiDialogRule.setDescColumn("QueryDesc");
 			this.limiDialogRule.setValidateColumns(new String[] { "QueryCode" });
 
-			List<String> existingGroups = new ArrayList<>();//PennantappUtil.getLimitHeaderCustomer(false, true);
+			List<String> existingGroups = new ArrayList<>();// PennantappUtil.getLimitHeaderCustomer(false, true);
 			Filter[] filtersRulebased = new Filter[1];
 			filtersRulebased[0] = new Filter("QueryCode", existingGroups, Filter.OP_NOT_IN);
 			if (existingGroups != null && existingGroups.size() > 0) {
@@ -705,7 +686,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 			gb_CustomerDetails.setVisible(false);
 			gb_GroupDetails.setVisible(false);
 			gb_RuleBased.setVisible(true);
-			//row3.setVisible(false);
+			// row3.setVisible(false);
 			listheader_ExpiryDate.setVisible(false);
 			window_LimitHeaderDialog_title.setValue(Labels.getLabel("window_LimitHeaderDialogRule.title"));
 			this.listBoxLimitDetail.setHeight(getListBoxHeight(9));
@@ -741,8 +722,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aLimitHeader
-	 *            LimitHeader
+	 * @param aLimitHeader LimitHeader
 	 * @throws DatatypeConfigurationException
 	 */
 	public void doWriteBeanToComponents(LimitHeader aLimitHeader) {
@@ -752,7 +732,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		this.customerGroupName.setValue(aLimitHeader.getGroupName());
 		this.customerId.setValue(aLimitHeader.getCustCIF());
 		custFullName.setValue(aLimitHeader.getCustFullName());
-		//custSalutationCode.setValue(aLimitHeader.getCustSalutationCode());
+		// custSalutationCode.setValue(aLimitHeader.getCustSalutationCode());
 		custDftBranchCode.setValue(aLimitHeader.getCustDftBranch());
 		aLimitHeader.setResponsibleBranch(aLimitHeader.getCustDftBranch());
 		custDftBranchName.setValue(aLimitHeader.getResponsibleBranchName());
@@ -1004,7 +984,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				customerlimits.setLimitCheck(limitStructureDetail.isLimitCheck());
 			}
 			customerlimits.setLimitChkMethod((getLimitHeader().getRuleCode() != null ? "A" : "R"));
-			//customerlimits.setBankingArrangement();
+			// customerlimits.setBankingArrangement();
 			customerlimits.setNewRecord(true);
 
 			limitDetailsList.add(customerlimits);
@@ -1053,7 +1033,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				Listcell lc = new Listcell(val);
 				lc.setParent(item);
 
-				//===============
+				// ===============
 				lc = new Listcell();
 
 				Datebox expryDate = new Datebox();
@@ -1073,7 +1053,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 							Labels.getLabel("label_LimitHeaderDialog_ExpiryDate.value"), false, true, null, true));
 				}
 				lc.setParent(item);
-				//=================
+				// =================
 
 				lc = new Listcell();
 
@@ -1091,7 +1071,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 							!limitDetails.isEditable() || getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
 				}
 				lc.setParent(item);
-				//=================
+				// =================
 				lc = new Listcell();
 				Checkbox revolving = new Checkbox();
 				revolving.setChecked(limitDetails.isRevolving());
@@ -1107,7 +1087,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 
 				revolving.setAttribute("Data", limitDetails);
 				lc.setParent(item);
-				//=================
+				// =================
 
 				lc = new Listcell();
 				Combobox actulOrReserved = new Combobox();
@@ -1123,7 +1103,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				actulOrReserved.setDisabled(getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
 
 				lc.setParent(item);
-				//====================
+				// ====================
 				Decimalbox limitSanctioned = new Decimalbox();
 				limitSanctioned.setDisabled(getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
 
@@ -1139,7 +1119,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				limitSanctioned.setParent(lc);
 				limitSanctioned.setWidth("150px");
 				lc.setParent(item);
-				//====================
+				// ====================
 
 				BigDecimal reserved = BigDecimal.ZERO;
 				BigDecimal actualExpo = BigDecimal.ZERO;
@@ -1178,7 +1158,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				lc = new Listcell(PennantApplicationUtil.amountFormate(avilable, ccyFormat));
 				lc.setParent(item);
 
-				//Bank Agreement
+				// Bank Agreement
 				lc = new Listcell();
 				Combobox bnkAggrmt = new Combobox();
 				bnkAggrmt.setId("BankingArrangement_" + strdId);
@@ -1190,7 +1170,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				bnkAggrmt.setDisabled(getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
 				lc.setParent(item);
 
-				//Limit Condition
+				// Limit Condition
 				lc = new Listcell();
 				Combobox lmtCondition = new Combobox();
 				lmtCondition.setId("LimitCondition_" + strdId);
@@ -1203,7 +1183,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				lmtCondition.setDisabled(getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
 				lc.setParent(item);
 
-				//Reference
+				// Reference
 				Textbox reference = new Textbox();
 				lc = new Listcell();
 				reference.setId("ExternalReference_" + strdId);
@@ -1214,7 +1194,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				reference.setWidth("100px");
 				lc.setParent(item);
 
-				//Reference
+				// Reference
 				Textbox reference1 = new Textbox();
 				lc = new Listcell();
 				reference1.setId("ExternalReference1_" + strdId);
@@ -1225,7 +1205,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				reference1.setWidth("100px");
 				lc.setParent(item);
 
-				//Tenor
+				// Tenor
 				Intbox tenor = new Intbox();
 				lc = new Listcell();
 				tenor.setId("Tenor_" + strdId);
@@ -1380,7 +1360,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 
 				closeDialog();
 			}
-		} catch (final DataAccessException e) {
+		} catch (final AppException e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
@@ -1389,11 +1369,9 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * @throws DatatypeConfigurationException
@@ -1446,10 +1424,8 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */
@@ -1603,7 +1579,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 			}
 		}
 
-		//validate group and lines
+		// validate group and lines
 		for (Listitem item : listtoprocess) {
 			LimitDetails limit = (LimitDetails) item.getAttribute("DATA");
 
@@ -1618,7 +1594,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 
 			if (!StringUtils.isEmpty(limit.getGroupCode())) {
 				List<String> validList = groupLineMap.get(limit.getGroupCode());
-				//validateChild
+				// validateChild
 				BigDecimal childMaxAmount = getMaxSactionedAmt(validList, listtoprocess);
 
 				if (sactioned.compareTo(childMaxAmount) < 0) {
@@ -1630,7 +1606,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 			}
 		}
 
-		//validate total
+		// validate total
 		BigDecimal total = BigDecimal.ZERO;
 		BigDecimal maxofGroups = BigDecimal.ZERO;
 		Decimalbox totalBox = null;

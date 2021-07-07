@@ -11456,6 +11456,7 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="finOCRDetailDAO" ref="finOCRDetailDAO" />
 		<property name="finOCRCaptureDAO" ref="finOCRCaptureDAO" />
+		<property name="dMSService" ref="dMSService" />
 	</bean>
 
 	<!--============ Qualification Details ============== -->

@@ -1,63 +1,47 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************************
- *                                 FILE HEADER                                              			*
+ * FILE HEADER *
  ********************************************************************************************************
  *
- * FileName    		:  ReceiptCalculator.java															*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES															*
- *                                                                  		
- * Creation Date    :  26-04-2011																		*
- *                                                                  
- * Modified Date    :  30-07-2011																		*
- *                                                                  
- * Description 		:												 									*                                 
- *                                                                                          
+ * FileName : ReceiptCalculator.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 26-04-2018		Vinay					 0.2     	As discussed with siva kumar 		*
- * 														In Suspense (NPA) case to
- * 														Allow different repay Heirarchy		* 
- *                                                                                          * 
- * 09-06-2018       Siva					 0.3        GST Rounding issues with Bounce on 
- * 														exclusive case on top  of GST       * 
- *                                                                                          * 
- * 13-06-2018       Siva					 0.4        Partial Settlement Amount 
- * 														Double Entry                        * 
+ * 26-04-2011 Pennant 0.1 * * 26-04-2018 Vinay 0.2 As discussed with siva kumar * In Suspense (NPA) case to Allow
+ * different repay Heirarchy * * 09-06-2018 Siva 0.3 GST Rounding issues with Bounce on exclusive case on top of GST * *
+ * 13-06-2018 Siva 0.4 Partial Settlement Amount Double Entry *
  * 
- * 26-06-2018       Siva					 0.5        Early Settlement balance Amount 
- * 														not closing fully(127641)           * 
+ * 26-06-2018 Siva 0.5 Early Settlement balance Amount not closing fully(127641) *
  * 
- * 26-06-2018       Siva					 0.6        Early Settlement balance Amount 
- * 														not closing fully(127641)           * 
+ * 26-06-2018 Siva 0.6 Early Settlement balance Amount not closing fully(127641) *
  * 
- * 14-07-2018		Siva			 		 0.7		Payable GST, Bounce refer changes, 
- * 																					LPP GST * 
+ * 14-07-2018 Siva 0.7 Payable GST, Bounce refer changes, LPP GST *
  * 
- * 26-07-2018		Siva			 		 0.8		TDS ROunding for Auto Allocation 	*
+ * 26-07-2018 Siva 0.8 TDS ROunding for Auto Allocation *
  * 
- * 01-08-2018  		Mangapathi				 0.9		  PSD - Ticket : 125445, 125588					*
- * 														  Mail Sub : Freezing Period, Dt : 30-May-2018  *
- *                                                        To address Freezing period case when schedule *
- *														  term is in Presentment.
- *                                                                                          * 
- *                                                                                          * 
+ * 01-08-2018 Mangapathi 0.9 PSD - Ticket : 125445, 125588 * Mail Sub : Freezing Period, Dt : 30-May-2018 * To address
+ * Freezing period case when schedule * term is in Presentment. * *
  ********************************************************************************************
  */
 package com.pennant.app.util;
@@ -334,10 +318,14 @@ public class ReceiptCalculator implements Serializable {
 			isAllocated = true;
 
 		}
+
 		List<Date> presentmentDates = getPresentmentDates(rd, valueDate);
 		rd = calSummaryDetail(rd, valueDate);
-		List<ReceiptAllocationDetail> allocationsList = resetAllocationList(rd);
-		rd.getReceiptHeader().setAllocations(allocationsList);
+
+		if (!FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())) {
+			List<ReceiptAllocationDetail> allocationsList = resetAllocationList(rd);
+			rd.getReceiptHeader().setAllocations(allocationsList);
+		}
 
 		rd = fetchODPenalties(rd, valueDate, presentmentDates);
 		rd = fetchManualAdviseDetails(rd, valueDate);
@@ -1849,9 +1837,9 @@ public class ReceiptCalculator implements Serializable {
 		for (FinODDetails fod : odList) {
 			tempOdList.add(fod.copyEntity());
 		}
-		
+
 		int receiptPurposeCtg = setReceiptCategory(rch.getReceiptPurpose());
-		
+
 		rch.setSchdIdx(-1);
 		rch.setLpiIdx(-1);
 		rch.setLppIdx(-1);

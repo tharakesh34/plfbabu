@@ -1,42 +1,37 @@
 /**
-* Copyright 2011 - Pennant Technologies
+ * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  ReceiptServiceImpl.java												*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : ReceiptServiceImpl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
-
- * 13-06-2018       Siva					 0.2        Stage Accounting Modifications      * 
- *                                                                                          * 
- * 19-06-2018       Siva					 0.3        Payable Reserve Amount Not 
- * 														removing on Maintenance     	 	* 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 *
+ * 
+ * 13-06-2018 Siva 0.2 Stage Accounting Modifications * * 19-06-2018 Siva 0.3 Payable Reserve Amount Not removing on
+ * Maintenance * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.finance.impl;
@@ -2596,6 +2591,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			FinReceiptDetail finReceiptDetail = receiptHeader.getReceiptDetails().get(0);
 			fsi.setFinReference(receiptHeader.getReference());
 			fsi.setValueDate(receiptHeader.getValueDate());
+			fsi.setAmount(receiptHeader.getReceiptAmount());
 			fsi.setTransactionRef(finReceiptDetail.getTransactionRef());
 			fsi.setFavourNumber(finReceiptDetail.getFavourNumber());
 			fsi.setPaymentMode(receiptHeader.getReceiptMode());
@@ -4467,11 +4463,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinanceMain fm = finScheduleData.getFinanceMain();
 		String closingStaus = fm.getClosingStatus();
 		if (StringUtils.isEmpty(closingStaus) || fm.isWriteoffLoan()) {
-			return receiptData;
-		}
-
-		if (StringUtils.equals(closingStaus, FinanceConstants.CLOSE_STATUS_CANCELLED)) {
-			finScheduleData = setErrorToFSD(finScheduleData, "RU0044", finReference);
 			return receiptData;
 		}
 
@@ -6936,18 +6927,20 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		message = new StringBuilder();
-		message.append("Receipt for the Fin Reference {0} , Value Date {1} ");
+		message.append("Receipt for the Fin Reference {0} , Value Date {1}, Receipt Amount {2} ");
 		if (fsi.getTransactionRef() != null) {
 			message.append(" and Transaction Reference");
 		}
-		message.append("{2} already exists with Receipt Id {3} .");
+		message.append("{3} already exists with Receipt Id {4} .");
 
 		String[] valueParm = new String[5];
 
 		valueParm[0] = fsi.getFinReference();
 		valueParm[1] = String.valueOf(fsi.getValueDate());
-		valueParm[2] = fsi.getTransactionRef();
-		valueParm[3] = String.valueOf(receiptIdList.get(0));
+		valueParm[2] = PennantApplicationUtil.amountFormate(fsi.getAmount(),
+				CurrencyUtil.getFormat(ImplementationConstants.BASE_CCY));
+		valueParm[3] = fsi.getTransactionRef();
+		valueParm[4] = String.valueOf(receiptIdList.get(0));
 
 		errors.add(new ErrorDetail("21005", message.toString(), valueParm));
 

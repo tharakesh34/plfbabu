@@ -1,41 +1,23 @@
 /********************************************************************************************************************
- * Copyright 2011 - Pennant Technologies																			*
- * 																													*
- * This file is part of Pennant Java Application Framework and related Products. All								*			
- * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant	*
- * Technologies.																									*
- * 																													*
- * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the	*
- * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a	*
- * violation of copyright law.																						*
+ * Copyright 2011 - Pennant Technologies * * This file is part of Pennant Java Application Framework and related
+ * Products. All * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of
+ * Pennant * Technologies. * * Copyright and other intellectual property laws protect these materials. Reproduction or
+ * retransmission of the * materials, in whole or in part, in any manner, without the prior written consent of the
+ * copyright holder, is a * violation of copyright law. *
  ******************************************************************************************************************** 
- * FILE HEADER 																										*	
+ * FILE HEADER *
  ******************************************************************************************************************** 
- * * FileName : FinanceDetailServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 15-11-2011     *
- * Modified Date : 15-11-2011 * * Description : * *																	*	
+ * * FileName : FinanceDetailServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 15-11-2011 *
+ * Modified Date : 15-11-2011 * * Description : * * *
  ******************************************************************************************************************** 
- * Date Author Version Comments 																					*
+ * Date Author Version Comments *
  ********************************************************************************************************************
- * 15-11-2011 Pennant 0.1 																							*
- * 08-05-2018 Vinay   0.2  As per mail from Raju ,subject : Daily status call : 19 April							*			
- * 						   added validations in Disbursement and Covenant types										*
+ * 15-11-2011 Pennant 0.1 * 08-05-2018 Vinay 0.2 As per mail from Raju ,subject : Daily status call : 19 April * added
+ * validations in Disbursement and Covenant types *
  ********************************************************************************************************************
- *16-05-2018 Madhu Babu 0.3******************																		*
- *As per mail from Raju added the validations to proceed with loan approval and disbursement basd on PDD/OTC 		*
- *																													*
- * 13-06-2018       Siva					 0.4        Stage Accounting Modifications      						* 
- * 																													*
- * 22-06-2018       Srinivas Varma		 	0.5        Post Hook Validation Implementation							*
- *																													*
- *																													* 
- *																													*
- *																													*
- *																													*
- *																													*
- *																													*
- *																													*
- *																													*
- *																													*
+ * 16-05-2018 Madhu Babu 0.3****************** * As per mail from Raju added the validations to proceed with loan
+ * approval and disbursement basd on PDD/OTC * * 13-06-2018 Siva 0.4 Stage Accounting Modifications * * 22-06-2018
+ * Srinivas Varma 0.5 Post Hook Validation Implementation * * * * * * * * * * *
  ********************************************************************************************************************
  */
 package com.pennant.backend.service.finance.impl;
@@ -10295,6 +10277,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			financeMain.setAdvStage(PennantConstants.List_Select);
 		}
 		// tasks # >>End Advance EMI and DSF
+
+		financeMain.setEntityCode(financeType.getLovDescEntityCode());
 
 		return financeMain;
 	}

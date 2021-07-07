@@ -1,42 +1,24 @@
 /**
-o * Copyright 2011 - Pennant Technologies
+ * o * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinAdvancePaymentsListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-08-2013    														*
- *                                                                  						*
- * Modified Date    :  14-08-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinAdvancePaymentsListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-08-2013 * *
+ * Modified Date : 14-08-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-08-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-08-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -154,7 +136,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		try {
 			if (event.getTarget().getParent() != null) {
 				parent = event.getTarget().getParent();
-				//parent.setStyle("overflow:auto;");
+				// parent.setStyle("overflow:auto;");
 			}
 
 			if (arguments.containsKey("financeMainDialogCtrl")) {
@@ -438,7 +420,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 
 					List<ErrorDetail> valid = disbursementInstCtrl
 							.validateOrgFinAdvancePayment(getFinAdvancePaymentsList(), validate);
-					//VAS FrontEndFunctionality Validations
+					// VAS FrontEndFunctionality Validations
 					if (ImplementationConstants.VAS_INST_ON_DISB
 							&& !StringUtils.equalsIgnoreCase(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDDISB)) {
 						List<ErrorDetail> vasErrList = null;
@@ -542,8 +524,9 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		logger.debug("Entering");
 		setFinAdvancePaymentsList(finAdvancePayDetails);
 		setVasRecordingList(vasRecordingList);
-		if (ImplementationConstants.VAS_INST_ON_DISB && StringUtils.isEmpty(moduleDefiner)) {//added empty check skip the below VAS process in LMS) {
-			String entityCode = getFinancedetail().getFinScheduleData().getFinanceMain().getLovDescEntityCode();
+		/* added empty check skip the below VAS process in LMS */
+		if (ImplementationConstants.VAS_INST_ON_DISB && StringUtils.isEmpty(moduleDefiner)) {
+			String entityCode = getFinancedetail().getFinScheduleData().getFinanceMain().getEntityCode();
 			finAdvancePaymentsService.processVasInstructions(vasRecordingList, getFinAdvancePaymentsList(), entityCode);
 		}
 		disbursementInstCtrl.doFillFinAdvancePaymentsDetails(getFinAdvancePaymentsList(),

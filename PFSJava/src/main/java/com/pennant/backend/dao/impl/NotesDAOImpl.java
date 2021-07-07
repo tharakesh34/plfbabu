@@ -1,45 +1,37 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  NotesDAOImpl.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  26-04-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : NotesDAOImpl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 26-04-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 21-05-2018		Sai						 0.2          1. PSD - Ticket: 126490 LMS >     * 
- *                                                           Notes of the rejected or       * 
- *                                                           resubmitted disbursed tranche  * 
- *                                                           is not visible.                * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * 21-05-2018 Sai 0.2 1. PSD - Ticket: 126490 LMS > * Notes of the rejected or * resubmitted
+ * disbursed tranche * is not visible. * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.impl;
 
 import java.util.ArrayList;
@@ -148,19 +140,18 @@ public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO {
 	private String commaJoin(List<String> moduleNames) {
 		return moduleNames.stream().map(moduleName -> "?").collect(Collectors.joining(","));
 	}
-	
+
 	public static List<Notes> sortNotes(List<Notes> notes) {
-			Collections.sort(notes, new Comparator<Notes>() {
-				@Override
-				public int compare(Notes detail1, Notes detail2) {
-					return DateUtil.compare(detail1.getInputDate(), detail2.getInputDate());
-				}
-			});
+		Collections.sort(notes, new Comparator<Notes>() {
+			@Override
+			public int compare(Notes detail1, Notes detail2) {
+				return DateUtil.compare(detail1.getInputDate(), detail2.getInputDate());
+			}
+		});
 
 		return notes;
 	}
 
-	
 	@Override
 	public List<Notes> getNotesListAsc(List<String> finReferences, String moduleName) {
 		List<String> modules = new ArrayList<>();
@@ -197,6 +188,19 @@ public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO {
 			ps.setString(index++, "N");
 		}, (rs, rowNum) -> {
 			Notes item = new Notes();
+
+			item.setNoteId(rs.getLong("NoteId"));
+			item.setModuleName(rs.getString("ModuleName"));
+			item.setReference(rs.getString("Reference"));
+			item.setRemarkType(rs.getString("RemarkType"));
+			item.setAlignType(rs.getString("AlignType"));
+			item.setRoleCode(rs.getString("RoleCode"));
+			item.setVersion(rs.getInt("Version"));
+			item.setRemarks(rs.getString("Remarks"));
+			item.setInputBy(rs.getLong("InputBy"));
+			item.setInputDate(rs.getTimestamp("InputDate"));
+			item.setUsrLogin(rs.getString("UsrLogin"));
+
 			return item;
 		});
 

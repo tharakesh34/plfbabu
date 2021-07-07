@@ -1,43 +1,25 @@
 /**
-x * Copyright 2011 - Pennant Technologies
+ * x * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  VASRecordingDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  02-12-2016    														*
- *                                                                  						*
- * Modified Date    :  02-12-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : VASRecordingDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 02-12-2016 * *
+ * Modified Date : 02-12-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 02-12-2016       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 02-12-2016 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.configuration.vasrecording;
@@ -850,8 +832,11 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 						finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
 						finFeeDetail.setRemainingFee(aVASRecording.getFee());
 
-						// FIXME
-						if (!StringUtils.equals(aVASRecording.getFeePaymentMode(), PennantConstants.List_Select)) {
+						String paymentMode = aVASRecording.getFeePaymentMode();
+						String modeOfPayment = aVASRecording.getVasConfiguration().getModeOfPayment();
+
+						// Deciding the Fee Schedule method based on the configuration
+						if (!PennantConstants.List_Select.equals(paymentMode)) {
 							finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PAID_BY_CUSTOMER);
 							finFeeDetail.setPaidAmountOriginal(aVASRecording.getFee());
 							finFeeDetail.setPaidAmountGST(BigDecimal.ZERO);
@@ -860,23 +845,17 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 							finFeeDetail.setRemainingFeeOriginal(BigDecimal.ZERO);
 							finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
 							finFeeDetail.setRemainingFee(BigDecimal.ZERO);
-						}
 
-						// Deciding the Fee Schedule method based on the configuration
-						if (!PennantConstants.List_Select.equals(aVASRecording.getFeePaymentMode())) {
-							if (StringUtils.equals(VASConsatnts.VAS_PAYMENT_COLLECTION,
-									aVASRecording.getVasConfiguration().getModeOfPayment())) {
+							if (VASConsatnts.VAS_PAYMENT_COLLECTION.equals(modeOfPayment)) {
 								finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);
-
-								finFeeDetail.setPaidAmountOriginal(aVASRecording.getFee());
+								finFeeDetail.setPaidAmountOriginal(BigDecimal.ZERO);
 								finFeeDetail.setPaidAmountGST(BigDecimal.ZERO);
-								finFeeDetail.setPaidAmount(aVASRecording.getFee());
+								finFeeDetail.setPaidAmount(BigDecimal.ZERO);
 
-								finFeeDetail.setRemainingFeeOriginal(BigDecimal.ZERO);
+								finFeeDetail.setRemainingFeeOriginal(aVASRecording.getFee());
 								finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
-								finFeeDetail.setRemainingFee(BigDecimal.ZERO);
-							} else if (StringUtils.equals(VASConsatnts.VAS_PAYMENT_DEDUCTION,
-									aVASRecording.getVasConfiguration().getModeOfPayment())) {
+								finFeeDetail.setRemainingFee(aVASRecording.getFee());
+							} else if (VASConsatnts.VAS_PAYMENT_DEDUCTION.equals(modeOfPayment)) {
 								finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_DISBURSE);
 								if (ImplementationConstants.DEFAULT_VAS_MODE_OF_PAYMENT) {
 									finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);

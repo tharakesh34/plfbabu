@@ -270,6 +270,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		String entityCode = financeType.getLovDescEntityCode();
 
 		fm.setFinType(finType);
+		fm.setEntityCode(entityCode);
 		fm.setLovDescEntityCode(entityCode);
 
 		try {
@@ -2298,7 +2299,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		LoggedInUser userDetails = financeDetail.getUserDetails();
-		String entityCode = financeMain.getLovDescEntityCode();
+		String entityCode = financeMain.getEntityCode();
 
 		List<FinAdvancePayments> advancePayments = financeDetail.getAdvancePaymentsList();
 		List<VASRecording> vasRecordingList = finScheduleData.getVasRecordingList();
