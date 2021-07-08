@@ -2,12 +2,16 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<style>
-		.decimalToString{ border:none; background-color:white; font-weight:bold; font-style:none #FF6600 solid; }
+		.decimalToString{
+		border:none;
+		background-color:white;
+		font-weight:bold;
+		font-style:none #FF6600 solid;
+		}
 	</style>
 
 	<window>
@@ -312,38 +316,33 @@
 										</hbox>
 									</div>
 
-									<listbox id="listBoxSchedule" emptyMessage="${c:l('listbox.emptyMessage')}"
-										fixedLayout="true" sizedByContent="true" span="true" width="100%" height="100%" multiple="false">
+									<listbox id="listBoxSchedule" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+										sizedByContent="true" span="true" width="100%" height="100%" multiple="false">
 										<listhead sizable="false" style="padding:0px;position:relative;">
 											<listheader hflex="min" />
 											<listheader id="listheader_ScheduleDetailDialog_Date" hflex="min" value="" />
 											<listheader id="listheader_ScheduleDetailDialog_ScheduleEvent" hflex="min" />
-											<listheader id="listheader_ScheduleDetailDialog_CalProfit" hflex="min"
-												align="right" />
+											<listheader id="listheader_ScheduleDetailDialog_CalProfit" hflex="min" align="right" />
 											<listheader id="listheader_ScheduleDetailDialog_MiscAmount" hflex="min"
-												align="right" />
-											<listheader id="listheader_ScheduleDetailDialog_SchFee" hflex="min"
-												align="right" />
-											<listheader id="listheader_ScheduleDetailDialog_SchTax" hflex="min"
-												align="right" />
-											<listheader id="listheader_ScheduleDetailDialog_TDSAmount"
-												label="${c:l('listheader_TDSAmount.label')}" hflex="min" align="right" />
-											<listheader id="listheader_ScheduleDetailDialog_SchProfit" hflex="min"
-												align="right" />
-											<listheader id="listheader_ScheduleDetailDialog_Principal" hflex="min"
-												align="right" />
-											<listheader id="listheader_ScheduleDetailDialog_Total" hflex="min"
-												align="right" />
-											<listheader id="listheader_ScheduleDetailDialog_ScheduleEndBal" hflex="min"
-												align="right" />
-											<listheader id="listheader_LimitChange" hflex="min" align="right"
-												visible="false" />
-											<listheader id="listheader_AvailableLimit" hflex="min" align="right"
-												visible="false" />
-											<listheader id="listheader_ODLimit" hflex="min" align="right"
-												visible="false" />
-											<listheader visible="false" id="listHeader_planEMIHDates" hflex="min"
-												align="center" />
+												align="right" visible="false"/>
+											<listheader hflex="min" visible="false"/>
+											<listheader id="listheader_ScheduleDetailDialog_SchFee" hflex="min" align="right" />
+											<listheader id="listheader_ScheduleDetailDialog_SchTax" hflex="min" align="right" />
+											<listheader id="listheader_ScheduleDetailDialog_TDSAmount" label="${c:l('listheader_TDSAmount.label')}"
+												hflex="min" align="right" />
+											<listheader hflex="min" visible="false"/>
+											<listheader id="listheader_ScheduleDetailDialog_SchProfit" hflex="min" align="right" />
+											<listheader id="listheader_ScheduleDetailDialog_Principal" hflex="min" align="right" />
+											<listheader hflex="min" visible="false"/>
+											<listheader hflex="min" visible="false"/>
+											<listheader id="listheader_ScheduleDetailDialog_Total" hflex="min" align="right" />
+											<listheader id="listheader_ScheduleDetailDialog_ScheduleEndBal" hflex="min" align="right" />
+											<listheader id="listheader_LimitChange" hflex="min" align="right" visible="false" />
+											<listheader id="listheader_AvailableLimit" hflex="min" align="right" visible="false" />
+											<listheader id="listheader_ODLimit" hflex="min" align="right" visible="false" />
+											<listheader visible="false" id="listHeader_planEMIHDates" hflex="min" align="center" />
+											<listheader hflex="min" visible="false"/>
+											<listheader hflex="min" visible="false"/>
 											<listheader id="listHeader_orgPrincipalDue" hflex="min" align="right" />
 										</listhead>
 									</listbox>

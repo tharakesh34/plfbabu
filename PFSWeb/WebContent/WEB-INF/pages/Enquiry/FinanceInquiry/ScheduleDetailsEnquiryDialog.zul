@@ -27,11 +27,17 @@
 										<listheader label="${c:l('listheader_ScheduleDate.label')}" hflex="min" />
 										<listheader label="${c:l('listheader_ScheduleEvent.label')}" hflex="min" />
 										<listheader label="${c:l('listheader_CalProfit.label')}" hflex="min" />
+										<listheader id="listheader_ScheduleDetailDialog_MiscAmount" hflex="min"
+												align="right" visible="false"/>
+										<listheader hflex="min" visible="false"/>
 										<listheader id="listheader_SchFee" label="${c:l('listheader_SchFee.label')}" hflex="min" />
 										<listheader id="listheader_SchTax" hflex="min" label="${c:l('listheader_SchTax.label')}" align="right" />
 										<listheader id="listheader_TDSAmount" label="${c:l('listheader_TDSAmount.label')}" hflex="min" />
+										<listheader hflex="min" visible="false"/>
 										<listheader label="${c:l('listheader_SchProfit.label')}" hflex="min" />
 										<listheader label="${c:l('listheader_Principal.label')}" hflex="min" />
+										<listheader hflex="min" visible="false"/>
+										<listheader hflex="min" visible="false"/>
 										<listheader id="listheader_Total" label="${c:l('listheader_Total.label')}" hflex="min" />
 										<listheader label="${c:l('listheader_ScheduleEndBal.label')}" hflex="min" />
 										<listheader id="listheader_LimitChange" hflex="min" align="right" visible="false" />
@@ -39,6 +45,8 @@
 										<listheader id="listheader_ODLimit" hflex="min" align="right" visible="false" />
 										<listheader id="listHeader_orgPrincipalDue" label="${c:l('listheader_OrgPrincipalDue.label')}"
 											hflex="min" />
+										<listheader hflex="min" visible="false"/>
+										<listheader hflex="min" visible="false"/>
 									</listhead>
 								</listbox>
 							</tabpanel>
