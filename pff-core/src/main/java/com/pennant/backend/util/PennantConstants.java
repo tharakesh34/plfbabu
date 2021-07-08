@@ -389,6 +389,12 @@ public class PennantConstants {
 	public static final String EOD_ACCRUAL_POSTING = "ACCRUAL POSTING";
 	public static final String EOD_PFT_DTL_UPLOAD = "UPLOAD PROFIT DETAILS";
 
+	public static final String TAKEOVERAGRDATA = "TAKEOVER";
+	public static final String ADVANCEPAYMENTAGRDATA = "ADVANCEPAY";
+	public static final String JOINSCUSTAGRDATA = "JOINTCUST";
+	public static final String LPOFORFLEETVEHICLE_DEALER = "LPOFLTDLR";
+	public static final String LPOFORFLEETVEHICLE_PRIVATE = "LPOFLTPRI";
+
 	// Rating Type Details
 	public static final String DEFAULT_CUST_TYPE = "EA";
 

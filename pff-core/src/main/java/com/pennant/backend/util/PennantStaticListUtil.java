@@ -128,6 +128,7 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> payOrderStatus;
 	private static List<ValueLabel> suspTriggers;
 	private static List<ValueLabel> transactionType;
+	private static List<ValueLabel> modulType;
 	private static List<ValueLabel> displayStyleList;
 	private static List<ValueLabel> limitStructureTypeList;
 	private static List<ValueLabel> sysParmType;
@@ -2111,6 +2112,23 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_DefaultFeeToFinance_PaidByCustomer")));
 		}
 		return feeToFinanceTypes;
+	}
+
+	public static List<ValueLabel> getModulType() {
+		if (modulType == null) {
+			modulType = new ArrayList<ValueLabel>(5);
+			modulType.add(
+					new ValueLabel(PennantConstants.TAKEOVERAGRDATA, Labels.getLabel("label_AgreementData_TAKEOVER")));
+			modulType.add(new ValueLabel(PennantConstants.ADVANCEPAYMENTAGRDATA,
+					Labels.getLabel("label_AgreementData_ADVANCEPAYMENT")));
+			modulType.add(new ValueLabel(PennantConstants.JOINSCUSTAGRDATA,
+					Labels.getLabel("label_AgreementData_JOINSCUSTAGRDATA")));
+			modulType.add(new ValueLabel(PennantConstants.LPOFORFLEETVEHICLE_DEALER,
+					Labels.getLabel("label_AgreementData_LPOFORFLEETVEHICLE_DEALER")));
+			modulType.add(new ValueLabel(PennantConstants.LPOFORFLEETVEHICLE_PRIVATE,
+					Labels.getLabel("label_AgreementData_LPOFORFLEETVEHICLE_PRIVATE")));
+		}
+		return modulType;
 	}
 
 	public static String getFinEventCode(String value) {

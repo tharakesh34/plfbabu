@@ -1033,7 +1033,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(
 					" TDSPercentage = :TdsPercentage, TdsStartDate = :TdsStartDate, TdsEndDate = :TdsEndDate, TdsLimitAmt = :TdsLimitAmt");
 			sql.append(", VanReq =:VanReq, VanCode =:VanCode, PlanEMIHAlwInGrace = :PlanEMIHAlwInGrace");
-			sql.append(", SubVentionFrom = :SubVentionFrom , ManufacturerDealerId = :ManufacturerDealerId,");
+			sql.append(", SubVentionFrom = :SubVentionFrom , ManufacturerDealerId = :ManufacturerDealerId");
 
 			// HL
 			sql.append(", FinOcrRequired = :FinOcrRequired, ReqLoanAmt = :ReqLoanAmt, ReqLoanTenor = :ReqLoanTenor");

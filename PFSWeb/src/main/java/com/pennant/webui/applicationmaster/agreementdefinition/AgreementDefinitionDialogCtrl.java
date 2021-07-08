@@ -433,6 +433,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 		this.aggIsActive.setChecked(aAgreementDefinition.isAggIsActive());
 		this.recordStatus.setValue(aAgreementDefinition.getRecordStatus());
 		fillComboBox(this.aggType, aAgreementDefinition.getAggtype(), PennantStaticListUtil.getAgreementType(), "");
+		fillComboBox(this.moduleType, aAgreementDefinition.getModuleType(), PennantStaticListUtil.getModulType(), "");
 		this.allowMultiple.setChecked(aAgreementDefinition.isAllowMultiple());
 		if (this.agreementDefinition.isNewRecord()) {
 			fillComboBox(this.moduleName, PennantConstants.WORFLOW_MODULE_FINANCE,

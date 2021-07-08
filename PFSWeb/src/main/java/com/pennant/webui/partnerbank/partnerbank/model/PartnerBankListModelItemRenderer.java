@@ -84,7 +84,7 @@ public class PartnerBankListModelItemRenderer implements ListitemRenderer<Partne
 		lc = new Listcell(PennantJavaUtil.getLabel(partnerBank.getRecordType()));
 		lc.setParent(item);
 
-		item.setAttribute("id", partnerBank.getId());
+		item.setAttribute("id", partnerBank.getPartnerBankId());
 
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onPartnerBankItemDoubleClicked");
 	}
