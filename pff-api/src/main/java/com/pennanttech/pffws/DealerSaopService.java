@@ -1,7 +1,7 @@
 package com.pennanttech.pffws;
 
-import javax.jws.WebParam;
-import javax.jws.WebService;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
 
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.ws.exception.ServiceException;

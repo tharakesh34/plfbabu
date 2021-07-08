@@ -15,7 +15,6 @@ import java.util.StringTokenizer;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
-import javax.xml.ws.WebServiceException;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
@@ -57,6 +56,8 @@ import com.pennanttech.ws.auth.model.UserAuthentication;
 import com.pennanttech.ws.auth.service.ServerAuthService;
 import com.pennanttech.ws.auth.service.UserAuthService;
 import com.pennanttech.ws.log.model.APILogDetail;
+
+import jakarta.xml.ws.WebServiceException;
 
 /**
  * This is REST services interceptor to read all the HTTP headers and set the details in the APIHeader bean object. The
@@ -249,7 +250,8 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 			} else if (APIHeader.API_SERVICENAME.equalsIgnoreCase(key)) {
 				isHeaderContainSrvcName = true;
 				String serviceName = headerMap.get(key).toString().replace("[", "").replace("]", "");
-				//In Case Of Get or Delete calls ServiceName in Header should be equal to one of the Last two Values in the URL.
+				// In Case Of Get or Delete calls ServiceName in Header should be equal to one of the Last two Values in
+				// the URL.
 				if (apiLogDetail.getServiceName().contains("/")) {
 					String[] serviceNameArray = apiLogDetail.getServiceName().split("/");
 					if (!StringUtils.equalsIgnoreCase(serviceNameArray[0], serviceName)
@@ -357,7 +359,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 
 			WebAuthenticationDetails authDetails = new WebAuthenticationDetails((HttpServletRequest) request);
 			String userLogin = authenticate(userName, password, authDetails);
-			//if valid user
+			// if valid user
 			String Token = RandomStringUtils.random(8, true, true);
 			PFSParameter pFSParameter = systemParameterService.getApprovedPFSParameterById("WS_TOKENEXPPERIOD");
 			if (pFSParameter != null) {
@@ -372,10 +374,10 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 		} else if (CHANNEL_SERVER.equals(channel) && !userName.equals("")) { // if channel is server with token.
 
 			WebAuthenticationDetails authDetails = new WebAuthenticationDetails((HttpServletRequest) request);
-			//if is not a valid token then raises Error
+			// if is not a valid token then raises Error
 			validateServerToken(userName, IP_ADDRESS, authDetails);
 		} else {
-			//if invalid channel
+			// if invalid channel
 
 			getErrorDetails("92001", null);
 		}

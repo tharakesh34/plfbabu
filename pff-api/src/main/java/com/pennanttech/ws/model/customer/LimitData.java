@@ -3,7 +3,7 @@ package com.pennanttech.ws.model.customer;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElement;
 
 public class LimitData {
 

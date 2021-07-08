@@ -2,7 +2,7 @@ package com.pennanttech.pffws;
 
 import java.util.List;
 
-import javax.jws.WebParam;
+import jakarta.jws.WebParam;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;

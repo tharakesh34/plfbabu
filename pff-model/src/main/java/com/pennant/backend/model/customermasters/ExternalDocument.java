@@ -2,9 +2,9 @@ package com.pennant.backend.model.customermasters;
 
 import java.sql.Timestamp;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.documentdetails.DocumentDetails;

@@ -1,6 +1,6 @@
 package com.pennanttech.pffws;
 
-import javax.jws.WebParam;
+import jakarta.jws.WebParam;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;

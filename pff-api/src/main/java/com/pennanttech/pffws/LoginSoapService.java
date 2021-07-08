@@ -1,7 +1,7 @@
 package com.pennanttech.pffws;
 
-import javax.jws.WebParam;
-import javax.jws.WebService;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
 
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.login.LoginRequest;

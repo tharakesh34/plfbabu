@@ -2,7 +2,7 @@ package com.pennant.backend.model.applicationmaster;
 
 import java.sql.Timestamp;
 
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;

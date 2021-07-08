@@ -45,7 +45,7 @@ package com.pennant.backend.model.mandate;
 
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;

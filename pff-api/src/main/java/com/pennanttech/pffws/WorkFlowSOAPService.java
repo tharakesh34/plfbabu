@@ -1,8 +1,8 @@
 package com.pennanttech.pffws;
 
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
 import javax.ws.rs.PathParam;
 
 import com.pennant.backend.model.WorkFlowDetails;

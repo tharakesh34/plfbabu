@@ -1,7 +1,7 @@
 package com.pennanttech.pffws;
 
-import javax.jws.WebResult;
-import javax.jws.WebService;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
 
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.ws.exception.ServiceException;

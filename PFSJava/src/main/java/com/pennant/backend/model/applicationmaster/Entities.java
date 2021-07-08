@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import com.pennant.backend.model.systemmasters.Academic;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
