@@ -56,7 +56,7 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 	public void handleMessage(Message message) throws Fault {
 		if (writer != null || LOG.isInfoEnabled()) {
 			logging(message);
-			//prepare the HeaderDetails of Response.
+			// prepare the HeaderDetails of Response.
 			prepareHeaderDetails(message);
 		}
 	}
@@ -89,7 +89,7 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 		if (apiHeader != null) {
 			String returnDesc = null;
 			Object obj = message.getContent(List.class).get(0);
-			//here we check the Return code and based on that we set the ReturnDesc to the Header.
+			// here we check the Return code and based on that we set the ReturnDesc to the Header.
 			if (StringUtils.isBlank(apiHeader.getReturnCode()) && obj != null) {
 				String jsonResponse = LogUtility.convertObjToJson(obj);
 				returnCode = LogUtility.getReturnCode(jsonResponse);
@@ -160,7 +160,7 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 			}
 			try {
 				String encoding = (String) message.get(Message.ENCODING);
-				writePayload(buffer.getPayload(), cos, encoding, ct);
+				writePayload(buffer.getPayload(), cos, encoding, ct, false);
 			} catch (Exception ex) {
 				LOG.error("Error logging API Response : ", ex);
 			}

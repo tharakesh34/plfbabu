@@ -8,7 +8,7 @@
 	<!-- RepayInstruction validations -->
 	<bean class="com.pennant.backend.model.finance.RepayInstruction" ignore-annotations="false">
 		<field name="repayDate">
-			<constraint annotation="javax.validation.constraints.NotNull">
+			<constraint annotation="jakarta.validation.constraints.NotNull">
 				<message>repayDate is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -18,7 +18,7 @@
 			</constraint>
 		</field>
 		<field name="repayAmount">
-			<constraint annotation="javax.validation.constraints.Min">
+			<constraint annotation="jakarta.validation.constraints.Min">
 				<message>repayAmount should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -27,7 +27,7 @@
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>repayAmount allow 18 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>

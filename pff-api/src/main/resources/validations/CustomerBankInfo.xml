@@ -8,7 +8,7 @@
 	<!-- CustomerBankInfo validations -->
 	<bean class="com.pennant.backend.model.customermasters.CustomerBankInfo">
 		<field name="bankId">
-			<constraint annotation="javax.validation.constraints.Min">
+			<constraint annotation="jakarta.validation.constraints.Min">
 				<message>bankId is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
@@ -16,14 +16,14 @@
 				<element name="value">1</element>
 
 			</constraint>
-			<constraint annotation="javax.validation.constraints.Max">
+			<constraint annotation="jakarta.validation.constraints.Max">
 				<message>bankId Applicable only for update Customer</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 				</groups>
 				<element name="value">-1</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>bankId allow 19 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>

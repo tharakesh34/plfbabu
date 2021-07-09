@@ -156,12 +156,6 @@
 			<artifactId>jackson-dataformat-xml</artifactId>
 			<version>2.12.3</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-validator -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<version>7.0.1.Final</version>
-		</dependency>
 		<dependency>
 			<groupId>org.infinispan</groupId>
 			<artifactId>infinispan-embedded</artifactId>
@@ -183,18 +177,6 @@
 		<dependency>
 			<groupId>com.pennanttech.pennapps</groupId>
 			<artifactId>pennapps-core</artifactId>
-		</dependency>
-		
-		<!-- Bean validation framework dependency -->
-		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-			<version>1.1.0.Final</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<version>5.2.4.Final</version>
 		</dependency>
 	</dependencies>
 

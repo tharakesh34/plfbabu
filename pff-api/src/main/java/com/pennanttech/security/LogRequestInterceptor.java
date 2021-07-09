@@ -94,7 +94,7 @@ public class LogRequestInterceptor extends LoggingInInterceptor {
 						bos.flush();
 						message.setContent(InputStream.class, bos.getInputStream());
 
-						writePayload(buffer.getPayload(), bos, encoding, ct);
+						writePayload(buffer.getPayload(), bos, encoding, ct, false);
 
 					}
 				}
@@ -178,15 +178,14 @@ public class LogRequestInterceptor extends LoggingInInterceptor {
 			}
 		}
 		apiLogDetail.setResponseGiven(new Timestamp(System.currentTimeMillis()));
-		
-		
+
 		String serviceName = StringUtils.trimToEmpty(apiLogDetail.getServiceName());
 		int serviceVersion = apiLogDetail.getServiceVersion();
 		String reference = StringUtils.trimToEmpty(apiLogDetail.getReference());
 		String keyFields = StringUtils.trimToEmpty(apiLogDetail.getKeyFields());
 		String messageId = StringUtils.trimToEmpty(apiLogDetail.getMessageId());
 		String entityId = StringUtils.trimToEmpty(apiLogDetail.getEntityId());
-		
+
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("\n");
 		logMsg.append("=======================================================\n");
@@ -197,20 +196,19 @@ public class LogRequestInterceptor extends LoggingInInterceptor {
 		logMsg.append("Reference:").append(reference).append("\n");
 		logMsg.append("KeyFields:").append(keyFields).append("\n");
 		logMsg.append("=======================================================");
-		
+
 		log.info(logMsg);
 		log.info(buffer.toString());
-		
+
 		truncateExcessParameters(apiLogDetail);
 		long seqId = apiLogDetailDAO.saveLogDetails(apiLogDetail);
 		log.info("Log request details into PLFAPILOGDETAILS table with ID {}", seqId);
-		
+
 		apiLogDetail.setSeqId(seqId);
 		message.getExchange().put(APIHeader.API_LOG_KEY, apiLogDetail);
-		
 
 	}
-	
+
 	private void truncateExcessParameters(APILogDetail apiLogDetail) {
 		if (apiLogDetail == null) {
 			return;
@@ -222,8 +220,7 @@ public class LogRequestInterceptor extends LoggingInInterceptor {
 		String entityId = StringUtils.trimToEmpty(apiLogDetail.getEntityId());
 		String language = StringUtils.trimToEmpty(apiLogDetail.getLanguage());
 		String error = StringUtils.trimToEmpty(apiLogDetail.getError());
-		
-		
+
 		if (reference.length() > 20) {
 			apiLogDetail.setReference(reference.substring(0, 20));
 		}
@@ -244,7 +241,7 @@ public class LogRequestInterceptor extends LoggingInInterceptor {
 		if (error.length() > 2000) {
 			apiLogDetail.setLanguage(error.substring(0, 2000));
 		}
-		
+
 	}
 
 	/**

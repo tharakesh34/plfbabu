@@ -21,7 +21,7 @@
 			</constraint>
 		</field>
 		<field name="oDGraceDays">
-			<constraint annotation="javax.validation.constraints.Max">
+			<constraint annotation="jakarta.validation.constraints.Max">
 				<message>oDGraceDays allow 3 digits only</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
@@ -43,7 +43,7 @@
 			</constraint>
 		</field>
 		<field name="oDChargeAmtOrPerc">
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>odChargeAmtOrPerc allow 18 digits only</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
@@ -54,7 +54,7 @@
 			</constraint>
 		</field>
 		<field name="oDMaxWaiverPerc">
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>odMaxWaiverPerc allow 3 digits only</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
