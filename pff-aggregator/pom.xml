@@ -162,7 +162,7 @@
 				<version>3.12.0</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.commons</groupId>
+				<groupId>commons-lang</groupId>
 				<artifactId>commons-lang</artifactId>
 				<version>2.6</version>
 			</dependency>
@@ -339,6 +339,10 @@
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 		</dependency>
@@ -455,7 +459,7 @@
 			<artifactId>jackson-annotations</artifactId>
 			<version>2.12.3</version>
 		</dependency>
-		
+
 		<!-- Apache Axiom Library for XML Infoset Compliant Object Model -->
 		<dependency>
 			<groupId>org.apache.ws.commons.axiom</groupId>
@@ -584,7 +588,7 @@
 			<version>2.3.1</version>
 			<scope>runtime</scope>
 		</dependency>
-	
+
 	</dependencies>
 
 	<build>
