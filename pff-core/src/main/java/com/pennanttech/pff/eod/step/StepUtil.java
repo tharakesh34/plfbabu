@@ -4,33 +4,12 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 
 public class StepUtil {
 	public enum Step {
-		microEOD,
-		microEODMonitor,
-		beforeEOD,
-		loanCancel,
-		prepareCustomerQueue,
-		masterStep,
-		processInActiveFinances,
-		prepareCustomerGroupQueue,
-		limitCustomerGroupsUpdate,
-		institutionLimitUpdate,
-		limitsUpdate,
-		datesUpdate,
-		snapShotPreparation,
-		ledgerDownLoad,
-		ledgerNotification,
-		gstDownload,
-		collectionDataDownLoad,
-		collectionNotification,
-		loadCollateralRevaluationData,
-		collateralRevaluation,
-		endOfMonthDecider,
-		retailcibil,
-		corporatecibil,
-		prepareIncomeAMZDetails,
-		autoKnockOffProcess,
-		customerDataPreperation, 
-		masterDataPreparation,
+		microEOD, microEODMonitor, beforeEOD, loanCancel, prepareCustomerQueue, masterStep, processInActiveFinances,
+		prepareCustomerGroupQueue, limitCustomerGroupsUpdate, institutionLimitUpdate, limitsUpdate, datesUpdate,
+		snapShotPreparation, ledgerDownLoad, ledgerNotification, gstDownload, collectionDataDownLoad,
+		collectionNotification, loadCollateralRevaluationData, collateralRevaluation, endOfMonthDecider, retailcibil,
+		corporatecibil, prepareIncomeAMZDetails, autoKnockOffProcess, customerDataPreperation, masterDataPreparation,
+		prepareAmortizationQueue
 	}
 
 	public static final DataEngineStatus COLLATERAL_REVALUATION = new DataEngineStatus("COLLATERAL_REVALUATION");
