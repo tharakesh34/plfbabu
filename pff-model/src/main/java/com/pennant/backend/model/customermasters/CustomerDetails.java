@@ -372,7 +372,7 @@ public class CustomerDetails implements java.io.Serializable {
 		CustomerEMail custEmail = null;
 		custDedup = new CustomerDedup();
 
-		if (this.customer.getCustCIF() != null) {
+		if (this.customer != null && this.customer.getCustCIF() != null) {
 			custDedup.setCustId(this.customer.getCustID());
 			custDedup.setCustCIF(this.customer.getCustCIF() != null ? this.customer.getCustCIF() : "");
 			custDedup.setCustCoreBank(this.customer.getCustCoreBank() != null ? this.customer.getCustCoreBank() : "");
