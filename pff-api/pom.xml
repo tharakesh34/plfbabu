@@ -96,20 +96,6 @@
 			<artifactId>cxf-rt-rs-client</artifactId>
 			<version>${cxf.version}</version>
 		</dependency>
-
-		<!-- jackson json parser framework dependency -->
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-jaxrs</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-xc -->
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-xc</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>

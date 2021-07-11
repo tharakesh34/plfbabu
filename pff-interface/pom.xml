@@ -110,16 +110,6 @@
 			<version>${cxf.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-jaxrs</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-xc</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
 			<version>3.1</version>
@@ -144,6 +134,24 @@
 			<groupId>com.squareup.okhttp3</groupId>
 			<artifactId>okhttp</artifactId>
 			<version>5.0.0-alpha.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.pennanttech.pennapps</groupId>
+			<artifactId>pennapps-spreadsheets</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.codehaus.jackson</groupId>
+					<artifactId>jackson-mapper-lgpl</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 	

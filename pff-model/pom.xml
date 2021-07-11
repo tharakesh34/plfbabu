@@ -14,19 +14,6 @@
 	<version>${pff.version}</version>
 	<packaging>jar</packaging>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-jaxrs</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-xc</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-	</dependencies>
-	
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<resources>
