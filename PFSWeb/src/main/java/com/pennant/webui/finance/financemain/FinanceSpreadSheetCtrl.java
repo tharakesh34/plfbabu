@@ -15,10 +15,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.json.JSONObject;
 import org.zkoss.json.parser.JSONParser;
@@ -42,6 +38,10 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Window;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.RuleExecutionUtil;
@@ -81,7 +81,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	protected Spreadsheet spreadSheet = null;
 	protected Div spreadSheetDiv;
 
-	//protected Listbox listBoxCustomerExternalLiability;
+	// protected Listbox listBoxCustomerExternalLiability;
 	private CreditReviewDetails creditReviewDetails = null;
 	private CreditReviewData creditReviewData = null;
 	private List<CustomerIncome> customerIncomeList = new ArrayList<CustomerIncome>();
@@ -268,7 +268,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		Map<String, Object> dataMap = new HashMap<>();
 		if (creditReviewData != null) {
 			dataMap = convertStringToMap(creditReviewData.getTemplateData());
-			//doFillExternalLiabilities(appExtLiabilities, dataMap);
+			// doFillExternalLiabilities(appExtLiabilities, dataMap);
 		}
 
 		String fields = creditReviewDetails.getFields();
@@ -343,7 +343,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 		if (this.creditReviewData == null) {
 			this.creditReviewData = new CreditReviewData();
-			//this.creditReviewData.setNewRecord(true);
+			// this.creditReviewData.setNewRecord(true);
 		}
 
 		this.creditReviewData.setTemplateName(this.creditReviewDetails.getTemplateName());
@@ -555,8 +555,8 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 							fieldValuesMap.put(fields[j], BigDecimal.ONE);
 						}
 					}
-					code = String.valueOf(RuleExecutionUtil.executeRule("Result = " + code + ";", fieldValuesMap,
-							null, RuleReturnType.INTEGER)); //FIXME Code should be checked
+					code = String.valueOf(RuleExecutionUtil.executeRule("Result = " + code + ";", fieldValuesMap, null,
+							RuleReturnType.INTEGER)); // FIXME Code should be checked
 				}
 
 				if (new BigDecimal(code.trim()).compareTo(max) > 0) {
@@ -567,7 +567,6 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 		return max;
 	}
-
 
 	private String getScrSlab(long refId, BigDecimal grpTotalScore, String execCreditWorth, boolean isRetail,
 			List<ScoringSlab> scoringSlabList) throws InterruptedException {
@@ -608,7 +607,6 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		return creditWorth;
 	}
 
-
 	private Map<String, Object> executeScoringMetrics(CustomerDetails customerDetails,
 			ExtendedFieldRender extendedFieldRender) {
 		logger.debug(Literal.ENTERING);
@@ -643,13 +641,13 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 							mapValues.get("NET_BONUS") == null ? BigDecimal.ZERO
 									: PennantApplicationUtil.formateAmount(
 											new BigDecimal(mapValues.get("NET_BONUS").toString()),
-											PennantConstants.defaultCCYDecPos));//DDE
+											PennantConstants.defaultCCYDecPos));// DDE
 					dataMap.put("annual_Net_Sal",
 							mapValues.get("NET_ANNUAL") == null ? BigDecimal.ZERO
 									: mapValues.get("NET_BONUS") == null ? BigDecimal.ZERO
 											: PennantApplicationUtil.formateAmount(
 													new BigDecimal(mapValues.get("NET_ANNUAL").toString()),
-													PennantConstants.defaultCCYDecPos));//DDE
+													PennantConstants.defaultCCYDecPos));// DDE
 					dataMap.put("dpdL6M",
 							mapValues.get("CIBIL_DPD60M") == null ? BigDecimal.ZERO : mapValues.get("CIBIL_DPD60M"));
 					dataMap.put("dpdL12M",
@@ -679,7 +677,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 										dataMap.put("emi_" + i, PennantApplicationUtil.formateAmount(
 												bankInfoDetail.getTotalEmi(), PennantConstants.defaultCCYDecPos));
 										dataMap.put("sal_month_" + i, PennantApplicationUtil.formateAmount(
-												bankInfoDetail.getTotalSalary(), PennantConstants.defaultCCYDecPos));										
+												bankInfoDetail.getTotalSalary(), PennantConstants.defaultCCYDecPos));
 										dataMap.put("emiBounce_" + i, bankInfoDetail.getEmiBounceNo());
 										dataMap.put("grossReceipts_" + i, BigDecimal.ZERO);
 
@@ -709,11 +707,11 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 					for (CustomerIncome customerIncome : customerIncomes) {
 						if (StringUtils.equals(customerIncome.getIncomeType(), "RENINC")) {
 							dataMap.put("rental_income", PennantApplicationUtil
-									.formateAmount(customerIncome.getIncome(), PennantConstants.defaultCCYDecPos));//DDE
+									.formateAmount(customerIncome.getIncome(), PennantConstants.defaultCCYDecPos));// DDE
 						}
 						if (StringUtils.equals(customerIncome.getIncomeType(), "INTINC")) {
 							dataMap.put("interest_income", PennantApplicationUtil
-									.formateAmount(customerIncome.getIncome(), PennantConstants.defaultCCYDecPos));//DDE
+									.formateAmount(customerIncome.getIncome(), PennantConstants.defaultCCYDecPos));// DDE
 						}
 					}
 				}
@@ -748,12 +746,12 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				String result = (String) RuleExecutionUtil.executeRule(rule.getSQLRule(), dataMap,
 						financeDetail.getFinScheduleData().getFinanceMain().getFinCcy(), RuleReturnType.CALCSTRING);
 
-				//creditWorth = calculateScore(scoringMetrics, creditWorth, customer, dataMap, result);
+				// creditWorth = calculateScore(scoringMetrics, creditWorth, customer, dataMap, result);
 				JSONParser parser = new JSONParser();
 				JSONObject json = (JSONObject) parser.parse(result.toString());
 				resutlMap = convertStringToMap(json.toString());
 			}
-			//dataMapValues.put(creditWorth, dataMap);
+			// dataMapValues.put(creditWorth, dataMap);
 			if (resutlMap != null)
 				dataMap.putAll(resutlMap);
 		}
@@ -778,7 +776,8 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			}
 
 			if (customer.getCustDOB() != null) {
-				int dobMonths = DateUtility.getMonthsBetween(customer.getCustDOB(), SysParamUtil.getAppDate());;
+				int dobMonths = DateUtility.getMonthsBetween(customer.getCustDOB(), SysParamUtil.getAppDate());
+				;
 				int months = dobMonths % 12;
 				BigDecimal age = BigDecimal.ZERO;
 				if (months <= 9) {
@@ -789,14 +788,13 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				customerEligibilityCheck.setCustAge(age);
 			}
 
-
-			//Get the slab based on the scoreGroupId
+			// Get the slab based on the scoreGroupId
 			List<ScoringSlab> scoringSlabList = finScoringDetailService
 					.getScoringSlabsByScoreGrpId(scoringMetrics.get(0).getScoreGroupId(), "_AView");
 
 			customerEligibilityCheck.setDataMap(dataMap);
 
-			//Execute the Metrics
+			// Execute the Metrics
 			scoringMetrics = finScoringDetailService.executeScoringMetrics(scoringMetrics, customerEligibilityCheck);
 			try {
 				for (ScoringMetrics scoringMetric : scoringMetrics) {
@@ -811,7 +809,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 					}
 				}
 
-				//Get the Scoring Group
+				// Get the Scoring Group
 				creditWorth = getScrSlab(scoringMetrics.get(0).getScoreGroupId(), totalGrpExecScore, "", true,
 						scoringSlabList);
 				mapValues.put("CreditWorth", creditWorth);
@@ -1006,12 +1004,12 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	@Autowired
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
-	
+
 	@Autowired
 	public void setFinScoringDetailService(ScoringDetailService finScoringDetailService) {
 		this.finScoringDetailService = finScoringDetailService;

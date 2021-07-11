@@ -1,6 +1,5 @@
 package com.pennanttech.controller;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -13,8 +12,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.zkoss.json.JSONObject;
 import org.zkoss.json.parser.JSONParser;
 
@@ -226,7 +223,7 @@ public class MiscellaneousServiceController extends ExtendedTestClass {
 					datamap.put(ruleCodeData.getElgRuleCode(), map);
 				}
 			}
-			//ruleCodeData.setMap(map);
+			// ruleCodeData.setMap(map);
 			ruleCodeData.setDataMap(datamap);
 			ruleCodeData.setRuleCodes(ruleCodeList);
 		}
@@ -396,7 +393,7 @@ public class MiscellaneousServiceController extends ExtendedTestClass {
 								JSONObject json = (JSONObject) parser.parse(result.toString());
 								detail.setJson(json);
 							}
-							//If Any Rule fails return the control along with executed Rule Result.
+							// If Any Rule fails return the control along with executed Rule Result.
 							if (StringUtils.equals("0", detail.getRuleResult())) {
 								responseList.add(detail);
 								response.setEligibilityDetails(responseList);
@@ -1129,7 +1126,7 @@ public class MiscellaneousServiceController extends ExtendedTestClass {
 				splRule = true;
 			}
 
-			//FIXME:shinde.b Need to check for Irrespective of the Rule Execution.
+			// FIXME:shinde.b Need to check for Irrespective of the Rule Execution.
 			Map<String, Object> varData = bRERequestDetail.getMap();
 			varData.put("splRule", "Y");
 
@@ -1159,7 +1156,7 @@ public class MiscellaneousServiceController extends ExtendedTestClass {
 				}
 
 			}
-			//If Any Rule fails return the control along with executed Rule Result.
+			// If Any Rule fails return the control along with executed Rule Result.
 			if (StringUtils.equals("0", detail.getRuleResult())) {
 				return response;
 			}
@@ -1347,7 +1344,7 @@ public class MiscellaneousServiceController extends ExtendedTestClass {
 				splRule = true;
 			}
 
-			//FIXME:Shinde.b Need to check for Irrespective of the Rule Execution.
+			// FIXME:Shinde.b Need to check for Irrespective of the Rule Execution.
 			Map<String, Object> varData = bRERequestDetail.getMap();
 			varData.put("splRule", "Y");
 
@@ -1365,7 +1362,7 @@ public class MiscellaneousServiceController extends ExtendedTestClass {
 				response.setResult(json);
 
 			}
-			//If Any Rule fails return the control along with executed Rule Result.
+			// If Any Rule fails return the control along with executed Rule Result.
 			if (StringUtils.equals("0", detail.getRuleResult())) {
 				return response;
 			}
@@ -1404,7 +1401,7 @@ public class MiscellaneousServiceController extends ExtendedTestClass {
 				splRule = true;
 			}
 
-			//FIXME:Shinde.b Need to check for Irrespective of the Rule Execution.
+			// FIXME:Shinde.b Need to check for Irrespective of the Rule Execution.
 			Map<String, Object> varData = bRERequestDetail.getMap();
 			varData.put("splRule", "Y");
 
@@ -1422,7 +1419,7 @@ public class MiscellaneousServiceController extends ExtendedTestClass {
 				response.setResult(json);
 
 			}
-			//If Any Rule fails return the control along with executed Rule Result.
+			// If Any Rule fails return the control along with executed Rule Result.
 			if (StringUtils.equals("0", detail.getRuleResult())) {
 				return response;
 			}

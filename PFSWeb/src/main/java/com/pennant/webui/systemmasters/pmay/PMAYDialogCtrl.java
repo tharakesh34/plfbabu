@@ -12,7 +12,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -36,6 +35,7 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
@@ -165,8 +165,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_PmayDialog(Event event) throws Exception {
@@ -304,8 +303,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -317,8 +315,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -329,8 +326,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -341,8 +337,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -353,8 +348,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -365,8 +359,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -377,8 +370,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -562,7 +554,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 			pmayDetails.setRECORD_ID(String.valueOf(recordId));
 		}
 
-		//String url = "http://localhost:8181/pennapps-simulator/PMAYServlet";
+		// String url = "http://localhost:8181/pennapps-simulator/PMAYServlet";
 		PmayDetailsService pmayService = new PmayDetailsService();
 		PMAYResponse processRes = pmayService.ProcessRequest(pmyReq);
 		String reqJson = "";
@@ -703,7 +695,8 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 						pmayDetails.setAADHAAR_NO(customerDocument.getCustDocTitle());
 						break;
 					}
-					if (StringUtils.equals(MasterDefUtil.getDocCode(DocType.ENO), //enrollment number if aadhaar not available
+					if (StringUtils.equals(MasterDefUtil.getDocCode(DocType.ENO), // enrollment number if aadhaar not
+																					// available
 							customerDocument.getCustDocCategory())) {
 						aadharFound = true;
 						pmayDetails.setAADHAAR_NO(customerDocument.getCustDocTitle());
@@ -913,7 +906,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 				listitem = new Listitem();
 				Listcell lc;
 
-				//Record ID
+				// Record ID
 				lc = new Listcell(String.valueOf(pmayEligibilityLog.getRecordId()));
 				lc.setParent(listitem);
 
@@ -929,11 +922,11 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 				lc = new Listcell(pmayEligibilityLog.getErrorDesc());
 				lc.setParent(listitem);
 
-				//Applicant ID
+				// Applicant ID
 				lc = new Listcell(pmayEligibilityLog.getApplicantId());
 				lc.setParent(listitem);
 
-				//Applicant ID
+				// Applicant ID
 				Textbox remarks = new Textbox();
 				remarks.addForward("onChange", self, "onChangeRemarks");
 				remarks.setAttribute("pmayEligibilityLog", pmayEligibilityLog);
@@ -1093,7 +1086,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		aPMAY.setFinReference(financeMain.getFinReference());
-		//notified town
+		// notified town
 
 		try {
 			if (notifiedTownYes.isSelected()) {
@@ -1111,7 +1104,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//central asstnce
+		// central asstnce
 		try {
 			if (centralAssistanceYes.isSelected()) {
 				aPMAY.setCentralAssistance(this.centralAssistanceYes.isSelected());
@@ -1121,7 +1114,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Owned house
+		// Owned house
 		try {
 			if (ownedHouseYes.isSelected()) {
 				aPMAY.setOwnedHouse(this.ownedHouseYes.isSelected());
@@ -1131,20 +1124,20 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Carpet Area
+		// Carpet Area
 		try {
 			aPMAY.setCarpetArea(this.carpetArea.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Annual income
+		// Annual income
 		try {
 			aPMAY.setHouseholdAnnIncome(
 					PennantApplicationUtil.unFormateAmount(this.householdAnnIncome.getActualValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Balance Trnsfr
+		// Balance Trnsfr
 		try {
 			if (balanceTransferYes.isSelected()) {
 				aPMAY.setBalanceTransfer(this.balanceTransferYes.isSelected());
@@ -1154,7 +1147,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Primary Appcnt
+		// Primary Appcnt
 		try {
 			if (primaryApplicantYes.isSelected()) {
 				aPMAY.setPrimaryApplicant(this.primaryApplicantYes.isSelected());
@@ -1164,19 +1157,19 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Tx FinType
+		// Tx FinType
 		try {
 			aPMAY.setTransactionFinType(this.transactionFinType.getSelectedItem().getValue().toString());
 		} catch (WrongValueException e) {
 			// TODO: handle exception
 		}
-		//Product
+		// Product
 		try {
 			aPMAY.setProduct(this.product.getSelectedItem().getValue().toString());
 		} catch (WrongValueException e) {
 			// TODO: handle exception
 		}
-		//Prprty Owned by women
+		// Prprty Owned by women
 		try {
 			if (prptyOwnedByWomenYes.isSelected()) {
 				aPMAY.setPrprtyOwnedByWomen(this.prptyOwnedByWomenYes.isSelected());
@@ -1186,7 +1179,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//water supply
+		// water supply
 		try {
 			if (waterSupplyYes.isSelected()) {
 				aPMAY.setWaterSupply(this.waterSupplyYes.isSelected());
@@ -1196,7 +1189,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//drinage
+		// drinage
 		try {
 			if (drinageYes.isSelected()) {
 				aPMAY.setDrinage(this.drinageYes.isSelected());
@@ -1206,7 +1199,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Electricity
+		// Electricity
 		try {
 			if (electricityYes.isSelected()) {
 				aPMAY.setElectricity(this.electricityYes.isSelected());
@@ -1240,8 +1233,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param pmay
-	 *            The entity that need to be render.
+	 * @param pmay The entity that need to be render.
 	 */
 	public void doShowDialog(PMAY aPMAY) {
 		logger.debug(Literal.ENTERING);
@@ -1567,11 +1559,9 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aPMAY
-	 *            (PMAY)
+	 * @param aPMAY    (PMAY)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1602,7 +1592,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 		this.pmay.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		this.pmay.setUserDetails(getUserWorkspace().getLoggedInUser());
 		aFinanceDetail.setPmay(this.pmay);
-		//Pmay data saving issue in finance main
+		// Pmay data saving issue in finance main
 		if (this.financeDetail != null) {
 			boolean ispMay = this.financeDetail.getFinScheduleData().getFinanceMain().isPmay();
 			aFinanceDetail.getFinScheduleData().getFinanceMain().setPmay(ispMay);
@@ -1712,10 +1702,8 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */
@@ -1800,7 +1788,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 		logger.debug(Literal.ENTERING);
 		Notes notes = new Notes();
 		notes.setModuleName("PMAY");
-		//notes.setReference(String.valueOf(getPmay().getFinReference()));
+		// notes.setReference(String.valueOf(getPmay().getFinReference()));
 		notes.setVersion(getPmay().getVersion());
 		logger.debug(Literal.LEAVING);
 		return notes;

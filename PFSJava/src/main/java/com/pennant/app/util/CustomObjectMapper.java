@@ -3,12 +3,14 @@ package com.pennant.app.util;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.util.PennantConstants;
 
 /**
@@ -17,13 +19,14 @@ import com.pennant.backend.util.PennantConstants;
  */
 public class CustomObjectMapper extends ObjectMapper {
 	public CustomObjectMapper() {
-		configure(SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY, false);
-		configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
+		configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
+		configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 		DateFormat dateFormat = new SimpleDateFormat(PennantConstants.APIDateFormatter);
 		dateFormat.setLenient(false);
 		setDateFormat(dateFormat);
-		setSerializationInclusion(Inclusion.NON_NULL);
-		setAnnotationIntrospector(new JaxbAnnotationIntrospector());
-		configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		setSerializationInclusion(JsonInclude.Include.NON_NULL);
+		setAnnotationIntrospector(new JaxbAnnotationIntrospector(TypeFactory.defaultInstance()));
+		configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		addMixIn(AuditDetail.class, AuditDetail.class);
 	}
 }

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinMandateServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-10-2016    														*
- *                                                                  						*
- * Modified Date    :  26-10-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinMandateServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-10-2016 * *
+ * Modified Date : 26-10-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-10-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-10-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -142,8 +124,8 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 		boolean isMandateReq = checkRepayMethod(finmain);
 		if (isMandateReq) {
 			if (mandate != null) {
-				//FIXME Setting the customer ID to mandate when custId is null or zero
-				//adding this condition to stop overring the co-applicant customer Id from loan queue 
+				// FIXME Setting the customer ID to mandate when custId is null or zero
+				// adding this condition to stop overring the co-applicant customer Id from loan queue
 				if (mandate.getCustID() == 0 || mandate.getCustID() == Long.MIN_VALUE) {
 					mandate.setCustID(finmain.getCustID());
 				}
@@ -198,8 +180,8 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 		boolean isMandateReq = checkRepayMethod(finmain);
 		if (isMandateReq) {
 			if (mandate != null) {
-				//FIXME Setting the customer ID to mandate when custId is null or zero
-				//adding this condition to stop overring the co-applicant customer Id from loan queue 
+				// FIXME Setting the customer ID to mandate when custId is null or zero
+				// adding this condition to stop overring the co-applicant customer Id from loan queue
 				if (mandate.getCustID() == 0 || mandate.getCustID() == Long.MIN_VALUE) {
 					mandate.setCustID(finmain.getCustID());
 				}
@@ -215,8 +197,9 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 					mandate.setStatus(MandateConstants.STATUS_NEW);
 					String mandateCustomStatus = SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS);
 					if (StringUtils.isNotBlank(mandateCustomStatus)) {
-						//FIXME: Custom Status should not be set to Mandate while Approving.Have to discuss with Respective module owner
-						//mandate.setStatus(mandateCustomStatus);
+						// FIXME: Custom Status should not be set to Mandate while Approving.Have to discuss with
+						// Respective module owner
+						// mandate.setStatus(mandateCustomStatus);
 					}
 					mandate.setRecordType("");
 					mandate.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -389,7 +372,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 				}
 
 				if (mandate.getMaxLimit().compareTo(exposure) < 0) {
-					auditDetail.setErrorDetail(90320);
+					// auditDetail.setErrorDetail(90320);
 				}
 
 			}

@@ -5,16 +5,16 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 @XmlType(propOrder = { "referenceId", "docCategory", "custDocTitle", "custDocIssuedCountry", "custDocSysName",
 		"custDocIssuedOn", "custDocExpDate", "docPurpose", "docName", "doctype", "docImage", "docUri",
@@ -102,12 +102,12 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private String applicationNo;
 	private String leadId;
 	private boolean lovDescNewImage = false;
-	//Specific To Verification API 
+	// Specific To Verification API
 	@XmlElement
 	private String lovDescCustShrtName;
 	@XmlElement
 	private String refId;
-	//Specific To  LV verification  API
+	// Specific To LV verification API
 	@XmlElement
 	private int docTypeId;
 
@@ -310,10 +310,6 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 
 	public void setReferenceId(String referenceId) {
 		this.referenceId = referenceId;
-	}
-
-	public void setRefId(long referenceId) {
-		this.referenceId = String.valueOf(referenceId);
 	}
 
 	public String getReferenceId() {
