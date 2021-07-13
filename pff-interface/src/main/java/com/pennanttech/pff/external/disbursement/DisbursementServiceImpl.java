@@ -53,6 +53,8 @@ public class DisbursementServiceImpl implements DisbursementService {
 		if (onlineDisbursement != null) {
 			try {
 				status = onlineDisbursement.processRequest(request);
+				status.getKeyAttributes().put("DISBURSEMENT_TYPE",
+						request.getDisbursementRequests().get(0).getDisbursementType());
 			} catch (Exception e) {
 				logger.debug(Literal.EXCEPTION, e);
 			}
@@ -199,10 +201,6 @@ public class DisbursementServiceImpl implements DisbursementService {
 
 	private OfflineDisbursement getOfflineDisbursement() {
 		return customOfflineDisbursement == null ? offlineDisbursement : customOfflineDisbursement;
-	}
-
-	public OnlineDisbursement getOnlineDisbursement() {
-		return onlineDisbursement;
 	}
 
 	@Autowired(required = false)

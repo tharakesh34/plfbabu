@@ -52,7 +52,6 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -1759,7 +1758,7 @@ public class ReceiptCalculator implements Serializable {
 
 		setSMTParms(eventProperties);
 
-		Map<String, BigDecimal> taxPercMap = new HashMap<>();
+		Map<String, BigDecimal> taxPercMap = taxSplit.getTaxPercMap();
 		// Fetch and store Tax percentages one time
 		if (financeDetail.getFinScheduleData().getGstExecutionMap().isEmpty()) {
 			taxPercMap = getTaxPercentageMap(financeDetail);

@@ -57,6 +57,7 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 	private PlatformTransactionManager transactionManager;
 	private static Map<Long, Map<String, EventProperties>> eventProperties = new HashMap<>();
 	private static String ONLINE = "ONLINE";
+	private static final String ERROR_MESSAGE = "Unable to process the disbursement requests, please contact administrator.";
 
 	protected Map<String, String> inserQueryMap = new HashMap<>();
 
@@ -90,11 +91,8 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 
 			logger.info("Processing the disbursement requests");
 			list = disbursementService.sendReqest(request);
-			if (PennantConstants.ONLINE.equals(request.getDownloadType())) {
-				updateOnlineBatchStatus(request, list);
-			} else {
-				updateBatchStatus(request, list);
-			}
+
+			updateBatchStatus(request, list);
 
 		} catch (AppException e) {
 			list = null;
@@ -114,7 +112,7 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 
 			if (CollectionUtils.isEmpty(list) && headerId != null) {
 				logger.info("AppException, list is empty and headerid is not null. ");
-				throw new AppException("Unable to process the disbursement requests, please contact administrator.");
+				throw new AppException(ERROR_MESSAGE);
 			}
 		}
 
@@ -122,130 +120,18 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 		return status;
 	}
 
-	private void updateOnlineBatchStatus(DisbursementRequest disbursementRequest, List<DataEngineStatus> list) {
+	private void updateBatchStatus(DisbursementRequest disbursementRequest, List<DataEngineStatus> list) {
 		logger.info("Updating batch status...");
 
+		List<DisbursementRequest> disbursementRequests = disbursementRequest.getDisbursementRequests();
+
 		for (DataEngineStatus dataEngineStatus : list) {
-			List<DisbursementRequest> disbursementRequests = disbursementRequest.getDisbursementRequests();
 			if (!"S".equals(dataEngineStatus.getStatus())) {
-				boolean disbursements = false;
-				boolean payments = false;
-
-				long btachId = dataEngineStatus.getId();
-				String disbursementType = dataEngineStatus.getKeyAttributes().get("DISBURSEMENT_TYPE").toString();
-
-				for (DisbursementRequest request : disbursementRequests) {
-					if (PaymentChannel.Disbursement.getValue().equals(request.getChannel())) {
-						disbursements = true;
-					} else if (PaymentChannel.Payment.getValue().equals(request.getChannel())) {
-						payments = true;
-					}
-				}
-
-				DisbursementRequest req = new DisbursementRequest();
-				req.setHeaderId(disbursementRequest.getHeaderId());
-				req.setBatchId(btachId);
-				req.setDisbursementType(disbursementType);
-				req.setDisbursements(disbursements);
-				req.setPayments(payments);
-				req.setUserId(disbursementRequest.getUserId());
+				DisbursementRequest req = prepareReqStatus(disbursementRequest, dataEngineStatus, disbursementRequests);
 				req.setStatus(PennantConstants.RCD_STATUS_APPROVED);
 
 				updateStatus(req);
-
-				throw new AppException("Unable to process the disbursement requests, please contact administrator.");
-
-			} else {
-				DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-				def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-				def.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
-				TransactionStatus transactionStatus = transactionManager.getTransaction(def);
-
-				try {
-
-					for (DataEngineStatus ds : list) {
-						Long btachId = ds.getId();
-						boolean disbursements = false;
-						boolean payments = false;
-						String disbursementType = ds.getKeyAttributes().get("DISBURSEMENT_TYPE").toString();
-						for (DisbursementRequest request : disbursementRequests) {
-							if (PaymentChannel.Disbursement.getValue().equals(request.getChannel())) {
-								disbursements = true;
-							} else if (PaymentChannel.Payment.getValue().equals(request.getChannel())) {
-								payments = true;
-							}
-						}
-
-						DisbursementRequest req = new DisbursementRequest();
-						req.setHeaderId(disbursementRequest.getHeaderId());
-						req.setBatchId(btachId);
-						req.setDisbursementType(disbursementType);
-						req.setDisbursements(disbursements);
-						req.setPayments(payments);
-						req.setUserId(disbursementRequest.getUserId());
-						req.setCreatedOn(DateUtility.getSysDate());
-						req.setStatus(DisbursementConstants.STATUS_PAID);
-
-						int count = disbursementRequestDAO.updateBatchStatus(req);
-
-						disbursementRequestDAO.logDisbursementMovement(req, false);
-						logger.info("{} disbursements processed successfully  with {} batch Id", count, btachId);
-					}
-
-					transactionManager.commit(transactionStatus);
-
-				} catch (Exception e) {
-					transactionManager.rollback(transactionStatus);
-					disbursementRequestDAO.deleteDisbursementBatch(disbursementRequest.getHeaderId());
-					throw new AppException(
-							"Unable to process the disbursement requests, please contact administrator.");
-				}
-
-			}
-		}
-
-	}
-
-	private void updateBatchStatus(DisbursementRequest disbursementRequest, List<DataEngineStatus> list) {
-		logger.info("updating batch status...");
-
-		boolean disbursements = false;
-		boolean payments = false;
-
-		for (DataEngineStatus dataEngineStatus : list) {
-			if (!"S".equals(dataEngineStatus.getStatus())) {
-				long btachId = dataEngineStatus.getId();
-				String disbursementType = dataEngineStatus.getKeyAttributes().get("DISBURSEMENT_TYPE").toString();
-				for (DisbursementRequest request : disbursementRequest.getDisbursementRequests()) {
-					if (PaymentChannel.Payment.getValue().equals(request.getChannel())) {
-						payments = true;
-					} else {
-						disbursements = true;
-					}
-				}
-
-				DisbursementRequest req = new DisbursementRequest();
-				req.setHeaderId(disbursementRequest.getHeaderId());
-				req.setBatchId(btachId);
-				req.setDisbursementType(disbursementType);
-				req.setDisbursements(disbursements);
-				req.setPayments(payments);
-				req.setUserId(disbursementRequest.getUserId());
-				req.setStatus("APPROVED");
-
-				updateStatus(req);
-
-				throw new AppException("Unable to process the disbursement requests, please contact administrator.");
-			}
-		}
-
-		long total = 0;
-		if (!disbursementRequest.getRequestSource().equals(PennantConstants.FINSOURCE_ID_API)) {
-			for (DataEngineStatus ds : list) {
-				total = total + ds.getTotalRecords();
-			}
-			if (total != disbursementRequest.getDisbursementRequests().size()) {
-				throw new AppException("Unable to process the disbursement requests, please contact administrator.");
+				throw new AppException(ERROR_MESSAGE);
 			}
 		}
 
@@ -254,58 +140,102 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 		def.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
 		TransactionStatus transactionStatus = transactionManager.getTransaction(def);
 
-		try {
+		if (PennantConstants.ONLINE.equals(disbursementRequest.getDownloadType())) {
+			try {
+				for (DataEngineStatus ds : list) {
+					long btachId = ds.getId();
+					DisbursementRequest req = prepareReqStatus(disbursementRequest, ds, disbursementRequests);
 
-			for (DataEngineStatus ds : list) {
-				Long btachId = ds.getId();
-				String disbursementType = ds.getKeyAttributes().get("DISBURSEMENT_TYPE").toString();
-				for (DisbursementRequest request : disbursementRequest.getDisbursementRequests()) {
-					if (PaymentChannel.Payment.getValue().equals(request.getChannel())) {
-						payments = true;
-					} else {
-						disbursements = true;
-					}
-				}
+					req.setCreatedOn(DateUtility.getSysDate());
+					req.setStatus(DisbursementConstants.STATUS_PAID);
 
-				DisbursementRequest req = new DisbursementRequest();
-				req.setHeaderId(disbursementRequest.getHeaderId());
-				req.setBatchId(btachId);
-				req.setDisbursementType(disbursementType);
-				req.setDisbursements(disbursements);
-				req.setPayments(payments);
-				req.setUserId(disbursementRequest.getUserId());
+					int count = disbursementRequestDAO.updateBatchStatus(req);
 
-				if (ds.getFileName() != null) {
-					req.setTargetType("FILE");
-					req.setFileName(ds.getFileName());
-					req.setFileLocation(ds.getFile().getParent());
-					req.setDataEngineConfig(ds.getConfiguration().getId());
-					req.setPostEvents(ds.getConfiguration().getPostEvent());
-				} else if ("DISB_IMPS_EXPORT".equals(ds.getName())) {
-					req.setTargetType("TABLE");
-				}
-
-				req.setCreatedOn(DateUtility.getSysDate());
-				req.setStatus("AC");
-
-				int count = disbursementRequestDAO.updateBatchStatus(req);
-
-				if ("OFF_LINE".endsWith(disbursementRequest.getRequestSource())) {
-					disbursementRequestDAO.logDisbursementMovement(req, false);
 					logger.info("{} disbursements processed successfully  with {} batch Id", count, btachId);
-				} else {
-					logger.info("{} disbursements processed successfully", count);
+				}
+
+				transactionManager.commit(transactionStatus);
+			} catch (Exception e) {
+				transactionManager.rollback(transactionStatus);
+				disbursementRequestDAO.deleteDisbursementBatch(disbursementRequest.getHeaderId());
+				throw new AppException(ERROR_MESSAGE);
+			}
+		} else {
+			long total = 0;
+
+			if (!disbursementRequest.getRequestSource().equals(PennantConstants.FINSOURCE_ID_API)) {
+				for (DataEngineStatus ds : list) {
+					total = total + ds.getTotalRecords();
+				}
+
+				if (total != disbursementRequests.size()) {
+					throw new AppException(ERROR_MESSAGE);
 				}
 			}
 
-			transactionManager.commit(transactionStatus);
+			try {
+				for (DataEngineStatus ds : list) {
+					Long btachId = ds.getId();
+					DisbursementRequest req = prepareReqStatus(disbursementRequest, ds, disbursementRequests);
 
-		} catch (Exception e) {
-			transactionManager.rollback(transactionStatus);
-			disbursementRequestDAO.deleteDisbursementBatch(disbursementRequest.getHeaderId());
-			throw new AppException("Unable to process the disbursement requests, please contact administrator.");
+					if (ds.getFileName() != null) {
+						req.setTargetType("FILE");
+						req.setFileName(ds.getFileName());
+						req.setFileLocation(ds.getFile().getParent());
+						req.setDataEngineConfig(ds.getConfiguration().getId());
+						req.setPostEvents(ds.getConfiguration().getPostEvent());
+					} else if ("DISB_IMPS_EXPORT".equals(ds.getName())) {
+						req.setTargetType("TABLE");
+					}
+
+					req.setCreatedOn(DateUtility.getSysDate());
+					req.setStatus(DisbursementConstants.STATUS_AWAITCON);
+
+					int count = disbursementRequestDAO.updateBatchStatus(req);
+
+					if ("OFF_LINE".endsWith(disbursementRequest.getRequestSource())) {
+						disbursementRequestDAO.logDisbursementMovement(req, false);
+						logger.info("{} disbursements processed successfully  with {} batch Id", count, btachId);
+					} else {
+						logger.info("{} disbursements processed successfully", count);
+					}
+				}
+
+				transactionManager.commit(transactionStatus);
+			} catch (Exception e) {
+				transactionManager.rollback(transactionStatus);
+				disbursementRequestDAO.deleteDisbursementBatch(disbursementRequest.getHeaderId());
+				throw new AppException(ERROR_MESSAGE);
+			}
+
 		}
 
+	}
+
+	private DisbursementRequest prepareReqStatus(DisbursementRequest disbursementRequest,
+			DataEngineStatus dataEngineStatus, List<DisbursementRequest> disbursementRequests) {
+		long btachId = dataEngineStatus.getId();
+		boolean disbursements = false;
+		boolean payments = false;
+		String disbursementType = dataEngineStatus.getKeyAttributes().get("DISBURSEMENT_TYPE").toString();
+
+		for (DisbursementRequest request : disbursementRequests) {
+			if (PaymentChannel.Disbursement.getValue().equals(request.getChannel())) {
+				disbursements = true;
+			} else if (PaymentChannel.Payment.getValue().equals(request.getChannel())) {
+				payments = true;
+			}
+		}
+
+		DisbursementRequest req = new DisbursementRequest();
+		req.setHeaderId(disbursementRequest.getHeaderId());
+		req.setBatchId(btachId);
+		req.setDisbursementType(disbursementType);
+		req.setDisbursements(disbursements);
+		req.setPayments(payments);
+		req.setUserId(disbursementRequest.getUserId());
+
+		return req;
 	}
 
 	private void saveDisbursementRequests(DisbursementRequest request) {

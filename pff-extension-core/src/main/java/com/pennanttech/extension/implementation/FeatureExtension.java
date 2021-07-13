@@ -60,7 +60,7 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("GROUP_BATCH_BY_PARTNERBANK", true);
 
-		customConstants.put("PRESENTMENT_STAGE_ACCOUNTING_REQ", true);
+		customConstants.put("PRESENTMENT_STAGE_ACCOUNTING_REQ", false);
 
 		customConstants.put("AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT", true);
 
@@ -76,10 +76,12 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("ALLOW_SUBVENTION", true);
 
-		customConstants.put("PRESENT_RECEIPTS_ON_RESP", true);
+		customConstants.put("PRESENT_RECEIPTS_ON_RESP", false);
 
 		customConstants.put("PRESENT_RESP_BOUNCE_REMARKS_MAN", true);
 
+		customConstants.put("DISBURSEMENT_AUTO_DOWNLOAD", false);
+		
 		// Temporary Enabled, need to disable once the testing is done
 		customConstants.put("MANDATE_ALLOW_CO_APP", true);
 		customConstants.put("DISBURSEMENT_ALLOW_CO_APP", true);

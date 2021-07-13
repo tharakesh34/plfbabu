@@ -27,4 +27,5 @@
 		<property name="pushPullControlService" ref="pushPullControlService" />
 	</bean>
 
+	<bean id="onlineDisbursement" class="com.pennanttech.external.disbursement.services.OnlineDisbursementImpl"/>
 </beans>

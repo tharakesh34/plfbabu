@@ -805,7 +805,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		feeTypeId = feeTypeService.getFinFeeTypeIdByFeeType(subventionFeeCode);
 
 		boolean feeTypeOrg = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
-		boolean feeTypeNonOrg = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
+		boolean feeTypeNonOrg = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, false);
 		if (financeType.isSubventionReq()) {
 			if (!feeTypeOrg) {
 				finTypeFee = getFinTypeFee(feeTypeId, subventionFeeCode, orgFinEvent, true);

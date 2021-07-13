@@ -3572,13 +3572,15 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			String[] args = new String[2];
 			StringBuilder ref = new StringBuilder();
 
-			finReferences.forEach(l1 -> ref.append(l1 + ","));
+			finReferences.forEach(l1 -> ref.append(l1 + "\n"));
 			ref.deleteCharAt(ref.length() - 1);
 
 			args[0] = finReference.getValue();
 			args[1] = ref.toString();
 
-			String message = args[0] + " is Linked with " + args[1] + " . Please Delink the loan first then Proceed ";
+			String message = args[0] + " is Linked with " + "\n" + args[1] + "\n"
+					+ "Please Delink the loan first then Proceed. ";
+
 			if (MessageUtil.confirm(message, MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
 				ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 				wve.add(new WrongValueException("Please Delink the loan first then Proceed "));

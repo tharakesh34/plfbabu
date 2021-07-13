@@ -193,8 +193,13 @@ public class PresentmentResponseProcess implements Runnable {
 		boolean processReceipt = false;
 		Long linkedTranId;
 
-		if (!finIsActive && receiptID == 0) {
-			processReceipt = processInactiveLoan(custEODEvent, pd);
+		if (receiptID == 0) {
+			if (ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
+				createPresentmentReceipt(pd);
+			} else if (!finIsActive) {
+				processReceipt = processInactiveLoan(custEODEvent, pd);
+			}
+
 			receiptID = pd.getReceiptID();
 		}
 
@@ -259,8 +264,8 @@ public class PresentmentResponseProcess implements Runnable {
 			}
 
 			String errorCode = StringUtils.trimToEmpty(bounceCode);
-			if (StringUtils.isNotEmpty(bounceRemarks)) {
-				errorCode = errorCode.concat("-").concat(bounceRemarks);
+			if (StringUtils.isNotEmpty(pd.getBounceCode())) {
+				errorCode = errorCode.concat("-").concat(pd.getBounceCode());
 			}
 
 			pd.setErrorDesc(errorCode);
@@ -534,6 +539,13 @@ public class PresentmentResponseProcess implements Runnable {
 		}
 
 		return rch;
+	}
+
+	private void createPresentmentReceipt(PresentmentDetail pd) throws Exception {
+		if (pd.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
+			pd.setAdvanceAmt(BigDecimal.ZERO);
+			presentmentDetailService.executeReceipts(pd, false, false);
+		}
 	}
 
 	private void logRespDetails(long headerId, PresentmentDetail pd, String errorCode, String errorDesc) {

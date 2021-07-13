@@ -703,9 +703,9 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			header.setReceiptAmount(pd.getAdvanceAmt());
 			header.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
 			receiptDetail.setValueDate(pd.getSchDate());
-			if (ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
+			if (!ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
 				receiptDetail.setValueDate(pd.getSchDate());
-			} else if (StringUtils.equals(pd.getPresentmentType(), PennantConstants.PROCESS_REPRESENTMENT)) {
+			} else if (PennantConstants.PROCESS_REPRESENTMENT.equals(pd.getPresentmentType())) {
 				receiptDetail.setValueDate(appDate);
 			}
 			receiptDetail.setReceivedDate(receiptDetail.getValueDate());
@@ -736,6 +736,8 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		if (pd.getId() != Long.MIN_VALUE && updateReceiptId) {
 			presentmentDetailDAO.updateReceptId(pd.getId(), header.getReceiptID());
 		}
+
+		pd.setReceiptID(receiptId);
 	}
 
 	private void processReceipts(PresentmentDetail pd, boolean isExcessNoReserve, boolean updateReceiptId,
