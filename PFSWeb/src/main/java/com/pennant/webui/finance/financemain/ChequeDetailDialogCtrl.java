@@ -1477,12 +1477,9 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				emiAmount = fsd.getRepayAmount();
 				if (fsd.getTDSAmount() != null && fsd.getTDSAmount().compareTo(BigDecimal.ZERO) > 0) {
 					emiAmount = emiAmount.subtract(fsd.getTDSAmount());
-					if (fsd.getTDSAmount() != null && fsd.getTDSAmount().compareTo(BigDecimal.ZERO) > 0) {
-						emiAmount = emiAmount.subtract(fsd.getTDSAmount());
 						totalChequeAmt = PennantApplicationUtil.unFormateAmount(totalChequeAmt, ccyEditField)
 								.add(emiAmount);
 						this.totAmount.setValue(PennantApplicationUtil.formateAmount(totalChequeAmt, ccyEditField));
-					}
 				}
 				break;
 			}

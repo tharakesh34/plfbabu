@@ -253,31 +253,44 @@ public class ClusterHierarchyServiceImpl extends GenericService<ClusterHierarchy
 		BeanUtils.copyProperties((ClusterHierarchy) auditHeader.getAuditDetail().getModelData(), clusterHierarchey);
 
 		clusterHierarchyDAO.delete(clusterHierarchey, TableType.TEMP_TAB);
-		clusterHierarchyDAO.delete(clusterHierarchey, TableType.MAIN_TAB);
 
-		if (!PennantConstants.RECORD_TYPE_NEW.equals(clusterHierarchey.getRecordType())) {
-			auditHeader.getAuditDetail()
-					.setBefImage(clusterHierarchyDAO.getClusterHierarchey(clusterHierarchey.getEntity(), "_lview"));
+		String recordType = clusterHierarchey.getRecordType();
+		
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(recordType)) {
+			ClusterHierarchy ch = clusterHierarchyDAO.getClusterHierarchey(clusterHierarchey.getEntity(), "_lview");
+			auditHeader.getAuditDetail().setBefImage(ch);
 		}
 
-		tranType = PennantConstants.TRAN_DEL;
+		if (PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
+			tranType = PennantConstants.TRAN_DEL;
+			clusterHierarchyDAO.delete(clusterHierarchey, TableType.MAIN_TAB);
+		} else {
+			clusterHierarchey.setRoleCode("");
+			clusterHierarchey.setNextRoleCode("");
+			clusterHierarchey.setTaskId("");
+			clusterHierarchey.setNextTaskId("");
+			clusterHierarchey.setWorkflowId(0);
 
-		clusterHierarchey.setRoleCode("");
-		clusterHierarchey.setNextRoleCode("");
-		clusterHierarchey.setTaskId("");
-		clusterHierarchey.setNextTaskId("");
-		clusterHierarchey.setWorkflowId(0);
+			for (ClusterHierarchy aClusterhierarchy : clusterHierarchey.getClusterTypes()) {
+				aClusterhierarchy.setTaskId("");
+				aClusterhierarchy.setNextTaskId("");
+				aClusterhierarchy.setRoleCode("");
+				aClusterhierarchy.setNextRoleCode("");
+				aClusterhierarchy.setRecordType("");
+				aClusterhierarchy.setWorkflowId(0);
+			}
 
-		for (ClusterHierarchy aClusterhierarchy : clusterHierarchey.getClusterTypes()) {
-			aClusterhierarchy.setTaskId("");
-			aClusterhierarchy.setNextTaskId("");
-			aClusterhierarchy.setRoleCode("");
-			aClusterhierarchy.setNextRoleCode("");
-			aClusterhierarchy.setRecordType("");
-			aClusterhierarchy.setWorkflowId(0);
+			if (PennantConstants.RECORD_TYPE_NEW.equals(recordType)) {
+				tranType = PennantConstants.TRAN_ADD;
+				clusterHierarchey.setRecordType("");
+				clusterHierarchyDAO.save(clusterHierarchey, TableType.MAIN_TAB);
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+				clusterHierarchey.setRecordType("");
+				clusterHierarchyDAO.update(clusterHierarchey, TableType.MAIN_TAB);
+			}
 
 		}
-		clusterHierarchyDAO.save(clusterHierarchey, TableType.MAIN_TAB);
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 

@@ -432,9 +432,9 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 							valueParm[0] = entityCode;
 							valueParm[1] = taxDetail.getStateCode();
 
-							parameters[0] = PennantJavaUtil.getLabel("label_TaxDetailDialog_StateCode.value") + ":"
+							parameters[0] = PennantJavaUtil.getLabel("label_TaxDetailDialog_EntityCode.value") + ":"
 									+ valueParm[0] + " and ";
-							parameters[1] = PennantJavaUtil.getLabel("label_TaxDetailDialog_EntityCode.value") + ":"
+							parameters[1] = PennantJavaUtil.getLabel("label_TaxDetailDialog_StateCode.value") + ":"
 									+ valueParm[1];
 
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(

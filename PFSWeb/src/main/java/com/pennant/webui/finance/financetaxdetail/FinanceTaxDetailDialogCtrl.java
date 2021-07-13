@@ -94,9 +94,11 @@ import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.gstn.validation.GSTNValidationService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -130,7 +132,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 	protected ExtendedCombobox addressDetail;
 	protected long taxCustId;
 	protected Checkbox taxExempted;
-	protected Textbox taxNumber;
+	protected Uppercasebox taxNumber;
 	protected Space space_taxNumber;
 	protected Textbox addrLine1;
 	protected Textbox addrLine2;
@@ -1303,6 +1305,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		// Tax Number
 		try {
 			aFinanceTaxDetail.setTaxNumber(this.taxNumber.getValue());
+			this.financeTaxDetail.setTaxNumber(this.taxNumber.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

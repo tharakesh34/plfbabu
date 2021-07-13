@@ -2632,6 +2632,8 @@
 		<sql>
 			<![CDATA[
 				UPDATE FINANCEMAIN Set SchdVersion = 0;
+				UPDATE FINANCEMAIN_TEMP Set SchdVersion = 0;
+				UPDATE REJECTFINANCEMAIN Set SchdVersion = 0;
 			]]>
 		</sql>
 	</changeSet>
