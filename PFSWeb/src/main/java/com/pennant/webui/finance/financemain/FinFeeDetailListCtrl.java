@@ -2244,7 +2244,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			if (isSubventionFee) {
 				taxSplit = GSTCalculator.getInclusiveGST(finFeeDetail.getNetAmount(), getDealerTaxPercentages());
 			} else {
-				taxSplit = GSTCalculator.getInclusiveGST(finFeeDetail.getNetAmount(), taxPercentages);
+				taxSplit = GSTCalculator.getInclusiveGST(finFeeDetail.getNetAmount(), getTaxPercentages());
 			}
 			BigDecimal netAmountOrginal = finFeeDetail.getNetAmount().subtract(taxSplit.gettGST());
 			finFeeDetail.setNetAmountGST(taxSplit.gettGST());

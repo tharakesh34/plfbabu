@@ -22253,18 +22253,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				disbursementDetails.setFeeChargeAmt(aFinanceMain.getFeeChargeAmt());
 				disbursementDetails.setQuickDisb(aFinanceSchData.getFinanceMain().isQuickDisb());
 				aFinanceSchData.getDisbursementDetails().add(disbursementDetails);
-
-				if (aFinanceMain.getFinAssetValue().compareTo(aFinanceMain.getFinAmount()) > 0) {
-					FinanceDisbursement remAssetDisburse = new FinanceDisbursement();
-
-					remAssetDisburse.setDisbSeq(aFinanceSchData.getDisbursementDetails().size() + 1);
-					remAssetDisburse.setDisbDate(aFinanceMain.getGrcPeriodEndDate());
-					remAssetDisburse
-							.setDisbAmount(aFinanceMain.getFinAssetValue().subtract(aFinanceMain.getFinAmount()));
-					remAssetDisburse.setDisbReqDate(appDate);
-					remAssetDisburse.setFeeChargeAmt(BigDecimal.ZERO);
-					aFinanceSchData.getDisbursementDetails().add(remAssetDisburse);
-				}
 			} else {
 				if (StringUtils.isEmpty(moduleDefiner)) {
 					if (!aFinanceSchData.getDisbursementDetails().isEmpty()) {
