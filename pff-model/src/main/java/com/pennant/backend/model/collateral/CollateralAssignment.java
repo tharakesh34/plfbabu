@@ -46,14 +46,15 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>CollateralAssignment table</b>.<br>
@@ -90,7 +91,7 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	//### 16-05-2018 End Development Item 82
 	@XmlElement
 	private String assignmentReference;
-	@XmlElement(name = "seq")
+	@JsonProperty("seq")
 	private long assignmentSeq;
 	private String depositorCIF;
 	private String collateralType;

@@ -3,10 +3,10 @@ package com.pennant.backend.model.applicationmaster;
 import java.io.Serializable;
 import java.util.List;
 
+import com.pennant.backend.model.WSReturnStatus;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-
-import com.pennant.backend.model.WSReturnStatus;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ReasonCodeResponse implements Serializable {

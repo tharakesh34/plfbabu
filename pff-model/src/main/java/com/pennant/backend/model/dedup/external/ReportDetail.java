@@ -1,26 +1,27 @@
 package com.pennant.backend.model.dedup.external;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class ReportDetail {
-	@XmlElement(name = "FILLER_STRING_1")
+	@JsonProperty("FILLER_STRING_1")
 	private String filler1;
-	@XmlElement(name = "FILLER_STRING_2")
+	@JsonProperty("FILLER_STRING_2")
 	private String filler2;
-	@XmlElement(name = "FILLER_STRING_3")
+	@JsonProperty("FILLER_STRING_3")
 	private String filler3;
-	@XmlElement(name = "FILLER_STRING_4")
+	@JsonProperty("FILLER_STRING_4")
 	private String filler4;
-	@XmlElement(name = "FILLER_STRING_5")
+	@JsonProperty("FILLER_STRING_5")
 	private String filler5;
-	@XmlElement(name = "FILLER_STRING_6")
+	@JsonProperty("FILLER_STRING_6")
 	private String filler6;
-	@XmlElement(name = "FILLER_STRING_7")
+	@JsonProperty("FILLER_STRING_7")
 	private String filler7;
-	@XmlElement(name = "RejectDate")
+	@JsonProperty("RejectDate")
 	private String rejectDate;
 
 	public String getFiller1() {

@@ -6,11 +6,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import jakarta.xml.bind.annotation.XmlTransient;
-
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
+import jakarta.xml.bind.annotation.XmlTransient;
 
 public class InsuranceDetails extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;

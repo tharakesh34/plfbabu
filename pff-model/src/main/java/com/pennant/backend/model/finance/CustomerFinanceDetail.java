@@ -7,11 +7,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.xml.bind.annotation.XmlElement;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.Notes;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
+import jakarta.xml.bind.annotation.XmlElement;
 
 /**
  * Model class for the <b>Customer table</b>.<br>
@@ -72,16 +73,16 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 	private String stage;
 	@XmlElement
 	private int curOddays = 0;
-	@XmlElement(name = "firstEmiAmount")
+	@JsonProperty("firstEmiAmount")
 	private BigDecimal firstRepay = BigDecimal.ZERO;
-	@XmlElement(name = "loanTenor")
+	@JsonProperty("loanTenor")
 	private int numberOfTerms = 0;
 
 	public CustomerFinanceDetail() {
 		super();
 	}
 
-	@XmlElement(name = "coApplicants")
+	@JsonProperty("coApplicants")
 	private List<JointAccountDetail> jointAccountDetails;
 
 	public Set<String> getExcludeFields() {

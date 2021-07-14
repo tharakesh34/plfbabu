@@ -44,6 +44,10 @@ package com.pennanttech.ws.model.VerificationCustomerAddress;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.customermasters.CustomerAddres;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -51,19 +55,16 @@ import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.customermasters.CustomerAddres;
-
 @XmlType(propOrder = { "primaryAddress", "coApplicants", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "customerAddress")
 public class VerificationCustomerAddress {
 	@XmlElementWrapper(name = "primaryAddress")
-	@XmlElement(name = "primaryAddress")
+	@JsonProperty("primaryAddress")
 	private List<CustomerAddres> addressList;
 
 	@XmlElementWrapper(name = "coApplicants")
-	@XmlElement(name = "coApplicant")
+	@JsonProperty("coApplicant")
 	private List<CustomerAddres> coApplicants;
 
 	@XmlElement

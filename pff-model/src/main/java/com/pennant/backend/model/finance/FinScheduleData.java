@@ -54,16 +54,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlType;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.BaseRate;
@@ -75,6 +69,13 @@ import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "finReference", "financeMain", "repayInstructions", "rateInstruction", "finFeeDetailList",
 		"feeDues", "foreClosureFees", "stepPolicyDetails", "financeScheduleDetails", "finODPenaltyRate",
@@ -91,41 +92,41 @@ public class FinScheduleData implements Serializable {
 
 	private FinanceType financeType;
 
-	@XmlElement(name = "financeDetail")
+	@JsonProperty("financeDetail")
 	private FinanceMain financeMain = null;
 	private Map<Date, FinanceScheduleDetail> scheduleMap;
 
-	@XmlElement(name = "step")
+	@JsonProperty("step")
 	private List<FinanceStepPolicyDetail> stepPolicyDetails = new ArrayList<>(1);
 
 	@XmlElementWrapper(name = "schedules")
-	@XmlElement(name = "schedule")
+	@JsonProperty("schedule")
 	private List<FinanceScheduleDetail> financeScheduleDetails = new ArrayList<>(1);
 
 	private List<OverdraftScheduleDetail> overdraftScheduleDetails = new ArrayList<>(1);
 	private List<FinanceDisbursement> disbursementDetails = new ArrayList<>(1);
 
-	@XmlElement(name = "repayInstruction")
+	@JsonProperty("repayInstruction")
 	private List<RepayInstruction> repayInstructions = new ArrayList<>(1);
 	private List<ErrorDetail> errorDetails = new ArrayList<>(1);
-	@XmlElement(name = "summary")
+	@JsonProperty("summary")
 	private FinanceSummary financeSummary;
 	private List<FeeRule> feeRules = new ArrayList<>(1);
 	@XmlElementWrapper(name = "fees")
-	@XmlElement(name = "fee")
+	@JsonProperty("fee")
 	private List<FinFeeDetail> finFeeDetailList = new ArrayList<>(1);
 	private List<FinanceRepayments> repayDetails = new ArrayList<>(1);
 
 	private List<OverdueChargeRecovery> penaltyDetails = new ArrayList<>(1);
 	private BigDecimal accrueValue = BigDecimal.ZERO;
 
-	@XmlElement(name = "overdue")
+	@JsonProperty("overdue")
 	private FinODPenaltyRate finODPenaltyRate;
 	private boolean finPftSuspended;
 	private Date finSuspDate;
 	private String feeEvent;
 
-	@XmlElement(name = "rateInstruction")
+	@JsonProperty("rateInstruction")
 	private List<RateInstruction> rateInstruction = new ArrayList<>();
 	private List<FinServiceInstruction> finServiceInstructions = new ArrayList<>();
 	private boolean odLimitReset;
@@ -136,24 +137,24 @@ public class FinScheduleData implements Serializable {
 
 	private List<BaseRate> baseRates = new ArrayList<>();
 	private List<SplRate> splRates = new ArrayList<>();
-	@XmlElement(name = "planEMIHDates")
+	@JsonProperty("planEMIHDates")
 	private List<FinPlanEmiHoliday> apiPlanEMIHDates = new ArrayList<>();
-	@XmlElement(name = "planEMIHmonths")
+	@JsonProperty("planEMIHmonths")
 	private List<FinPlanEmiHoliday> apiPlanEMIHmonths = new ArrayList<>();
 	// Vas Recording Details
 	@XmlElementWrapper(name = "vas")
-	@XmlElement(name = "vasRecording")
+	@JsonProperty("vasRecording")
 	private List<VASRecording> vasRecordingList = new ArrayList<>(1);
 
 	// API specific fields
-	@XmlElement(name = "overdueCharges")
+	@JsonProperty("overdueCharges")
 	private List<FinODDetails> finODDetails = new ArrayList<>();
 	@XmlElementWrapper(name = "foreClosureFees")
-	@XmlElement(name = "foreClosureFee")
+	@JsonProperty("foreClosureFee")
 	List<FinFeeDetail> foreClosureFees;
 
 	@XmlElementWrapper(name = "feeDues")
-	@XmlElement(name = "feeDue")
+	@JsonProperty("feeDue")
 	List<FinFeeDetail> feeDues = new ArrayList<>(1);
 	@XmlElement
 	private BigDecimal outstandingPri = BigDecimal.ZERO;
@@ -189,7 +190,7 @@ public class FinScheduleData implements Serializable {
 	private FinanceProfitDetail finPftDeatil;
 
 	@XmlElementWrapper(name = "receiptAllocations")
-	@XmlElement(name = "allocation")
+	@JsonProperty("allocation")
 	private List<ReceiptAllocationDetail> receiptAllocationList;
 
 	// GST Tax Map
@@ -199,7 +200,7 @@ public class FinScheduleData implements Serializable {
 	private List<IRRScheduleDetail> irrSDList = new ArrayList<>(1);
 	private FinMaintainInstruction finMaintainInstruction = new FinMaintainInstruction();
 
-	@XmlElement(name = "hostReference")
+	@JsonProperty("hostReference")
 	private String oldFinReference;
 
 	private RestructureDetail restructureDetail;

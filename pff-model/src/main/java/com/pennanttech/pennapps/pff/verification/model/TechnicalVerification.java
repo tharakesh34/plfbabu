@@ -20,12 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlTransient;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -34,6 +29,12 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
  * Model class for the <b>FieldInvestigation table</b>.<br>
@@ -51,11 +52,11 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	private int type;
 	@XmlElement
 	private Date verifiedDate;
-	@XmlElement(name = "recommendations")
+	@JsonProperty("recommendations")
 	private int status;
 	@XmlElement
 	private Long reason;
-	@XmlElement(name = "remarks")
+	@JsonProperty("remarks")
 	private String summaryRemarks;
 	private String sourceFormName;
 	private String verificationFormName;
@@ -69,7 +70,7 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	private Timestamp createdOn;
 	private String cif;
 	private Long custId;
-	@XmlElement(name = "name")
+	@JsonProperty("name")
 	private String custName;
 	@XmlElement
 	private String keyReference;
@@ -105,7 +106,7 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 
 	private String documentName;
 	private long documentRef;
-	@XmlElement(name = "docContent")
+	@JsonProperty("docContent")
 	private byte[] docImage;
 	private String loanType;
 	private String lovDescLoanTypeName;
@@ -113,7 +114,7 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	private String lovDescSourcingBranch;
 
 	@XmlElementWrapper(name = "extendedDetails")
-	@XmlElement(name = "extendedDetail")
+	@JsonProperty("extendedDetail")
 	private List<ExtendedField> extendedDetails;
 
 	@XmlElement

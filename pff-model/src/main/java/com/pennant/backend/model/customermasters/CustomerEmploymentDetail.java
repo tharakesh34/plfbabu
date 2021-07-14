@@ -47,14 +47,15 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennant.backend.model.Entity;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennant.backend.model.Entity;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>CustomerEmploymentDetail table</b>.<br>
@@ -68,20 +69,20 @@ public class CustomerEmploymentDetail extends AbstractWorkflowEntity implements 
 	private static final long serialVersionUID = -5317225672461108680L;
 
 	private long custID;
-	@XmlElement(name = "employmentId")
+	@JsonProperty("employmentId")
 	private long custEmpId = Long.MIN_VALUE;
-	@XmlElement(name = "employerId")
+	@JsonProperty("employerId")
 	private Long custEmpName;
 	private String lovDesccustEmpName;
-	@XmlElement(name = "startDate")
+	@JsonProperty("startDate")
 	private Date custEmpFrom;
-	@XmlElement(name = "endDate")
+	@JsonProperty("endDate")
 	private Date custEmpTo;
 	private boolean currentEmployer;
-	@XmlElement(name = "designation")
+	@JsonProperty("designation")
 	private String custEmpDesg;
 	private String lovDescCustEmpDesgName;
-	@XmlElement(name = "department")
+	@JsonProperty("department")
 	private String custEmpDept;
 	private String lovDescCustEmpDeptName;
 	@XmlElement

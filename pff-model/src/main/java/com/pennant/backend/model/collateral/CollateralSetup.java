@@ -53,14 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
-import jakarta.xml.bind.annotation.XmlType;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -72,6 +65,14 @@ import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>CollateralSetup table</b>.<br>
@@ -90,7 +91,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	private String collateralRef;
 	@XmlElement
 	private String finReference;
-	@XmlElement(name = "cif")
+	@JsonProperty("cif")
 	private String depositorCif;
 
 	private long depositorId;
@@ -106,7 +107,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	private BigDecimal maxCollateralValue = BigDecimal.ZERO;
 
 	private BigDecimal bankLTV = BigDecimal.ZERO;
-	@XmlElement(name = "splLtv")
+	@JsonProperty("splLtv")
 	private BigDecimal specialLTV = BigDecimal.ZERO;
 	private BigDecimal bankValuation = BigDecimal.ZERO;
 
@@ -117,16 +118,16 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	@XmlElement
 	private Date expiryDate;
 
-	@XmlElement(name = "rvwFrq")
+	@JsonProperty("rvwFrq")
 	private String reviewFrequency;
 
 	@XmlElement
 	private Date nextReviewDate;
 
-	@XmlElement(name = "alwMultiLoanAssign")
+	@JsonProperty("alwMultiLoanAssign")
 	private boolean multiLoanAssignment;
 
-	@XmlElement(name = "alwThirdPartyAssign")
+	@JsonProperty("alwThirdPartyAssign")
 	private boolean thirdPartyAssignment;
 
 	private boolean fromLoan;
@@ -148,11 +149,11 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	private CustomerDetails customerDetails;
 
 	@XmlElementWrapper(name = "coOwnerDetails")
-	@XmlElement(name = "coOwnerDetail")
+	@JsonProperty("coOwnerDetail")
 	private List<CoOwnerDetail> coOwnerDetailList = null;
 
 	@XmlElementWrapper(name = "thirdParties")
-	@XmlElement(name = "thirdParty")
+	@JsonProperty("thirdParty")
 	private List<CollateralThirdParty> collateralThirdPartyList = null;
 	private List<AssignmentDetails> assignmentDetails = null;
 	private List<FinanceReferenceDetail> aggrements = null;
@@ -161,7 +162,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	private Map<Long, Long> selAnsCountMap = new HashMap<Long, Long>(1);
 
 	@XmlElementWrapper(name = "documents")
-	@XmlElement(name = "document")
+	@JsonProperty("document")
 	private List<DocumentDetails> documents = null;
 	private List<ExtendedFieldRender> extendedFieldRenderList = new ArrayList<ExtendedFieldRender>();
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
@@ -169,7 +170,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 
 	// API specific
 	@XmlElementWrapper(name = "extendedDetails")
-	@XmlElement(name = "extendedDetail")
+	@JsonProperty("extendedDetail")
 	private List<ExtendedField> extendedDetails = null;
 
 	@XmlElement

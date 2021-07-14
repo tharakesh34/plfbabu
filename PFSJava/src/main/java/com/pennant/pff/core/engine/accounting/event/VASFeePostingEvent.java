@@ -5,14 +5,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.amtmasters.VehicleDealerService;
-
-import com.pennant.app.constants.AccountingEvent;
 
 public class VASFeePostingEvent extends PostingEvent {
 

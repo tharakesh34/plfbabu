@@ -47,13 +47,13 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>Collateral table</b>.<br>
@@ -66,13 +66,13 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 	private long finTypeFeeId = Long.MIN_VALUE;
 	private String finType = null;
 	private boolean originationFee;
-	@XmlElement(name = "feeEvent")
+	@JsonProperty("feeEvent")
 	private String finEvent;
 	private String finEventDesc;
 	private Long feeTypeID;
-	@XmlElement(name = "feeCode")
+	@JsonProperty("feeCode")
 	private String feeTypeCode;
-	@XmlElement(name = "feeDesc")
+	@JsonProperty("feeDesc")
 	private String feeTypeDesc;
 	private int feeOrder;
 	private String feeScheduleMethod;
@@ -84,9 +84,9 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 	private BigDecimal amount = BigDecimal.ZERO;
 	private BigDecimal percentage = BigDecimal.ZERO;
 	private String calculateOn;
-	@XmlElement(name = "allowWaiver")
+	@JsonProperty("allowWaiver")
 	private boolean alwDeviation;
-	@XmlElement(name = "maxWaiverPerc")
+	@JsonProperty("maxWaiverPerc")
 	private BigDecimal maxWaiverPerc = BigDecimal.ZERO;
 	private boolean alwModifyFee;
 	private boolean alwModifyFeeSchdMthd;

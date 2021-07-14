@@ -34,12 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlRootElement;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.customermasters.Customer;
@@ -49,6 +44,12 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
  * Model class for the <b>LegalDetail table</b>.<br>
@@ -85,7 +86,7 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 	private byte[] docImage;
 	private LegalDetail befImage;
 	private LoggedInUser userDetails;
-	@XmlElement(name = "seq")
+	@JsonProperty("seq")
 	private long legalSeq;
 
 	@XmlElement
@@ -93,13 +94,13 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 	private List<Customer> customerList = new ArrayList<>();
 	private List<DocumentDetails> collateralDocumentList = new ArrayList<>();
 	@XmlElementWrapper(name = "applicantDetails")
-	@XmlElement(name = "applicantDetail")
+	@JsonProperty("applicantDetail")
 	private List<LegalApplicantDetail> applicantDetailList = new ArrayList<>();
 	@XmlElementWrapper(name = "propertyDetails")
-	@XmlElement(name = "propertyDetail")
+	@JsonProperty("propertyDetail")
 	private List<LegalPropertyDetail> propertyDetailList = new ArrayList<>();
 	@XmlElementWrapper(name = "legalDocuments")
-	@XmlElement(name = "legalDocument")
+	@JsonProperty("legalDocument")
 	private List<LegalDocument> documentList = new ArrayList<>();
 	private List<LegalPropertyTitle> propertyTitleList = new ArrayList<>();
 	private List<LegalECDetail> ecdDetailsList = new ArrayList<>();

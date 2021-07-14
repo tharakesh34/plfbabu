@@ -1,13 +1,13 @@
 package com.pennanttech.ws.model.customer;
 
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.customermasters.CustomerGST;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.customermasters.CustomerGST;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(propOrder = { "cif", "customerGST", "Id", "returnStatus" })

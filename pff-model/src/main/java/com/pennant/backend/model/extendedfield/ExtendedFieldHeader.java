@@ -50,19 +50,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlType;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>ExtendedFieldHeader table</b>.<br>
@@ -76,9 +77,9 @@ public class ExtendedFieldHeader extends AbstractWorkflowEntity implements Entit
 	private static final long serialVersionUID = 5219478530421796781L;
 
 	private long moduleId = Long.MIN_VALUE;
-	@XmlElement(name = "module")
+	@JsonProperty("module")
 	private String moduleName = "";
-	@XmlElement(name = "subModule")
+	@JsonProperty("subModule")
 	private String subModuleName = "";
 	private String event;
 	private String tabHeading;
@@ -93,7 +94,7 @@ public class ExtendedFieldHeader extends AbstractWorkflowEntity implements Entit
 	private LoggedInUser userDetails;
 
 	@XmlElementWrapper(name = "extendedFields")
-	@XmlElement(name = "extendedField")
+	@JsonProperty("extendedField")
 	private List<ExtendedFieldDetail> extendedFieldDetailList = new ArrayList<ExtendedFieldDetail>(1);
 	private List<ExtendedFieldDetail> technicalValuationDetailList;
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();

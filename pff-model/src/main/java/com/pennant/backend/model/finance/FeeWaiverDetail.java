@@ -48,13 +48,14 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
 
 /**
  * Model class for the <b>FeeWaiverDetails table</b>.<br>
@@ -77,7 +78,7 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal receivedAmount = BigDecimal.ZERO;
 	private BigDecimal WaivedAmount = BigDecimal.ZERO;
 	private BigDecimal balanceAmount = BigDecimal.ZERO;
-	@XmlElement(name = "waiverAmount")
+	@JsonProperty("waiverAmount")
 	private BigDecimal currWaiverAmount = BigDecimal.ZERO;
 	private boolean newRecord = false;
 	private String lovValue;

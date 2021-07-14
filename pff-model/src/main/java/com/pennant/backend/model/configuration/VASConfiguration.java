@@ -49,6 +49,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -56,12 +63,6 @@ import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
-import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>VASConfiguration table</b>.<br>
@@ -74,7 +75,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlAccessorType(XmlAccessType.NONE)
 public class VASConfiguration extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-	@XmlElement(name = "product")
+	@JsonProperty("product")
 	private String productCode;
 	@XmlElement
 	private String productDesc;
@@ -130,7 +131,7 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	@XmlElement
 	private WSReturnStatus returnStatus;
 	@XmlElementWrapper(name = "extendedFields")
-	@XmlElement(name = "extendedField")
+	@JsonProperty("extendedField")
 	private List<ExtendedFieldDetail> extendedFieldDetailList;
 
 	private String modeOfPayment = "D";

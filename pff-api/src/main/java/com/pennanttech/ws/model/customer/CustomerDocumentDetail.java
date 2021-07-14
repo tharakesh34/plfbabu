@@ -1,12 +1,13 @@
 package com.pennanttech.ws.model.customer;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.customermasters.CustomerDocument;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.customermasters.CustomerDocument;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(propOrder = { "cif", "customerDocument", "custDocCategory", "returnStatus" })
@@ -15,10 +16,10 @@ public class CustomerDocumentDetail {
 	@XmlElement
 	private String cif;
 
-	@XmlElement(name = "document")
+	@JsonProperty("document")
 	private CustomerDocument customerDocument;
 
-	@XmlElement(name = "docCategory")
+	@JsonProperty("docCategory")
 	private String custDocCategory;
 
 	@XmlElement

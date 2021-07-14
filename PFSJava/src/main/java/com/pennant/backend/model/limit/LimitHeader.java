@@ -49,18 +49,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.XMLGregorianCalendar;
-
-import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>LimitHeader table</b>.<br>
@@ -74,7 +76,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class LimitHeader extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
-	@XmlElement(name = "limitId")
+	@JsonProperty("limitId")
 	private long headerId = Long.MIN_VALUE;
 
 	private String ruleCode;
@@ -89,13 +91,13 @@ public class LimitHeader extends AbstractWorkflowEntity {
 	@XmlElement
 	private String responsibleBranchName;
 
-	@XmlElement(name = "ccy")
+	@JsonProperty("ccy")
 	private String limitCcy;
 
-	@XmlElement(name = "expiryDate")
+	@JsonProperty("expiryDate")
 	private Date limitExpiryDate;
 
-	@XmlElement(name = "reviewDate")
+	@JsonProperty("reviewDate")
 	private Date limitRvwDate;
 
 	@XmlElement
@@ -108,10 +110,10 @@ public class LimitHeader extends AbstractWorkflowEntity {
 
 	private String showLimitsIn;
 
-	@XmlElement(name = "structureCode")
+	@JsonProperty("structureCode")
 	private String limitStructureCode;
 
-	@XmlElement(name = "remarks")
+	@JsonProperty("remarks")
 	private String limitSetupRemarks;
 
 	private String custFName;
@@ -128,10 +130,10 @@ public class LimitHeader extends AbstractWorkflowEntity {
 	@XmlElement
 	private String structureName;
 
-	@XmlElement(name = "cif")
+	@JsonProperty("cif")
 	private String custCIF;
 
-	@XmlElement(name = "customerGroup")
+	@JsonProperty("customerGroup")
 	private String custGrpCode;
 
 	@XmlElement
@@ -149,7 +151,7 @@ public class LimitHeader extends AbstractWorkflowEntity {
 	private LimitHeader befImage;
 	private LoggedInUser userDetails;
 
-	@XmlElement(name = "limitDetail")
+	@JsonProperty("limitDetail")
 	private List<LimitDetails> customerLimitDetailsList = null;
 
 	@XmlElement

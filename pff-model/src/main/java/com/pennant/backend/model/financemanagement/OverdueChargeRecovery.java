@@ -46,10 +46,10 @@ package com.pennant.backend.model.financemanagement;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import jakarta.xml.bind.annotation.XmlTransient;
-
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
+import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
  * Model class for the <b>OverdueChargeRecovery table</b>.<br>

@@ -3,9 +3,10 @@ package com.pennanttech.ws.model.financetype;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
@@ -26,13 +27,13 @@ public class BasicDetail implements Serializable {
 	}
 
 	private String finCcy;
-	@XmlElement(name = "finCcyDesc")
+	@JsonProperty("finCcyDesc")
 	private String lovDescFinCcyName;
 
-	@XmlElement(name = "profitDaysBasis")
+	@JsonProperty("profitDaysBasis")
 	private String finDaysCalType;
 
-	@XmlElement(name = "profitDaysBasisDesc")
+	@JsonProperty("profitDaysBasisDesc")
 	private String lovDescFinDaysCalTypeName;
 
 	private BigDecimal finMinAmount = BigDecimal.ZERO;
@@ -42,7 +43,7 @@ public class BasicDetail implements Serializable {
 
 	private String finAssetType;
 
-	@XmlElement(name = "downPayReq")
+	@JsonProperty("downPayReq")
 	private boolean finIsDwPayRequired;
 	private long downPayRule;
 	private String downPayRuleDesc;

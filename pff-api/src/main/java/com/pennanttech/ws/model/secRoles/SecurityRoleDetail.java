@@ -2,19 +2,20 @@ package com.pennanttech.ws.model.secRoles;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.administration.SecurityRole;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
 
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.administration.SecurityRole;
-
 @XmlAccessorType(XmlAccessType.NONE)
 public class SecurityRoleDetail {
 
 	@XmlElementWrapper(name = "securityRoles")
-	@XmlElement(name = "securityRole")
+	@JsonProperty("securityRole")
 	private List<SecurityRole> secRoleList;
 
 	@XmlElement

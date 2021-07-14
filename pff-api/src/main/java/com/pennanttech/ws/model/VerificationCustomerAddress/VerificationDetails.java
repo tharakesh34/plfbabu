@@ -44,6 +44,13 @@ package com.pennanttech.ws.model.VerificationCustomerAddress;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennanttech.pennapps.pff.verification.model.Verification;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -51,37 +58,31 @@ import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.customermasters.CustomerAddres;
-import com.pennant.backend.model.customermasters.CustomerDocument;
-import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennanttech.pennapps.pff.verification.model.Verification;
-
 @XmlType(propOrder = { "VerificationDetailsList", "primaryCustomerAddress", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "customerAddress")
 public class VerificationDetails {
 	@XmlElementWrapper(name = "VerificationDetailList")
-	@XmlElement(name = "VerificationDetailsList")
+	@JsonProperty("VerificationDetailsList")
 	private List<Verification> VerificationDetailsList;
 	@XmlElementWrapper(name = "customerAddressDetail")
-	@XmlElement(name = "customerAddressDetails")
+	@JsonProperty("customerAddressDetails")
 	private List<CustomerAddres> primaryCustomerAddress;
 
 	@XmlElementWrapper(name = "coapplicantsAddress")
-	@XmlElement(name = "coapplicantsAddresses")
+	@JsonProperty("coapplicantsAddresses")
 	private List<CustomerAddres> coApplicantsAddress;
 	@XmlElementWrapper(name = "customerDocumentList")
-	@XmlElement(name = "customerDocumentsList")
+	@JsonProperty("customerDocumentsList")
 	private List<CustomerDocument> customerDocumentsList;
 	@XmlElementWrapper(name = "loanDocumentList")
-	@XmlElement(name = "loanDocumentsList")
+	@JsonProperty("loanDocumentsList")
 	private List<DocumentDetails> loanDocumentsList;
 	@XmlElementWrapper(name = "collateralsDocumentList")
-	@XmlElement(name = "collateralsDocumentsList")
+	@JsonProperty("collateralsDocumentsList")
 	private List<DocumentDetails> collateralsDocumentsList;
 	@XmlElementWrapper(name = "coApptDocumentList")
-	@XmlElement(name = "coApptDocumentsList")
+	@JsonProperty("coApptDocumentsList")
 	private List<CustomerDocument> coApptDocumentsList;
 	@XmlElement
 	private WSReturnStatus returnStatus;

@@ -2,6 +2,8 @@ package com.pennanttech.ws.model.miscellaneous;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -22,7 +24,7 @@ public class CheckListDetailsRespons implements Serializable {
 	private String docType;
 	@XmlElement
 	private long checkListId;
-	@XmlElement(name = "remarksMandatory")
+	@JsonProperty("remarksMandatory")
 	private boolean remarksMand;
 
 	public boolean isRemarksMand() {

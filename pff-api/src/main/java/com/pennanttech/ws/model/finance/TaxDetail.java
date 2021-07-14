@@ -2,13 +2,13 @@ package com.pennanttech.ws.model.finance;
 
 import java.math.BigDecimal;
 
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 @XmlType(propOrder = { "gstType", "adviseAmount", "netCGST", "netSGST", "netIGST", "netUGST", "netTGST", "total" })
 @XmlRootElement(name = "FinTaxDetails")

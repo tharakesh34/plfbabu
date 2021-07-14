@@ -2,11 +2,11 @@ package com.pennanttech.ws.model.customer;
 
 import java.io.Serializable;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.DirectorDetail;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomerDirectorDetail implements Serializable {

@@ -4,12 +4,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennanttech.ws.model.miscellaneous.CheckListResponse;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
-
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennanttech.ws.model.miscellaneous.CheckListResponse;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EligibilitySummaryResponse implements Serializable {

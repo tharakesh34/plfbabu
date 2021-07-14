@@ -48,6 +48,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -55,11 +61,6 @@ import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>QueryDetail table</b>.<br>
@@ -90,7 +91,7 @@ public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 
 	// @XmlJavaTypeAdapter(TimestampFormatterAdapter.class)
 	private Timestamp raisedOn;
-	@XmlElement(name = "remarks")
+	@JsonProperty("remarks")
 	private String responsNotes;
 	private long responseBy = 0;
 	// @XmlJavaTypeAdapter(TimestampFormatterAdapter.class)
@@ -119,7 +120,7 @@ public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 	private String module;
 	private String reference;
 	@XmlElementWrapper(name = "documents")
-	@XmlElement(name = "document")
+	@JsonProperty("document")
 	private List<DocumentDetails> documentDetailsList = new ArrayList<>();
 	private Long custId;
 	private String raisedUsrRole;

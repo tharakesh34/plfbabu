@@ -1,10 +1,10 @@
 package com.pennanttech.pffws;
 
-import jakarta.jws.WebParam;
-
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennant.ws.exception.ServiceException;
+
+import jakarta.jws.WebParam;
 
 public interface RelationshipOfficersSoapService {
 

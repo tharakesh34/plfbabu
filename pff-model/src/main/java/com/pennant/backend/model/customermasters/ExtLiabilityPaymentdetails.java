@@ -3,10 +3,10 @@ package com.pennant.backend.model.customermasters;
 import java.util.HashSet;
 import java.util.Set;
 
-import jakarta.xml.bind.annotation.XmlElement;
-
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
+import jakarta.xml.bind.annotation.XmlElement;
 
 public class ExtLiabilityPaymentdetails extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;

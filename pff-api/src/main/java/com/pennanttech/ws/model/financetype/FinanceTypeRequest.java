@@ -2,9 +2,10 @@ package com.pennanttech.ws.model.financetype;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -19,7 +20,7 @@ public class FinanceTypeRequest implements Serializable {
 
 	// Request fields
 	private String finType;
-	@XmlElement(name = "promotionCode")
+	@JsonProperty("promotionCode")
 	private String promotionType;
 	private boolean basicDetailReq;
 	private boolean grcDetailReq;

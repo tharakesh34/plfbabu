@@ -29,14 +29,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennant.backend.model.Entity;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennant.backend.model.Entity;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>GuarantorDetail table</b>.<br>
@@ -92,7 +93,7 @@ public class CoOwnerDetail extends AbstractWorkflowEntity implements Entity {
 	private String addrLine1;
 	@XmlElement
 	private String addrLine2;
-	@XmlElement(name = "poBox")
+	@JsonProperty("poBox")
 	private String POBox;
 	@XmlElement
 	private String addrCountry;

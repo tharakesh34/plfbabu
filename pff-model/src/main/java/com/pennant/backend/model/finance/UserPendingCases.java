@@ -3,9 +3,10 @@ package com.pennant.backend.model.finance;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UserPendingCases implements Serializable {
@@ -13,16 +14,16 @@ public class UserPendingCases implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private String finReference;
-	@XmlElement(name = "previousRolecode")
+	@JsonProperty("previousRolecode")
 	private String rolecode;
-	@XmlElement(name = "rolecodeDescription")
+	@JsonProperty("rolecodeDescription")
 	private String roledesc;
 	private String recordStatus;
-	@XmlElement(name = "customerName")
+	@JsonProperty("customerName")
 	private String custShrtName;
-	@XmlElement(name = "mobileNumber")
+	@JsonProperty("mobileNumber")
 	private String phoneNumber;
-	@XmlElement(name = "loanType")
+	@JsonProperty("loanType")
 	private String finType;
 	private Date initiateDate;
 

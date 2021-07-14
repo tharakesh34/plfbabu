@@ -3,11 +3,11 @@ package com.pennanttech.ws.model.remark;
 import java.io.Serializable;
 import java.util.List;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.WSReturnStatus;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemarksResponse implements Serializable {

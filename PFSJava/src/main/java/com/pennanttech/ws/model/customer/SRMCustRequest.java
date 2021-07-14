@@ -3,9 +3,10 @@ package com.pennanttech.ws.model.customer;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SRMCustRequest implements Serializable {
@@ -13,16 +14,16 @@ public class SRMCustRequest implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private String source;
-	@XmlElement(name = "cif")
+	@JsonProperty("cif")
 	private String custCif;
-	@XmlElement(name = "phoneNumber")
+	@JsonProperty("phoneNumber")
 	private String phoneNumber;
 	private String finReference;
-	@XmlElement(name = "panNumber")
+	@JsonProperty("panNumber")
 	private String custCRCPR;
-	@XmlElement(name = "shortName")
+	@JsonProperty("shortName")
 	private String custShrtName;
-	@XmlElement(name = "dateofBirth")
+	@JsonProperty("dateofBirth")
 	private Date custDOB;
 
 	public SRMCustRequest() {

@@ -4,14 +4,15 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennant.backend.model.Entity;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennant.backend.model.Entity;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 @XmlType(propOrder = { "bankCustomer", "coOwnerIDType", "coOwnerId", "coOwnerPercentage", "coOwnerCIF",
 		"coOwnerCIFName", "mobileNo", "emailId", "coOwnerIDNumber", "addrHNbr", "flatNbr", "addrStreet", "addrLine1",
@@ -22,31 +23,31 @@ public class CoOwnerDetail extends AbstractWorkflowEntity implements Entity {
 
 	private long customerId;
 
-	@XmlElement(name = "coOwnerID")
+	@JsonProperty("coOwnerID")
 	private int coOwnerId;
 	private String collateralRef;
 
 	@XmlElement
 	private boolean bankCustomer;
 
-	@XmlElement(name = "cif")
+	@JsonProperty("cif")
 	private String coOwnerCIF;
 
-	@XmlElement(name = "idType")
+	@JsonProperty("idType")
 	private String coOwnerIDType;
 
-	@XmlElement(name = "idNumber")
+	@JsonProperty("idNumber")
 	private String coOwnerIDNumber;
 
-	@XmlElement(name = "name")
+	@JsonProperty("name")
 	private String coOwnerCIFName;
 
-	@XmlElement(name = "ownershipPerc")
+	@JsonProperty("ownershipPerc")
 	private BigDecimal coOwnerPercentage;
-	@XmlElement(name = "phoneNumber")
+	@JsonProperty("phoneNumber")
 	private String mobileNo;
 
-	@XmlElement(name = "email")
+	@JsonProperty("email")
 	private String emailId;
 
 	private byte[] coOwnerProof = new byte[Byte.MAX_VALUE];
@@ -55,13 +56,13 @@ public class CoOwnerDetail extends AbstractWorkflowEntity implements Entity {
 	private String remarks;
 	// Address Details
 
-	@XmlElement(name = "houseNo")
+	@JsonProperty("houseNo")
 	private String addrHNbr;
 
-	@XmlElement(name = "flatNo")
+	@JsonProperty("flatNo")
 	private String flatNbr;
 
-	@XmlElement(name = "streetName")
+	@JsonProperty("streetName")
 	private String addrStreet;
 
 	@XmlElement
@@ -73,16 +74,16 @@ public class CoOwnerDetail extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private String POBox;
 
-	@XmlElement(name = "country")
+	@JsonProperty("country")
 	private String addrCountry;
 
-	@XmlElement(name = "province")
+	@JsonProperty("province")
 	private String addrProvince;
 
-	@XmlElement(name = "city")
+	@JsonProperty("city")
 	private String addrCity;
 
-	@XmlElement(name = "zip")
+	@JsonProperty("zip")
 	private String addrZIP;
 	private boolean newRecord = false;
 	private CoOwnerDetail befImage;

@@ -47,19 +47,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlType;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>LimitStructure table</b>.<br>
@@ -85,7 +87,7 @@ public class LimitStructure extends AbstractWorkflowEntity {
 	@XmlElement
 	private boolean active;
 
-	@XmlElement(name = "structureDetail")
+	@JsonProperty("structureDetail")
 	private List<LimitStructureDetail> limitStructureDetailItemsList;
 
 	private long createdBy;

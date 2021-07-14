@@ -32,14 +32,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
 
 /**
  * Model class for the <b>JVPosting table</b>.<br>
@@ -52,9 +53,9 @@ public class FeePostings extends AbstractWorkflowEntity implements Entity {
 	private long postId = Long.MIN_VALUE;
 	private String postAgainst;
 	private String reference;
-	@XmlElement(name = "feeCode")
+	@JsonProperty("feeCode")
 	private String feeTyeCode;
-	@XmlElement(name = "amount")
+	@JsonProperty("amount")
 	private BigDecimal postingAmount;
 	private Date postDate;
 	@XmlElement
@@ -63,7 +64,7 @@ public class FeePostings extends AbstractWorkflowEntity implements Entity {
 	private String lovValue;
 	private FeePostings befImage;
 	private LoggedInUser userDetails;
-	@XmlElement(name = "ccy")
+	@JsonProperty("ccy")
 	private String currency;
 	@XmlElement
 	private String remarks;

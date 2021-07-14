@@ -4,15 +4,16 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "finReference", "linkedTranId", "finStartDate", "maturityDate", "finCurrAssetValue",
 		"finAdvancePayments", "postingList", "returnStatus" })
@@ -29,11 +30,11 @@ public class DisbursementServiceReq extends AbstractWorkflowEntity implements En
 	private Date finStartDate;
 	@XmlElement
 	private Date maturityDate;
-	@XmlElement(name = "totalDisbAmount")
+	@JsonProperty("totalDisbAmount")
 	private BigDecimal finCurrAssetValue;
-	@XmlElement(name = "disbursement")
+	@JsonProperty("disbursement")
 	private List<FinAdvancePayments> finAdvancePayments;
-	@XmlElement(name = "postings")
+	@JsonProperty("postings")
 	private List<ReturnDataSet> postingList;
 	@XmlElement
 	private WSReturnStatus returnStatus;

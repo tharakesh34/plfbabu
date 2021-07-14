@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.amortization.ProjectedAmortization;
 import com.pennant.backend.model.eventproperties.EventProperties;

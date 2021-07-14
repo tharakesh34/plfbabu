@@ -47,46 +47,47 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennant.backend.model.WSReturnStatus;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
-import com.pennant.backend.model.WSReturnStatus;
-
 @XmlType(propOrder = { "utilityCode", "userName", "umrnNo", "destAccHolder", "IFSC", "micr", "accountNo",
 		"txnReference", "chequeAmount", "presentationDate", "mandateType", "status", "presentment", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "presentment")
 public class Presentment {
-	@XmlElement(name = "transactionRef")
+	@JsonProperty("transactionRef")
 	private long txnReference;
 	private long entityCode;
 	private long cycleType = 1;
 	private String instrumentMode;
-	@XmlElement(name = "dateOfTxn")
+	@JsonProperty("dateOfTxn")
 	private Date presentationDate;
 	private String bankCode;
 	private String productCode;
 	private long customerId;
-	@XmlElement(name = "finReference")
+	@JsonProperty("finReference")
 	private String agreementNo;
-	@XmlElement(name = "amount")
+	@JsonProperty("amount")
 	private BigDecimal chequeAmount;
 	private long emiNo;
 	private long txnTypeCode = 1;
 	private long sourceCode = 2;
 	@XmlElement
 	private String brCode;
-	@XmlElement(name = "mandateRef")
+	@JsonProperty("mandateRef")
 	private String umrnNo;
 	private String bankName;
-	@XmlElement(name = "micr")
+	@JsonProperty("micr")
 	private String micrCode;
-	@XmlElement(name = "accountNumber")
+	@JsonProperty("accountNumber")
 	private String accountNo;
-	@XmlElement(name = "custName")
+	@JsonProperty("custName")
 	private String destAccHolder;
 	@XmlElement
 	private long accType;
@@ -96,7 +97,7 @@ public class Presentment {
 	private Date dataGenDate;
 	private long specialHitFile;
 	private String userID;
-	@XmlElement(name = "uniqueReference")
+	@JsonProperty("uniqueReference")
 	private String batchId;
 	private long jobId;
 	private long pickupBatchId = 1;
@@ -104,7 +105,7 @@ public class Presentment {
 	private String accountField2;
 	private String accountField3;
 	private String processedFlag;
-	@XmlElement(name = "instDate")
+	@JsonProperty("instDate")
 	private Date cycleDate;
 	private String dataGenStatus = "C";
 	private long bankReportCnt;
@@ -115,14 +116,14 @@ public class Presentment {
 	private Date startDate;
 	private Date endDate;
 	private Long returnCode;
-	@XmlElement(name = "rejectReason")
+	@JsonProperty("rejectReason")
 	private String returnReason;
 	private String lateResponseFlag;
 	private Date processedDate;
 	private long responseID;
 	private String partnerBankName;
 	private long partnerBankId;
-	@XmlElement(name = "ifsc")
+	@JsonProperty("ifsc")
 	private String IFSC;
 	private String chequeSerialNo;
 	private Date chequeDate;
@@ -137,7 +138,7 @@ public class Presentment {
 	@XmlElement
 	private String status;
 
-	@XmlElement(name = "UTRNumber")
+	@JsonProperty("UTRNumber")
 	private String utrNumber;
 
 	@XmlElement

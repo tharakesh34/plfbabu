@@ -3,12 +3,12 @@ package com.pennant.backend.model.finance;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.pennant.backend.model.WSReturnStatus;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennant.backend.model.WSReturnStatus;
 
 @XmlType(propOrder = { "finReference", "cif", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)

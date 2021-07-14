@@ -2,11 +2,11 @@ package com.pennanttech.ws.model.customer;
 
 import java.util.List;
 
+import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "cif", "finCreditReviewDetails" })

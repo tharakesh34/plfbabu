@@ -46,15 +46,16 @@ package com.pennant.backend.model.beneficiary;
 import java.util.HashSet;
 import java.util.Set;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>Beneficiary table</b>.<br>
@@ -67,10 +68,10 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class Beneficiary extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
-	@XmlElement(name = "beneficiaryID")
+	@JsonProperty("beneficiaryID")
 	private long beneficiaryId = Long.MIN_VALUE;
 	private long custID;
-	@XmlElement(name = "cif")
+	@JsonProperty("cif")
 	private String custCIF;
 	private String custShrtName;
 	private long bankBranchID;
@@ -81,11 +82,11 @@ public class Beneficiary extends AbstractWorkflowEntity implements Entity {
 	private String bankCode;
 	private String bankName;
 	private String city;
-	@XmlElement(name = "ifsc")
+	@JsonProperty("ifsc")
 	private String iFSC;
-	@XmlElement(name = "accountNo")
+	@JsonProperty("accountNo")
 	private String accNumber;
-	@XmlElement(name = "acHolderName")
+	@JsonProperty("acHolderName")
 	private String accHolderName;
 	@XmlElement
 	private String phoneCountryCode;

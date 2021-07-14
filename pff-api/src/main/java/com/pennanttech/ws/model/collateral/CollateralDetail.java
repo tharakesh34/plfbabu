@@ -3,13 +3,13 @@ package com.pennanttech.ws.model.collateral;
 import java.io.Serializable;
 import java.util.List;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.collateral.CollateralSetup;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "cif", "collateralSetup", "returnStatus" })
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -18,7 +18,7 @@ public class CollateralDetail implements Serializable {
 
 	private String cif;
 
-	@XmlElement(name = "collateral")
+	@JsonProperty("collateral")
 	private List<CollateralSetup> collateralSetup;
 	private WSReturnStatus returnStatus;
 

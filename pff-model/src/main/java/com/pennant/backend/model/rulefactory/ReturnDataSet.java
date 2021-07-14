@@ -4,12 +4,13 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennant.backend.model.eventproperties.EventProperties;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennant.backend.model.eventproperties.EventProperties;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(propOrder = { "postref", "finEvent", "postDate", "valueDate", "tranCode", "tranDesc", "revTranCode", "account",
@@ -23,7 +24,7 @@ public class ReturnDataSet implements Serializable {
 	private String postref;
 	private String postingId;
 	private String finReference;
-	@XmlElement(name = "accEvent")
+	@JsonProperty("accEvent")
 	private String finEvent;
 	private String lovDescEventCodeName;
 	@XmlElement

@@ -7,18 +7,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlType;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(propOrder = { "auditYear", "bankName", "auditors", "consolidated", "location", "conversionRate", "auditedDate",
@@ -50,7 +51,7 @@ public class FinCreditReviewDetails extends AbstractWorkflowEntity implements En
 	private FinCreditReviewDetails befImage;
 	private LoggedInUser userDetails;
 	@XmlElementWrapper(name = "finCreditRevSummary")
-	@XmlElement(name = "finCreditRevSummary")
+	@JsonProperty("finCreditRevSummary")
 	private List<FinCreditReviewSummary> lovDescCreditReviewSummaryEntries = new ArrayList<FinCreditReviewSummary>();
 	private List<FinCreditRevSubCategory> lovDescFinCreditRevSubCategory = new ArrayList<FinCreditRevSubCategory>();
 	private List<CustomerDocument> customerDocumentList = new ArrayList<CustomerDocument>();

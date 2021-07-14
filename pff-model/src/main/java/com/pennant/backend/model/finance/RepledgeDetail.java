@@ -45,10 +45,10 @@ package com.pennant.backend.model.finance;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import jakarta.xml.bind.annotation.XmlTransient;
-
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
+import jakarta.xml.bind.annotation.XmlTransient;
 
 public class RepledgeDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;

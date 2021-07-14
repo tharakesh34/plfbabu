@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -26,22 +27,22 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 
 	private long docId = Long.MIN_VALUE;
 	private String docModule;
-	@XmlElement(name = "finReference")
+	@JsonProperty("finReference")
 	private String referenceId = "";
 	private String finEvent = "";
 
 	@XmlElement
 	private String docCategory;
-	@XmlElement(name = "docFormat")
+	@JsonProperty("docFormat")
 	private String doctype;
 	@XmlElement
 	private String docName;
-	@XmlElement(name = "docContent")
+	@JsonProperty("docContent")
 	private byte[] docImage;
 	private String categoryCode;
 	@XmlElement
 	private String custDocTitle;
-	@XmlElement(name = "custDocIssuedAuth")
+	@JsonProperty("custDocIssuedAuth")
 	private String custDocSysName;
 	private Timestamp custDocRcvdOn;
 	@XmlElement
@@ -52,7 +53,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private String custDocIssuedCountry;
 	@XmlElement
 	private String docPurpose;
-	@XmlElement(name = "docRefId")
+	@JsonProperty("docRefId")
 	private String docUri;
 	private String lovDescCustDocIssuedCountry;
 	private boolean custDocIsVerified;

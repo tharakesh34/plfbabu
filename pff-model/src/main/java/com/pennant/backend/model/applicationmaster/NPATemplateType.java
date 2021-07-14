@@ -2,10 +2,10 @@ package com.pennant.backend.model.applicationmaster;
 
 import java.sql.Timestamp;
 
-import jakarta.xml.bind.annotation.XmlTransient;
-
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
+import jakarta.xml.bind.annotation.XmlTransient;
 
 public class NPATemplateType extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -2065817593651934568L;

@@ -51,17 +51,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennant.app.util.DateFormatterAdapter;
+import com.pennant.backend.model.Entity;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import com.pennant.app.util.DateFormatterAdapter;
-import com.pennant.backend.model.Entity;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>PresentmentHeader table</b>.<br>
@@ -72,13 +73,13 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlAccessorType(XmlAccessType.NONE)
 public class PresentmentHeader extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
-	@XmlElement(name = "presentmentHeaderId")
+	@JsonProperty("presentmentHeaderId")
 	private long id = Long.MIN_VALUE;
-	@XmlElement(name = "batchReference")
+	@JsonProperty("batchReference")
 	private String reference;
 	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
 	private Date presentmentDate;
-	@XmlElement(name = "partnerBank")
+	@JsonProperty("partnerBank")
 	private long partnerBankId;
 	private String partnerBankCode;
 	private String partnerBankName;
@@ -91,10 +92,10 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 	private int status;
 	private String bankCode;
 	private String bankName;
-	@XmlElement(name = "paymentMode")
+	@JsonProperty("paymentMode")
 	private String mandateType;
 	private String mandateTypeName;
-	@XmlElement(name = "finType")
+	@JsonProperty("finType")
 	private String loanType;
 	private String loanTypeName;
 	private String finBranch;

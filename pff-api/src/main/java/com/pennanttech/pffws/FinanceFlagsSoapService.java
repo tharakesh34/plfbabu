@@ -1,12 +1,12 @@
 package com.pennanttech.pffws;
 
-import jakarta.jws.WebParam;
-import jakarta.jws.WebResult;
-import jakarta.jws.WebService;
-
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.financemanagement.FinanceFlag;
 import com.pennant.ws.exception.ServiceException;
+
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
 
 @WebService
 public interface FinanceFlagsSoapService {

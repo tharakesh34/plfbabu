@@ -30,10 +30,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.pennant.backend.model.WSReturnStatus;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-
-import com.pennant.backend.model.WSReturnStatus;
 
 /**
  * Model class for the <b>Academic table</b>.<br>

@@ -1,12 +1,12 @@
 package com.pennanttech.ws.model.covenantStatus;
 
+import com.pennant.backend.model.WSReturnStatus;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennant.backend.model.WSReturnStatus;
 
 @XmlType(propOrder = { "finreference", "docStauts", "covenantTypeId", "category", "covenantType", "returnStatus" })
 @XmlRootElement(name = "covenantStatus")

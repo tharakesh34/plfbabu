@@ -8,27 +8,28 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennant.backend.model.audit.AuditDetail;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 @XmlType(propOrder = { "custCIF", "custCtgCode", "custFName", "custLName", "custShrtName", "custDOB", "custCRCPR",
 		"mobileNumber" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class BlackListCustomers extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 4313500432713459335L;
-	@XmlElement(name = "cif")
+	@JsonProperty("cif")
 	private String custCIF;
-	@XmlElement(name = "firstName")
+	@JsonProperty("firstName")
 	private String custFName;
-	@XmlElement(name = "lastName")
+	@JsonProperty("lastName")
 	private String custLName;
-	@XmlElement(name = "shrttName")
+	@JsonProperty("shrttName")
 	private String custShrtName;
 	@XmlElement
 	private String custCompName;

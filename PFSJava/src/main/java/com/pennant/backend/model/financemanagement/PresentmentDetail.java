@@ -49,36 +49,37 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 
-import com.pennant.backend.model.finance.FinExcessAmount;
-import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 @XmlType(propOrder = { "id", "finReference", "custCif", "finType", "schDate", "presentmentAmt", "presentmentRef",
 		"batchReference", "presentmentId", "status", "mandateType", })
 @XmlAccessorType(XmlAccessType.NONE)
 public class PresentmentDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-	@XmlElement(name = "presentmentId")
+	@JsonProperty("presentmentId")
 	private long id = Long.MIN_VALUE;
-	@XmlElement(name = "presentmentHeaderId")
+	@JsonProperty("presentmentHeaderId")
 	private long headerId = Long.MIN_VALUE;
 	private long responseId;
 	@XmlElement
 	private String batchReference;
 
-	@XmlElement(name = "uniqueReference")
+	@JsonProperty("uniqueReference")
 	private String presentmentRef;
 	@XmlElement
 	private String finReference;
 	private String hostReference;
-	@XmlElement(name = "instDate")
+	@JsonProperty("instDate")
 	private Date schDate;
 	private Date defSchdDate;
 	private long mandateId;
@@ -93,7 +94,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	private long excessID;
 	private BigDecimal adviseAmt;
 	private int excludeReason;
-	@XmlElement(name = "amount")
+	@JsonProperty("amount")
 	private BigDecimal presentmentAmt;
 	private int emiNo;
 	private int schSeq;
@@ -101,17 +102,17 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	private String bounceCode;
 	private String bounceRemarks;
 	private Long manualAdviseId;
-	@XmlElement(name = "presentmentStatus")
+	@JsonProperty("presentmentStatus")
 	private String status;
 	private boolean newRecord = false;
 	private String customerName;
-	@XmlElement(name = "cif")
+	@JsonProperty("cif")
 	private String custCif;
 
 	@XmlElement
 	private String finType;
 	private String finTypeDesc;
-	@XmlElement(name = "paymentMode")
+	@JsonProperty("paymentMode")
 	private String mandateType;
 	private String mandateStatus;
 	private Date mandateExpiryDate;

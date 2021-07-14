@@ -5,17 +5,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlType;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.rulefactory.FeeRule;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "promotionDesc", "startDate", "endDate", "finType", "finTypeDesc", "basicDetail", "graceDetail",
 		"repayDetail", "overdueDetail", "overdueProfitDetail", "insurance", "feeRule", "finTypeFeesList", "stepDetail",
@@ -43,18 +43,18 @@ public class FinanceTypeResponse implements Serializable {
 	private Date startDate;
 	private Date endDate;
 
-	@XmlElement(name = "promotionDetail")
+	@JsonProperty("promotionDetail")
 	private List<PromotionType> promotions;
 
 	@XmlElementWrapper(name = "fees")
-	@XmlElement(name = "fee")
+	@JsonProperty("fee")
 	private List<FinTypeFees> finTypeFeesList;
 
 	@XmlElementWrapper(name = "vas")
-	@XmlElement(name = "vas")
+	@JsonProperty("vas")
 	private List<FinTypeVASProducts> finTypeVASProductsList;
 	@XmlElementWrapper(name = "partnerBanks")
-	@XmlElement(name = "partnerBank")
+	@JsonProperty("partnerBank")
 	private List<FinTypePartnerBank> finTypePartnerBankList = new ArrayList<FinTypePartnerBank>();
 
 	// Return status

@@ -47,9 +47,10 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 /**
@@ -64,14 +65,14 @@ public class FinODDetails implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private String finReference;
-	@XmlElement(name = "odDate")
+	@JsonProperty("odDate")
 	private Date finODSchdDate;
 	private String finODFor;
 	private String finBranch;
 	private String finType;
 	private long custID;
 	private Date finODTillDate;
-	@XmlElement(name = "odAmount")
+	@JsonProperty("odAmount")
 	private BigDecimal finCurODAmt = BigDecimal.ZERO;
 	private BigDecimal finCurODPri = BigDecimal.ZERO;
 	private BigDecimal finCurODPft = BigDecimal.ZERO;
@@ -83,15 +84,15 @@ public class FinODDetails implements Serializable {
 	private int finCurODDays = 0;
 
 	private BigDecimal totWaived = BigDecimal.ZERO;
-	@XmlElement(name = "odCharge")
+	@JsonProperty("odCharge")
 	private BigDecimal totPenaltyAmt = BigDecimal.ZERO;
-	@XmlElement(name = "odChargePaid")
+	@JsonProperty("odChargePaid")
 	private BigDecimal totPenaltyPaid = BigDecimal.ZERO;
 	private BigDecimal totPenaltyBal = BigDecimal.ZERO;
 
-	@XmlElement(name = "odPft")
+	@JsonProperty("odPft")
 	private BigDecimal lPIAmt = BigDecimal.ZERO;
-	@XmlElement(name = "odPftPaid")
+	@JsonProperty("odPftPaid")
 	private BigDecimal lPIPaid = BigDecimal.ZERO;
 	private BigDecimal lPIBal = BigDecimal.ZERO;
 	private BigDecimal lPIWaived = BigDecimal.ZERO;
@@ -101,7 +102,7 @@ public class FinODDetails implements Serializable {
 	//Overdue Penalty Details
 	private boolean applyODPenalty;
 	private boolean oDIncGrcDays;
-	@XmlElement(name = "chargeType")
+	@JsonProperty("chargeType")
 	private String oDChargeType;
 	private int oDGraceDays = 0;
 	private String oDChargeCalOn;

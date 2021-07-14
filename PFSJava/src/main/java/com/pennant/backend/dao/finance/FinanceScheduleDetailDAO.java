@@ -47,7 +47,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;

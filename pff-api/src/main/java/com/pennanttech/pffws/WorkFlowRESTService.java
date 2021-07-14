@@ -1,6 +1,5 @@
 package com.pennanttech.pffws;
 
-import jakarta.jws.WebParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -10,6 +9,8 @@ import javax.ws.rs.Produces;
 import com.pennant.backend.model.ProcessViewDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.ws.exception.ServiceException;
+
+import jakarta.jws.WebParam;
 
 @Produces("application/json")
 public interface WorkFlowRESTService {

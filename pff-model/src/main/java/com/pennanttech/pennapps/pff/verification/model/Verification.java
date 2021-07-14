@@ -19,16 +19,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
 
 /**
  * Model class for the <b>Verification table</b>
@@ -73,7 +74,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private boolean approveTab;
 	private boolean waiveTab;
-	@XmlElement(name = "documentType")
+	@JsonProperty("documentType")
 	private int docType;
 	private int oldRequestType;
 	private String docName;
@@ -86,7 +87,7 @@ public class Verification extends AbstractWorkflowEntity {
 
 	@XmlElement
 	private String cif;
-	@XmlElement(name = "name")
+	@JsonProperty("name")
 	private String customerName;
 	private String agencyName;
 	private String agencyCity;
@@ -121,7 +122,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private String verificationStatus;
 	private PersonalDiscussion personalDiscussion;
 
-	@XmlElement(name = "accountNumber")
+	@JsonProperty("accountNumber")
 	private String accNumber;
 	@XmlElement
 	private String bankName;

@@ -56,7 +56,6 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.backend.dao.rulefactory.FinFeeChargesDAO;
 import com.pennant.backend.model.rulefactory.FeeRule;
-import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class FinFeeChargesDAOImpl extends BasicDao<FeeRule> implements FinFeeChargesDAO {

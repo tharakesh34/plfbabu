@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BREService implements Serializable {
@@ -14,7 +14,7 @@ public class BREService implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	DAXMLDocument daXMLDocument;
-	
+
 	@JsonCreator
 	public BREService() {
 	}
@@ -39,9 +39,9 @@ public class BREService implements Serializable {
 		PchflIn pchflIn;
 		@JsonProperty("PCHFLOUT")
 		Pchflout PchflOut;
-		
+
 		@JsonCreator
-		public DAXMLDocument(){
+		public DAXMLDocument() {
 		}
 
 		public Pchflout getPchflOut() {
@@ -76,7 +76,7 @@ public class BREService implements Serializable {
 
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class OControl implements Serializable {
-		
+
 		private static final long serialVersionUID = 1L;
 		@JsonProperty("ALIAS")
 		private String alias;
@@ -96,12 +96,12 @@ public class BREService implements Serializable {
 		private String errormsg;
 		@JsonProperty("APPLICATION_ID")
 		private String application_id;
-		
+
 		@JsonCreator
 		public OControl() {
 		}
 
-		// Getter Methods 
+		// Getter Methods
 
 		@JsonProperty("ALIAS")
 		public String getAlias() {
@@ -140,7 +140,7 @@ public class BREService implements Serializable {
 			return application_id;
 		}
 
-		// Setter Methods 
+		// Setter Methods
 		@JsonProperty("ALIAS")
 		public void setAlias(String alias) {
 			this.alias = alias;
@@ -182,16 +182,16 @@ public class BREService implements Serializable {
 
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class PchflIn implements Serializable {
-		
+
 		private static final long serialVersionUID = 1L;
 		@JsonProperty("APPLICANTIN")
 		ApplicantIn applicantIn;
 		@JsonProperty("APPLICATIONIN")
 		ApplicationIn applicationIn;
-		
+
 		@JsonCreator
-		public PchflIn(){
-			
+		public PchflIn() {
+
 		}
 
 		public ApplicantIn getApplicantIn() {
@@ -211,19 +211,20 @@ public class BREService implements Serializable {
 		}
 
 	}
-	
+
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class Pchflout implements Serializable {
 
 		private static final long serialVersionUID = 1L;
 		@JsonProperty("APPLICANTOUT")
 		private ApplicantOut applicantOut;
-	
+
 		@JsonProperty("APPLICATIONOUT")
 		private ApplicationOut applicationOut;
-		
+
 		@JsonCreator
-		public Pchflout(){}
+		public Pchflout() {
+		}
 
 		public ApplicantOut getApplicantOut() {
 			return applicantOut;
@@ -241,29 +242,30 @@ public class BREService implements Serializable {
 			this.applicationOut = applicationOut;
 		}
 	}
-	
+
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class ApplicationOut implements Serializable{
-		
+	public static class ApplicationOut implements Serializable {
+
 		private static final long serialVersionUID = 1L;
 
 		@JsonProperty("CALCULATIONS_LTV")
 		CalculationsLtv calculationsLtv;
-		
+
 		@JsonProperty("DECISION_REASON_CODE")
 		DecisionReasonCode decisionReasonCode;
-		
+
 		@JsonProperty("DELEGATION_LEVEL")
 		private String delegationLevel;
-		
+
 		@JsonProperty("FINAL_ELIGIBILITY")
 		private FinalEligibility FinalEligibility;
-		
+
 		@JsonProperty("LOAN_ELIG_LTV")
 		private LoanEligLtv loanEligLtv;
-		
+
 		@JsonCreator
-		public ApplicationOut(){}		
+		public ApplicationOut() {
+		}
 
 		public CalculationsLtv getCalculationsLtv() {
 			return calculationsLtv;
@@ -305,9 +307,9 @@ public class BREService implements Serializable {
 			this.loanEligLtv = loanEligLtv;
 		}
 	}
-	
+
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class Advantage implements Serializable{
+	public static class Advantage implements Serializable {
 
 		/**
 		 * 
@@ -323,49 +325,59 @@ public class BREService implements Serializable {
 		private EmiAmount emiAmount;
 		@JsonProperty("MONTHS")
 		private Months months;
-		
+
 		@JsonCreator
-		public Advantage(){}
-		
+		public Advantage() {
+		}
+
 		public String getCombinedLoanSanctioned() {
 			return combinedLoanSanctioned;
 		}
+
 		public void setCombinedLoanSanctioned(String combinedLoanSanctioned) {
 			this.combinedLoanSanctioned = combinedLoanSanctioned;
 		}
+
 		public String getEligibleLoanAdvantage() {
 			return eligibleLoanAdvantage;
 		}
+
 		public void setEligibleLoanAdvantage(String eligibleLoanAdvantage) {
 			this.eligibleLoanAdvantage = eligibleLoanAdvantage;
 		}
+
 		public String getRoiAdvantage() {
 			return roiAdvantage;
 		}
+
 		public void setRoiAdvantage(String roiAdvantage) {
 			this.roiAdvantage = roiAdvantage;
 		}
+
 		public EmiAmount getEmiAmount() {
 			return emiAmount;
 		}
+
 		public void setEmiAmount(EmiAmount emiAmount) {
 			this.emiAmount = emiAmount;
 		}
+
 		public Months getMonths() {
 			return months;
 		}
+
 		public void setMonths(Months months) {
 			this.months = months;
 		}
 	}
-	
+
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class SuperHigherLoan implements Serializable{
+	public static class SuperHigherLoan implements Serializable {
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		
+
 		@JsonProperty("APPLICABLE_EMI_BALANCE")
 		private String applicableEmiBalance;
 		@JsonProperty("APPLICABLE_EMI_FIRST_60")
@@ -382,8 +394,9 @@ public class BREService implements Serializable {
 		private String possibleHigherLoan;
 		@JsonProperty("TOTAL_LOAN_AMOUNT")
 		private String totalLoanAmount;
-		
-		public SuperHigherLoan(){}
+
+		public SuperHigherLoan() {
+		}
 
 		public String getPercChangeEmiBalance() {
 			return percChangeEmiBalance;
@@ -396,36 +409,47 @@ public class BREService implements Serializable {
 		public String getFoirInsurance() {
 			return foirInsurance;
 		}
+
 		public void setFoirInsurance(String foirInsurance) {
 			this.foirInsurance = foirInsurance;
 		}
+
 		public String getPercIncreaseElig() {
 			return percIncreaseElig;
 		}
+
 		public void setPercIncreaseElig(String percIncreaseElig) {
 			this.percIncreaseElig = percIncreaseElig;
 		}
+
 		public String getTotalLoanAmount() {
 			return totalLoanAmount;
 		}
+
 		public void setTotalLoanAmount(String totalLoanAmount) {
 			this.totalLoanAmount = totalLoanAmount;
 		}
+
 		public String getPossibleHigherLoan() {
 			return possibleHigherLoan;
 		}
+
 		public void setPossibleHigherLoan(String possibleHigherLoan) {
 			this.possibleHigherLoan = possibleHigherLoan;
 		}
+
 		public String getApplicableEmiFirst60() {
 			return applicableEmiFirst60;
 		}
+
 		public void setApplicableEmiFirst60(String applicableEmiFirst60) {
 			this.applicableEmiFirst60 = applicableEmiFirst60;
 		}
+
 		public String getApplicableEmiNext60() {
 			return applicableEmiNext60;
 		}
+
 		public void setApplicableEmiNext60(String applicableEmiNext60) {
 			this.applicableEmiNext60 = applicableEmiNext60;
 		}
@@ -436,16 +460,14 @@ public class BREService implements Serializable {
 
 		public void setApplicableEmiBalance(String applicableEmiBalance) {
 			this.applicableEmiBalance = applicableEmiBalance;
-		}				
+		}
 	}
-		
-	
+
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class SuperLowEmi implements Serializable{
-		
-		
+	public static class SuperLowEmi implements Serializable {
+
 		private static final long serialVersionUID = 1L;
-		
+
 		@JsonProperty("APPLICABLE_EMI_BALANCE")
 		private String applicable_emi_balance;
 		@JsonProperty("APPLICABLE_EMI_FIRST_60")
@@ -462,11 +484,12 @@ public class BREService implements Serializable {
 		private String proposed_loan_effective_emi;
 		@JsonProperty("TOTAL_LOAN_AMOUNT")
 		private String total_loan_amount;
-		
-		@JsonCreator
-		public SuperLowEmi(){}
 
-		// Getter Methods 
+		@JsonCreator
+		public SuperLowEmi() {
+		}
+
+		// Getter Methods
 
 		public String getApplicable_emi_balance() {
 			return applicable_emi_balance;
@@ -500,7 +523,7 @@ public class BREService implements Serializable {
 			return total_loan_amount;
 		}
 
-		// Setter Methods 
+		// Setter Methods
 
 		public void setApplicable_emi_balance(String applicable_emi_balance) {
 			this.applicable_emi_balance = applicable_emi_balance;
@@ -534,12 +557,12 @@ public class BREService implements Serializable {
 			this.total_loan_amount = total_loan_amount;
 		}
 	}
-	
+
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class FinalEligibility implements Serializable{
-		
+	public static class FinalEligibility implements Serializable {
+
 		private static final long serialVersionUID = 1L;
-		
+
 		@JsonProperty("CONSIDERED_MONTHLY_INCOME")
 		private String consideredMonthlyIncome;
 		@JsonProperty("ELIGIBLE_LOAN")
@@ -578,30 +601,36 @@ public class BREService implements Serializable {
 		private SuperHigherLoan superHigherLoan;
 		@JsonProperty("ADVANTAGE")
 		private Advantage advantage;
-		
+
 		@JsonCreator
-		public FinalEligibility(){
-			
+		public FinalEligibility() {
+
 		}
-		
+
 		public String getConsideredMonthlyIncome() {
 			return consideredMonthlyIncome;
 		}
+
 		public void setConsideredMonthlyIncome(String consideredMonthlyIncome) {
 			this.consideredMonthlyIncome = consideredMonthlyIncome;
 		}
+
 		public String getEligibleLoan() {
 			return eligibleLoan;
 		}
+
 		public void setEligibleLoan(String eligibleLoan) {
 			this.eligibleLoan = eligibleLoan;
 		}
+
 		public String getEmi() {
 			return emi;
 		}
+
 		public void setEmi(String emi) {
 			this.emi = emi;
-		}		
+		}
+
 		public String getEmiLi() {
 			return emiLi;
 		}
@@ -621,9 +650,11 @@ public class BREService implements Serializable {
 		public String getEmiLiGi() {
 			return emiLiGi;
 		}
+
 		public void setEmiLiGi(String emiLiGi) {
 			this.emiLiGi = emiLiGi;
 		}
+
 		public String getEmiBtHl() {
 			return emiBtHl;
 		}
@@ -643,9 +674,11 @@ public class BREService implements Serializable {
 		public String getExistingMonthlyObligations() {
 			return existingMonthlyObligations;
 		}
+
 		public void setExistingMonthlyObligations(String existingMonthlyObligations) {
 			this.existingMonthlyObligations = existingMonthlyObligations;
 		}
+
 		public String getFinalEligibleLoanBtHl() {
 			return finalEligibleLoanBtHl;
 		}
@@ -665,30 +698,39 @@ public class BREService implements Serializable {
 		public String getFoirCalc() {
 			return foirCalc;
 		}
+
 		public void setFoirCalc(String foirCalc) {
 			this.foirCalc = foirCalc;
 		}
+
 		public String getFoirCalcLigi() {
 			return foirCalcLigi;
 		}
+
 		public void setFoirCalcLigi(String foirCalcLigi) {
 			this.foirCalcLigi = foirCalcLigi;
 		}
+
 		public String getLoanRecommended() {
 			return loanRecommended;
 		}
+
 		public void setLoanRecommended(String loanRecommended) {
 			this.loanRecommended = loanRecommended;
 		}
+
 		public String getMaxPossibleEmi() {
 			return maxPossibleEmi;
 		}
+
 		public void setMaxPossibleEmi(String maxPossibleEmi) {
 			this.maxPossibleEmi = maxPossibleEmi;
 		}
+
 		public String getTenorAsPerNorms() {
 			return tenorAsPerNorms;
 		}
+
 		public void setTenorAsPerNorms(String tenorAsPerNorms) {
 			this.tenorAsPerNorms = tenorAsPerNorms;
 		}
@@ -716,11 +758,12 @@ public class BREService implements Serializable {
 		public void setAdvantage(Advantage advantage) {
 			this.advantage = advantage;
 		}
-		
+
 	}
+
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class CalculationsLtv implements Serializable{
-		
+	public static class CalculationsLtv implements Serializable {
+
 		/**
 		 * 
 		 */
@@ -751,11 +794,12 @@ public class BREService implements Serializable {
 		private String total_loan_ltv_on_mv_consolidated;
 		@JsonProperty("LTV_AS_PER_NHB_POLICY")
 		private String ltv_as_per_nhb_policy;
-		
-		@JsonCreator
-		public CalculationsLtv(){}
 
-		// Getter Methods 
+		@JsonCreator
+		public CalculationsLtv() {
+		}
+
+		// Getter Methods
 
 		public String getAllowed_hl_loan_amount_consolidated() {
 			return allowed_hl_loan_amount_consolidated;
@@ -809,7 +853,7 @@ public class BREService implements Serializable {
 			return total_loan_ltv_on_mv_consolidated;
 		}
 
-		// Setter Methods 
+		// Setter Methods
 
 		public void setAllowed_hl_loan_amount_consolidated(String allowed_hl_loan_amount_consolidated) {
 			this.allowed_hl_loan_amount_consolidated = allowed_hl_loan_amount_consolidated;
@@ -960,12 +1004,12 @@ public class BREService implements Serializable {
 		DV dv;
 		@JsonProperty("SUPERCALC")
 		Supercalc superCalc;
-		
+
 		@JsonCreator
 		public ApplicationIn() {
 		}
 
-		// Getter Methods 
+		// Getter Methods
 		public String getBusiness_date() {
 			return business_date;
 		}
@@ -1012,7 +1056,7 @@ public class BREService implements Serializable {
 
 		public void setgInsurance_loan_amount(String gInsurance_loan_amount) {
 			this.gInsurance_loan_amount = gInsurance_loan_amount;
-		}		
+		}
 
 		public String getLoan_recommended_li() {
 			return loan_recommended_li;
@@ -1154,7 +1198,7 @@ public class BREService implements Serializable {
 			return superCalc;
 		}
 
-		//Setter Methods
+		// Setter Methods
 		public void setBusiness_date(String business_date) {
 			this.business_date = business_date;
 		}
@@ -1327,7 +1371,7 @@ public class BREService implements Serializable {
 			this.superCalc = superCalc;
 		}
 	}
-	
+
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class ApplicantDetails implements Serializable {
 
@@ -1392,15 +1436,15 @@ public class BREService implements Serializable {
 		private String retirementAge;
 		@JsonProperty("INSURANCE_FLAG")
 		private String insuranceFlag;
-		
+
 		@JsonProperty("DECISION_REASON_CODE")
 		private DecisionReasonCode decisionReasonCode;
 
 		@JsonCreator
 		public ApplicantDetails() {
-			
+
 		}
-		
+
 		public DecisionReasonCode getDecisionReasonCode() {
 			return decisionReasonCode;
 		}
@@ -1408,7 +1452,6 @@ public class BREService implements Serializable {
 		public void setDecisionReasonCode(DecisionReasonCode decisionReasonCode) {
 			this.decisionReasonCode = decisionReasonCode;
 		}
-
 
 		public String getFirstName() {
 			return firstName;
@@ -1651,7 +1694,7 @@ public class BREService implements Serializable {
 		}
 
 	}
-	
+
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class EmploymentDetails implements Serializable {
 
@@ -1692,10 +1735,10 @@ public class BREService implements Serializable {
 		private String designation;
 		@JsonProperty("OFFICIAL_EMAIL")
 		private String officialEmail;
-		
+
 		@JsonCreator
 		public EmploymentDetails() {
-			
+
 		}
 
 		public String getEmploymentType() {
@@ -1840,7 +1883,7 @@ public class BREService implements Serializable {
 
 		public void setOfficialEmail(String officialEmail) {
 			this.officialEmail = officialEmail;
-		}		
+		}
 	}
 
 	@JsonIgnoreProperties(ignoreUnknown = true)
@@ -1886,7 +1929,7 @@ public class BREService implements Serializable {
 		private String sumOfCredits;
 		@JsonProperty("SUM_OF_TRANSFER")
 		private String sumOfTransfer;
-		
+
 		@JsonCreator
 		public ConsolidatedBanking() {
 		}
@@ -2883,8 +2926,7 @@ public class BREService implements Serializable {
 		private String netWorthCurrentYear;
 		@JsonProperty("INDUSTRY_MARGIN")
 		private String industryMargin;
-		
-		
+
 		@JsonCreator
 		public Business() {
 		}
@@ -3002,9 +3044,7 @@ public class BREService implements Serializable {
 		private String recommendedLoanAmount;
 		@JsonProperty("RECOMMENDED_LOAN_AMOUNT_ADVANTAGE")
 		private String recommendedLoanAmountAdvantage;
-		
-		
-		
+
 		@JsonCreator
 		public Eligibility() {
 		}
@@ -3066,7 +3106,7 @@ public class BREService implements Serializable {
 		private String educationDummy3;
 		@JsonProperty("EDUCATION_DUMMY4")
 		private String educationDummy4;
-		
+
 		@JsonCreator
 		public EducationDetail() {
 		}
@@ -3129,7 +3169,7 @@ public class BREService implements Serializable {
 		private String poaDummy4;
 		@JsonProperty("POA_DUMMY5")
 		private String poaDummy5;
-		
+
 		@JsonCreator
 		public Poa() {
 		}
@@ -3187,7 +3227,6 @@ public class BREService implements Serializable {
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class Bureau implements Serializable {
 
-
 		private static final long serialVersionUID = 1L;
 
 		@JsonProperty("SCOREDETAIL")
@@ -3198,9 +3237,7 @@ public class BREService implements Serializable {
 
 		@JsonProperty("ENQUIRYDETAIL")
 		EnquiryDetail enquiryDetail;
-		
-		
-		
+
 		@JsonCreator
 		public Bureau() {
 		}
@@ -3242,8 +3279,7 @@ public class BREService implements Serializable {
 		private String scoreDate;
 		@JsonProperty("CIBIL_ENQUIRY_DATE")
 		private String cibilEnquiryDate;
-		
-		
+
 		@JsonCreator
 		public ScoreDetail() {
 		}
@@ -3277,11 +3313,10 @@ public class BREService implements Serializable {
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class PropertyMaster implements Serializable {
 
-
 		private static final long serialVersionUID = 1L;
 		@JsonProperty("element")
 		List<Element> element;
-		
+
 		public PropertyMaster() {
 
 		}
@@ -3304,14 +3339,12 @@ public class BREService implements Serializable {
 		private String perc_change_emi_first_60;
 		@JsonProperty("PERC_CHANGE_EMI_NEXT_60")
 		private String perc_change_emi_next_60;
-		
-		
-		
+
 		@JsonCreator
 		public Supercalc() {
 		}
 
-		// Getter Methods 
+		// Getter Methods
 		public String getPerc_change_emi_first_60() {
 			return perc_change_emi_first_60;
 		}
@@ -3320,7 +3353,7 @@ public class BREService implements Serializable {
 			return perc_change_emi_next_60;
 		}
 
-		// Setter Methods 
+		// Setter Methods
 		public void setPerc_change_emi_first_60(String perc_change_emi_first_60) {
 			this.perc_change_emi_first_60 = perc_change_emi_first_60;
 		}
@@ -3334,9 +3367,10 @@ public class BREService implements Serializable {
 	public static class DV implements Serializable {
 
 		private static final long serialVersionUID = 1L;
-		
-		public DV(){}
-		
+
+		public DV() {
+		}
+
 		@JsonProperty("element")
 		List<Element> element;
 
@@ -3348,16 +3382,16 @@ public class BREService implements Serializable {
 			this.element = element;
 		}
 
-
 	}
 
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class FCU implements Serializable {
 
 		private static final long serialVersionUID = 1L;
-		
-		public FCU(){}
-		
+
+		public FCU() {
+		}
+
 		@JsonProperty("element")
 		List<Element> element;
 
@@ -3372,8 +3406,7 @@ public class BREService implements Serializable {
 
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class PD implements Serializable {
-		
-		
+
 		/**
 		 * 
 		 */
@@ -3434,7 +3467,7 @@ public class BREService implements Serializable {
 		public LRD() {
 		}
 
-		// Getter Methods 
+		// Getter Methods
 		public String getProperty_vacant_since() {
 			return property_vacant_since;
 		}
@@ -3495,7 +3528,7 @@ public class BREService implements Serializable {
 			return applicable_ltv;
 		}
 
-		// Setter Methods 
+		// Setter Methods
 
 		public void setProperty_vacant_since(String property_vacant_since) {
 			this.property_vacant_since = property_vacant_since;
@@ -3577,5 +3610,5 @@ public class BREService implements Serializable {
 	public String toString() {
 		return "BREService [daXMLDocument=" + daXMLDocument + "]";
 	}
-	
+
 }

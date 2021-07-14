@@ -9,12 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlTransient;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -23,6 +18,12 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlTransient;
+
 @XmlAccessorType(XmlAccessType.NONE)
 public class RiskContainmentUnit extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
@@ -30,7 +31,7 @@ public class RiskContainmentUnit extends AbstractWorkflowEntity {
 	private String cif;
 	@XmlElement
 	private String keyReference;
-	@XmlElement(name = "name")
+	@JsonProperty("name")
 	private String custName;
 	private String rcuReference;
 	@XmlElement
@@ -41,7 +42,7 @@ public class RiskContainmentUnit extends AbstractWorkflowEntity {
 	private String agentCode;
 	@XmlElement
 	private String agentName;
-	@XmlElement(name = "recommendations")
+	@JsonProperty("recommendations")
 	private int status;
 	@XmlElement
 	private Long reason;
@@ -59,7 +60,7 @@ public class RiskContainmentUnit extends AbstractWorkflowEntity {
 
 	private List<DocumentDetails> documents = null;
 	@XmlElementWrapper(name = "rcuDocuments")
-	@XmlElement(name = "rcuDocument")
+	@JsonProperty("rcuDocument")
 	private List<RCUDocument> rcuDocuments = new ArrayList<>();
 	private ExtendedFieldHeader extendedFieldHeader;
 	private ExtendedFieldRender extendedFieldRender;

@@ -1,13 +1,14 @@
 package com.pennanttech.ws.model.manualAdvice;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennanttech.ws.model.finance.TaxDetail;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennanttech.ws.model.finance.TaxDetail;
 
 @XmlType(propOrder = { "adviseId", "finTaxDetails", "returnStatus" })
 @XmlRootElement(name = "ManualAdviseResponse")
@@ -17,7 +18,7 @@ public class ManualAdviseResponse {
 	@XmlElement
 	private long adviseId = Long.MIN_VALUE;
 
-	@XmlElement(name = "finGSTDetail")
+	@JsonProperty("finGSTDetail")
 	private TaxDetail taxDetail;
 
 	@XmlElement

@@ -1,12 +1,12 @@
 package com.pennanttech.pffws;
 
-import jakarta.jws.WebParam;
-import jakarta.jws.WebService;
-
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.mandate.MandateDetial;
+
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
 
 @WebService
 public interface MandateSoapService {

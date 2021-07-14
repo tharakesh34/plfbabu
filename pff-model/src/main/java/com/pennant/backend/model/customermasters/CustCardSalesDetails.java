@@ -5,14 +5,14 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "id", "cardSalesId", "month", "salesAmount", "noOfSettlements", "totalNoOfCredits",
 		"totalNoOfDebits", "totalCreditValue", "totalDebitValue", "inwardBounce", "outwardBounce" })
@@ -20,27 +20,27 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class CustCardSalesDetails extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
-	@XmlElement(name = "id")
+	@JsonProperty("id")
 	private long id = Long.MIN_VALUE;
-	@XmlElement(name = "cardSalesId")
+	@JsonProperty("cardSalesId")
 	private long cardSalesId;
-	@XmlElement(name = "month")
+	@JsonProperty("month")
 	private Date month;
-	@XmlElement(name = "salesAmount")
+	@JsonProperty("salesAmount")
 	private BigDecimal salesAmount;
-	@XmlElement(name = "noOfSettlements")
+	@JsonProperty("noOfSettlements")
 	private int noOfSettlements;
-	@XmlElement(name = "totalNoOfCredits")
+	@JsonProperty("totalNoOfCredits")
 	private int totalNoOfCredits;
-	@XmlElement(name = "totalNoOfDebits")
+	@JsonProperty("totalNoOfDebits")
 	private int totalNoOfDebits;
-	@XmlElement(name = "totalCreditValue")
+	@JsonProperty("totalCreditValue")
 	private BigDecimal totalCreditValue;
-	@XmlElement(name = "totalDebitValue")
+	@JsonProperty("totalDebitValue")
 	private BigDecimal totalDebitValue;
-	@XmlElement(name = "inwardBounce")
+	@JsonProperty("inwardBounce")
 	private BigDecimal inwardBounce;
-	@XmlElement(name = "outwardBounce")
+	@JsonProperty("outwardBounce")
 	private BigDecimal outwardBounce;
 	private CustCardSalesDetails befImage;
 	private LoggedInUser userDetails;

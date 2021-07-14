@@ -1,14 +1,11 @@
 package com.pennant.backend.model.dedup.external;
 
-import org.codehaus.jackson.annotate.JsonAutoDetect;
-
-//import java.util.Date;
-
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
-import org.codehaus.jackson.annotate.JsonTypeInfo.As;
-import org.codehaus.jackson.annotate.JsonTypeInfo.Id;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 @JsonPropertyOrder({ "DEAL_ID", "ORG", "REQUEST_TYPE", "DATASOURCE", "FIRST_NAME", "MIDDLE_NAME", "LAST_NAME",
 		"ADDRESS_1", "ADDRESS_2", "ADDRESS_3", "AREA", "LANDMARK", "CITY", "PIN", "DOB", "LANDLINE_1", "LANDLINE_2",

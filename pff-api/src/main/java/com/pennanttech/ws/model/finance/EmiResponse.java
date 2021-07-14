@@ -2,11 +2,11 @@ package com.pennanttech.ws.model.finance;
 
 import java.math.BigDecimal;
 
+import com.pennant.backend.model.WSReturnStatus;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennant.backend.model.WSReturnStatus;
 
 @XmlType(propOrder = { "repayAmount", "returnStatus" })
 @XmlAccessorType(XmlAccessType.FIELD)

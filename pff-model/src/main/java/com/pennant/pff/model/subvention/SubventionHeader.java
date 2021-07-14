@@ -4,13 +4,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.zkoss.util.media.Media;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
-
-import org.zkoss.util.media.Media;
-
-import com.pennanttech.dataengine.model.DataEngineStatus;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class SubventionHeader {
@@ -20,7 +21,7 @@ public class SubventionHeader {
 	private Media media;
 	private String userBranch;
 	private Long id;
-	@XmlElement(name = "batchReference")
+	@JsonProperty("batchReference")
 	private String batchRef;
 	@XmlElement
 	private String entityCode;

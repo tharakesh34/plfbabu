@@ -49,17 +49,19 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.Entity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.XMLGregorianCalendar;
-
-import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.Entity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>LimitDetail table</b>.<br>
@@ -73,11 +75,11 @@ public class LimitDetails implements java.io.Serializable, Entity {
 
 	private static final long serialVersionUID = 1L;
 
-	@XmlElement(name = "limitDetailId")
+	@JsonProperty("limitDetailId")
 	private long detailId = Long.MIN_VALUE;
 	private long limitHeaderId;
 	private String limitGroup;
-	@XmlElement(name = "structureDetailId")
+	@JsonProperty("structureDetailId")
 	private long limitStructureDetailsID;
 
 	@XmlElement
@@ -91,7 +93,7 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	@XmlElement
 	private BigDecimal reservedLimit = BigDecimal.ZERO;
 
-	@XmlElement(name = "availableLimit")
+	@JsonProperty("availableLimit")
 	private BigDecimal actualLimit = BigDecimal.ZERO;
 
 	private BigDecimal reservedexposure = BigDecimal.ZERO;
@@ -133,7 +135,7 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	private int orderSeq;
 	private int itemPriority;
 
-	@XmlElement(name = "structureDetail")
+	@JsonProperty("structureDetail")
 	private LimitStructureDetail limitStructureDetails;
 
 	@XmlTransient
@@ -179,9 +181,9 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	private long workflowId = 0;
 
 	//API Purpose
-	@XmlElement(name = "actualexposure")
+	@JsonProperty("actualexposure")
 	private BigDecimal limitActualexposure = BigDecimal.ZERO;
-	@XmlElement(name = "reservedexposure")
+	@JsonProperty("reservedexposure")
 	private BigDecimal limitReservedexposure = BigDecimal.ZERO;
 
 	private boolean validateMaturityDate;

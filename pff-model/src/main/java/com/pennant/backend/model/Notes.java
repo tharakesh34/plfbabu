@@ -48,14 +48,15 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennanttech.pennapps.core.model.AbstractEntity;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
-
-import org.apache.commons.lang.StringUtils;
-
-import com.pennanttech.pennapps.core.model.AbstractEntity;
 
 /**
  * Model class for the <b>Notes table</b>.<br>
@@ -68,7 +69,7 @@ public class Notes extends AbstractEntity implements Entity {
 	private long noteId = Long.MIN_VALUE;
 	private String moduleName = "";
 
-	@XmlElement(name = "finReference")
+	@JsonProperty("finReference")
 	private String reference = "";
 
 	@XmlElement
@@ -83,7 +84,7 @@ public class Notes extends AbstractEntity implements Entity {
 	@XmlElement
 	private String usrLogin = "";
 
-	@XmlElement(name = "inputDate")
+	@JsonProperty("inputDate")
 	private Date inDate;
 
 	private String roleCode = "";

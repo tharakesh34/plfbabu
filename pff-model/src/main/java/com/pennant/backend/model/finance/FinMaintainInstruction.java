@@ -10,14 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import jakarta.xml.bind.annotation.XmlTransient;
-
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
+import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
  * Model class for the <b>FinMaintainInstruction table</b>.<br>

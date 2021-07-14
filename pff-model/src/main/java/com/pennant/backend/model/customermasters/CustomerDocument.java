@@ -47,13 +47,14 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>CustomerDocument table</b>.<br>
@@ -68,16 +69,16 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private Long custID = Long.MIN_VALUE;
 	@XmlElement
 	private String lovDescCustShrtName;
-	@XmlElement(name = "docFormat")
+	@JsonProperty("docFormat")
 	private String custDocType;
-	@XmlElement(name = "docName")
+	@JsonProperty("docName")
 	private String custDocName;
-	@XmlElement(name = "docCategory")
+	@JsonProperty("docCategory")
 	private String custDocCategory;
 	private String lovDescCustDocCategory;
 	@XmlElement
 	private String custDocTitle;
-	@XmlElement(name = "custDocIssuedAuth")
+	@JsonProperty("custDocIssuedAuth")
 	private String custDocSysName;
 	private Timestamp custDocRcvdOn;
 	@XmlElement
@@ -90,13 +91,13 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private String docPurpose;
 	@XmlElement
 	private String remarks;
-	@XmlElement(name = "docRefId")
+	@JsonProperty("docRefId")
 	private String docUri;
 	private String lovDescCustDocIssuedCountry;
 	private boolean custDocIsVerified;
 	private long custDocVerifiedBy;
 	private boolean custDocIsAcrive;
-	@XmlElement(name = "docContent")
+	@JsonProperty("docContent")
 	private byte[] custDocImage;
 	private Long docRefId = Long.MIN_VALUE;
 	private boolean newRecord = false;
@@ -115,7 +116,7 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private boolean docIsPdfExtRequired = false;;
 	private boolean docIsPasswordProtected = false;;
 	private Long pdfMappingRef;
-	@XmlElement(name = "docPassword")
+	@JsonProperty("docPassword")
 	private String pdfPassWord;
 	private String year;
 	private String sourceId;

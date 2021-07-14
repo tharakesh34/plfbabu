@@ -2,11 +2,11 @@ package com.pennanttech.ws.model.login;
 
 import java.io.Serializable;
 
+import com.pennant.backend.model.WSReturnStatus;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
-
-import com.pennant.backend.model.WSReturnStatus;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UserRolesResponse implements Serializable {

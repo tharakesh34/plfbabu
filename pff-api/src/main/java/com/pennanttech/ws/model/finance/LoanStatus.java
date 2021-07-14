@@ -2,13 +2,13 @@ package com.pennanttech.ws.model.finance;
 
 import java.io.Serializable;
 
+import com.pennant.backend.model.WSReturnStatus;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennant.backend.model.WSReturnStatus;
 
 @XmlType(propOrder = { "finReference", "roleCode", "recordStatus", "nextRoleCode", "returnStatus" })
 @XmlRootElement(name = "finance")

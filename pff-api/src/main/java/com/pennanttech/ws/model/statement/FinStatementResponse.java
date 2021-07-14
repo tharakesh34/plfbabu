@@ -2,16 +2,17 @@ package com.pennanttech.ws.model.statement;
 
 import java.util.List;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.ForeClosureReport;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(propOrder = { "customer", "finance", "finReference", "docImage","foreclosureReport", "returnStatus" })
@@ -24,7 +25,7 @@ public class FinStatementResponse {
 	private WSReturnStatus returnStatus;
 	@XmlElement
 	private String finReference;
-	@XmlElement(name = "docContent")
+	@JsonProperty("docContent")
 	private byte[] docImage;
 	@XmlElement
 	private StatementOfAccount statementSOA;

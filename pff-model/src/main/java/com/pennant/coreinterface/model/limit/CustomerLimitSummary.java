@@ -5,7 +5,8 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import jakarta.xml.bind.annotation.XmlElement;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -39,7 +40,7 @@ public class CustomerLimitSummary implements Serializable {
 
 	}
 
-	@XmlElement(name = "LimitReference")
+	@JsonProperty("LimitReference")
 	public String getLimitReference() {
 		return limitReference;
 	}
@@ -48,7 +49,7 @@ public class CustomerLimitSummary implements Serializable {
 		this.limitReference = limitReference;
 	}
 
-	@XmlElement(name = "LimitDesc")
+	@JsonProperty("LimitDesc")
 	public String getLimitDesc() {
 		return limitDesc;
 	}
@@ -57,7 +58,7 @@ public class CustomerLimitSummary implements Serializable {
 		this.limitDesc = limitDesc;
 	}
 
-	@XmlElement(name = "ControllerUnder")
+	@JsonProperty("ControllerUnder")
 	public String getControllerUnder() {
 		return controllerUnder;
 	}
@@ -66,7 +67,7 @@ public class CustomerLimitSummary implements Serializable {
 		this.controllerUnder = controllerUnder;
 	}
 
-	@XmlElement(name = "Rev_Nrev")
+	@JsonProperty("Rev_Nrev")
 	public String getRev_Nrev() {
 		return rev_Nrev;
 	}
@@ -75,7 +76,7 @@ public class CustomerLimitSummary implements Serializable {
 		this.rev_Nrev = revNrev;
 	}
 
-	@XmlElement(name = "AppovedAmount")
+	@JsonProperty("AppovedAmount")
 	public BigDecimal getAppovedAmount() {
 		return appovedAmount;
 	}
@@ -84,7 +85,7 @@ public class CustomerLimitSummary implements Serializable {
 		this.appovedAmount = appovedAmount;
 	}
 
-	@XmlElement(name = "AppovedAmountCcy")
+	@JsonProperty("AppovedAmountCcy")
 	public String getAppovedAmountCcy() {
 		return appovedAmountCcy;
 	}
@@ -93,7 +94,7 @@ public class CustomerLimitSummary implements Serializable {
 		this.appovedAmountCcy = appovedAmountCcy;
 	}
 
-	@XmlElement(name = "Outstanding")
+	@JsonProperty("Outstanding")
 	public BigDecimal getOutstanding() {
 		return outstanding;
 	}
@@ -102,7 +103,7 @@ public class CustomerLimitSummary implements Serializable {
 		this.outstanding = outstanding;
 	}
 
-	@XmlElement(name = "OutstandingCcy")
+	@JsonProperty("OutstandingCcy")
 	public String getOutstandingCcy() {
 		return outstandingCcy;
 	}
@@ -111,7 +112,7 @@ public class CustomerLimitSummary implements Serializable {
 		this.outstandingCcy = outstandingCcy;
 	}
 
-	@XmlElement(name = "Available")
+	@JsonProperty("Available")
 	public BigDecimal getAvailable() {
 		return available;
 	}
@@ -120,7 +121,7 @@ public class CustomerLimitSummary implements Serializable {
 		this.available = available;
 	}
 
-	@XmlElement(name = "AvailableCcy")
+	@JsonProperty("AvailableCcy")
 	public String getAvailableCcy() {
 		return availableCcy;
 	}
@@ -129,7 +130,7 @@ public class CustomerLimitSummary implements Serializable {
 		this.availableCcy = availableCcy;
 	}
 
-	@XmlElement(name = "Reserved")
+	@JsonProperty("Reserved")
 	public BigDecimal getReserved() {
 		return reserved;
 	}
@@ -138,7 +139,7 @@ public class CustomerLimitSummary implements Serializable {
 		this.reserved = reserved;
 	}
 
-	@XmlElement(name = "ReservedCcy")
+	@JsonProperty("ReservedCcy")
 	public String getReservedCcy() {
 		return reservedCcy;
 	}
@@ -147,7 +148,7 @@ public class CustomerLimitSummary implements Serializable {
 		this.reservedCcy = reservedCcy;
 	}
 
-	@XmlElement(name = "LimitExpiryDate")
+	@JsonProperty("LimitExpiryDate")
 	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
 	public Date getLimitExpiryDate() {
 		return limitExpiryDate;
@@ -157,7 +158,7 @@ public class CustomerLimitSummary implements Serializable {
 		this.limitExpiryDate = limitExpiryDate;
 	}
 
-	@XmlElement(name = "Blocked")
+	@JsonProperty("Blocked")
 	public BigDecimal getBlocked() {
 		return blocked;
 	}
@@ -166,7 +167,7 @@ public class CustomerLimitSummary implements Serializable {
 		this.blocked = blocked;
 	}
 
-	@XmlElement(name = "BlockedCcy")
+	@JsonProperty("BlockedCcy")
 	public String getBlockedCcy() {
 		return blockedCcy;
 	}
@@ -175,7 +176,7 @@ public class CustomerLimitSummary implements Serializable {
 		this.blockedCcy = blockedCcy;
 	}
 
-	@XmlElement(name = "LimitCurrency")
+	@JsonProperty("LimitCurrency")
 	public String getLimitCurrency() {
 		return limitCurrency;
 	}

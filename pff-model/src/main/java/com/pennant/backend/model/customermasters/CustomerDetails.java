@@ -32,6 +32,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.blacklist.BlackListCustomers;
@@ -70,19 +71,19 @@ public class CustomerDetails implements java.io.Serializable {
 	private long custID;
 	private boolean newRecord = false;
 
-	@XmlElement(name = "cif")
+	@JsonProperty("cif")
 	private String custCIF;
 
-	@XmlElement(name = "coreBankID")
+	@JsonProperty("coreBankID")
 	private String custCoreBank;
 
-	@XmlElement(name = "categoryCode")
+	@JsonProperty("categoryCode")
 	private String custCtgCode;
 
-	@XmlElement(name = "defaultBranch")
+	@JsonProperty("defaultBranch")
 	private String custDftBranch;
 
-	@XmlElement(name = "baseCurrency")
+	@JsonProperty("baseCurrency")
 	private String custBaseCcy;
 
 	@XmlElement
@@ -90,70 +91,70 @@ public class CustomerDetails implements java.io.Serializable {
 
 	private String sourceId;
 
-	@XmlElement(name = "personalInfo")
+	@JsonProperty("personalInfo")
 	private Customer customer;
 
 	private CustEmployeeDetail custEmployeeDetail;
 	private CustomerDocument customerDocument;
 
-	@XmlElement(name = "extendedDetail")
+	@JsonProperty("extendedDetail")
 	private ExtendedFieldHeader extendedFieldHeader;
 	private ExtendedFieldRender extendedFieldRender;
 
 	@XmlElementWrapper(name = "extendedDetails")
-	@XmlElement(name = "extendedDetail")
+	@JsonProperty("extendedDetail")
 	private List<ExtendedField> extendedDetails = null;
 
 	private List<CustomerRating> ratingsList;
 
 	@XmlElementWrapper(name = "employments")
-	@XmlElement(name = "employment")
+	@JsonProperty("employment")
 	private List<CustomerEmploymentDetail> employmentDetailsList;
 
 	@XmlElementWrapper(name = "documents")
-	@XmlElement(name = "document")
+	@JsonProperty("document")
 	private List<CustomerDocument> customerDocumentsList;
 
 	@XmlElementWrapper(name = "addresses")
-	@XmlElement(name = "address")
+	@JsonProperty("address")
 	private List<CustomerAddres> addressList = new ArrayList<>();
 
 	@XmlElementWrapper(name = "customerGstLists")
-	@XmlElement(name = "customerGstList")
+	@JsonProperty("customerGstList")
 	private List<CustomerGST> customerGstList = new ArrayList<>();
 	@XmlElementWrapper(name = "phones")
-	@XmlElement(name = "phone")
+	@JsonProperty("phone")
 	private List<CustomerPhoneNumber> customerPhoneNumList;
 
 	@XmlElementWrapper(name = "emails")
-	@XmlElement(name = "email")
+	@JsonProperty("email")
 	private List<CustomerEMail> customerEMailList;
 
 	@XmlElementWrapper(name = "customersIncome")
-	@XmlElement(name = "customerIncome")
+	@JsonProperty("customerIncome")
 	private List<CustomerIncome> customerIncomeList;
 
 	@XmlElementWrapper(name = "customerDirector")
-	@XmlElement(name = "customerDirector")
+	@JsonProperty("customerDirector")
 	private List<DirectorDetail> customerDirectorList;
 
 	@XmlElementWrapper(name = "customersBankInfo")
-	@XmlElement(name = "customerBankInfo")
+	@JsonProperty("customerBankInfo")
 	private List<CustomerBankInfo> customerBankInfoList;
 
 	@XmlElementWrapper(name = "accountsBehaviour")
-	@XmlElement(name = "accountBehaviour")
+	@JsonProperty("accountBehaviour")
 	private List<CustomerChequeInfo> customerChequeInfoList;
 
 	@XmlElementWrapper(name = "customersExtLiability")
-	@XmlElement(name = "customerExtLiability")
+	@JsonProperty("customerExtLiability")
 	private List<CustomerExtLiability> customerExtLiabilityList;
 	private List<FinanceEnquiry> custFinanceExposureList;
 	@XmlElementWrapper(name = "dedup")
-	@XmlElement(name = "dedup")
+	@JsonProperty("dedup")
 	private List<CustomerDedup> customerDedupList;
 	@XmlElementWrapper(name = "balckListCustomers")
-	@XmlElement(name = "balckListCustomers")
+	@JsonProperty("balckListCustomers")
 	private List<BlackListCustomers> balckListCustomers;
 	private CoreCustomer coreCustomer;
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
@@ -166,7 +167,7 @@ public class CustomerDetails implements java.io.Serializable {
 	private List<VASRecording> vasRecordingList = new ArrayList<>();
 	private List<CollateralSetup> collateraldetailList;
 	@XmlElementWrapper(name = "custCardSales")
-	@XmlElement(name = "custCardSales")
+	@JsonProperty("custCardSales")
 	private List<CustCardSales> custCardSales;
 
 	@XmlElement

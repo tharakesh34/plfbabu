@@ -1,11 +1,11 @@
 package com.pennanttech.pffws;
 
-import jakarta.jws.WebResult;
-import jakarta.jws.WebService;
-
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.statement.FinStatementRequest;
 import com.pennanttech.ws.model.statement.FinStatementResponse;
+
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
 
 @WebService
 public interface FinStatementSoapService {

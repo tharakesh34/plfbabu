@@ -5,12 +5,13 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Model class for the <b>Customer table</b>.<br>
@@ -21,19 +22,19 @@ import org.apache.commons.lang.StringUtils;
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerDedup implements Serializable {
 	private static final long serialVersionUID = 1L;
-	@XmlElement(name = "cif")
+	@JsonProperty("cif")
 	private String custCIF;
 	private String finReference;
-	@XmlElement(name = "lastName")
+	@JsonProperty("lastName")
 	private String custLName;
-	@XmlElement(name = "firstName")
+	@JsonProperty("firstName")
 	private String custFName;
-	@XmlElement(name = "shortName ")
+	@JsonProperty("shortName ")
 	private String custShrtName;
 	private String custMotherMaiden;
-	@XmlElement(name = "dateofBirth")
+	@JsonProperty("dateofBirth")
 	private Date custDOB;
-	@XmlElement(name = "custPAN")
+	@JsonProperty("custPAN")
 	private String custCRCPR;
 	private String custPassportNo;
 	private String mobileNumber;
@@ -55,11 +56,11 @@ public class CustomerDedup implements Serializable {
 	// For Internal use //Not in the table should be exculed for audit
 	private long custId = Long.MIN_VALUE;
 	private String custCoreBank;
-	@XmlElement(name = "categoryCode")
+	@JsonProperty("categoryCode")
 	private String custCtgCode;
-	@XmlElement(name = "defaultBranch")
+	@JsonProperty("defaultBranch")
 	private String custDftBranch;
-	@XmlElement(name = "sector ")
+	@JsonProperty("sector ")
 	private String custSector;
 	private String custSubSector;
 	private String custDocType;
@@ -90,11 +91,11 @@ public class CustomerDedup implements Serializable {
 	private String aadharNumber;
 	private String fatherName;
 	private String motherName;
-	@XmlElement(name = "voterId")
+	@JsonProperty("voterId")
 	private String voterID;
 	private String rationCard;
 	private String lpgNumber;
-	@XmlElement(name = "drivingLicense")
+	@JsonProperty("drivingLicense")
 	private String drivingLicenceNo;
 	private String finType;
 

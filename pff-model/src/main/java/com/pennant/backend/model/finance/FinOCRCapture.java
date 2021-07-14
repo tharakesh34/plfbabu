@@ -5,14 +5,15 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 @XmlType(propOrder = { "disbSeq", "demandAmount", "paidAmount", "remarks", "fileName", "docImage" })
 @XmlRootElement(name = "finOCRCapture")
@@ -20,7 +21,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class FinOCRCapture extends AbstractWorkflowEntity implements Comparable<FinOCRCapture> {
 	private static final long serialVersionUID = 1L;
 	private long id = Long.MIN_VALUE;
-	@XmlElement(name = "receiptSeq")
+	@JsonProperty("receiptSeq")
 	private int disbSeq;
 	@XmlElement
 	private String finReference;

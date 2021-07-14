@@ -1,13 +1,13 @@
 package com.pennanttech.pffws;
 
-import jakarta.jws.WebParam;
-import jakarta.jws.WebResult;
-import jakarta.jws.WebService;
-
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.financetype.FinanceTypeRequest;
 import com.pennanttech.ws.model.financetype.FinanceTypeResponse;
+
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
 
 @WebService
 public interface PromotionTypeSoapService {

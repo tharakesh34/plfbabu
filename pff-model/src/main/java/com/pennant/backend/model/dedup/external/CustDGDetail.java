@@ -1,36 +1,37 @@
 package com.pennant.backend.model.dedup.external;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustDGDetail {
-	@XmlElement(name = "Customer_ID__c")
+	@JsonProperty("Customer_ID__c")
 	private String customerId;
-	@XmlElement(name = "Customer_Type__c")
+	@JsonProperty("Customer_Type__c")
 	private String customerType;
-	@XmlElement(name = "Name")
+	@JsonProperty("Name")
 	private String customerName;
-	@XmlElement(name = "Fathers_Husband_s_Name__c")
+	@JsonProperty("Fathers_Husband_s_Name__c")
 	private String FatherorHusbandName;
-	@XmlElement(name = "DOB__c")
+	@JsonProperty("DOB__c")
 	private String dateOfBirth;
-	@XmlElement(name = "PAN__c")
+	@JsonProperty("PAN__c")
 	private String panNumber;
-	@XmlElement(name = "Voterid__c")
+	@JsonProperty("Voterid__c")
 	private String voiterId;
-	@XmlElement(name = "Cin__c")
+	@JsonProperty("Cin__c")
 	private String cinNumber;
-	@XmlElement(name = "Din__c")
+	@JsonProperty("Din__c")
 	private String dinNumber;
-	@XmlElement(name = "AadhaarNo")
+	@JsonProperty("AadhaarNo")
 	private String aadhaarNo;
-	@XmlElement(name = "Gender_Flag")
+	@JsonProperty("Gender_Flag")
 	private String gender;
-	@XmlElement(name = "Marital_Status_Flag")
+	@JsonProperty("Marital_Status_Flag")
 	private String maritalSts;
-	@XmlElement(name = "Source_System")
+	@JsonProperty("Source_System")
 	private String sourceSystem;
 
 	public String getCustomerId() {

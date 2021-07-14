@@ -49,16 +49,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>CollateralStructure table</b>.<br>
@@ -81,7 +82,7 @@ public class CollateralStructure extends AbstractWorkflowEntity {
 	private String ltvType;
 	private String ltvTypeName;
 
-	@XmlElement(name = "ltvPerc")
+	@JsonProperty("ltvPerc")
 	private BigDecimal ltvPercentage;
 
 	@XmlElement
@@ -99,10 +100,10 @@ public class CollateralStructure extends AbstractWorkflowEntity {
 	@XmlElement
 	private String remarks;
 
-	@XmlElement(name = "alwLtvWaiver")
+	@JsonProperty("alwLtvWaiver")
 	private boolean allowLtvWaiver;
 
-	@XmlElement(name = "maxLtvWaiverPerc")
+	@JsonProperty("maxLtvWaiverPerc")
 	private BigDecimal maxLtvWaiver;
 	private boolean newRecord = false;
 	private String lovValue;
@@ -110,7 +111,7 @@ public class CollateralStructure extends AbstractWorkflowEntity {
 	@XmlTransient
 	private LoggedInUser userDetails;
 
-	@XmlElement(name = "extendedDetail")
+	@JsonProperty("extendedDetail")
 	private ExtendedFieldHeader extendedFieldHeader;
 
 	@XmlElement
@@ -128,7 +129,7 @@ public class CollateralStructure extends AbstractWorkflowEntity {
 	private long queryId;
 	private String queryCode;
 	private String querySubCode;
-	@XmlElement(name = "thresholdLtvPerc")
+	@JsonProperty("thresholdLtvPerc")
 	private BigDecimal thresholdLtvPercentage;
 	private Long commodityId;
 

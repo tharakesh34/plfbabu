@@ -42,14 +42,15 @@
 */
 package com.pennant.backend.model.solutionfactory;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>ExtendedFieldDetail table</b>.<br>
@@ -72,37 +73,37 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity {
 	@XmlElement
 	private String fieldType;
 
-	@XmlElement(name = "maxLength")
+	@JsonProperty("maxLength")
 	private int fieldLength;
 
-	@XmlElement(name = "precision")
+	@JsonProperty("precision")
 	private int fieldPrec;
 
 	@XmlElement
 	private String fieldLabel;
 
-	@XmlElement(name = "mandatory")
+	@JsonProperty("mandatory")
 	private boolean fieldMandatory;
 
-	@XmlElement(name = "constraint")
+	@JsonProperty("constraint")
 	private String fieldConstraint;
 
-	@XmlElement(name = "seqOrder")
+	@JsonProperty("seqOrder")
 	private int fieldSeqOrder;
 
-	@XmlElement(name = "listValues")
+	@JsonProperty("listValues")
 	private String fieldList;
 
-	@XmlElement(name = "dftValue")
+	@JsonProperty("dftValue")
 	private String fieldDefaultValue;
 
-	@XmlElement(name = "minValue")
+	@JsonProperty("minValue")
 	private long fieldMinValue;
 
-	@XmlElement(name = "maxValue")
+	@JsonProperty("maxValue")
 	private long fieldMaxValue;
 
-	@XmlElement(name = "uniqueField")
+	@JsonProperty("uniqueField")
 	private boolean fieldUnique;
 	private String filters;
 

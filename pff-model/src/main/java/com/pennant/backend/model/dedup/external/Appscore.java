@@ -1,9 +1,9 @@
 package com.pennant.backend.model.dedup.external;
 
-import jakarta.xml.bind.annotation.XmlElement;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import jakarta.xml.bind.annotation.XmlElement;
 
 @JsonPropertyOrder({ "appscore", "appscoreDP" })
 @JsonSerialize

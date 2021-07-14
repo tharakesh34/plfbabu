@@ -3,9 +3,10 @@ package com.pennanttech.ws.model.financetype;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "finRateType", "lovDescFinRateTypeName", "finIntRate", "finBaseRate", "lovDescFinBaseRateName",
@@ -30,35 +31,35 @@ public class RepayDetail implements Serializable {
 
 	private String finRateType;
 
-	@XmlElement(name = "finRateTypeDesc")
+	@JsonProperty("finRateTypeDesc")
 	private String lovDescFinRateTypeName;
 
-	@XmlElement(name = "finPftRate")
+	@JsonProperty("finPftRate")
 	private BigDecimal finIntRate = BigDecimal.ZERO;
 	private String finBaseRate;
 
-	@XmlElement(name = "rpyBaseRateCodeDesc")
+	@JsonProperty("rpyBaseRateCodeDesc")
 	private String lovDescFinBaseRateName;
 	private String finSplRate;
 
-	@XmlElement(name = "rpySpecialRateCodeDesc")
+	@JsonProperty("rpySpecialRateCodeDesc")
 	private String lovDescFinSplRateName;
 	private BigDecimal finMargin = BigDecimal.ZERO;
 
-	@XmlElement(name = "finMinRate")
+	@JsonProperty("finMinRate")
 	private BigDecimal fInMinRate = BigDecimal.ZERO;
 	private BigDecimal finMaxRate = BigDecimal.ZERO;
 
-	@XmlElement(name = "finDftPftFrq")
+	@JsonProperty("finDftPftFrq")
 	private String finDftIntFrq;
 	private boolean finRepayPftOnFrq;
 	private String finRpyFrq;
 	private String finSchdMthd;
 
-	@XmlElement(name = "schdMethodDesc")
+	@JsonProperty("schdMethodDesc")
 	private String lovDescFinSchdMthdName;
 
-	@XmlElement(name = "finIsPftCpz")
+	@JsonProperty("finIsPftCpz")
 	private boolean finIsIntCpz;
 	private String finCpzFrq;
 	private boolean finIsRvwAlw;
@@ -70,7 +71,7 @@ public class RepayDetail implements Serializable {
 	private int finDftTerms;
 	private String fInRepayMethod;
 
-	@XmlElement(name = "finRepayMethodDesc")
+	@JsonProperty("finRepayMethodDesc")
 	private String lovDescFInRepayMethodName;
 	private boolean finIsAlwPartialRpy;
 	private boolean finIsAlwDifferment;

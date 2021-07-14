@@ -2,22 +2,23 @@ package com.pennanttech.pff.model;
 
 import java.io.Serializable;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PMAYDetailsRespData implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	@XmlElement(name = "MESSAGE")
+	@JsonProperty("MESSAGE")
 	public String MESSAGE;
-	@XmlElement(name = "STATUS")
+	@JsonProperty("STATUS")
 	public String STATUS;
-	@XmlElement(name = "RECORD_ID")
+	@JsonProperty("RECORD_ID")
 	public String RECORD_ID;
 	public String APPLICATION_ID;
 	public String BENEFICIARY_CODE;

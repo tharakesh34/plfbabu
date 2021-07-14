@@ -6,11 +6,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
-
-import com.pennant.backend.model.documentdetails.DocumentDetails;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class Covenant extends CovenantType {
@@ -28,14 +29,14 @@ public class Covenant extends CovenantType {
 	private boolean internalUse;
 	@XmlElement
 	private Date extendedDate;
-	@XmlElement(name = "description")
+	@JsonProperty("description")
 	private String remarks;
 	private byte[] remarks1;
-	@XmlElement(name = "remarks")
+	@JsonProperty("remarks")
 	private String additionalField1;
-	@XmlElement(name = "standardValue")
+	@JsonProperty("standardValue")
 	private String additionalField2;
-	@XmlElement(name = "actualValue")
+	@JsonProperty("actualValue")
 	private String additionalField3;
 	private String additionalField4;
 	@XmlElement
@@ -58,11 +59,11 @@ public class Covenant extends CovenantType {
 	private List<DocumentDetails> documentDetails = new ArrayList<>();
 	private Date alertsentOn;
 
-	@XmlElement(name = "pdd")
+	@JsonProperty("pdd")
 	private String strPdd;
-	@XmlElement(name = "otc")
+	@JsonProperty("otc")
 	private String strOtc;
-	@XmlElement(name = "documentReceived")
+	@JsonProperty("documentReceived")
 	private String strDocumentReceived;
 
 	public Covenant() {

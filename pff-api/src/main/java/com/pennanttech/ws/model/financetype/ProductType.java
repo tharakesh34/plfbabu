@@ -2,11 +2,11 @@ package com.pennanttech.ws.model.financetype;
 
 import java.util.List;
 
+import com.pennant.backend.model.WSReturnStatus;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennant.backend.model.WSReturnStatus;
 
 @XmlType(propOrder = { "productCode", "productDesc", "financeTypeList", "returnStatus" })
 @XmlAccessorType(XmlAccessType.FIELD)

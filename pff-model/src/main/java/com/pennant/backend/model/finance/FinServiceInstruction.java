@@ -7,11 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.extendedfield.ExtendedField;
@@ -19,6 +15,11 @@ import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinServiceInstruction extends AbstractWorkflowEntity implements Entity {
@@ -52,13 +53,13 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	private String splRate;
 	@XmlElement
 	private BigDecimal margin = BigDecimal.ZERO;
-	@XmlElement(name = "reCalType")
+	@JsonProperty("reCalType")
 	private String recalType;
-	@XmlElement(name = "reCalFromDate")
+	@JsonProperty("reCalFromDate")
 	private Date recalFromDate;
-	@XmlElement(name = "reCalToDate")
+	@JsonProperty("reCalToDate")
 	private Date recalToDate;
-	@XmlElement(name = "stpProcess")
+	@JsonProperty("stpProcess")
 	private boolean nonStp = true;
 	@XmlElement
 	private String processStage;
@@ -73,10 +74,10 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	private String schdMethod;
 	@XmlElement
 	private String allocationType;
-	@XmlElement(name = "fundingAccount")
+	@JsonProperty("fundingAccount")
 	private long fundingAc = 0;
 	@XmlElementWrapper(name = "allocationDetails")
-	@XmlElement(name = "allocationDetail")
+	@JsonProperty("allocationDetail")
 	private List<UploadAlloctionDetail> uploadAllocationDetails;
 	@XmlElement
 	private String receiptPurpose;
@@ -160,12 +161,12 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	@XmlElement
 	private FinReceiptDetail receiptDetail;
 	@XmlElementWrapper(name = "disbursements")
-	@XmlElement(name = "disbursement")
+	@JsonProperty("disbursement")
 	private List<FinAdvancePayments> disbursementDetails;
 	@XmlElementWrapper(name = "fees")
-	@XmlElement(name = "fee")
+	@JsonProperty("fee")
 	private List<FinFeeDetail> finFeeDetails = new ArrayList<>();
-	@XmlElement(name = "overdue")
+	@JsonProperty("overdue")
 	private FinODPenaltyRate finODPenaltyRate;
 	private String moduleDefiner;
 	private boolean newRecord;
@@ -214,7 +215,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 		this.restructuringType = restructuringType;
 	}
 
-	@XmlElement(name = "depositAccount")
+	@JsonProperty("depositAccount")
 	private String depositAcc;
 
 	// ### 16-08-2018 Ticket ID : 124998,receipt upload
@@ -251,7 +252,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 		this.appDate = appDate;
 	}
 
-	@XmlElement(name = "isUpload")
+	@JsonProperty("isUpload")
 	private boolean isReceiptUpload;
 
 	private FinServiceInstruction validateChangeRepayment = this;
@@ -288,7 +289,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	private long checker = Long.MIN_VALUE;;
 
 	@XmlElementWrapper(name = "extendedDetails")
-	@XmlElement(name = "extendedDetail")
+	@JsonProperty("extendedDetail")
 	private List<ExtendedField> extendedDetails;
 
 	private LoggedInUser loggedInUser;
@@ -467,7 +468,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	}
 
 	private long custID;
-	@XmlElement(name = "cif")
+	@JsonProperty("cif")
 	private String custCIF;
 	@XmlElement
 	private BigDecimal tdsAmount = BigDecimal.ZERO;

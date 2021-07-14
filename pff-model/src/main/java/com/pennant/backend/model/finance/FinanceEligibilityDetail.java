@@ -7,12 +7,14 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.zkoss.json.JSONObject;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
-
-import org.zkoss.json.JSONObject;
 
 @XmlType(propOrder = { "elgRuleCode", "ruleResultType", "ruleResult" })
 @XmlAccessorType(XmlAccessType.NONE)
@@ -23,7 +25,7 @@ public class FinanceEligibilityDetail implements Serializable {
 	private String finReference;
 	private long elgRuleCode;
 	private String elgRuleValue;
-	@XmlElement(name = "elgRuleCode")
+	@JsonProperty("elgRuleCode")
 	private String lovDescElgRuleCode;
 	private String lovDescElgRuleCodeDesc;
 	@XmlElement

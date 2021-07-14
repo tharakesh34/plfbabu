@@ -49,18 +49,20 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.Entity;
+import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.XMLGregorianCalendar;
-
-import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.Entity;
-import com.pennant.backend.util.WorkFlowUtil;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>LimitStructureDetail table</b>.<br>
@@ -72,7 +74,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class LimitStructureDetail implements java.io.Serializable, Entity {
 	private static final long serialVersionUID = 1L;
 
-	@XmlElement(name = "structureDetailId")
+	@JsonProperty("structureDetailId")
 	private long limitStructureDetailsID = Long.MIN_VALUE;
 
 	private String limitStructureCode;
@@ -80,10 +82,10 @@ public class LimitStructureDetail implements java.io.Serializable, Entity {
 	@XmlElement
 	private String groupCode;
 
-	@XmlElement(name = "lineCode")
+	@JsonProperty("lineCode")
 	private String limitLine;
 
-	@XmlElement(name = "sequence")
+	@JsonProperty("sequence")
 	private int itemSeq;
 
 	@XmlElement
@@ -91,19 +93,19 @@ public class LimitStructureDetail implements java.io.Serializable, Entity {
 	private String displayStyle;
 	private int version;
 
-	@XmlElement(name = "structureDetailDesc")
+	@JsonProperty("structureDetailDesc")
 	private String structureName;
-	@XmlElement(name = "lineCodeDesc")
+	@JsonProperty("lineCodeDesc")
 	private String limitLineDesc;
-	@XmlElement(name = "groupCodeDesc")
+	@JsonProperty("groupCodeDesc")
 	private String groupName;
 	private int key;
 	private String limitCategory;
 
-	@XmlElement(name = "level")
+	@JsonProperty("level")
 	private int itemLevel;
 
-	@XmlElement(name = "check")
+	@JsonProperty("check")
 	private boolean limitCheck;
 
 	@XmlElement

@@ -5,16 +5,18 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.finance.FinanceMain;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
-import javax.xml.datatype.XMLGregorianCalendar;
-
-import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.finance.FinanceMain;
 
 @XmlType(propOrder = { "headerId", "custCIF", "custGrpCode", "referenceCode", "referenceNumber", "limitCurrency",
 		"limitAmount", "returnStatus" })
@@ -23,7 +25,7 @@ public class LimitTransactionDetail implements java.io.Serializable, Entity {
 
 	private static final long serialVersionUID = 3749037992177767072L;
 	private long transactionId = Long.MIN_VALUE;
-	@XmlElement(name = "limitId")
+	@JsonProperty("limitId")
 	private long headerId;
 	@XmlElement
 	private String referenceCode;
@@ -36,13 +38,13 @@ public class LimitTransactionDetail implements java.io.Serializable, Entity {
 	private boolean overrideFlag;
 	private BigDecimal transactionAmount;
 	private String transactionCurrency;
-	@XmlElement(name = "ccy")
+	@JsonProperty("ccy")
 	private String limitCurrency;
-	@XmlElement(name = "amount")
+	@JsonProperty("amount")
 	private BigDecimal limitAmount;
-	@XmlElement(name = "cif")
+	@JsonProperty("cif")
 	private String custCIF;
-	@XmlElement(name = "customerGroup")
+	@JsonProperty("customerGroup")
 	private String custGrpCode;
 	@XmlElement
 	private WSReturnStatus returnStatus;

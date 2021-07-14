@@ -2,18 +2,18 @@ package com.penanttech.pff.model.external.bre;
 
 import java.io.Serializable;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DAXMLDocument implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public DAXMLDocument() {
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	@JsonProperty("OCONTROL")
 	OControl oControl;
 

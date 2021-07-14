@@ -1,11 +1,11 @@
 package com.pennant.backend.model.applicationmaster;
 
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 @XmlType(propOrder = { "finReference", "custID", "custCIF", "custShrtName", "pANNumber", "phoneNumber" })
 @XmlAccessorType(XmlAccessType.NONE)

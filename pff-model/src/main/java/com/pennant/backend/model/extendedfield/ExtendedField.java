@@ -4,9 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
 
 /**
@@ -25,7 +26,7 @@ public class ExtendedField implements Serializable {
 	}
 
 	@XmlElementWrapper(name = "extendedFields")
-	@XmlElement(name = "extendedField")
+	@JsonProperty("extendedField")
 	private List<ExtendedFieldData> extendedFieldDataList;
 
 	public ExtendedField copyEntity() {

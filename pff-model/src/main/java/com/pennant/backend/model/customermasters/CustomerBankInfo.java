@@ -51,16 +51,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.audit.AuditDetail;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>CustomerBankInfo table</b>.<br>
@@ -126,14 +127,14 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 	private String typeOfBanks;
 	private Date accountOpeningDate;
 	@XmlElementWrapper(name = "bankInfoDetails")
-	@XmlElement(name = "bankInfoDetail")
+	@JsonProperty("bankInfoDetail")
 	private List<BankInfoDetail> bankInfoDetails = new ArrayList<>();
 	private List<BankInfoSubDetail> bankInfoSubDetails = new ArrayList<>();
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	@XmlElement
 	private boolean addToBenficiary;
 	private Long bankBranchID;
-	@XmlElement(name = "ifsc")
+	@JsonProperty("ifsc")
 	private String iFSC;
 	@XmlElement
 	private String accountHolderName;

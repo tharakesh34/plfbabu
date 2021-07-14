@@ -14,12 +14,13 @@ package com.pennanttech.pennapps.pff.verification.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
-
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>verification_lv_details table</b>
@@ -33,7 +34,7 @@ public class LVDocument extends AbstractWorkflowEntity {
 	@XmlElement
 	private int seqNo;
 	private Long documentId;
-	@XmlElement(name = "documentName")
+	@JsonProperty("documentName")
 	private String documentSubId;
 	private String remarks;
 	private String docCategory;

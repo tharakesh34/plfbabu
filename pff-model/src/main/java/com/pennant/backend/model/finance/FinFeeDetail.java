@@ -50,13 +50,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>Collateral table</b>.<br>
@@ -75,11 +76,11 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private String finEvent;
 	private long feeTypeID = Long.MIN_VALUE;
 	private BigDecimal calculatedAmount = BigDecimal.ZERO;
-	@XmlElement(name = "feeAmount")
+	@JsonProperty("feeAmount")
 	private BigDecimal actualAmount = BigDecimal.ZERO;
 	private BigDecimal actualAmountOriginal = BigDecimal.ZERO;
 	private BigDecimal actualAmountGST = BigDecimal.ZERO;
-	@XmlElement(name = "waiverAmount")
+	@JsonProperty("waiverAmount")
 	private BigDecimal waivedAmount = BigDecimal.ZERO;
 	private BigDecimal paidAmountOriginal = BigDecimal.ZERO;
 	private BigDecimal paidAmountGST = BigDecimal.ZERO;
@@ -88,11 +89,11 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private BigDecimal netAmountOriginal = BigDecimal.ZERO;
 	private BigDecimal netAmountGST = BigDecimal.ZERO;
 	private BigDecimal netAmount = BigDecimal.ZERO;
-	@XmlElement(name = "scheduleTerms")
+	@JsonProperty("scheduleTerms")
 	private int terms = 0;
 	private BigDecimal remainingFeeOriginal = BigDecimal.ZERO;
 	private BigDecimal remainingFeeGST = BigDecimal.ZERO;
-	@XmlElement(name = "feeBalance")
+	@JsonProperty("feeBalance")
 	private BigDecimal remainingFee = BigDecimal.ZERO;
 	private BigDecimal taxPercent = BigDecimal.ZERO;
 	@XmlElement
@@ -100,10 +101,10 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private String paymentRef;
 	private int feeOrder;
 	private String finEventDesc;
-	@XmlElement(name = "feeCode")
+	@JsonProperty("feeCode")
 	private String feeTypeCode;
 	private String feeTypeDesc;
-	@XmlElement(name = "feeMethod")
+	@JsonProperty("feeMethod")
 	private String feeScheduleMethod;
 	private String calculationType;
 	private String ruleCode;

@@ -44,11 +44,11 @@ package com.pennant.backend.model.finance.financialsummary;
 
 import java.sql.Timestamp;
 
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 /**
  * Model class for the <b>CustomerDocument table</b>.<br>

@@ -2,13 +2,12 @@ package com.penanttech.pff.model.external.bre;
 
 import java.io.Serializable;
 
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AccountElement implements Serializable{
-	
+public class AccountElement implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	@JsonProperty("BUREAU_TENURE")
@@ -67,9 +66,7 @@ public class AccountElement implements Serializable{
 	private String cashLimit;
 	@JsonProperty("WOF_TOTAL_AMOUNT")
 	private String wofTotalAmount;
-	
 
-	
 	@JsonCreator
 	public AccountElement() {
 	}
@@ -297,7 +294,5 @@ public class AccountElement implements Serializable{
 	public void setWofTotalAmount(String wofTotalAmount) {
 		this.wofTotalAmount = wofTotalAmount;
 	}
-
-
 
 }

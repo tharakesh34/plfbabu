@@ -2,15 +2,15 @@ package com.pennanttech.ws.model.presentment;
 
 import java.util.List;
 
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.financemanagement.PresentmentDetail;
+import com.pennanttech.model.presentment.Presentment;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
-import com.pennanttech.model.presentment.Presentment;
 
 @XmlType(propOrder = { "presentmentDetails", "approvedPresentments", "presentment", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)

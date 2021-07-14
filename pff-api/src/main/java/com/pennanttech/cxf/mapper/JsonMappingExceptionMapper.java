@@ -7,8 +7,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonMappingException.Reference;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * Exception Mapping file to display the wrong values in request fields.
@@ -18,6 +22,7 @@ import com.fasterxml.jackson.databind.JsonMappingException.Reference;
  */
 @Provider
 public class JsonMappingExceptionMapper implements ExceptionMapper<JsonMappingException> {
+	private static Logger logger = LogManager.getLogger(JsonMappingExceptionMapper.class);
 
 	@Override
 	public Response toResponse(JsonMappingException exception) {
@@ -37,6 +42,9 @@ public class JsonMappingExceptionMapper implements ExceptionMapper<JsonMappingEx
 		if (message.endsWith("/")) {
 			message = message.substring(0, message.length() - 1);
 		}
+
+		logger.error(Literal.EXCEPTION, exception);
+
 		return Response.status(Response.Status.BAD_REQUEST).entity(message).type(MediaType.TEXT_PLAIN).build();
 	}
 

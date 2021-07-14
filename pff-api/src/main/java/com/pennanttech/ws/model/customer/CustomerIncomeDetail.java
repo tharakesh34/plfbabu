@@ -1,12 +1,13 @@
 package com.pennanttech.ws.model.customer;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.customermasters.CustomerIncome;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
-
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.customermasters.CustomerIncome;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(propOrder = { "cif", "customerIncome", "incomeExpense", "category", "custIncomeType", "returnStatus" })
@@ -15,7 +16,7 @@ public class CustomerIncomeDetail {
 	@XmlElement
 	private String cif;
 
-	@XmlElement(name = "customerIncome")
+	@JsonProperty("customerIncome")
 	private CustomerIncome customerIncome;
 
 	@XmlElement
