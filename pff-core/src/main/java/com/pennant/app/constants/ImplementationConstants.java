@@ -159,7 +159,7 @@ public class ImplementationConstants {
 		GROUP_BATCH_BY_PARTNERBANK = getValueAsBoolean(extensions, "GROUP_BATCH_BY_PARTNERBANK", false);
 		CUST_EMP_TYPE_MANDATORY = getValueAsBoolean(extensions, "CUST_EMP_TYPE_MANDATORY", false);
 		DEDUP_BLACKLIST_COAPP = getValueAsBoolean(extensions, "DEDUP_BLACKLIST_COAPP", false);
-		POPULATE_DFT_INCOME_DETAILS = getValueAsBoolean(extensions, "POPULATE_DFT_INCOME_DETAILS", true);
+		POPULATE_DFT_INCOME_DETAILS = getValueAsBoolean(extensions, "POPULATE_DFT_INCOME_DETAILS", false);
 		CUST_MOB_MANDATORY = getValueAsBoolean(extensions, "CUST_MOB_MANDATORY", true);
 
 		NOC_GENERATION_MULTIPLE = getValueAsBoolean(extensions, "NOC_GENERATION_MULTIPLE", false);
