@@ -95,12 +95,11 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 			updateBatchStatus(request, list);
 
 		} catch (AppException e) {
-			list = null;
 			status = "F";
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
 		} finally {
-			if (CollectionUtils.isEmpty(list) && headerId != null) {
+			if ("F".equals(status) || (CollectionUtils.isEmpty(list))) {
 				logger.error("disbursement download request processed failed.");
 				request.setStatus("APPROVED");
 				updateBatchFailureStatus(request);
@@ -110,10 +109,6 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 				disbursementRequestDAO.clearBatch(headerId);
 			}
 
-			if (CollectionUtils.isEmpty(list) && headerId != null) {
-				logger.info("AppException, list is empty and headerid is not null. ");
-				throw new AppException(ERROR_MESSAGE);
-			}
 		}
 
 		logger.info(Literal.LEAVING);
