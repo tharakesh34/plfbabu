@@ -81,7 +81,7 @@ public class FeatureExtension implements IFeatureExtension {
 		customConstants.put("PRESENT_RESP_BOUNCE_REMARKS_MAN", true);
 
 		customConstants.put("DISBURSEMENT_AUTO_DOWNLOAD", false);
-		
+
 		// Temporary Enabled, need to disable once the testing is done
 		customConstants.put("MANDATE_ALLOW_CO_APP", true);
 		customConstants.put("DISBURSEMENT_ALLOW_CO_APP", true);
@@ -91,6 +91,7 @@ public class FeatureExtension implements IFeatureExtension {
 		customConstants.put("VAS_INST_ON_DISB", true);
 		customConstants.put("FEE_SERVICEING_STAMPIN_ON_ORG", true);
 		customConstants.put("ALLOW_BUILDER_BENEFICIARY_DETAILS", true);
+		customConstants.put("POPULATE_DFT_INCOME_DETAILS", true);
 
 	}
 
