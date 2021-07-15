@@ -46,14 +46,13 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Model class for the <b>CovenantType table</b>.<br>
@@ -102,13 +101,13 @@ public class CovenantType extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	@XmlElement
 	private String covenantType;
-	@JsonProperty("alertsRequired")
+	@XmlElement(name = "alertsRequired")
 	private String strAlertsRequired;
-	@JsonProperty("graceDays")
+	@XmlElement(name = "graceDays")
 	public Integer lGraceDays;
-	@JsonProperty("alertDays")
+	@XmlElement(name = "alertDays")
 	public Integer lAlertDays;
-	@JsonProperty("allowPostPonement")
+	@XmlElement(name = "allowPostPonement")
 	private String strAllowPostPonement;
 
 	public CovenantType() {

@@ -3,23 +3,22 @@ package com.pennanttech.ws.model.financetype;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "finRateType", "lovDescFinRateTypeName", "finIntRate", "finBaseRate", "lovDescFinBaseRateName",
-		"finSplRate", "lovDescFinSplRateName", "finMargin",
-		"fInMinRate", "finMaxRate", "finDftIntFrq", "finRepayPftOnFrq", "finRpyFrq", "finSchdMthd",
-		"lovDescFinSchdMthdName", "finIsIntCpz", "finCpzFrq", "finIsRvwAlw", "finRvwFrq", "finRvwRateApplFor",
-		"finSchCalCodeOnRvw", "finMinTerm", "finMaxTerm", "finDftTerms", "fInRepayMethod", "lovDescFInRepayMethodName",
-		"finIsAlwPartialRpy", "finIsAlwDifferment", "finMaxDifferment", "alwPlanDeferment", "planDeferCount",
-		"finScheduleOn", "alwEarlyPayMethods", "finPftUnChanged", "equalRepayment",
-		"finHistRetension", "finODRpyTries", "finAlwRateChangeAnyDate", "finIsAlwEarlyRpy", "finIsAlwEarlySettle",
-		"planEMIHAlw", "planEMIHMethod", "planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz",
-		"unPlanEMIHLockPeriod", "unPlanEMICpz", "reAgeCpz", "fddLockPeriod", "maxUnplannedEmi", "maxReAgeHolidays",
-		"frequencyDays" })
+		"finSplRate", "lovDescFinSplRateName", "finMargin", "fInMinRate", "finMaxRate", "finDftIntFrq",
+		"finRepayPftOnFrq", "finRpyFrq", "finSchdMthd", "lovDescFinSchdMthdName", "finIsIntCpz", "finCpzFrq",
+		"finIsRvwAlw", "finRvwFrq", "finRvwRateApplFor", "finSchCalCodeOnRvw", "finMinTerm", "finMaxTerm",
+		"finDftTerms", "fInRepayMethod", "lovDescFInRepayMethodName", "finIsAlwPartialRpy", "finIsAlwDifferment",
+		"finMaxDifferment", "alwPlanDeferment", "planDeferCount", "finScheduleOn", "alwEarlyPayMethods",
+		"finPftUnChanged", "equalRepayment", "finHistRetension", "finODRpyTries", "finAlwRateChangeAnyDate",
+		"finIsAlwEarlyRpy", "finIsAlwEarlySettle", "planEMIHAlw", "planEMIHMethod", "planEMIHMaxPerYear", "planEMIHMax",
+		"planEMIHLockPeriod", "planEMICpz", "unPlanEMIHLockPeriod", "unPlanEMICpz", "reAgeCpz", "fddLockPeriod",
+		"maxUnplannedEmi", "maxReAgeHolidays", "frequencyDays" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RepayDetail implements Serializable {
 
@@ -31,35 +30,35 @@ public class RepayDetail implements Serializable {
 
 	private String finRateType;
 
-	@JsonProperty("finRateTypeDesc")
+	@XmlElement(name = "finRateTypeDesc")
 	private String lovDescFinRateTypeName;
 
-	@JsonProperty("finPftRate")
+	@XmlElement(name = "finPftRate")
 	private BigDecimal finIntRate = BigDecimal.ZERO;
 	private String finBaseRate;
 
-	@JsonProperty("rpyBaseRateCodeDesc")
+	@XmlElement(name = "rpyBaseRateCodeDesc")
 	private String lovDescFinBaseRateName;
 	private String finSplRate;
 
-	@JsonProperty("rpySpecialRateCodeDesc")
+	@XmlElement(name = "rpySpecialRateCodeDesc")
 	private String lovDescFinSplRateName;
 	private BigDecimal finMargin = BigDecimal.ZERO;
 
-	@JsonProperty("finMinRate")
+	@XmlElement(name = "finMinRate")
 	private BigDecimal fInMinRate = BigDecimal.ZERO;
 	private BigDecimal finMaxRate = BigDecimal.ZERO;
 
-	@JsonProperty("finDftPftFrq")
+	@XmlElement(name = "finDftPftFrq")
 	private String finDftIntFrq;
 	private boolean finRepayPftOnFrq;
 	private String finRpyFrq;
 	private String finSchdMthd;
 
-	@JsonProperty("schdMethodDesc")
+	@XmlElement(name = "schdMethodDesc")
 	private String lovDescFinSchdMthdName;
 
-	@JsonProperty("finIsPftCpz")
+	@XmlElement(name = "finIsPftCpz")
 	private boolean finIsIntCpz;
 	private String finCpzFrq;
 	private boolean finIsRvwAlw;
@@ -71,7 +70,7 @@ public class RepayDetail implements Serializable {
 	private int finDftTerms;
 	private String fInRepayMethod;
 
-	@JsonProperty("finRepayMethodDesc")
+	@XmlElement(name = "finRepayMethodDesc")
 	private String lovDescFInRepayMethodName;
 	private boolean finIsAlwPartialRpy;
 	private boolean finIsAlwDifferment;

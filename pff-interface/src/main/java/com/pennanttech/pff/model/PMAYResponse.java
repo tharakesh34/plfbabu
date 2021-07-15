@@ -2,12 +2,13 @@ package com.pennanttech.pff.model;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlRootElement;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @XmlRootElement(name = "DATA")
@@ -15,7 +16,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 public class PMAYResponse implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	@JsonProperty("ID")
+	@XmlElement(name = "ID")
 	private PMAYDetailsRespData pmayDetailsRespData;
 
 	public PMAYDetailsRespData getPmayDetailsRespData() {

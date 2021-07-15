@@ -3,13 +3,14 @@ package com.pennant.backend.model.collateral;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class CollateralThirdParty extends AbstractWorkflowEntity {
@@ -18,7 +19,7 @@ public class CollateralThirdParty extends AbstractWorkflowEntity {
 	private long customerId;
 	private boolean newRecord = false;
 
-	@JsonProperty("thirdPartyCif")
+	@XmlElement(name = "thirdPartyCif")
 	private String custCIF;
 	private String custShrtName;
 	private String custCRCPR;

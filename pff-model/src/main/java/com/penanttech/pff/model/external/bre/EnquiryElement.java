@@ -2,21 +2,22 @@ package com.penanttech.pff.model.external.bre;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
+
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EnquiryElement implements Serializable{
+public class EnquiryElement implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	@JsonProperty("date_of_enquiry")
+	@XmlElement(name = "date_of_enquiry")
 	private String dateOfEnquiry;
-	@JsonProperty("enquiry_purpose")
+	@XmlElement(name = "enquiry_purpose")
 	private String enquiryPurpose;
-	@JsonProperty("enqiury_amount")
+	@XmlElement(name = "enqiury_amount")
 	private String enqiuryAmount;
-	@JsonProperty("member_name")
+	@XmlElement(name = "member_name")
 	private String memberName;
 
 	@JsonCreator
@@ -54,7 +55,5 @@ public class EnquiryElement implements Serializable{
 	public void setMemberName(String memberName) {
 		this.memberName = memberName;
 	}
-
-
 
 }

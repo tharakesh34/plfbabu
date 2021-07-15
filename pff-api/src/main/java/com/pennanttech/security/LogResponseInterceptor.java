@@ -25,18 +25,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.pennant.app.util.APIHeader;
+import com.pennant.app.util.CustomObjectMapper;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.util.APILogDetailDAO;
 import com.pennanttech.ws.log.model.APILogDetail;
@@ -162,7 +156,7 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 			}
 			try {
 				String encoding = (String) message.get(Message.ENCODING);
-				writePayload(buffer.getPayload(), cos, encoding, ct, false);
+				writePayload(buffer.getPayload(), cos, encoding, ct);
 			} catch (Exception ex) {
 				LOG.error("Error logging API Response : ", ex);
 			}
@@ -232,7 +226,7 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 	public static class LogUtility {
 		static Configuration conf = Configuration.defaultConfiguration();
 		static Configuration conf2 = conf.addOptions(Option.SUPPRESS_EXCEPTIONS);
-		static ObjectMapper mapper = new ObjectMapper();
+		static CustomObjectMapper mapper = new CustomObjectMapper();
 		static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 		public static String getValueFromResponse(String key, String jsonResponse) {
@@ -248,13 +242,7 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 
 		public static String convertObjToJson(Object obj) {
 			String jsonString;
-			mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
-			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-			mapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector(TypeFactory.defaultInstance()));
-			mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-			mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-			dateFormat.setLenient(false);
-			mapper.setDateFormat(dateFormat);
+
 			try {
 				jsonString = mapper.writeValueAsString(obj);
 			} catch (Exception e) {

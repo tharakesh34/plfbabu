@@ -7,7 +7,7 @@
 	<bean class="com.pennant.backend.model.loanquery.QueryDetail"
 		ignore-annotations="false">
 		<field name="id">
- 			<constraint annotation="jakarta.validation.constraints.Min">
+ 			<constraint annotation="javax.validation.constraints.Min">
 				<message>queryId is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.QueryDetailGroup</value>

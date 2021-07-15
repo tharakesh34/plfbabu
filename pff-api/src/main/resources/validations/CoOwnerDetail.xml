@@ -19,7 +19,7 @@
 		</field>
 
 		<field name="coOwnerId">
-			<constraint annotation="jakarta.validation.constraints.Min">
+			<constraint annotation="javax.validation.constraints.Min">
 				<message>coOwnerId should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
@@ -29,7 +29,7 @@
 		</field>
 
 		<field name="coOwnerPercentage">
-			<constraint annotation="jakarta.validation.constraints.Min">
+			<constraint annotation="javax.validation.constraints.Min">
 				<message>ownershipPerc should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -38,7 +38,7 @@
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.DecimalMax">
+			<constraint annotation="javax.validation.constraints.DecimalMax">
 				<message>ownershipPerc allow 3 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -71,7 +71,7 @@
 				</groups>
 				<element name="max">50</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.Pattern">
+			<constraint annotation="javax.validation.constraints.Pattern">
 				<message>name invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
 			</message>
 				<groups>
@@ -198,7 +198,7 @@
 				</groups>
 				<element name="max">10</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.Pattern">
+			<constraint annotation="javax.validation.constraints.Pattern">
 				<message>PoBox is invalid. Allowed Characters are [0-9].</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -256,7 +256,7 @@
 				</groups>
 				<element name="max">8</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.Pattern">
+			<constraint annotation="javax.validation.constraints.Pattern">
 				<message>zip is invalid. Allowed Characters are [0-9].</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>

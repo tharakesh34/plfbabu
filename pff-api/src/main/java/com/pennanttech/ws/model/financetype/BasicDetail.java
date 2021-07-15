@@ -3,19 +3,18 @@ package com.pennanttech.ws.model.financetype;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "finCcy", "lovDescFinCcyName", "finDaysCalType", "lovDescFinDaysCalTypeName", "finMinAmount",
 		"finMaxAmount", "finCategory", "finAssetType", "finIsDwPayRequired", "downPayRule", "downPayRuleDesc",
-		"fInIsAlwGrace", "finIsAlwMD", "alwMaxDisbCheckReq", "limitRequired", "overrideLimit",
-		"finCollateralReq", "finCollateralOvrride", "collateralType", "partiallySecured", "allowRIAInvestment",
-		"finDivision", "finIsActive",
-		"finCommitmentReq", "finCommitmentOvrride", "alwMultiPartyDisb", "tDSApplicable" })
+		"fInIsAlwGrace", "finIsAlwMD", "alwMaxDisbCheckReq", "limitRequired", "overrideLimit", "finCollateralReq",
+		"finCollateralOvrride", "collateralType", "partiallySecured", "allowRIAInvestment", "finDivision",
+		"finIsActive", "finCommitmentReq", "finCommitmentOvrride", "alwMultiPartyDisb", "tDSApplicable" })
 @XmlRootElement(name = "basicDetails")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BasicDetail implements Serializable {
@@ -27,13 +26,13 @@ public class BasicDetail implements Serializable {
 	}
 
 	private String finCcy;
-	@JsonProperty("finCcyDesc")
+	@XmlElement(name = "finCcyDesc")
 	private String lovDescFinCcyName;
 
-	@JsonProperty("profitDaysBasis")
+	@XmlElement(name = "profitDaysBasis")
 	private String finDaysCalType;
 
-	@JsonProperty("profitDaysBasisDesc")
+	@XmlElement(name = "profitDaysBasisDesc")
 	private String lovDescFinDaysCalTypeName;
 
 	private BigDecimal finMinAmount = BigDecimal.ZERO;
@@ -43,7 +42,7 @@ public class BasicDetail implements Serializable {
 
 	private String finAssetType;
 
-	@JsonProperty("downPayReq")
+	@XmlElement(name = "downPayReq")
 	private boolean finIsDwPayRequired;
 	private long downPayRule;
 	private String downPayRuleDesc;

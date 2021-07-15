@@ -2,52 +2,52 @@ package com.penanttech.pff.model.external.bre;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
+
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class LoanObligationElement implements Serializable{
+public class LoanObligationElement implements Serializable {
 
 	private static final long serialVersionUID = -7536537740033026351L;
-	
-	@JsonProperty("CUSTOMER_DECLARED_OBLIGATION")
+
+	@XmlElement(name = "CUSTOMER_DECLARED_OBLIGATION")
 	private String customerDeclaredObligation;
-	@JsonProperty("LOAN_AMOUNT")
+	@XmlElement(name = "LOAN_AMOUNT")
 	private String loanAmount;
-	@JsonProperty("TO_BE_REFINANCED")
+	@XmlElement(name = "TO_BE_REFINANCED")
 	private String toBeRefinanced;
-	@JsonProperty("TO_BE_CONSIDERED_FOR_OBLIGATION")
+	@XmlElement(name = "TO_BE_CONSIDERED_FOR_OBLIGATION")
 	private String toBeConsideredForObligation;
-	@JsonProperty("TENURE")
+	@XmlElement(name = "TENURE")
 	private String tenure;
-	@JsonProperty("REMAINING_TENURE")
+	@XmlElement(name = "REMAINING_TENURE")
 	private String remainingTenure;
-	@JsonProperty("OBLIGATION_TYPE")
+	@XmlElement(name = "OBLIGATION_TYPE")
 	private String obligationType;
-	@JsonProperty("NO_OF_EMI_PAID")
+	@XmlElement(name = "NO_OF_EMI_PAID")
 	private String noOfEmiPaid;
-	@JsonProperty("OUTSTANDING_LOAN_AMOUNT")
+	@XmlElement(name = "OUTSTANDING_LOAN_AMOUNT")
 	private String outstandingLoanAmount;
-	@JsonProperty("EMI")
+	@XmlElement(name = "EMI")
 	private String emi;
-	@JsonProperty("EMI_BOUNCEL3")
+	@XmlElement(name = "EMI_BOUNCEL3")
 	private String emiBouncel3;
-	@JsonProperty("EMI_BOUNCEL12")
+	@XmlElement(name = "EMI_BOUNCEL12")
 	private String emiBouncel12;
-	@JsonProperty("DPD")
+	@XmlElement(name = "DPD")
 	private String dpd;
-	@JsonProperty("BT_TOPUP_FLAG")
+	@XmlElement(name = "BT_TOPUP_FLAG")
 	private String btTopupFlag;
-	@JsonProperty("BT_FINANCER")
+	@XmlElement(name = "BT_FINANCER")
 	private String btFinancer;
-	@JsonProperty("BT_MOB")
+	@XmlElement(name = "BT_MOB")
 	private String btMob;
-	@JsonProperty("BT_EMI")
+	@XmlElement(name = "BT_EMI")
 	private String btEmi;
-	@JsonProperty("CONSIDERED_RTR")
+	@XmlElement(name = "CONSIDERED_RTR")
 	private String consideredRtr;
-	
 
 	@JsonCreator
 	public LoanObligationElement() {

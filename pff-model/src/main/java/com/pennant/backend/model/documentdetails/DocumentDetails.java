@@ -5,17 +5,16 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "referenceId", "docCategory", "custDocTitle", "custDocIssuedCountry", "custDocSysName",
 		"custDocIssuedOn", "custDocExpDate", "docPurpose", "docName", "doctype", "docImage", "docUri",
@@ -27,22 +26,22 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 
 	private long docId = Long.MIN_VALUE;
 	private String docModule;
-	@JsonProperty("finReference")
+	@XmlElement(name = "finReference")
 	private String referenceId = "";
 	private String finEvent = "";
 
 	@XmlElement
 	private String docCategory;
-	@JsonProperty("docFormat")
+	@XmlElement(name = "docFormat")
 	private String doctype;
 	@XmlElement
 	private String docName;
-	@JsonProperty("docContent")
+	@XmlElement(name = "docContent")
 	private byte[] docImage;
 	private String categoryCode;
 	@XmlElement
 	private String custDocTitle;
-	@JsonProperty("custDocIssuedAuth")
+	@XmlElement(name = "custDocIssuedAuth")
 	private String custDocSysName;
 	private Timestamp custDocRcvdOn;
 	@XmlElement
@@ -53,7 +52,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private String custDocIssuedCountry;
 	@XmlElement
 	private String docPurpose;
-	@JsonProperty("docRefId")
+	@XmlElement(name = "docRefId")
 	private String docUri;
 	private String lovDescCustDocIssuedCountry;
 	private boolean custDocIsVerified;

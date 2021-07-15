@@ -5,13 +5,13 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
+
 import org.apache.commons.lang.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>Customer table</b>.<br>
@@ -22,19 +22,19 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerDedup implements Serializable {
 	private static final long serialVersionUID = 1L;
-	@JsonProperty("cif")
+	@XmlElement(name = "cif")
 	private String custCIF;
 	private String finReference;
-	@JsonProperty("lastName")
+	@XmlElement(name = "lastName")
 	private String custLName;
-	@JsonProperty("firstName")
+	@XmlElement(name = "firstName")
 	private String custFName;
-	@JsonProperty("shortName ")
+	@XmlElement(name = "shortName ")
 	private String custShrtName;
 	private String custMotherMaiden;
-	@JsonProperty("dateofBirth")
+	@XmlElement(name = "dateofBirth")
 	private Date custDOB;
-	@JsonProperty("custPAN")
+	@XmlElement(name = "custPAN")
 	private String custCRCPR;
 	private String custPassportNo;
 	private String mobileNumber;
@@ -56,11 +56,11 @@ public class CustomerDedup implements Serializable {
 	// For Internal use //Not in the table should be exculed for audit
 	private long custId = Long.MIN_VALUE;
 	private String custCoreBank;
-	@JsonProperty("categoryCode")
+	@XmlElement(name = "categoryCode")
 	private String custCtgCode;
-	@JsonProperty("defaultBranch")
+	@XmlElement(name = "defaultBranch")
 	private String custDftBranch;
-	@JsonProperty("sector ")
+	@XmlElement(name = "sector ")
 	private String custSector;
 	private String custSubSector;
 	private String custDocType;
@@ -91,11 +91,11 @@ public class CustomerDedup implements Serializable {
 	private String aadharNumber;
 	private String fatherName;
 	private String motherName;
-	@JsonProperty("voterId")
+	@XmlElement(name = "voterId")
 	private String voterID;
 	private String rationCard;
 	private String lpgNumber;
-	@JsonProperty("drivingLicense")
+	@XmlElement(name = "drivingLicense")
 	private String drivingLicenceNo;
 	private String finType;
 

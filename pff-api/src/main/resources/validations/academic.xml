@@ -8,15 +8,15 @@
 	<bean class="com.pennant.backend.model.systemmasters.Academic">
 
 		<field name="academicID">
-			<constraint annotation="jakarta.validation.constraints.Min">
+			<constraint annotation="javax.validation.constraints.Min">
 				<element name="value">2</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.Max">
+			<constraint annotation="javax.validation.constraints.Max">
 				<element name="value">50</element>
 			</constraint>
 		</field>
 		<field name="academicLevel">
-			<constraint annotation="jakarta.validation.constraints.NotNull" />
+			<constraint annotation="javax.validation.constraints.NotNull" />
 		</field>
 	</bean>
 

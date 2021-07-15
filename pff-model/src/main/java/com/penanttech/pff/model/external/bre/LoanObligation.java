@@ -2,18 +2,17 @@ package com.penanttech.pff.model.external.bre;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
+
+import org.codehaus.jackson.annotate.JsonCreator;
 
 public class LoanObligation {
-	
-	
-	
+
 	@JsonCreator
 	public LoanObligation() {
 	}
 
-	@JsonProperty("element")
+	@XmlElement(name = "element")
 	List<LoanObligationElement> element;
 
 	public List<LoanObligationElement> getElement() {
@@ -22,5 +21,5 @@ public class LoanObligation {
 
 	public void setElement(List<LoanObligationElement> element) {
 		this.element = element;
-	}	
+	}
 }

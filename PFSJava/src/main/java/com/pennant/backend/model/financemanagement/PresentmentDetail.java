@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PresentmentDetail.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  22-04-2017    														*
- *                                                                  						*
- * Modified Date    :  22-04-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PresentmentDetail.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 22-04-2017 * * Modified
+ * Date : 22-04-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 22-04-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 22-04-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.model.financemanagement;
@@ -49,37 +31,36 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlTransient;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "id", "finReference", "custCif", "finType", "schDate", "presentmentAmt", "presentmentRef",
 		"batchReference", "presentmentId", "status", "mandateType", })
 @XmlAccessorType(XmlAccessType.NONE)
 public class PresentmentDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-	@JsonProperty("presentmentId")
+	@XmlElement(name = "presentmentId")
 	private long id = Long.MIN_VALUE;
-	@JsonProperty("presentmentHeaderId")
+	@XmlElement(name = "presentmentHeaderId")
 	private long headerId = Long.MIN_VALUE;
 	private long responseId;
 	@XmlElement
 	private String batchReference;
 
-	@JsonProperty("uniqueReference")
+	@XmlElement(name = "uniqueReference")
 	private String presentmentRef;
 	@XmlElement
 	private String finReference;
 	private String hostReference;
-	@JsonProperty("instDate")
+	@XmlElement(name = "instDate")
 	private Date schDate;
 	private Date defSchdDate;
 	private long mandateId;
@@ -94,7 +75,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	private long excessID;
 	private BigDecimal adviseAmt;
 	private int excludeReason;
-	@JsonProperty("amount")
+	@XmlElement(name = "amount")
 	private BigDecimal presentmentAmt;
 	private int emiNo;
 	private int schSeq;
@@ -102,17 +83,17 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	private String bounceCode;
 	private String bounceRemarks;
 	private Long manualAdviseId;
-	@JsonProperty("presentmentStatus")
+	@XmlElement(name = "presentmentStatus")
 	private String status;
 	private boolean newRecord = false;
 	private String customerName;
-	@JsonProperty("cif")
+	@XmlElement(name = "cif")
 	private String custCif;
 
 	@XmlElement
 	private String finType;
 	private String finTypeDesc;
-	@JsonProperty("paymentMode")
+	@XmlElement(name = "paymentMode")
 	private String mandateType;
 	private String mandateStatus;
 	private Date mandateExpiryDate;

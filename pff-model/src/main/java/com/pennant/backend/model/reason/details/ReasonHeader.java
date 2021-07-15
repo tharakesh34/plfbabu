@@ -7,9 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import jakarta.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElement;
 
 public class ReasonHeader implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -24,7 +22,7 @@ public class ReasonHeader implements Serializable {
 	private long toUser;
 	private Timestamp logTime;
 	private Long reasonId;
-	@JsonProperty("reasonDetails")
+	@XmlElement(name = "reasonDetails")
 	private List<ReasonDetails> detailsList = new ArrayList<ReasonDetails>();
 
 	public Set<String> getExcludeFields() {

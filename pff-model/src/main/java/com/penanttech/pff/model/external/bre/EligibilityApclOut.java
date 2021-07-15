@@ -3,20 +3,21 @@ package com.penanttech.pff.model.external.bre;
 import java.io.Serializable;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
+
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EligibilityApclOut implements Serializable{
-	
+public class EligibilityApclOut implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	@JsonProperty("element")
+	@XmlElement(name = "element")
 	private List<EligibilityApclOutElement> eligApclOutElement;
-	
+
 	@JsonCreator
-	public EligibilityApclOut(){}
+	public EligibilityApclOut() {
+	}
 
 	public List<EligibilityApclOutElement> getEligApclOutElement() {
 		return eligApclOutElement;
@@ -25,7 +26,5 @@ public class EligibilityApclOut implements Serializable{
 	public void setEligApclOutElement(List<EligibilityApclOutElement> eligApclOutElement) {
 		this.eligApclOutElement = eligApclOutElement;
 	}
-
-
 
 }

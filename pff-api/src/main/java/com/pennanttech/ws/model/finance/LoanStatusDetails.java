@@ -4,16 +4,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class LoanStatusDetails implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@JsonProperty("finance")
+	@XmlElement(name = "finance")
 	private List<LoanStatus> loanSatusDetails = new ArrayList<>();
 
 	public LoanStatusDetails() {

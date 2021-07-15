@@ -4,12 +4,11 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElement;
 
 public class CovenantDocument extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
@@ -22,7 +21,7 @@ public class CovenantDocument extends AbstractWorkflowEntity {
 	private Date frequencyDate;
 	private Date documentReceivedDate;
 	private boolean newRecord = false;
-	@JsonProperty("isOriginalDocument")
+	@XmlElement(name = "isOriginalDocument")
 	private boolean originalDocument;
 	private String lovValue;
 	private CovenantDocument befImage;
@@ -35,7 +34,7 @@ public class CovenantDocument extends AbstractWorkflowEntity {
 	@XmlElement
 	private String doctype;
 	private Long custId;
-	@JsonProperty("docContent")
+	@XmlElement(name = "docContent")
 	private byte[] docImage;
 	@XmlElement
 	private String docStatus;

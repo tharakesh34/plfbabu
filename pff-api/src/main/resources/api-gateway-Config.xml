@@ -43,7 +43,7 @@
 
 	<!-- JSON Provider Configuration -->
 	<bean id="jacksonMapper" class="com.pennant.app.util.CustomObjectMapper" />
-	<bean id="jsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider">
+	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider">
 		<property name="mapper">
 			<ref bean="jacksonMapper" />
 		</property>

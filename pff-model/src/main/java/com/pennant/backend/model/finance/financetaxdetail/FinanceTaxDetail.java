@@ -47,16 +47,15 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlTransient;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>FinanceTaxDetail table</b>.<br>
@@ -70,31 +69,31 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 
 	@XmlElement
 	private String finReference;
-	@JsonProperty("applicableFor")
+	@XmlElement(name = "applicableFor")
 	private String applicableFor;
 	private long taxCustId;
-	@JsonProperty("gstExempted")
+	@XmlElement(name = "gstExempted")
 	private boolean taxExempted;
-	@JsonProperty("gstNumber")
+	@XmlElement(name = "gstNumber")
 	private String taxNumber;
-	@JsonProperty("addrLine1")
+	@XmlElement(name = "addrLine1")
 	private String addrLine1;
-	@JsonProperty("addrLine2")
+	@XmlElement(name = "addrLine2")
 	private String addrLine2;
-	@JsonProperty("addrLine3")
+	@XmlElement(name = "addrLine3")
 	private String addrLine3;
-	@JsonProperty("addrLine4")
+	@XmlElement(name = "addrLine4")
 	private String addrLine4;
-	@JsonProperty("country")
+	@XmlElement(name = "country")
 	private String country;
 	private String countryName;
-	@JsonProperty("province")
+	@XmlElement(name = "province")
 	private String province;
 	private String provinceName;
-	@JsonProperty("city")
+	@XmlElement(name = "city")
 	private String city;
 	private String cityName;
-	@JsonProperty("pinCode")
+	@XmlElement(name = "pinCode")
 	private String pinCode;
 	private String pinCodeName;
 	@XmlTransient
@@ -110,7 +109,7 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 
 	private String sourceId;
 
-	@JsonProperty("cif")
+	@XmlElement(name = "cif")
 	private String custCIF;
 	private String custShrtName;
 

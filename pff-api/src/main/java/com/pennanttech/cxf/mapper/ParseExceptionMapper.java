@@ -5,7 +5,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.fasterxml.jackson.core.JsonParseException;
+import org.codehaus.jackson.JsonParseException;
 
 /**
  * Exception mapping class to handle wrong formated JSON request.

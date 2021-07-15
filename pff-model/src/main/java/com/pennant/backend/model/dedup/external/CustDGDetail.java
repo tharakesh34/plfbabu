@@ -1,37 +1,37 @@
 package com.pennant.backend.model.dedup.external;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustDGDetail {
-	@JsonProperty("Customer_ID__c")
+	@XmlElement(name = "Customer_ID__c")
 	private String customerId;
-	@JsonProperty("Customer_Type__c")
+	@XmlElement(name = "Customer_Type__c")
 	private String customerType;
-	@JsonProperty("Name")
+	@XmlElement(name = "Name")
 	private String customerName;
-	@JsonProperty("Fathers_Husband_s_Name__c")
+	@XmlElement(name = "Fathers_Husband_s_Name__c")
 	private String FatherorHusbandName;
-	@JsonProperty("DOB__c")
+	@XmlElement(name = "DOB__c")
 	private String dateOfBirth;
-	@JsonProperty("PAN__c")
+	@XmlElement(name = "PAN__c")
 	private String panNumber;
-	@JsonProperty("Voterid__c")
+	@XmlElement(name = "Voterid__c")
 	private String voiterId;
-	@JsonProperty("Cin__c")
+	@XmlElement(name = "Cin__c")
 	private String cinNumber;
-	@JsonProperty("Din__c")
+	@XmlElement(name = "Din__c")
 	private String dinNumber;
-	@JsonProperty("AadhaarNo")
+	@XmlElement(name = "AadhaarNo")
 	private String aadhaarNo;
-	@JsonProperty("Gender_Flag")
+	@XmlElement(name = "Gender_Flag")
 	private String gender;
-	@JsonProperty("Marital_Status_Flag")
+	@XmlElement(name = "Marital_Status_Flag")
 	private String maritalSts;
-	@JsonProperty("Source_System")
+	@XmlElement(name = "Source_System")
 	private String sourceSystem;
 
 	public String getCustomerId() {

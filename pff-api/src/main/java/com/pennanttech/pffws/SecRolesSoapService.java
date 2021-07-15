@@ -1,10 +1,10 @@
 package com.pennanttech.pffws;
 
-import com.pennanttech.ws.model.secRoles.SecurityRoleDetail;
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebService;
 
-import jakarta.jws.WebMethod;
-import jakarta.jws.WebParam;
-import jakarta.jws.WebService;
+import com.pennanttech.ws.model.secRoles.SecurityRoleDetail;
 
 @WebService
 public interface SecRolesSoapService {

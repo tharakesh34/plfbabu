@@ -4,9 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
+
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BREService implements Serializable {
@@ -19,12 +20,12 @@ public class BREService implements Serializable {
 	public BREService() {
 	}
 
-	@JsonProperty("DAXMLDocument")
+	@XmlElement(name = "DAXMLDocument")
 	public DAXMLDocument getDaXMLDocument() {
 		return daXMLDocument;
 	}
 
-	@JsonProperty("DAXMLDocument")
+	@XmlElement(name = "DAXMLDocument")
 	public void setDaXMLDocument(DAXMLDocument daXMLDocument) {
 		this.daXMLDocument = daXMLDocument;
 	}
@@ -33,11 +34,11 @@ public class BREService implements Serializable {
 	public static class DAXMLDocument implements Serializable {
 
 		private static final long serialVersionUID = 1L;
-		@JsonProperty("OCONTROL")
+		@XmlElement(name = "OCONTROL")
 		OControl oControl;
-		@JsonProperty("PCHFLIN")
+		@XmlElement(name = "PCHFLIN")
 		PchflIn pchflIn;
-		@JsonProperty("PCHFLOUT")
+		@XmlElement(name = "PCHFLOUT")
 		Pchflout PchflOut;
 
 		@JsonCreator
@@ -78,23 +79,23 @@ public class BREService implements Serializable {
 	public static class OControl implements Serializable {
 
 		private static final long serialVersionUID = 1L;
-		@JsonProperty("ALIAS")
+		@XmlElement(name = "ALIAS")
 		private String alias;
-		@JsonProperty("SIGNATURE")
+		@XmlElement(name = "SIGNATURE")
 		private String signature;
-		@JsonProperty("DALOGLEVEL")
+		@XmlElement(name = "DALOGLEVEL")
 		private String daloglevel;
-		@JsonProperty("EDITION")
+		@XmlElement(name = "EDITION")
 		private String edition;
-		@JsonProperty("OBJECTIVE")
+		@XmlElement(name = "OBJECTIVE")
 		private String objective;
-		@JsonProperty("EDITIONDATE")
+		@XmlElement(name = "EDITIONDATE")
 		private String editiondate;
-		@JsonProperty("ERRORCODE")
+		@XmlElement(name = "ERRORCODE")
 		private String errorcode;
-		@JsonProperty("ERRORMSG")
+		@XmlElement(name = "ERRORMSG")
 		private String errormsg;
-		@JsonProperty("APPLICATION_ID")
+		@XmlElement(name = "APPLICATION_ID")
 		private String application_id;
 
 		@JsonCreator
@@ -103,7 +104,7 @@ public class BREService implements Serializable {
 
 		// Getter Methods
 
-		@JsonProperty("ALIAS")
+		@XmlElement(name = "ALIAS")
 		public String getAlias() {
 			return alias;
 		}
@@ -141,7 +142,7 @@ public class BREService implements Serializable {
 		}
 
 		// Setter Methods
-		@JsonProperty("ALIAS")
+		@XmlElement(name = "ALIAS")
 		public void setAlias(String alias) {
 			this.alias = alias;
 		}
@@ -184,9 +185,9 @@ public class BREService implements Serializable {
 	public static class PchflIn implements Serializable {
 
 		private static final long serialVersionUID = 1L;
-		@JsonProperty("APPLICANTIN")
+		@XmlElement(name = "APPLICANTIN")
 		ApplicantIn applicantIn;
-		@JsonProperty("APPLICATIONIN")
+		@XmlElement(name = "APPLICATIONIN")
 		ApplicationIn applicationIn;
 
 		@JsonCreator
@@ -216,10 +217,10 @@ public class BREService implements Serializable {
 	public static class Pchflout implements Serializable {
 
 		private static final long serialVersionUID = 1L;
-		@JsonProperty("APPLICANTOUT")
+		@XmlElement(name = "APPLICANTOUT")
 		private ApplicantOut applicantOut;
 
-		@JsonProperty("APPLICATIONOUT")
+		@XmlElement(name = "APPLICATIONOUT")
 		private ApplicationOut applicationOut;
 
 		@JsonCreator
@@ -248,19 +249,19 @@ public class BREService implements Serializable {
 
 		private static final long serialVersionUID = 1L;
 
-		@JsonProperty("CALCULATIONS_LTV")
+		@XmlElement(name = "CALCULATIONS_LTV")
 		CalculationsLtv calculationsLtv;
 
-		@JsonProperty("DECISION_REASON_CODE")
+		@XmlElement(name = "DECISION_REASON_CODE")
 		DecisionReasonCode decisionReasonCode;
 
-		@JsonProperty("DELEGATION_LEVEL")
+		@XmlElement(name = "DELEGATION_LEVEL")
 		private String delegationLevel;
 
-		@JsonProperty("FINAL_ELIGIBILITY")
+		@XmlElement(name = "FINAL_ELIGIBILITY")
 		private FinalEligibility FinalEligibility;
 
-		@JsonProperty("LOAN_ELIG_LTV")
+		@XmlElement(name = "LOAN_ELIG_LTV")
 		private LoanEligLtv loanEligLtv;
 
 		@JsonCreator
@@ -315,15 +316,15 @@ public class BREService implements Serializable {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		@JsonProperty("COMBINED_LOAN_SANCTIONED")
+		@XmlElement(name = "COMBINED_LOAN_SANCTIONED")
 		private String combinedLoanSanctioned;
-		@JsonProperty("ELIGIBLE_LOAN_ADVANTAGE")
+		@XmlElement(name = "ELIGIBLE_LOAN_ADVANTAGE")
 		private String eligibleLoanAdvantage;
-		@JsonProperty("ROI_ADVANTAGE")
+		@XmlElement(name = "ROI_ADVANTAGE")
 		private String roiAdvantage;
-		@JsonProperty("EMI_AMOUNT")
+		@XmlElement(name = "EMI_AMOUNT")
 		private EmiAmount emiAmount;
-		@JsonProperty("MONTHS")
+		@XmlElement(name = "MONTHS")
 		private Months months;
 
 		@JsonCreator
@@ -378,21 +379,21 @@ public class BREService implements Serializable {
 		 */
 		private static final long serialVersionUID = 1L;
 
-		@JsonProperty("APPLICABLE_EMI_BALANCE")
+		@XmlElement(name = "APPLICABLE_EMI_BALANCE")
 		private String applicableEmiBalance;
-		@JsonProperty("APPLICABLE_EMI_FIRST_60")
+		@XmlElement(name = "APPLICABLE_EMI_FIRST_60")
 		private String applicableEmiFirst60;
-		@JsonProperty("APPLICABLE_EMI_NEXT_60")
+		@XmlElement(name = "APPLICABLE_EMI_NEXT_60")
 		private String applicableEmiNext60;
-		@JsonProperty("PERC_CHANGE_EMI_BALANCE")
+		@XmlElement(name = "PERC_CHANGE_EMI_BALANCE")
 		private String percChangeEmiBalance;
-		@JsonProperty("FOIR_INSURANCE")
+		@XmlElement(name = "FOIR_INSURANCE")
 		private String foirInsurance;
-		@JsonProperty("PERC_INCREASE_ELIG")
+		@XmlElement(name = "PERC_INCREASE_ELIG")
 		private String percIncreaseElig;
-		@JsonProperty("POSSIBLE_HIGHER_LOAN")
+		@XmlElement(name = "POSSIBLE_HIGHER_LOAN")
 		private String possibleHigherLoan;
-		@JsonProperty("TOTAL_LOAN_AMOUNT")
+		@XmlElement(name = "TOTAL_LOAN_AMOUNT")
 		private String totalLoanAmount;
 
 		public SuperHigherLoan() {
@@ -468,21 +469,21 @@ public class BREService implements Serializable {
 
 		private static final long serialVersionUID = 1L;
 
-		@JsonProperty("APPLICABLE_EMI_BALANCE")
+		@XmlElement(name = "APPLICABLE_EMI_BALANCE")
 		private String applicable_emi_balance;
-		@JsonProperty("APPLICABLE_EMI_FIRST_60")
+		@XmlElement(name = "APPLICABLE_EMI_FIRST_60")
 		private String applicable_emi_first_60;
-		@JsonProperty("APPLICABLE_EMI_NEXT_60")
+		@XmlElement(name = "APPLICABLE_EMI_NEXT_60")
 		private String applicable_emi_next_60;
-		@JsonProperty("FOIR_INSURANCE")
+		@XmlElement(name = "FOIR_INSURANCE")
 		private String foir_insurance;
-		@JsonProperty("PERC_CHANGE_EMI_BALANCE_60")
+		@XmlElement(name = "PERC_CHANGE_EMI_BALANCE_60")
 		private String perc_change_emi_balance_60;
-		@JsonProperty("PERC_LOW_EMI_POSSIBLE")
+		@XmlElement(name = "PERC_LOW_EMI_POSSIBLE")
 		private String perc_low_emi_possible;
-		@JsonProperty("PROPOSED_LOAN_EFFECTIVE_EMI")
+		@XmlElement(name = "PROPOSED_LOAN_EFFECTIVE_EMI")
 		private String proposed_loan_effective_emi;
-		@JsonProperty("TOTAL_LOAN_AMOUNT")
+		@XmlElement(name = "TOTAL_LOAN_AMOUNT")
 		private String total_loan_amount;
 
 		@JsonCreator
@@ -563,43 +564,43 @@ public class BREService implements Serializable {
 
 		private static final long serialVersionUID = 1L;
 
-		@JsonProperty("CONSIDERED_MONTHLY_INCOME")
+		@XmlElement(name = "CONSIDERED_MONTHLY_INCOME")
 		private String consideredMonthlyIncome;
-		@JsonProperty("ELIGIBLE_LOAN")
+		@XmlElement(name = "ELIGIBLE_LOAN")
 		private String eligibleLoan;
-		@JsonProperty("EMI")
+		@XmlElement(name = "EMI")
 		private String emi;
-		@JsonProperty("EMI_LI")
+		@XmlElement(name = "EMI_LI")
 		private String emiLi;
-		@JsonProperty("EMI_GI")
+		@XmlElement(name = "EMI_GI")
 		private String emiGi;
-		@JsonProperty("EMI_LIGI")
+		@XmlElement(name = "EMI_LIGI")
 		private String emiLiGi;
-		@JsonProperty("EMI_BT_HL")
+		@XmlElement(name = "EMI_BT_HL")
 		private String emiBtHl;
-		@JsonProperty("EMI_HE_TOPUP")
+		@XmlElement(name = "EMI_HE_TOPUP")
 		private String emiHeTopup;
-		@JsonProperty("EXISTING_MONTHLY_OBLIGATIONS")
+		@XmlElement(name = "EXISTING_MONTHLY_OBLIGATIONS")
 		private String existingMonthlyObligations;
-		@JsonProperty("FINAL_ELIGIBLE_LOAN_BT_HL")
+		@XmlElement(name = "FINAL_ELIGIBLE_LOAN_BT_HL")
 		private String finalEligibleLoanBtHl;
-		@JsonProperty("FINAL_ELIGIBLE_LOAN_HE_TOPUP")
+		@XmlElement(name = "FINAL_ELIGIBLE_LOAN_HE_TOPUP")
 		private String finalEligibleLoanHeTopup;
-		@JsonProperty("FOIR_CALC")
+		@XmlElement(name = "FOIR_CALC")
 		private String foirCalc;
-		@JsonProperty("FOIR_CALC_LIGI")
+		@XmlElement(name = "FOIR_CALC_LIGI")
 		private String foirCalcLigi;
-		@JsonProperty("LOAN_RECOMMENDED")
+		@XmlElement(name = "LOAN_RECOMMENDED")
 		private String loanRecommended;
-		@JsonProperty("MAX_POSSIBLE_EMI")
+		@XmlElement(name = "MAX_POSSIBLE_EMI")
 		private String maxPossibleEmi;
-		@JsonProperty("TENOR_AS_PER_NORMS")
+		@XmlElement(name = "TENOR_AS_PER_NORMS")
 		private String tenorAsPerNorms;
-		@JsonProperty("SUPER_LOW_EMI")
+		@XmlElement(name = "SUPER_LOW_EMI")
 		private SuperLowEmi superLowEmi;
-		@JsonProperty("SUPER_HIGHER_LOAN")
+		@XmlElement(name = "SUPER_HIGHER_LOAN")
 		private SuperHigherLoan superHigherLoan;
-		@JsonProperty("ADVANTAGE")
+		@XmlElement(name = "ADVANTAGE")
 		private Advantage advantage;
 
 		@JsonCreator
@@ -768,31 +769,31 @@ public class BREService implements Serializable {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		@JsonProperty("ALLOWED_HL_LOAN_AMOUNT_CONSOLIDATED")
+		@XmlElement(name = "ALLOWED_HL_LOAN_AMOUNT_CONSOLIDATED")
 		private String allowed_hl_loan_amount_consolidated;
-		@JsonProperty("ALLOWED_TOPUP_LOAN_AMOUNT_CONSOLIDATED")
+		@XmlElement(name = "ALLOWED_TOPUP_LOAN_AMOUNT_CONSOLIDATED")
 		private String allowed_topup_loan_amount_consolidated;
-		@JsonProperty("ALLOWED_TOTAL_LOAN_AMOUNT_CONSOLIDATED")
+		@XmlElement(name = "ALLOWED_TOTAL_LOAN_AMOUNT_CONSOLIDATED")
 		private String allowed_total_loan_amount_consolidated;
-		@JsonProperty("HL_LTV_ON_AV_CONSOLIDATED")
+		@XmlElement(name = "HL_LTV_ON_AV_CONSOLIDATED")
 		private String hl_ltv_on_av_consolidated;
-		@JsonProperty("HL_LTV_ON_DV_CONSOLIDATED")
+		@XmlElement(name = "HL_LTV_ON_DV_CONSOLIDATED")
 		private String hl_ltv_on_dv_consolidated;
-		@JsonProperty("HL_LTV_ON_MV_CONSOLIDATED")
+		@XmlElement(name = "HL_LTV_ON_MV_CONSOLIDATED")
 		private String hl_ltv_on_mv_consolidated;
-		@JsonProperty("INSURANCE_LTV_ON_MV_CONSOLIDATED")
+		@XmlElement(name = "INSURANCE_LTV_ON_MV_CONSOLIDATED")
 		private String insurance_ltv_on_mv_consolidated;
-		@JsonProperty("PERC_OF_AMENITIES_ON_AV_CONSOLIDATED")
+		@XmlElement(name = "PERC_OF_AMENITIES_ON_AV_CONSOLIDATED")
 		private String perc_of_amenities_on_av_consolidated;
-		@JsonProperty("TOTAL_LOAN_LTV_ON_AV_GST_CONSOLIDATED")
+		@XmlElement(name = "TOTAL_LOAN_LTV_ON_AV_GST_CONSOLIDATED")
 		private String total_loan_ltv_on_av_gst_consolidated;
-		@JsonProperty("TOTAL_LOAN_LTV_ON_AV_CONSOLIDATED")
+		@XmlElement(name = "TOTAL_LOAN_LTV_ON_AV_CONSOLIDATED")
 		private String total_loan_ltv_on_av_consolidated;
-		@JsonProperty("TOTAL_LOAN_LTV_ON_DV_CONSOLIDATED")
+		@XmlElement(name = "TOTAL_LOAN_LTV_ON_DV_CONSOLIDATED")
 		private String total_loan_ltv_on_dv_consolidated;
-		@JsonProperty("TOTAL_LOAN_LTV_ON_MV_CONSOLIDATED")
+		@XmlElement(name = "TOTAL_LOAN_LTV_ON_MV_CONSOLIDATED")
 		private String total_loan_ltv_on_mv_consolidated;
-		@JsonProperty("LTV_AS_PER_NHB_POLICY")
+		@XmlElement(name = "LTV_AS_PER_NHB_POLICY")
 		private String ltv_as_per_nhb_policy;
 
 		@JsonCreator
@@ -912,97 +913,97 @@ public class BREService implements Serializable {
 	public static class ApplicationIn implements Serializable {
 
 		private static final long serialVersionUID = 1L;
-		@JsonProperty("BUSINESS_DATE")
+		@XmlElement(name = "BUSINESS_DATE")
 		private String business_date;
-		@JsonProperty("LEAD_ID")
+		@XmlElement(name = "LEAD_ID")
 		private String lead_id;
-		@JsonProperty("LOAN_TYPE")
+		@XmlElement(name = "LOAN_TYPE")
 		private String loan_type;
-		@JsonProperty("TRANSACTION_TYPE")
+		@XmlElement(name = "TRANSACTION_TYPE")
 		private String transaction_type;
-		@JsonProperty("TRANSACTION_SUBTYPE")
+		@XmlElement(name = "TRANSACTION_SUBTYPE")
 		private String transaction_subtype;
-		@JsonProperty("SOURCE_SYSTEM")
+		@XmlElement(name = "SOURCE_SYSTEM")
 		private String source_system;
-		@JsonProperty("PRODUCT")
+		@XmlElement(name = "PRODUCT")
 		private String product;
-		@JsonProperty("APPLIED_LOAN_AMOUNT")
+		@XmlElement(name = "APPLIED_LOAN_AMOUNT")
 		private String applied_loan_amount;
-		@JsonProperty("LINSURANCE_LOAN_AMOUNT")
+		@XmlElement(name = "LINSURANCE_LOAN_AMOUNT")
 		private String lInsurance_loan_amount;
-		@JsonProperty("GINSURANCE_LOAN_AMOUNT")
+		@XmlElement(name = "GINSURANCE_LOAN_AMOUNT")
 		private String gInsurance_loan_amount;
-		@JsonProperty("LOAN_RECOMMENDED_LI")
+		@XmlElement(name = "LOAN_RECOMMENDED_LI")
 		private String loan_recommended_li;
-		@JsonProperty("LOAN_RECOMMENDED_GI")
+		@XmlElement(name = "LOAN_RECOMMENDED_GI")
 		private String loan_recommended_gi;
-		@JsonProperty("LOAN_RECOMMENDED_BTHL")
+		@XmlElement(name = "LOAN_RECOMMENDED_BTHL")
 		private String loan_recommended_bthl;
-		@JsonProperty("LOAN_RECOMMENDED_HETOPUP")
+		@XmlElement(name = "LOAN_RECOMMENDED_HETOPUP")
 		private String loan_recommended_hetopup;
-		@JsonProperty("ALLOWED_HL_LOAN_AMOUNT")
+		@XmlElement(name = "ALLOWED_HL_LOAN_AMOUNT")
 		private String allowed_hl_loan_amount;
-		@JsonProperty("ALLOWED_TOPUP_LOAN_AMOUNT")
+		@XmlElement(name = "ALLOWED_TOPUP_LOAN_AMOUNT")
 		private String allowed_topup_loan_amount;
-		@JsonProperty("ALLOWED_TOTAL_LOAN_AMOUNT")
+		@XmlElement(name = "ALLOWED_TOTAL_LOAN_AMOUNT")
 		private String allowed_total_loan_amount;
-		@JsonProperty("INITIAL_TRANSACTION")
+		@XmlElement(name = "INITIAL_TRANSACTION")
 		private String initial_transaction;
-		@JsonProperty("TENOR")
+		@XmlElement(name = "TENOR")
 		private String tenor;
-		@JsonProperty("TENOR_CREDIT")
+		@XmlElement(name = "TENOR_CREDIT")
 		private String tenor_credit;
-		@JsonProperty("TIER")
+		@XmlElement(name = "TIER")
 		private String tier;
-		@JsonProperty("RATE_OF_INTEREST")
+		@XmlElement(name = "RATE_OF_INTEREST")
 		private String rate_of_interest;
-		@JsonProperty("LOAN_PURPOSE")
+		@XmlElement(name = "LOAN_PURPOSE")
 		private String loan_purpose;
-		@JsonProperty("END_USE")
+		@XmlElement(name = "END_USE")
 		private String end_use;
-		@JsonProperty("SOURCING_BRANCH")
+		@XmlElement(name = "SOURCING_BRANCH")
 		private String sourcing_branch;
-		@JsonProperty("SOURCING_CHANNEL")
+		@XmlElement(name = "SOURCING_CHANNEL")
 		private String sourcing_channel;
-		@JsonProperty("CALL_SEGMENTATION")
+		@XmlElement(name = "CALL_SEGMENTATION")
 		private String call_segmentation;
-		@JsonProperty("TOTAL_LOAN_AMOUNT")
+		@XmlElement(name = "TOTAL_LOAN_AMOUNT")
 		private String total_loan_amount;
-		@JsonProperty("HOME_LOAN_AMOUNT")
+		@XmlElement(name = "HOME_LOAN_AMOUNT")
 		private String home_loan_amount;
-		@JsonProperty("TOP_UP_LOAN_AMOUNT")
+		@XmlElement(name = "TOP_UP_LOAN_AMOUNT")
 		private String top_up_loan_amount;
-		@JsonProperty("LI_GI_INSURANCE_LOAN_AMOUNT")
+		@XmlElement(name = "LI_GI_INSURANCE_LOAN_AMOUNT")
 		private String li_gi_insurance_loan_amount;
-		@JsonProperty("STEP_EMI_APPLICABLE")
+		@XmlElement(name = "STEP_EMI_APPLICABLE")
 		private String step_emi_applicable;
-		@JsonProperty("STEP_EMI_TYPE")
+		@XmlElement(name = "STEP_EMI_TYPE")
 		private String step_emi_type;
-		@JsonProperty("TOTAL_LOAN_INCLUDING_LI_GI")
+		@XmlElement(name = "TOTAL_LOAN_INCLUDING_LI_GI")
 		private String total_loan_including_li_gi;
-		@JsonProperty("PRIMARY_LOAN_AMOUNT")
+		@XmlElement(name = "PRIMARY_LOAN_AMOUNT")
 		private String primary_loan_amount;
-		@JsonProperty("LTV_ON_AV_AS_PER_SCHEME")
+		@XmlElement(name = "LTV_ON_AV_AS_PER_SCHEME")
 		private String ltv_on_av_as_per_scheme;
-		@JsonProperty("LTV_ON_AV_PLUS_GST_AS_PER_SCHEME")
+		@XmlElement(name = "LTV_ON_AV_PLUS_GST_AS_PER_SCHEME")
 		private String ltv_on_av_plus_gst_as_per_scheme;
-		@JsonProperty("LTV_ON_DV_AS_PER_SCHEME")
+		@XmlElement(name = "LTV_ON_DV_AS_PER_SCHEME")
 		private String ltv_on_dv_as_per_scheme;
-		@JsonProperty("LTV_ON_MV_AS_PER_SCHEME")
+		@XmlElement(name = "LTV_ON_MV_AS_PER_SCHEME")
 		private String ltv_on_mv_as_per_scheme;
 
-		@JsonProperty("PROPERTY_MASTER")
+		@XmlElement(name = "PROPERTY_MASTER")
 		PropertyMaster propertyMaster;
 
-		@JsonProperty("LRD")
+		@XmlElement(name = "LRD")
 		LRD lrd;
-		@JsonProperty("PD")
+		@XmlElement(name = "PD")
 		PD pd;
-		@JsonProperty("FCU")
+		@XmlElement(name = "FCU")
 		FCU fcu;
-		@JsonProperty("DV")
+		@XmlElement(name = "DV")
 		DV dv;
-		@JsonProperty("SUPERCALC")
+		@XmlElement(name = "SUPERCALC")
 		Supercalc superCalc;
 
 		@JsonCreator
@@ -1376,68 +1377,68 @@ public class BREService implements Serializable {
 	public static class ApplicantDetails implements Serializable {
 
 		private static final long serialVersionUID = 1L;
-		@JsonProperty("FIRST_NAME")
+		@XmlElement(name = "FIRST_NAME")
 		private String firstName;
-		@JsonProperty("MIDDLE_NAME")
+		@XmlElement(name = "MIDDLE_NAME")
 		private String middleName;
-		@JsonProperty("LAST_NAME")
+		@XmlElement(name = "LAST_NAME")
 		private String lastName;
-		@JsonProperty("CCCID")
+		@XmlElement(name = "CCCID")
 		private String cccid;
-		@JsonProperty("APPLICANT_CATEGORY")
+		@XmlElement(name = "APPLICANT_CATEGORY")
 		private String applicantCategory;
-		@JsonProperty("INCOME_CONSIDERED")
+		@XmlElement(name = "INCOME_CONSIDERED")
 		private String incomeConsidered;
-		@JsonProperty("PCHFL_EMPLOYEE")
+		@XmlElement(name = "PCHFL_EMPLOYEE")
 		private String pchflEmployee;
-		@JsonProperty("REF_CHECK_LINE_MANAGER_DOCUMENTED")
+		@XmlElement(name = "REF_CHECK_LINE_MANAGER_DOCUMENTED")
 		private String refCheckLineManagerDocumented;
-		@JsonProperty("CAUTION_PROFILE")
+		@XmlElement(name = "CAUTION_PROFILE")
 		private String cautionProfile;
-		@JsonProperty("NEGATIVE_PROFILE")
+		@XmlElement(name = "NEGATIVE_PROFILE")
 		private String negativeProfile;
-		@JsonProperty("PROPERTY_OWNER")
+		@XmlElement(name = "PROPERTY_OWNER")
 		private String propertyOwner;
-		@JsonProperty("DOB")
+		@XmlElement(name = "DOB")
 		private String dob;
-		@JsonProperty("GENDER")
+		@XmlElement(name = "GENDER")
 		private String gender;
-		@JsonProperty("RETIREMENT_DATE")
+		@XmlElement(name = "RETIREMENT_DATE")
 		private String retirementDate;
-		@JsonProperty("NATIONALITY")
+		@XmlElement(name = "NATIONALITY")
 		private String nationality;
-		@JsonProperty("RESIDENT_STATUS")
+		@XmlElement(name = "RESIDENT_STATUS")
 		private String residentStatus;
-		@JsonProperty("POA_FLAG")
+		@XmlElement(name = "POA_FLAG")
 		private String poaFlag;
-		@JsonProperty("RELATIONSHIP_WITH_MAIN_APPLICANT")
+		@XmlElement(name = "RELATIONSHIP_WITH_MAIN_APPLICANT")
 		private String relationshipWithMainApplicant;
-		@JsonProperty("MARITAL_STATUS")
+		@XmlElement(name = "MARITAL_STATUS")
 		private String maritalStatus;
-		@JsonProperty("APPLICANT_TYPE")
+		@XmlElement(name = "APPLICANT_TYPE")
 		private String applicantType;
-		@JsonProperty("PERSONAL_EMAIL")
+		@XmlElement(name = "PERSONAL_EMAIL")
 		private String personalEmail;
-		@JsonProperty("SEGMENT")
+		@XmlElement(name = "SEGMENT")
 		private String segment;
-		@JsonProperty("FOIR")
+		@XmlElement(name = "FOIR")
 		private String foir;
-		@JsonProperty("ELIGIBILITY_METHOD")
+		@XmlElement(name = "ELIGIBILITY_METHOD")
 		private String eligibilityMethod;
-		@JsonProperty("ROI")
+		@XmlElement(name = "ROI")
 		private String roi;
-		@JsonProperty("TENURE_CREDIT")
+		@XmlElement(name = "TENURE_CREDIT")
 		private String tenureCredit;
-		@JsonProperty("SOURCING_BRANCH")
+		@XmlElement(name = "SOURCING_BRANCH")
 		private String sourcingBranch;
-		@JsonProperty("PENSION_FLAG")
+		@XmlElement(name = "PENSION_FLAG")
 		private String pensionFlag;
-		@JsonProperty("RETIREMENT_AGE")
+		@XmlElement(name = "RETIREMENT_AGE")
 		private String retirementAge;
-		@JsonProperty("INSURANCE_FLAG")
+		@XmlElement(name = "INSURANCE_FLAG")
 		private String insuranceFlag;
 
-		@JsonProperty("DECISION_REASON_CODE")
+		@XmlElement(name = "DECISION_REASON_CODE")
 		private DecisionReasonCode decisionReasonCode;
 
 		@JsonCreator
@@ -1699,41 +1700,41 @@ public class BREService implements Serializable {
 	public static class EmploymentDetails implements Serializable {
 
 		private static final long serialVersionUID = 1L;
-		@JsonProperty("EMPLOYMENT_TYPE")
+		@XmlElement(name = "EMPLOYMENT_TYPE")
 		private String employmentType;
-		@JsonProperty("ENTITY_TYPE")
+		@XmlElement(name = "ENTITY_TYPE")
 		private String entityType;
-		@JsonProperty("EMPLOYER_CATEGORY")
+		@XmlElement(name = "EMPLOYER_CATEGORY")
 		private String employerCategory;
-		@JsonProperty("EMPLOYER_VINTAGE")
+		@XmlElement(name = "EMPLOYER_VINTAGE")
 		private String employerVintage;
-		@JsonProperty("NO_OF_EMPLOYEES")
+		@XmlElement(name = "NO_OF_EMPLOYEES")
 		private String noOfEmployees;
-		@JsonProperty("WORKING_SINCE")
+		@XmlElement(name = "WORKING_SINCE")
 		private String workingSince;
-		@JsonProperty("EMPLOYER_TYPE")
+		@XmlElement(name = "EMPLOYER_TYPE")
 		private String employerType;
-		@JsonProperty("WORK_EXP_IN_YEARS_CUR")
+		@XmlElement(name = "WORK_EXP_IN_YEARS_CUR")
 		private String workExpInYearsCur;
-		@JsonProperty("WORK_EXP_IN_MONTH_CUR")
+		@XmlElement(name = "WORK_EXP_IN_MONTH_CUR")
 		private String workExpInMonthCur;
-		@JsonProperty("WORK_EXP_IN_YEARS")
+		@XmlElement(name = "WORK_EXP_IN_YEARS")
 		private String workExpInYears;
-		@JsonProperty("WORK_EXP_IN_MONTHS")
+		@XmlElement(name = "WORK_EXP_IN_MONTHS")
 		private String workExpInMonths;
-		@JsonProperty("WORK_EXP_ABROAD_IN_YEARS")
+		@XmlElement(name = "WORK_EXP_ABROAD_IN_YEARS")
 		private String workExpAbroadInYears;
-		@JsonProperty("VISA_EXPIRY_DATE")
+		@XmlElement(name = "VISA_EXPIRY_DATE")
 		private String visaExpiryDate;
-		@JsonProperty("EXCHANGE_RATE")
+		@XmlElement(name = "EXCHANGE_RATE")
 		private String exchangeRate;
-		@JsonProperty("MONTHS_OF_SAIL_IN_LAST_3YEARS")
+		@XmlElement(name = "MONTHS_OF_SAIL_IN_LAST_3YEARS")
 		private String monthsOfSailInLast3years;
-		@JsonProperty("PROFESSION")
+		@XmlElement(name = "PROFESSION")
 		private String profession;
-		@JsonProperty("DESIGNATION")
+		@XmlElement(name = "DESIGNATION")
 		private String designation;
-		@JsonProperty("OFFICIAL_EMAIL")
+		@XmlElement(name = "OFFICIAL_EMAIL")
 		private String officialEmail;
 
 		@JsonCreator
@@ -1891,43 +1892,43 @@ public class BREService implements Serializable {
 
 		private static final long serialVersionUID = 1L;
 
-		@JsonProperty("TOTAL_NO_OF_CREDIT_TRANSACTIONS")
+		@XmlElement(name = "TOTAL_NO_OF_CREDIT_TRANSACTIONS")
 		private String totalNoOfCreditTransactions;
-		@JsonProperty("TOTAL_AMOUNT_OF_CREDIT_TRANSACTIONS")
+		@XmlElement(name = "TOTAL_AMOUNT_OF_CREDIT_TRANSACTIONS")
 		private String totalAmountOfCreditTransactions;
-		@JsonProperty("TOTAL_NO_OF_DEBIT_TRANSACTIONS")
+		@XmlElement(name = "TOTAL_NO_OF_DEBIT_TRANSACTIONS")
 		private String totalNoOfDebitTransactions;
-		@JsonProperty("TOTAL_AMOUNT_OF_DEBIT_TRANSACTIONS")
+		@XmlElement(name = "TOTAL_AMOUNT_OF_DEBIT_TRANSACTIONS")
 		private String totalAmountOfDebitTransactions;
-		@JsonProperty("TOTAL_NO_OF_INWARD_CHEQUE_BOUNCE")
+		@XmlElement(name = "TOTAL_NO_OF_INWARD_CHEQUE_BOUNCE")
 		private String totalNoOfInwardChequeBounce;
-		@JsonProperty("PERC_INWARD_CHEQUE_BOUNCE")
+		@XmlElement(name = "PERC_INWARD_CHEQUE_BOUNCE")
 		private String percInwardChequeBounce;
-		@JsonProperty("TOTAL_NO_OF_OUTWARD_CHEQUE_BOUNCE")
+		@XmlElement(name = "TOTAL_NO_OF_OUTWARD_CHEQUE_BOUNCE")
 		private String totalNoOfOutwardChequeBounce;
-		@JsonProperty("PERC_OUTWARD_CHEQUE_BOUNCE")
+		@XmlElement(name = "PERC_OUTWARD_CHEQUE_BOUNCE")
 		private String percOutwardChequeBounce;
-		@JsonProperty("MIN_EOD_BALANCE")
+		@XmlElement(name = "MIN_EOD_BALANCE")
 		private String minEodBalance;
-		@JsonProperty("MAX_EOD_BALANCE")
+		@XmlElement(name = "MAX_EOD_BALANCE")
 		private String maxEodBalance;
-		@JsonProperty("AVERAGE_EOD_BALANCE")
+		@XmlElement(name = "AVERAGE_EOD_BALANCE")
 		private String averageEodBalance;
-		@JsonProperty("CL_BALANCE")
+		@XmlElement(name = "CL_BALANCE")
 		private String clBalance;
-		@JsonProperty("ODCC_UTILIZATION_PER_MONTH")
+		@XmlElement(name = "ODCC_UTILIZATION_PER_MONTH")
 		private String odccUtilizationPerMonth;
-		@JsonProperty("ODCC_LIMIT_PER_MONTH")
+		@XmlElement(name = "ODCC_LIMIT_PER_MONTH")
 		private String odccLimitPerMonth;
-		@JsonProperty("INTREST")
+		@XmlElement(name = "INTREST")
 		private String intrest;
-		@JsonProperty("TRF")
+		@XmlElement(name = "TRF")
 		private String trf;
-		@JsonProperty("CREDIT_SUMMATION_OF_REPORTED_TURNOVER")
+		@XmlElement(name = "CREDIT_SUMMATION_OF_REPORTED_TURNOVER")
 		private String creditSummationOfReportedTurnover;
-		@JsonProperty("SUM_OF_CREDITS")
+		@XmlElement(name = "SUM_OF_CREDITS")
 		private String sumOfCredits;
-		@JsonProperty("SUM_OF_TRANSFER")
+		@XmlElement(name = "SUM_OF_TRANSFER")
 		private String sumOfTransfer;
 
 		@JsonCreator
@@ -2092,165 +2093,165 @@ public class BREService implements Serializable {
 
 		private static final long serialVersionUID = 1L;
 
-		@JsonProperty("ELIGIBILITY_METHOD")
+		@XmlElement(name = "ELIGIBILITY_METHOD")
 		private String eligibilityMethod;
-		@JsonProperty("GROSS_MONTHLY_INCOME_NRI")
+		@XmlElement(name = "GROSS_MONTHLY_INCOME_NRI")
 		private String grossMonthlyIncomeNri;
-		@JsonProperty("REGISTERED_RENTAL_INCOME_PREVIOUSYR")
+		@XmlElement(name = "REGISTERED_RENTAL_INCOME_PREVIOUSYR")
 		private String registeredRentalIncomePreviousyr;
-		@JsonProperty("REGISTERED_RENTAL_INCOME_CURRENTYR")
+		@XmlElement(name = "REGISTERED_RENTAL_INCOME_CURRENTYR")
 		private String registeredRentalIncomeCurrentyr;
-		@JsonProperty("CASH_PROFIT_PREVIOUSYEAR")
+		@XmlElement(name = "CASH_PROFIT_PREVIOUSYEAR")
 		private String cashProfitPreviousyear;
-		@JsonProperty("CASH_PROFIT_CURRENTYEAR")
+		@XmlElement(name = "CASH_PROFIT_CURRENTYEAR")
 		private String cashProfitCurrentyear;
-		@JsonProperty("OTHER_INCOME_PREVIOUSYEAR")
+		@XmlElement(name = "OTHER_INCOME_PREVIOUSYEAR")
 		private String otherIncomePreviousyear;
-		@JsonProperty("OTHER_INCOME_CURRENTYEAR")
+		@XmlElement(name = "OTHER_INCOME_CURRENTYEAR")
 		private String otherIncomeCurrentyear;
-		@JsonProperty("GROSS_RECIEPT_PREVIOUSYEAR")
+		@XmlElement(name = "GROSS_RECIEPT_PREVIOUSYEAR")
 		private String grossRecieptPreviousyear;
-		@JsonProperty("GROSS_RECIEPT_CURRENTYEAR")
+		@XmlElement(name = "GROSS_RECIEPT_CURRENTYEAR")
 		private String grossRecieptCurrentyear;
-		@JsonProperty("GROSS_PROFIT_PREVIOUSYEAR")
+		@XmlElement(name = "GROSS_PROFIT_PREVIOUSYEAR")
 		private String grossProfitPreviousyear;
-		@JsonProperty("GROSS_PROFIT_CURRENTYEAR")
+		@XmlElement(name = "GROSS_PROFIT_CURRENTYEAR")
 		private String grossProfitCurrentyear;
-		@JsonProperty("INDUSTRY_TURNOVER_PREVIOUSYR")
+		@XmlElement(name = "INDUSTRY_TURNOVER_PREVIOUSYR")
 		private String industryTurnoverPreviousyr;
-		@JsonProperty("INDUSTRY_TURNOVER_CURRENTYR")
+		@XmlElement(name = "INDUSTRY_TURNOVER_CURRENTYR")
 		private String industryTurnoverCurrentyr;
-		@JsonProperty("DEBT_EQUITY_RATIO")
+		@XmlElement(name = "DEBT_EQUITY_RATIO")
 		private String debtEquityRatio;
-		@JsonProperty("NET_ANNUAL_TUROVER")
+		@XmlElement(name = "NET_ANNUAL_TUROVER")
 		private String netAnnualTurover;
-		@JsonProperty("ANNUALIZED_BANKING_TURNOVER")
+		@XmlElement(name = "ANNUALIZED_BANKING_TURNOVER")
 		private String annualizedBankingTurnover;
-		@JsonProperty("PAT_PREVIOUS_YEAR")
+		@XmlElement(name = "PAT_PREVIOUS_YEAR")
 		private String patPreviousYear;
-		@JsonProperty("PAT_CURRENT_YEAR")
+		@XmlElement(name = "PAT_CURRENT_YEAR")
 		private String patCurrentYear;
-		@JsonProperty("PBT_PREVIOUS_YEAR")
+		@XmlElement(name = "PBT_PREVIOUS_YEAR")
 		private String pbtPreviousYear;
-		@JsonProperty("PBT_CURRENT_YEAR")
+		@XmlElement(name = "PBT_CURRENT_YEAR")
 		private String pbtCurrentYear;
-		@JsonProperty("DEPRECIATION_PREVIOUSYEAR")
+		@XmlElement(name = "DEPRECIATION_PREVIOUSYEAR")
 		private String depreciationPreviousyear;
-		@JsonProperty("DEPRECIATION_CURRENTYEAR")
+		@XmlElement(name = "DEPRECIATION_CURRENTYEAR")
 		private String depreciationCurrentyear;
-		@JsonProperty("INTEREST_PAID_PARTNER_DIRECTOR_PREVIOUSYEAR")
+		@XmlElement(name = "INTEREST_PAID_PARTNER_DIRECTOR_PREVIOUSYEAR")
 		private String interestPaidPartnerDirectorPreviousyear;
-		@JsonProperty("INTEREST_PAID_PARTNER_DIRECTOR_CURRENTYEAR")
+		@XmlElement(name = "INTEREST_PAID_PARTNER_DIRECTOR_CURRENTYEAR")
 		private String interestPaidPartnerDirectorCurrentyear;
-		@JsonProperty("INTEREST_INCOME_CURRENTYR")
+		@XmlElement(name = "INTEREST_INCOME_CURRENTYR")
 		private String interestIncomeCurrentyr;
-		@JsonProperty("INTEREST_INCOME_PREVIOUSYR")
+		@XmlElement(name = "INTEREST_INCOME_PREVIOUSYR")
 		private String interestIncomePreviousyr;
-		@JsonProperty("CA_ASSESSED_INCOME")
+		@XmlElement(name = "CA_ASSESSED_INCOME")
 		private String caAssessedIncome;
-		@JsonProperty("SALARY_PARTNER_DIRECTOR_CURRENTYEAR")
+		@XmlElement(name = "SALARY_PARTNER_DIRECTOR_CURRENTYEAR")
 		private String salaryPartnerDirectorCurrentyear;
-		@JsonProperty("SALARY_PARTNER_DIRECTOR_PREVIOUSYEAR")
+		@XmlElement(name = "SALARY_PARTNER_DIRECTOR_PREVIOUSYEAR")
 		private String salaryPartnerDirectorPreviousyear;
-		@JsonProperty("INTEREST_PAID_ON_TERM_LOAN_CURRENTYEAR")
+		@XmlElement(name = "INTEREST_PAID_ON_TERM_LOAN_CURRENTYEAR")
 		private String interestPaidOnTermLoanCurrentyear;
-		@JsonProperty("INTEREST_PAID_ON_TERM_LOAN_PREVIOUSYEAR")
+		@XmlElement(name = "INTEREST_PAID_ON_TERM_LOAN_PREVIOUSYEAR")
 		private String interestPaidOnTermLoanPreviousyear;
-		@JsonProperty("OTHER_PAYMENTS_CURRENTYEAR")
+		@XmlElement(name = "OTHER_PAYMENTS_CURRENTYEAR")
 		private String otherPaymentsCurrentyear;
-		@JsonProperty("OTHER_PAYMENTS_PREVIOUSYEAR")
+		@XmlElement(name = "OTHER_PAYMENTS_PREVIOUSYEAR")
 		private String otherPaymentsPreviousyear;
-		@JsonProperty("ITR_PREVIOUS_YEAR_FILING_DATE")
+		@XmlElement(name = "ITR_PREVIOUS_YEAR_FILING_DATE")
 		private String itrPreviousYearFilingDate;
-		@JsonProperty("ITR_CURRENT_YEAR_FILING_DATE")
+		@XmlElement(name = "ITR_CURRENT_YEAR_FILING_DATE")
 		private String itrCurrentYearFilingDate;
-		@JsonProperty("INTEREST_FD_CURRENTYEAR")
+		@XmlElement(name = "INTEREST_FD_CURRENTYEAR")
 		private String interestFdCurrentyear;
-		@JsonProperty("INTEREST_FD_PREVIOUSYEAR")
+		@XmlElement(name = "INTEREST_FD_PREVIOUSYEAR")
 		private String interestFdPreviousyear;
-		@JsonProperty("INTEREST_COMMISION_CURRENTYR")
+		@XmlElement(name = "INTEREST_COMMISION_CURRENTYR")
 		private String interestCommisionCurrentyr;
-		@JsonProperty("INTEREST_COMMISION_PREVIOUSYR")
+		@XmlElement(name = "INTEREST_COMMISION_PREVIOUSYR")
 		private String interestCommisionPreviousyr;
-		@JsonProperty("TOTAL_REVENUE_CURRENTYEAR")
+		@XmlElement(name = "TOTAL_REVENUE_CURRENTYEAR")
 		private String totalRevenueCurrentyear;
-		@JsonProperty("TOTAL_REVENUE_PREVIOUSYEAR")
+		@XmlElement(name = "TOTAL_REVENUE_PREVIOUSYEAR")
 		private String totalRevenuePreviousyear;
-		@JsonProperty("BASIC_PAY")
+		@XmlElement(name = "BASIC_PAY")
 		private String basicPay;
-		@JsonProperty("HRA")
+		@XmlElement(name = "HRA")
 		private String hra;
-		@JsonProperty("SPECIAL_ALLOWANCE")
+		@XmlElement(name = "SPECIAL_ALLOWANCE")
 		private String specialAllowance;
-		@JsonProperty("OTHERS_FIXED_PAY")
+		@XmlElement(name = "OTHERS_FIXED_PAY")
 		private String othersFixedPay;
-		@JsonProperty("MONTHLY_VARIABLE_PAY")
+		@XmlElement(name = "MONTHLY_VARIABLE_PAY")
 		private String monthlyVariablePay;
-		@JsonProperty("QAURTELY_VARIABLE_PAY")
+		@XmlElement(name = "QAURTELY_VARIABLE_PAY")
 		private String qaurtelyVariablePay;
-		@JsonProperty("ANNUAL_VARIABLE_PAY")
+		@XmlElement(name = "ANNUAL_VARIABLE_PAY")
 		private String annualVariablePay;
-		@JsonProperty("PERCENTAGE_CONSIDERED_MONTHLY_VARIABLE_PAY_INCENTIVE")
+		@XmlElement(name = "PERCENTAGE_CONSIDERED_MONTHLY_VARIABLE_PAY_INCENTIVE")
 		private String percentageConsideredMonthlyVariablePayIncentive;
-		@JsonProperty("PERCENTAGE_CONSIDERED_QUARTERLY_VARIABLE_PAY_INCENTIVE")
+		@XmlElement(name = "PERCENTAGE_CONSIDERED_QUARTERLY_VARIABLE_PAY_INCENTIVE")
 		private String percentageConsideredQuarterlyVariablePayIncentive;
-		@JsonProperty("PERCENTAGE_CONSIDERED_ANNUAL_VARIABLE_PAY_INCENTIVE")
+		@XmlElement(name = "PERCENTAGE_CONSIDERED_ANNUAL_VARIABLE_PAY_INCENTIVE")
 		private String percentageConsideredAnnualVariablePayIncentive;
-		@JsonProperty("TOTAL_FIXED_PAY")
+		@XmlElement(name = "TOTAL_FIXED_PAY")
 		private String totalFixedPay;
-		@JsonProperty("TOTAL_VARIABLE_PAY")
+		@XmlElement(name = "TOTAL_VARIABLE_PAY")
 		private String totalVariablePay;
-		@JsonProperty("RENTAL_INCOME_PER_MONTH")
+		@XmlElement(name = "RENTAL_INCOME_PER_MONTH")
 		private String rentalIncomePerMonth;
-		@JsonProperty("INTEREST_INCOME_IN_ITR")
+		@XmlElement(name = "INTEREST_INCOME_IN_ITR")
 		private String interestIncomeInItr;
-		@JsonProperty("DIVIDEND_INCOME_IN_ITR")
+		@XmlElement(name = "DIVIDEND_INCOME_IN_ITR")
 		private String dividendIncomeInItr;
-		@JsonProperty("COMMISION_INCOME_IN_ITR")
+		@XmlElement(name = "COMMISION_INCOME_IN_ITR")
 		private String commisionIncomeInItr;
-		@JsonProperty("PERCENTAGE_CONSIDERED_INTEREST_INCOME_IN_ITR")
+		@XmlElement(name = "PERCENTAGE_CONSIDERED_INTEREST_INCOME_IN_ITR")
 		private String percentageConsideredInterestIncomeInItr;
-		@JsonProperty("PERCENTAGE_CONSIDERED_DIVIDEND_INCOME_IN_ITR")
+		@XmlElement(name = "PERCENTAGE_CONSIDERED_DIVIDEND_INCOME_IN_ITR")
 		private String percentageConsideredDividendIncomeInItr;
-		@JsonProperty("PERCENTAGE_CONSIDERED_COMMISION_INCOME_IN_ITR")
+		@XmlElement(name = "PERCENTAGE_CONSIDERED_COMMISION_INCOME_IN_ITR")
 		private String percentageConsideredCommisionIncomeInItr;
-		@JsonProperty("OTHER_INCOME_PER_MONTH")
+		@XmlElement(name = "OTHER_INCOME_PER_MONTH")
 		private String otherIncomePerMonth;
-		@JsonProperty("CUSTOMER_DECLARED_INCOME")
+		@XmlElement(name = "CUSTOMER_DECLARED_INCOME")
 		private String customerDeclaredIncome;
-		@JsonProperty("PERCENTAGE_CAPPING_LAST_YEAR_BUSINESS_INCOME")
+		@XmlElement(name = "PERCENTAGE_CAPPING_LAST_YEAR_BUSINESS_INCOME")
 		private String percentageCappingLastYearBusinessIncome;
-		@JsonProperty("CONSIDER_CURRENT_YEAR_BUSINESS_INCOME")
+		@XmlElement(name = "CONSIDER_CURRENT_YEAR_BUSINESS_INCOME")
 		private String considerCurrentYearBusinessIncome;
-		@JsonProperty("CAPPING_OF_ANNUAL_TURNOVER_GROSS_PROFIT_METHOD")
+		@XmlElement(name = "CAPPING_OF_ANNUAL_TURNOVER_GROSS_PROFIT_METHOD")
 		private String cappingOfAnnualTurnoverGrossProfitMethod;
-		@JsonProperty("MULTIPLIER_GROSS_RECEIPT_METHOD")
+		@XmlElement(name = "MULTIPLIER_GROSS_RECEIPT_METHOD")
 		private String multiplierGrossReceiptMethod;
-		@JsonProperty("MULTIPLIER_LIQUID_INCOME_PROGRAM")
+		@XmlElement(name = "MULTIPLIER_LIQUID_INCOME_PROGRAM")
 		private String multiplierLiquidIncomeProgram;
-		@JsonProperty("CONSIDER_CONSOLIDATION_OF_FINANCIALS")
+		@XmlElement(name = "CONSIDER_CONSOLIDATION_OF_FINANCIALS")
 		private String considerConsolidationOfFinancials;
-		@JsonProperty("MULTIPLIER_INDUSTRY_MARGIN")
+		@XmlElement(name = "MULTIPLIER_INDUSTRY_MARGIN")
 		private String multiplierIndustryMargin;
-		@JsonProperty("OTHER_INCOME_CAPPING_PERCENTAGE")
+		@XmlElement(name = "OTHER_INCOME_CAPPING_PERCENTAGE")
 		private String otherIncomeCappingPercentage;
-		@JsonProperty("ANNUAL_INTEREST_PAID_ON_ODCC_CURRENTYEAR")
+		@XmlElement(name = "ANNUAL_INTEREST_PAID_ON_ODCC_CURRENTYEAR")
 		private String annualInterestPaidOnOdccCurrentyear;
-		@JsonProperty("ANNUAL_INTEREST_PAID_ON_ODCC_PREVIOUSYEAR")
+		@XmlElement(name = "ANNUAL_INTEREST_PAID_ON_ODCC_PREVIOUSYEAR")
 		private String annualInterestPaidOnOdccPreviousyear;
-		@JsonProperty("PENSION_INCOME")
+		@XmlElement(name = "PENSION_INCOME")
 		private String pensionIncome;
-		@JsonProperty("INTEREST_ON_LOAN_TO_BE_ADDED_BACK_CURRENT_YR")
+		@XmlElement(name = "INTEREST_ON_LOAN_TO_BE_ADDED_BACK_CURRENT_YR")
 		private String interestOnLoanToBeAddedBackCurrentYr;
-		@JsonProperty("INTEREST_ON_LOAN_TO_BE_ADDED_BACK_PREVIOUS_YEAR")
+		@XmlElement(name = "INTEREST_ON_LOAN_TO_BE_ADDED_BACK_PREVIOUS_YEAR")
 		private String interestOnLoanToBeAddedBackPreviousYear;
-		@JsonProperty("LIQUID_ASSESSED_PAT")
+		@XmlElement(name = "LIQUID_ASSESSED_PAT")
 		private String liquidAssessedPat;
-		@JsonProperty("INTEREST_PAID_ON_OBLIGATED_LOANS_CURRENT_YR")
+		@XmlElement(name = "INTEREST_PAID_ON_OBLIGATED_LOANS_CURRENT_YR")
 		private String interestPaidOnObligatedLoansCurrentYr;
-		@JsonProperty("INTEREST_PAID_ON_OBLIGATED_LOANS_PREVIOUS_YR")
+		@XmlElement(name = "INTEREST_PAID_ON_OBLIGATED_LOANS_PREVIOUS_YR")
 		private String interestPaidOnObligatedLoansPreviousYr;
-		@JsonProperty("TOTAL_OTHER_INCOME")
+		@XmlElement(name = "TOTAL_OTHER_INCOME")
 		private String totalOtherIncome;
 
 		public String getEligibilityMethod() {
@@ -2902,29 +2903,29 @@ public class BREService implements Serializable {
 	public static class Business implements Serializable {
 
 		private static final long serialVersionUID = 1L;
-		@JsonProperty("EMPLOYER_TYPE")
+		@XmlElement(name = "EMPLOYER_TYPE")
 		private String employerType;
-		@JsonProperty("INDUSTRY_TYPE")
+		@XmlElement(name = "INDUSTRY_TYPE")
 		private String industryType;
-		@JsonProperty("INDUSTRY_NAME")
+		@XmlElement(name = "INDUSTRY_NAME")
 		private String industryName;
-		@JsonProperty("BUSINESS_TYPE")
+		@XmlElement(name = "BUSINESS_TYPE")
 		private String businessType;
-		@JsonProperty("DATE_OF_INCORPORATION")
+		@XmlElement(name = "DATE_OF_INCORPORATION")
 		private String dateOfIncorporation;
-		@JsonProperty("BUSINESS_CONTINUTIY")
+		@XmlElement(name = "BUSINESS_CONTINUTIY")
 		private String businessContinutiy;
-		@JsonProperty("PROFIT_SHARING_PERCENTAGE")
+		@XmlElement(name = "PROFIT_SHARING_PERCENTAGE")
 		private String profitSharingPercentage;
-		@JsonProperty("SHARE_HOLDING_PERCENTAGE")
+		@XmlElement(name = "SHARE_HOLDING_PERCENTAGE")
 		private String shareHoldingPercentage;
-		@JsonProperty("ORGANIZATION_TYPE")
+		@XmlElement(name = "ORGANIZATION_TYPE")
 		private String organizationType;
-		@JsonProperty("NET_WORTH_PREVIOUS_YEAR")
+		@XmlElement(name = "NET_WORTH_PREVIOUS_YEAR")
 		private String netWorthPreviousYear;
-		@JsonProperty("NET_WORTH_CURRENT_YEAR")
+		@XmlElement(name = "NET_WORTH_CURRENT_YEAR")
 		private String netWorthCurrentYear;
-		@JsonProperty("INDUSTRY_MARGIN")
+		@XmlElement(name = "INDUSTRY_MARGIN")
 		private String industryMargin;
 
 		@JsonCreator
@@ -3034,15 +3035,15 @@ public class BREService implements Serializable {
 
 		private static final long serialVersionUID = 1L;
 
-		@JsonProperty("APPLIED_TENOR_ADVANTAGE_LOAN")
+		@XmlElement(name = "APPLIED_TENOR_ADVANTAGE_LOAN")
 		private String appliedTenorAdvantageLoan;
-		@JsonProperty("APPLIED_ROI")
+		@XmlElement(name = "APPLIED_ROI")
 		private String appliedRoi;
-		@JsonProperty("RECOMMENDED_FOIR")
+		@XmlElement(name = "RECOMMENDED_FOIR")
 		private String recommendedFoir;
-		@JsonProperty("RECOMMENDED_LOAN_AMOUNT")
+		@XmlElement(name = "RECOMMENDED_LOAN_AMOUNT")
 		private String recommendedLoanAmount;
-		@JsonProperty("RECOMMENDED_LOAN_AMOUNT_ADVANTAGE")
+		@XmlElement(name = "RECOMMENDED_LOAN_AMOUNT_ADVANTAGE")
 		private String recommendedLoanAmountAdvantage;
 
 		@JsonCreator
@@ -3096,15 +3097,15 @@ public class BREService implements Serializable {
 
 		private static final long serialVersionUID = 1L;
 
-		@JsonProperty("QUALIFICATION")
+		@XmlElement(name = "QUALIFICATION")
 		private String qualification;
-		@JsonProperty("EDUCATION_DUMMY1")
+		@XmlElement(name = "EDUCATION_DUMMY1")
 		private String educationDummy1;
-		@JsonProperty("EDUCATION_DUMMY2")
+		@XmlElement(name = "EDUCATION_DUMMY2")
 		private String educationDummy2;
-		@JsonProperty("EDUCATION_DUMMY3")
+		@XmlElement(name = "EDUCATION_DUMMY3")
 		private String educationDummy3;
-		@JsonProperty("EDUCATION_DUMMY4")
+		@XmlElement(name = "EDUCATION_DUMMY4")
 		private String educationDummy4;
 
 		@JsonCreator
@@ -3157,17 +3158,17 @@ public class BREService implements Serializable {
 	public static class Poa implements Serializable {
 
 		private static final long serialVersionUID = 1L;
-		@JsonProperty("POA_HOLDER")
+		@XmlElement(name = "POA_HOLDER")
 		private String poaHolder;
-		@JsonProperty("POA_DUMMY1")
+		@XmlElement(name = "POA_DUMMY1")
 		private String poaDummy1;
-		@JsonProperty("POA_DUMMY2")
+		@XmlElement(name = "POA_DUMMY2")
 		private String poaDummy2;
-		@JsonProperty("POA_DUMMY3")
+		@XmlElement(name = "POA_DUMMY3")
 		private String poaDummy3;
-		@JsonProperty("POA_DUMMY4")
+		@XmlElement(name = "POA_DUMMY4")
 		private String poaDummy4;
-		@JsonProperty("POA_DUMMY5")
+		@XmlElement(name = "POA_DUMMY5")
 		private String poaDummy5;
 
 		@JsonCreator
@@ -3229,13 +3230,13 @@ public class BREService implements Serializable {
 
 		private static final long serialVersionUID = 1L;
 
-		@JsonProperty("SCOREDETAIL")
+		@XmlElement(name = "SCOREDETAIL")
 		ScoreDetail scoreDetail;
 
-		@JsonProperty("ACCOUNTDETAIL")
+		@XmlElement(name = "ACCOUNTDETAIL")
 		AccountDetail accountDetail;
 
-		@JsonProperty("ENQUIRYDETAIL")
+		@XmlElement(name = "ENQUIRYDETAIL")
 		EnquiryDetail enquiryDetail;
 
 		@JsonCreator
@@ -3273,11 +3274,11 @@ public class BREService implements Serializable {
 
 		private static final long serialVersionUID = 1L;
 
-		@JsonProperty("SCORE")
+		@XmlElement(name = "SCORE")
 		private String score;
-		@JsonProperty("SCORE_DATE")
+		@XmlElement(name = "SCORE_DATE")
 		private String scoreDate;
-		@JsonProperty("CIBIL_ENQUIRY_DATE")
+		@XmlElement(name = "CIBIL_ENQUIRY_DATE")
 		private String cibilEnquiryDate;
 
 		@JsonCreator
@@ -3314,7 +3315,7 @@ public class BREService implements Serializable {
 	public static class PropertyMaster implements Serializable {
 
 		private static final long serialVersionUID = 1L;
-		@JsonProperty("element")
+		@XmlElement(name = "element")
 		List<Element> element;
 
 		public PropertyMaster() {
@@ -3335,9 +3336,9 @@ public class BREService implements Serializable {
 	public static class Supercalc implements Serializable {
 
 		private static final long serialVersionUID = 1L;
-		@JsonProperty("PERC_CHANGE_EMI_FIRST_60")
+		@XmlElement(name = "PERC_CHANGE_EMI_FIRST_60")
 		private String perc_change_emi_first_60;
-		@JsonProperty("PERC_CHANGE_EMI_NEXT_60")
+		@XmlElement(name = "PERC_CHANGE_EMI_NEXT_60")
 		private String perc_change_emi_next_60;
 
 		@JsonCreator
@@ -3371,7 +3372,7 @@ public class BREService implements Serializable {
 		public DV() {
 		}
 
-		@JsonProperty("element")
+		@XmlElement(name = "element")
 		List<Element> element;
 
 		public List<Element> getElement() {
@@ -3392,7 +3393,7 @@ public class BREService implements Serializable {
 		public FCU() {
 		}
 
-		@JsonProperty("element")
+		@XmlElement(name = "element")
 		List<Element> element;
 
 		public List<Element> getElement() {
@@ -3416,7 +3417,7 @@ public class BREService implements Serializable {
 		public PD() {
 		}
 
-		@JsonProperty("element")
+		@XmlElement(name = "element")
 		List<Element> element;
 
 		public List<Element> getElement() {
@@ -3432,35 +3433,35 @@ public class BREService implements Serializable {
 	public static class LRD implements Serializable {
 
 		private static final long serialVersionUID = 1L;
-		@JsonProperty("PROPERTY_VACANT_SINCE")
+		@XmlElement(name = "PROPERTY_VACANT_SINCE")
 		private String property_vacant_since;
-		@JsonProperty("PROPERTY_TYPE")
+		@XmlElement(name = "PROPERTY_TYPE")
 		private String property_type;
-		@JsonProperty("DATE_OF_AGREEMENT")
+		@XmlElement(name = "DATE_OF_AGREEMENT")
 		private String date_of_agreement;
-		@JsonProperty("TENURE_OF_LEASE_FROM")
+		@XmlElement(name = "TENURE_OF_LEASE_FROM")
 		private String tenure_of_lease_from;
-		@JsonProperty("TENURE_OF_LEASE_TO")
+		@XmlElement(name = "TENURE_OF_LEASE_TO")
 		private String tenure_of_lease_to;
-		@JsonProperty("NPV")
+		@XmlElement(name = "NPV")
 		private String npv;
-		@JsonProperty("LETTER_OF_INTENT")
+		@XmlElement(name = "LETTER_OF_INTENT")
 		private String letter_of_intent;
-		@JsonProperty("LETTER_OF_INTENT_1")
+		@XmlElement(name = "LETTER_OF_INTENT_1")
 		private String letter_of_intent_1;
-		@JsonProperty("ESCALATION_FLAG")
+		@XmlElement(name = "ESCALATION_FLAG")
 		private String escalation_flag;
-		@JsonProperty("NET_CURRENT_MONTHLY_RENTALS")
+		@XmlElement(name = "NET_CURRENT_MONTHLY_RENTALS")
 		private String net_current_monthly_rentals;
-		@JsonProperty("RESIDUAL_LEASE_PERIOD_IN_MONTHS")
+		@XmlElement(name = "RESIDUAL_LEASE_PERIOD_IN_MONTHS")
 		private String residual_lease_period_in_months;
-		@JsonProperty("LEASE_PERIOD_IN_MONTHS")
+		@XmlElement(name = "LEASE_PERIOD_IN_MONTHS")
 		private String lease_period_in_months;
-		@JsonProperty("LEASE_MARKET_CAPITALISATION")
+		@XmlElement(name = "LEASE_MARKET_CAPITALISATION")
 		private String lease_market_capitalisation;
-		@JsonProperty("COST_OF_PROPERTY")
+		@XmlElement(name = "COST_OF_PROPERTY")
 		private String cost_of_property;
-		@JsonProperty("APPLICABLE_LTV")
+		@XmlElement(name = "APPLICABLE_LTV")
 		private String applicable_ltv;
 
 		@JsonCreator

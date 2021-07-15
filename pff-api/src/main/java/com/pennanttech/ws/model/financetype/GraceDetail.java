@@ -3,17 +3,16 @@ package com.pennanttech.ws.model.financetype;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "finGrcRateType", "lovDescFinGrcRateTypeName", "finGrcIntRate", "finGrcBaseRate",
-		"lovDescFinGrcBaseRateName", "finGrcSplRate", "lovDescFinGrcSplRateName", "finGrcMargin",
-		"fInGrcMinRate", "finGrcMaxRate", "finGrcDftIntFrq",
-		"finIsAlwGrcRepay", "finGrcSchdMthd", "finGrcIsIntCpz", "finGrcCpzFrq", "finGrcIsRvwAlw", "finGrcRvwFrq",
-		"finGrcRvwRateApplFor", "finIsIntCpzAtGrcEnd" })
+		"lovDescFinGrcBaseRateName", "finGrcSplRate", "lovDescFinGrcSplRateName", "finGrcMargin", "fInGrcMinRate",
+		"finGrcMaxRate", "finGrcDftIntFrq", "finIsAlwGrcRepay", "finGrcSchdMthd", "finGrcIsIntCpz", "finGrcCpzFrq",
+		"finGrcIsRvwAlw", "finGrcRvwFrq", "finGrcRvwRateApplFor", "finIsIntCpzAtGrcEnd" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GraceDetail implements Serializable {
 
@@ -25,36 +24,36 @@ public class GraceDetail implements Serializable {
 
 	private String finGrcRateType;
 
-	@JsonProperty("grcRateTypeDesc")
+	@XmlElement(name = "grcRateTypeDesc")
 	private String lovDescFinGrcRateTypeName;
 
-	@JsonProperty("finGrcPftRate")
+	@XmlElement(name = "finGrcPftRate")
 	private BigDecimal finGrcIntRate = BigDecimal.ZERO;
 	private String finGrcBaseRate;
 
-	@JsonProperty("grcBaseRateCodeDesc")
+	@XmlElement(name = "grcBaseRateCodeDesc")
 	private String lovDescFinGrcBaseRateName;
 	private String finGrcSplRate;
 
-	@JsonProperty("grcSpecialRateCodeDesc")
+	@XmlElement(name = "grcSpecialRateCodeDesc")
 	private String lovDescFinGrcSplRateName;
 	private BigDecimal finGrcMargin = BigDecimal.ZERO;
 	private BigDecimal fInGrcMinRate = BigDecimal.ZERO;
 	private BigDecimal finGrcMaxRate = BigDecimal.ZERO;
 
-	@JsonProperty("finGrcDftPftFrq")
+	@XmlElement(name = "finGrcDftPftFrq")
 	private String finGrcDftIntFrq;
 	private boolean finIsAlwGrcRepay;
 	private String finGrcSchdMthd;
 
-	@JsonProperty("finGrcIsPftCpz")
+	@XmlElement(name = "finGrcIsPftCpz")
 	private boolean finGrcIsIntCpz;
 	private String finGrcCpzFrq;
 	private boolean finGrcIsRvwAlw;
 	private String finGrcRvwFrq;
 	private String finGrcRvwRateApplFor;
 
-	@JsonProperty("finIsPftCpzAtGrcEnd")
+	@XmlElement(name = "finIsPftCpzAtGrcEnd")
 	private boolean finIsIntCpzAtGrcEnd;
 
 	// private String schdMethodDesc;//Not available in PFF: FinanceType

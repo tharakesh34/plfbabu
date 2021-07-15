@@ -4,15 +4,14 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "allocationType", "referenceCode", "paidAmount", "waivedAmount" })
 
@@ -25,7 +24,7 @@ public class UploadAlloctionDetail extends AbstractWorkflowEntity implements Ent
 	private long uploadAlloctionDetailId = Long.MIN_VALUE;
 
 	private String rootId;
-	@JsonProperty("allocationItem")
+	@XmlElement(name = "allocationItem")
 	private String allocationType;
 	@XmlElement
 	private String referenceCode;

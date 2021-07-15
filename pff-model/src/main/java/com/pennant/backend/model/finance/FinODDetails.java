@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinODDetails.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  08-05-2012    														*
- *                                                                  						*
- * Modified Date    :  08-05-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinODDetails.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 08-05-2012 * * Modified Date :
+ * 08-05-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 08-05-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 08-05-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -47,11 +29,11 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>FinODDetails table</b>.<br>
@@ -65,14 +47,14 @@ public class FinODDetails implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private String finReference;
-	@JsonProperty("odDate")
+	@XmlElement(name = "odDate")
 	private Date finODSchdDate;
 	private String finODFor;
 	private String finBranch;
 	private String finType;
 	private long custID;
 	private Date finODTillDate;
-	@JsonProperty("odAmount")
+	@XmlElement(name = "odAmount")
 	private BigDecimal finCurODAmt = BigDecimal.ZERO;
 	private BigDecimal finCurODPri = BigDecimal.ZERO;
 	private BigDecimal finCurODPft = BigDecimal.ZERO;
@@ -84,25 +66,25 @@ public class FinODDetails implements Serializable {
 	private int finCurODDays = 0;
 
 	private BigDecimal totWaived = BigDecimal.ZERO;
-	@JsonProperty("odCharge")
+	@XmlElement(name = "odCharge")
 	private BigDecimal totPenaltyAmt = BigDecimal.ZERO;
-	@JsonProperty("odChargePaid")
+	@XmlElement(name = "odChargePaid")
 	private BigDecimal totPenaltyPaid = BigDecimal.ZERO;
 	private BigDecimal totPenaltyBal = BigDecimal.ZERO;
 
-	@JsonProperty("odPft")
+	@XmlElement(name = "odPft")
 	private BigDecimal lPIAmt = BigDecimal.ZERO;
-	@JsonProperty("odPftPaid")
+	@XmlElement(name = "odPftPaid")
 	private BigDecimal lPIPaid = BigDecimal.ZERO;
 	private BigDecimal lPIBal = BigDecimal.ZERO;
 	private BigDecimal lPIWaived = BigDecimal.ZERO;
 
 	private Date finLMdfDate;
 
-	//Overdue Penalty Details
+	// Overdue Penalty Details
 	private boolean applyODPenalty;
 	private boolean oDIncGrcDays;
-	@JsonProperty("chargeType")
+	@XmlElement(name = "chargeType")
 	private String oDChargeType;
 	private int oDGraceDays = 0;
 	private String oDChargeCalOn;
@@ -119,7 +101,7 @@ public class FinODDetails implements Serializable {
 
 	private BigDecimal paidNow = BigDecimal.ZERO;
 	private BigDecimal waivedNow = BigDecimal.ZERO;
-	//OD Penalty Capitalization
+	// OD Penalty Capitalization
 
 	/*
 	 * These fields used in bulk upload (Ex: EOD) rcdAction = "" No action Required rcdAction = "I" record to be
@@ -424,7 +406,7 @@ public class FinODDetails implements Serializable {
 		this.oDMaxWaiverPerc = oDMaxWaiverPerc;
 	}
 
-	//	
+	//
 	public BigDecimal getLPIAmt() {
 		return lPIAmt;
 	}

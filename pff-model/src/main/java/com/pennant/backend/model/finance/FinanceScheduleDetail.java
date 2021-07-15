@@ -48,15 +48,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>WIFFinanceScheduleDetail table</b>.<br>
@@ -91,13 +90,13 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private BigDecimal calculatedRate = BigDecimal.ZERO;
 	private int noOfDays;
 	private BigDecimal dayFactor = BigDecimal.ZERO;
-	@JsonProperty("pftAmount")
+	@XmlElement(name = "pftAmount")
 	private BigDecimal profitCalc = BigDecimal.ZERO;
-	@JsonProperty("schdPft")
+	@XmlElement(name = "schdPft")
 	private BigDecimal profitSchd = BigDecimal.ZERO;
-	@JsonProperty("schdPri")
+	@XmlElement(name = "schdPri")
 	private BigDecimal principalSchd = BigDecimal.ZERO;
-	@JsonProperty("totalAmount")
+	@XmlElement(name = "totalAmount")
 	private BigDecimal repayAmount = BigDecimal.ZERO;
 	private BigDecimal profitBalance = BigDecimal.ZERO;
 	private BigDecimal disbAmount = BigDecimal.ZERO;
@@ -107,7 +106,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private BigDecimal refundOrWaiver = BigDecimal.ZERO;
 	private BigDecimal cpzAmount = BigDecimal.ZERO;
 	private BigDecimal cpzBalance = BigDecimal.ZERO;
-	@JsonProperty("endBal")
+	@XmlElement(name = "endBal")
 	private BigDecimal closingBalance = BigDecimal.ZERO;
 
 	private BigDecimal profitFraction = BigDecimal.ZERO;
@@ -165,11 +164,11 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private BigDecimal schdPftWaiver = BigDecimal.ZERO;
 
 	// HybridFlexi
-	@JsonProperty("limitDrop")
+	@XmlElement(name = "limitDrop")
 	private BigDecimal limitDrop = BigDecimal.ZERO;
-	@JsonProperty("dropLineLimit")
+	@XmlElement(name = "dropLineLimit")
 	private BigDecimal oDLimit = BigDecimal.ZERO;
-	@JsonProperty("availableLimit")
+	@XmlElement(name = "availableLimit")
 	private BigDecimal availableLimit = BigDecimal.ZERO;
 
 	public FinanceScheduleDetail(Date schDate, boolean repayOnSchDate, BigDecimal actRate) {

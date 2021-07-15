@@ -30,14 +30,15 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
+
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>FinCollaterals table</b>.<br>
@@ -52,7 +53,7 @@ public class FinCollaterals extends AbstractWorkflowEntity implements Entity {
 	private String finReference = null;
 	private long collateralSeq = Long.MIN_VALUE;
 
-	@JsonProperty("type")
+	@XmlElement(name = "type")
 	private String collateralType;
 	private long custID;
 	private String reference;

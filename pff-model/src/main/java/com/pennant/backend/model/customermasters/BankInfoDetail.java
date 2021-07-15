@@ -49,14 +49,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 
 /**
  * Model class for the <b>BankInfoDetail table</b>.<br>
@@ -94,7 +93,7 @@ public class BankInfoDetail extends AbstractWorkflowEntity {
 	private BankInfoDetail befImage;
 	private LoggedInUser userDetails;
 	@XmlElementWrapper(name = "bankInfoSubDetails")
-	@JsonProperty("bankInfoSubDetail")
+	@XmlElement(name = "bankInfoSubDetail")
 	private List<BankInfoSubDetail> bankInfoSubDetails = new ArrayList<>();
 	@XmlElement
 	private BigDecimal sanctionLimit = BigDecimal.ZERO;

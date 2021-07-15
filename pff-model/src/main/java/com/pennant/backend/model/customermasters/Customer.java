@@ -53,16 +53,15 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>Customer table</b>.<br>
@@ -88,59 +87,59 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String lovDescCustCtgCodeName;
 	private String lovDescCustCtgType;
 
-	@JsonProperty("type")
+	@XmlElement(name = "type")
 	private String custTypeCode;
 	private String lovDescCustTypeCodeName;
 
-	@JsonProperty("salutation")
+	@XmlElement(name = "salutation")
 	private String custSalutationCode;
 	private String lovDescCustSalutationCodeName;
 
-	@JsonProperty("firstName")
+	@XmlElement(name = "firstName")
 	private String custFName;
 
-	@JsonProperty("middleName")
+	@XmlElement(name = "middleName")
 	private String custMName;
 
-	@JsonProperty("lastName")
+	@XmlElement(name = "lastName")
 	private String custLName;
 
-	@JsonProperty("shortName")
+	@XmlElement(name = "shortName")
 	private String custShrtName;
 
-	@JsonProperty("motherName")
+	@XmlElement(name = "motherName")
 	private String custFNameLclLng;
 	private String custMNameLclLng;
 	private String custLNameLclLng;
-	@JsonProperty("othersName")
+	@XmlElement(name = "othersName")
 	private String custShrtNameLclLng;
 
 	private String custDftBranch;
 
 	private String lovDescCustDftBranchName;
 
-	@JsonProperty("gender")
+	@XmlElement(name = "gender")
 	private String custGenderCode;
 	private String lovDescCustGenderCodeName;
 
-	@JsonProperty("dateofBirth")
+	@XmlElement(name = "dateofBirth")
 	private Date custDOB;
 	private String custPOB;
 
-	@JsonProperty("countryofBirth")
+	@XmlElement(name = "countryofBirth")
 	private String custCOB;
 	private String lovDescCustCOBName;
 	private String custPassportNo;
 
-	@JsonProperty("fatherName")
+	@XmlElement(name = "fatherName")
 	private String custMotherMaiden;
 	private boolean custIsMinor;
 	private String custReferedBy;
 
-	@JsonProperty("saleAgent")
+	@XmlElement(name = "saleAgent")
 	private String custDSA;
 
-	@JsonProperty("saleAgentDept")
+	@XmlElement(name = "saleAgentDept")
 	private String custDSADept;
 	private String lovDescCustDSADeptName;
 	private long custRO1;
@@ -149,7 +148,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String custRO2;
 	private String lovDescCustRO2Name;
 
-	@JsonProperty("groupID")
+	@XmlElement(name = "groupID")
 	private long custGroupID;
 	private String lovDescCustGroupCode;
 	private String lovDesccustGroupIDName;
@@ -172,21 +171,21 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private boolean custIsDelinquent;
 	private boolean custIsTradeFinCust;
 
-	@JsonProperty("staff")
+	@XmlElement(name = "staff")
 	private boolean custIsStaff;
 
-	@JsonProperty("staffID")
+	@XmlElement(name = "staffID")
 	private String custStaffID;
 
-	@JsonProperty("industry")
+	@XmlElement(name = "industry")
 	private String custIndustry;
 	private String lovDescCustIndustryName;
 
-	@JsonProperty("sector")
+	@XmlElement(name = "sector")
 	private String custSector;
 	private String lovDescCustSectorName;
 
-	@JsonProperty("subSector")
+	@XmlElement(name = "subSector")
 	private String custSubSector;
 	private String lovDescCustSubSectorName;
 	@XmlElement
@@ -195,25 +194,25 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal custTotalIncome = BigDecimal.ZERO;
 	private BigDecimal custTotalExpense = BigDecimal.ZERO;
 
-	@JsonProperty("maritalStatus")
+	@XmlElement(name = "maritalStatus")
 	private String custMaritalSts;
 	private String lovDescCustMaritalStsName;
 
-	@JsonProperty("employmentStatus")
+	@XmlElement(name = "employmentStatus")
 	private String custEmpSts;
 	private String lovDescCustEmpStsName;
 
-	@JsonProperty("segment")
+	@XmlElement(name = "segment")
 	private String custSegment;
 	private String lovDescCustSegmentName;
 
-	@JsonProperty("subsegment")
+	@XmlElement(name = "subsegment")
 	private String custSubSegment;
 	private String lovDescCustSubSegmentName;
 	private boolean custIsBlackListed;
 	private Date custBlackListDate;
 
-	@JsonProperty("numofDependents")
+	@XmlElement(name = "numofDependents")
 	private int noOfDependents;
 	private String custBLRsnCode;
 	private String lovDescCustBLRsnCodeName;
@@ -223,21 +222,21 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 
 	private String custBaseCcy;
 
-	@JsonProperty("language")
+	@XmlElement(name = "language")
 	private String custLng;
 	private String lovDescCustLngName;
 
-	@JsonProperty("parentCountry")
+	@XmlElement(name = "parentCountry")
 	private String custParentCountry;
 	private String lovDescCustParentCountryName;
 	private String custResdCountry;
 	private String lovDescCustResdCountryName;
 
-	@JsonProperty("riskCountry")
+	@XmlElement(name = "riskCountry")
 	private String custRiskCountry;
 	private String lovDescCustRiskCountryName;
 
-	@JsonProperty("nationality")
+	@XmlElement(name = "nationality")
 	private String custNationality;
 	private String lovDescCustNationalityName;
 	private Date custClosedOn;
@@ -279,7 +278,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String phoneNumber;
 	private String phoneAreaCode;
 	private String phoneCountryCode;
-	@JsonProperty("emiCardEligibilityAmt")
+	@XmlElement(name = "emiCardEligibilityAmt")
 	private BigDecimal custAddlDec1 = BigDecimal.ZERO;
 	private double custAddlDec2;
 	private double custAddlDec3;
@@ -299,7 +298,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private boolean proceedToDedup = false;
 	private boolean dedupFound = false;
 	private boolean skipDedup = false;
-	@JsonProperty("custCRCPR")
+	@XmlElement(name = "custCRCPR")
 	private String custCRCPR;
 	private boolean jointCust;
 	private String jointCustName;
@@ -322,9 +321,9 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 
 	@XmlElement
 	private String subCategory;
-	@JsonProperty("caste")
+	@XmlElement(name = "caste")
 	private long casteId;
-	@JsonProperty("religion")
+	@XmlElement(name = "religion")
 	private long religionId;
 	private String casteCode;
 	private String religionCode;
@@ -360,7 +359,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String lovDescNatureOfBusiness;
 	private String entityType;
 	private String lovDescEntityType;
-	@JsonProperty("residentialSts")
+	@XmlElement(name = "residentialSts")
 	private String custResidentialSts;
 	private String lovDescCustResidentialSts;
 	private String qualification;

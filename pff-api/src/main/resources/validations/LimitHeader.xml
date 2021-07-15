@@ -10,7 +10,7 @@
 	<bean class="com.pennant.backend.model.limit.LimitHeader">
 
 		<field name="headerId">
-			<constraint annotation="jakarta.validation.constraints.Min">
+			<constraint annotation="javax.validation.constraints.Min">
 				<message>limitId is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
@@ -18,14 +18,14 @@
 				<element name="value">1</element>
 
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.Max">
+			<constraint annotation="javax.validation.constraints.Max">
 				<message>limitId Applicable only for update limit</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 				</groups>
 				<element name="value">-1</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.DecimalMax">
+			<constraint annotation="javax.validation.constraints.DecimalMax">
 				<message>limitId allow 19 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>

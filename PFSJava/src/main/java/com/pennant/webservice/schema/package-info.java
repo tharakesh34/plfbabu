@@ -5,5 +5,5 @@
 // Generated on: 2016.05.07 at 06:25:23 PM IST 
 //
 
-@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.pennant.com/PFSService/schema", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.pennant.com/PFSService/schema", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package com.pennant.webservice.schema;

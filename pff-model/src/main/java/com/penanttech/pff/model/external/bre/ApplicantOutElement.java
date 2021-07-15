@@ -2,18 +2,20 @@ package com.penanttech.pff.model.external.bre;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
+
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import com.penanttech.pff.model.external.bre.BREService.ApplicantDetails;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ApplicantOutElement implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	@JsonProperty("APPLICANT_DETAILS")
+	@XmlElement(name = "APPLICANT_DETAILS")
 	private ApplicantDetails applicantDetails;
 
-	@JsonProperty("ELIGIBILITY_APCL_OUT")
+	@XmlElement(name = "ELIGIBILITY_APCL_OUT")
 	private EligibilityApclOut eligApclOut;
 
 	public ApplicantOutElement() {

@@ -3,8 +3,8 @@ package com.penanttech.pff.model.external.bre;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EmiAmount implements Serializable {

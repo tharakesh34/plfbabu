@@ -3,57 +3,40 @@ package com.pennant.backend.model.rmtmasters;
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinTypeFees.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  04-12-2013    														*
- *                                                                  						*
- * Modified Date    :  04-12-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinTypeFees.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 04-12-2013 * * Modified Date :
+ * 04-12-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 04-12-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 04-12-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>Collateral table</b>.<br>
@@ -66,13 +49,13 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 	private long finTypeFeeId = Long.MIN_VALUE;
 	private String finType = null;
 	private boolean originationFee;
-	@JsonProperty("feeEvent")
+	@XmlElement(name = "feeEvent")
 	private String finEvent;
 	private String finEventDesc;
 	private Long feeTypeID;
-	@JsonProperty("feeCode")
+	@XmlElement(name = "feeCode")
 	private String feeTypeCode;
-	@JsonProperty("feeDesc")
+	@XmlElement(name = "feeDesc")
 	private String feeTypeDesc;
 	private int feeOrder;
 	private String feeScheduleMethod;
@@ -84,9 +67,9 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 	private BigDecimal amount = BigDecimal.ZERO;
 	private BigDecimal percentage = BigDecimal.ZERO;
 	private String calculateOn;
-	@JsonProperty("allowWaiver")
+	@XmlElement(name = "allowWaiver")
 	private boolean alwDeviation;
-	@JsonProperty("maxWaiverPerc")
+	@XmlElement(name = "maxWaiverPerc")
 	private BigDecimal maxWaiverPerc = BigDecimal.ZERO;
 	private boolean alwModifyFee;
 	private boolean alwModifyFeeSchdMthd;
@@ -101,7 +84,7 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 
 	private LoggedInUser userDetails;
 
-	//GST
+	// GST
 	private boolean taxApplicable;
 	private String taxComponent;
 
@@ -182,7 +165,7 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 
 		return excludeFields;
 	}
-	//Getter and Setter methods
+	// Getter and Setter methods
 
 	public String getId() {
 		return finType;

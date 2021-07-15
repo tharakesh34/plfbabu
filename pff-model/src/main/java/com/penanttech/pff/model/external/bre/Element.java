@@ -1,233 +1,234 @@
 package com.penanttech.pff.model.external.bre;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
+
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import com.penanttech.pff.model.external.bre.BREService.TotalMarketValue;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Element {
-	@JsonProperty("STATUS")
+	@XmlElement(name = "STATUS")
 	private String status;
-	@JsonProperty("DV_REASON_CODE")
+	@XmlElement(name = "DV_REASON_CODE")
 	private String dv_reason_code;
-	@JsonProperty("VERIFICATION_TYPE")
+	@XmlElement(name = "VERIFICATION_TYPE")
 	private String verification_type;
-	@JsonProperty("DOCUMENT_CODE")
+	@XmlElement(name = "DOCUMENT_CODE")
 	private String document_code;
-	@JsonProperty("DV_DUMMY1")
+	@XmlElement(name = "DV_DUMMY1")
 	private String dv_dummy1;
-	@JsonProperty("DV_DUMMY2")
+	@XmlElement(name = "DV_DUMMY2")
 	private String dv_dummy2;
 
-	@JsonProperty("PD_TYPE_FLAG")
+	@XmlElement(name = "PD_TYPE_FLAG")
 	private String pd_type_flag;
-	
-	@JsonProperty("FCU_STATUS")
-	private String fcu_status;
-	
 
-	@JsonProperty("COLLATERAL_ID")
+	@XmlElement(name = "FCU_STATUS")
+	private String fcu_status;
+
+	@XmlElement(name = "COLLATERAL_ID")
 	private String collateral_id;
-	@JsonProperty("PROPERTY_IDENTIFIED")
+	@XmlElement(name = "PROPERTY_IDENTIFIED")
 	private String property_identified;
-	@JsonProperty("COST_OF_PROPERTY")
+	@XmlElement(name = "COST_OF_PROPERTY")
 	private String cost_of_property;
-	@JsonProperty("PROPERTY_TYPE")
+	@XmlElement(name = "PROPERTY_TYPE")
 	private String property_type;
-	@JsonProperty("NEGATIVE_AREA_FLAG")
+	@XmlElement(name = "NEGATIVE_AREA_FLAG")
 	private String negative_area_flag;
-	@JsonProperty("NEGATIVE_PROPERTY")
+	@XmlElement(name = "NEGATIVE_PROPERTY")
 	private String negative_property;
-	@JsonProperty("PROPERTY_OGL")
+	@XmlElement(name = "PROPERTY_OGL")
 	private String property_ogl;
-	@JsonProperty("PROPERTY_AGE")
+	@XmlElement(name = "PROPERTY_AGE")
 	private String property_age;
-	@JsonProperty("RESIDUAL_AGE")
+	@XmlElement(name = "RESIDUAL_AGE")
 	private String residual_age;
-	@JsonProperty("PROJECT_TYPE")
+	@XmlElement(name = "PROJECT_TYPE")
 	private String project_type;
-	@JsonProperty("PROPERTY_USAGE")
+	@XmlElement(name = "PROPERTY_USAGE")
 	private String property_usage;
-	@JsonProperty("PLOT_VALUE")
+	@XmlElement(name = "PLOT_VALUE")
 	private String plot_value;
-	@JsonProperty("AGREEMENT_VALUE")
+	@XmlElement(name = "AGREEMENT_VALUE")
 	private String agreement_value;
-	@JsonProperty("TOTAL_DOCUMENT_VALUE")
+	@XmlElement(name = "TOTAL_DOCUMENT_VALUE")
 	private String total_document_value;
-	@JsonProperty("SALE_DEED_VALUE")
+	@XmlElement(name = "SALE_DEED_VALUE")
 	private String sale_deed_value;
-	@JsonProperty("PURCHASE_VALUE")
+	@XmlElement(name = "PURCHASE_VALUE")
 	private String purchase_value;
-	@JsonProperty("OTHER_CHARGE")
+	@XmlElement(name = "OTHER_CHARGE")
 	private String other_charge;
-	@JsonProperty("CUSTOMER_DECLARED_VALUE")
+	@XmlElement(name = "CUSTOMER_DECLARED_VALUE")
 	private String customer_declared_value;
-	@JsonProperty("COLLATERAL_TYPE")
+	@XmlElement(name = "COLLATERAL_TYPE")
 	private String collateral_type;
-	@JsonProperty("PROPERTY_STATUS")
+	@XmlElement(name = "PROPERTY_STATUS")
 	private String property_status;
-	@JsonProperty("VALUATION_FEEDBACK")
+	@XmlElement(name = "VALUATION_FEEDBACK")
 	private String valuation_feedback;
-	@JsonProperty("TOTAL_MARKET_VALUE")
+	@XmlElement(name = "TOTAL_MARKET_VALUE")
 	TotalMarketValue total_market_value;
-	@JsonProperty("MARKET_VALUE1")
+	@XmlElement(name = "MARKET_VALUE1")
 	private String market_value1;
-	@JsonProperty("MARKET_VALUE2")
+	@XmlElement(name = "MARKET_VALUE2")
 	private String market_value2;
-	@JsonProperty("STAMP_DUTY")
+	@XmlElement(name = "STAMP_DUTY")
 	private String stamp_duty;
-	@JsonProperty("REGISTRATION_CHARGES")
+	@XmlElement(name = "REGISTRATION_CHARGES")
 	private String registration_charges;
-	@JsonProperty("AMENITIES_1")
+	@XmlElement(name = "AMENITIES_1")
 	private String amenities_1;
-	@JsonProperty("AMENITIES_2")
+	@XmlElement(name = "AMENITIES_2")
 	private String amenities_2;
-	@JsonProperty("AMENITIES_3")
+	@XmlElement(name = "AMENITIES_3")
 	private String amenities_3;
-	@JsonProperty("ASSET_USAGE")
+	@XmlElement(name = "ASSET_USAGE")
 	private String asset_usage;
-	@JsonProperty("CONSIDERABLE_MV")
+	@XmlElement(name = "CONSIDERABLE_MV")
 	private String considerable_mv;
-	@JsonProperty("TOTAL_DV")
+	@XmlElement(name = "TOTAL_DV")
 	private String total_dv;
-	@JsonProperty("LTV_AS_PER_NHB")
+	@XmlElement(name = "LTV_AS_PER_NHB")
 	private String ltv_as_per_nhb;
-	@JsonProperty("LTV_AS_PER_POLICY_ON_DV")
+	@XmlElement(name = "LTV_AS_PER_POLICY_ON_DV")
 	private String ltv_as_per_policy_on_dv;
-	@JsonProperty("LTV_AS_PER_POLICY_ON_MV")
+	@XmlElement(name = "LTV_AS_PER_POLICY_ON_MV")
 	private String ltv_as_per_policy_on_mv;
-	@JsonProperty("LTV_ON_AV_AS_PER_SCHEME")
+	@XmlElement(name = "LTV_ON_AV_AS_PER_SCHEME")
 	private String ltv_on_av_as_per_scheme;
-	@JsonProperty("LTV_ON_DV_AS_PER_SCHEME")
+	@XmlElement(name = "LTV_ON_DV_AS_PER_SCHEME")
 	private String ltv_on_dv_as_per_scheme;
-	@JsonProperty("LTV_ON_MV_AS_PER_SCHEME")
+	@XmlElement(name = "LTV_ON_MV_AS_PER_SCHEME")
 	private String ltv_on_mv_as_per_scheme;
-	@JsonProperty("LTV_ON_AV_PLUS_GST_AS_PER_SCHEME")
+	@XmlElement(name = "LTV_ON_AV_PLUS_GST_AS_PER_SCHEME")
 	private String ltv_on_av_plus_gst_as_per_scheme;
-	@JsonProperty("TYPE_OF_COLLATERAL")
+	@XmlElement(name = "TYPE_OF_COLLATERAL")
 	private String type_of_collateral;
-	@JsonProperty("PROPERTY_SUBTYPE")
+	@XmlElement(name = "PROPERTY_SUBTYPE")
 	private String property_subtype;
-	@JsonProperty("GST_CHARGES_CUSTOMER_FUNDED")
+	@XmlElement(name = "GST_CHARGES_CUSTOMER_FUNDED")
 	private String gst_charges_customer_funded;
-	@JsonProperty("GST_CHARGES_PCHFL_FUNDED")
+	@XmlElement(name = "GST_CHARGES_PCHFL_FUNDED")
 	private String gst_charges_pchfl_funded;
 
-	//Address Details
-	@JsonProperty("ADDRESS_TYPE")
+	// Address Details
+	@XmlElement(name = "ADDRESS_TYPE")
 	private String addressType;
-	@JsonProperty("STATE")
+	@XmlElement(name = "STATE")
 	private String state;
-	@JsonProperty("CITY")
+	@XmlElement(name = "CITY")
 	private String city;
-	@JsonProperty("CITY_CATEGORY")
+	@XmlElement(name = "CITY_CATEGORY")
 	private String cityCategory;
-	@JsonProperty("PINCODE")
+	@XmlElement(name = "PINCODE")
 	private String pincode;
-	@JsonProperty("COUNTRY")
+	@XmlElement(name = "COUNTRY")
 	private String country;
-	@JsonProperty("ADDRESS_LINE1")
+	@XmlElement(name = "ADDRESS_LINE1")
 	private String addressLine1;
-	@JsonProperty("ADDRESS_LINE2")
+	@XmlElement(name = "ADDRESS_LINE2")
 	private String addressLine2;
-	@JsonProperty("ADDRESS_LINE3")
+	@XmlElement(name = "ADDRESS_LINE3")
 	private String addressLine3;
-	
-	@JsonProperty("ACCOMODATION_TYPE")
+
+	@XmlElement(name = "ACCOMODATION_TYPE")
 	private String accomodationType;
-	@JsonProperty("STABILITY_YEARS")
+	@XmlElement(name = "STABILITY_YEARS")
 	private String stabilityYears;
-	@JsonProperty("STABILITY_MONTHS")
+	@XmlElement(name = "STABILITY_MONTHS")
 	private String stabilityMonths;
-	@JsonProperty("ELIGIBLE_COUNTRY")
+	@XmlElement(name = "ELIGIBLE_COUNTRY")
 	private String eligibleCountry;
-	@JsonProperty("ADDRESS_DUMMY1")
+	@XmlElement(name = "ADDRESS_DUMMY1")
 	private String addressDummy1;
-	@JsonProperty("ADDRESS_DUMMY2")
+	@XmlElement(name = "ADDRESS_DUMMY2")
 	private String addressDummy2;
-	@JsonProperty("ADDRESS_DUMMY3")
+	@XmlElement(name = "ADDRESS_DUMMY3")
 	private String addressDummy3;
-	@JsonProperty("ADDRESS_DUMMY4")
+	@XmlElement(name = "ADDRESS_DUMMY4")
 	private String addressDummy4;
 
-	@JsonProperty("ADDRESS_CATEGORY")
+	@XmlElement(name = "ADDRESS_CATEGORY")
 	private String addressCategory;
-	@JsonProperty("RESIDENCE_CODE")
+	@XmlElement(name = "RESIDENCE_CODE")
 	private String residenceCode;
-	@JsonProperty("ADDRESS_LINE4")
+	@XmlElement(name = "ADDRESS_LINE4")
 	private String addressLine4;
-	@JsonProperty("ADDRESS_LINE5")
+	@XmlElement(name = "ADDRESS_LINE5")
 	private String addressLine5;
-	@JsonProperty("STATE_CODE")
+	@XmlElement(name = "STATE_CODE")
 	private String stateCode;
 
-	//Account Details
-	@JsonProperty("BUREAU_TENURE")
+	// Account Details
+	@XmlElement(name = "BUREAU_TENURE")
 	private String bureauTenure;
-	@JsonProperty("ACCOUNT_TYPE")
+	@XmlElement(name = "ACCOUNT_TYPE")
 	private String accountType;
-	@JsonProperty("ACCOUNT_NUMBER")
+	@XmlElement(name = "ACCOUNT_NUMBER")
 	private String accountNumber;
-	@JsonProperty("AMOUNT_OVERDUE")
+	@XmlElement(name = "AMOUNT_OVERDUE")
 	private String amountOverdue;
-	@JsonProperty("CURRENT_BALANCE")
+	@XmlElement(name = "CURRENT_BALANCE")
 	private String currentBalance;
-	@JsonProperty("DATE_CLOSED")
+	@XmlElement(name = "DATE_CLOSED")
 	private String dateClosed;
-	@JsonProperty("DATE_OF_LAST_PAYMENT")
+	@XmlElement(name = "DATE_OF_LAST_PAYMENT")
 	private String dateOfLastPayment;
-	@JsonProperty("DATE_OPENED_DISBURSED")
+	@XmlElement(name = "DATE_OPENED_DISBURSED")
 	private String dateOpenedDisbursed;
-	@JsonProperty("DATE_REPORTED")
+	@XmlElement(name = "DATE_REPORTED")
 	private String dateReported;
-	@JsonProperty("EMI_AMOUNT")
+	@XmlElement(name = "EMI_AMOUNT")
 	private String emiAmount;
-	@JsonProperty("HIGH_CREDIT_SANCTIONED_AMOUNT")
+	@XmlElement(name = "HIGH_CREDIT_SANCTIONED_AMOUNT")
 	private String highCreditSanctionedAmount;
-	@JsonProperty("OWNERSHIP_INDICATOR")
+	@XmlElement(name = "OWNERSHIP_INDICATOR")
 	private String ownershipIndicator;
-	@JsonProperty("PAYMENT_FREQUENCY")
+	@XmlElement(name = "PAYMENT_FREQUENCY")
 	private String paymentFrequency;
-	@JsonProperty("PAYMENT_HISTORY1")
+	@XmlElement(name = "PAYMENT_HISTORY1")
 	private String paymentHistory1;
-	@JsonProperty("PAYMENT_HISTORY2")
+	@XmlElement(name = "PAYMENT_HISTORY2")
 	private String paymentHistory2;
-	@JsonProperty("PAYMENT_HISTORY_END_DATE")
+	@XmlElement(name = "PAYMENT_HISTORY_END_DATE")
 	private String paymentHistoryEndDate;
-	@JsonProperty("PAYMENT_HISTORY_START_DATE")
+	@XmlElement(name = "PAYMENT_HISTORY_START_DATE")
 	private String paymentHistoryStartDate;
-	@JsonProperty("RATE_OF_INTEREST")
+	@XmlElement(name = "RATE_OF_INTEREST")
 	private String rateOfInterest;
-	@JsonProperty("REPAYMENT_TENURE")
+	@XmlElement(name = "REPAYMENT_TENURE")
 	private String repaymentTenure;
-	@JsonProperty("SETTLEMENT_AMOUNT")
+	@XmlElement(name = "SETTLEMENT_AMOUNT")
 	private String settlementAmount;
-	@JsonProperty("SUIT_FILED_STATUS")
+	@XmlElement(name = "SUIT_FILED_STATUS")
 	private String suitFiledStatus;
-	@JsonProperty("TYPE_COLLATERAL")
+	@XmlElement(name = "TYPE_COLLATERAL")
 	private String typeCollateral;
-	@JsonProperty("VALUE_COLLATERAL")
+	@XmlElement(name = "VALUE_COLLATERAL")
 	private String valueCollateral;
-	@JsonProperty("WOF_PRINCIPAL")
+	@XmlElement(name = "WOF_PRINCIPAL")
 	private String wofPrincipal;
-	@JsonProperty("WOF_SETTLED_STATUS")
+	@XmlElement(name = "WOF_SETTLED_STATUS")
 	private String wofSettledStatus;
-	@JsonProperty("CREDIT_LIMIT")
+	@XmlElement(name = "CREDIT_LIMIT")
 	private String creditLimit;
-	@JsonProperty("CASH_LIMIT")
+	@XmlElement(name = "CASH_LIMIT")
 	private String cashLimit;
-	@JsonProperty("WOF_TOTAL_AMOUNT")
+	@XmlElement(name = "WOF_TOTAL_AMOUNT")
 	private String wofTotalAmount;
 
-	//Enquiry Detail		
-	@JsonProperty("DATE_OF_ENQUIRY")
+	// Enquiry Detail
+	@XmlElement(name = "DATE_OF_ENQUIRY")
 	private String dateOfEnquiry;
-	@JsonProperty("ENQUIRY_PURPOSE")
+	@XmlElement(name = "ENQUIRY_PURPOSE")
 	private String enquiryPurpose;
-	@JsonProperty("ENQIURY_AMOUNT")
+	@XmlElement(name = "ENQIURY_AMOUNT")
 	private String enqiuryAmount;
-	@JsonProperty("MEMBER_NAME")
+	@XmlElement(name = "MEMBER_NAME")
 	private String memberName;
 
 	@JsonCreator
@@ -249,8 +250,6 @@ public class Element {
 	public void setResidenceCode(String residenceCode) {
 		this.residenceCode = residenceCode;
 	}
-
-	
 
 	public String getAddressLine4() {
 		return addressLine4;
@@ -275,8 +274,6 @@ public class Element {
 	public void setStateCode(String stateCode) {
 		this.stateCode = stateCode;
 	}
-
-	
 
 	public String getDateOfEnquiry() {
 		return dateOfEnquiry;
@@ -534,8 +531,6 @@ public class Element {
 		this.wofTotalAmount = wofTotalAmount;
 	}
 
-	
-
 	public String getAccomodationType() {
 		return accomodationType;
 	}
@@ -776,7 +771,7 @@ public class Element {
 		return gst_charges_pchfl_funded;
 	}
 
-	// Setter Methods 
+	// Setter Methods
 
 	public void setCollateral_id(String collateral_id) {
 		this.collateral_id = collateral_id;
@@ -946,19 +941,19 @@ public class Element {
 		this.gst_charges_pchfl_funded = gst_charges_pchfl_funded;
 	}
 
-	// Getter Methods 
+	// Getter Methods
 
 	public String getPd_type_flag() {
 		return pd_type_flag;
 	}
 
-	// Setter Methods 
+	// Setter Methods
 
 	public void setPd_type_flag(String pd_type_flag) {
 		this.pd_type_flag = pd_type_flag;
 	}
-	
-	// Getter Methods 
+
+	// Getter Methods
 
 	public String getFcu_status() {
 		return fcu_status;
@@ -992,7 +987,7 @@ public class Element {
 		return dv_dummy2;
 	}
 
-	// Setter Methods 
+	// Setter Methods
 
 	public void setStatus(String status) {
 		this.status = status;
@@ -1017,7 +1012,6 @@ public class Element {
 	public void setDv_dummy2(String dv_dummy2) {
 		this.dv_dummy2 = dv_dummy2;
 	}
-	
 
 	public String getAddressType() {
 		return addressType;

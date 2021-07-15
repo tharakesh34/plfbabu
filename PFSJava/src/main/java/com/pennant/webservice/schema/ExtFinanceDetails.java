@@ -9,14 +9,12 @@ package com.pennant.webservice.schema;
 
 import java.math.BigDecimal;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlSchemaType;
-import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * <p>
@@ -70,54 +68,54 @@ import jakarta.xml.bind.annotation.XmlType;
 		"expRateAtGrcEnd" })
 public class ExtFinanceDetails {
 
-	@JsonProperty(value = "FinType", required = true)
+	@XmlElement(name = "FinType", required = true)
 	protected String finType;
-	@JsonProperty(value = "FinReference", required = true)
+	@XmlElement(name = "FinReference", required = true)
 	protected String finReference;
-	@JsonProperty(value = "FinCcy", required = true)
+	@XmlElement(name = "FinCcy", required = true)
 	protected String finCcy;
-	@JsonProperty(value = "RepayRateBasis", required = true)
+	@XmlElement(name = "RepayRateBasis", required = true)
 	protected String repayRateBasis;
-	@JsonProperty(value = "ScheduleMethod", required = true)
+	@XmlElement(name = "ScheduleMethod", required = true)
 	protected String scheduleMethod;
-	@JsonProperty(value = "AllowGrcPeriod", required = true)
+	@XmlElement(name = "AllowGrcPeriod", required = true)
 	protected String allowGrcPeriod;
-	@JsonProperty(value = "GrcSchdMthd", required = true)
+	@XmlElement(name = "GrcSchdMthd", required = true)
 	protected String grcSchdMthd;
-	@JsonProperty(value = "AllowGrcCpz", required = true)
+	@XmlElement(name = "AllowGrcCpz", required = true)
 	protected String allowGrcCpz;
-	@JsonProperty(value = "ProfitDaysBasis", required = true)
+	@XmlElement(name = "ProfitDaysBasis", required = true)
 	protected String profitDaysBasis;
-	@JsonProperty(value = "LovDescCustCIF", required = true)
+	@XmlElement(name = "LovDescCustCIF", required = true)
 	protected String lovDescCustCIF;
-	@JsonProperty(value = "FinStartDate", required = true)
+	@XmlElement(name = "FinStartDate", required = true)
 	@XmlSchemaType(name = "date")
 	protected XMLGregorianCalendar finStartDate;
-	@JsonProperty(value = "FinAmount", required = true)
+	@XmlElement(name = "FinAmount", required = true)
 	protected BigDecimal finAmount;
-	@JsonProperty(value = "DpToBank", required = true)
+	@XmlElement(name = "DpToBank", required = true)
 	protected BigDecimal dpToBank;
-	@JsonProperty(value = "DpToSupplier", required = true)
+	@XmlElement(name = "DpToSupplier", required = true)
 	protected BigDecimal dpToSupplier;
-	@JsonProperty(value = "ExpGracePft", required = true)
+	@XmlElement(name = "ExpGracePft", required = true)
 	protected BigDecimal expGracePft;
-	@JsonProperty(value = "ExpGraceCpz", required = true)
+	@XmlElement(name = "ExpGraceCpz", required = true)
 	protected BigDecimal expGraceCpz;
-	@JsonProperty(value = "ExpGorssGracePft", required = true)
+	@XmlElement(name = "ExpGorssGracePft", required = true)
 	protected BigDecimal expGorssGracePft;
-	@JsonProperty(value = "ExpRepayPft", required = true)
+	@XmlElement(name = "ExpRepayPft", required = true)
 	protected BigDecimal expRepayPft;
-	@JsonProperty(value = "ExpTotalPft", required = true)
+	@XmlElement(name = "ExpTotalPft", required = true)
 	protected BigDecimal expTotalPft;
-	@JsonProperty(value = "ExpFirstInst", required = true)
+	@XmlElement(name = "ExpFirstInst", required = true)
 	protected BigDecimal expFirstInst;
-	@JsonProperty(value = "ExpLastInst", required = true)
+	@XmlElement(name = "ExpLastInst", required = true)
 	protected BigDecimal expLastInst;
-	@JsonProperty(value = "ExpLastInstPft", required = true)
+	@XmlElement(name = "ExpLastInstPft", required = true)
 	protected BigDecimal expLastInstPft;
-	@JsonProperty(value = "ExpRateAtStart", required = true)
+	@XmlElement(name = "ExpRateAtStart", required = true)
 	protected BigDecimal expRateAtStart;
-	@JsonProperty(value = "ExpRateAtGrcEnd", required = true)
+	@XmlElement(name = "ExpRateAtGrcEnd", required = true)
 	protected BigDecimal expRateAtGrcEnd;
 
 	/**

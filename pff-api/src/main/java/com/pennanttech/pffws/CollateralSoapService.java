@@ -1,13 +1,13 @@
 package com.pennanttech.pffws;
 
+import javax.jws.WebParam;
+import javax.jws.WebService;
+
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.collateral.CollateralStructure;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.collateral.CollateralDetail;
-
-import jakarta.jws.WebParam;
-import jakarta.jws.WebService;
 
 @WebService
 public interface CollateralSoapService {

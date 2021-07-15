@@ -7,17 +7,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "custId", "merchantId", "custCardMonthSales" })
 @XmlAccessorType(XmlAccessType.NONE)
@@ -26,7 +25,7 @@ public class CustCardSales extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private long id = Long.MIN_VALUE;
 	private long custID = Long.MIN_VALUE;
-	@JsonProperty("merchantId")
+	@XmlElement(name = "merchantId")
 	private String merchantId;
 	private boolean newRecord = false;
 	private CustCardSales befImage;
@@ -35,7 +34,7 @@ public class CustCardSales extends AbstractWorkflowEntity implements Entity {
 	private String lovDescCustCIF;
 	private String lovDescCustShrtName;
 	@XmlElementWrapper(name = "custCardMonthSales")
-	@JsonProperty("custCardMonthSales")
+	@XmlElement(name = "custCardMonthSales")
 	private List<CustCardSalesDetails> custCardMonthSales = new ArrayList<>();
 	private String sourceId;
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();

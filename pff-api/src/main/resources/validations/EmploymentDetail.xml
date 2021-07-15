@@ -29,14 +29,14 @@
 		</field>
 
 		<field name="employementId">
-			<constraint annotation="jakarta.validation.constraints.Min">
+			<constraint annotation="javax.validation.constraints.Min">
 				<message>employementId should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.DeleteValidationGroup</value>
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.DecimalMax">
+			<constraint annotation="javax.validation.constraints.DecimalMax">
 				<message>employementId allow 19 digits only</message>
 				<groups>
 					<value>com.pennant.validation.DeleteValidationGroup</value>

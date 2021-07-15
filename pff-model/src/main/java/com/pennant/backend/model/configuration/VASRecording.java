@@ -52,7 +52,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -65,13 +64,13 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>VASRecording table</b>.<br>
@@ -86,7 +85,7 @@ import jakarta.xml.bind.annotation.XmlType;
 public class VASRecording extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
-	@JsonProperty("product")
+	@XmlElement(name = "product")
 	private String productCode;
 	private String productDesc;
 	@XmlElement
@@ -166,16 +165,16 @@ public class VASRecording extends AbstractWorkflowEntity {
 	private List<FinanceCheckListReference> vasCheckLists = null;
 	private Map<Long, Long> selAnsCountMap = new HashMap<Long, Long>(1);
 	@XmlElementWrapper(name = "documents")
-	@JsonProperty("document")
+	@XmlElement(name = "document")
 	private List<DocumentDetails> documents = null;
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private List<FinanceReferenceDetail> checkLists = null;
 	private VasCustomer vasCustomer = null;
 	private List<ReturnDataSet> returnDataSetList = new ArrayList<ReturnDataSet>(1);
-	@JsonProperty("fees")
+	@XmlElement(name = "fees")
 	private List<FinFeeDetail> finFeeDetailsList = new ArrayList<FinFeeDetail>();
 	@XmlElementWrapper(name = "extendedDetails")
-	@JsonProperty("extendedDetail")
+	@XmlElement(name = "extendedDetail")
 	private List<ExtendedField> extendedDetails = null;
 	// API Specific
 	@XmlElement

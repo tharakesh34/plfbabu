@@ -5,7 +5,7 @@ import java.util.Set;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
-import jakarta.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlTransient;
 
 public class CreditReviewData extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 6579430447635480792L;

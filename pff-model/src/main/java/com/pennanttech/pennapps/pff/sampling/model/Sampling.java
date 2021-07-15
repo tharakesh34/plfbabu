@@ -23,7 +23,7 @@ import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlTransient;
 
 public class Sampling extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;

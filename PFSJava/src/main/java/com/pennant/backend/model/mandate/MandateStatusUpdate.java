@@ -48,7 +48,7 @@ import java.util.Date;
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Model class for the <b>Mandate table</b>.<br>

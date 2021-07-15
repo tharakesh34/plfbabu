@@ -5,9 +5,9 @@ import java.util.List;
 
 import com.pennant.backend.model.Notes;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "finReference", "currentStage", "action", "remarks" })
 @XmlAccessorType(XmlAccessType.FIELD)

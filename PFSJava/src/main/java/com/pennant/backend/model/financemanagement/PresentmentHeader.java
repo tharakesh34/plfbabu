@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PresentmentHeader.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  01-05-2017    														*
- *                                                                  						*
- * Modified Date    :  01-05-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PresentmentHeader.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 01-05-2017 * * Modified
+ * Date : 01-05-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 01-05-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 01-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.model.financemanagement;
@@ -51,18 +33,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.app.util.DateFormatterAdapter;
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlTransient;
-import jakarta.xml.bind.annotation.XmlType;
-import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * Model class for the <b>PresentmentHeader table</b>.<br>
@@ -73,13 +54,13 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.NONE)
 public class PresentmentHeader extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
-	@JsonProperty("presentmentHeaderId")
+	@XmlElement(name = "presentmentHeaderId")
 	private long id = Long.MIN_VALUE;
-	@JsonProperty("batchReference")
+	@XmlElement(name = "batchReference")
 	private String reference;
 	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
 	private Date presentmentDate;
-	@JsonProperty("partnerBank")
+	@XmlElement(name = "partnerBank")
 	private long partnerBankId;
 	private String partnerBankCode;
 	private String partnerBankName;
@@ -92,10 +73,10 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 	private int status;
 	private String bankCode;
 	private String bankName;
-	@JsonProperty("paymentMode")
+	@XmlElement(name = "paymentMode")
 	private String mandateType;
 	private String mandateTypeName;
-	@JsonProperty("finType")
+	@XmlElement(name = "finType")
 	private String loanType;
 	private String loanTypeName;
 	private String finBranch;

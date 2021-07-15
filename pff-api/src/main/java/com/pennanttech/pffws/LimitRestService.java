@@ -1,5 +1,6 @@
 package com.pennanttech.pffws;
 
+import javax.jws.WebParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -11,8 +12,6 @@ import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.model.limit.LimitStructure;
 import com.pennant.backend.model.limit.LimitTransactionDetail;
 import com.pennant.ws.exception.ServiceException;
-
-import jakarta.jws.WebParam;
 
 @Produces("application/json")
 public interface LimitRestService {

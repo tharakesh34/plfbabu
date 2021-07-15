@@ -2,20 +2,20 @@ package com.pennant.backend.model.finance;
 
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "planEMIHMonth", "planEMIHDate" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinPlanEmiHoliday {
 
 	private String finReference;
-	@JsonProperty("holidayMonth")
+	@XmlElement(name = "holidayMonth")
 	private int planEMIHMonth;
-	@JsonProperty("holidayDate")
+	@XmlElement(name = "holidayDate")
 	private Date planEMIHDate;
 
 	public FinPlanEmiHoliday() {

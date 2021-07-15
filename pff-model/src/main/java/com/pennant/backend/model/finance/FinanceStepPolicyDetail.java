@@ -5,14 +5,13 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "stepNo", "tenorSplitPerc", "rateMargin", "emiSplitPerc", "installments", "steppedEMI",
 		"stepSpecifier", "autoCal" })
@@ -22,7 +21,7 @@ public class FinanceStepPolicyDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -2343217039719002642L;
 
 	private String finReference;
-	@JsonProperty("stepNumber")
+	@XmlElement(name = "stepNumber")
 	private int stepNo;
 	@XmlElement
 	private BigDecimal tenorSplitPerc = BigDecimal.ZERO;

@@ -55,7 +55,7 @@
 			</constraint>
 		</field>
 		<field name="fromDate">
-			<constraint annotation="jakarta.validation.constraints.NotNull">
+			<constraint annotation="javax.validation.constraints.NotNull">
 				<message>fromDate is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.AddRateChangeGroup</value>
@@ -74,7 +74,7 @@
 			</constraint>
 		</field>
 		<field name="toDate">
-			<constraint annotation="jakarta.validation.constraints.NotNull">
+			<constraint annotation="javax.validation.constraints.NotNull">
 				<message>toDate is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.AddRateChangeGroup</value>
@@ -84,7 +84,7 @@
 			</constraint>
 		</field>
 		<field name="pftDaysBasis">
-			<constraint annotation="jakarta.validation.constraints.Null">
+			<constraint annotation="javax.validation.constraints.Null">
 				<message>pftDaysBasis is not required for this service</message>
 				<groups>
 					<value>com.pennant.validation.ChangeRepaymentGroup</value>
@@ -126,7 +126,7 @@
 			</constraint>
 		</field>
 		<field name="schdMethod">
-			<constraint annotation="jakarta.validation.constraints.Null">
+			<constraint annotation="javax.validation.constraints.Null">
 				<message>schMthd is not required for this service</message>
 				<groups>
 					<value>com.pennant.validation.AddRateChangeGroup</value>
@@ -143,9 +143,9 @@
 		</field>
 
 		<field name="amount">
-			<!-- <constraint annotation="jakarta.validation.constraints.Max"> <message>amount is not required for this service</message> 
+			<!-- <constraint annotation="javax.validation.constraints.Max"> <message>amount is not required for this service</message> 
 				<groups> <value>com.pennant.validation.AddRateChangeGroup</value> </groups> <element name="value">0</element> </constraint> -->
-			<constraint annotation="jakarta.validation.constraints.Min">
+			<constraint annotation="javax.validation.constraints.Min">
 				<message>amount should be greater than zero</message>
 				<groups>
 					<value>com.pennant.validation.ChangeRepaymentGroup</value>
@@ -158,7 +158,7 @@
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.DecimalMax">
+			<constraint annotation="javax.validation.constraints.DecimalMax">
 				<message>amount allow 18 digits only</message>
 				<groups>
 					<value>com.pennant.validation.ChangeRepaymentGroup</value>
@@ -169,7 +169,7 @@
 				</groups>
 				<element name="value">999999999999999999</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.NotNull">
+			<constraint annotation="javax.validation.constraints.NotNull">
 				<message>amount is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.SchedulePaymentGroup</value>
@@ -180,12 +180,12 @@
 
 		</field>
 
-		<!-- <field name="terms"> <constraint annotation="jakarta.validation.constraints.DecimalMax"> <message>terms allow 3 digits 
+		<!-- <field name="terms"> <constraint annotation="javax.validation.constraints.DecimalMax"> <message>terms allow 3 digits 
 			only</message> <groups> <value>com.pennant.validation.AddTermsGroup</value> </groups> <element name="value">999</element> 
-			</constraint> <constraint annotation="jakarta.validation.constraints.Min"> <message>terms should be positive</message> <groups> 
+			</constraint> <constraint annotation="javax.validation.constraints.Min"> <message>terms should be positive</message> <groups> 
 			<value>com.pennant.validation.AddTermsGroup</value> </groups> <element name="value">1</element> </constraint> </field> -->
 		<field name="actualRate">
-			<constraint annotation="jakarta.validation.constraints.DecimalMax">
+			<constraint annotation="javax.validation.constraints.DecimalMax">
 				<message>actualRate allow 4 digits only</message>
 				<groups>
 					<value>com.pennant.validation.AddTermsGroup</value>
@@ -215,7 +215,7 @@
 			</constraint>
 		</field>
 		<field name="margin">
-			<constraint annotation="jakarta.validation.constraints.DecimalMax">
+			<constraint annotation="javax.validation.constraints.DecimalMax">
 				<message>actualRate allow 4 digits only</message>
 				<groups>
 					<value>com.pennant.validation.AddTermsGroup</value>
@@ -256,7 +256,7 @@
 			</constraint>
 		</field>
 		<field name="accountsOfficer">
-			<constraint annotation="jakarta.validation.constraints.Min">
+			<constraint annotation="javax.validation.constraints.Min">
 				<message>accountsOfficer should be positive</message>
 				<groups>
 					<value>com.pennant.validation.UpdateLoanBasicDetailsGroup</value>

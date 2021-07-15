@@ -3,9 +3,7 @@ package com.pennanttech.ws.model.customer;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import jakarta.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElement;
 
 public class LimitData {
 
@@ -13,7 +11,7 @@ public class LimitData {
 	private Date expiryDate;
 	@XmlElement
 	private String limitGroup;
-	@JsonProperty("availableLimit")
+	@XmlElement(name = "availableLimit")
 	private BigDecimal actualLimit = BigDecimal.ZERO;
 
 	public Date getExpiryDate() {

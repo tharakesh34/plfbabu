@@ -42,15 +42,14 @@
 */
 package com.pennant.backend.model.solutionfactory;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlTransient;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>ExtendedFieldDetail table</b>.<br>
@@ -73,37 +72,37 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity {
 	@XmlElement
 	private String fieldType;
 
-	@JsonProperty("maxLength")
+	@XmlElement(name = "maxLength")
 	private int fieldLength;
 
-	@JsonProperty("precision")
+	@XmlElement(name = "precision")
 	private int fieldPrec;
 
 	@XmlElement
 	private String fieldLabel;
 
-	@JsonProperty("mandatory")
+	@XmlElement(name = "mandatory")
 	private boolean fieldMandatory;
 
-	@JsonProperty("constraint")
+	@XmlElement(name = "constraint")
 	private String fieldConstraint;
 
-	@JsonProperty("seqOrder")
+	@XmlElement(name = "seqOrder")
 	private int fieldSeqOrder;
 
-	@JsonProperty("listValues")
+	@XmlElement(name = "listValues")
 	private String fieldList;
 
-	@JsonProperty("dftValue")
+	@XmlElement(name = "dftValue")
 	private String fieldDefaultValue;
 
-	@JsonProperty("minValue")
+	@XmlElement(name = "minValue")
 	private long fieldMinValue;
 
-	@JsonProperty("maxValue")
+	@XmlElement(name = "maxValue")
 	private long fieldMaxValue;
 
-	@JsonProperty("uniqueField")
+	@XmlElement(name = "uniqueField")
 	private boolean fieldUnique;
 	private String filters;
 

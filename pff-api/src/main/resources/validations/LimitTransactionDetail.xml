@@ -83,14 +83,14 @@
 		</field>
 
 		<field name="limitAmount">
-			<constraint annotation="jakarta.validation.constraints.Min">
+			<constraint annotation="javax.validation.constraints.Min">
 				<message>Amount should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.DecimalMax">
+			<constraint annotation="javax.validation.constraints.DecimalMax">
 				<message>Amount allow 21 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>

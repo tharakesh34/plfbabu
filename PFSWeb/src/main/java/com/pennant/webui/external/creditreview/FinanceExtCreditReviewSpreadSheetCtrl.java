@@ -19,6 +19,11 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zss.api.Importer;
@@ -36,11 +41,6 @@ import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Window;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.CharMatcher;
 import com.penanttech.pff.model.external.bre.ApplicantOutElement;
 import com.penanttech.pff.model.external.bre.BREService;
@@ -263,7 +263,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 	public static Map<String, Object> convertStringToMap(String payload) {
 		logger.debug(Literal.ENTERING);
 
-		ObjectMapper mapper = new ObjectMapper();
+		org.codehaus.jackson.map.ObjectMapper mapper = new org.codehaus.jackson.map.ObjectMapper();
 		HashMap<String, Object> map = null;
 
 		try {
@@ -333,8 +333,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 		}
 
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-				DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES);
+		mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
 		BREService response = null;
 		try {
 

@@ -45,7 +45,6 @@ package com.pennanttech.model;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -54,11 +53,11 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Model class for the <b>Customer table</b>.<br>
@@ -72,7 +71,7 @@ public class DedupCustomerDetail implements java.io.Serializable {
 	private long custID;
 	private boolean newRecord = false;
 
-	@JsonProperty("cif")
+	@XmlElement(name = "cif")
 	private String custCIF;
 
 	private String sourceId;
@@ -82,23 +81,23 @@ public class DedupCustomerDetail implements java.io.Serializable {
 	private String applicationNo;
 	private String accountNumber;
 
-	@JsonProperty("personalInfo")
+	@XmlElement(name = "personalInfo")
 	private Customer customer;
 
 	@XmlElementWrapper(name = "documents")
-	@JsonProperty("document")
+	@XmlElement(name = "document")
 	private List<CustomerDocument> customerDocumentsList;
 
 	@XmlElementWrapper(name = "addresses")
-	@JsonProperty("address")
+	@XmlElement(name = "address")
 	private List<CustomerAddres> addressList;
 
 	@XmlElementWrapper(name = "phones")
-	@JsonProperty("phone")
+	@XmlElement(name = "phone")
 	private List<CustomerPhoneNumber> customerPhoneNumList;
 
 	@XmlElementWrapper(name = "emails")
-	@JsonProperty("email")
+	@XmlElement(name = "email")
 	private List<CustomerEMail> customerEMailList;
 	// added customer dedupe class for preparing the request data
 	List<CustomerDedup> customerDedupList;

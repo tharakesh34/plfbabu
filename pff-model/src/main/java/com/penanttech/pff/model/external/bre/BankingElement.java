@@ -1,50 +1,51 @@
 package com.penanttech.pff.model.external.bre;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
+
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BankingElement {
-	@JsonProperty("BANK_NAME")
+	@XmlElement(name = "BANK_NAME")
 	private String bankName;
-	@JsonProperty("BANK_BRANCH")
+	@XmlElement(name = "BANK_BRANCH")
 	private String bankBranch;
-	@JsonProperty("BANK_ACCOUNT_NO")
+	@XmlElement(name = "BANK_ACCOUNT_NO")
 	private String bankAccountNo;
-	@JsonProperty("AVERAGE_BANK_BALANCE")
+	@XmlElement(name = "AVERAGE_BANK_BALANCE")
 	private String averageBankBalance;
-	@JsonProperty("AVERAGE_MONTHLY_CREDITS")
+	@XmlElement(name = "AVERAGE_MONTHLY_CREDITS")
 	private String averageMonthlyCredits;
-	@JsonProperty("CONSIDER_INCOME_BANKING")
+	@XmlElement(name = "CONSIDER_INCOME_BANKING")
 	private String considerIncomeBanking;
-	@JsonProperty("PRIMARY_ACCOUNT")
+	@XmlElement(name = "PRIMARY_ACCOUNT")
 	private String primaryAccount;
-	@JsonProperty("REPAYMENT_FROM_THIS_ACCOUNT")
+	@XmlElement(name = "REPAYMENT_FROM_THIS_ACCOUNT")
 	private String repaymentFromThisAccount;
-	@JsonProperty("ACCOUNT_TYPE_SBCA")
+	@XmlElement(name = "ACCOUNT_TYPE_SBCA")
 	private String accountTypeSbca;
-	@JsonProperty("FINANCIAL_INSTITUTION")
+	@XmlElement(name = "FINANCIAL_INSTITUTION")
 	private String financialInstitution;
-	@JsonProperty("NO_DEBIT")
+	@XmlElement(name = "NO_DEBIT")
 	private String noDebit;
-	@JsonProperty("NO_CREDIT")
+	@XmlElement(name = "NO_CREDIT")
 	private String noCredit;
-	@JsonProperty("INWARD_CHEQUE_BOUNCE")
+	@XmlElement(name = "INWARD_CHEQUE_BOUNCE")
 	private String inwardChequeBounce;
-	@JsonProperty("OUTWARD_CHEQUE_BOUNCE")
+	@XmlElement(name = "OUTWARD_CHEQUE_BOUNCE")
 	private String outwardChequeBounce;
-	@JsonProperty("TOTAL_CR")
+	@XmlElement(name = "TOTAL_CR")
 	private String totalCr;
-	@JsonProperty("TOTAL_DR")
+	@XmlElement(name = "TOTAL_DR")
 	private String totalDr;
-	@JsonProperty("INWARD_CHEQUE_RETURN_COUNT")
+	@XmlElement(name = "INWARD_CHEQUE_RETURN_COUNT")
 	private String inwardChequeReturnCount;
-	@JsonProperty("OUTWARD_CHEQUE_RETURN_COUNT")
+	@XmlElement(name = "OUTWARD_CHEQUE_RETURN_COUNT")
 	private String outwardChequeReturnCount;
-	@JsonProperty("TOTAL_DEBIT_ENTRY")
+	@XmlElement(name = "TOTAL_DEBIT_ENTRY")
 	private String totalDebitEntry;
-	@JsonProperty("TOTAL_CREDIT_ENTRY")
+	@XmlElement(name = "TOTAL_CREDIT_ENTRY")
 	private String totalCreditEntry;
 
 	@JsonCreator

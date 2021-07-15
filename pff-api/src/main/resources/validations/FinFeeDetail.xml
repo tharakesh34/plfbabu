@@ -19,7 +19,7 @@
 			</constraint>
 		</field>
 		<field name="terms">
-			<constraint annotation="jakarta.validation.constraints.Min">
+			<constraint annotation="javax.validation.constraints.Min">
 				<message>9009</message>
 				<groups>
 					<value>com.pennant.validation.AddRateChangeGroup</value>

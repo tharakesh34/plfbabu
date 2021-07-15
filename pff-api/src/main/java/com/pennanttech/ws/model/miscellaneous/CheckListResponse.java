@@ -3,14 +3,13 @@ package com.pennanttech.ws.model.miscellaneous;
 import java.io.Serializable;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.WSReturnStatus;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "checkListId", "checkListDesc", "mandInputInStage", "checkMinCount", "checkMaxCount",
 		"checkListMandnetory", "checkListDetail", "returnStatus" })
@@ -20,19 +19,19 @@ public class CheckListResponse implements Serializable {
 	private static final long serialVersionUID = 6569842731762889262L;
 	@XmlElement
 	private String finType;
-	@JsonProperty("checkListId")
+	@XmlElement(name = "checkListId")
 	private long finRefId;
-	@JsonProperty("checkListDesc")
+	@XmlElement(name = "checkListDesc")
 	private String lovDescRefDesc;
-	@JsonProperty("mandInputInStage")
+	@XmlElement(name = "mandInputInStage")
 	private String mandInputInStage;
-	@JsonProperty("checkMinCount")
+	@XmlElement(name = "checkMinCount")
 	private long lovDescCheckMinCount;
-	@JsonProperty("checkMaxCount")
+	@XmlElement(name = "checkMaxCount")
 	private long lovDescCheckMaxCount;
 	@XmlElement
 	private boolean checkListMandnetory = false;
-	@JsonProperty("checkListDetail")
+	@XmlElement(name = "checkListDetail")
 	private List<CheckListDetailsRespons> lovDesccheckListDetail;
 	@XmlElement
 	private WSReturnStatus returnStatus;

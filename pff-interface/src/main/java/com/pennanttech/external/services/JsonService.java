@@ -16,6 +16,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -27,11 +31,6 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -39,9 +38,9 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
 
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.Marshaller;
-import jakarta.xml.bind.Unmarshaller;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 public abstract class JsonService<T> {
 	protected static Logger logger = LogManager.getLogger(JsonService.class.getClass());
@@ -294,18 +293,18 @@ public abstract class JsonService<T> {
 
 	private ObjectMapper getObjectMapper(JsonServiceDetail jsonServiceDetail) {
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
-		mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		mapper.configure(SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY, false);
+		mapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
+		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 		dateFormat.setLenient(false);
 		mapper.setDateFormat(dateFormat);
 
 		if (jsonServiceDetail.isExcludeNull()) {
-			mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+			mapper.setSerializationInclusion(Inclusion.NON_NULL);
 		}
 		if (jsonServiceDetail.isExcludeEmpty()) {
-			mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+			mapper.setSerializationInclusion(Inclusion.NON_EMPTY);
 		}
 
 		return mapper;

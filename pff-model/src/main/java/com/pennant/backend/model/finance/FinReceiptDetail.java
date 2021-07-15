@@ -10,11 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinReceiptDetail implements Serializable {
@@ -37,7 +35,7 @@ public class FinReceiptDetail implements Serializable {
 	// Bankbranch ID for IMD
 	private long bankBranchID;
 	// IFSC for IMD API
-	@JsonProperty("ifsc")
+	@XmlElement(name = "ifsc")
 	private String iFSC;
 	private String branchDesc;
 	@XmlElement
@@ -51,7 +49,7 @@ public class FinReceiptDetail implements Serializable {
 	private String transactionRef;
 	@XmlElement
 	private String chequeAcNo;
-	@JsonProperty("fundingAccount")
+	@XmlElement(name = "fundingAccount")
 	private long fundingAc = 0;
 	private String fundingAcCode;
 	private String fundingAcDesc;

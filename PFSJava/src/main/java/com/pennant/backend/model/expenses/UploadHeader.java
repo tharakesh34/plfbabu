@@ -60,7 +60,7 @@ import com.pennant.backend.model.refundupload.RefundUpload;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlTransient;
 
 public class UploadHeader extends AbstractWorkflowEntity implements Entity {
 

@@ -1,14 +1,13 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 package com.pennanttech.pff.model.external.interfacedetails;
@@ -16,12 +15,11 @@ package com.pennanttech.pff.model.external.interfacedetails;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @XmlAccessorType(XmlAccessType.NONE)
@@ -59,19 +57,19 @@ public class InterfaceServiceDetails implements Serializable {
 	@XmlElement
 	private byte[] resoponseAsPdf;
 	private String cibilInitateDate;
-	@JsonProperty("customer_status")
+	@XmlElement(name = "customer_status")
 	private String custStatus;
 	private String dedupDecision;
 	private String dedupComments;
-	@JsonProperty("dedup_result")
+	@XmlElement(name = "dedup_result")
 	private String dedupResult;
 	private String applicantId;
-	@JsonProperty("source_target")
+	@XmlElement(name = "source_target")
 	private String sourceOrTarget;
 	private String segment;
-	@JsonProperty("dedup_lan_matches")
+	@XmlElement(name = "dedup_lan_matches")
 	private String dedupLanMatches;
-	@JsonProperty("dedup_target_remarks")
+	@XmlElement(name = "dedup_target_remarks")
 	private String dedupTargetRemarks;
 	private String customerName;
 	private String customerId;

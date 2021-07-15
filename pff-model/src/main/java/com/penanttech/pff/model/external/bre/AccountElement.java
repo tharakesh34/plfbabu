@@ -2,69 +2,70 @@ package com.penanttech.pff.model.external.bre;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
+
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AccountElement implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	@JsonProperty("BUREAU_TENURE")
+	@XmlElement(name = "BUREAU_TENURE")
 	private String bureauTenure;
-	@JsonProperty("ACCOUNT_TYPE")
+	@XmlElement(name = "ACCOUNT_TYPE")
 	private String accountType;
-	@JsonProperty("ACCOUNT_NUMBER")
+	@XmlElement(name = "ACCOUNT_NUMBER")
 	private String accountNumber;
-	@JsonProperty("AMOUNT_OVERDUE")
+	@XmlElement(name = "AMOUNT_OVERDUE")
 	private String amountOverdue;
-	@JsonProperty("CURRENT_BALANCE")
+	@XmlElement(name = "CURRENT_BALANCE")
 	private String currentBalance;
-	@JsonProperty("DATE_CLOSED")
+	@XmlElement(name = "DATE_CLOSED")
 	private String dateClosed;
-	@JsonProperty("DATE_OF_LAST_PAYMENT")
+	@XmlElement(name = "DATE_OF_LAST_PAYMENT")
 	private String dateOfLastPayment;
-	@JsonProperty("DATE_OPENED_DISBURSED")
+	@XmlElement(name = "DATE_OPENED_DISBURSED")
 	private String dateOpenedDisbursed;
-	@JsonProperty("DATE_REPORTED")
+	@XmlElement(name = "DATE_REPORTED")
 	private String dateReported;
-	@JsonProperty("EMI_AMOUNT")
+	@XmlElement(name = "EMI_AMOUNT")
 	private String emiAmount;
-	@JsonProperty("HIGH_CREDIT_SANCTIONED_AMOUNT")
+	@XmlElement(name = "HIGH_CREDIT_SANCTIONED_AMOUNT")
 	private String highCreditSanctionedAmount;
-	@JsonProperty("OWNERSHIP_INDICATOR")
+	@XmlElement(name = "OWNERSHIP_INDICATOR")
 	private String ownershipIndicator;
-	@JsonProperty("PAYMENT_FREQUENCY")
+	@XmlElement(name = "PAYMENT_FREQUENCY")
 	private String paymentFrequency;
-	@JsonProperty("PAYMENT_HISTORY1")
+	@XmlElement(name = "PAYMENT_HISTORY1")
 	private String paymentHistory1;
-	@JsonProperty("PAYMENT_HISTORY2")
+	@XmlElement(name = "PAYMENT_HISTORY2")
 	private String paymentHistory2;
-	@JsonProperty("PAYMENT_HISTORY_END_DATE")
+	@XmlElement(name = "PAYMENT_HISTORY_END_DATE")
 	private String paymentHistoryEndDate;
-	@JsonProperty("PAYMENT_HISTORY_START_DATE")
+	@XmlElement(name = "PAYMENT_HISTORY_START_DATE")
 	private String paymentHistoryStartDate;
-	@JsonProperty("RATE_OF_INTEREST")
+	@XmlElement(name = "RATE_OF_INTEREST")
 	private String rateOfInterest;
-	@JsonProperty("REPAYMENT_TENURE")
+	@XmlElement(name = "REPAYMENT_TENURE")
 	private String repaymentTenure;
-	@JsonProperty("SETTLEMENT_AMOUNT")
+	@XmlElement(name = "SETTLEMENT_AMOUNT")
 	private String settlementAmount;
-	@JsonProperty("SUIT_FILED_STATUS")
+	@XmlElement(name = "SUIT_FILED_STATUS")
 	private String suitFiledStatus;
-	@JsonProperty("TYPE_COLLATERAL")
+	@XmlElement(name = "TYPE_COLLATERAL")
 	private String typeCollateral;
-	@JsonProperty("VALUE_COLLATERAL")
+	@XmlElement(name = "VALUE_COLLATERAL")
 	private String valueCollateral;
-	@JsonProperty("WOF_PRINCIPAL")
+	@XmlElement(name = "WOF_PRINCIPAL")
 	private String wofPrincipal;
-	@JsonProperty("WOF_SETTLED_STATUS")
+	@XmlElement(name = "WOF_SETTLED_STATUS")
 	private String wofSettledStatus;
-	@JsonProperty("CREDIT_LIMIT")
+	@XmlElement(name = "CREDIT_LIMIT")
 	private String creditLimit;
-	@JsonProperty("CASH_LIMIT")
+	@XmlElement(name = "CASH_LIMIT")
 	private String cashLimit;
-	@JsonProperty("WOF_TOTAL_AMOUNT")
+	@XmlElement(name = "WOF_TOTAL_AMOUNT")
 	private String wofTotalAmount;
 
 	@JsonCreator

@@ -1,6 +1,6 @@
 package com.pennant.backend.model.dedup.external;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ErrorDescription {

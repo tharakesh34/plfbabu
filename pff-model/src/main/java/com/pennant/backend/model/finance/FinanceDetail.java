@@ -49,7 +49,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.beneficiary.FinBeneficiary;
@@ -96,13 +95,13 @@ import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.eod.collateral.reval.model.CollateralRevaluation;
 import com.pennanttech.pff.model.external.interfacedetails.InterfaceServiceDetails;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "finReference", "stp", "processStage", "finScheduleData", "foreClosureDetails",
 		"customerDetails", "advancePaymentsList", "mandate", "jointAccountDetailList", "gurantorsDetailList",
@@ -116,7 +115,7 @@ public class FinanceDetail implements java.io.Serializable {
 
 	@XmlElement
 	private String finReference;
-	@JsonProperty("financeSchedule")
+	@XmlElement(name = "financeSchedule")
 	private FinScheduleData finScheduleData = new FinScheduleData();
 	private boolean newRecord = false;
 	private LoggedInUser userDetails;
@@ -147,20 +146,20 @@ public class FinanceDetail implements java.io.Serializable {
 	private List<Rule> feeCharges = new ArrayList<>(1);
 	private List<FinTypeFees> finTypeFeesList = new ArrayList<>();
 	@XmlElementWrapper(name = "transactions")
-	@JsonProperty("transaction")
+	@XmlElement(name = "transaction")
 	private List<ReturnDataSet> returnDataSetList = new ArrayList<>(1);
 	private List<TransactionEntry> cmtFinanceEntries = new ArrayList<>(1);
 	private List<ReturnDataSet> cmtDataSetList = new ArrayList<>(1);
 	private List<TransactionEntry> stageTransactionEntries = new ArrayList<>(1);
 	private List<ReturnDataSet> stageAccountingList = new ArrayList<>(1);
 	@XmlElementWrapper(name = "documents")
-	@JsonProperty("document")
+	@XmlElement(name = "document")
 	private List<DocumentDetails> documentDetailsList = new ArrayList<>(1);
 	@XmlElementWrapper(name = "guarantors")
-	@JsonProperty("guarantor")
+	@XmlElement(name = "guarantor")
 	private List<GuarantorDetail> gurantorsDetailList = new ArrayList<>(1);
 	@XmlElementWrapper(name = "coApplicants")
-	@JsonProperty("coApplicant")
+	@XmlElement(name = "coApplicant")
 	private List<JointAccountDetail> jointAccountDetailList = new ArrayList<>(1);
 	private List<FinanceDeviations> financeDeviations = new ArrayList<>();
 	private List<FinanceDeviations> approvedFinanceDeviations = new ArrayList<>();
@@ -168,23 +167,23 @@ public class FinanceDetail implements java.io.Serializable {
 	private List<FinanceDeviations> approvedManualDeviations = new ArrayList<>();
 	private List<FinCollaterals> financeCollaterals = new ArrayList<>(1);
 	@XmlElementWrapper(name = "collaterals")
-	@JsonProperty("collateral")
+	@XmlElement(name = "collateral")
 	private List<CollateralAssignment> collateralAssignmentList = new ArrayList<>(1);
 	private List<FinAssetTypes> finAssetTypesList = new ArrayList<>(1);
 	private List<ExtendedFieldRender> extendedFieldRenderList = new ArrayList<>(1);
 	private List<FinBlacklistCustomer> finBlacklistCustomer;
 	private List<FinanceDedup> finDedupDetails;
 	private List<CustomerDedup> customerDedupList;
-	@JsonProperty("disbursement")
+	@XmlElement(name = "disbursement")
 	private List<FinAdvancePayments> advancePaymentsList = new ArrayList<>();
 	private List<FeePaymentDetail> feePaymentDetailList;
 	@XmlElementWrapper(name = "covenants")
-	@JsonProperty("covenant")
+	@XmlElement(name = "covenant")
 	private List<FinCovenantType> covenantTypeList = new ArrayList<>(1);
 	private Covenant covenant;
-	@JsonProperty("covenantDetails")
+	@XmlElement(name = "covenantDetails")
 	private List<Covenant> covenants;
-	@JsonProperty("customer")
+	@XmlElement(name = "customer")
 	private CustomerDetails customerDetails;
 	private StorageDetail storageDetail;
 	private WIFCustomer customer;
@@ -209,15 +208,15 @@ public class FinanceDetail implements java.io.Serializable {
 	private transient Map<String, Object> lovDescExtendedFieldValues = new HashMap<>(1);
 	private FinWriteoffPayment finwriteoffPayment;
 	private FinRepayHeader finRepayHeader;
-	@JsonProperty("mandateDetail")
+	@XmlElement(name = "mandateDetail")
 	private Mandate mandate;
-	@JsonProperty("taxDetail")
+	@XmlElement(name = "taxDetail")
 	private FinanceTaxDetail financeTaxDetail;
 	@XmlElementWrapper(name = "financeFlags")
-	@JsonProperty("financeFlag")
+	@XmlElement(name = "financeFlag")
 	private List<FinFlagsDetail> finFlagsDetails;
 	@XmlElementWrapper(name = "fees")
-	@JsonProperty("fee")
+	@XmlElement(name = "fee")
 	private List<FinFeeDetail> finFeeDetails;
 	@XmlElement
 	private WSReturnStatus returnStatus;
@@ -226,20 +225,20 @@ public class FinanceDetail implements java.io.Serializable {
 	@XmlElement
 	private String processStage;
 	@XmlElementWrapper(name = "collateralDetails")
-	@JsonProperty("collateralDetail")
+	@XmlElement(name = "collateralDetail")
 	private List<CollateralSetup> collaterals;
 	@XmlElementWrapper(name = "foreClosures")
-	@JsonProperty("foreClosure")
+	@XmlElement(name = "foreClosure")
 	private List<ForeClosure> foreClosureDetails;
 	@XmlElementWrapper(name = "extendedDetails")
-	@JsonProperty("extendedDetail")
+	@XmlElement(name = "extendedDetail")
 	private List<ExtendedField> extendedDetails;
 	@XmlElement
 	private ChequeHeader chequeHeader;
 	@XmlElement
 	private ReasonHeader reasonHeader;
 	@XmlElementWrapper(name = "legalDetails")
-	@JsonProperty("legalDetail")
+	@XmlElement(name = "legalDetail")
 	private List<LegalDetail> legalDetailsList;
 	private Verification fiVerification;
 	private Verification tvVerification;
@@ -275,7 +274,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private FinOption finOption;
 	private List<FinOption> finOptions = new ArrayList<>();
 	@XmlElementWrapper(name = "interfaceDetailList")
-	@JsonProperty("interfaceDetailList")
+	@XmlElement(name = "interfaceDetailList")
 	private List<InterfaceServiceDetails> interfaceDetailList = new ArrayList<>();
 	private boolean validateUpfrontFees;
 	private CollateralRevaluation collateralRevaluation = new CollateralRevaluation();

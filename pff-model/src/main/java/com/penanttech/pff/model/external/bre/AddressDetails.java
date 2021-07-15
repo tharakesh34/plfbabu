@@ -2,9 +2,10 @@ package com.penanttech.pff.model.external.bre;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
+
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AddressDetails {
@@ -14,7 +15,7 @@ public class AddressDetails {
 
 	}
 
-	@JsonProperty("element")
+	@XmlElement(name = "element")
 	private List<AddressElement> addElement;
 
 	public List<AddressElement> getAddElement() {

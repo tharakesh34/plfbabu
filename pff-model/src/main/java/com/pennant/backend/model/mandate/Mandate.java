@@ -48,18 +48,17 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>Mandate table</b>.<br>
@@ -82,7 +81,7 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	private String mandateRef;
 	private long custID;
 
-	@JsonProperty("cif")
+	@XmlElement(name = "cif")
 	private String custCIF;
 	private String custShrtName;
 
@@ -104,10 +103,10 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	private String bankName;
 	private String city;
 
-	@JsonProperty("micr")
+	@XmlElement(name = "micr")
 	private String mICR;
 
-	@JsonProperty("ifsc")
+	@XmlElement(name = "ifsc")
 	private String iFSC;
 	@XmlElement
 	private String accNumber;
@@ -155,15 +154,15 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private boolean useExisting;
 	private String mandateCcy;
-	@JsonProperty("finReference")
+	@XmlElement(name = "finReference")
 	private String orgReference;
 	private String sourceId;
 	@XmlElement
 	private String documentName;
 	private Long documentRef = Long.MIN_VALUE;
-	@JsonProperty("docContent")
+	@XmlElement(name = "docContent")
 	private byte[] docImage;
-	@JsonProperty("docRefId")
+	@XmlElement(name = "docRefId")
 	private String externalRef;
 
 	// API validation purpose only
@@ -177,7 +176,7 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	private String barCodeNumber;
 	@XmlElement
 	private String amountInWords;
-	@JsonProperty("swap")
+	@XmlElement(name = "swap")
 	private boolean swapIsActive;
 	private long primaryMandateId = 0;
 	private boolean secondaryMandate;

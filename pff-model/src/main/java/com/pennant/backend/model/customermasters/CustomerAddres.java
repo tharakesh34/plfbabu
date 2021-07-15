@@ -46,15 +46,14 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>CustomerAddres table</b>.<br>
@@ -71,46 +70,46 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	private long custID = Long.MIN_VALUE;
 	@XmlElement
 	private String lovDescCustShrtName;
-	@JsonProperty("addrType")
+	@XmlElement(name = "addrType")
 	private String custAddrType;
 	private String lovDescCustAddrTypeName;
-	@JsonProperty("buildingNo")
+	@XmlElement(name = "buildingNo")
 	private String custAddrHNbr;
-	@JsonProperty("FlatNo")
+	@XmlElement(name = "FlatNo")
 	private String custFlatNbr;
-	@JsonProperty("Street")
+	@XmlElement(name = "Street")
 	private String custAddrStreet;
-	@JsonProperty("addrLine1")
+	@XmlElement(name = "addrLine1")
 	private String custAddrLine1;
-	@JsonProperty("addrLine2")
+	@XmlElement(name = "addrLine2")
 	private String custAddrLine2;
-	@JsonProperty("poBox")
+	@XmlElement(name = "poBox")
 	private String custPOBox;
-	@JsonProperty("country")
+	@XmlElement(name = "country")
 	private String custAddrCountry;
-	@JsonProperty("countryName")
+	@XmlElement(name = "countryName")
 	private String lovDescCustAddrCountryName;
-	@JsonProperty("state")
+	@XmlElement(name = "state")
 	private String custAddrProvince;
-	@JsonProperty("stateName")
+	@XmlElement(name = "stateName")
 	private String lovDescCustAddrProvinceName;
-	@JsonProperty("city")
+	@XmlElement(name = "city")
 	private String custAddrCity;
-	@JsonProperty("cityName")
+	@XmlElement(name = "cityName")
 	private String lovDescCustAddrCityName;
-	@JsonProperty("pinCode")
+	@XmlElement(name = "pinCode")
 	private String custAddrZIP;
 	private String custAddrPhone;
 	private boolean newRecord = false;
 	private String lovValue;
 	private CustomerAddres befImage;
 	private LoggedInUser userDetails;
-	@JsonProperty("residingFrom")
+	@XmlElement(name = "residingFrom")
 	private Timestamp custAddrFrom;
 	private String lovDescCustRecordType;
 	@XmlElement
 	private String lovDescCustCIF;
-	@JsonProperty("priority")
+	@XmlElement(name = "priority")
 	private int custAddrPriority;
 	@XmlElement
 	private String typeOfResidence;

@@ -2,41 +2,42 @@ package com.penanttech.pff.model.external.bre;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
+
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LoanElgLtvElement implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@JsonProperty("ALLOWED_HL_LOAN_AMOUNT")
+	@XmlElement(name = "ALLOWED_HL_LOAN_AMOUNT")
 	private String alwdHlLnAmt;
-	@JsonProperty("ALLOWED_TOPUP_LOAN_AMOUNT")
+	@XmlElement(name = "ALLOWED_TOPUP_LOAN_AMOUNT")
 	private String alwdTopUpLnAmt;
-	@JsonProperty("ALLOWED_TOTAL_LOAN_AMOUNT")
+	@XmlElement(name = "ALLOWED_TOTAL_LOAN_AMOUNT")
 	private String totallnAmt;
-	@JsonProperty("COLLATERAL_ID")
+	@XmlElement(name = "COLLATERAL_ID")
 	private String collateralId;
-	@JsonProperty("HL_LTV_ON_AV")
+	@XmlElement(name = "HL_LTV_ON_AV")
 	private String hlLtvOnAv;
-	@JsonProperty("HL_LTV_ON_DV")
+	@XmlElement(name = "HL_LTV_ON_DV")
 	private String hlLtvOnDv;
-	@JsonProperty("HL_LTV_ON_MV")
+	@XmlElement(name = "HL_LTV_ON_MV")
 	private String hlLtvOnMv;
-	@JsonProperty("INSURANCE_LTV_ON_MV")
+	@XmlElement(name = "INSURANCE_LTV_ON_MV")
 	private String insuranceLtvOnMv;
-	@JsonProperty("PERC_OF_AMENITIES_ON_AV")
+	@XmlElement(name = "PERC_OF_AMENITIES_ON_AV")
 	private String percOfAminitiesOnMv;
-	@JsonProperty("TOTAL_LOAN_LTV_ON_AV_GST")
+	@XmlElement(name = "TOTAL_LOAN_LTV_ON_AV_GST")
 	private String totalLnLtvOnAvGst;
-	@JsonProperty("TOTAL_LOAN_LTV_ON_AV")
+	@XmlElement(name = "TOTAL_LOAN_LTV_ON_AV")
 	private String totalLnLtvOnAv;
-	@JsonProperty("TOTAL_LOAN_LTV_ON_DV")
+	@XmlElement(name = "TOTAL_LOAN_LTV_ON_DV")
 	private String totalLnLtvOnDv;
-	@JsonProperty("TOTAL_LOAN_LTV_ON_mV")
+	@XmlElement(name = "TOTAL_LOAN_LTV_ON_mV")
 	private String totalLnLtvOnMv;
-	@JsonProperty("LTV_AS_PER_NHB_POLICY")
+	@XmlElement(name = "LTV_AS_PER_NHB_POLICY")
 	private String ltv_as_per_nhb_policy;
 
 	public LoanElgLtvElement() {

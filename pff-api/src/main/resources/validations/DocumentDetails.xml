@@ -60,10 +60,10 @@
 			</constraint>
 		</field>
 
-		<!-- <field name="docRefId"> <constraint annotation="jakarta.validation.constraints.Min"> <message>docRefId should be Positive</message> 
+		<!-- <field name="docRefId"> <constraint annotation="javax.validation.constraints.Min"> <message>docRefId should be Positive</message> 
 			<groups> <value>com.pennant.validation.CreateFinanceGroup</value> <value>com.pennant.validation.CreateFinancewithWIFGroup</value> 
 			<value>com.pennant.validation.SaveValidationGroup</value> <value>com.pennant.validation.UpdateValidationGroup</value> </groups> 
-			<element name="value">1</element> </constraint> <constraint annotation="jakarta.validation.constraints.DecimalMax"> <message>docRefId 
+			<element name="value">1</element> </constraint> <constraint annotation="javax.validation.constraints.DecimalMax"> <message>docRefId 
 			allow 19 digits only</message> <groups> <value>com.pennant.validation.CreateFinanceGroup</value> <value>com.pennant.validation.CreateFinancewithWIFGroup</value> 
 			<value>com.pennant.validation.SaveValidationGroup</value> <value>com.pennant.validation.UpdateValidationGroup</value> </groups> 
 			<element name="value">9999999999999999999</element> </constraint> </field> -->

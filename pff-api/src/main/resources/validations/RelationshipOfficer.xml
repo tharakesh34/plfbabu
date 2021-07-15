@@ -9,7 +9,7 @@
 	<bean class="com.pennant.backend.model.applicationmaster.RelationshipOfficer">
 
 		<field name="rOfficerCode">
-			<constraint annotation="jakarta.validation.constraints.NotNull">
+			<constraint annotation="javax.validation.constraints.NotNull">
 				<message>RelationshipOfficer code is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -18,7 +18,7 @@
 			</constraint>
 		</field>
 		<field name="rOfficerDesc">
-			<constraint annotation="jakarta.validation.constraints.NotNull">
+			<constraint annotation="javax.validation.constraints.NotNull">
 				<message>RelationshipOfficer description is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -27,7 +27,7 @@
 			</constraint>
 		</field>
 		<field name="rOfficerDeptCode">
-			<constraint annotation="jakarta.validation.constraints.NotNull">
+			<constraint annotation="javax.validation.constraints.NotNull">
 				<message>RelationshipOfficer dept code is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>

@@ -94,7 +94,7 @@ public class LogRequestInterceptor extends LoggingInInterceptor {
 						bos.flush();
 						message.setContent(InputStream.class, bos.getInputStream());
 
-						writePayload(buffer.getPayload(), bos, encoding, ct, false);
+						writePayload(buffer.getPayload(), bos, encoding, ct);
 
 					}
 				}

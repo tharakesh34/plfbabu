@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
 
-import jakarta.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "CustomerLimitSummaryReply")
 public class CustomerLimitPosition implements Serializable {
@@ -29,7 +29,7 @@ public class CustomerLimitPosition implements Serializable {
 		super();
 	}
 
-	@JsonProperty("ReferenceNum")
+	@XmlElement(name = "ReferenceNum")
 	public String getReferenceNum() {
 		return referenceNum;
 	}
@@ -38,7 +38,7 @@ public class CustomerLimitPosition implements Serializable {
 		this.referenceNum = referenceNum;
 	}
 
-	@JsonProperty("CustomerReference")
+	@XmlElement(name = "CustomerReference")
 	public String getCustomerReference() {
 		return customerReference;
 	}
@@ -47,7 +47,7 @@ public class CustomerLimitPosition implements Serializable {
 		this.customerReference = customerReference;
 	}
 
-	@JsonProperty("BranchCode")
+	@XmlElement(name = "BranchCode")
 	public String getBranchCode() {
 		return branchCode;
 	}
@@ -56,7 +56,7 @@ public class CustomerLimitPosition implements Serializable {
 		this.branchCode = branchCode;
 	}
 
-	@JsonProperty("TotalOutstanding")
+	@XmlElement(name = "TotalOutstanding")
 	public BigDecimal getTotalOutstanding() {
 		return totalOutstanding;
 	}
@@ -65,7 +65,7 @@ public class CustomerLimitPosition implements Serializable {
 		this.totalOutstanding = totalOutstanding;
 	}
 
-	@JsonProperty("CustRef")
+	@XmlElement(name = "CustRef")
 	public String getCustRef() {
 		return custRef;
 	}
@@ -74,7 +74,7 @@ public class CustomerLimitPosition implements Serializable {
 		this.custRef = custRef;
 	}
 
-	@JsonProperty("GroupRef")
+	@XmlElement(name = "GroupRef")
 	public String getGroupRef() {
 		return groupRef;
 	}
@@ -83,7 +83,7 @@ public class CustomerLimitPosition implements Serializable {
 		this.groupRef = groupRef;
 	}
 
-	@JsonProperty("ReturnCode")
+	@XmlElement(name = "ReturnCode")
 	public String getReturnCode() {
 		return returnCode;
 	}
@@ -92,7 +92,7 @@ public class CustomerLimitPosition implements Serializable {
 		this.returnCode = returnCode;
 	}
 
-	@JsonProperty("ReturnText")
+	@XmlElement(name = "ReturnText")
 	public String getReturnText() {
 		return returnText;
 	}
@@ -101,7 +101,7 @@ public class CustomerLimitPosition implements Serializable {
 		this.returnText = returnText;
 	}
 
-	@JsonProperty("TimeStamp")
+	@XmlElement(name = "TimeStamp")
 	public long getTimeStamp() {
 		return timeStamp;
 	}
@@ -110,7 +110,7 @@ public class CustomerLimitPosition implements Serializable {
 		this.timeStamp = timeStamp;
 	}
 
-	@JsonProperty("Limits")
+	@XmlElement(name = "Limits")
 	public List<CustomerLimitSummary> getLimitSummary() {
 		return limitSummary;
 	}
@@ -119,7 +119,7 @@ public class CustomerLimitPosition implements Serializable {
 		this.limitSummary = limitSummary;
 	}
 
-	@JsonProperty("LimitCurrency")
+	@XmlElement(name = "LimitCurrency")
 	public String getLimitCurrency() {
 		return limitCurrency;
 	}

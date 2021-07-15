@@ -26,7 +26,7 @@
 			</constraint>
 		</field>
 		<field name="postponeDays">
-			<constraint annotation="jakarta.validation.constraints.DecimalMax">
+			<constraint annotation="javax.validation.constraints.DecimalMax">
 				<message>postponeDays allow 3 digits only</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>

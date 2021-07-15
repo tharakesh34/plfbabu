@@ -1,11 +1,12 @@
 package com.pennant.backend.model.dedup.external;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import javax.xml.bind.annotation.XmlElement;
+
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+import org.codehaus.jackson.annotate.JsonPropertyOrder;
+import org.codehaus.jackson.annotate.JsonTypeInfo;
+import org.codehaus.jackson.annotate.JsonTypeInfo.As;
+import org.codehaus.jackson.annotate.JsonTypeInfo.Id;
 
 @JsonPropertyOrder({ "DEAL_ID", "ORG", "REQUEST_TYPE", "DATASOURCE", "FIRST_NAME", "MIDDLE_NAME", "LAST_NAME",
 		"ADDRESS_1", "ADDRESS_2", "ADDRESS_3", "AREA", "LANDMARK", "CITY", "PIN", "DOB", "LANDLINE_1", "LANDLINE_2",
@@ -20,136 +21,136 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 @JsonTypeInfo(include = As.WRAPPER_OBJECT, use = Id.NAME)
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class DedupeRequest {
-	@JsonProperty("DEAL_ID")
+	@XmlElement(name = "DEAL_ID")
 	private String dealId;
-	@JsonProperty("ORG")
+	@XmlElement(name = "ORG")
 	private String org;
-	@JsonProperty("REQUEST_TYPE")
+	@XmlElement(name = "REQUEST_TYPE")
 	private String requestType;
-	@JsonProperty("DATASOURCE")
+	@XmlElement(name = "DATASOURCE")
 	private String dataSource;
-	@JsonProperty("FIRST_NAME")
+	@XmlElement(name = "FIRST_NAME")
 	private String firstName;
-	@JsonProperty("MIDDLE_NAME")
+	@XmlElement(name = "MIDDLE_NAME")
 	private String middleName;
-	@JsonProperty("LAST_NAME")
+	@XmlElement(name = "LAST_NAME")
 	private String lastName;
-	@JsonProperty("ADDRESS_1")
+	@XmlElement(name = "ADDRESS_1")
 	private String address1;
-	@JsonProperty("ADDRESS_2")
+	@XmlElement(name = "ADDRESS_2")
 	private String address2;
-	@JsonProperty("ADDRESS_3")
+	@XmlElement(name = "ADDRESS_3")
 	private String address3;
-	@JsonProperty("AREA")
+	@XmlElement(name = "AREA")
 	private String area;
-	@JsonProperty("LANDMARK")
+	@XmlElement(name = "LANDMARK")
 	private String landMark;
-	@JsonProperty("CITY")
+	@XmlElement(name = "CITY")
 	private String city;
-	@JsonProperty("PIN")
+	@XmlElement(name = "PIN")
 	private String pinCode;
-	@JsonProperty("DOB")
+	@XmlElement(name = "DOB")
 	private String dateOfBirth;
-	@JsonProperty("LANDLINE_1")
+	@XmlElement(name = "LANDLINE_1")
 	private String landLine1;
-	@JsonProperty("LANDLINE_2")
+	@XmlElement(name = "LANDLINE_2")
 	private String landLine2;
-	@JsonProperty("MOBILE")
+	@XmlElement(name = "MOBILE")
 	private String mobile;
-	@JsonProperty("STD")
+	@XmlElement(name = "STD")
 	private String stdCode;
-	@JsonProperty("PAN")
+	@XmlElement(name = "PAN")
 	private String panNumber;
-	@JsonProperty("EMAIL")
+	@XmlElement(name = "EMAIL")
 	private String email;
-	@JsonProperty("ACCOUNT_NUMBER")
+	@XmlElement(name = "ACCOUNT_NUMBER")
 	private String accountNumber;
-	@JsonProperty("VOTER_ID")
+	@XmlElement(name = "VOTER_ID")
 	private String voterId;
-	@JsonProperty("CREDIT_CARD_NUMBER")
+	@XmlElement(name = "CREDIT_CARD_NUMBER")
 	private String creditCardNumber;
-	@JsonProperty("CUSTOMER_NO")
+	@XmlElement(name = "CUSTOMER_NO")
 	private Integer customerNumber;
-	@JsonProperty("LAN_NO")
+	@XmlElement(name = "LAN_NO")
 	private String lanNo;
-	@JsonProperty("LAN_2")
+	@XmlElement(name = "LAN_2")
 	private String lan2;
-	@JsonProperty("CUSTOMER_TYPE")
+	@XmlElement(name = "CUSTOMER_TYPE")
 	private String customerType;
-	@JsonProperty("TAN_NO")
+	@XmlElement(name = "TAN_NO")
 	private String tanNo;
-	@JsonProperty("CUST_SR_NO")
+	@XmlElement(name = "CUST_SR_NO")
 	private String customerSrNo;
-	@JsonProperty("APPLN_NO")
+	@XmlElement(name = "APPLN_NO")
 	private Integer applicationNo;
-	@JsonProperty("FATHER_NAME")
+	@XmlElement(name = "FATHER_NAME")
 	private String fatherName;
-	@JsonProperty("EMPOYER_NAME")
+	@XmlElement(name = "EMPOYER_NAME")
 	private String employerName;
-	@JsonProperty("DRIVING_LICENSE_NUMBER")
+	@XmlElement(name = "DRIVING_LICENSE_NUMBER")
 	private String drivingLicense;
-	@JsonProperty("PASSPORT_NO")
+	@XmlElement(name = "PASSPORT_NO")
 	private String passportNo;
-	@JsonProperty("ADDRESS1_OFFICE")
+	@XmlElement(name = "ADDRESS1_OFFICE")
 	private String officeAddress1;
-	@JsonProperty("ADDRESS2_OFFICE")
+	@XmlElement(name = "ADDRESS2_OFFICE")
 	private String officeAddress2;
-	@JsonProperty("ADDRESS3_OFFICE")
+	@XmlElement(name = "ADDRESS3_OFFICE")
 	private String officeAddress3;
-	@JsonProperty("AREA_OFFICE")
+	@XmlElement(name = "AREA_OFFICE")
 	private String officeArea;
-	@JsonProperty("CITY_OFFICE")
+	@XmlElement(name = "CITY_OFFICE")
 	private String officeCity;
-	@JsonProperty("PIN_OFFICE")
+	@XmlElement(name = "PIN_OFFICE")
 	private String officePinCode;
-	@JsonProperty("LANDLINE1_OFFICE")
+	@XmlElement(name = "LANDLINE1_OFFICE")
 	private String officeLanLine1;
-	@JsonProperty("LANDLINE2_OFFICE")
+	@XmlElement(name = "LANDLINE2_OFFICE")
 	private String officeLanLine2;
-	@JsonProperty("STD_OFFICE")
+	@XmlElement(name = "STD_OFFICE")
 	private String officeStdCode;
-	@JsonProperty("PRODUCT")
+	@XmlElement(name = "PRODUCT")
 	private String product;
-	@JsonProperty("BATCH")
+	@XmlElement(name = "BATCH")
 	private String batch;
-	@JsonProperty("STAYING_SINCE")
+	@XmlElement(name = "STAYING_SINCE")
 	private String stayingSince;
-	@JsonProperty("CITY_CLASSIFICATION")
+	@XmlElement(name = "CITY_CLASSIFICATION")
 	private String cityClassification;
-	@JsonProperty("EMPLOYMENT_BUSINESS")
+	@XmlElement(name = "EMPLOYMENT_BUSINESS")
 	private String employmentBusiness;
-	@JsonProperty("AGE")
+	@XmlElement(name = "AGE")
 	private String age;
-	@JsonProperty("RESIDENT_TYPE")
+	@XmlElement(name = "RESIDENT_TYPE")
 	private String residentType;
-	@JsonProperty("CREDIT_PROGRAM")
+	@XmlElement(name = "CREDIT_PROGRAM")
 	private String creditProgram;
-	@JsonProperty("ASSET_CATEGORY")
+	@XmlElement(name = "ASSET_CATEGORY")
 	private String assetCategory;
-	@JsonProperty("REQUEST_ID_FIN")
+	@XmlElement(name = "REQUEST_ID_FIN")
 	private String finRequestId;
-	@JsonProperty("MATCH_PROFILE")
+	@XmlElement(name = "MATCH_PROFILE")
 	private String matchProfile = "5";
-	@JsonProperty("SEGMENT")
+	@XmlElement(name = "SEGMENT")
 	private String segment;
-	@JsonProperty("APPLICANT_TYPE")
+	@XmlElement(name = "APPLICANT_TYPE")
 	private String applicatntType;
-	@JsonProperty("DATE_OF_INCORPORATION")
+	@XmlElement(name = "DATE_OF_INCORPORATION")
 	private String dateOfIncorporation;
-	@JsonProperty("LANDMARK_OFFICE")
+	@XmlElement(name = "LANDMARK_OFFICE")
 	private String officelandMark;
-	@JsonProperty("MOBILE_OFFICE")
+	@XmlElement(name = "MOBILE_OFFICE")
 	private String officeMobile;
-	@JsonProperty("EMAIL_OFFICE")
+	@XmlElement(name = "EMAIL_OFFICE")
 	private String officeMail;
-	@JsonProperty("LOAN_APP_NO")
+	@XmlElement(name = "LOAN_APP_NO")
 	private String loanApplicationNo;
-	@JsonProperty("CustomerStatusYN")
+	@XmlElement(name = "CustomerStatusYN")
 	private String customerStatus;
-	@JsonProperty("DemoDtlYN")
+	@XmlElement(name = "DemoDtlYN")
 	private String demoDtl;
 
-	@JsonProperty("AppscoreYN")
+	@XmlElement(name = "AppscoreYN")
 	private String appscore;
 
 	public String getDealId() {

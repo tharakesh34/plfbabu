@@ -3,21 +3,22 @@ package com.penanttech.pff.model.external.bre;
 import java.io.Serializable;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
 
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class LoanEligLtv implements Serializable{
+public class LoanEligLtv implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
-	@JsonProperty("element")
+
+	@XmlElement(name = "element")
 	private List<LoanElgLtvElement> loanElgLtvElement;
-	
+
 	@JsonCreator
-	public LoanEligLtv(){}
+	public LoanEligLtv() {
+	}
 
 	public List<LoanElgLtvElement> getLoanElgLtvElement() {
 		return loanElgLtvElement;

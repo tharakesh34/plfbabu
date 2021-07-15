@@ -37,7 +37,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.reason.details.ReasonDetails;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
@@ -45,12 +44,12 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>FinanceMain table</b>.<br>
@@ -99,7 +98,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private String profitDaysBasis;
 	private long custID;
-	@JsonProperty("cif")
+	@XmlElement(name = "cif")
 	private String lovDescCustCIF;
 	private String lovDescCustShrtName;
 	@XmlElement
@@ -140,10 +139,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Date initiateDate;
 	private boolean finIsAlwMD;
 	private long accountsOfficer;
-	@JsonProperty("accountsOfficer")
+	@XmlElement(name = "accountsOfficer")
 	private String accountsOfficerReference;
 	private String dsaCode;
-	@JsonProperty("dsaCode")
+	@XmlElement(name = "dsaCode")
 	private String dsaCodeReference;
 	private String dsaName;
 	private String dsaCodeDesc;
@@ -156,7 +155,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Date lovDescCustDOB;
 	private String lovDescRequestStage;
 	private String lovDescQueuePriority;
-	@JsonProperty("tdsApplicable")
+	@XmlElement(name = "tdsApplicable")
 	private boolean tDSApplicable;
 	@XmlElement
 	private String droplineFrq;
@@ -202,7 +201,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private String sourChannelCategory;
 	private Long asmName;
-	@JsonProperty("asmName")
+	@XmlElement(name = "asmName")
 	private String lovDescAsmName;
 
 	// Payment type check
@@ -257,7 +256,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	// ==========Grace Period Details=============
 	// ===========================================
 
-	@JsonProperty("grcTerms")
+	@XmlElement(name = "grcTerms")
 	private int graceTerms = 0;
 	@XmlElement
 	private Date grcPeriodEndDate;
@@ -265,9 +264,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String grcRateBasis;
 	@XmlElement
 	private BigDecimal grcPftRate = BigDecimal.ZERO;
-	@JsonProperty("grcBaseRate")
+	@XmlElement(name = "grcBaseRate")
 	private String graceBaseRate;
-	@JsonProperty("grcSpecialRate")
+	@XmlElement(name = "grcSpecialRate")
 	private String graceSpecialRate;
 	@XmlElement
 	private BigDecimal grcMargin = BigDecimal.ZERO;
@@ -310,7 +309,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal reqRepayAmount = BigDecimal.ZERO;
 	@XmlElement
 	private String repayRateBasis;
-	@JsonProperty("repayPftRate")
+	@XmlElement(name = "repayPftRate")
 	private BigDecimal repayProfitRate = BigDecimal.ZERO;
 	@XmlElement
 	private String repayBaseRate;
@@ -343,9 +342,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Date maturityDate;
 	@XmlElement
 	private boolean finRepayPftOnFrq;
-	@JsonProperty("repayMinRate")
+	@XmlElement(name = "repayMinRate")
 	private BigDecimal rpyMinRate = BigDecimal.ZERO;
-	@JsonProperty("repayMaxRate")
+	@XmlElement(name = "repayMaxRate")
 	private BigDecimal rpyMaxRate = BigDecimal.ZERO;
 
 	private boolean frqEditable = false;
@@ -361,11 +360,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	// ===========================================
 	// =========BPI Details ============
 	// ===========================================
-	@JsonProperty("alwBpiTreatment")
+	@XmlElement(name = "alwBpiTreatment")
 	private boolean alwBPI = false;
-	@JsonProperty("dftBpiTreatment")
+	@XmlElement(name = "dftBpiTreatment")
 	private String bpiTreatment;
-	@JsonProperty("bpiPftDaysBasis")
+	@XmlElement(name = "bpiPftDaysBasis")
 	private String bpiPftDaysBasis;
 
 	// ===========================================
@@ -604,7 +603,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String salesDepartment;
 	private String salesDepartmentDesc;
 	private String dmaCode;
-	@JsonProperty("dmaCode")
+	@XmlElement(name = "dmaCode")
 	private String dmaCodeReference;
 	private String dmaCodeDesc;
 	private String dmaName;
@@ -677,7 +676,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean depositProcess = false; // added for Cash Management
 
 	private long connector;
-	@JsonProperty("connector")
+	@XmlElement(name = "connector")
 	private String connectorReference;
 	private String connectorCode;
 	private String connectorDesc;
@@ -708,7 +707,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String grcAdvType;
 	private int grcAdvTerms;
 	private String advType;
-	@JsonProperty("advEMITerms")
+	@XmlElement(name = "advEMITerms")
 	private int advTerms;
 	private String advStage;
 
@@ -727,7 +726,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private int maxStrtPrdHdays;
 	private int strtPrdHdays;
 	private String strtprdCpzMethod;
-	@JsonProperty("hostReference")
+	@XmlElement(name = "hostReference")
 	private String oldFinReference;
 	@XmlElement
 	private String coreBankId;

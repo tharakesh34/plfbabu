@@ -8,7 +8,7 @@
 	<!-- StepPolicyDetails validations -->
 	<bean class="com.pennant.backend.model.finance.FinanceStepPolicyDetail" ignore-annotations="false">
 		<field name="stepNo">
-			<constraint annotation="jakarta.validation.constraints.Min">
+			<constraint annotation="javax.validation.constraints.Min">
 				<message>stepNumber should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -17,7 +17,7 @@
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.DecimalMax">
+			<constraint annotation="javax.validation.constraints.DecimalMax">
 				<message>stepNumber allow 3 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -29,7 +29,7 @@
 		</field>
 
 		<field name="rateMargin">
-			<constraint annotation="jakarta.validation.constraints.DecimalMax">
+			<constraint annotation="javax.validation.constraints.DecimalMax">
 				<message>rateMargin allow 4 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>

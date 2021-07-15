@@ -4,15 +4,14 @@ package com.pennanttech.pennapps.pff.verification.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class RCUDocument extends AbstractWorkflowEntity {
@@ -24,21 +23,21 @@ public class RCUDocument extends AbstractWorkflowEntity {
 	private Long documentId;
 	@XmlElement
 	private int documentType;
-	@JsonProperty("documentName")
+	@XmlElement(name = "documentName")
 	private String documentSubId;
 	private Long documentRefId;
 	private String documentUri;
 	private Long reinitid;
 	@XmlElement
 	private int verificationType;
-	@JsonProperty("rcuStatus")
+	@XmlElement(name = "rcuStatus")
 	private int status;
 	@XmlElement
 	private int pagesEyeballed;
 	@XmlElement
 	private int pagesSampled;
 	private String initRemarks;
-	@JsonProperty("remarks")
+	@XmlElement(name = "remarks")
 	private String agentRemarks;
 	private String decisionRemarks;
 	private boolean reInitiated;

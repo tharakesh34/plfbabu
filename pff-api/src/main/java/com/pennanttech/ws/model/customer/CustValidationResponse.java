@@ -4,21 +4,20 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(propOrder = { "cif", "customerName", "blocklimit", "expiryDate", "actualLimit", "customerPhoneNumber",
 		"returnStatus" })
 public class CustValidationResponse {
 
-	@JsonProperty("phone")
+	@XmlElement(name = "phone")
 	private List<CustomerPhoneNumber> customerPhoneNumber = null;
 	@XmlElement
 	private String cif;
@@ -35,7 +34,7 @@ public class CustValidationResponse {
 	@XmlElement
 	private Date expiryDate;
 
-	@JsonProperty("availableLimit")
+	@XmlElement(name = "availableLimit")
 	private BigDecimal actualLimit = BigDecimal.ZERO;
 
 	public WSReturnStatus getReturnStatus() {

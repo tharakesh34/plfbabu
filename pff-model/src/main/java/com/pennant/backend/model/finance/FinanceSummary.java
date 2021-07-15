@@ -47,13 +47,11 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "effectiveRateOfReturn", "totalGracePft", "totalGraceCpz", "totalGrossGrcPft", "totalCpz",
 		"totalProfit", "totalRepayAmt", "feeChargeAmt", "numberOfTerms", "loanTenor", "maturityDate", "firstDisbDate",
@@ -74,9 +72,9 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal totalPftSchd = BigDecimal.ZERO;
 	private BigDecimal principalSchd = BigDecimal.ZERO;
 	private BigDecimal profitSchd = BigDecimal.ZERO;
-	@JsonProperty("paidPft")
+	@XmlElement(name = "paidPft")
 	private BigDecimal schdPftPaid = BigDecimal.ZERO;
-	@JsonProperty("paidPri")
+	@XmlElement(name = "paidPri")
 	private BigDecimal schdPriPaid = BigDecimal.ZERO;
 	private BigDecimal totalDownPayment = BigDecimal.ZERO;
 	@XmlElement
@@ -106,16 +104,16 @@ public class FinanceSummary implements Serializable {
 	private Date finStartDate;
 	@XmlElement
 	private Date maturityDate;
-	@JsonProperty("finActiveStatus")
+	@XmlElement(name = "finActiveStatus")
 	private String finStatus;
 	private BigDecimal finRate = BigDecimal.ZERO;
-	@JsonProperty("lastRepayDate")
+	@XmlElement(name = "lastRepayDate")
 	private Date finLastRepayDate;
-	@JsonProperty("outstandingPri")
+	@XmlElement(name = "outstandingPri")
 	private BigDecimal outStandPrincipal = BigDecimal.ZERO;
-	@JsonProperty("outstandingPft")
+	@XmlElement(name = "outstandingPft")
 	private BigDecimal outStandProfit = BigDecimal.ZERO;
-	@JsonProperty("outstandingTotal")
+	@XmlElement(name = "outstandingTotal")
 	private BigDecimal totalOutStanding = BigDecimal.ZERO;
 
 	private BigDecimal principal = BigDecimal.ZERO;
@@ -130,15 +128,15 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal unPaidProfit = BigDecimal.ZERO;
 	private BigDecimal totalUnPaid = BigDecimal.ZERO;
 
-	@JsonProperty("overduePri")
+	@XmlElement(name = "overduePri")
 	private BigDecimal overDuePrincipal = BigDecimal.ZERO;
-	@JsonProperty("overduePft")
+	@XmlElement(name = "overduePft")
 	private BigDecimal overDueProfit = BigDecimal.ZERO;
-	@JsonProperty("overdueTotal")
+	@XmlElement(name = "overdueTotal")
 	private BigDecimal totalOverDue = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal overDueCharges = BigDecimal.ZERO;
-	@JsonProperty("overdueTotalIncludeCharges")
+	@XmlElement(name = "overdueTotalIncludeCharges")
 	private BigDecimal totalOverDueIncCharges = BigDecimal.ZERO;
 
 	private BigDecimal earnedPrincipal = BigDecimal.ZERO;
@@ -153,7 +151,7 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal payOffProfit = BigDecimal.ZERO;
 	private BigDecimal totalPayOff = BigDecimal.ZERO;
 
-	@JsonProperty("overdueInst")
+	@XmlElement(name = "overdueInst")
 	private long overDueInstlments;
 	private BigDecimal overDueInstlementPft = BigDecimal.ZERO;
 	private long paidInstlments;
@@ -187,7 +185,7 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal totalGrossGrcPft = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal totalProfit = BigDecimal.ZERO;
-	@JsonProperty("feeChargeAmount")
+	@XmlElement(name = "feeChargeAmount")
 	private BigDecimal feeChargeAmt = BigDecimal.ZERO;
 	@XmlElement
 	private int loanTenor;
@@ -210,15 +208,15 @@ public class FinanceSummary implements Serializable {
 	@XmlElement
 	private BigDecimal advPaymentAmount;
 	@XmlElementWrapper(name = "overdueCharges")
-	@JsonProperty("overdueCharge")
+	@XmlElement(name = "overdueCharge")
 	private List<FinODDetails> finODDetail;
 	@XmlElement
 	private boolean fullyDisb;
-	@JsonProperty("limitBalance")
+	@XmlElement(name = "limitBalance")
 	private BigDecimal sanctionAmt = BigDecimal.ZERO;
-	@JsonProperty("billedAmount")
+	@XmlElement(name = "billedAmount")
 	private BigDecimal utilizedAmt = BigDecimal.ZERO;
-	@JsonProperty("unbilledAmount")
+	@XmlElement(name = "unbilledAmount")
 	private BigDecimal availableAmt = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal dueCharges = BigDecimal.ZERO;

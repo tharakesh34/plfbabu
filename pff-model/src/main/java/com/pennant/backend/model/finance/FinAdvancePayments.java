@@ -50,14 +50,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>FinAdvancePayments table</b>.<br>
@@ -72,7 +71,7 @@ import jakarta.xml.bind.annotation.XmlType;
 public class FinAdvancePayments extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -6234931333270161797L;
-	@JsonProperty("disbInstId")
+	@XmlElement(name = "disbInstId")
 	private long paymentId = Long.MIN_VALUE;
 	@XmlElement
 	private String finReference;
@@ -80,30 +79,30 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 	private int disbSeq;
 	private String serviceReqNo;
 
-	@JsonProperty("disbParty")
+	@XmlElement(name = "disbParty")
 	private String paymentDetail;
 
-	@JsonProperty("disbAmount")
+	@XmlElement(name = "disbAmount")
 	private BigDecimal amtToBeReleased = BigDecimal.ZERO;
 
-	@JsonProperty("favourName")
+	@XmlElement(name = "favourName")
 	private String liabilityHoldName;
 
-	@JsonProperty("acHolderName")
+	@XmlElement(name = "acHolderName")
 	private String beneficiaryName;
 
-	@JsonProperty("accountNo")
+	@XmlElement(name = "accountNo")
 	private String beneficiaryAccNo;
 	private String reEnterBeneficiaryAccNo;
 	private String description;
 
-	@JsonProperty("disbType")
+	@XmlElement(name = "disbType")
 	private String paymentType;
 
-	@JsonProperty("chequeNo")
+	@XmlElement(name = "chequeNo")
 	private String llReferenceNo;
 
-	@JsonProperty("disbDate")
+	@XmlElement(name = "disbDate")
 	private Date llDate;
 	private BigDecimal custContribution = BigDecimal.ZERO;
 	private BigDecimal sellerContribution = BigDecimal.ZERO;
@@ -111,11 +110,11 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 	@XmlElement
 	private String remarks;
 
-	@JsonProperty("issueBank")
+	@XmlElement(name = "issueBank")
 	private String bankCode;
 	private String bankName;
 
-	@JsonProperty("bankCode")
+	@XmlElement(name = "bankCode")
 	private String branchBankCode;
 	@XmlElement
 	private String branchBankName;
@@ -125,7 +124,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 	private String branchDesc;
 	private String city;
 
-	@JsonProperty("ifsc")
+	@XmlElement(name = "ifsc")
 	private String iFSC;
 
 	@XmlElement
@@ -160,7 +159,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 	private String lovValue;
 	private FinAdvancePayments befImage;
 	private LoggedInUser userDetails;
-	@JsonProperty("partnerBankId")
+	@XmlElement(name = "partnerBankId")
 	private long partnerBankID;
 	@XmlElement
 	private String partnerbankCode;
@@ -213,11 +212,11 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 	@XmlElement
 	private Date toDate;
 
-	@JsonProperty("docName")
+	@XmlElement(name = "docName")
 	private String documentName;
-	@JsonProperty("docContent")
+	@XmlElement(name = "docContent")
 	private byte[] docImage;
-	@JsonProperty("docFormat")
+	@XmlElement(name = "docFormat")
 	private String docType;
 	@XmlElement
 	private String vasProductCode;

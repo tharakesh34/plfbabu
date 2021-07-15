@@ -52,7 +52,7 @@
 		</field>
 
 		<field name="llDate">
-			<constraint annotation="jakarta.validation.constraints.NotNull">
+			<constraint annotation="javax.validation.constraints.NotNull">
 				<message>disbDate is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
@@ -75,7 +75,7 @@
 			</constraint>
 		</field>
 		<field name="amtToBeReleased">
-			<constraint annotation="jakarta.validation.constraints.Min">
+			<constraint annotation="javax.validation.constraints.Min">
 				<message>disbAmount should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
@@ -85,7 +85,7 @@
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.DecimalMax">
+			<constraint annotation="javax.validation.constraints.DecimalMax">
 				<message>disbAmount allow 18 digits only</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
@@ -118,7 +118,7 @@
 				</groups>
 				<element name="max">100</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.Pattern">
+			<constraint annotation="javax.validation.constraints.Pattern">
 				<message>favourName invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and
 					must starts with [a-z A-Z].
 				</message>
@@ -229,7 +229,7 @@
 				</groups>
 				<element name="max">50</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.Pattern">
+			<constraint annotation="javax.validation.constraints.Pattern">
 				<message>accHolderName invalid. Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .]
 					and must starts with [a-z A-Z 0-9].
 				</message>

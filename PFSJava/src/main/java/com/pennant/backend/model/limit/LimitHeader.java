@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LimitHeader.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-03-2016    														*
- *                                                                  						*
- * Modified Date    :  31-03-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LimitHeader.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-03-2016 * * Modified Date :
+ * 31-03-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-03-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-03-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.model.limit;
@@ -52,17 +34,16 @@ import java.util.Set;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>LimitHeader table</b>.<br>
@@ -76,7 +57,7 @@ import jakarta.xml.bind.annotation.XmlType;
 public class LimitHeader extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
-	@JsonProperty("limitId")
+	@XmlElement(name = "limitId")
 	private long headerId = Long.MIN_VALUE;
 
 	private String ruleCode;
@@ -91,13 +72,13 @@ public class LimitHeader extends AbstractWorkflowEntity {
 	@XmlElement
 	private String responsibleBranchName;
 
-	@JsonProperty("ccy")
+	@XmlElement(name = "ccy")
 	private String limitCcy;
 
-	@JsonProperty("expiryDate")
+	@XmlElement(name = "expiryDate")
 	private Date limitExpiryDate;
 
-	@JsonProperty("reviewDate")
+	@XmlElement(name = "reviewDate")
 	private Date limitRvwDate;
 
 	@XmlElement
@@ -110,10 +91,10 @@ public class LimitHeader extends AbstractWorkflowEntity {
 
 	private String showLimitsIn;
 
-	@JsonProperty("structureCode")
+	@XmlElement(name = "structureCode")
 	private String limitStructureCode;
 
-	@JsonProperty("remarks")
+	@XmlElement(name = "remarks")
 	private String limitSetupRemarks;
 
 	private String custFName;
@@ -130,10 +111,10 @@ public class LimitHeader extends AbstractWorkflowEntity {
 	@XmlElement
 	private String structureName;
 
-	@JsonProperty("cif")
+	@XmlElement(name = "cif")
 	private String custCIF;
 
-	@JsonProperty("customerGroup")
+	@XmlElement(name = "customerGroup")
 	private String custGrpCode;
 
 	@XmlElement
@@ -151,7 +132,7 @@ public class LimitHeader extends AbstractWorkflowEntity {
 	private LimitHeader befImage;
 	private LoggedInUser userDetails;
 
-	@JsonProperty("limitDetail")
+	@XmlElement(name = "limitDetail")
 	private List<LimitDetails> customerLimitDetailsList = null;
 
 	@XmlElement

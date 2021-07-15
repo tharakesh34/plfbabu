@@ -155,6 +155,12 @@
 			<version>10.1.0-M1</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- TODO : Remove -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+			<version>2.12.3</version>
+		</dependency>
 
 		<!-- pennApps Framework -->
 		<dependency>

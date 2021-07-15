@@ -2,22 +2,22 @@ package com.pennant.backend.model.dedup.external;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class DedupeResponse {
-	@JsonProperty("RESPCODE")
+	@XmlElement(name = "RESPCODE")
 	private String responseCode;
-	@JsonProperty("customerStatusResponse")
+	@XmlElement(name = "customerStatusResponse")
 	private CustomerStatusResponse customerStatusResponse;
-	@JsonProperty("appscore")
+	@XmlElement(name = "appscore")
 	private Appscore appscore;
-	@JsonProperty("errorDescription")
+	@XmlElement(name = "errorDescription")
 	private ErrorDescription errorDescription;
-	@JsonProperty("demographicDetails")
+	@XmlElement(name = "demographicDetails")
 	private List<DemographicDetail> demographicDetails;
 
 	public String getResponseCode() {

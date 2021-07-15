@@ -1,13 +1,13 @@
 package com.pennanttech.pffws;
 
+import javax.jws.WebParam;
+import javax.jws.WebResult;
+import javax.jws.WebService;
+
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.finance.FinCovenantResponse;
-
-import jakarta.jws.WebParam;
-import jakarta.jws.WebResult;
-import jakarta.jws.WebService;
 
 @WebService
 public interface FinCovenantSoapService {

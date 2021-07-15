@@ -2,85 +2,85 @@ package com.pennant.backend.model.dedup.external;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class DemographicDetail {
-	@JsonProperty("MATCHED_ID")
+	@XmlElement(name = "MATCHED_ID")
 	private String matchedId;
-	@JsonProperty("MATCHED_PERCNTG")
+	@XmlElement(name = "MATCHED_PERCNTG")
 	private String matchedPercntg;
-	@JsonProperty("REJ_MATCHED_ID__c")
+	@XmlElement(name = "REJ_MATCHED_ID__c")
 	private String rejectionMatchid;
-	@JsonProperty("REJ_MATCHED_PRCNTG__c")
+	@XmlElement(name = "REJ_MATCHED_PRCNTG__c")
 	private String rejectionPercentage;
-	@JsonProperty("REJ_RESASON__c")
+	@XmlElement(name = "REJ_RESASON__c")
 	private String rejectReasion;
-	@JsonProperty("FRAUD_MATCHED_ID__c")
+	@XmlElement(name = "FRAUD_MATCHED_ID__c")
 	private String fraudmatchId;
-	@JsonProperty("FRAUD_MATCHED_PRCNTG__c")
+	@XmlElement(name = "FRAUD_MATCHED_PRCNTG__c")
 	private String fraudPercentage;
-	@JsonProperty("Dedupe_Source__c")
+	@XmlElement(name = "Dedupe_Source__c")
 	private String dedupeSource;
-	@JsonProperty("Source_Or_Target__c")
+	@XmlElement(name = "Source_Or_Target__c")
 	private String sourceOrTarget;
-	@JsonProperty("Loan_Application__c")
+	@XmlElement(name = "Loan_Application__c")
 	private String applicationNo;
-	@JsonProperty("Lead__c")
+	@XmlElement(name = "Lead__c")
 	private String lead;
-	@JsonProperty("Lead_Applicants__c")
+	@XmlElement(name = "Lead_Applicants__c")
 	private String leadApplicants;
-	@JsonProperty("TERR_MATCHED_ID__c")
+	@XmlElement(name = "TERR_MATCHED_ID__c")
 	private String terrMatchedId;
-	@JsonProperty("Customer_Status__c")
+	@XmlElement(name = "Customer_Status__c")
 	private String customerStatus;
-	@JsonProperty("LAN__c")
+	@XmlElement(name = "LAN__c")
 	private String customerLan;
-	@JsonProperty("Product__c")
+	@XmlElement(name = "Product__c")
 	private String loanProduct;
-	@JsonProperty("Loan_Status__c")
+	@XmlElement(name = "Loan_Status__c")
 	private String loanStatus;
-	@JsonProperty("FDD__c")
+	@XmlElement(name = "FDD__c")
 	private String firstDueDate;
-	@JsonProperty("Current_Bucket1__c")
+	@XmlElement(name = "Current_Bucket1__c")
 	private String currentBucket;
-	@JsonProperty("Balance_Amount__c")
+	@XmlElement(name = "Balance_Amount__c")
 	private String loanBalanceAmount;
-	@JsonProperty("EMI_Amount__c")
+	@XmlElement(name = "EMI_Amount__c")
 	private String EMIAmount;
-	@JsonProperty("Bank_Account_No__c")
+	@XmlElement(name = "Bank_Account_No__c")
 	private String repayBankAccount;
-	@JsonProperty("DPD_String__c")
+	@XmlElement(name = "DPD_String__c")
 	private String loanDPDString;
-	@JsonProperty("Tenure__c")
+	@XmlElement(name = "Tenure__c")
 	private String tenure;
-	@JsonProperty("Month_On_Book__c")
+	@XmlElement(name = "Month_On_Book__c")
 	private String disbursementDate;
-	@JsonProperty("Loan_Amount__c")
+	@XmlElement(name = "Loan_Amount__c")
 	private String loanAmount;
 
-	@JsonProperty("custDGDetails")
+	@XmlElement(name = "custDGDetails")
 	private List<CustDGDetail> custDGDetails;
 
-	@JsonProperty("custAddressDetails")
+	@XmlElement(name = "custAddressDetails")
 	List<CustAddressDetail> custAddressDetails;
 
-	@JsonProperty("custEmailDetails")
+	@XmlElement(name = "custEmailDetails")
 	List<CustEmailDetail> custEmailDetails;
 
-	@JsonProperty("custContactDetails")
+	@XmlElement(name = "custContactDetails")
 	List<CustContactDetail> custContactDetails;
 
-	@JsonProperty("custLoanDetails")
+	@XmlElement(name = "custLoanDetails")
 	List<CustLoanDetail> custLoanDetails;
 
-	@JsonProperty("reportDetails")
+	@XmlElement(name = "reportDetails")
 	ReportDetail reportDetails;
 
-	@JsonProperty("matchedDetails")
+	@XmlElement(name = "matchedDetails")
 	List<MatchedDetails> matchedDetails;
 
 	public String getRejectionMatchid() {

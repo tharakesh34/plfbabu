@@ -14,8 +14,8 @@
  ******************************************************************************************** 
  * FILE HEADER *
  ******************************************************************************************** 
- * * FileName : FinanceFlag.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
- * Modified Date : 12-11-2011 * * Description : * *
+ * * FileName : FinanceFlag.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * * Modified Date :
+ * 12-11-2011 * * Description : * *
  ******************************************************************************************** 
  * Date Author Version Comments *
  ******************************************************************************************** 
@@ -33,17 +33,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>FinCollaterals table</b>.<br>
@@ -81,7 +80,7 @@ public class FinanceFlag extends AbstractWorkflowEntity {
 
 	private boolean scheduleChange;
 	@XmlElementWrapper(name = "flags")
-	@JsonProperty("flag")
+	@XmlElement(name = "flag")
 	private List<FinFlagsDetail> finFlagDetailList = new ArrayList<FinFlagsDetail>();
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	@XmlElement

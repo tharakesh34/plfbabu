@@ -1,15 +1,15 @@
 package com.pennant.backend.model.dedup.external;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class MatchedDetails {
-	@JsonProperty("matchedId")
+	@XmlElement(name = "matchedId")
 	private String matchedId;
-	@JsonProperty("matchType")
+	@XmlElement(name = "matchType")
 	private String matchType;
 
 	public String getMatchType() {

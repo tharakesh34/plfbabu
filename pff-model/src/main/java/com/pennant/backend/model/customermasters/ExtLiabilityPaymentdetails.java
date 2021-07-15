@@ -6,7 +6,7 @@ import java.util.Set;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElement;
 
 public class ExtLiabilityPaymentdetails extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;

@@ -4,12 +4,10 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "applyODPenalty", "oDIncGrcDays", "oDGraceDays", "oDChargeType", "oDChargeCalOn",
 		"oDChargeAmtOrPerc", "oDAllowWaiver", "oDMaxWaiverPerc" })
@@ -21,19 +19,19 @@ public class FinODPenaltyRate implements Serializable {
 	private Date finEffectDate;
 	@XmlElement
 	private boolean applyODPenalty;
-	@JsonProperty("odIncGrcDays")
+	@XmlElement(name = "odIncGrcDays")
 	private boolean oDIncGrcDays;
-	@JsonProperty("odChargeType")
+	@XmlElement(name = "odChargeType")
 	private String oDChargeType;
-	@JsonProperty("odGraceDays")
+	@XmlElement(name = "odGraceDays")
 	private int oDGraceDays;
-	@JsonProperty("odChargeCalOn")
+	@XmlElement(name = "odChargeCalOn")
 	private String oDChargeCalOn;
-	@JsonProperty("odChargeAmtOrPerc")
+	@XmlElement(name = "odChargeAmtOrPerc")
 	private BigDecimal oDChargeAmtOrPerc = BigDecimal.ZERO;
-	@JsonProperty("odAllowWaiver")
+	@XmlElement(name = "odAllowWaiver")
 	private boolean oDAllowWaiver;
-	@JsonProperty("odMaxWaiverPerc")
+	@XmlElement(name = "odMaxWaiverPerc")
 	private BigDecimal oDMaxWaiverPerc = BigDecimal.ZERO;
 	private BigDecimal oDMinCapAmount = BigDecimal.ZERO;
 	private long logKey = 0;

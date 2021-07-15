@@ -1,13 +1,12 @@
 package com.pennanttech.ws.model.customer;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(propOrder = { "cif", "externalLiability", "liabilitySeq", "returnStatus" })
@@ -16,7 +15,7 @@ public class CustomerExtLiabilityDetail {
 	@XmlElement
 	private String cif;
 
-	@JsonProperty("customerExtLiability")
+	@XmlElement(name = "customerExtLiability")
 	private CustomerExtLiability externalLiability;
 
 	@XmlElement

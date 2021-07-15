@@ -46,15 +46,14 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>FinTypePartnerBank table</b>.<br>
@@ -71,7 +70,7 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity implements Entity
 	private String purpose;
 	@XmlElement
 	private String paymentMode;
-	@JsonProperty("partnerBankId")
+	@XmlElement(name = "partnerBankId")
 	private long partnerBankID;
 	private String partnerBankCode;
 	private String partnerBankName;

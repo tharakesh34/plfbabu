@@ -29,16 +29,15 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlTransient;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>LegalDocument table</b>.<br>
@@ -56,19 +55,19 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 	private int seqNum = 0;
 	private byte[] docImage;
 	private Long documentReference = Long.MIN_VALUE;
-	@JsonProperty("docDate")
+	@XmlElement(name = "docDate")
 	private Date documentDate;
-	@JsonProperty("docDetail")
+	@XmlElement(name = "docDetail")
 	private String documentDetail;
 	private String documentName;
-	@JsonProperty("docNo")
+	@XmlElement(name = "docNo")
 	private String documentNo;
 	private String uploadDocumentType;
 	@XmlElement
 	private String surveyNo;
-	@JsonProperty("docType")
+	@XmlElement(name = "docType")
 	private String documentType;
-	@JsonProperty("docCategory")
+	@XmlElement(name = "docCategory")
 	private String documentCategory;
 	@XmlElement
 	private String scheduleType;
@@ -91,13 +90,13 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 	private String documentTypeApproveName;
 
 	// --- Document Tracking fields -----//
-	@JsonProperty("docHolder")
+	@XmlElement(name = "docHolder")
 	private String documentHolderProperty;
-	@JsonProperty("docPropertyAddrs")
+	@XmlElement(name = "docPropertyAddrs")
 	private String documentPropertyAddress;
-	@JsonProperty("docBriefTracking")
+	@XmlElement(name = "docBriefTracking")
 	private String documentBriefTracking;
-	@JsonProperty("docMortage")
+	@XmlElement(name = "docMortage")
 	private boolean documentMortgage = false;
 	private String finReference;
 	private Long custId;

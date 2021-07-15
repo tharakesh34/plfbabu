@@ -15,6 +15,7 @@ import java.util.StringTokenizer;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
@@ -56,8 +57,6 @@ import com.pennanttech.ws.auth.model.UserAuthentication;
 import com.pennanttech.ws.auth.service.ServerAuthService;
 import com.pennanttech.ws.auth.service.UserAuthService;
 import com.pennanttech.ws.log.model.APILogDetail;
-
-import jakarta.xml.ws.WebServiceException;
 
 /**
  * This is REST services interceptor to read all the HTTP headers and set the details in the APIHeader bean object. The

@@ -107,7 +107,7 @@
 				</groups>
 				<element name="max">8</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.Pattern">
+			<constraint annotation="javax.validation.constraints.Pattern">
 				<message>poBox is invalid. Allowed Characters are [0-9].</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -148,7 +148,7 @@
 				</groups>
 				<element name="max">50</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.Pattern">
+			<constraint annotation="javax.validation.constraints.Pattern">
 				<message>pinCode is invalid. Allowed Characters are [0-9].</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -158,7 +158,7 @@
 			</constraint>
 		</field>
 		<field name="custAddrPriority">
-			<constraint annotation="jakarta.validation.constraints.DecimalMin">
+			<constraint annotation="javax.validation.constraints.DecimalMin">
 				<message>priority should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -166,7 +166,7 @@
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.DecimalMax">
+			<constraint annotation="javax.validation.constraints.DecimalMax">
 				<message>custEMailPriority allow 3 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -177,7 +177,7 @@
 		</field>
 
 		<field name="pinCodeId">
-			<constraint annotation="jakarta.validation.constraints.Max">
+			<constraint annotation="javax.validation.constraints.Max">
 				<message>PinCodeId allow 19 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>

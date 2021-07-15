@@ -43,7 +43,7 @@
 			</constraint>
 		</field>
 		<field name="guranteePercentage">
-			<constraint annotation="jakarta.validation.constraints.Min">
+			<constraint annotation="javax.validation.constraints.Min">
 				<message>guranteePercentage should be greater than ZERO</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
@@ -51,7 +51,7 @@
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.DecimalMax">
+			<constraint annotation="javax.validation.constraints.DecimalMax">
 				<message>guranteePercentage allow 3 digits only</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
@@ -70,7 +70,7 @@
 				</groups>
 				<element name="max">100</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.Pattern">
+			<constraint annotation="javax.validation.constraints.Pattern">
 				<message>Name invalid. Allowed Characters are [a-z A-Z 0-9 Space and
 					special characters are &amp; ( ) - .] and must
 					starts with [a-z
@@ -170,7 +170,7 @@
 				</groups>
 				<element name="max">8</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.Pattern">
+			<constraint annotation="javax.validation.constraints.Pattern">
 				<message>poBox is invalid. Allowed Characters are [0-9].</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
@@ -226,7 +226,7 @@
 				</groups>
 				<element name="min">3</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.Pattern">
+			<constraint annotation="javax.validation.constraints.Pattern">
 				<message>addrZIP is invalid. Allowed Characters are [0-9].</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>

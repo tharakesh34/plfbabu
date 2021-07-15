@@ -2,16 +2,15 @@ package com.pennant.backend.model.customermasters;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "customer", "customerDedupList", "addressList", "customerPhoneNumList", "customerEMailList",
 		"returnStatus" })
@@ -27,7 +26,7 @@ public class ProspectCustomerDetails extends AbstractWorkflowEntity implements E
 	private String custCtgCode;
 
 	@XmlElementWrapper(name = "dedups")
-	@JsonProperty("dedup")
+	@XmlElement(name = "dedup")
 	private List<CustomerDedup> customerDedupList;
 
 	@XmlElement

@@ -7,21 +7,21 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 import org.json.JSONObject;
 import org.springframework.http.MediaType;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -30,9 +30,6 @@ import com.pennanttech.pff.model.PMAYDetailsRespData;
 import com.pennanttech.pff.model.PMAYRequest;
 import com.pennanttech.pff.model.PMAYResponse;
 import com.pennanttech.pff.model.PmayDetails;
-
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.Unmarshaller;
 
 public class PmayDetailsService {
 	private static final Logger logger = LogManager.getLogger(PmayDetailsService.class);
@@ -127,15 +124,14 @@ public class PmayDetailsService {
 
 		ObjectMapper mapper = new ObjectMapper();
 
-		mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
-		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		mapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector(TypeFactory.defaultInstance()));
-		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-		mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-
+		mapper.configure(SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY, false);
+		mapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
 		DateFormat dateFormat = new SimpleDateFormat(PennantConstants.APIDateFormatter);
 		dateFormat.setLenient(false);
 		mapper.setDateFormat(dateFormat);
+		mapper.setSerializationInclusion(Inclusion.NON_NULL);
+		mapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector());
+		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 		try {
 			return mapper.writeValueAsString(requestData);

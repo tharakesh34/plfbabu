@@ -10,7 +10,7 @@ import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlTransient;
 
 public class AssignmentRate extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;

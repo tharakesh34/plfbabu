@@ -28,14 +28,14 @@
 			</constraint>
 		</field>
 		<field name="liabilitySeq">
-			<constraint annotation="jakarta.validation.constraints.Min">
+			<constraint annotation="javax.validation.constraints.Min">
 				<message>liabilitySeq should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.DeleteValidationGroup</value>
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.DecimalMax">
+			<constraint annotation="javax.validation.constraints.DecimalMax">
 				<message>liabilitySeq allow 3 digits only</message>
 				<groups>
 					<value>com.pennant.validation.DeleteValidationGroup</value>

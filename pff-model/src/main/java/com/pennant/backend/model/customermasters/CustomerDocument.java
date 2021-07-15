@@ -47,14 +47,13 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>CustomerDocument table</b>.<br>
@@ -69,16 +68,16 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private Long custID = Long.MIN_VALUE;
 	@XmlElement
 	private String lovDescCustShrtName;
-	@JsonProperty("docFormat")
+	@XmlElement(name = "docFormat")
 	private String custDocType;
-	@JsonProperty("docName")
+	@XmlElement(name = "docName")
 	private String custDocName;
-	@JsonProperty("docCategory")
+	@XmlElement(name = "docCategory")
 	private String custDocCategory;
 	private String lovDescCustDocCategory;
 	@XmlElement
 	private String custDocTitle;
-	@JsonProperty("custDocIssuedAuth")
+	@XmlElement(name = "custDocIssuedAuth")
 	private String custDocSysName;
 	private Timestamp custDocRcvdOn;
 	@XmlElement
@@ -91,13 +90,13 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private String docPurpose;
 	@XmlElement
 	private String remarks;
-	@JsonProperty("docRefId")
+	@XmlElement(name = "docRefId")
 	private String docUri;
 	private String lovDescCustDocIssuedCountry;
 	private boolean custDocIsVerified;
 	private long custDocVerifiedBy;
 	private boolean custDocIsAcrive;
-	@JsonProperty("docContent")
+	@XmlElement(name = "docContent")
 	private byte[] custDocImage;
 	private Long docRefId = Long.MIN_VALUE;
 	private boolean newRecord = false;
@@ -116,7 +115,7 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private boolean docIsPdfExtRequired = false;;
 	private boolean docIsPasswordProtected = false;;
 	private Long pdfMappingRef;
-	@JsonProperty("docPassword")
+	@XmlElement(name = "docPassword")
 	private String pdfPassWord;
 	private String year;
 	private String sourceId;

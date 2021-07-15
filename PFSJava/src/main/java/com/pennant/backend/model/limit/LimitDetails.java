@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LimitDetail.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-03-2016    														*
- *                                                                  						*
- * Modified Date    :  31-03-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LimitDetail.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-03-2016 * * Modified Date :
+ * 31-03-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-03-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-03-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -52,16 +34,15 @@ import java.util.Set;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlTransient;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>LimitDetail table</b>.<br>
@@ -75,11 +56,11 @@ public class LimitDetails implements java.io.Serializable, Entity {
 
 	private static final long serialVersionUID = 1L;
 
-	@JsonProperty("limitDetailId")
+	@XmlElement(name = "limitDetailId")
 	private long detailId = Long.MIN_VALUE;
 	private long limitHeaderId;
 	private String limitGroup;
-	@JsonProperty("structureDetailId")
+	@XmlElement(name = "structureDetailId")
 	private long limitStructureDetailsID;
 
 	@XmlElement
@@ -93,7 +74,7 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	@XmlElement
 	private BigDecimal reservedLimit = BigDecimal.ZERO;
 
-	@JsonProperty("availableLimit")
+	@XmlElement(name = "availableLimit")
 	private BigDecimal actualLimit = BigDecimal.ZERO;
 
 	private BigDecimal reservedexposure = BigDecimal.ZERO;
@@ -135,7 +116,7 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	private int orderSeq;
 	private int itemPriority;
 
-	@JsonProperty("structureDetail")
+	@XmlElement(name = "structureDetail")
 	private LimitStructureDetail limitStructureDetails;
 
 	@XmlTransient
@@ -180,10 +161,10 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	@XmlTransient
 	private long workflowId = 0;
 
-	//API Purpose
-	@JsonProperty("actualexposure")
+	// API Purpose
+	@XmlElement(name = "actualexposure")
 	private BigDecimal limitActualexposure = BigDecimal.ZERO;
-	@JsonProperty("reservedexposure")
+	@XmlElement(name = "reservedexposure")
 	private BigDecimal limitReservedexposure = BigDecimal.ZERO;
 
 	private boolean validateMaturityDate;

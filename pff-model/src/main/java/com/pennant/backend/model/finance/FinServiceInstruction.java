@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.extendedfield.ExtendedField;
@@ -16,10 +15,10 @@ import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinServiceInstruction extends AbstractWorkflowEntity implements Entity {
@@ -53,13 +52,13 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	private String splRate;
 	@XmlElement
 	private BigDecimal margin = BigDecimal.ZERO;
-	@JsonProperty("reCalType")
+	@XmlElement(name = "reCalType")
 	private String recalType;
-	@JsonProperty("reCalFromDate")
+	@XmlElement(name = "reCalFromDate")
 	private Date recalFromDate;
-	@JsonProperty("reCalToDate")
+	@XmlElement(name = "reCalToDate")
 	private Date recalToDate;
-	@JsonProperty("stpProcess")
+	@XmlElement(name = "stpProcess")
 	private boolean nonStp = true;
 	@XmlElement
 	private String processStage;
@@ -74,10 +73,10 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	private String schdMethod;
 	@XmlElement
 	private String allocationType;
-	@JsonProperty("fundingAccount")
+	@XmlElement(name = "fundingAccount")
 	private long fundingAc = 0;
 	@XmlElementWrapper(name = "allocationDetails")
-	@JsonProperty("allocationDetail")
+	@XmlElement(name = "allocationDetail")
 	private List<UploadAlloctionDetail> uploadAllocationDetails;
 	@XmlElement
 	private String receiptPurpose;
@@ -161,12 +160,12 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	@XmlElement
 	private FinReceiptDetail receiptDetail;
 	@XmlElementWrapper(name = "disbursements")
-	@JsonProperty("disbursement")
+	@XmlElement(name = "disbursement")
 	private List<FinAdvancePayments> disbursementDetails;
 	@XmlElementWrapper(name = "fees")
-	@JsonProperty("fee")
+	@XmlElement(name = "fee")
 	private List<FinFeeDetail> finFeeDetails = new ArrayList<>();
-	@JsonProperty("overdue")
+	@XmlElement(name = "overdue")
 	private FinODPenaltyRate finODPenaltyRate;
 	private String moduleDefiner;
 	private boolean newRecord;
@@ -215,7 +214,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 		this.restructuringType = restructuringType;
 	}
 
-	@JsonProperty("depositAccount")
+	@XmlElement(name = "depositAccount")
 	private String depositAcc;
 
 	// ### 16-08-2018 Ticket ID : 124998,receipt upload
@@ -252,7 +251,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 		this.appDate = appDate;
 	}
 
-	@JsonProperty("isUpload")
+	@XmlElement(name = "isUpload")
 	private boolean isReceiptUpload;
 
 	private FinServiceInstruction validateChangeRepayment = this;
@@ -289,7 +288,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	private long checker = Long.MIN_VALUE;;
 
 	@XmlElementWrapper(name = "extendedDetails")
-	@JsonProperty("extendedDetail")
+	@XmlElement(name = "extendedDetail")
 	private List<ExtendedField> extendedDetails;
 
 	private LoggedInUser loggedInUser;
@@ -468,7 +467,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	}
 
 	private long custID;
-	@JsonProperty("cif")
+	@XmlElement(name = "cif")
 	private String custCIF;
 	@XmlElement
 	private BigDecimal tdsAmount = BigDecimal.ZERO;

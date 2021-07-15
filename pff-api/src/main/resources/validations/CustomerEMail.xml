@@ -46,9 +46,9 @@
 		</field>
 
 
-		<!-- <field name="custEMailPriority"> <constraint annotation="jakarta.validation.constraints.DecimalMin"> <message>custEMailPriority 
+		<!-- <field name="custEMailPriority"> <constraint annotation="javax.validation.constraints.DecimalMin"> <message>custEMailPriority 
 			should be Positive</message> <groups> <value>com.pennant.validation.SaveValidationGroup</value> <value>com.pennant.validation.UpdateValidationGroup</value> 
-			</groups> <element name="value">1</element> </constraint> <constraint annotation="jakarta.validation.constraints.DecimalMax"> 
+			</groups> <element name="value">1</element> </constraint> <constraint annotation="javax.validation.constraints.DecimalMax"> 
 			<message>custEMailPriority allow 3 digits only</message> <groups> <value>com.pennant.validation.SaveValidationGroup</value> 
 			<value>com.pennant.validation.UpdateValidationGroup</value> </groups> <element name="value">999</element> </constraint> </field> -->
 

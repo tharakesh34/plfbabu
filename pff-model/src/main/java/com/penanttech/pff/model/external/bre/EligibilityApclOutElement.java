@@ -2,33 +2,34 @@ package com.penanttech.pff.model.external.bre;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
 
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EligibilityApclOutElement implements Serializable{
+public class EligibilityApclOutElement implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
-	@JsonProperty("CORE_INC_SALARIED")
+
+	@XmlElement(name = "CORE_INC_SALARIED")
 	private String coreIncSalaried;
-	
-	@JsonProperty("ELIGIBLE_INCOME")
+
+	@XmlElement(name = "ELIGIBLE_INCOME")
 	private String eligibleIncome;
-	
-	@JsonProperty("FOIR_NORM")
+
+	@XmlElement(name = "FOIR_NORM")
 	private String foirNorm;
-	
-	@JsonProperty("INCOME_METHOD")
+
+	@XmlElement(name = "INCOME_METHOD")
 	private String incomeMethod;
-	
-	@JsonProperty("LOAN_ELIGIBILITY")
+
+	@XmlElement(name = "LOAN_ELIGIBILITY")
 	private String loanEligibility;
-	
+
 	@JsonCreator
-	public EligibilityApclOutElement(){}
+	public EligibilityApclOutElement() {
+	}
 
 	public String getCoreIncSalaried() {
 		return coreIncSalaried;

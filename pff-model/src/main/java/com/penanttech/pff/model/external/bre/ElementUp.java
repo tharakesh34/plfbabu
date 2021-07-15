@@ -1,12 +1,13 @@
 package com.penanttech.pff.model.external.bre;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
+
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ElementUp {
 
-	@JsonProperty("element")
+	@XmlElement(name = "element")
 	private Element element;
 
 	public Element getElement() {

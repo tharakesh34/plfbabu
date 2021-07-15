@@ -2,8 +2,9 @@ package com.penanttech.pff.model.external.bre;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
+
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DAXMLDocument implements Serializable {
@@ -14,7 +15,7 @@ public class DAXMLDocument implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 
-	@JsonProperty("OCONTROL")
+	@XmlElement(name = "OCONTROL")
 	OControl oControl;
 
 	public OControl getoControl() {

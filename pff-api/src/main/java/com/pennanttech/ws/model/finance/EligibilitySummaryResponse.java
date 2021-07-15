@@ -7,9 +7,9 @@ import java.util.List;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.ws.model.miscellaneous.CheckListResponse;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EligibilitySummaryResponse implements Serializable {

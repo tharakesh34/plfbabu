@@ -13,7 +13,7 @@
 					<value>com.pennant.validation.PersionalInfoGroup</value>
 				</groups>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.Null">
+			<constraint annotation="javax.validation.constraints.Null">
 				<message>Invalid Data for cif </message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -57,7 +57,7 @@
 				</groups>
 				<element name="max">8</element>
 			</constraint>
-			<!-- <constraint annotation="jakarta.validation.constraints.Null"> <message>Invalid Data for categoryCode </message> <groups> 
+			<!-- <constraint annotation="javax.validation.constraints.Null"> <message>Invalid Data for categoryCode </message> <groups> 
 				<value>com.pennant.validation.UpdateValidationGroup</value> </groups> </constraint> -->
 
 		</field>

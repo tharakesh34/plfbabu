@@ -1,38 +1,38 @@
 package com.penanttech.pff.model.external.bre;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
+
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OControl {
 
-
 	private static final long serialVersionUID = 1L;
-	@JsonProperty("ALIAS")
+	@XmlElement(name = "ALIAS")
 	private String alias;
-	@JsonProperty("SIGNATURE")
+	@XmlElement(name = "SIGNATURE")
 	private String signature;
-	@JsonProperty("DALOGLEVEL")
+	@XmlElement(name = "DALOGLEVEL")
 	private String daloglevel;
-	@JsonProperty("EDITION")
+	@XmlElement(name = "EDITION")
 	private String edition;
-	@JsonProperty("OBJECTIVE")
+	@XmlElement(name = "OBJECTIVE")
 	private String objective;
-	@JsonProperty("EDITIONDATE")
+	@XmlElement(name = "EDITIONDATE")
 	private String editiondate;
-	@JsonProperty("ERRORCODE")
+	@XmlElement(name = "ERRORCODE")
 	private String errorcode;
-	@JsonProperty("ERRORMSG")
+	@XmlElement(name = "ERRORMSG")
 	private String errormsg;
-	@JsonProperty("APPLICATION_ID")
+	@XmlElement(name = "APPLICATION_ID")
 	private String application_id;
 
 	@JsonCreator
 	public OControl() {
 	}
 
-	// Getter Methods 
+	// Getter Methods
 	public String getAlias() {
 		return alias;
 	}
@@ -69,7 +69,7 @@ public class OControl {
 		return application_id;
 	}
 
-	// Setter Methods 
+	// Setter Methods
 	public void setAlias(String alias) {
 		this.alias = alias;
 	}
@@ -105,6 +105,5 @@ public class OControl {
 	public void setApplication_id(String application_id) {
 		this.application_id = application_id;
 	}
-
 
 }

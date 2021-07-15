@@ -2,16 +2,15 @@ package com.pennanttech.ws.model.mandate;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.mandate.Mandate;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "mandateList", "oldMandateId", "newMandateId", "finReference", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
@@ -19,7 +18,7 @@ import jakarta.xml.bind.annotation.XmlType;
 public class MandateDetial {
 
 	@XmlElementWrapper(name = "mandates")
-	@JsonProperty("mandate")
+	@XmlElement(name = "mandate")
 	private List<Mandate> mandateList;
 
 	@XmlElement

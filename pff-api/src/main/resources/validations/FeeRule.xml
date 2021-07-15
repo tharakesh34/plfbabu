@@ -31,7 +31,7 @@
 
 
 		<field name="feeAmount">
-			<constraint annotation="jakarta.validation.constraints.Min">
+			<constraint annotation="javax.validation.constraints.Min">
 				<message>feeAmount should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.AddRateChangeGroup</value>
@@ -41,7 +41,7 @@
 				</groups>
 				<element name="value">0</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.DecimalMax">
+			<constraint annotation="javax.validation.constraints.DecimalMax">
 				<message>feeAmount allow 18 digits only</message>
 				<groups>
 					<value>com.pennant.validation.AddRateChangeGroup</value>
@@ -53,7 +53,7 @@
 			</constraint>
 		</field>
 		<field name="waiverAmount">
-			<constraint annotation="jakarta.validation.constraints.Min">
+			<constraint annotation="javax.validation.constraints.Min">
 				<message>waiverAmount should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.AddRateChangeGroup</value>
@@ -63,7 +63,7 @@
 				</groups>
 				<element name="value">0</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.DecimalMax">
+			<constraint annotation="javax.validation.constraints.DecimalMax">
 				<message>waiverAmount allow 18 digits only</message>
 				<groups>
 					<value>com.pennant.validation.AddRateChangeGroup</value>
@@ -75,7 +75,7 @@
 			</constraint>
 		</field>
 		<field name="paidAmount">
-			<constraint annotation="jakarta.validation.constraints.Min">
+			<constraint annotation="javax.validation.constraints.Min">
 				<message>paidAmount should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.AddRateChangeGroup</value>
@@ -85,7 +85,7 @@
 				</groups>
 				<element name="value">0</element>
 			</constraint>
-			<constraint annotation="jakarta.validation.constraints.DecimalMax">
+			<constraint annotation="javax.validation.constraints.DecimalMax">
 				<message>paidAmount allow 18 digits only</message>
 				<groups>
 					<value>com.pennant.validation.AddRateChangeGroup</value>

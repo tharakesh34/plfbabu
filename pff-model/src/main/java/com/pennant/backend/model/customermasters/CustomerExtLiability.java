@@ -7,13 +7,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "seqNo", "finType", "loanBankName", "instalmentAmount", "outstandingBalance", "originalAmount",
 		"finDate", "finStatus" })
@@ -22,7 +21,7 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 
 	private long id;
 	private long linkId;
-	@JsonProperty("liabilitySeq")
+	@XmlElement(name = "liabilitySeq")
 	private int seqNo;
 	private long custId;
 	private String custCif;
@@ -31,7 +30,7 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 	private String finType;
 	@XmlElement
 	private Date finDate;
-	@JsonProperty("bankName")
+	@XmlElement(name = "bankName")
 	private String loanBank;
 	@XmlElement
 	private BigDecimal rateOfInterest = BigDecimal.ZERO;
@@ -39,7 +38,7 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 	private int tenure;
 	@XmlElement
 	private BigDecimal instalmentAmount = BigDecimal.ZERO;
-	@JsonProperty("outStandingBal")
+	@XmlElement(name = "outStandingBal")
 	private BigDecimal outstandingBalance = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal originalAmount = BigDecimal.ZERO;
@@ -106,7 +105,7 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 	private int mob;
 
 	@XmlElementWrapper(name = "extLiabilitiesPayments")
-	@JsonProperty("extLiabilitiesPayment")
+	@XmlElement(name = "extLiabilitiesPayment")
 	private List<ExtLiabilityPaymentdetails> extLiabilitiesPayments = new ArrayList<>();
 
 	public boolean isNew() {

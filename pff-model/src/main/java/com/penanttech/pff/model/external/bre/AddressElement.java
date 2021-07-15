@@ -1,30 +1,31 @@
 package com.penanttech.pff.model.external.bre;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
+
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AddressElement {
 
 	// Address Details
-	@JsonProperty("ADDRESS_TYPE")
+	@XmlElement(name = "ADDRESS_TYPE")
 	private String addressType;
-	@JsonProperty("STATE")
+	@XmlElement(name = "STATE")
 	private String state;
-	@JsonProperty("CITY")
+	@XmlElement(name = "CITY")
 	private String city;
-	@JsonProperty("CITY_CATEGORY")
+	@XmlElement(name = "CITY_CATEGORY")
 	private String cityCategory;
-	@JsonProperty("PINCODE")
+	@XmlElement(name = "PINCODE")
 	private String pincode;
-	@JsonProperty("COUNTRY")
+	@XmlElement(name = "COUNTRY")
 	private String country;
-	@JsonProperty("ADDRESS_LINE1")
+	@XmlElement(name = "ADDRESS_LINE1")
 	private String addressLine1;
-	@JsonProperty("ADDRESS_LINE2")
+	@XmlElement(name = "ADDRESS_LINE2")
 	private String addressLine2;
-	@JsonProperty("ADDRESS_LINE3")
+	@XmlElement(name = "ADDRESS_LINE3")
 	private String addressLine3;
 
 	@JsonCreator

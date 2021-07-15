@@ -1,8 +1,10 @@
 package com.penanttech.pff.model.external.bre;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
+
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import com.penanttech.pff.model.external.bre.BREService.ApplicantDetails;
 import com.penanttech.pff.model.external.bre.BREService.Bureau;
 import com.penanttech.pff.model.external.bre.BREService.Business;
@@ -16,29 +18,29 @@ import com.penanttech.pff.model.external.bre.BREService.Poa;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ApplicantInElement {
 
-	@JsonProperty("APPLICANT_DETAILS")
+	@XmlElement(name = "APPLICANT_DETAILS")
 	private ApplicantDetails applicantDetails;
-	@JsonProperty("ADDRESSDETIALS")
+	@XmlElement(name = "ADDRESSDETIALS")
 	private AddressDetails addressdetials;
-	@JsonProperty("EMPLOYMENTDETAILS")
+	@XmlElement(name = "EMPLOYMENTDETAILS")
 	private EmploymentDetails employmentdetails;
-	@JsonProperty("BANKING")
+	@XmlElement(name = "BANKING")
 	private Banking banking;
-	@JsonProperty("CONSOLIDATED_BANKING")
+	@XmlElement(name = "CONSOLIDATED_BANKING")
 	private ConsolidatedBanking consolidatedBanking;
-	@JsonProperty("INCOME")
+	@XmlElement(name = "INCOME")
 	private Income income;
-	@JsonProperty("BUSINESS")
+	@XmlElement(name = "BUSINESS")
 	private Business business;
-	@JsonProperty("ELIGIBILITY")
+	@XmlElement(name = "ELIGIBILITY")
 	private Eligibility eligibility;
-	@JsonProperty("BUREAU")
+	@XmlElement(name = "BUREAU")
 	private Bureau bureau;
-	@JsonProperty("LOANOBLIGATION")
+	@XmlElement(name = "LOANOBLIGATION")
 	private LoanObligation loanobligation;
-	@JsonProperty("EDUCATIONDETAIL")
+	@XmlElement(name = "EDUCATIONDETAIL")
 	private EducationDetail educationdetail;
-	@JsonProperty("POA")
+	@XmlElement(name = "POA")
 	private Poa poa;
 
 	@JsonCreator
