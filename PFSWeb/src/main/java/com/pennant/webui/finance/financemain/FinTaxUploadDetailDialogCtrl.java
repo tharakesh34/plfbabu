@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
@@ -249,19 +250,20 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		FinTaxUploadDetail fintaxDetail;
 
 		fintaxDetail = new FinTaxUploadDetail();
-		fintaxDetail.setTaxCode(getValue(nextRow.getCell(0, Row.CREATE_NULL_AS_BLANK)));
-		fintaxDetail.setAggrementNo(getValue(nextRow.getCell(1, Row.CREATE_NULL_AS_BLANK)));
-		fintaxDetail.setApplicableFor(getValue(nextRow.getCell(2, Row.CREATE_NULL_AS_BLANK)));
-		fintaxDetail.setApplicant(getValue(nextRow.getCell(3, Row.CREATE_NULL_AS_BLANK)));
-		fintaxDetail.setAddrLine1(getValue(nextRow.getCell(4, Row.CREATE_NULL_AS_BLANK)));
-		fintaxDetail.setAddrLine2(getValue(nextRow.getCell(5, Row.CREATE_NULL_AS_BLANK)));
-		fintaxDetail.setAddrLine3(getValue(nextRow.getCell(6, Row.CREATE_NULL_AS_BLANK)));
-		fintaxDetail.setAddrLine4(getValue(nextRow.getCell(7, Row.CREATE_NULL_AS_BLANK)));
-		fintaxDetail.setPinCode(getValue(nextRow.getCell(8, Row.CREATE_NULL_AS_BLANK)));
-		fintaxDetail.setCity(getValue(nextRow.getCell(9, Row.CREATE_NULL_AS_BLANK)));
-		fintaxDetail.setProvince(getValue(nextRow.getCell(10, Row.CREATE_NULL_AS_BLANK)));
-		fintaxDetail.setCountry(getValue(nextRow.getCell(11, Row.CREATE_NULL_AS_BLANK)));
-		fintaxDetail.setTaxExempted(getValue(nextRow.getCell(12, Row.CREATE_NULL_AS_BLANK)).equals("Y") ? true : false);
+		fintaxDetail.setTaxCode(getValue(nextRow.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setAggrementNo(getValue(nextRow.getCell(1, MissingCellPolicy.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setApplicableFor(getValue(nextRow.getCell(2, MissingCellPolicy.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setApplicant(getValue(nextRow.getCell(3, MissingCellPolicy.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setAddrLine1(getValue(nextRow.getCell(4, MissingCellPolicy.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setAddrLine2(getValue(nextRow.getCell(5, MissingCellPolicy.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setAddrLine3(getValue(nextRow.getCell(6, MissingCellPolicy.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setAddrLine4(getValue(nextRow.getCell(7, MissingCellPolicy.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setPinCode(getValue(nextRow.getCell(8, MissingCellPolicy.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setCity(getValue(nextRow.getCell(9, MissingCellPolicy.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setProvince(getValue(nextRow.getCell(10, MissingCellPolicy.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setCountry(getValue(nextRow.getCell(11, MissingCellPolicy.CREATE_NULL_AS_BLANK)));
+		fintaxDetail.setTaxExempted(
+				getValue(nextRow.getCell(12, MissingCellPolicy.CREATE_NULL_AS_BLANK)).equals("Y") ? true : false);
 		finTaxUploadDetail.add(fintaxDetail);
 		return fintaxDetail;
 	}
@@ -270,21 +272,23 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		String value = "";
 
 		switch (cell.getCellType()) {
-		case Cell.CELL_TYPE_STRING:
+		case STRING:
 			value = cell.getStringCellValue();
 			break;
-		case Cell.CELL_TYPE_BOOLEAN:
+		case BOOLEAN:
 			if (cell.getBooleanCellValue()) {
 				value = "Y";
 			} else {
 				value = "N";
 			}
 			break;
-		case Cell.CELL_TYPE_NUMERIC:
+		case NUMERIC:
 			value = String.valueOf(cell.getNumericCellValue());
 			if (value.contains(".0")) {
 				isvalidData = false;
 			}
+			break;
+		default:
 			break;
 		}
 
@@ -398,8 +402,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -798,8 +801,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		if (doClose(this.btnSave.isVisible())) {

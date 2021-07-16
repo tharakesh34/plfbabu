@@ -392,7 +392,7 @@ public class FileImport {
 			return null;
 		}
 
-		CellType type = cell.getCellTypeEnum();
+		CellType type = cell.getCellType();
 		if (type == CellType.STRING) {
 			return StringUtils.trimToNull(cell.getStringCellValue());
 		} else if (type == CellType.NUMERIC) {
@@ -408,7 +408,7 @@ public class FileImport {
 		if (cell == null) {
 			return null;
 		}
-		CellType type = cell.getCellTypeEnum();
+		CellType type = cell.getCellType();
 		if (type == CellType.STRING) {
 			return StringUtils.trimToNull(cell.getStringCellValue());
 		} else if (type == CellType.NUMERIC) {
@@ -430,7 +430,7 @@ public class FileImport {
 		if (cell == null) {
 			return null;
 		}
-		CellType type = cell.getCellTypeEnum();
+		CellType type = cell.getCellType();
 		if (type == CellType.NUMERIC) {
 			return cell.getDateCellValue();
 		} else if (type == CellType.BLANK) {

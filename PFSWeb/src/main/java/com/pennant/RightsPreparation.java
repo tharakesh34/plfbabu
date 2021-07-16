@@ -119,14 +119,16 @@ public class RightsPreparation {
 		String value = "";
 
 		switch (cell.getCellType()) {
-		case Cell.CELL_TYPE_STRING:
+		case STRING:
 			value = cell.getStringCellValue();
 			break;
-		case Cell.CELL_TYPE_BOOLEAN:
+		case BOOLEAN:
 			System.out.print(cell.getBooleanCellValue());
 			break;
-		case Cell.CELL_TYPE_NUMERIC:
+		case NUMERIC:
 			value = String.valueOf(cell.getNumericCellValue()).substring(0, 1);
+			break;
+		default:
 			break;
 		}
 

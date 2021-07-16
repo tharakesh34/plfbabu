@@ -23,13 +23,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
@@ -238,10 +239,8 @@ public class BatchUploadProcessor {
 	/**
 	 * Accepting single cell key and value and comparing with other sheet data
 	 * 
-	 * @param key
-	 *            sheet key
-	 * @param value
-	 *            row value
+	 * @param key                  sheet key
+	 * @param value                row value
 	 * @param jsonForextendedField
 	 * @param flag
 	 * @finalRequestJson append prepared json to this.
@@ -344,10 +343,8 @@ public class BatchUploadProcessor {
 	/**
 	 * method will return list of all mapping values
 	 * 
-	 * @param sheetIndex
-	 *            index of the sheet
-	 * @param keyIndex
-	 *            index of the key
+	 * @param sheetIndex index of the sheet
+	 * @param keyIndex   index of the key
 	 * 
 	 * @return List List of mapping values.
 	 */
@@ -391,8 +388,7 @@ public class BatchUploadProcessor {
 	/**
 	 * util method convert list to json
 	 * 
-	 * @param prepairedLsitOfmap
-	 *            mapped list
+	 * @param prepairedLsitOfmap mapped list
 	 * @return JSONObject
 	 */
 	private JSONObject listOfMapToJson(List<Map<String, Object>> prepairedLsitOfmap) {
@@ -417,7 +413,7 @@ public class BatchUploadProcessor {
 		}
 		if (workbook.getNumberOfSheets() > 1) {
 			Row headings = sheet.getRow(0);
-			//sheet.getRow(0).getPhysicalNumberOfCells();
+			// sheet.getRow(0).getPhysicalNumberOfCells();
 			Cell cell = headings.getCell(0);
 			if (!BatchUploadProcessorConstatnt.ROOTKEY.equals(cell.getStringCellValue().trim())) {
 				throw new ValidationException(BatchUploadProcessorConstatnt.INVALID_FILE_TEMPLATE_MSG);
@@ -472,7 +468,7 @@ public class BatchUploadProcessor {
 		if (value.equalsIgnoreCase(BatchUploadProcessorConstatnt.TRUE)
 				|| value.equalsIgnoreCase(BatchUploadProcessorConstatnt.FALSE)) {
 			result = BatchProcessorUtil.boolFormater(value);
-		} else if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC && DateUtil.isCellDateFormatted(cell)) {
+		} else if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
 			result = BatchProcessorUtil.dateFormater(cell.toString());
 		} else {
 			result = value;
@@ -496,7 +492,7 @@ public class BatchUploadProcessor {
 		}
 		CellStyle style = workbook.createCellStyle();
 		style.setFillForegroundColor(IndexedColors.GOLD.getIndex());
-		style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
 		logger.info("Response writing to :: " + workbook.getSheetAt(sheetIndex).getSheetName());
 
@@ -505,7 +501,7 @@ public class BatchUploadProcessor {
 		int lastCellIndex = row.getLastCellNum();
 		for (int i = 0; i < Headers.size(); i++) {
 			Cell cell = row.createCell(lastCellIndex + (i + 1));
-			cell.setCellType(1);
+			cell.setCellType(CellType.STRING);
 			cell.setCellValue(Headers.get(i));
 			cell.setCellStyle(style);
 		}
@@ -517,14 +513,10 @@ public class BatchUploadProcessor {
 	/**
 	 * method will call appropriate api with given jsonobject and return response back to writing to excel
 	 * 
-	 * @param json
-	 *            prepared jsonObject
-	 * @param writebleSheet
-	 *            response will write to this field
-	 * @param messageId
-	 *            to pass as input header
-	 * @param lastCellIndex
-	 *            cell index where the response will written
+	 * @param json          prepared jsonObject
+	 * @param writebleSheet response will write to this field
+	 * @param messageId     to pass as input header
+	 * @param lastCellIndex cell index where the response will written
 	 */
 	private synchronized void callApiNWriteToSheet(JSONObject json, Sheet writebleSheet, String messageId,
 			int lastCellIndex) throws Exception {
@@ -601,10 +593,8 @@ public class BatchUploadProcessor {
 	/**
 	 * util method to get Webclient
 	 * 
-	 * @param serviceEndPoint
-	 *            url to hit the api
-	 * @param messageId
-	 *            to pass in input header
+	 * @param serviceEndPoint url to hit the api
+	 * @param messageId       to pass in input header
 	 */
 	private WebClient getClient(String serviceEndPoint, String messageId) {
 		WebClient client = null;
@@ -640,7 +630,7 @@ public class BatchUploadProcessor {
 			Row row = writebleSheet.getRow(cellndex);
 			for (int i = 0; i < response.length; i++) {
 				Cell cell = row.createCell(lastCellIndex + (i + 1));
-				cell.setCellType(1);
+				cell.setCellType(CellType.STRING);
 				cell.setCellValue(response[i]);
 			}
 			FileOutputStream outputStream = new FileOutputStream(file);

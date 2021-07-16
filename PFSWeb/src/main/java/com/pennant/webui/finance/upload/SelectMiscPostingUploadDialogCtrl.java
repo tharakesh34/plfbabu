@@ -21,8 +21,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -167,8 +167,7 @@ public class SelectMiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader>
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param uploadHeader
-	 *            The entity that need to be render.
+	 * @param uploadHeader The entity that need to be render.
 	 */
 	public void doShowDialog(UploadHeader uploadHeader) {
 		logger.debug(Literal.ENTERING);
@@ -443,7 +442,7 @@ public class SelectMiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader>
 		if (value.equalsIgnoreCase(BatchUploadProcessorConstatnt.TRUE)
 				|| value.equalsIgnoreCase(BatchUploadProcessorConstatnt.FALSE)) {
 			result = BatchProcessorUtil.boolFormater(value);
-		} else if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC && DateUtil.isCellDateFormatted(cell)) {
+		} else if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
 			result = BatchProcessorUtil.dateFormater(cell.toString());
 		} else {
 			result = value.trim();
