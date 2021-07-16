@@ -156,7 +156,7 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 			}
 			try {
 				String encoding = (String) message.get(Message.ENCODING);
-				writePayload(buffer.getPayload(), cos, encoding, ct);
+				writePayload(buffer.getPayload(), cos, encoding, ct, false);
 			} catch (Exception ex) {
 				LOG.error("Error logging API Response : ", ex);
 			}

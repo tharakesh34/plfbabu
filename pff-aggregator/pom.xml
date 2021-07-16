@@ -22,7 +22,7 @@
 		<atlantic.version>8.0.1</atlantic.version>
 		<jasperreports.version>6.6.0</jasperreports.version>
 		<jackson.version>1.9.13</jackson.version>
-		<cxf.version>3.1.8</cxf.version>
+		<cxf.version>3.4.4</cxf.version>
 		<log4j.version>2.14.1</log4j.version>
 	</properties>
 
@@ -572,7 +572,32 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>5.2.4.Final</version>
 		</dependency>
-		
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>2.12.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.12.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>2.12.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+			<version>2.12.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.woodstox</groupId>
+			<artifactId>woodstox-core</artifactId>
+			<version>6.2.6</version>
+		</dependency>
+
 
 	</dependencies>
 
