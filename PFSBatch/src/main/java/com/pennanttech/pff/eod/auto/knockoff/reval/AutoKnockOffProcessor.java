@@ -2,12 +2,12 @@ package com.pennanttech.pff.eod.auto.knockoff.reval;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,7 +31,7 @@ public class AutoKnockOffProcessor extends BasicDao<AutoKnockOffExcess>
 
 	private AutoKnockOffProcessService autoKnockOffProcessService;
 
-	private Map<String, AutoKnockOffExcess> processMap = new HashedMap<>();
+	private Map<String, AutoKnockOffExcess> processMap = new HashMap<>();
 	private AutoKnockOffExcess knockOffData = null;
 	long processedRecords = 0;
 
@@ -51,7 +51,7 @@ public class AutoKnockOffProcessor extends BasicDao<AutoKnockOffExcess>
 			excessList.addAll(autoKnockoff.getExcessDetails());
 			count = excessList.size() - 1;
 		} else {
-			processMap = new HashedMap<>();
+			processMap = new HashMap<>();
 			processMap.put(key, autoKnockoff);
 			knockOffData = processMap.get(key);
 		}
