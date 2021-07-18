@@ -110,7 +110,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		super();
 	}
 
-	public List<FinODDetails> calPDOnBackDatePayment(FinanceMain fm, List<FinODDetails> fodList, Date valueDate,
+	public void calPDOnBackDatePayment(FinanceMain fm, List<FinODDetails> fodList, Date valueDate,
 			List<FinanceScheduleDetail> schedules, List<FinanceRepayments> rpdList, boolean calcwithoutDue,
 			boolean zeroIfpaid) {
 		logger.debug(Literal.ENTERING);
@@ -128,13 +128,14 @@ public class LatePayMarkingService extends ServiceHelper {
 			FinanceScheduleDetail curSchd = getODSchedule(schedules, fod);
 
 			if (curSchd == null) {
-				//if there is no schedule for od now then there is no penlaty
+				// if there is no schedule for od now then there is no penlaty
 				fod.setFinODTillDate(valueDate);
 				fod.setFinCurODPri(BigDecimal.ZERO);
 				fod.setFinCurODPft(BigDecimal.ZERO);
 				fod.setFinCurODAmt(BigDecimal.ZERO);
 				fod.setFinCurODDays(0);
-				//TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be worked.
+				// TODO ###124902 - New field to be included for future use which stores the last payment date. This
+				// needs to be worked.
 				fod.setFinLMdfDate(appDate);
 				fod.setTotPenaltyAmt(BigDecimal.ZERO);
 				fod.setTotPenaltyBal(
@@ -152,9 +153,9 @@ public class LatePayMarkingService extends ServiceHelper {
 				continue;
 			}
 
-			//check due and proceeed
+			// check due and proceeed
 			boolean isAmountDue = isOldestDueOverDue(curSchd);
-			//Paid Principal OR Paid Interest Less than scheduled amounts 
+			// Paid Principal OR Paid Interest Less than scheduled amounts
 			if (curSchd.getSchdPriPaid().compareTo(curSchd.getPrincipalSchd()) < 0
 					|| curSchd.getSchdPftPaid().compareTo(curSchd.getProfitSchd()) < 0) {
 				isAmountDue = true;
@@ -171,7 +172,6 @@ public class LatePayMarkingService extends ServiceHelper {
 		}
 
 		logger.debug(Literal.LEAVING);
-		return fodList;
 	}
 
 	public void resetMaxODAmount(List<FinanceRepayments> repayments, FinODDetails fod, FinanceScheduleDetail curSchd) {
@@ -261,7 +261,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		FinanceMain fm = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 
-		//Get details first time from DB
+		// Get details first time from DB
 		String finReference = fm.getFinReference();
 		Date finStartDate = fm.getFinStartDate();
 
@@ -298,7 +298,7 @@ public class LatePayMarkingService extends ServiceHelper {
 			}
 
 			boolean isAmountDue = false;
-			//Paid Principal OR Paid Interest Less than scheduled amounts 
+			// Paid Principal OR Paid Interest Less than scheduled amounts
 			BigDecimal principalSchd = schd.getPrincipalSchd();
 			BigDecimal schdPriPaid = schd.getSchdPriPaid();
 			BigDecimal profitSchd = schd.getProfitSchd();
@@ -310,17 +310,17 @@ public class LatePayMarkingService extends ServiceHelper {
 
 			FinODDetails fod = findExisingOD(finEODEvent.getFinODDetails(), schd);
 
-			//No current Overdue and No Previous Overdue
+			// No current Overdue and No Previous Overdue
 			if (!isAmountDue && fod == null) {
 				continue;
 			}
 
-			//No current Overdue But Previous Overdue, check LPP balance for CPZ method
+			// No current Overdue But Previous Overdue, check LPP balance for CPZ method
 			if (!isAmountDue && fod != null) {
 				isAmountDue = isLPCpzRequired(fod);
 			}
 
-			//Current Overdue and No Previous Overdue, create OD create
+			// Current Overdue and No Previous Overdue, create OD create
 			if (isAmountDue && fod == null) {
 				fod = createODDetails(schd, fm, penaltyRate);
 				finEODEvent.getFinODDetails().add(fod);
@@ -332,7 +332,8 @@ public class LatePayMarkingService extends ServiceHelper {
 					penaltyCalDate = DateUtil.addDays(valueDate, 1);
 					logger.info("Calculating penalty on SOD basis.");
 				}
-				//TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be worked.
+				// TODO ###124902 - New field to be included for future use which stores the last payment date. This
+				// needs to be worked.
 				fod.setFinLMdfDate(appDate);
 				logger.info("Calculating penalty from {}", penaltyCalDate);
 
@@ -425,13 +426,13 @@ public class LatePayMarkingService extends ServiceHelper {
 		}
 
 		for (FinanceRepayments rpd : repayments) {
-			//check the payment made against the actual schedule date 
+			// check the payment made against the actual schedule date
 			Date finSchdDate = rpd.getFinSchdDate();
 			if (finSchdDate.compareTo(fod.getFinODSchdDate()) != 0) {
 				continue;
 			}
 
-			//Max OD amounts is same as rpdList balance amounts
+			// Max OD amounts is same as rpdList balance amounts
 			Date finValueDate = rpd.getFinValueDate();
 			if (finSchdDate.compareTo(finValueDate) == 0 || DateUtil.compare(grcDate, finValueDate) >= 0) {
 				fod.setFinMaxODPri(fod.getFinMaxODPri().subtract(rpd.getFinSchdPriPaid()));
@@ -464,7 +465,8 @@ public class LatePayMarkingService extends ServiceHelper {
 		fod.setFinCurODDays(DateUtil.getDaysBetween(fod.getFinODSchdDate(), odtCaldate));
 		EventProperties eventProperties = fm.getEventProperties();
 
-		//TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be worked.
+		// TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be
+		// worked.
 		if (eventProperties.isParameterLoaded()) {
 			fod.setFinLMdfDate(eventProperties.getAppDate());
 		} else {
@@ -534,7 +536,7 @@ public class LatePayMarkingService extends ServiceHelper {
 				pftDetail.setFirstODDate(fod.getFinODSchdDate());
 			}
 
-			//There is chance OD dates might not be in ascending order so take the least date
+			// There is chance OD dates might not be in ascending order so take the least date
 			if (fod.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0
 					&& fod.getFinODSchdDate().compareTo(pftDetail.getPrvODDate()) <= 0) {
 				pftDetail.setPrvODDate(fod.getFinODSchdDate());
@@ -603,7 +605,8 @@ public class LatePayMarkingService extends ServiceHelper {
 		finOD.setFinMaxODAmt(finOD.getFinMaxODPft().add(finOD.getFinMaxODPri()));
 
 		finOD.setFinCurODDays(DateUtil.getDaysBetween(finOD.getFinODSchdDate(), valueDate));
-		//TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be worked.
+		// TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be
+		// worked.
 
 		finOD.setFinLMdfDate(valueDate);
 
@@ -641,13 +644,13 @@ public class LatePayMarkingService extends ServiceHelper {
 		BigDecimal penaltyDue = fod.getTotPenaltyBal();
 		BigDecimal penaltyDueGst = BigDecimal.ZERO;
 
-		//Prepare Finance Detail
+		// Prepare Finance Detail
 		FinanceDetail detail = new FinanceDetail();
 		detail.getFinScheduleData().setFinanceMain(fm);
 		detail.getFinScheduleData().setFinanceType(finEODEvent.getFinType());
 		prepareFinanceDetail(detail, custEODEvent);
 
-		// Calculate GSTAmount 
+		// Calculate GSTAmount
 		boolean gstCalReq = false;
 
 		// LPP GST Amount calculation
@@ -693,7 +696,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		}
 
 		Map<String, BigDecimal> taxPercmap = null;
-		// IF GST Calculation Required for LPI or LPP 
+		// IF GST Calculation Required for LPI or LPP
 		if (gstCalReq) {
 			taxPercmap = GSTCalculator.getTaxPercentages(gstExecutionMap, fm.getFinCcy());
 
@@ -749,10 +752,10 @@ public class LatePayMarkingService extends ServiceHelper {
 		aeEvent.getAcSetIDList().add(accountingID);
 		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
 
-		//Postings Process and save all postings related to finance for one time accounts update
+		// Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent);
 
-		//GST Invoice Preparation
+		// GST Invoice Preparation
 		if (aeEvent.getLinkedTranId() > 0) {
 
 			// LPP Receivable Data Update for Future Accounting

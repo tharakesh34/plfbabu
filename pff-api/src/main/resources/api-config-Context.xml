@@ -73,27 +73,14 @@
 	</bean>
 	<!-- WIF Loan Calculator -->
 	<bean id="financeDetailController" class="com.pennanttech.controller.FinanceDetailController" autowire="byName"
-		scope="prototype">
-		<property name="financeDetailService" ref="financeDetailService" />
-		<property name="stepPolicyDetailDAO" ref="stepPolicyDetailDAO" />
-		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
-		<property name="finFeeChargesDAO" ref="finFeeChargesDAO" />
-		<property name="ruleService" ref="ruleService" />
-		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
-	</bean>
+		scope="prototype" parent="summaryDetailService"/>
 
 	<!-- Finance/Loan Services -->
 	<bean id="finServiceInstController" class="com.pennanttech.controller.FinServiceInstController" autowire="byName"
-		scope="prototype">
-		<property name="financeDetailService" ref="financeDetailService" />
-		<property name="accrualService" ref="accrualService" />
-		<property name="feeWaiverHeaderService" ref="feeWaiverHeaderService" />
-	</bean>
+		scope="prototype" parent="summaryDetailService"/>
 
 	<!-- FinanceType/LoanType controller -->
-	<bean id="financeTypeController" class="com.pennanttech.controller.FinanceTypeController" autowire="byName" scope="prototype">
-	</bean>
+	<bean id="financeTypeController" class="com.pennanttech.controller.FinanceTypeController" autowire="byName" scope="prototype"/>
 
 	<bean id="createFinanceController" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
@@ -108,11 +95,13 @@
 			</props>
 		</property>
 	</bean>
-
+	
 	<!-- CreateFinance/Loan controller -->
 	<bean id="createFinanceControllerTarget" class="com.pennanttech.controller.CreateFinanceController" autowire="byName"
-		scope="prototype">
+		scope="prototype" parent="summaryDetailService">
 	</bean>
+
+	<bean id="summaryDetailService" class="com.pennanttech.controller.SummaryDetailService" autowire="byName"/>
 
 	<!-- Mandate controller -->
 	<bean id="mandateController" class="com.pennanttech.controller.MandateController" autowire="byName" scope="prototype">
@@ -146,8 +135,8 @@
 
 	<!-- Statement controller -->
 	<bean id="finStatementController" class="com.pennanttech.controller.FinStatementController" autowire="byName"
-		scope="prototype">
-	</bean>
+		scope="prototype" parent="summaryDetailService"/>
+		
 	<!-- VAS controller -->
 	<bean id="vasController" class="com.pennanttech.controller.VASController" autowire="byName" scope="prototype">
 	</bean>

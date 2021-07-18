@@ -68,7 +68,6 @@ import com.pennanttech.ws.model.finance.EmiResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class FinanceDetailController extends SummaryDetailService {
-
 	private static final Logger logger = LogManager.getLogger(FinanceDetailController.class);
 
 	private FinanceDetailService financeDetailService;
@@ -177,10 +176,10 @@ public class FinanceDetailController extends SummaryDetailService {
 				AuditHeader auditHeader = new AuditHeader(afinanceDetail.getFinScheduleData().getFinReference(), null,
 						null, null, auditDetail, financeMain.getUserDetails(),
 						new HashMap<String, List<ErrorDetail>>());
-				//get the header details from the request
+				// get the header details from the request
 				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 						.get(APIHeader.API_HEADER_KEY);
-				//set the headerDetails to AuditHeader
+				// set the headerDetails to AuditHeader
 				auditHeader.setApiHeader(reqHeaderDetails);
 				// save the finance details into main table
 				auditHeader = getFinanceDetailService().doApprove(auditHeader, true);
@@ -332,10 +331,10 @@ public class FinanceDetailController extends SummaryDetailService {
 					feeDetail.setFixedAmount(vasRecording.getFee());
 					feeDetail.setAlwDeviation(true);
 					feeDetail.setMaxWaiverPerc(BigDecimal.valueOf(100));
-					//feeDetail.setAlwModifyFee(true);
+					// feeDetail.setAlwModifyFee(true);
 					feeDetail.setAlwModifyFeeSchdMthd(true);
 					feeDetail.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
-					//Fee Details set to the VasRecording
+					// Fee Details set to the VasRecording
 					vasRecording.setWaivedAmt(feeDetail.getWaivedAmount());
 					vasRecording.setPaidAmt(feeDetail.getPaidAmount());
 				}
@@ -350,8 +349,7 @@ public class FinanceDetailController extends SummaryDetailService {
 		executeFeeCharges(financeDetail, finEvent, enquiry);
 
 		// Step Policy Details
-		if (financeMain.isStepFinance()
-				&& PennantConstants.STEPPING_CALC_PERC.equals(financeMain.getCalcOfSteps())) {
+		if (financeMain.isStepFinance() && PennantConstants.STEPPING_CALC_PERC.equals(financeMain.getCalcOfSteps())) {
 			String stepPolicyCode = financeMain.getStepPolicy();
 			if (StringUtils.isNotBlank(stepPolicyCode)) {
 				List<StepPolicyDetail> stepPolicyList = getStepPolicyDetailDAO()
@@ -407,7 +405,7 @@ public class FinanceDetailController extends SummaryDetailService {
 			finScheduleData.setStepPolicyDetails(finStepPoliciesList, true);
 		}
 
-		finScheduleData.getFinanceMain().setCalculateRepay(true);//FIXME: why this field
+		finScheduleData.getFinanceMain().setCalculateRepay(true);// FIXME: why this field
 
 		// Disbursement details
 		FinanceDisbursement disbursementDetails = new FinanceDisbursement();
@@ -509,9 +507,9 @@ public class FinanceDetailController extends SummaryDetailService {
 			// set fee paid amounts based on schedule method
 			finScheduleData.setFinFeeDetailList(getUpdatedFees(finScheduleData.getFinFeeDetailList()));
 
-			//summary
+			// summary
 			FinanceDetail response = new FinanceDetail();
-			//used for AEAMOUNTS class 
+			// used for AEAMOUNTS class
 			response.setFinReference(financeMain.getFinReference());
 			financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			;
@@ -567,7 +565,7 @@ public class FinanceDetailController extends SummaryDetailService {
 
 			if (financeDetail != null) {
 				FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-				//setting Disb first and lastDates
+				// setting Disb first and lastDates
 				List<FinanceDisbursement> disbList = financeDetail.getFinScheduleData().getDisbursementDetails();
 				Collections.sort(disbList, new Comparator<FinanceDisbursement>() {
 					@Override
@@ -613,7 +611,7 @@ public class FinanceDetailController extends SummaryDetailService {
 				response.setFinFeeDetailList(getUpdatedFees(response.getFinFeeDetailList()));
 				response.setFinanceSummary(getFinanceSummary(financeDetail));
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-				//get FinODDetails
+				// get FinODDetails
 				List<FinODDetails> finODDetailsList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
 				response.setFinODDetails(finODDetailsList);
 				// to remove un-necessary objects from response make them as null

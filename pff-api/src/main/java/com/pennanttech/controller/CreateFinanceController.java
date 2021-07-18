@@ -241,7 +241,6 @@ public class CreateFinanceController extends SummaryDetailService {
 	private ReasonDetailDAO reasonDetailDAO;
 	private FinTypePartnerBankService finTypePartnerBankService;
 	private FinanceDeviationsService deviationDetailsService;
-	private ReceiptCalculator receiptCalculator;
 	private FeeTypeDAO feeTypeDAO;
 	private VehicleDealerDAO vehicleDealerDao;
 	private VehicleDealer vehicleDealer;
@@ -2796,7 +2795,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				finInquiryDetail.setJointAccountDetailList(jointAccountDetailList);
 
 				// fetch disbursement details
-				List<FinanceDisbursement> disbList = getFinanceDisbursementDAO()
+				List<FinanceDisbursement> disbList = financeDisbursementDAO
 						.getFinanceDisbursementDetails(financeMain.getFinReference(), "", false);
 				BigDecimal totDisbAmt = BigDecimal.ZERO;
 				BigDecimal totfeeChrgAmt = BigDecimal.ZERO;

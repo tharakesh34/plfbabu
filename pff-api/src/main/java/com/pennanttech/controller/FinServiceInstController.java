@@ -203,7 +203,6 @@ public class FinServiceInstController extends SummaryDetailService {
 	private FinAdvancePaymentsService finAdvancePaymentsService;
 	private ReceiptService receiptService;
 	private FinTypePartnerBankService finTypePartnerBankService;
-	private ReceiptCalculator receiptCalculator;
 	private PartnerBankDAO partnerBankDAO;
 	private ManualPaymentService manualPaymentService;
 	private RepayCalculator repayCalculator;
@@ -2882,7 +2881,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		Date valuedate = finServiceInst.getFromDate();
 
 		FinanceProfitDetail tempPftDetail = profitDetailsDAO.getFinProfitDetailsById(financeMain.getFinReference());
-		getAccrualService().calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(), tempPftDetail,
+		accrualService.calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(), tempPftDetail,
 				valuedate);
 
 		List<RepayScheduleDetail> repaySchdList = repayData.getRepayScheduleDetails();

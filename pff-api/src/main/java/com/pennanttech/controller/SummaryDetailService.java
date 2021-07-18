@@ -10,17 +10,17 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
-import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -36,19 +36,18 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.util.APIConstants;
 
 public class SummaryDetailService extends ExtendedTestClass {
 	private static final Logger logger = LogManager.getLogger(SummaryDetailService.class);
 
-	private FinanceDisbursementDAO financeDisbursementDAO;
+	protected FinanceDisbursementDAO financeDisbursementDAO;
 	protected FinODDetailsDAO finODDetailsDAO;
-	private FinanceProfitDetailDAO financeProfitDetailDAO;
-	private AccrualService accrualService;
+	protected AccrualService accrualService;
 	protected FinExcessAmountDAO finExcessAmountDAO;
 	protected FinFeeDetailDAO finFeeDetailDAO;
+	protected ReceiptCalculator receiptCalculator;
 
 	public FinanceSummary getFinanceSummary(FinanceDetail financeDetail) {
 		logger.debug("Entering");
@@ -72,7 +71,7 @@ public class SummaryDetailService extends ExtendedTestClass {
 			financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			FinScheduleData curSchd = resetScheduleDetail(financeDetail.getFinScheduleData());
 			finPftDetail = accrualService.calProfitDetails(financeMain, curSchd.getFinanceScheduleDetails(),
-					finPftDetail, DateUtility.getAppDate());
+					finPftDetail, SysParamUtil.getAppDate());
 
 			// override repay profit rate with FinProfitdetail calculated value(which is latest).
 			financeMain.setRepayProfitRate(finPftDetail.getCurReducingRate());
@@ -121,8 +120,8 @@ public class SummaryDetailService extends ExtendedTestClass {
 			}
 
 			// setting first and last disbursement dates
-			List<FinanceDisbursement> disbList = getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference,
-					"", false);
+			List<FinanceDisbursement> disbList = financeDisbursementDAO.getFinanceDisbursementDetails(finReference, "",
+					false);
 			if (disbList != null && disbList.size() > 0) {
 				if (disbList.size() == 1) {
 					summary.setFirstDisbDate(disbList.get(0).getDisbDate());
@@ -302,83 +301,14 @@ public class SummaryDetailService extends ExtendedTestClass {
 		}
 	}
 
-	public List<FinanceRepayments> getRepaymentDetails(FinScheduleData finScheduleData, BigDecimal orgReceiptAmount,
+	public List<FinanceRepayments> getRepaymentDetails(FinScheduleData schdData, BigDecimal receiptAmount,
 			Date valueDate) {
-		// Repayment Details
 		List<FinanceRepayments> repayments = new ArrayList<>();
-		BigDecimal totReceiptAmt = orgReceiptAmount;
 
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		// Newly Paid Amount Repayment Details
-		List<FinanceScheduleDetail> schdList = finScheduleData.getFinanceScheduleDetails();
-		if (totReceiptAmt.compareTo(BigDecimal.ZERO) > 0) {
-			char[] rpyOrder = finScheduleData.getFinanceType().getRpyHierarchy().replace("CS", "C").toCharArray();
-			FinanceScheduleDetail curSchd = null;
-			for (int i = 0; i < schdList.size(); i++) {
-				curSchd = schdList.get(i);
-				if (curSchd.getSchDate().compareTo(valueDate) > 0) {
-					break;
-				}
-
-				if (totReceiptAmt.compareTo(BigDecimal.ZERO) == 0) {
-					break;
-				}
-
-				if ((curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid())).compareTo(BigDecimal.ZERO) > 0
-						|| (curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()))
-								.compareTo(BigDecimal.ZERO) > 0
-						|| (curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid())).compareTo(BigDecimal.ZERO) > 0) {
-
-					FinanceRepayments repayment = new FinanceRepayments();
-					repayment.setFinValueDate(valueDate);
-					repayment.setFinRpyFor(FinanceConstants.SCH_TYPE_SCHEDULE);
-					repayment.setFinSchdDate(curSchd.getSchDate());
-					repayment.setFinRpyAmount(orgReceiptAmount);
-
-					for (int j = 0; j < rpyOrder.length; j++) {
-
-						char repayTo = rpyOrder[j];
-						if (repayTo == RepayConstants.REPAY_PENALTY) {
-							continue;
-						}
-						BigDecimal balAmount = BigDecimal.ZERO;
-						if (repayTo == RepayConstants.REPAY_PRINCIPAL) {
-							balAmount = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
-							if (totReceiptAmt.compareTo(balAmount) < 0) {
-								balAmount = totReceiptAmt;
-							}
-							repayment.setFinSchdPriPaid(balAmount);
-							totReceiptAmt = totReceiptAmt.subtract(balAmount);
-
-						} else if (repayTo == RepayConstants.REPAY_PROFIT) {
-
-							balAmount = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
-							if (totReceiptAmt.compareTo(balAmount) < 0) {
-								balAmount = totReceiptAmt;
-							}
-							repayment.setFinSchdPftPaid(balAmount);
-							totReceiptAmt = totReceiptAmt.subtract(balAmount);
-
-						} else if (repayTo == RepayConstants.REPAY_FEE) {
-
-							balAmount = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
-							if (totReceiptAmt.compareTo(balAmount) < 0) {
-								balAmount = totReceiptAmt;
-							}
-							repayment.setSchdFeePaid(balAmount);
-							totReceiptAmt = totReceiptAmt.subtract(balAmount);
-						}
-
-					}
-					repayment.setFinTotSchdPaid(repayment.getFinSchdPftPaid().add(repayment.getFinSchdPriPaid()));
-					repayment.setFinType(financeMain.getFinType());
-					repayment.setFinBranch(financeMain.getFinBranch());
-					repayment.setFinCustID(financeMain.getCustID());
-					repayment.setFinPaySeq(100);
-					repayments.add(repayment);
-				}
-			}
+		if (receiptAmount.compareTo(BigDecimal.ZERO) > 0) {
+			repayments.addAll(receiptCalculator.getRepayListByHierarchy(schdData, receiptAmount, valueDate));
 		}
+
 		return repayments;
 	}
 
@@ -455,38 +385,18 @@ public class SummaryDetailService extends ExtendedTestClass {
 		return finScheduleData;
 	}
 
-	public FinanceDisbursementDAO getFinanceDisbursementDAO() {
-		return financeDisbursementDAO;
-	}
-
-	@Autowired
 	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
 		this.financeDisbursementDAO = financeDisbursementDAO;
 	}
 
-	@Autowired
-	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
-		this.financeProfitDetailDAO = financeProfitDetailDAO;
-	}
-
-	@Autowired
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
-	}
-
-	public FinanceProfitDetailDAO getFinanceProfitDetailDAO() {
-		return financeProfitDetailDAO;
-	}
-
-	public AccrualService getAccrualService() {
-		return accrualService;
 	}
 
 	public void setAccrualService(AccrualService accrualService) {
 		this.accrualService = accrualService;
 	}
 
-	@Autowired
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
@@ -494,4 +404,9 @@ public class SummaryDetailService extends ExtendedTestClass {
 	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
 		this.finFeeDetailDAO = finFeeDetailDAO;
 	}
+
+	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
+		this.receiptCalculator = receiptCalculator;
+	}
+
 }

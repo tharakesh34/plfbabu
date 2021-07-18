@@ -2609,32 +2609,52 @@ public class ReceiptCalculator implements Serializable {
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		int receiptPurposeCtg = setReceiptCategory(rch.getReceiptPurpose());
 
+		boolean adjSchedule = receiptData.isAdjSchedule();
+
+		BigDecimal priPaidAvailable = BigDecimal.ZERO;
+		if (adjSchedule && receiptPurposeCtg == 2 && rch.getFutPriIdx() > 0 && rch.getPriIdx() > 0) {
+			priPaidAvailable = rch.getAllocations().get(rch.getPriIdx()).getPaidAvailable();
+		}
+
+		BigDecimal pftPaidAvailable = BigDecimal.ZERO;
+
+		if (adjSchedule && receiptPurposeCtg == 2 && rch.getPftIdx() != -1 && rch.getFutPftIdx() != -1) {
+			pftPaidAvailable = rch.getAllocations().get(rch.getPftIdx()).getPaidAvailable();
+		}
+
 		for (char repayTo : rpyOrder) {
-			if (repayTo == RepayConstants.REPAY_PRINCIPAL) {
+			switch (repayTo) {
+			case RepayConstants.REPAY_PRINCIPAL:
 				receiptData = priApportion(receiptData);
-				if (receiptData.isAdjSchedule() && receiptPurposeCtg == 2 && rch.getFutPriIdx() > 0
-						&& rch.getPriIdx() > 0 && rch.getAllocations().get(rch.getPriIdx()).getPaidAvailable()
-								.compareTo(BigDecimal.ZERO) <= 0) {
+				if (priPaidAvailable.compareTo(BigDecimal.ZERO) <= 0) {
 					receiptData = priApportion(receiptData);
 				}
-			} else if (repayTo == RepayConstants.REPAY_PROFIT) {
+				break;
+			case RepayConstants.REPAY_PROFIT:
 				receiptData = intApportion(receiptData);
 				// Common issue 16
-				if (receiptData.isAdjSchedule() && receiptPurposeCtg == 2 && rch.getPftIdx() != -1
-						&& rch.getFutPftIdx() != -1 && rch.getAllocations().get(rch.getPftIdx()).getPaidAvailable()
-								.compareTo(BigDecimal.ZERO) <= 0) {
+				if (pftPaidAvailable.compareTo(BigDecimal.ZERO) <= 0) {
 					receiptData = repayIntApportion(receiptData);
 				}
-			} else if (!rch.isPenalSeparate() && repayTo == RepayConstants.REPAY_PENALTY) {
-				receiptData = penalApportion(receiptData);
-			} else if (repayTo == RepayConstants.REPAY_OTHERS) {
-				// Code Related to Schedule Fees & Insurance Deleted
+				break;
+			case RepayConstants.REPAY_PENALTY:
+				if (!rch.isPenalSeparate()) {
+					receiptData = penalApportion(receiptData);
+				}
+				break;
+			case RepayConstants.REPAY_OTHERS:
+				break;
+			default:
+
+				break;
 			}
-			if (!receiptData.isAdjSchedule()) {
+
+			if (!adjSchedule) {
 				if (receiptData.getReceiptHeader().getBalAmount().compareTo(BigDecimal.ZERO) <= 0) {
 					break;
 				}
 			}
+
 		}
 
 		return receiptData;
@@ -4214,73 +4234,61 @@ public class ReceiptCalculator implements Serializable {
 		logger.debug(Literal.ENTERING);
 
 		List<ReceiptAllocationDetail> radList = new ArrayList<>();
+
+		String finReference = schData.getFinanceMain().getFinReference();
 		String repayHierarchy = schData.getFinanceType().getRpyHierarchy();
 
 		char[] rpyOrder = repayHierarchy.toCharArray();
-		ReceiptAllocationDetail ad = null;
 
 		int seqID = 1;
-		for (int i = 0; i < rpyOrder.length; i++) {
-			char repayTo = rpyOrder[i];
-			ad = new ReceiptAllocationDetail();
+		for (char repayTo : rpyOrder) {
+			ReceiptAllocationDetail rad = null;
 
-			// Add Principal Record
-			if (repayTo == RepayConstants.REPAY_PRINCIPAL) {
-				ad.setAllocationType(RepayConstants.ALLOCATION_PRI);
-				ad.setAllocationID(seqID);
+			switch (repayTo) {
+			case RepayConstants.REPAY_PRINCIPAL:
+				rad = new ReceiptAllocationDetail();
+				rad.setAllocationType(RepayConstants.ALLOCATION_PRI);
+				rad.setAllocationID(seqID);
 				seqID = seqID + 1;
-				radList.add(ad);
-				continue;
-			}
-
-			// Add Interest
-			if (repayTo == RepayConstants.REPAY_PROFIT) {
+				radList.add(rad);
+				break;
+			case RepayConstants.REPAY_PROFIT:
 				String profit = ImplementationConstants.REPAY_INTEREST_HIERARCHY;
 				char[] pftPayOrder = profit.toCharArray();
 
-				for (int j = 0; j < pftPayOrder.length; j++) {
-					ad = new ReceiptAllocationDetail();
-					char pftTo = pftPayOrder[j];
+				for (char pftTo : pftPayOrder) {
+					rad = new ReceiptAllocationDetail();
 					if (pftTo == RepayConstants.REPAY_PROFIT) {
-						ad.setAllocationType(RepayConstants.ALLOCATION_PFT);
-						ad.setAllocationID(seqID);
+						rad.setAllocationType(RepayConstants.ALLOCATION_PFT);
+						rad.setAllocationID(seqID);
 						seqID = seqID + 1;
-						radList.add(ad);
+						radList.add(rad);
 					} else {
-						ad.setAllocationType(RepayConstants.ALLOCATION_LPFT);
-						ad.setAllocationID(seqID);
+						rad.setAllocationType(RepayConstants.ALLOCATION_LPFT);
+						rad.setAllocationID(seqID);
 						seqID = seqID + 1;
-						radList.add(ad);
+						radList.add(rad);
 					}
 
 					continue;
 				}
-
-				continue;
-			}
-
-			// Overdue and Bounce Charges
-			if (repayTo == RepayConstants.REPAY_PENALTY) {
-				ad.setAllocationType(RepayConstants.ALLOCATION_ODC);
-				ad.setAllocationID(seqID);
+				break;
+			case RepayConstants.REPAY_PENALTY:
+				rad = new ReceiptAllocationDetail();
+				rad.setAllocationType(RepayConstants.ALLOCATION_ODC);
+				rad.setAllocationID(seqID);
 				seqID = seqID + 1;
-				radList.add(ad);
-				continue;
-			}
-
-			// Other Fee and Charges
-			if (repayTo == RepayConstants.REPAY_OTHERS) {
-
-				List<ManualAdvise> advises = manualAdviseDAO.getManualAdviseByRef(
-						schData.getFinanceMain().getFinReference(), FinanceConstants.MANUAL_ADVISE_RECEIVABLE,
-						"_AView");
+				radList.add(rad);
+				break;
+			case RepayConstants.REPAY_OTHERS:
+				List<ManualAdvise> advises = manualAdviseDAO.getManualAdviseByRef(finReference,
+						FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_AView");
 				if (advises == null || advises.isEmpty()) {
 					continue;
 				}
 
 				BigDecimal bounceAmt = BigDecimal.ZERO;
-				for (int j = 0; j < advises.size(); j++) {
-					ManualAdvise advise = advises.get(j);
+				for (ManualAdvise advise : advises) {
 					BigDecimal adviseBal = advise.getAdviseAmount().subtract(advise.getPaidAmount())
 							.subtract(advise.getWaivedAmount());
 
@@ -4288,33 +4296,39 @@ public class ReceiptCalculator implements Serializable {
 					if (adviseBal.compareTo(BigDecimal.ZERO) <= 0) {
 						continue;
 					}
+
 					if (advise.getBounceID() > 0) {
 						bounceAmt = bounceAmt.add(adviseBal);
 						continue;
 					}
-					ad = new ReceiptAllocationDetail();
-					ad.setAllocationTo(advise.getAdviseID());
-					ad.setAllocationType(RepayConstants.ALLOCATION_MANADV);
-					ad.setTypeDesc(advise.getFeeTypeDesc());
-					ad.setDueAmount(advise.getAdviseAmount().subtract(advise.getPaidAmount())
+
+					rad = new ReceiptAllocationDetail();
+					rad.setAllocationTo(advise.getAdviseID());
+					rad.setAllocationType(RepayConstants.ALLOCATION_MANADV);
+					rad.setTypeDesc(advise.getFeeTypeDesc());
+					rad.setDueAmount(advise.getAdviseAmount().subtract(advise.getPaidAmount())
 							.subtract(advise.getWaivedAmount()));
-					ad.setAllocationID(seqID);
+					rad.setAllocationID(seqID);
 					seqID = seqID + 1;
-					radList.add(ad);
+					radList.add(rad);
 				}
 
 				// Bounce charges
 				if (bounceAmt.compareTo(BigDecimal.ZERO) > 0) {
-					ad = new ReceiptAllocationDetail();
-					ad.setAllocationType(RepayConstants.ALLOCATION_BOUNCE);
-					ad.setDueAmount(bounceAmt);
-					ad.setAllocationID(seqID);
-					radList.add(ad);
+					rad = new ReceiptAllocationDetail();
+					rad.setAllocationType(RepayConstants.ALLOCATION_BOUNCE);
+					rad.setDueAmount(bounceAmt);
+					rad.setAllocationID(seqID);
+					radList.add(rad);
 				}
+
+				break;
+			default:
+				break;
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return radList;
 
 	}
@@ -4686,8 +4700,8 @@ public class ReceiptCalculator implements Serializable {
 			repayments = financeRepaymentsDAO.getFinRepayListByFinRef(finReference, false, "");
 		}
 
-		overdueList = latePayMarkingService.calPDOnBackDatePayment(fm, overdueList, valueDate, finSchdDtls, repayments,
-				resetReq, true);
+		latePayMarkingService.calPDOnBackDatePayment(fm, overdueList, valueDate, finSchdDtls, repayments, resetReq,
+				true);
 
 		logger.debug("Leaving");
 		return overdueList;
@@ -4846,9 +4860,98 @@ public class ReceiptCalculator implements Serializable {
 		List<FinanceScheduleDetail> schdList = finScheduleData.getFinanceScheduleDetails();
 		String finReference = fm.getFinReference();
 		List<FinanceRepayments> repayments = financeRepaymentsDAO.getFinRepayListByFinRef(finReference, false, "");
-		return latePayMarkingService.calPDOnBackDatePayment(fm, overdueList, valueDate, schdList, repayments, true,
-				true);
+		latePayMarkingService.calPDOnBackDatePayment(fm, overdueList, valueDate, schdList, repayments, true, true);
 
+		return overdueList;
+
+	}
+
+	public List<FinanceRepayments> getRepayListByHierarchy(FinScheduleData schdData, BigDecimal receiptAmount,
+			Date valueDate) {
+		List<FinanceRepayments> repayments = new ArrayList<>();
+
+		String rpyHierarchy = schdData.getFinanceType().getRpyHierarchy();
+		char[] rpyOrder = rpyHierarchy.replace("CS", "C").toCharArray();
+
+		FinanceMain fm = schdData.getFinanceMain();
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+		BigDecimal totReceiptAmt = receiptAmount;
+
+		for (FinanceScheduleDetail curSchd : schedules) {
+			if (curSchd.getSchDate().compareTo(valueDate) > 0) {
+				break;
+			}
+
+			if (totReceiptAmt.compareTo(BigDecimal.ZERO) == 0) {
+				break;
+			}
+
+			BigDecimal totalDue = BigDecimal.ZERO;
+			totalDue = totalDue.add(curSchd.getProfitSchd());
+			totalDue = totalDue.add(curSchd.getPrincipalSchd());
+			totalDue = totalDue.add(curSchd.getFeeSchd());
+
+			BigDecimal totalPaid = BigDecimal.ZERO;
+			totalPaid = totalPaid.add(curSchd.getSchdPftPaid());
+			totalPaid = totalPaid.add(curSchd.getSchdPriPaid());
+			totalPaid = totalPaid.add(curSchd.getSchdFeePaid());
+
+			totalDue = totalDue.subtract(totalPaid);
+
+			if (totalDue.compareTo(BigDecimal.ZERO) <= 0) {
+				continue;
+			}
+
+			FinanceRepayments repayment = new FinanceRepayments();
+			repayment.setFinValueDate(valueDate);
+			repayment.setFinRpyFor(FinanceConstants.SCH_TYPE_SCHEDULE);
+			repayment.setFinSchdDate(curSchd.getSchDate());
+			repayment.setFinRpyAmount(receiptAmount);
+
+			for (char repayTo : rpyOrder) {
+				BigDecimal balAmount = BigDecimal.ZERO;
+
+				switch (repayTo) {
+				case RepayConstants.REPAY_PRINCIPAL:
+					balAmount = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
+					if (totReceiptAmt.compareTo(balAmount) < 0) {
+						balAmount = totReceiptAmt;
+					}
+					repayment.setFinSchdPriPaid(balAmount);
+					totReceiptAmt = totReceiptAmt.subtract(balAmount);
+					break;
+				case RepayConstants.REPAY_PROFIT:
+					balAmount = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
+					if (totReceiptAmt.compareTo(balAmount) < 0) {
+						balAmount = totReceiptAmt;
+					}
+					repayment.setFinSchdPftPaid(balAmount);
+					totReceiptAmt = totReceiptAmt.subtract(balAmount);
+					break;
+				case RepayConstants.REPAY_FEE:
+					balAmount = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
+					if (totReceiptAmt.compareTo(balAmount) < 0) {
+						balAmount = totReceiptAmt;
+					}
+					repayment.setSchdFeePaid(balAmount);
+					totReceiptAmt = totReceiptAmt.subtract(balAmount);
+					break;
+				case RepayConstants.REPAY_PENALTY:
+					break;
+				default:
+					break;
+				}
+			}
+
+			repayment.setFinTotSchdPaid(repayment.getFinSchdPftPaid().add(repayment.getFinSchdPriPaid()));
+			repayment.setFinType(fm.getFinType());
+			repayment.setFinBranch(fm.getFinBranch());
+			repayment.setFinCustID(fm.getCustID());
+			repayment.setFinPaySeq(100);
+			repayments.add(repayment);
+		}
+
+		return repayments;
 	}
 
 	// ******************************************************//

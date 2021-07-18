@@ -129,23 +129,9 @@ public class RepaymentProcessUtil {
 		super();
 	}
 
-	/**
-	 * Method for Calculation of Schedule payment based on Allocated Details from Receipts
-	 * 
-	 * @param scheduleData
-	 * 
-	 * @param receiptData
-	 * @param scheduleData
-	 * @return
-	 * @throws InterfaceException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 */
-	@SuppressWarnings("unchecked")
 	public void calcualteAndPayReceipt(FinanceMain fm, Customer customer, List<FinanceScheduleDetail> scheduleDetails,
-			List<FinFeeDetail> finFeeDetailList, FinanceProfitDetail profitDetail, FinReceiptHeader rch,
-			String repayHierarchy, Date valuedate, Date postDate)
-			throws IllegalAccessException, InvocationTargetException, InterfaceException {
+			List<FinFeeDetail> finFeeDetailList, FinanceProfitDetail profitDetail, FinReceiptHeader rch, Date valuedate,
+			Date postDate) throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug(Literal.ENTERING);
 
 		String finrefer = fm.getFinReference();

@@ -74,7 +74,6 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.XcessPayables;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
-import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
@@ -569,10 +568,9 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		Customer customer = customerDAO.getCustomerForPresentment(fm.getCustID());
 		scheduleDetails = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false);
 		FinanceProfitDetail profitDetail = financeProfitDetailDAO.getFinProfitDetailsById(finReference);
-		String repayHierarchy = financeTypeDAO.getRepayHierarchy(fm.getFinType());
 
 		repaymentProcessUtil.calcualteAndPayReceipt(fm, customer, scheduleDetails, null, profitDetail, header,
-				repayHierarchy, presentmentDetail.getSchDate(), appDate);
+				presentmentDetail.getSchDate(), appDate);
 
 		if (presentmentDetail.getId() != Long.MIN_VALUE) {
 			presentmentDetailDAO.updateReceptId(presentmentDetail.getId(), header.getReceiptID());
@@ -640,10 +638,9 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		Customer customer = customerDAO.getCustomerForPresentment(financeMain.getCustID());
 		scheduleDetails = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false);
 		FinanceProfitDetail profitDetail = financeProfitDetailDAO.getFinProfitDetailsById(finReference);
-		String repayHierarchy = financeTypeDAO.getRepayHierarchy(financeMain.getFinType());
 
 		repaymentProcessUtil.calcualteAndPayReceipt(financeMain, customer, scheduleDetails, null, profitDetail, header,
-				repayHierarchy, schDate, appDate);
+				schDate, appDate);
 	}
 
 	private void processEmiInAdvance(PresentmentDetail pd, boolean isExcessNoReserve, boolean updateReceiptId)
@@ -730,9 +727,8 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		List<FinanceScheduleDetail> scheduleDetails = financeScheduleDetailDAO
 				.getFinScheduleDetails(pd.getFinReference(), "_AView", false);
 		FinanceProfitDetail profitDetail = financeProfitDetailDAO.getFinProfitDetailsById(pd.getFinReference());
-		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(financeMain.getFinType(), "_AView");
 		repaymentProcessUtil.calcualteAndPayReceipt(financeMain, custDetails.getCustomer(), scheduleDetails, null,
-				profitDetail, header, financeType.getRpyHierarchy(), valueDate, appDate);
+				profitDetail, header, valueDate, appDate);
 		if (pd.getId() != Long.MIN_VALUE && updateReceiptId) {
 			presentmentDetailDAO.updateReceptId(pd.getId(), header.getReceiptID());
 		}
@@ -819,9 +815,8 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		List<FinanceScheduleDetail> scheduleDetails = financeScheduleDetailDAO
 				.getFinScheduleDetails(pd.getFinReference(), "_AView", false);
 		FinanceProfitDetail profitDetail = financeProfitDetailDAO.getFinProfitDetailsById(pd.getFinReference());
-		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(financeMain.getFinType(), "_AView");
 		repaymentProcessUtil.calcualteAndPayReceipt(financeMain, custDetails.getCustomer(), scheduleDetails, null,
-				profitDetail, header, financeType.getRpyHierarchy(), valueDate, appDate);
+				profitDetail, header, valueDate, appDate);
 		if (pd.getId() != Long.MIN_VALUE && updateReceiptId) {
 			presentmentDetailDAO.updateReceptId(pd.getId(), header.getReceiptID());
 		}

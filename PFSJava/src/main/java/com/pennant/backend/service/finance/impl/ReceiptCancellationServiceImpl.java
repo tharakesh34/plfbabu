@@ -1801,15 +1801,13 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					newTaxRcv.setCESS(cessTaxLPP.getPaidTax().subtract(cessTax.getPaidTax()));
 
 					if (accrualDiffPostReq) {
-
 						Date dateValueDate = DateUtility.addDays(DateUtility.getMonthStart(valueDate), -1);
-						List<FinODDetails> odList = latePayMarkingService.calPDOnBackDatePayment(financeMain,
-								overdueList, dateValueDate, scheduleData.getFinanceScheduleDetails(), repayments, true,
-								true);
+						latePayMarkingService.calPDOnBackDatePayment(financeMain, overdueList, dateValueDate,
+								scheduleData.getFinanceScheduleDetails(), repayments, true, true);
 
 						BigDecimal totalLPP = BigDecimal.ZERO;
-						for (int i = 0; i < odList.size(); i++) {
-							totalLPP = totalLPP.add(odList.get(i).getTotPenaltyAmt());
+						for (int i = 0; i < overdueList.size(); i++) {
+							totalLPP = totalLPP.add(overdueList.get(i).getTotPenaltyAmt());
 						}
 
 						// Profit Details Recalculation Process

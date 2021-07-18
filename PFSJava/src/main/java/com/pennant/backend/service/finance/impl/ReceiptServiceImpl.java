@@ -2146,7 +2146,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		List<FinanceScheduleDetail> schdList = schData.getFinanceScheduleDetails();
 		String finReference = fm.getFinReference();
 		List<FinanceRepayments> repayments = financeRepaymentsDAO.getFinRepayListByFinRef(finReference, false, "");
-		odList = latePayMarkingService.calPDOnBackDatePayment(fm, odList, valueDate, schdList, repayments, true, true);
+		latePayMarkingService.calPDOnBackDatePayment(fm, odList, valueDate, schdList, repayments, true, true);
 
 		logger.debug(Literal.LEAVING);
 		return odList;
@@ -2946,110 +2946,16 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		return finReceiptData;
 	}
 
-	/**
-	 * Method for Fetch Overdue Penalty details as per passing Value Date
-	 * 
-	 * @param finScheduleData
-	 * @param receiptData
-	 * @param valueDate
-	 * @return
-	 */
 	@Override
-	public List<FinODDetails> getValueDatePenalties(FinScheduleData finScheduleData, BigDecimal orgReceiptAmount,
-			Date valueDate, List<FinanceRepayments> finRepayments, boolean resetReq) {
-		logger.debug("Entering");
+	public List<FinODDetails> getValueDatePenalties(FinScheduleData schdData, BigDecimal receiptAmount, Date valueDate,
+			List<FinanceRepayments> finRepayments, boolean resetReq) {
+		logger.debug(Literal.ENTERING);
 
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		List<FinODDetails> overdueList = getFinODDetailsDAO().getFinODBalByFinRef(financeMain.getFinReference());
-		if (overdueList == null || overdueList.isEmpty()) {
-			logger.debug("Leaving");
-			return overdueList;
-		}
+		FinanceMain fm = schdData.getFinanceMain();
+		List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(fm.getFinReference());
 
-		// Repayment Details
-		List<FinanceRepayments> repayments = new ArrayList<FinanceRepayments>();
-		if (finRepayments != null && !finRepayments.isEmpty()) {
-			repayments = finRepayments;
-		} else {
-			repayments = financeRepaymentsDAO.getFinRepayListByFinRef(financeMain.getFinReference(), false, "");
-		}
-		BigDecimal totReceiptAmt = orgReceiptAmount;
-
-		// Newly Paid Amount Repayment Details
-		List<FinanceScheduleDetail> schdList = finScheduleData.getFinanceScheduleDetails();
-		if (totReceiptAmt.compareTo(BigDecimal.ZERO) > 0) {
-			char[] rpyOrder = finScheduleData.getFinanceType().getRpyHierarchy().replace("CS", "C").toCharArray();
-			FinanceScheduleDetail curSchd = null;
-			for (int i = 0; i < schdList.size(); i++) {
-				curSchd = schdList.get(i);
-				if (curSchd.getSchDate().compareTo(valueDate) > 0) {
-					break;
-				}
-
-				if (totReceiptAmt.compareTo(BigDecimal.ZERO) == 0) {
-					break;
-				}
-
-				if ((curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid())).compareTo(BigDecimal.ZERO) > 0
-						|| (curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()))
-								.compareTo(BigDecimal.ZERO) > 0
-						|| (curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid())).compareTo(BigDecimal.ZERO) > 0) {
-
-					FinanceRepayments repayment = new FinanceRepayments();
-					repayment.setFinValueDate(valueDate);
-					repayment.setFinRpyFor(FinanceConstants.SCH_TYPE_SCHEDULE);
-					repayment.setFinSchdDate(curSchd.getSchDate());
-					repayment.setFinRpyAmount(orgReceiptAmount);
-
-					for (int j = 0; j < rpyOrder.length; j++) {
-
-						char repayTo = rpyOrder[j];
-						if (repayTo == RepayConstants.REPAY_PENALTY) {
-							continue;
-						}
-						BigDecimal balAmount = BigDecimal.ZERO;
-						if (repayTo == RepayConstants.REPAY_PRINCIPAL) {
-							balAmount = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
-							if (totReceiptAmt.compareTo(balAmount) < 0) {
-								balAmount = totReceiptAmt;
-							}
-							repayment.setFinSchdPriPaid(balAmount);
-							totReceiptAmt = totReceiptAmt.subtract(balAmount);
-
-						} else if (repayTo == RepayConstants.REPAY_PROFIT) {
-
-							balAmount = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
-							if (totReceiptAmt.compareTo(balAmount) < 0) {
-								balAmount = totReceiptAmt;
-							}
-							repayment.setFinSchdPftPaid(balAmount);
-							totReceiptAmt = totReceiptAmt.subtract(balAmount);
-
-						} else if (repayTo == RepayConstants.REPAY_FEE) {
-
-							balAmount = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
-							if (totReceiptAmt.compareTo(balAmount) < 0) {
-								balAmount = totReceiptAmt;
-							}
-							repayment.setSchdFeePaid(balAmount);
-							totReceiptAmt = totReceiptAmt.subtract(balAmount);
-						}
-
-					}
-					repayment.setFinTotSchdPaid(repayment.getFinSchdPftPaid().add(repayment.getFinSchdPriPaid()));
-					repayment.setFinType(financeMain.getFinType());
-					repayment.setFinBranch(financeMain.getFinBranch());
-					repayment.setFinCustID(financeMain.getCustID());
-					repayment.setFinPaySeq(100);
-					repayments.add(repayment);
-				}
-			}
-		}
-
-		overdueList = latePayMarkingService.calPDOnBackDatePayment(financeMain, overdueList, valueDate, schdList,
-				repayments, resetReq, true);
-
-		logger.debug("Leaving");
+		calculateODDetails(schdData, overdueList, receiptAmount, valueDate, finRepayments, resetReq);
+		logger.debug(Literal.LEAVING);
 		return overdueList;
 	}
 
@@ -3064,7 +2970,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 */
 	public List<FinODDetails> calCurDatePenalties(FinScheduleData finScheduleData, FinReceiptData receiptData,
 			Date valueDate) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 
@@ -3085,15 +2991,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotWaived()).subtract(fod.getTotPenaltyPaid()));
 		}
 
-		overdueList = latePayMarkingService.calPDOnBackDatePayment(financeMain, overdueList, valueDate, schdList,
-				repayments, true, true);
-
-		/*
-		 * for (FinODDetails fod : overdueList) { BigDecimal penalty = getPenaltyPaid(fod.getFinODSchdDate(),
-		 * receiptData); fod.setTotPenaltyPaid(fod.getTotPenaltyPaid().add(penalty));
-		 * fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotWaived()).subtract(fod.getTotPenaltyPaid()));
-		 * }
-		 */
+		latePayMarkingService.calPDOnBackDatePayment(financeMain, overdueList, valueDate, schdList, repayments, true,
+				true);
 
 		logger.debug("Leaving");
 		return overdueList;
@@ -3116,106 +3015,32 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		return penaltypaidNow;
 	}
 
-	/**
-	 * Method for Fetch Overdue Penalty details as per passing Value Date
-	 * 
-	 * @param finScheduleData
-	 * @param receiptData
-	 * @param valueDate
-	 * @return
-	 */
-	public List<FinODDetails> calculateODDetails(FinScheduleData finScheduleData, List<FinODDetails> overdueList,
-			BigDecimal orgReceiptAmount, Date valueDate, List<FinanceRepayments> finRepayments, boolean resetReq) {
-		logger.debug("Entering");
+	public List<FinODDetails> calculateODDetails(FinScheduleData schdData, List<FinODDetails> overdueList,
+			BigDecimal receiptAmount, Date valueDate, List<FinanceRepayments> finRepayments, boolean resetReq) {
+		logger.debug(Literal.ENTERING);
 
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		if (overdueList == null || overdueList.isEmpty()) {
-			logger.debug("Leaving");
+		FinanceMain fm = schdData.getFinanceMain();
+		if (CollectionUtils.isEmpty(overdueList)) {
+			logger.debug(Literal.LEAVING);
 			return overdueList;
 		}
 
 		// Repayment Details
 		List<FinanceRepayments> repayments = new ArrayList<>();
-		if (finRepayments != null && !finRepayments.isEmpty()) {
-			repayments = finRepayments;
+
+		if (CollectionUtils.isNotEmpty(finRepayments)) {
+			repayments.addAll(finRepayments);
 		} else {
-			repayments = financeRepaymentsDAO.getFinRepayListByFinRef(financeMain.getFinReference(), false, "");
-		}
-		BigDecimal totReceiptAmt = orgReceiptAmount;
-
-		// Newly Paid Amount Repayment Details
-		List<FinanceScheduleDetail> schdList = finScheduleData.getFinanceScheduleDetails();
-		if (totReceiptAmt.compareTo(BigDecimal.ZERO) > 0) {
-			char[] rpyOrder = finScheduleData.getFinanceType().getRpyHierarchy().replace("CS", "C").toCharArray();
-			FinanceScheduleDetail curSchd = null;
-			for (int i = 0; i < schdList.size(); i++) {
-				curSchd = schdList.get(i);
-				if (curSchd.getSchDate().compareTo(valueDate) > 0) {
-					break;
-				}
-
-				if (totReceiptAmt.compareTo(BigDecimal.ZERO) == 0) {
-					break;
-				}
-
-				if ((curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid())).compareTo(BigDecimal.ZERO) > 0
-						|| (curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()))
-								.compareTo(BigDecimal.ZERO) > 0
-						|| (curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid())).compareTo(BigDecimal.ZERO) > 0) {
-
-					FinanceRepayments repayment = new FinanceRepayments();
-					repayment.setFinValueDate(valueDate);
-					repayment.setFinRpyFor(FinanceConstants.SCH_TYPE_SCHEDULE);
-					repayment.setFinSchdDate(curSchd.getSchDate());
-					repayment.setFinRpyAmount(orgReceiptAmount);
-
-					for (int j = 0; j < rpyOrder.length; j++) {
-
-						char repayTo = rpyOrder[j];
-						if (repayTo == RepayConstants.REPAY_PENALTY) {
-							continue;
-						}
-						BigDecimal balAmount = BigDecimal.ZERO;
-						if (repayTo == RepayConstants.REPAY_PRINCIPAL) {
-							balAmount = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
-							if (totReceiptAmt.compareTo(balAmount) < 0) {
-								balAmount = totReceiptAmt;
-							}
-							repayment.setFinSchdPriPaid(balAmount);
-							totReceiptAmt = totReceiptAmt.subtract(balAmount);
-
-						} else if (repayTo == RepayConstants.REPAY_PROFIT) {
-
-							balAmount = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
-							if (totReceiptAmt.compareTo(balAmount) < 0) {
-								balAmount = totReceiptAmt;
-							}
-							repayment.setFinSchdPftPaid(balAmount);
-							totReceiptAmt = totReceiptAmt.subtract(balAmount);
-
-						} else if (repayTo == RepayConstants.REPAY_FEE) {
-
-							balAmount = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
-							if (totReceiptAmt.compareTo(balAmount) < 0) {
-								balAmount = totReceiptAmt;
-							}
-							repayment.setSchdFeePaid(balAmount);
-							totReceiptAmt = totReceiptAmt.subtract(balAmount);
-						}
-
-					}
-					repayment.setFinTotSchdPaid(repayment.getFinSchdPftPaid().add(repayment.getFinSchdPriPaid()));
-					repayment.setFinType(financeMain.getFinType());
-					repayment.setFinBranch(financeMain.getFinBranch());
-					repayment.setFinCustID(financeMain.getCustID());
-					repayment.setFinPaySeq(100);
-					repayments.add(repayment);
-				}
-			}
+			repayments.addAll(financeRepaymentsDAO.getFinRepayListByFinRef(fm.getFinReference(), false, ""));
 		}
 
-		overdueList = latePayMarkingService.calPDOnBackDatePayment(financeMain, overdueList, valueDate, schdList,
-				repayments, resetReq, true);
+		if (receiptAmount.compareTo(BigDecimal.ZERO) > 0) {
+			repayments.addAll(receiptCalculator.getRepayListByHierarchy(schdData, receiptAmount, valueDate));
+		}
+
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+
+		latePayMarkingService.calPDOnBackDatePayment(fm, overdueList, valueDate, schedules, repayments, resetReq, true);
 
 		logger.debug("Leaving");
 		return overdueList;

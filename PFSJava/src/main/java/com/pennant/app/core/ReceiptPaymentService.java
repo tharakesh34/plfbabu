@@ -193,7 +193,6 @@ public class ReceiptPaymentService extends ServiceHelper {
 		FinanceProfitDetail profitDetail = finEODEvent.getFinProfitDetail();
 
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
-		String repayHeirarchy = finEODEvent.getFinType().getRpyHierarchy();
 
 		FinReceiptDetail receiptDetail = null;
 		/*
@@ -229,8 +228,8 @@ public class ReceiptPaymentService extends ServiceHelper {
 		receiptDetails.add(receiptDetail);
 
 		header.setReceiptDetails(receiptDetails);
-		repaymentProcessUtil.calcualteAndPayReceipt(fm, customer, schedules, null, profitDetail, header, repayHeirarchy,
-				businessDate, businessDate);
+		repaymentProcessUtil.calcualteAndPayReceipt(fm, customer, schedules, null, profitDetail, header, businessDate,
+				businessDate);
 		financeMainDAO.updateSchdVersion(fm, true);
 		if (pd.getId() != Long.MIN_VALUE) {
 			pd.setReceiptID(header.getReceiptID());
@@ -305,9 +304,8 @@ public class ReceiptPaymentService extends ServiceHelper {
 		FinanceProfitDetail profitDetail = finEODEvent.getFinProfitDetail();
 
 		List<FinanceScheduleDetail> scheduleDetails = finEODEvent.getFinanceScheduleDetails();
-		String repayHeirarchy = finEODEvent.getFinType().getRpyHierarchy();
 		repaymentProcessUtil.calcualteAndPayReceipt(fm, customer, scheduleDetails, null, profitDetail, header,
-				repayHeirarchy, businessDate, businessDate);
+				businessDate, businessDate);
 
 		boolean isFinFullyPaid = repaymentPostingsUtil.isSchdFullyPaid(fm.getFinReference(), scheduleDetails);
 
