@@ -1,52 +1,30 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
-
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * 
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ReceiptDialogCtrl.java                           					*
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-06-2011    														*
- *                                                                  						*
- * Modified Date    :  03-06-2011    														*
- *                                                                  						*
- * Description 		:																		*	
- *                                                                                          *
+ * * FileName : ReceiptDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-06-2011 * * Modified
+ * Date : 03-06-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-06-2011       Pennant	                 0.1                                        	* 
- * 29-09-2018       somasekhar               0.2         added backdate sp also,            * 
- * 10-10-2018       somasekhar               0.3         Ticket id:124998,defaulting receipt* 
- *                                                       purpose and excessadjustto for     * 
- *                                                       closed loans                       *
- *                                                       Ticket id:124998                   * 
- * 13-06-2018       Siva					 0.2        Receipt auto printing on approval   * 
- *                                                                                          * 
- * 13-06-2018       Siva					 0.3        Receipt Print Option Added 			* 
- *                                                                                          * 
- * 17-06-2018		Srinivasa Varma			 0.4		PSD 126950                          * 
- *                                                                                          *
- * 19-06-2018		Siva			 		 0.5		Auto Receipt Number Generation      * 
- * 																							*
- * 28-06-2018		Siva			 		 0.6		Stop printing Receipt if receipt 
- * 												     mode status is either cancel or Bounce * 
- *                                                                                          * 
+ * 03-06-2011 Pennant 0.1 * 29-09-2018 somasekhar 0.2 added backdate sp also, * 10-10-2018 somasekhar 0.3 Ticket
+ * id:124998,defaulting receipt* purpose and excessadjustto for * closed loans * Ticket id:124998 * 13-06-2018 Siva 0.2
+ * Receipt auto printing on approval * * 13-06-2018 Siva 0.3 Receipt Print Option Added * * 17-06-2018 Srinivasa Varma
+ * 0.4 PSD 126950 * * 19-06-2018 Siva 0.5 Auto Receipt Number Generation * * 28-06-2018 Siva 0.6 Stop printing Receipt
+ * if receipt mode status is either cancel or Bounce * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.receipts;
@@ -5799,106 +5777,20 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method for Adding Fee details to Amount codes on Accounting execution
-	 * 
-	 * @param amountCodes
-	 * @param dataMap
-	 */
 	private void prepareFeeRulesMap(AEAmountCodes amountCodes, Map<String, Object> dataMap, String payType) {
 		logger.debug(Literal.ENTERING);
 		List<FinFeeDetail> finFeeDetailList = receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
 
-		if (finFeeDetailList != null) {
-			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-				if (!finFeeDetail.isRcdVisible()) {
-					continue;
-				}
-				TaxHeader taxHeader = finFeeDetail.getTaxHeader();
-				Taxes cgstTax = new Taxes();
-				Taxes sgstTax = new Taxes();
-				Taxes igstTax = new Taxes();
-				Taxes ugstTax = new Taxes();
-				Taxes cessTax = new Taxes();
-				if (taxHeader != null) {
-					List<Taxes> taxDetails = taxHeader.getTaxDetails();
-					if (CollectionUtils.isNotEmpty(taxDetails)) {
-						for (Taxes taxes : taxDetails) {
-							if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
-								cgstTax = taxes;
-							} else if (StringUtils.equals(RuleConstants.CODE_SGST, taxes.getTaxType())) {
-								sgstTax = taxes;
-							} else if (StringUtils.equals(RuleConstants.CODE_IGST, taxes.getTaxType())) {
-								igstTax = taxes;
-							} else if (StringUtils.equals(RuleConstants.CODE_UGST, taxes.getTaxType())) {
-								ugstTax = taxes;
-							} else if (StringUtils.equals(RuleConstants.CODE_CESS, taxes.getTaxType())) {
-								cessTax = taxes;
-							}
-						}
-					}
-				}
+		if (CollectionUtils.isEmpty(finFeeDetailList)) {
+			return;
+		}
 
-				String feeTypeCode = finFeeDetail.getFeeTypeCode();
-				dataMap.put(feeTypeCode + "_C", finFeeDetail.getActualAmount());
-
-				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
-					dataMap.put(feeTypeCode + "_W",
-							finFeeDetail.getWaivedAmount()
-									.subtract(cgstTax.getWaivedTax().add(sgstTax.getWaivedTax())
-											.add(igstTax.getWaivedTax()).add(ugstTax.getWaivedTax())
-											.add(cessTax.getWaivedTax())));
-				} else {
-					dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount());
-				}
-
-				dataMap.put(feeTypeCode + "_P", finFeeDetail.getPaidAmountOriginal());
-				dataMap.put(feeTypeCode + "_N", finFeeDetail.getNetAmount());
-
-				// TDS
-				dataMap.put(feeTypeCode + "_TDS_N", finFeeDetail.getNetTDS());
-				dataMap.put(feeTypeCode + "_TDS_P", finFeeDetail.getPaidTDS());
-
-				if (StringUtils.equals(payType, RepayConstants.RECEIPTMODE_EXCESS)) {
-					payType = "EX_";
-				} else if (StringUtils.equals(payType, RepayConstants.RECEIPTMODE_EMIINADV)) {
-					payType = "EA_";
-				} else if (StringUtils.equals(payType, RepayConstants.RECEIPTMODE_PAYABLE)) {
-					payType = "PA_";
-				} else {
-					payType = "PB_";
-				}
-
-				dataMap.put(payType + feeTypeCode + "_P", finFeeDetail.getPaidAmountOriginal());
-
-				// Calculated Amount
-				dataMap.put(feeTypeCode + "_CGST_C", cgstTax.getActualTax());
-				dataMap.put(feeTypeCode + "_SGST_C", sgstTax.getActualTax());
-				dataMap.put(feeTypeCode + "_IGST_C", igstTax.getActualTax());
-				dataMap.put(feeTypeCode + "_UGST_C", ugstTax.getActualTax());
-				dataMap.put(feeTypeCode + "_CESS_C", cessTax.getActualTax());
-
-				// Paid Amount
-				dataMap.put(feeTypeCode + "_CGST_P", cgstTax.getPaidTax());
-				dataMap.put(feeTypeCode + "_SGST_P", sgstTax.getPaidTax());
-				dataMap.put(feeTypeCode + "_IGST_P", igstTax.getPaidTax());
-				dataMap.put(feeTypeCode + "_UGST_P", ugstTax.getPaidTax());
-				dataMap.put(feeTypeCode + "_CESS_P", cessTax.getPaidTax());
-
-				// Net Amount
-				dataMap.put(feeTypeCode + "_CGST_N", cgstTax.getNetTax());
-				dataMap.put(feeTypeCode + "_SGST_N", sgstTax.getNetTax());
-				dataMap.put(feeTypeCode + "_IGST_N", igstTax.getNetTax());
-				dataMap.put(feeTypeCode + "_UGST_N", ugstTax.getNetTax());
-				dataMap.put(feeTypeCode + "_CESS_N", cessTax.getNetTax());
-
-				// Waiver GST Amounts (GST Waiver Changes)
-				dataMap.put(feeTypeCode + "_CGST_W", cgstTax.getWaivedTax());
-				dataMap.put(feeTypeCode + "_SGST_W", sgstTax.getWaivedTax());
-				dataMap.put(feeTypeCode + "_IGST_W", igstTax.getWaivedTax());
-				dataMap.put(feeTypeCode + "_UGST_W", ugstTax.getWaivedTax());
-				dataMap.put(feeTypeCode + "_CESS_W", cessTax.getWaivedTax());
+		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
+			if (!finFeeDetail.isRcdVisible()) {
+				continue;
 			}
+
+			dataMap.putAll(FeeCalculator.getFeeRuleMap(finFeeDetail, payType));
 		}
 
 		logger.debug(Literal.LEAVING);

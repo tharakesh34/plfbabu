@@ -76,6 +76,7 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.FeeCalculator;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.ReportsUtil;
@@ -2000,7 +2001,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				if (!feesExecuted && StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(),
 						FinanceConstants.FINSER_EVENT_SCHDRPY)) {
 					feesExecuted = true;
-					prepareFeeRulesMap(amountCodes, dataMap, receiptDetail.getPaymentType());
+					prepareFeeRulesMap(dataMap, receiptDetail.getPaymentType());
 				}
 
 				// Receipt Detail external usage Fields Insertion into
@@ -2404,7 +2405,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 							&& StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(),
 									repayHeader.getFinEvent())))) {
 				feesExecuted = true;
-				prepareFeeRulesMap(amountCodes, dataMap, receiptDetail.getPaymentType());
+				prepareFeeRulesMap(dataMap, receiptDetail.getPaymentType());
 			}
 			aeEvent.setDataMap(dataMap);
 			engineExecution.getAccEngineExecResults(aeEvent);
@@ -2703,106 +2704,22 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method for Adding Fee details to Amount codes on Accounting execution
-	 * 
-	 * @param amountCodes
-	 * @param dataMap
-	 */
-	private void prepareFeeRulesMap(AEAmountCodes amountCodes, Map<String, Object> dataMap, String payType) {
-		logger.debug("Entering");
+	private void prepareFeeRulesMap(Map<String, Object> dataMap, String payType) {
 		List<FinFeeDetail> finFeeDetailList = receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
 
-		if (finFeeDetailList != null) {
-			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-				if (!finFeeDetail.isRcdVisible()) {
-					continue;
-				}
-				TaxHeader taxHeader = finFeeDetail.getTaxHeader();
-				Taxes cgstTax = new Taxes();
-				Taxes sgstTax = new Taxes();
-				Taxes igstTax = new Taxes();
-				Taxes ugstTax = new Taxes();
-				Taxes cessTax = new Taxes();
-				if (taxHeader != null) {
-					List<Taxes> taxDetails = taxHeader.getTaxDetails();
-					if (CollectionUtils.isNotEmpty(taxDetails)) {
-						for (Taxes taxes : taxDetails) {
-							if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
-								cgstTax = taxes;
-							} else if (StringUtils.equals(RuleConstants.CODE_SGST, taxes.getTaxType())) {
-								sgstTax = taxes;
-							} else if (StringUtils.equals(RuleConstants.CODE_IGST, taxes.getTaxType())) {
-								igstTax = taxes;
-							} else if (StringUtils.equals(RuleConstants.CODE_UGST, taxes.getTaxType())) {
-								ugstTax = taxes;
-							} else if (StringUtils.equals(RuleConstants.CODE_CESS, taxes.getTaxType())) {
-								cessTax = taxes;
-							}
-						}
-					}
-				}
-
-				String feeTypeCode = finFeeDetail.getFeeTypeCode();
-				dataMap.put(feeTypeCode + "_C", finFeeDetail.getActualAmount());
-				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
-					dataMap.put(feeTypeCode + "_W",
-							finFeeDetail.getWaivedAmount()
-									.subtract(cgstTax.getWaivedTax().add(sgstTax.getWaivedTax())
-											.add(igstTax.getWaivedTax()).add(ugstTax.getWaivedTax())
-											.add(cessTax.getWaivedTax())));
-				} else {
-					dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount());
-				}
-				dataMap.put(feeTypeCode + "_P", finFeeDetail.getPaidAmount());
-				dataMap.put(feeTypeCode + "_N", finFeeDetail.getNetAmount());
-
-				if (StringUtils.equals(payType, RepayConstants.RECEIPTMODE_EXCESS)) {
-					payType = "EX_";
-				} else if (StringUtils.equals(payType, RepayConstants.RECEIPTMODE_EMIINADV)) {
-					payType = "EA_";
-				} else if (StringUtils.equals(payType, RepayConstants.RECEIPTMODE_PAYABLE)) {
-					payType = "PA_";
-				} else {
-					payType = "PB_";
-				}
-				dataMap.put(payType + feeTypeCode + "_P", finFeeDetail.getPaidAmountOriginal());
-
-				// Calculated Amount
-				dataMap.put(feeTypeCode + "_CGST_C", cgstTax.getActualTax());
-				dataMap.put(feeTypeCode + "_SGST_C", sgstTax.getActualTax());
-				dataMap.put(feeTypeCode + "_IGST_C", igstTax.getActualTax());
-				dataMap.put(feeTypeCode + "_UGST_C", ugstTax.getActualTax());
-				dataMap.put(feeTypeCode + "_CESS_C", cessTax.getActualTax());
-
-				// Paid Amount
-				dataMap.put(feeTypeCode + "_CGST_P", cgstTax.getPaidTax());
-				dataMap.put(feeTypeCode + "_SGST_P", sgstTax.getPaidTax());
-				dataMap.put(feeTypeCode + "_IGST_P", igstTax.getPaidTax());
-				dataMap.put(feeTypeCode + "_UGST_P", ugstTax.getPaidTax());
-				dataMap.put(feeTypeCode + "_CESS_P", cessTax.getPaidTax());
-
-				// Net Amount
-				dataMap.put(feeTypeCode + "_CGST_N", cgstTax.getNetTax());
-				dataMap.put(feeTypeCode + "_SGST_N", sgstTax.getNetTax());
-				dataMap.put(feeTypeCode + "_IGST_N", igstTax.getNetTax());
-				dataMap.put(feeTypeCode + "_UGST_N", ugstTax.getNetTax());
-				dataMap.put(feeTypeCode + "_CESS_N", cessTax.getNetTax());
-
-				// Waiver GST Amounts (GST Waiver Changes)
-				dataMap.put(feeTypeCode + "_CGST_W", cgstTax.getWaivedTax());
-				dataMap.put(feeTypeCode + "_SGST_W", sgstTax.getWaivedTax());
-				dataMap.put(feeTypeCode + "_IGST_W", igstTax.getWaivedTax());
-				dataMap.put(feeTypeCode + "_UGST_W", ugstTax.getWaivedTax());
-				dataMap.put(feeTypeCode + "_CESS_W", cessTax.getWaivedTax());
-
-				// TDS
-				dataMap.put(feeTypeCode + "_TDS_N", finFeeDetail.getNetTDS());
-				dataMap.put(feeTypeCode + "_TDS_P", finFeeDetail.getPaidTDS());
-			}
+		if (CollectionUtils.isEmpty(finFeeDetailList)) {
+			return;
 		}
 
-		logger.debug("Leaving");
+		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
+			if (!finFeeDetail.isRcdVisible()) {
+				continue;
+			}
+
+			dataMap.putAll(FeeCalculator.getFeeRuleMap(finFeeDetail, payType));
+
+		}
+
 	}
 
 	/**

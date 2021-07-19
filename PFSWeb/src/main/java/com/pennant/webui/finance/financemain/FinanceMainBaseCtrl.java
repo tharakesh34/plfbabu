@@ -150,6 +150,7 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.FeeCalculator;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PathUtil;
@@ -226,8 +227,6 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.SubventionDetail;
 import com.pennant.backend.model.finance.TATDetail;
-import com.pennant.backend.model.finance.TaxHeader;
-import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.covenant.CovenantDocument;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
@@ -15011,123 +15010,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				continue;
 			}
 
-			TaxHeader taxHeader = finFeeDetail.getTaxHeader();
-			Taxes cgstTax = new Taxes();
-			Taxes sgstTax = new Taxes();
-			Taxes igstTax = new Taxes();
-			Taxes ugstTax = new Taxes();
-			Taxes cessTax = new Taxes();
-			if (taxHeader != null) {
-				List<Taxes> taxDetails = taxHeader.getTaxDetails();
-				if (CollectionUtils.isNotEmpty(taxDetails)) {
-					for (Taxes taxes : taxDetails) {
-						if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
-							cgstTax = taxes;
-						} else if (StringUtils.equals(RuleConstants.CODE_SGST, taxes.getTaxType())) {
-							sgstTax = taxes;
-						} else if (StringUtils.equals(RuleConstants.CODE_IGST, taxes.getTaxType())) {
-							igstTax = taxes;
-						} else if (StringUtils.equals(RuleConstants.CODE_UGST, taxes.getTaxType())) {
-							ugstTax = taxes;
-						} else if (StringUtils.equals(RuleConstants.CODE_CESS, taxes.getTaxType())) {
-							cessTax = taxes;
-						}
-					}
-				}
-			}
-
-			feeRule = new FeeRule();
-			// GST Waiver Changes
-			String feeTypeCode = finFeeDetail.getFeeTypeCode();
-
-			feeRule.setFeeCode(feeTypeCode);
-			feeRule.setFeeAmount(finFeeDetail.getActualAmount());
-			feeRule.setWaiverAmount(finFeeDetail.getWaivedAmount());
-			feeRule.setPaidAmount(finFeeDetail.getPaidAmount());
-			feeRule.setFeeToFinance(finFeeDetail.getFeeScheduleMethod());
-			feeRule.setFeeMethod(finFeeDetail.getFeeScheduleMethod());
-
-			dataMap.put(feeTypeCode + "_C", finFeeDetail.getActualAmountOriginal());
-
-			// GST Waiver Changes
-			if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
-				dataMap.put(feeTypeCode + "_W",
-						finFeeDetail.getWaivedAmount().subtract(cgstTax.getWaivedTax().add(sgstTax.getWaivedTax())
-								.add(igstTax.getWaivedTax()).add(ugstTax.getWaivedTax()).add(cessTax.getWaivedTax())));
-			} else {
-				dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount());
-			}
-
-			dataMap.put(feeTypeCode + "_P", finFeeDetail.getPaidAmount());
-
-			// GST
-			dataMap.put(feeTypeCode + "_N", finFeeDetail.getNetAmount());
-
-			// Calculated Amount
-			dataMap.put(feeTypeCode + "_CGST_C", cgstTax.getActualTax());
-			dataMap.put(feeTypeCode + "_SGST_C", sgstTax.getActualTax());
-			dataMap.put(feeTypeCode + "_IGST_C", igstTax.getActualTax());
-			dataMap.put(feeTypeCode + "_UGST_C", ugstTax.getActualTax());
-			dataMap.put(feeTypeCode + "_CESS_C", cessTax.getActualTax());
-
-			// Paid Amount
-			dataMap.put(feeTypeCode + "_CGST_P", cgstTax.getPaidTax());
-			dataMap.put(feeTypeCode + "_SGST_P", sgstTax.getPaidTax());
-			dataMap.put(feeTypeCode + "_IGST_P", igstTax.getPaidTax());
-			dataMap.put(feeTypeCode + "_UGST_P", ugstTax.getPaidTax());
-			dataMap.put(feeTypeCode + "_CESS_P", cessTax.getPaidTax());
-
-			// Net Amount
-			dataMap.put(feeTypeCode + "_CGST_N", cgstTax.getNetTax());
-			dataMap.put(feeTypeCode + "_SGST_N", sgstTax.getNetTax());
-			dataMap.put(feeTypeCode + "_IGST_N", igstTax.getNetTax());
-			dataMap.put(feeTypeCode + "_UGST_N", ugstTax.getNetTax());
-			dataMap.put(feeTypeCode + "_CESS_N", cessTax.getNetTax());
-
-			// Waiver GST Amounts (GST Waiver Changes)
-			dataMap.put(feeTypeCode + "_CGST_W", cgstTax.getWaivedTax());
-			dataMap.put(feeTypeCode + "_SGST_W", sgstTax.getWaivedTax());
-			dataMap.put(feeTypeCode + "_IGST_W", igstTax.getWaivedTax());
-			dataMap.put(feeTypeCode + "_UGST_W", ugstTax.getWaivedTax());
-			dataMap.put(feeTypeCode + "_CESS_W", cessTax.getWaivedTax());
-
-			if (feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
-					|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
-					|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
-				dataMap.put(feeTypeCode + "_SCH", finFeeDetail.getRemainingFeeOriginal());
-				// GST
-				dataMap.put(feeTypeCode + "_CGST_SCH", cgstTax.getRemFeeTax());
-				dataMap.put(feeTypeCode + "_SGST_SCH", sgstTax.getRemFeeTax());
-				dataMap.put(feeTypeCode + "_IGST_SCH", igstTax.getRemFeeTax());
-				dataMap.put(feeTypeCode + "_UGST_SCH", ugstTax.getRemFeeTax());
-				dataMap.put(feeTypeCode + "_CESS_SCH", cessTax.getRemFeeTax());
-			} else {
-				dataMap.put(feeTypeCode + "_SCH", 0);
-				// GST
-				dataMap.put(feeTypeCode + "_CGST_SCH", 0);
-				dataMap.put(feeTypeCode + "_SGST_SCH", 0);
-				dataMap.put(feeTypeCode + "_IGST_SCH", 0);
-				dataMap.put(feeTypeCode + "_UGST_SCH", 0);
-				dataMap.put(feeTypeCode + "_CESS_SCH", 0);
-			}
-
-			if (StringUtils.equals(feeRule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)) {
-				dataMap.put(feeTypeCode + "_AF", finFeeDetail.getRemainingFeeOriginal());
-				// GST
-				dataMap.put(feeTypeCode + "_CGST_AF", cgstTax.getRemFeeTax());
-				dataMap.put(feeTypeCode + "_SGST_AF", sgstTax.getRemFeeTax());
-				dataMap.put(feeTypeCode + "_IGST_AF", igstTax.getRemFeeTax());
-				dataMap.put(feeTypeCode + "_UGST_AF", ugstTax.getRemFeeTax());
-				dataMap.put(feeTypeCode + "_CESS_AF", cessTax.getRemFeeTax());
-			} else {
-				dataMap.put(feeTypeCode + "_AF", 0);
-				// GST
-				dataMap.put(feeTypeCode + "_CGST_AF", 0);
-				dataMap.put(feeTypeCode + "_SGST_AF", 0);
-				dataMap.put(feeTypeCode + "_IGST_AF", 0);
-				dataMap.put(feeTypeCode + "_UGST_AF", 0);
-				dataMap.put(feeTypeCode + "_CESS_AF", 0);
-			}
+			dataMap.putAll(FeeCalculator.getFeeRuleMap(finFeeDetail));
 
 			if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
 				deductFeeDisb = deductFeeDisb.add(finFeeDetail.getRemainingFee());
@@ -15149,9 +15032,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				vasFeeWaived = vasFeeWaived.add(finFeeDetail.getWaivedAmount());
 			}
 
-			// TDS
-			dataMap.put(feeTypeCode + "_TDS_N", finFeeDetail.getNetTDS());
-			dataMap.put(feeTypeCode + "_TDS_P", finFeeDetail.getPaidTDS());
 		}
 
 		amountCodes.setDeductFeeDisb(deductFeeDisb);

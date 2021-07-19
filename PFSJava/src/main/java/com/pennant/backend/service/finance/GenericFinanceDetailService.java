@@ -1,41 +1,36 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  GenericFinanceDetailService.java										*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : GenericFinanceDetailService.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
-
- * 13-06-2018       Siva					 0.2        Stage Accounting Modifications      * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 *
+ * 
+ * 13-06-2018 Siva 0.2 Stage Accounting Modifications * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.finance;
@@ -74,6 +69,7 @@ import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.FeeCalculator;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.OverDueRecoveryPostingsUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -1395,32 +1391,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				isPreIncomized = true;
 			}
 
-			TaxHeader taxHeader = fee.getTaxHeader();
-			Taxes cgstTax = new Taxes();
-			Taxes sgstTax = new Taxes();
-			Taxes igstTax = new Taxes();
-			Taxes ugstTax = new Taxes();
-			Taxes cessTax = new Taxes();
-
-			if (taxHeader != null) {
-				List<Taxes> taxDetails = taxHeader.getTaxDetails();
-				if (CollectionUtils.isNotEmpty(taxDetails)) {
-					for (Taxes taxes : taxDetails) {
-						if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
-							cgstTax = taxes;
-						} else if (StringUtils.equals(RuleConstants.CODE_SGST, taxes.getTaxType())) {
-							sgstTax = taxes;
-						} else if (StringUtils.equals(RuleConstants.CODE_IGST, taxes.getTaxType())) {
-							igstTax = taxes;
-						} else if (StringUtils.equals(RuleConstants.CODE_UGST, taxes.getTaxType())) {
-							ugstTax = taxes;
-						} else if (StringUtils.equals(RuleConstants.CODE_CESS, taxes.getTaxType())) {
-							cessTax = taxes;
-						}
-					}
-				}
-			}
-
 			String feeTypeCode = fee.getFeeTypeCode();
 			feeRule.setFeeCode(feeTypeCode);
 			feeRule.setFeeAmount(fee.getActualAmount());
@@ -1428,91 +1398,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			feeRule.setPaidAmount(fee.getPaidAmount());
 			feeRule.setFeeToFinance(fee.getFeeScheduleMethod());
 			feeRule.setFeeMethod(fee.getFeeScheduleMethod());
-
-			dataMap.put(feeTypeCode + "_C", isPreIncomized ? BigDecimal.ZERO : fee.getActualAmountOriginal());
-
-			// GST Waiver Changes
-			if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(fee.getTaxComponent())) {
-				dataMap.put(feeTypeCode + "_W",
-						isPreIncomized ? BigDecimal.ZERO
-								: fee.getWaivedAmount()
-										.subtract(cgstTax.getWaivedTax().add(sgstTax.getWaivedTax())
-												.add(igstTax.getWaivedTax()).add(ugstTax.getWaivedTax())
-												.add(cessTax.getWaivedTax())));
-			} else {
-				dataMap.put(feeTypeCode + "_W", isPreIncomized ? BigDecimal.ZERO : fee.getWaivedAmount());
-			}
-
-			dataMap.put(feeTypeCode + "_P", isPreIncomized ? BigDecimal.ZERO : fee.getPaidAmount());
-
-			// GST Added
-			dataMap.put(feeTypeCode + "_N", isPreIncomized ? BigDecimal.ZERO : fee.getNetAmount());
-			// Calculated Amount
-			dataMap.put(feeTypeCode + "_CGST_C", isPreIncomized ? BigDecimal.ZERO : cgstTax.getActualTax());
-			dataMap.put(feeTypeCode + "_SGST_C", isPreIncomized ? BigDecimal.ZERO : sgstTax.getActualTax());
-			dataMap.put(feeTypeCode + "_IGST_C", isPreIncomized ? BigDecimal.ZERO : igstTax.getActualTax());
-			dataMap.put(feeTypeCode + "_UGST_C", isPreIncomized ? BigDecimal.ZERO : ugstTax.getActualTax());
-			dataMap.put(feeTypeCode + "_CESS_C", isPreIncomized ? BigDecimal.ZERO : cessTax.getActualTax());
-
-			// Paid Amount
-			dataMap.put(feeTypeCode + "_CGST_P", isPreIncomized ? BigDecimal.ZERO : cgstTax.getPaidTax());
-			dataMap.put(feeTypeCode + "_SGST_P", isPreIncomized ? BigDecimal.ZERO : sgstTax.getPaidTax());
-			dataMap.put(feeTypeCode + "_IGST_P", isPreIncomized ? BigDecimal.ZERO : igstTax.getPaidTax());
-			dataMap.put(feeTypeCode + "_UGST_P", isPreIncomized ? BigDecimal.ZERO : ugstTax.getPaidTax());
-			dataMap.put(feeTypeCode + "_CESS_P", isPreIncomized ? BigDecimal.ZERO : cessTax.getPaidTax());
-
-			// Net Amount
-			dataMap.put(feeTypeCode + "_CGST_N", isPreIncomized ? BigDecimal.ZERO : cgstTax.getNetTax());
-			dataMap.put(feeTypeCode + "_SGST_N", isPreIncomized ? BigDecimal.ZERO : sgstTax.getNetTax());
-			dataMap.put(feeTypeCode + "_IGST_N", isPreIncomized ? BigDecimal.ZERO : igstTax.getNetTax());
-			dataMap.put(feeTypeCode + "_UGST_N", isPreIncomized ? BigDecimal.ZERO : ugstTax.getNetTax());
-			dataMap.put(feeTypeCode + "_CESS_N", isPreIncomized ? BigDecimal.ZERO : cessTax.getNetTax());
-
-			// Waiver GST Amounts (GST Waiver Changes)
-			dataMap.put(feeTypeCode + "_CGST_W", isPreIncomized ? BigDecimal.ZERO : cgstTax.getWaivedTax());
-			dataMap.put(feeTypeCode + "_SGST_W", isPreIncomized ? BigDecimal.ZERO : sgstTax.getWaivedTax());
-			dataMap.put(feeTypeCode + "_IGST_W", isPreIncomized ? BigDecimal.ZERO : igstTax.getWaivedTax());
-			dataMap.put(feeTypeCode + "_UGST_W", isPreIncomized ? BigDecimal.ZERO : ugstTax.getWaivedTax());
-			dataMap.put(feeTypeCode + "_CESS_W", isPreIncomized ? BigDecimal.ZERO : cessTax.getWaivedTax());
-
-			if (feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
-					|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
-					|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
-				dataMap.put(feeTypeCode + "_SCH", fee.getRemainingFee());
-				// GST Added
-				dataMap.put(feeTypeCode + "_CGST_SCH", cgstTax.getRemFeeTax());
-				dataMap.put(feeTypeCode + "_SGST_SCH", sgstTax.getRemFeeTax());
-				dataMap.put(feeTypeCode + "_IGST_SCH", igstTax.getRemFeeTax());
-				dataMap.put(feeTypeCode + "_UGST_SCH", ugstTax.getRemFeeTax());
-				dataMap.put(feeTypeCode + "_CESS_SCH", cessTax.getRemFeeTax());
-			} else {
-				dataMap.put(feeTypeCode + "_SCH", 0);
-				// GST Added
-				dataMap.put(feeTypeCode + "_CGST_SCH", 0);
-				dataMap.put(feeTypeCode + "_SGST_SCH", 0);
-				dataMap.put(feeTypeCode + "_IGST_SCH", 0);
-				dataMap.put(feeTypeCode + "_UGST_SCH", 0);
-				dataMap.put(feeTypeCode + "_CESS_SCH", 0);
-			}
-
-			if (StringUtils.equals(feeRule.getFeeToFinance(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
-				dataMap.put(feeTypeCode + "_AF", fee.getRemainingFee());
-				// GST Added
-				dataMap.put(feeTypeCode + "_CGST_AF", cgstTax.getRemFeeTax());
-				dataMap.put(feeTypeCode + "_SGST_AF", sgstTax.getRemFeeTax());
-				dataMap.put(feeTypeCode + "_IGST_AF", igstTax.getRemFeeTax());
-				dataMap.put(feeTypeCode + "_UGST_AF", ugstTax.getRemFeeTax());
-				dataMap.put(feeTypeCode + "_CESS_AF", cessTax.getRemFeeTax());
-
-			} else {
-				dataMap.put(feeTypeCode + "_AF", 0);
-				// GST Added
-				dataMap.put(feeTypeCode + "_CGST_AF", 0);
-				dataMap.put(feeTypeCode + "_SGST_AF", 0);
-				dataMap.put(feeTypeCode + "_IGST_AF", 0);
-				dataMap.put(feeTypeCode + "_UGST_AF", 0);
-				dataMap.put(feeTypeCode + "_CESS_AF", 0);
-			}
 
 			if (fee.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
 				deductFeeDisb = deductFeeDisb.add(fee.getRemainingFee());
@@ -1536,9 +1421,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				vasFeeWaived = vasFeeWaived.add(fee.getWaivedAmount());
 			}
 
-			// TDS
-			dataMap.put(feeTypeCode + "_TDS_N", fee.getNetTDS());
-			dataMap.put(feeTypeCode + "_TDS_P", fee.getPaidTDS());
+			dataMap.putAll(FeeCalculator.getFeeRuleMap(fee));
 		}
 
 		amountCodes.setDeductFeeDisb(deductFeeDisb);

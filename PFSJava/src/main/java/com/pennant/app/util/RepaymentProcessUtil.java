@@ -587,7 +587,7 @@ public class RepaymentProcessUtil {
 			Map<String, BigDecimal> feeMap = new HashMap<>();
 
 			if (finFeeDetailList != null) {
-				prepareFeeRulesMap(amountCodes, feeMap, finFeeDetailList, rcd.getPaymentType());
+				prepareFeeRulesMap(feeMap, finFeeDetailList, rcd.getPaymentType());
 			}
 			extDataMap.putAll(feeMap);
 		}
@@ -1348,7 +1348,7 @@ public class RepaymentProcessUtil {
 		movementMap.put(feeCode, amt.add(amount));
 	}
 
-	private Map<String, BigDecimal> prepareFeeRulesMap(AEAmountCodes amountCodes, Map<String, BigDecimal> dataMap,
+	private Map<String, BigDecimal> prepareFeeRulesMap(Map<String, BigDecimal> dataMap,
 			List<FinFeeDetail> finFeeDetailList, String payType) {
 		logger.debug(Literal.ENTERING);
 
@@ -1357,7 +1357,7 @@ public class RepaymentProcessUtil {
 				continue;
 			}
 
-			dataMap.putAll(FeeCalculator.getFeeRuleMap(payType, finFeeDetail));
+			dataMap.putAll(FeeCalculator.getFeeRuleMap(finFeeDetail, payType));
 		}
 
 		logger.debug(Literal.LEAVING);

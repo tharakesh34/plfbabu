@@ -33,7 +33,6 @@
  */
 package com.pennant.app.util;
 
-import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -114,8 +113,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 
-public class RepaymentPostingsUtil implements Serializable {
-	private static final long serialVersionUID = 4165353615228874397L;
+public class RepaymentPostingsUtil {
 	private static Logger logger = LogManager.getLogger(RepaymentPostingsUtil.class);
 
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
@@ -1286,7 +1284,7 @@ public class RepaymentPostingsUtil implements Serializable {
 			}
 		}
 
-		prepareFeeRulesMap(amountCodes, dataMap, finFeeDetailList, rpyQueueHeader.getPayType());
+		prepareFeeRulesMap(dataMap, finFeeDetailList, rpyQueueHeader.getPayType());
 		addZeroifNotContainsObj(dataMap, "bounceChargePaid");
 		addZeroifNotContainsObj(dataMap, "bounceCharge_CGST_P");
 		addZeroifNotContainsObj(dataMap, "bounceCharge_IGST_P");
@@ -1421,114 +1419,22 @@ public class RepaymentPostingsUtil implements Serializable {
 		}
 	}
 
-	private Map<String, Object> prepareFeeRulesMap(AEAmountCodes amountCodes, Map<String, Object> dataMap,
-			List<FinFeeDetail> finFeeDetailList, String payType) {
-		logger.debug("Entering");
+	private Map<String, Object> prepareFeeRulesMap(Map<String, Object> dataMap, List<FinFeeDetail> finFeeDetailList,
+			String payType) {
 
-		if (finFeeDetailList != null) {
-
-			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-				if (StringUtils.startsWith(finFeeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_ADDDBS)) {
-					continue;
-				}
-
-				TaxHeader taxHeader = finFeeDetail.getTaxHeader();
-				Taxes cgstTax = new Taxes();
-				Taxes sgstTax = new Taxes();
-				Taxes igstTax = new Taxes();
-				Taxes ugstTax = new Taxes();
-				Taxes cessTax = new Taxes();
-				List<Taxes> taxDetails = taxHeader.getTaxDetails();
-
-				if (taxHeader != null) {
-					if (CollectionUtils.isNotEmpty(taxDetails)) {
-						for (Taxes taxes : taxDetails) {
-							switch (taxes.getTaxType()) {
-							case RuleConstants.CODE_CGST:
-								cgstTax = taxes;
-								break;
-							case RuleConstants.CODE_SGST:
-								sgstTax = taxes;
-								break;
-							case RuleConstants.CODE_IGST:
-								igstTax = taxes;
-								break;
-							case RuleConstants.CODE_UGST:
-								ugstTax = taxes;
-								break;
-							case RuleConstants.CODE_CESS:
-								cessTax = taxes;
-								break;
-							default:
-								break;
-							}
-						}
-					}
-				}
-
-				String feeTypeCode = finFeeDetail.getFeeTypeCode();
-				dataMap.put(feeTypeCode + "_C", finFeeDetail.getActualAmount());
-
-				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
-					dataMap.put(feeTypeCode + "_W",
-							finFeeDetail.getWaivedAmount()
-									.subtract(cgstTax.getWaivedTax().add(sgstTax.getWaivedTax())
-											.add(igstTax.getWaivedTax()).add(ugstTax.getWaivedTax())
-											.add(cessTax.getWaivedTax())));
-				} else {
-					dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount());
-				}
-
-				dataMap.put(feeTypeCode + "_P", finFeeDetail.getPaidAmount());
-
-				switch (payType) {
-				case RepayConstants.RECEIPTMODE_EXCESS:
-					payType = "EX_";
-					break;
-				case RepayConstants.RECEIPTMODE_EMIINADV:
-					payType = "EA_";
-					break;
-				case RepayConstants.RECEIPTMODE_PAYABLE:
-					payType = "PA_";
-					break;
-				default:
-					payType = "PB_";
-					break;
-				}
-
-				dataMap.put(payType + feeTypeCode + "_P", finFeeDetail.getPaidAmount());
-
-				// Calculated Amount
-				dataMap.put(feeTypeCode + "_CGST_C", cgstTax.getActualTax());
-				dataMap.put(feeTypeCode + "_SGST_C", sgstTax.getActualTax());
-				dataMap.put(feeTypeCode + "_IGST_C", igstTax.getActualTax());
-				dataMap.put(feeTypeCode + "_UGST_C", ugstTax.getActualTax());
-				dataMap.put(feeTypeCode + "_CESS_C", cessTax.getActualTax());
-
-				// Paid Amount
-				dataMap.put(feeTypeCode + "_CGST_P", cgstTax.getPaidTax());
-				dataMap.put(feeTypeCode + "_SGST_P", sgstTax.getPaidTax());
-				dataMap.put(feeTypeCode + "_IGST_P", igstTax.getPaidTax());
-				dataMap.put(feeTypeCode + "_UGST_P", ugstTax.getPaidTax());
-				dataMap.put(feeTypeCode + "_CESS_P", cessTax.getPaidTax());
-
-				// Net Amount
-				dataMap.put(feeTypeCode + "_CGST_N", cgstTax.getNetTax());
-				dataMap.put(feeTypeCode + "_SGST_N", sgstTax.getNetTax());
-				dataMap.put(feeTypeCode + "_IGST_N", igstTax.getNetTax());
-				dataMap.put(feeTypeCode + "_UGST_N", ugstTax.getNetTax());
-				dataMap.put(feeTypeCode + "_CESS_N", cessTax.getNetTax());
-
-				// Waiver GST Amounts (GST Waiver Changes)
-				dataMap.put(feeTypeCode + "_CGST_W", cgstTax.getWaivedTax());
-				dataMap.put(feeTypeCode + "_SGST_W", sgstTax.getWaivedTax());
-				dataMap.put(feeTypeCode + "_IGST_W", igstTax.getWaivedTax());
-				dataMap.put(feeTypeCode + "_UGST_W", ugstTax.getWaivedTax());
-				dataMap.put(feeTypeCode + "_CESS_W", cessTax.getWaivedTax());
-			}
+		if (CollectionUtils.isEmpty(finFeeDetailList)) {
+			return dataMap;
 		}
 
-		logger.debug("Leaving");
+		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
+			if (StringUtils.startsWith(finFeeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_ADDDBS)) {
+				continue;
+			}
+
+			dataMap.putAll(FeeCalculator.getFeeRuleMap(finFeeDetail, payType));
+
+		}
+
 		return dataMap;
 	}
 

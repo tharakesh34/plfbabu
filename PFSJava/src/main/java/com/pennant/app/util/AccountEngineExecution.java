@@ -49,7 +49,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -58,6 +57,7 @@ import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
@@ -481,135 +481,16 @@ public class AccountEngineExecution implements Serializable {
 			return;
 		}
 
-		for (String feeCode : feeCodes.split(",")) {
-			addZeroifNotContains(dataMap, feeCode + "_C");
-			addZeroifNotContains(dataMap, feeCode + "_W");
-			addZeroifNotContains(dataMap, feeCode + "_P");
-			addZeroifNotContains(dataMap, feeCode + "_SCH");
-			addZeroifNotContains(dataMap, feeCode + "_AF");
-			addZeroifNotContains(dataMap, feeCode + "_N");
-			addZeroifNotContains(dataMap, feeCode + "_R");
+		for (String feeTypeCode : feeCodes.split(",")) {
 
-			// GST
-			addZeroifNotContains(dataMap, feeCode + "_UGST_N");
-			addZeroifNotContains(dataMap, feeCode + "_SGST_N");
-			addZeroifNotContains(dataMap, feeCode + "_IGST_N");
-			addZeroifNotContains(dataMap, feeCode + "_CGST_N");
-			addZeroifNotContains(dataMap, feeCode + "_CESS_N");
+			FinFeeDetail fd = new FinFeeDetail();
 
-			addZeroifNotContains(dataMap, feeCode + "_UGST_C");
-			addZeroifNotContains(dataMap, feeCode + "_SGST_C");
-			addZeroifNotContains(dataMap, feeCode + "_IGST_C");
-			addZeroifNotContains(dataMap, feeCode + "_CGST_C");
-			addZeroifNotContains(dataMap, feeCode + "_CESS_C");
+			fd.setFeeTypeCode(feeTypeCode);
 
-			addZeroifNotContains(dataMap, feeCode + "_UGST_P");
-			addZeroifNotContains(dataMap, feeCode + "_SGST_P");
-			addZeroifNotContains(dataMap, feeCode + "_IGST_P");
-			addZeroifNotContains(dataMap, feeCode + "_CGST_P");
-			addZeroifNotContains(dataMap, feeCode + "_CESS_P");
-
-			addZeroifNotContains(dataMap, feeCode + "_UGST_W");
-			addZeroifNotContains(dataMap, feeCode + "_SGST_W");
-			addZeroifNotContains(dataMap, feeCode + "_IGST_W");
-			addZeroifNotContains(dataMap, feeCode + "_CGST_W");
-			addZeroifNotContains(dataMap, feeCode + "_CESS_W");
-
-			addZeroifNotContains(dataMap, feeCode + "_UGST_R");
-			addZeroifNotContains(dataMap, feeCode + "_SGST_R");
-			addZeroifNotContains(dataMap, feeCode + "_IGST_R");
-			addZeroifNotContains(dataMap, feeCode + "_CGST_R");
-
-			addZeroifNotContains(dataMap, feeCode + "_UGST_R");
-			addZeroifNotContains(dataMap, feeCode + "_SGST_R");
-			addZeroifNotContains(dataMap, feeCode + "_IGST_R");
-			addZeroifNotContains(dataMap, feeCode + "_CGST_R");
-
-			addZeroifNotContains(dataMap, feeCode + "_UGST_SCH");
-			addZeroifNotContains(dataMap, feeCode + "_SGST_SCH");
-			addZeroifNotContains(dataMap, feeCode + "_IGST_SCH");
-			addZeroifNotContains(dataMap, feeCode + "_CGST_SCH");
-			addZeroifNotContains(dataMap, feeCode + "_CESS_SCH");
-
-			addZeroifNotContains(dataMap, feeCode + "_UGST_AF");
-			addZeroifNotContains(dataMap, feeCode + "_SGST_AF");
-			addZeroifNotContains(dataMap, feeCode + "_IGST_AF");
-			addZeroifNotContains(dataMap, feeCode + "_CGST_AF");
-			addZeroifNotContains(dataMap, feeCode + "_CESS_AF");
-
-			if (ImplementationConstants.ALLOW_TDS_ON_FEE) {
-				addZeroifNotContains(dataMap, feeCode + "_TDS_N");
-				addZeroifNotContains(dataMap, feeCode + "_TDS_P");
-				addZeroifNotContains(dataMap, feeCode + "_TDS_R");
-			}
-
-			String[] payTypes = { "EX_", "EA_", "PA_", "PB_" };
-			String key;
-			for (String payType : payTypes) {
-				key = payType + feeCode + "_P";
-				if (!dataMap.containsKey(key)) {
-					dataMap.put(key, BigDecimal.ZERO);
-				}
-			}
+			dataMap.putAll(FeeCalculator.getFeeRuleMap(fd));
 		}
 
 	}
-
-	private void addZeroifNotContains(Map<String, Object> dataMap, String key) {
-		if (dataMap != null) {
-			if (!dataMap.containsKey(key)) {
-				dataMap.put(key, BigDecimal.ZERO);
-			}
-		}
-	}
-
-	/*
-	 * private List<ReturnDataSet> createAccOnCCyConversion(ReturnDataSet existDataSet, String acCcy, BigDecimal
-	 * unconvertedPostAmt, Map<String, Object> dataMap) {
-	 * 
-	 * List<ReturnDataSet> newEntries = new ArrayList<>(2);
-	 * 
-	 * String finBranch = (String) dataMap.get("fm_finBranch"); String finCcy = (String) dataMap.get("fm_finCcy");
-	 * 
-	 * String actTranType = existDataSet.getDrOrCr();
-	 * 
-	 * EventProperties eventProperties = existDataSet.getEventProperties(); String phase = null; String appCurrency =
-	 * null;
-	 * 
-	 * if (eventProperties.isParameterLoaded()) { phase = eventProperties.getPhase(); appCurrency =
-	 * eventProperties.getAppCurrency(); } else { phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
-	 * appCurrency = SysParamUtil.getAppCurrency(); }
-	 * 
-	 * String finCcyNum = ""; String acCcyNum = ""; int formatter = 0; if (phase.equals(PennantConstants.APP_PHASE_EOD))
-	 * { finCcyNum = CurrencyUtil.getCcyNumber(finCcy); acCcyNum = CurrencyUtil.getCcyNumber(acCcy); } else { finCcyNum
-	 * = currencyDAO.getCurrencyById(finCcy);
-	 * 
-	 * Currency currency = currencyDAO.getCurrencyByCode(acCcy); acCcyNum = currency.getCcyNumber(); formatter =
-	 * currency.getCcyEditField(); }
-	 * 
-	 * String drCr = actTranType.equals(AccountConstants.TRANTYPE_DEBIT) ? AccountConstants.TRANTYPE_CREDIT :
-	 * AccountConstants.TRANTYPE_DEBIT; String crDr = actTranType.equals(AccountConstants.TRANTYPE_DEBIT) ?
-	 * AccountConstants.TRANTYPE_DEBIT : AccountConstants.TRANTYPE_CREDIT;
-	 * 
-	 * String crDrTranCode = SysParamUtil.getValueAsString("CCYCNV_" + crDr + "RTRANCODE"); String drCrTranCode =
-	 * SysParamUtil.getValueAsString("CCYCNV_" + drCr + "RTRANCODE");
-	 * 
-	 * ReturnDataSet newDataSet1 = existDataSet.copyEntity(); newDataSet1.setDrOrCr(drCr); newDataSet1.setAcCcy(acCcy);
-	 * newDataSet1.setTransOrder(existDataSet.getTransOrder() + 1); newDataSet1.setTranCode(drCrTranCode);
-	 * newDataSet1.setRevTranCode(crDrTranCode); newDataSet1.setAccount(existDataSet.getAccount().substring(0, 4) +
-	 * "881" + acCcyNum + finCcyNum); newDataSet1.setFormatter(formatter); newEntries.add(newDataSet1);
-	 * 
-	 * ReturnDataSet newDataSet2 = existDataSet.copyEntity(); newDataSet2.setDrOrCr(crDr);
-	 * newDataSet2.setTransOrder(existDataSet.getTransOrder() + 2); newDataSet2.setTranCode(crDrTranCode);
-	 * newDataSet2.setRevTranCode(drCrTranCode); newDataSet2.setAccount(finBranch + "881" + finCcyNum + acCcyNum);
-	 * newDataSet2.setPostAmount(unconvertedPostAmt);
-	 * newDataSet2.setPostAmountLcCcy(CalculationUtil.getConvertedAmount(finCcy, appCurrency, unconvertedPostAmt));
-	 * newEntries.add(newDataSet2);
-	 * 
-	 * existDataSet.setFormatter(formatter);
-	 * 
-	 * return newEntries; }
-	 */
 
 	private void doFilldataMap(Map<String, Object> dataMap) throws IllegalAccessException, InvocationTargetException {
 		Customer customer = customerDAO.getCustomerForPostings((long) dataMap.get("fm_custID"));

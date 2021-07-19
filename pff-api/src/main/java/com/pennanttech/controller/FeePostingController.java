@@ -25,6 +25,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.fees.FeePostings;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
@@ -280,89 +281,90 @@ public class FeePostingController extends ExtendedTestClass {
 	private ManualAdviseResponse calculateGST(ManualAdvise manualAdvise, boolean taxApplicable, String taxComp) {
 		logger.debug(Literal.ENTERING);
 		FinFeeDetail finFeeDetail = new FinFeeDetail();
-		ManualAdviseResponse response = new ManualAdviseResponse();
+		ManualAdviseResponse mar = new ManualAdviseResponse();
 		FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(manualAdvise.getFinReference(), "",
 				false);
 
-		if (financeDetail != null) {
-			FinTypeFees finTypeFee = new FinTypeFees();
-			financeDetail.setFinanceTaxDetail(
-					financeTaxDetailService.getApprovedFinanceTaxDetail(manualAdvise.getFinReference()));
-			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		if (financeDetail == null) {
+			return mar;
+		}
 
-			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain.getFinReference());
+		FinScheduleData schdData = financeDetail.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		String finReference = fm.getFinReference();
 
-			finFeeDetail.setCalculatedAmount(manualAdvise.getAdviseAmount());
+		financeDetail.setFinanceTaxDetail(financeTaxDetailService.getApprovedFinanceTaxDetail(finReference));
 
-			finFeeDetail.setTaxComponent(taxComp);
-			finFeeDetail.setTaxApplicable(taxApplicable);
-			finTypeFee.setTaxComponent(taxComp);
-			finTypeFee.setTaxApplicable(taxApplicable);
-			finTypeFee.setAmount(manualAdvise.getAdviseAmount());
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finReference);
 
-			finFeeDetailService.convertGSTFinTypeFees(finFeeDetail, finTypeFee, financeDetail, taxPercentages);
-			finFeeDetailService.calculateFees(finFeeDetail, financeDetail.getFinScheduleData(), taxPercentages);
+		finFeeDetail.setCalculatedAmount(manualAdvise.getAdviseAmount());
 
-			String taxComponent = "";
+		finFeeDetail.setTaxComponent(taxComp);
+		finFeeDetail.setTaxApplicable(taxApplicable);
 
-			if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, finFeeDetail.getTaxComponent())) {
-				taxComponent = Labels.getLabel("label_FeeTypeDialog_Exclusive");
-			} else if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE,
-					finFeeDetail.getTaxComponent())) {
-				taxComponent = Labels.getLabel("label_FeeTypeDialog_Inclusive");
-			}
+		FinTypeFees finTypeFee = new FinTypeFees();
+		finTypeFee.setTaxComponent(taxComp);
+		finTypeFee.setTaxApplicable(taxApplicable);
+		finTypeFee.setAmount(manualAdvise.getAdviseAmount());
 
-			if (finFeeDetail.getTaxHeader() != null) {
-				TaxDetail taxDetail = new TaxDetail();
+		finFeeDetailService.convertGSTFinTypeFees(finFeeDetail, finTypeFee, financeDetail, taxPercentages);
+		finFeeDetailService.calculateFees(finFeeDetail, schdData, taxPercentages);
 
-				TaxHeader taxHeader = finFeeDetail.getTaxHeader();
-				BigDecimal totalGstAmount = BigDecimal.ZERO;
-				BigDecimal totalAmount = BigDecimal.ZERO;
-				Taxes cgstTax = new Taxes();
-				Taxes sgstTax = new Taxes();
-				Taxes igstTax = new Taxes();
-				Taxes ugstTax = new Taxes();
-				Taxes cessTax = new Taxes();
+		String taxComponent = "";
 
-				List<Taxes> taxDetails = taxHeader.getTaxDetails();
-				for (Taxes taxes : taxDetails) {
-					if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
-						cgstTax = taxes;
-					} else if (StringUtils.equals(RuleConstants.CODE_SGST, taxes.getTaxType())) {
-						sgstTax = taxes;
-					} else if (StringUtils.equals(RuleConstants.CODE_IGST, taxes.getTaxType())) {
-						igstTax = taxes;
-					} else if (StringUtils.equals(RuleConstants.CODE_UGST, taxes.getTaxType())) {
-						ugstTax = taxes;
-					} else if (StringUtils.equals(RuleConstants.CODE_CESS, taxes.getTaxType())) {
-						cessTax = taxes;
-					}
-				}
+		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
+			taxComponent = Labels.getLabel("label_FeeTypeDialog_Exclusive");
+		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
+			taxComponent = Labels.getLabel("label_FeeTypeDialog_Inclusive");
+		}
 
-				// Total GST Amount
-				totalGstAmount = cgstTax.getNetTax().add(sgstTax.getNetTax()).add(igstTax.getNetTax())
-						.add(ugstTax.getNetTax()).add(cessTax.getNetTax());
+		TaxDetail taxDetail = new TaxDetail();
 
-				taxDetail.setNetCGST(cgstTax.getNetTax());
-				taxDetail.setNetSGST(sgstTax.getNetTax());
-				taxDetail.setNetIGST(igstTax.getNetTax());
-				taxDetail.setNetUGST(ugstTax.getNetTax());
-				taxDetail.setNetCESS(cessTax.getNetTax());
-				taxDetail.setNetTGST(totalGstAmount);
+		TaxHeader taxHeader = finFeeDetail.getTaxHeader();
+		BigDecimal totalGstAmount = BigDecimal.ZERO;
+		BigDecimal totalAmount = BigDecimal.ZERO;
+		Taxes cgstTax = new Taxes();
+		Taxes sgstTax = new Taxes();
+		Taxes igstTax = new Taxes();
+		Taxes ugstTax = new Taxes();
+		Taxes cessTax = new Taxes();
 
-				// Total Amount include GST
-				totalAmount = finFeeDetail.getNetAmountOriginal().add(totalGstAmount);
-				taxDetail.setTotal(totalAmount);
-
-				taxDetail.setAdviseAmount(finFeeDetail.getNetAmountOriginal());
-				taxDetail.setGstType(taxComponent);
-				response.setTaxDetail(taxDetail);
-
+		List<Taxes> taxDetails = taxHeader.getTaxDetails();
+		for (Taxes taxes : taxDetails) {
+			if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
+				cgstTax = taxes;
+			} else if (StringUtils.equals(RuleConstants.CODE_SGST, taxes.getTaxType())) {
+				sgstTax = taxes;
+			} else if (StringUtils.equals(RuleConstants.CODE_IGST, taxes.getTaxType())) {
+				igstTax = taxes;
+			} else if (StringUtils.equals(RuleConstants.CODE_UGST, taxes.getTaxType())) {
+				ugstTax = taxes;
+			} else if (StringUtils.equals(RuleConstants.CODE_CESS, taxes.getTaxType())) {
+				cessTax = taxes;
 			}
 		}
 
+		// Total GST Amount
+		totalGstAmount = cgstTax.getNetTax().add(sgstTax.getNetTax()).add(igstTax.getNetTax()).add(ugstTax.getNetTax())
+				.add(cessTax.getNetTax());
+
+		taxDetail.setNetCGST(cgstTax.getNetTax());
+		taxDetail.setNetSGST(sgstTax.getNetTax());
+		taxDetail.setNetIGST(igstTax.getNetTax());
+		taxDetail.setNetUGST(ugstTax.getNetTax());
+		taxDetail.setNetCESS(cessTax.getNetTax());
+		taxDetail.setNetTGST(totalGstAmount);
+
+		// Total Amount include GST
+		totalAmount = finFeeDetail.getNetAmountOriginal().add(totalGstAmount);
+		taxDetail.setTotal(totalAmount);
+
+		taxDetail.setAdviseAmount(finFeeDetail.getNetAmountOriginal());
+		taxDetail.setGstType(taxComponent);
+		mar.setTaxDetail(taxDetail);
+
 		logger.debug(Literal.LEAVING);
-		return response;
+		return mar;
 	}
 
 	/**
