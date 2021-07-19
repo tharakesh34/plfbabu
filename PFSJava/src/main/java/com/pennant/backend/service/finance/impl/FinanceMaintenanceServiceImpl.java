@@ -109,6 +109,7 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -242,7 +243,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		//Finance Stage Accounting Posting Details 
 		//=======================================
 		financeDetail.setStageTransactionEntries(getTransactionEntryDAO().getListTransactionEntryByRefType(finType,
-				StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent,
+				StringUtils.isEmpty(procEdtEvent) ? FinServiceEvent.ORG : procEdtEvent,
 				FinanceConstants.PROCEDT_STAGEACC, userRole, "_AEView", true));
 
 		//Finance Joint Account Details
@@ -250,7 +251,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				.setJointAccountDetailList(getJointAccountDetailService().getJoinAccountDetail(finReference, "_View"));
 
 		//Finance Guaranteer Details		
-		if (StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_BASICMAINTAIN)) {
+		if (StringUtils.equals(procEdtEvent, FinServiceEvent.BASICMAINTAIN)) {
 			financeDetail.setGurantorsDetailList(getGuarantorDetailService().getGuarantorDetail(finReference, "_View"));
 
 			// Collateral Details
@@ -273,7 +274,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		financeDetail.setDocumentDetailsList(getDocumentDetailsDAO().getDocumentDetailsByRef(finReference,
 				FinanceConstants.MODULE_NAME, procEdtEvent, "_View"));
 
-		if (StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
+		if (StringUtils.equals(procEdtEvent, FinServiceEvent.WRITEOFFPAY)) {
 			if (StringUtils.isNotBlank(scheduleData.getFinanceMain().getRecordType())) {
 				financeDetail.setFinwriteoffPayment(
 						getFinanceWriteoffDAO().getFinWriteoffPaymentById(finReference, "_Temp"));
@@ -875,12 +876,12 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		}
 
 		String accEventCode = "";
-		if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
+		if (StringUtils.equals(financeDetail.getModuleDefiner(), FinServiceEvent.WRITEOFFPAY)) {
 			accEventCode = AccountEventConstants.ACCEVENT_WRITEBK;
-		} else if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_BASICMAINTAIN)) {
+		} else if (StringUtils.equals(financeDetail.getModuleDefiner(), FinServiceEvent.BASICMAINTAIN)) {
 			accEventCode = AccountEventConstants.ACCEVENT_AMENDMENT;
 		} else if (StringUtils.equals(financeDetail.getModuleDefiner(),
-				FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN)) {
+				FinServiceEvent.RPYBASICMAINTAIN)) {
 			accEventCode = AccountEventConstants.ACCEVENT_SEGMENT;
 		}
 

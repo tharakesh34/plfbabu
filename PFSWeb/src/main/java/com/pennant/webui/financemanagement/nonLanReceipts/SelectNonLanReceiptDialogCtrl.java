@@ -76,6 +76,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.upload.MultiReceiptThreadProcess;
 import com.rits.cloning.Cloner;
 

@@ -82,7 +82,6 @@ import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.UploadManualAdvise;
 import com.pennant.backend.service.finance.UploadHeaderService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JvPostingConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.UploadConstants;
@@ -96,6 +95,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/Uploads/UploadList.zul file.
@@ -554,15 +554,15 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 				List<String> finEvents = uploadHeaderService.getFinEventByFinRef(ma.getFinReference(), "_Temp");
 
 				if (CollectionUtils.isNotEmpty(finEvents)) {
-					if (finEvents.contains(FinanceConstants.FINSER_EVENT_ADDDISB)
-							|| finEvents.contains(FinanceConstants.FINSER_EVENT_RATECHG)
-							|| finEvents.contains(FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+					if (finEvents.contains(FinServiceEvent.ADDDISB)
+							|| finEvents.contains(FinServiceEvent.RATECHG)
+							|| finEvents.contains(FinServiceEvent.EARLYRPY)) {
 						reason = Labels.getLabel("LOAN_SERVICE_PROCESS");
 						rejectSts = true;
-					} else if (finEvents.contains(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+					} else if (finEvents.contains(FinServiceEvent.EARLYSETTLE)) {
 						reason = Labels.getLabel("LOAN_EARLY_PROCESS");
 						rejectSts = true;
-					} else if (finEvents.contains(FinanceConstants.FINSER_EVENT_CANCELFIN)) {
+					} else if (finEvents.contains(FinServiceEvent.CANCELFIN)) {
 						reason = Labels.getLabel("LOAN_CANCEL_PROCESS");
 						rejectSts = true;
 					}

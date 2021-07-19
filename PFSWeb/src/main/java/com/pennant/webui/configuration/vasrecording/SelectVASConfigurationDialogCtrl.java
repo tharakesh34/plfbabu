@@ -82,7 +82,6 @@ import com.pennant.backend.service.configuration.VASRecordingService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.VASConsatnts;
@@ -94,6 +93,7 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private static final long serialVersionUID = 1L;
@@ -236,7 +236,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			this.productType.setValidateColumns(new String[] { "TypeCode" });
 
 			Filter[] filters = new Filter[1];
-			filters[0] = new Filter("FinEvent", FinanceConstants.FINSER_EVENT_ORG, Filter.OP_EQUAL);
+			filters[0] = new Filter("FinEvent", FinServiceEvent.ORG, Filter.OP_EQUAL);
 			this.productType.setFilters(filters);
 
 			String whereClause = getWhereClauseWithFirstTask();
@@ -344,7 +344,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 		// Setting Workflow Details
 		if (getFinanceWorkFlow() == null && !isFinanceProcess) {
 			FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
-					this.productType.getValue(), FinanceConstants.FINSER_EVENT_ORG,
+					this.productType.getValue(), FinServiceEvent.ORG,
 					PennantConstants.WORFLOW_MODULE_VAS);
 			setFinanceWorkFlow(financeWorkFlow);
 		}
@@ -410,7 +410,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 		// Fetching Finance Reference Detail
 		if (getFinanceWorkFlow() != null && !isFinanceProcess) {
 			vasRecording = getvASRecordingService().getProcessEditorDetails(vasRecording, getRole(),
-					FinanceConstants.FINSER_EVENT_ORG);
+					FinServiceEvent.ORG);
 		}
 		showDetailView();
 		logger.debug("Leaving " + event.toString());

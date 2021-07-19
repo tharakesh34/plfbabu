@@ -22,6 +22,7 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class DisbInsPostingEvent extends PostingEvent {
 	private FinAdvancePaymentsService finAdvancePaymentsService;
@@ -35,7 +36,7 @@ public class DisbInsPostingEvent extends PostingEvent {
 		FinScheduleData fschdData = fd.getFinScheduleData();
 		List<FinAdvancePayments> advPaymentsList = fd.getAdvancePaymentsList();
 
-		if (FinanceConstants.FINSER_EVENT_ORG.equals(moduleDefiner)) {
+		if (FinServiceEvent.ORG.equals(moduleDefiner)) {
 			prepareVasAccountingData(advPaymentsList, fschdData.getVasRecordingList());
 		}
 

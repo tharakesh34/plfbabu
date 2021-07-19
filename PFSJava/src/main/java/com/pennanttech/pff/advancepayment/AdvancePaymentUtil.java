@@ -18,6 +18,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class AdvancePaymentUtil {
 
@@ -434,7 +435,7 @@ public class AdvancePaymentUtil {
 		curAdvPay.setAdvEMITds(curAdvPay.getAdvEMITds().subtract(advPay.getAdvEMITds()));
 
 		if (!ImplementationConstants.RCVADV_CREATE_ON_INTEMI) {
-			if (!StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDDISB)) {
+			if (!StringUtils.equals(moduleDefiner, FinServiceEvent.ADDDISB)) {
 				if (curAdvPay.getAdvInt().compareTo(BigDecimal.ZERO) > 0) {
 					curAdvPay.setAdvInt(BigDecimal.ZERO);
 					curAdvPay.setAdvIntTds(BigDecimal.ZERO);
@@ -716,19 +717,19 @@ public class AdvancePaymentUtil {
 	public static boolean advPayUpdateReq(String moduleDefiner) {
 		boolean advPayUpdReq = false;
 		switch (moduleDefiner) {
-		case FinanceConstants.FINSER_EVENT_ORG:
-		case FinanceConstants.FINSER_EVENT_ADDDISB:
-		case FinanceConstants.FINSER_EVENT_RATECHG:
-		case FinanceConstants.FINSER_EVENT_ADDTERM:
-		case FinanceConstants.FINSER_EVENT_RMVTERM:
-		case FinanceConstants.FINSER_EVENT_CANCELDISB:
-		case FinanceConstants.FINSER_EVENT_CHGPFT:
-		case FinanceConstants.FINSER_EVENT_CHGFRQ:
-		case FinanceConstants.FINSER_EVENT_PLANNEDEMI:
-		case FinanceConstants.FINSER_EVENT_UNPLANEMIH:
-		case FinanceConstants.FINSER_EVENT_RESCHD:
-		case FinanceConstants.FINSER_EVENT_RECALCULATE:
-		case FinanceConstants.FINSER_EVENT_CHGRPY:
+		case FinServiceEvent.ORG:
+		case FinServiceEvent.ADDDISB:
+		case FinServiceEvent.RATECHG:
+		case FinServiceEvent.ADDTERM:
+		case FinServiceEvent.RMVTERM:
+		case FinServiceEvent.CANCELDISB:
+		case FinServiceEvent.CHGPFT:
+		case FinServiceEvent.CHGFRQ:
+		case FinServiceEvent.PLANNEDEMI:
+		case FinServiceEvent.UNPLANEMIH:
+		case FinServiceEvent.RESCHD:
+		case FinServiceEvent.RECALCULATE:
+		case FinServiceEvent.CHGRPY:
 			advPayUpdReq = true;
 			break;
 		default:

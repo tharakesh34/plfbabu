@@ -71,11 +71,11 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.rmtmasters.Promotion;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class CDScheduleCalculator {
 	private static final Logger logger = LogManager.getLogger(CDScheduleCalculator.class);
@@ -159,7 +159,7 @@ public class CDScheduleCalculator {
 		logger.debug("Entering");
 
 		FinanceMain fm = fsData.getFinanceMain();
-		fm.setProcMethod(FinanceConstants.FINSER_EVENT_RECEIPT);
+		fm.setProcMethod(FinServiceEvent.RECEIPT);
 		fsData.getFinanceMain().setResetOrgBal(false);
 
 		String receivedRecalMethod = fm.getRecalSchdMethod();
@@ -658,7 +658,7 @@ public class CDScheduleCalculator {
 				boolean isFreezeSchd = false;
 
 				if (curSchd.getPresentmentId() != 0
-						&& !StringUtils.equals(fm.getProcMethod(), FinanceConstants.FINSER_EVENT_RECEIPT)) {
+						&& !StringUtils.equals(fm.getProcMethod(), FinServiceEvent.RECEIPT)) {
 					isFreezeSchd = true;
 				}
 
@@ -1197,7 +1197,7 @@ public class CDScheduleCalculator {
 		BigDecimal schdInterest = BigDecimal.ZERO;
 
 		if (curSchd.getPresentmentId() > 0
-				&& !StringUtils.equals(FinanceConstants.FINSER_EVENT_RECEIPT, fm.getProcMethod())) {
+				&& !StringUtils.equals(FinServiceEvent.RECEIPT, fm.getProcMethod())) {
 			if ((curSchd.getProfitCalc().add(prvSchd.getProfitBalance().subtract(prvSchd.getCpzAmount())))
 					.compareTo(curSchd.getProfitSchd()) > 0) {
 				curSchd.setRepayAmount(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));
@@ -1265,8 +1265,8 @@ public class CDScheduleCalculator {
 						prvSchd.getProfitBalance().add(curSchd.getProfitCalc()).subtract(prvSchd.getCpzAmount()));
 
 				if (StringUtils.isNotBlank(fm.getReceiptPurpose()) && (StringUtils.equals(fm.getReceiptPurpose(),
-						FinanceConstants.FINSER_EVENT_EARLYRPY)
-						|| StringUtils.equals(fm.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYSETTLE))) {
+						FinServiceEvent.EARLYRPY)
+						|| StringUtils.equals(fm.getReceiptPurpose(), FinServiceEvent.EARLYSETTLE))) {
 
 					if (curSchd.getSchDate().compareTo(SysParamUtil.getAppDate()) <= 0) {
 						curSchd.setRepayAmount(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
@@ -1811,7 +1811,7 @@ public class CDScheduleCalculator {
 						recalSchdMethod = CalculationConstants.SCHMTHD_PRI_PFT;
 					}
 
-					if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+					if (StringUtils.equals(receiptPurpose, FinServiceEvent.EARLYSETTLE)) {
 						if (StringUtils.equals(recalSchdMethod, CalculationConstants.SCHMTHD_PRI)) {
 							recalSchdMethod = CalculationConstants.SCHMTHD_PRI_PFT;
 						}
@@ -1820,7 +1820,7 @@ public class CDScheduleCalculator {
 					recalSchdMethod = CalculationConstants.SCHMTHD_PRI_PFT;
 				} else {
 					recalSchdMethod = CalculationConstants.SCHMTHD_PRI;
-					if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+					if (StringUtils.equals(receiptPurpose, FinServiceEvent.EARLYSETTLE)) {
 						recalSchdMethod = CalculationConstants.SCHMTHD_PRI_PFT;
 					}
 				}
@@ -1842,16 +1842,16 @@ public class CDScheduleCalculator {
 			fsData = addSchdRcd(fsData, eventFromDate, prvIndex);
 			openSchd = fsData.getFinanceScheduleDetails().get(prvIndex + 1);
 
-			if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+			if (StringUtils.equals(receiptPurpose, FinServiceEvent.EARLYRPY)) {
 				recalSchdMethod = CalculationConstants.SCHMTHD_PRI;
-			} else if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			} else if (StringUtils.equals(receiptPurpose, FinServiceEvent.EARLYSETTLE)) {
 				recalSchdMethod = CalculationConstants.SCHMTHD_PRI_PFT;
 			}
 
 			openSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_REPAY);
 		}
 
-		if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+		if (StringUtils.equals(receiptPurpose, FinServiceEvent.EARLYSETTLE)) {
 			openSchd.setPftOnSchDate(true);
 		} else {
 			openSchd.setPartialPaidAmt(openSchd.getPartialPaidAmt().add(amount));

@@ -110,6 +110,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = -4578996988245614938L;
@@ -1196,7 +1197,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		finServInst.setFinReference(getFinScheduleData().getFinanceMain().getFinReference());
-		finServInst.setFinEvent(FinanceConstants.FINSER_EVENT_RATECHG);
+		finServInst.setFinEvent(FinServiceEvent.RATECHG);
 
 		if (allowBackDatedRateChange && StringUtils.trimToNull(finServInst.getBaseRate()) != null
 				&& StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {

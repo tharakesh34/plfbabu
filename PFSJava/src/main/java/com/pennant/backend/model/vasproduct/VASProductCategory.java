@@ -43,10 +43,10 @@
 
 package com.pennant.backend.model.vasproduct;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Model class for the <b>VASProductCategory table</b>.<br>

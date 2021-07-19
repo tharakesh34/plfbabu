@@ -123,6 +123,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -586,7 +587,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			auditDetails.addAll(details);
 		}
 
-		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_FEEWAIVERS;
+		String rcdMaintainSts = FinServiceEvent.FEEWAIVERS;
 		financeMainDAO.updateMaintainceStatus(feeWaiverHeader.getFinReference(), rcdMaintainSts);
 
 		// Add Audit

@@ -68,7 +68,6 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.PennantAppUtil;
@@ -76,6 +75,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/Additional/ChangeProfitDialog.zul file.
@@ -438,7 +438,7 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		finServiceInstruction.setFinReference(finMain.getFinReference());
-		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_CHGPFT);
+		finServiceInstruction.setFinEvent(FinServiceEvent.CHGPFT);
 
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];

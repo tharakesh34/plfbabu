@@ -84,6 +84,7 @@ import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/WIFFinanceMain/WIFFinanceMainList.zul file.
@@ -304,7 +305,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceMain aWIFFinanceMain = (FinanceMain) item.getAttribute("data");
 			final FinanceDetail financeDetail = getFinanceDetailService().getWIFFinance(aWIFFinanceMain.getId(),
-					reqCustDetails, FinanceConstants.FINSER_EVENT_ORG);
+					reqCustDetails, FinServiceEvent.ORG);
 			if (!isFacilityWIF) {
 				financeDetail.getFinScheduleData().getFinanceMain().setWorkflowId(0);
 			}

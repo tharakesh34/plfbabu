@@ -3,13 +3,13 @@ package com.pennant.backend.model.applicationmaster;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 @XmlType(propOrder = { "loanPendingDetails", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)

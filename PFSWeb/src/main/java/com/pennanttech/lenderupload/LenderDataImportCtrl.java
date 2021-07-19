@@ -98,7 +98,6 @@ import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.backend.service.lenderupload.LenderDataService;
 import com.pennant.backend.service.lenderupload.LenderDataUploadService;
 import com.pennant.backend.util.ExtendedFieldConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -106,6 +105,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * ************************************************************<br>
@@ -303,11 +303,11 @@ public class LenderDataImportCtrl extends GFCBaseListCtrl<LenderDataUpload> impl
 		int failedCount = 0;
 
 		extendedFieldHeader = extendedFieldHeaderDAO.getExtFieldHeaderListByModuleName(
-				ExtendedFieldConstants.MODULE_LOAN, FinanceConstants.FINSER_EVENT_ORG, "");
+				ExtendedFieldConstants.MODULE_LOAN, FinServiceEvent.ORG, "");
 
 		if (CollectionUtils.isNullOrEmpty(extendedFieldHeader)) {
 			MessageUtil.showError("Extended Field configuration not available with module: "
-					+ ExtendedFieldConstants.MODULE_LOAN + " and Event: " + FinanceConstants.FINSER_EVENT_ORG);
+					+ ExtendedFieldConstants.MODULE_LOAN + " and Event: " + FinServiceEvent.ORG);
 			return;
 		}
 		if (this.workbook instanceof HSSFWorkbook) {
@@ -405,7 +405,7 @@ public class LenderDataImportCtrl extends GFCBaseListCtrl<LenderDataUpload> impl
 				if (dataUpload.getReason() == null) {
 					financeMain = financeMainDAO.getFinanceMainById(dataUpload.getFinReference(), "_View", false);
 					String tableName = getTableName(ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinCategory(),
-							FinanceConstants.FINSER_EVENT_ORG);
+							FinServiceEvent.ORG);
 					isExist = lenderDataService.isLenderExist(dataUpload.getFinReference(), tableName, type);
 					if (!isExist) {
 						type = "";

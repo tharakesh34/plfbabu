@@ -27,6 +27,7 @@ import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class CancelDisbursementServiceImpl extends GenericService<FinServiceInstruction>
 		implements CancelDisbursementService {
@@ -131,7 +132,7 @@ public class CancelDisbursementServiceImpl extends GenericService<FinServiceInst
 				&& !(StringUtils.isEmpty(finServiceInstruction.getServiceReqNo()))) {
 			List<FinServiceInstruction> finServiceInstructions = finServiceInstructionDAO.getFinServInstByServiceReqNo(
 					finServiceInstruction.getFinReference(), finServiceInstruction.getFromDate(),
-					finServiceInstruction.getServiceReqNo(), FinanceConstants.FINSER_EVENT_ADDDISB);
+					finServiceInstruction.getServiceReqNo(), FinServiceEvent.ADDDISB);
 			if (CollectionUtils.isNullOrEmpty(finServiceInstructions)) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finServiceInstruction.getServiceReqNo();
@@ -140,7 +141,7 @@ public class CancelDisbursementServiceImpl extends GenericService<FinServiceInst
 			} else {
 				List<FinServiceInstruction> finServInstCanReq = finServiceInstructionDAO.getFinServInstByServiceReqNo(
 						finServiceInstruction.getFinReference(), finServiceInstruction.getFromDate(),
-						finServiceInstruction.getServiceReqNo(), FinanceConstants.FINSER_EVENT_CANCELDISB);
+						finServiceInstruction.getServiceReqNo(), FinServiceEvent.CANCELDISB);
 
 				if (!CollectionUtils.isNullOrEmpty(finServInstCanReq)) {
 					String[] valueParm = new String[1];

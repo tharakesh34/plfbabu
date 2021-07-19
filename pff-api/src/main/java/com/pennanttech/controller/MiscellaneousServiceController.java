@@ -74,6 +74,7 @@ import com.pennant.fusioncharts.ChartSetElement;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.dashboard.DashBoardRequest;
 import com.pennanttech.ws.model.dashboard.DashBoardResponse;
@@ -821,7 +822,7 @@ public class MiscellaneousServiceController extends ExtendedTestClass {
 		String result = null;
 
 		List<FinanceReferenceDetail> financeReferenceDetail = financeReferenceDetailDAO.getFinanceReferenceDetail(
-				finMian.getFinType(), FinanceConstants.FINSER_EVENT_ORG, loanTypeMiscRequest.getStage(), "_TEView");
+				finMian.getFinType(), FinServiceEvent.ORG, loanTypeMiscRequest.getStage(), "_TEView");
 		if (!CollectionUtils.isEmpty(financeReferenceDetail)) {
 			Map<String, Object> declaredMap = getMapValue(loanTypeMiscRequest);
 			for (FinanceReferenceDetail finaReferenceDetail : financeReferenceDetail) {
@@ -990,7 +991,7 @@ public class MiscellaneousServiceController extends ExtendedTestClass {
 		int ccyFormat = 2;
 
 		FinanceDetail finDetils = financeDetailService.getFinanceDetailById(loanTypeMiscRequest.getFinReference(),
-				false, FinanceConstants.FINSER_EVENT_ORG, false, "", "");
+				false, FinServiceEvent.ORG, false, "", "");
 		FinanceMain financeMain = finDetils.getFinScheduleData().getFinanceMain();
 		CustomerDetails customerDetails = finDetils.getCustomerDetails();
 		List<JointAccountDetail> jointAccountDetailList = finDetils.getJointAccountDetailList();

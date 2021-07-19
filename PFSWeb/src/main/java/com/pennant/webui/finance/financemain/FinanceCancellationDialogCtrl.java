@@ -35,9 +35,7 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.AccountSelectionBox;
 import com.pennant.CurrencyBox;
-import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
@@ -71,6 +69,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
 public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
@@ -370,7 +369,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		}
 
 		aFinanceDetail.setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
+				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 
 		// Fill Remaining Tab Details
 		// ============================================
@@ -567,7 +566,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 				this.label_FinanceMainDialog_FinAssetValue
 						.setValue(Labels.getLabel("label_FinanceMainDialog_ODFinAssetValue.value"));
 
-				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD, this.moduleDefiner)) {
+				if (StringUtils.equals(FinServiceEvent.OVERDRAFTSCHD, this.moduleDefiner)) {
 					if (this.finAssetValue.getValidateValue()
 							.compareTo(PennantAppUtil.formateAmount(aFinanceMain.getFinAssetValue(), formatter)) < 0) {
 						throw new WrongValueException(this.finAssetValue.getCcyTextBox(),
@@ -581,7 +580,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			if (this.row_FinAssetValue.isVisible()) {
 				//Validate if the total disbursement amount exceeds maximum disbursement Amount 
 				if (((StringUtils.isEmpty(moduleDefiner)
-						|| StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)))) {
+						|| StringUtils.equals(FinServiceEvent.ADDDISB, moduleDefiner)))) {
 					if (this.finCurrentAssetValue.getActualValue() != null
 							&& finAssetValue.getActualValue().compareTo(BigDecimal.ZERO) > 0
 							&& finCurrentAssetValue.getActualValue().compareTo(finAssetValue.getActualValue()) > 0) {
@@ -960,7 +959,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
 
 					notification.setModule("LOAN_CANCELLATION");
-					notification.setSubModule(FinanceConstants.FINSER_EVENT_CANCELFIN);
+					notification.setSubModule(FinServiceEvent.CANCELFIN);
 					notification.setKeyReference(financeMain.getFinReference());
 					notification.setStage(financeMain.getRoleCode());
 					notification.setReceivedBy(getUserWorkspace().getUserId());
@@ -1440,7 +1439,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		buildEvent = false;
 		doWriteComponentsToBean(getFinanceDetail().getFinScheduleData());
 		getFinanceDetail().setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
+				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 		logger.debug("Leaving");
 		return getFinanceDetail();
 	}

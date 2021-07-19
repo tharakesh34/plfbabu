@@ -72,7 +72,6 @@ import com.pennant.backend.financeservice.RemoveTermsService;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
@@ -80,6 +79,7 @@ import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = 2623911832045017662L;
@@ -426,9 +426,9 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		finServiceInstruction.setFinReference(getFinScheduleData().getFinanceMain().getFinReference());
 		if (isAddTerms()) {
-			finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_ADDTERM);
+			finServiceInstruction.setFinEvent(FinServiceEvent.ADDTERM);
 		} else {
-			finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_RMVTERM);
+			finServiceInstruction.setFinEvent(FinServiceEvent.RMVTERM);
 		}
 		finServiceInstruction.setServiceReqNo(this.serviceReqNo.getValue());
 		finServiceInstruction.setRemarks(this.remarks.getValue());

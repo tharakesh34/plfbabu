@@ -21,13 +21,13 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.notification.Notification;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class CovenantAlerts extends BasicDao<Covenant> {
@@ -89,7 +89,7 @@ public class CovenantAlerts extends BasicDao<Covenant> {
 			Notification notification = new Notification();
 			notification.setKeyReference(covenant.getKeyReference());
 			notification.setModule("LOAN");
-			notification.setSubModule(FinanceConstants.FINSER_EVENT_COVENANTS);
+			notification.setSubModule(FinServiceEvent.COVENANTS);
 			notification.setTemplateCode(covenant.getCustomerTemplateCode());
 
 			List<String> emails = new ArrayList<>();
@@ -112,7 +112,7 @@ public class CovenantAlerts extends BasicDao<Covenant> {
 			Notification notification = new Notification();
 			notification.setKeyReference(covenant.getKeyReference());
 			notification.setModule("LOAN");
-			notification.setSubModule(FinanceConstants.FINSER_EVENT_COVENANTS);
+			notification.setSubModule(FinServiceEvent.COVENANTS);
 			notification.setTemplateCode(covenant.getUserTemplateCode());
 
 			List<SecurityUser> secUsers = securityUserDAO.getSecUsersByRoles(covenant.getAlertToRoles().split(","));

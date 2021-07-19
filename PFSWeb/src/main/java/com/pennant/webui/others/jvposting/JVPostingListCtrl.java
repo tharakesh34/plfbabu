@@ -60,7 +60,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.service.others.JVPostingService;

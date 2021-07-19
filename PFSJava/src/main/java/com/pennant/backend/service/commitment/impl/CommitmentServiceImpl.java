@@ -106,6 +106,7 @@ import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class CommitmentServiceImpl extends GenericService<Commitment> implements CommitmentService {
 	private static final Logger logger = LogManager.getLogger(CommitmentServiceImpl.class);
@@ -291,7 +292,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 
 				// Document Details
 				List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(cmtReference,
-						CommitmentConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
+						CommitmentConstants.MODULE_NAME, FinServiceEvent.ORG, "_View");
 				if (commitment.getDocuments() != null && !commitment.getDocuments().isEmpty()) {
 					commitment.getDocuments().addAll(documentList);
 				} else {
@@ -302,7 +303,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				if (StringUtils.isNotEmpty(commitment.getRecordType())
 						&& !StringUtils.equals(commitment.getRecordType(), PennantConstants.RECORD_TYPE_UPD)
 						&& !StringUtils.equals(commitment.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
-					commitment = getProcessEditorDetails(commitment, nextRoleCode, FinanceConstants.FINSER_EVENT_ORG);
+					commitment = getProcessEditorDetails(commitment, nextRoleCode, FinServiceEvent.ORG);
 				}
 			}
 		}
@@ -330,7 +331,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		// Fetch Total Process editor Details
 		List<FinanceReferenceDetail> cmtRefDetails = getFinanceReferenceDetailDAO().getFinanceProcessEditorDetails(
 				CommitmentConstants.WF_NEWCOMMITMENT,
-				StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent, "_CMTVIEW");
+				StringUtils.isEmpty(procEdtEvent) ? FinServiceEvent.ORG : procEdtEvent, "_CMTVIEW");
 
 		if (cmtRefDetails != null && !cmtRefDetails.isEmpty()) {
 			for (FinanceReferenceDetail finrefDetail : cmtRefDetails) {
@@ -1994,7 +1995,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 					if (StringUtils.isEmpty(documentDetail.getReferenceId())) {
 						documentDetail.setReferenceId(commitment.getCmtReference());
 					}
-					documentDetail.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
+					documentDetail.setFinEvent(FinServiceEvent.ORG);
 
 					// Save the document (documentDetail object) into
 					// DocumentManagerTable using documentManagerDAO.save(?) get

@@ -1,43 +1,25 @@
 /**
-\ * Copyright 2011 - Pennant Technologies
+ * \ * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinCollateralDetailsDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinCollateralDetailsDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 *
+ * * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -342,8 +324,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -369,8 +350,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param finCollaterals
-	 *            FinCollaterals
+	 * @param finCollaterals FinCollaterals
 	 */
 	public void doWriteBeanToComponents(FinCollaterals finCollaterals) {
 
@@ -572,7 +552,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 			if (isNewFinCollateral()) {
 				this.window_FinCollateralDetailDialog.setHeight("70%");
 				this.window_FinCollateralDetailDialog.setWidth("70%");
-				//this.groupboxWf.setVisible(false);
+				// this.groupboxWf.setVisible(false);
 				this.window_FinCollateralDetailDialog.doModal();
 			} else {
 				this.window_FinCollateralDetailDialog.setWidth("100%");
@@ -951,7 +931,11 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 			for (int i = 0; i < getFinCollateralHeaderDialogCtrl().getFinCollateralDetailsList().size(); i++) {
 				FinCollaterals finCollateral = getFinCollateralHeaderDialogCtrl().getFinCollateralDetailsList().get(i);
 
-				if (StringUtils.equals(finCollateral.getReference(), aFinCollaterals.getReference())) { // Both Current and Existing list are having same record.
+				if (StringUtils.equals(finCollateral.getReference(), aFinCollaterals.getReference())) { // Both Current
+																										// and Existing
+																										// list are
+																										// having same
+																										// record.
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
@@ -1009,8 +993,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1028,8 +1011,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

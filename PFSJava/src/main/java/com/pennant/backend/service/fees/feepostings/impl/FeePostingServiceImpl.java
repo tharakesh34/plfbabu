@@ -91,6 +91,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
 public class FeePostingServiceImpl extends GenericService<FeePostings> implements FeePostingService {
@@ -145,7 +146,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			getFeePostingsDAO().update(feePostings, tableType);
 		}
 
-		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_FEEPOSTING;
+		String rcdMaintainSts = FinServiceEvent.FEEPOSTING;
 		financeMainDAO.updateMaintainceStatus(feePostings.getReference(), rcdMaintainSts);
 
 		auditHeader.setAuditDetails(auditDetails);
@@ -252,7 +253,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		String reference = feePostings.getReference();
 		String rcdMntnSts = financeMainDAO.getFinanceMainByRcdMaintenance(reference, "_View");
 
-		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinanceConstants.FINSER_EVENT_FEEPOSTING.equals(rcdMntnSts)) {
+		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.FEEPOSTING.equals(rcdMntnSts)) {
 			String[] valueParm1 = new String[1];
 			valueParm1[0] = rcdMntnSts;
 			auditDetail.setErrorDetail(new ErrorDetail("LMS001", valueParm1));

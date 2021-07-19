@@ -111,6 +111,7 @@ import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.BankAccountValidationService;
 
@@ -662,7 +663,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 		// for Overdraft loan types checking for mandate is approved or not. and validate for Expiry date.
 		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
-		if (isOverDraft && StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ADDDISB)
+		if (isOverDraft && StringUtils.equals(financeDetail.getModuleDefiner(), FinServiceEvent.ADDDISB)
 				&& financeDetail.getFinScheduleData().getFinanceMain().getMandateID() != 0) {
 
 			Mandate mandate = new Mandate();
@@ -794,7 +795,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 		String recordStatus = fm.getRecordStatus();
 
-		if (isQDPProcess(fd) && FinanceConstants.FINSER_EVENT_ORG.equals(moduleDefiner)) {
+		if (isQDPProcess(fd) && FinServiceEvent.ORG.equals(moduleDefiner)) {
 			processDisbursments(fd);
 			// Postings preparation
 
@@ -807,7 +808,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			return auditDetails;
 		} else {
 			if (ImplementationConstants.ALW_QDP_CUSTOMIZATION && fm.isQuickDisb()
-					&& FinanceConstants.FINSER_EVENT_ORG.equals(moduleDefiner)) {
+					&& FinServiceEvent.ORG.equals(moduleDefiner)) {
 				if (PennantConstants.RCD_STATUS_APPROVED.equals(recordStatus)) {
 					int i = 0;
 					for (FinAdvancePayments fap : finAdvancePayList) {
@@ -1358,7 +1359,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		details.setLastMntBy(finPayment.getLastMntBy());
 		details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		details.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		details.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
+		details.setFinEvent(FinServiceEvent.ORG);
 		details.setDocImage(finPayment.getDocImage());
 		details.setReferenceId(String.valueOf(finPayment.getPaymentId()));
 		details.setFinReference(finPayment.getFinReference());

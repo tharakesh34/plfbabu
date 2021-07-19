@@ -86,6 +86,7 @@ import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the
@@ -195,7 +196,7 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkF
 		// set the itemRenderer
 		List<FinServicingEvent> events;
 
-		if (StringUtils.equals(eventName, FinanceConstants.FINSER_EVENT_ORG)) {
+		if (StringUtils.equals(eventName, FinServiceEvent.ORG)) {
 			events = PennantStaticListUtil.getFinServiceEvents(false);
 			listBoxFinanceReferenceDetail.setItemRenderer(new FinanceReferenceDetailListModelItemRenderer(
 					PennantStaticListUtil.getValueLabels(events), moduleName));
@@ -421,8 +422,8 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkF
 
 		// Removing Unused Finance Events
 		List<String> finEventList = new ArrayList<>();
-		finEventList.add(FinanceConstants.FINSER_EVENT_FINFLAGS);
-		finEventList.add(FinanceConstants.FINSER_EVENT_REINSTATE);
+		finEventList.add(FinServiceEvent.FINFLAGS);
+		finEventList.add(FinServiceEvent.REINSTATE);
 		this.searchObj.addFilterNotIn("FinEvent", finEventList);
 
 		this.searchObj.addFilter(new Filter("FinIsActive", 1, Filter.OP_EQUAL));
@@ -442,13 +443,13 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkF
 					.addFilter(new Filter("ModuleName", PennantConstants.WORFLOW_MODULE_FINANCE, Filter.OP_EQUAL));
 		}
 
-		if (StringUtils.equals(eventName, FinanceConstants.FINSER_EVENT_ORG)) {
+		if (StringUtils.equals(eventName, FinServiceEvent.ORG)) {
 			this.searchObj.addFilter(new Filter("FinEvent",
-					new String[] { FinanceConstants.FINSER_EVENT_ORG, FinanceConstants.FINSER_EVENT_PREAPPROVAL },
+					new String[] { FinServiceEvent.ORG, FinServiceEvent.PREAPPROVAL },
 					Filter.OP_IN));
 		} else {
 			this.searchObj.addFilter(new Filter("FinEvent",
-					new String[] { FinanceConstants.FINSER_EVENT_ORG, FinanceConstants.FINSER_EVENT_PREAPPROVAL },
+					new String[] { FinServiceEvent.ORG, FinServiceEvent.PREAPPROVAL },
 					Filter.OP_NOT_IN));
 		}
 

@@ -33,6 +33,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.staticlist.AppStaticList;
 import com.pennanttech.pff.staticlist.ExtFieldStaticList;
 
@@ -2158,7 +2159,7 @@ public class PennantStaticListUtil {
 		}
 
 		// Add origination.
-		events.add(0, new FinServicingEvent(FinanceConstants.FINSER_EVENT_ORG,
+		events.add(0, new FinServicingEvent(FinServiceEvent.ORG,
 				Labels.getLabel("label_FinSerEvent_Origination"), "ORG"));
 
 		return events;
@@ -2178,26 +2179,26 @@ public class PennantStaticListUtil {
 		List<FinServicingEvent> events = new ArrayList<>();
 
 		if (!isService) {
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_ORG,
+			events.add(new FinServicingEvent(FinServiceEvent.ORG,
 					Labels.getLabel("label_FinSerEvent_Origination"), "ORG"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_PREAPPROVAL,
+			events.add(new FinServicingEvent(FinServiceEvent.PREAPPROVAL,
 					Labels.getLabel("label_FinSerEvent_PreApproval"), ""));
 		} else {
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_BASICMAINTAIN,
+			events.add(new FinServicingEvent(FinServiceEvent.BASICMAINTAIN,
 					Labels.getLabel("label_FinSerEvent_MaintainBasicDetail"), "BDM"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN,
+			events.add(new FinServicingEvent(FinServiceEvent.RPYBASICMAINTAIN,
 					Labels.getLabel("label_FinSerEvent_RpyMaintainBasicDetail"), "CPM"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_ADDDISB,
+			events.add(new FinServicingEvent(FinServiceEvent.ADDDISB,
 					Labels.getLabel("label_FinSerEvent_AddDisbursement"), "ADSB"));
 			// finServiceEvents.add(new
 			// ValueLabel(FinanceConstants.FINSER_EVENT_RLSDISB,Labels.getLabel("label_FinSerEvent_RlsHoldDisbursement")));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_POSTPONEMENT,
+			events.add(new FinServicingEvent(FinServiceEvent.POSTPONEMENT,
 					Labels.getLabel("label_FinSerEvent_Postponement"), "EPP"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_UNPLANEMIH,
+			events.add(new FinServicingEvent(FinServiceEvent.UNPLANEMIH,
 					Labels.getLabel("label_FinSerEvent_UnPlanEmiHolidays"), "UPEH"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_RESCHD,
+			events.add(new FinServicingEvent(FinServiceEvent.RESCHD,
 					Labels.getLabel("label_FinSerEvent_ReSchedule"), "RSCH"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_CHGGRCEND,
+			events.add(new FinServicingEvent(FinServiceEvent.CHGGRCEND,
 					Labels.getLabel("label_FinSerEvent_ChangeGestation"), "CGE"));
 			// finServiceEvents.add(new
 			// ValueLabel(FinanceConstants.FINSER_EVENT_SCHDRPY,Labels.getLabel("label_FinSerEvent_SchdlRepayment")));
@@ -2205,88 +2206,88 @@ public class PennantStaticListUtil {
 			// ValueLabel(FinanceConstants.FINSER_EVENT_EARLYRPY,Labels.getLabel("label_FinSerEvent_EarlyPayment")));
 			// finServiceEvents.add(new
 			// ValueLabel(FinanceConstants.FINSER_EVENT_EARLYSETTLE,Labels.getLabel("label_FinSerEvent_EarlySettlement")));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_WRITEOFF,
+			events.add(new FinServicingEvent(FinServiceEvent.WRITEOFF,
 					Labels.getLabel("label_FinSerEvent_WriteOff"), "WO"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_WRITEOFFPAY,
+			events.add(new FinServicingEvent(FinServiceEvent.WRITEOFFPAY,
 					Labels.getLabel("label_FinSerEvent_WriteOffPay"), "WOP"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_CANCELFIN,
+			events.add(new FinServicingEvent(FinServiceEvent.CANCELFIN,
 					Labels.getLabel("label_FinSerEvent_CancelFinance"), "CFIN"));
 			// finServiceEvents.add(new
 			// ValueLabel(FinanceConstants.FINSER_EVENT_LIABILITYREQ,Labels.getLabel("label_FinSerEvent_LiabilityReq")));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_NOCISSUANCE,
+			events.add(new FinServicingEvent(FinServiceEvent.NOCISSUANCE,
 					Labels.getLabel("label_FinSerEvent_NOCIssuance"), "NOC"));
 			// finServiceEvents.add(new
 			// ValueLabel(FinanceConstants.FINSER_EVENT_TIMELYCLOSURE,Labels.getLabel("label_FinSerEvent_TimelyClosure")));
 			// finServiceEvents.add(new
 			// ValueLabel(FinanceConstants.FINSER_EVENT_INSCLAIM,Labels.getLabel("label_FinSerEvent_TakafulClaim")));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_RATECHG,
+			events.add(new FinServicingEvent(FinServiceEvent.RATECHG,
 					Labels.getLabel("label_FinSerEvent_AddRateChange"), "RCHG"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_CHGRPY,
+			events.add(new FinServicingEvent(FinServiceEvent.CHGRPY,
 					Labels.getLabel("label_FinSerEvent_ChangeRepay"), "CPA"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_ADDTERM,
+			events.add(new FinServicingEvent(FinServiceEvent.ADDTERM,
 					Labels.getLabel("label_FinSerEvent_AddTerms"), "ATRM"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_RMVTERM,
+			events.add(new FinServicingEvent(FinServiceEvent.RMVTERM,
 					Labels.getLabel("label_FinSerEvent_RmvTerms"), "RTRM"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_RECALCULATE,
+			events.add(new FinServicingEvent(FinServiceEvent.RECALCULATE,
 					Labels.getLabel("label_FinSerEvent_Recalculate"), "RCAL"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_RECEIPT,
+			events.add(new FinServicingEvent(FinServiceEvent.RECEIPT,
 					Labels.getLabel("label_FinSerEvent_Receipt"), "RCPT"));
 			// finServiceEvents.add(new
 			// ValueLabel(FinanceConstants.FINSER_EVENT_SUBSCHD,Labels.getLabel("label_FinSerEvent_SubSchedule")));
 			// finServiceEvents.add(new
 			// ValueLabel(FinanceConstants.FINSER_EVENT_CHGPFT,Labels.getLabel("label_FinSerEvent_ChangeProfit")));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_CHGFRQ,
+			events.add(new FinServicingEvent(FinServiceEvent.CHGFRQ,
 					Labels.getLabel("label_FinSerEvent_ChangeFrequency"), "CFRQ"));
 			// finServiceEvents.add(new
 			// ValueLabel(FinanceConstants.FINSER_EVENT_FAIRVALREVAL,Labels.getLabel("label_FinSerEvent_FairValueRevaluation")));
 			// finServiceEvents.add(new
 			// ValueLabel(FinanceConstants.FINSER_EVENT_INSCHANGE,Labels.getLabel("label_FinSerEvent_InsuranceChange")));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_PROVISION,
+			events.add(new FinServicingEvent(FinServiceEvent.PROVISION,
 					Labels.getLabel("label_FinSerEvent_Provision"), "PROV"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_SUSPHEAD,
+			events.add(new FinServicingEvent(FinServiceEvent.SUSPHEAD,
 					Labels.getLabel("label_FinSerEvent_FinanceSuspHead"), "NPA"));
 			// finServiceEvents.add(new
 			// ValueLabel(FinanceConstants.FINSER_EVENT_CANCELRPY,Labels.getLabel("label_FinSerEvent_CancelRepay")));
 			// finServiceEvents.add(new
 			// ValueLabel(FinanceConstants.FINSER_EVENT_FINFLAGS,Labels.getLabel("label_FinSerEvent_FinFlags")));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_REINSTATE,
+			events.add(new FinServicingEvent(FinServiceEvent.REINSTATE,
 					Labels.getLabel("label_FinSerEvent_ReIstate"), "RINS"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_CANCELDISB,
+			events.add(new FinServicingEvent(FinServiceEvent.CANCELDISB,
 					Labels.getLabel("label_FinSerEvent_CancelDisbursement"), "CDSB"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD,
+			events.add(new FinServicingEvent(FinServiceEvent.OVERDRAFTSCHD,
 					Labels.getLabel("label_FinSerEvent_OverdraftSchedule"), "OSCH"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_PLANNEDEMI,
+			events.add(new FinServicingEvent(FinServiceEvent.PLANNEDEMI,
 					Labels.getLabel("label_FinSerEvent_PlannedEMI"), "PEH"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_REAGING,
+			events.add(new FinServicingEvent(FinServiceEvent.REAGING,
 					Labels.getLabel("label_FinSerEvent_ReAging"), "RAGE"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_HOLDEMI,
+			events.add(new FinServicingEvent(FinServiceEvent.HOLDEMI,
 					Labels.getLabel("label_FinSerEvent_HoldEMI"), "HLDE"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_COVENANTS,
+			events.add(new FinServicingEvent(FinServiceEvent.COVENANTS,
 					Labels.getLabel("label_FinSerEvent_Covenants"), "COVN"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_COLLATERAL,
+			events.add(new FinServicingEvent(FinServiceEvent.COLLATERAL,
 					Labels.getLabel("label_FinSerEvent_Collateral"), "COLL"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD,
+			events.add(new FinServicingEvent(FinServiceEvent.CHGSCHDMETHOD,
 					Labels.getLabel("label_FinSerEvent_ChangeSchdMtd"), "CSCH"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_FEEWAIVERS,
+			events.add(new FinServicingEvent(FinServiceEvent.FEEWAIVERS,
 					Labels.getLabel("label_FinSerEvent_FeeWaivers"), "FWO"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_FINOPTION,
+			events.add(new FinServicingEvent(FinServiceEvent.FINOPTION,
 					Labels.getLabel("label_FinSerEvent_FinOption"), "FINO"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_RECEIPTKNOCKOFF,
+			events.add(new FinServicingEvent(FinServiceEvent.RECEIPTKNOCKOFF,
 					Labels.getLabel("label_FinSerEvent_ReceiptKnockOff"), "RKNOF"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_RECEIPTFORECLOSURE,
+			events.add(new FinServicingEvent(FinServiceEvent.RECEIPTFORECLOSURE,
 					Labels.getLabel("label_FinSerEvent_ReceiptForeClosure"), "RFC"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_RECEIPTKNOCKOFF_CAN,
+			events.add(new FinServicingEvent(FinServiceEvent.RECEIPTKNOCKOFF_CAN,
 					Labels.getLabel("label_FinSerEvent_ReceiptKnockOffCancel"), "RKNC"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_CHANGETDS,
+			events.add(new FinServicingEvent(FinServiceEvent.CHANGETDS,
 					Labels.getLabel("label_FinSerEvent_ChangeTDS"), "CTDS"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_LOANDOWNSIZING,
+			events.add(new FinServicingEvent(FinServiceEvent.LOANDOWNSIZING,
 					Labels.getLabel("label_FinSerEvent_LoanDownSizing"), "LDS"));
 
 			if (ImplementationConstants.ALLOW_RESTRUCTURING) {
-				events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_RESTRUCTURE,
+				events.add(new FinServicingEvent(FinServiceEvent.RESTRUCTURE,
 						Labels.getLabel("label_FinSerEvent_Restructure"), "RSTCR"));
 			}
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_LINKDELINK,
+			events.add(new FinServicingEvent(FinServiceEvent.LINKDELINK,
 					Labels.getLabel("label_FinSerEvent_LinkDelink"), "LDFIN"));
 		}
 		return events;
@@ -2296,23 +2297,23 @@ public class PennantStaticListUtil {
 
 		if (templateEvents == null) {
 			templateEvents = new ArrayList<>(5);
-			templateEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_ORG,
+			templateEvents.add(new ValueLabel(FinServiceEvent.ORG,
 					Labels.getLabel("label_FinSerEvent_Origination")));
-			templateEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_RATECHG,
+			templateEvents.add(new ValueLabel(FinServiceEvent.RATECHG,
 					Labels.getLabel("label_FinSerEvent_AddRateChange")));
-			templateEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_ADDDISB,
+			templateEvents.add(new ValueLabel(FinServiceEvent.ADDDISB,
 					Labels.getLabel("label_FinSerEvent_AddDisbursement")));
-			templateEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_RECEIPT,
+			templateEvents.add(new ValueLabel(FinServiceEvent.RECEIPT,
 					Labels.getLabel("label_FinSerEvent_Receipt")));
-			templateEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_COVENANT,
+			templateEvents.add(new ValueLabel(FinServiceEvent.COVENANT,
 					Labels.getLabel("label_FinSerEvent_Covenants")));
-			templateEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_PUTCALL,
+			templateEvents.add(new ValueLabel(FinServiceEvent.PUTCALL,
 					Labels.getLabel("label_FinSerEvent_PutCall")));
-			templateEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_COLLATERAL_LTV_BREACHS,
+			templateEvents.add(new ValueLabel(FinServiceEvent.COLLATERAL_LTV_BREACHS,
 					Labels.getLabel("label_FinSerEvent_Collateral_Ltv_Breaches")));
-			templateEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_CANCELFIN,
+			templateEvents.add(new ValueLabel(FinServiceEvent.CANCELFIN,
 					Labels.getLabel("label_VasEvent_Cancellation")));
-			templateEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_DUEALERTS,
+			templateEvents.add(new ValueLabel(FinServiceEvent.DUEALERTS,
 					Labels.getLabel("label_VasEvent_DueAlerts")));
 
 		}
@@ -3127,13 +3128,13 @@ public class PennantStaticListUtil {
 	public static List<ValueLabel> getReceiptPurpose() {
 		if (receiptPurposes == null) {
 			receiptPurposes = new ArrayList<ValueLabel>(4);
-			receiptPurposes.add(new ValueLabel(FinanceConstants.FINSER_EVENT_SCHDRPY,
+			receiptPurposes.add(new ValueLabel(FinServiceEvent.SCHDRPY,
 					Labels.getLabel("label_ReceiptPurpose_SchedulePayment")));
-			receiptPurposes.add(new ValueLabel(FinanceConstants.FINSER_EVENT_EARLYRPY,
+			receiptPurposes.add(new ValueLabel(FinServiceEvent.EARLYRPY,
 					Labels.getLabel("label_ReceiptPurpose_PartialSettlement")));
-			receiptPurposes.add(new ValueLabel(FinanceConstants.FINSER_EVENT_EARLYSETTLE,
+			receiptPurposes.add(new ValueLabel(FinServiceEvent.EARLYSETTLE,
 					Labels.getLabel("label_ReceiptPurpose_EarlySettlement")));
-			receiptPurposes.add(new ValueLabel(FinanceConstants.FINSER_EVENT_FEEPAYMENT,
+			receiptPurposes.add(new ValueLabel(FinServiceEvent.FEEPAYMENT,
 					Labels.getLabel("label_ReceiptPurpose_FeePayment")));
 		}
 		return receiptPurposes;

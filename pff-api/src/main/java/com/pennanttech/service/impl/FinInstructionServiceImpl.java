@@ -134,6 +134,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pffws.FinServiceInstRESTService;
 import com.pennanttech.pffws.FinServiceInstSOAPService;
@@ -720,7 +721,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			finServiceInstruction.setCustID(customer.getCustID());
 
 			int count = receiptService.geFeeReceiptCountByExtReference(Objects.toString(customer.getCustID(), ""),
-					FinanceConstants.FINSER_EVENT_FEEPAYMENT, finServiceInstruction.getExternalReference());
+					FinServiceEvent.FEEPAYMENT, finServiceInstruction.getExternalReference());
 			if (count > 0) {
 				String valueParm[] = new String[3];
 				valueParm[0] = "Invalid CIF";
@@ -734,7 +735,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			finServiceInstruction.setAmount(BigDecimal.ZERO);
 		}
 
-		String moduleDefiner = FinanceConstants.FINSER_EVENT_FEEPAYMENT;
+		String moduleDefiner = FinServiceEvent.FEEPAYMENT;
 
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
@@ -1371,7 +1372,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	@Override
 	public FinanceDetail earlySettlement(FinServiceInstruction finServiceInstruction) {
 		try {
-			String moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
+			String moduleDefiner = FinServiceEvent.EARLYSETTLE;
 			FinanceDetail financeDetail = receiptTransaction(finServiceInstruction, moduleDefiner);
 			return financeDetail;
 		} catch (AppException ex) {
@@ -1397,7 +1398,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	@Override
 	public FinanceDetail partialSettlement(FinServiceInstruction finServiceInstruction) {
 		try {
-			String moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYRPY;
+			String moduleDefiner = FinServiceEvent.EARLYRPY;
 			finServiceInstruction.setReceivedDate(finServiceInstruction.getReceiptDetail().getReceivedDate());
 			FinanceDetail financeDetail = receiptTransaction(finServiceInstruction, moduleDefiner);
 			return financeDetail;
@@ -1423,7 +1424,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	@Override
 	public FinanceDetail manualPayment(FinServiceInstruction finServiceInstruction) throws ServiceException {
 		try {
-			String moduleDefiner = FinanceConstants.FINSER_EVENT_SCHDRPY;
+			String moduleDefiner = FinServiceEvent.SCHDRPY;
 			FinanceDetail financeDetail = receiptTransaction(finServiceInstruction, moduleDefiner);
 			return financeDetail;
 		} catch (AppException ex) {
@@ -1449,24 +1450,24 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		logger.debug(Literal.ENTERING);
 
 		String eventCode = null;
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+		if (StringUtils.equals(moduleDefiner, FinServiceEvent.SCHDRPY)) {
 			eventCode = AccountEventConstants.ACCEVENT_REPAY;
-			fsi.setModuleDefiner(FinanceConstants.FINSER_EVENT_SCHDRPY);
-			fsi.setReceiptPurpose(FinanceConstants.FINSER_EVENT_SCHDRPY);
+			fsi.setModuleDefiner(FinServiceEvent.SCHDRPY);
+			fsi.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 			if (!fsi.isReceiptUpload()) {
 				validationUtility.validate(fsi, SchedulePaymentGroup.class);
 			}
-		} else if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+		} else if (StringUtils.equals(moduleDefiner, FinServiceEvent.EARLYRPY)) {
 			eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
-			fsi.setModuleDefiner(FinanceConstants.FINSER_EVENT_EARLYRPY);
-			fsi.setReceiptPurpose(FinanceConstants.FINSER_EVENT_EARLYRPY);
+			fsi.setModuleDefiner(FinServiceEvent.EARLYRPY);
+			fsi.setReceiptPurpose(FinServiceEvent.EARLYRPY);
 			if (!fsi.isReceiptUpload()) {
 				validationUtility.validate(fsi, PartialSettlementGroup.class);
 			}
-		} else if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+		} else if (StringUtils.equals(moduleDefiner, FinServiceEvent.EARLYSETTLE)) {
 			eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
-			fsi.setModuleDefiner(FinanceConstants.FINSER_EVENT_EARLYSETTLE);
-			fsi.setReceiptPurpose(FinanceConstants.FINSER_EVENT_EARLYSETTLE);
+			fsi.setModuleDefiner(FinServiceEvent.EARLYSETTLE);
+			fsi.setReceiptPurpose(FinServiceEvent.EARLYSETTLE);
 			if (!fsi.isReceiptUpload()) {
 				validationUtility.validate(fsi, EarlySettlementGroup.class);
 			}
@@ -3374,7 +3375,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		// validating with the rcdmaintainsts
 		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(finReference, "_View");
 
-		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinanceConstants.FINSER_EVENT_FEEWAIVERS.equals(rcdMntnSts)) {
+		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.FEEWAIVERS.equals(rcdMntnSts)) {
 			String valueParm[] = new String[4];
 			valueParm[0] = "Finance is";
 			valueParm[1] = "Progress";
@@ -3553,7 +3554,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 	@Override
 	public FinanceDetail nonLanReceipt(FinServiceInstruction finServiceInstruction) throws ServiceException {
-		String moduleDefiner = FinanceConstants.FINSER_EVENT_SCHDRPY;
+		String moduleDefiner = FinServiceEvent.SCHDRPY;
 		FinanceDetail financeDetail = nonLanReceiptTransaction(finServiceInstruction, moduleDefiner);
 		return financeDetail;
 	}

@@ -73,7 +73,6 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.HoldDisbursementService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.service.finance.ManualAdviseService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.webui.finance.finchangecustomer.FinChangeCustomerListCtrl;
 import com.pennant.webui.finance.holddisbursement.HoldDisbursementListCtrl;
@@ -84,6 +83,7 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/ SelectFinanceTypeDialog.zul file.
@@ -235,8 +235,8 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 		}
 		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
 		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(this.finReference.getValue(), "_View");
-		if (StringUtils.isNotEmpty(rcdMntnSts) && (!FinanceConstants.FINSER_EVENT_MANUALADVISE.equals(rcdMntnSts)
-				|| !FinanceConstants.FINSER_EVENT_HOLDDISB.equals(rcdMntnSts))) {
+		if (StringUtils.isNotEmpty(rcdMntnSts) && (!FinServiceEvent.MANUALADVISE.equals(rcdMntnSts)
+				|| !FinServiceEvent.HOLDDISB.equals(rcdMntnSts))) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
 			return;
 		}

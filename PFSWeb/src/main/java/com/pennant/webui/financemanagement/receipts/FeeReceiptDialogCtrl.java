@@ -146,6 +146,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
 /**
@@ -374,7 +375,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		// Remove Receipt Records , because fees in Receipts collected automatically
 		Filter referenceFilter[] = new Filter[2];
-		referenceFilter[0] = new Filter("RcdMaintainSts", FinanceConstants.FINSER_EVENT_RECEIPT, Filter.OP_NOT_EQUAL);
+		referenceFilter[0] = new Filter("RcdMaintainSts", FinServiceEvent.RECEIPT, Filter.OP_NOT_EQUAL);
 		referenceFilter[1] = Filter.isNull("RcdMaintainSts");
 
 		Filter filter[] = new Filter[1];
@@ -1284,7 +1285,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						FinRepayHeader repayHeader = new FinRepayHeader();
 						repayHeader.setFinReference(this.finReference.getValue());
 						repayHeader.setValueDate(this.receivedDate.getValue());
-						repayHeader.setFinEvent(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
+						repayHeader.setFinEvent(FinServiceEvent.FEEPAYMENT);
 						repayHeader.setRepayAmount(header.getReceiptAmount());
 
 						receiptDetail.getRepayHeaders().add(repayHeader);
@@ -1404,7 +1405,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		// Receipt Header Details
 		FinReceiptHeader header = getReceiptHeader();
 		int finFormatter = CurrencyUtil.getFormat(header.getFinCcy());
-		fillComboBox(this.receiptPurpose, FinanceConstants.FINSER_EVENT_FEEPAYMENT,
+		fillComboBox(this.receiptPurpose, FinServiceEvent.FEEPAYMENT,
 				PennantStaticListUtil.getReceiptPurpose(), "");
 		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(),
 				"");
@@ -2040,7 +2041,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			wve.add(we);
 		}
 
-		header.setReceiptPurpose(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
+		header.setReceiptPurpose(FinServiceEvent.FEEPAYMENT);
 		header.setCustID(this.customerID);
 		String finCcy = this.finCcy.getValue();
 		if (StringUtils.isNotBlank(finCcy)) {

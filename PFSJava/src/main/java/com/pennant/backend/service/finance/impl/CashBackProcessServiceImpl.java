@@ -72,6 +72,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class CashBackProcessServiceImpl implements CashBackProcessService {
 	private static final Logger logger = LogManager.getLogger(CashBackProcessServiceImpl.class);
@@ -431,7 +432,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		serviceInstr.setAdviseAmount(rcptAmt);
 
 		// Create Receipt Against Loan
-		FinanceDetail detail = receiptService.receiptTransaction(serviceInstr, FinanceConstants.FINSER_EVENT_SCHDRPY);
+		FinanceDetail detail = receiptService.receiptTransaction(serviceInstr, FinServiceEvent.SCHDRPY);
 		if (detail.getReturnStatus() != null) {
 			throw new AppException("AppException", detail.getReturnStatus().getReturnText());
 		}
@@ -473,7 +474,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		fsi.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
 
 		fsi.setEntity(partnerBank.getEntity());
-		fsi.setReceiptPurpose(FinanceConstants.FINSER_EVENT_SCHDRPY);
+		fsi.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		fsi.setReceiptdetailExits(false);
 		fsi.setUploadAllocationDetails(null);
 		fsi.setReqType(RepayConstants.REQTYPE_POST);
@@ -493,7 +494,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		rcd.setStatus(fsi.getStatus());
 		rcd.setRemarks("Cash Back");
 		rcd.setReference(finReference);
-		rcd.setReceiptPurpose(FinanceConstants.FINSER_EVENT_SCHDRPY);
+		rcd.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 
 		fsi.setReceiptDetail(rcd);
 		return fsi;

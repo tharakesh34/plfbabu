@@ -65,13 +65,13 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.payorderissue.PayOrderIssueService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.webui.finance.payorderissue.model.PayOrderIssueListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SolutionFactory/PayOrderIssue/PayOrderIssueList.zul file.
@@ -221,7 +221,7 @@ public class PayOrderIssueListCtrl extends GFCBaseListCtrl<PayOrderIssueHeader> 
 
 		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
 		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(finRef, "_View");
-		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinanceConstants.FINSER_EVENT_DISBINST.equals(rcdMntnSts)) {
+		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.DISBINST.equals(rcdMntnSts)) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
 			return;
 		}

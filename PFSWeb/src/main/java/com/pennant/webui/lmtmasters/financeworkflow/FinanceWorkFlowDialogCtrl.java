@@ -75,7 +75,6 @@ import com.pennant.backend.model.finance.CAFFacilityType;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
@@ -84,6 +83,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SolutionFactory/FinanceWorkFlow/financeWorkFlowDialog.zul file.
@@ -462,7 +462,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 		// Get the finance servicing events.
 		List<FinServicingEvent> events = new ArrayList<>();
 
-		if (StringUtils.equals(eventAction, FinanceConstants.FINSER_EVENT_ORG)) {
+		if (StringUtils.equals(eventAction, FinServiceEvent.ORG)) {
 			events = PennantStaticListUtil.getFinServiceEvents(false);
 		} else {
 			events = PennantStaticListUtil.getFinServiceEvents(true);
@@ -743,7 +743,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 		// Show a confirm box
 		String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ Labels.getLabel("label_FinanceWorkFlowDialog_FinType.value") + " : " + aFinanceWorkFlow.getFinType();
-		if (!StringUtils.equals(aFinanceWorkFlow.getFinEvent(), FinanceConstants.FINSER_EVENT_ORG)) {
+		if (!StringUtils.equals(aFinanceWorkFlow.getFinEvent(), FinServiceEvent.ORG)) {
 			msg = msg.concat(" & " + Labels.getLabel("label_FinanceWorkFlowDialog_FinEvent.value") + " : "
 					+ aFinanceWorkFlow.getFinEvent());
 		}

@@ -64,11 +64,11 @@ import com.pennant.backend.model.systemmasters.BuilderProjcet;
 import com.pennant.backend.model.systemmasters.ProjectUnits;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.BuilderProjcetService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -192,7 +192,7 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 		//getting the project document details
 		// Document Details
 		List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(String.valueOf(id),
-				PennantConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
+				PennantConstants.MODULE_NAME, FinServiceEvent.ORG, "_View");
 		if (builderProjcet.getDocumentDetails() != null && !builderProjcet.getDocumentDetails().isEmpty()) {
 			builderProjcet.getDocumentDetails().addAll(documentList);
 		} else {
@@ -223,7 +223,7 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 		//getting the project document details
 		// Document Details
 		List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(String.valueOf(id),
-				PennantConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_AView");
+				PennantConstants.MODULE_NAME, FinServiceEvent.ORG, "_AView");
 		if (builderProjcet.getDocumentDetails() != null && !builderProjcet.getDocumentDetails().isEmpty()) {
 			builderProjcet.getDocumentDetails().addAll(documentList);
 		} else {
@@ -729,7 +729,7 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 					if (StringUtils.isEmpty(documentDetails.getReferenceId())) {
 						documentDetails.setReferenceId(String.valueOf(builderProject.getId()));
 					}
-					documentDetails.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
+					documentDetails.setFinEvent(FinServiceEvent.ORG);
 					if (documentDetails.getDocImage() != null && documentDetails.getDocRefId() <= 0) {
 						DocumentManager documentManager = new DocumentManager();
 						documentManager.setDocImage(documentDetails.getDocImage());

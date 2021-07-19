@@ -132,6 +132,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
 /**
@@ -361,7 +362,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			this.listheader_FeeDetailList_Terms.setVisible(false);
 		}
 
-		if (StringUtils.equals(this.moduleDefiner, FinanceConstants.FINSER_EVENT_ADDDISB)) {
+		if (StringUtils.equals(this.moduleDefiner, FinServiceEvent.ADDDISB)) {
 			this.listheader_FeeDetailList_FeeScheduleMethod.setVisible(true);
 			this.listheader_FeeDetailList_PaidAmount.setVisible(false);
 		}
@@ -486,7 +487,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				String wifReference = financeMain.getWifReference();
 
 				if ((StringUtils.isNotBlank(financeDetail.getModuleDefiner())
-						&& !FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner()))
+						&& !FinServiceEvent.ORG.equals(financeDetail.getModuleDefiner()))
 						|| StringUtils.isBlank(wifReference)) {
 					finFeeDetailList = convertToFinanceFees(financeDetail.getFinTypeFeesList());
 				} else {
@@ -1468,7 +1469,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 							.unFormateAmount(BigDecimal.valueOf(remFeeBox.doubleValue()), formatter);
 
 					if (StringUtils.isNotBlank(this.moduleDefiner) && remainingFee.compareTo(BigDecimal.ZERO) != 0
-							&& !StringUtils.equals(this.moduleDefiner, FinanceConstants.FINSER_EVENT_ADDDISB)) {
+							&& !StringUtils.equals(this.moduleDefiner, FinServiceEvent.ADDDISB)) {
 						throw new WrongValueException(remFeeBox,
 								Labels.getLabel("label_Fee_PaidWaiverAmount_NotEqual"));
 					}
@@ -1660,7 +1661,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		this.listheader_FeeDetailList_NetTdsAmount.setVisible(ImplementationConstants.ALLOW_TDS_ON_FEE);
 
 		boolean isDisbServ = false;
-		if (StringUtils.equals(this.moduleDefiner, FinanceConstants.FINSER_EVENT_ADDDISB)) {
+		if (StringUtils.equals(this.moduleDefiner, FinServiceEvent.ADDDISB)) {
 			isDisbServ = true;
 		}
 

@@ -111,6 +111,7 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 public class RepaymentPostingsUtil {
@@ -775,14 +776,14 @@ public class RepaymentPostingsUtil {
 
 		if (!isPresentProc && isSchdFullyPaid(finReference, scheduleDetails)
 				&& (!financeMain.isSanBsdSchdle() || (financeMain.isSanBsdSchdle() && ((receiptPurpose != null
-						&& FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(receiptPurpose)))))) {
+						&& FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)))))) {
 
 			pftDetail.setSvnAcrCalReq(false);
 			financeMain.setFinIsActive(false);
 			financeMain.setClosedDate(appDate);
 			financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
 
-			if (FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(receiptPurpose)) {
+			if (FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)) {
 				financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_EARLYSETTLE);
 				pftDetail.setSvnAcrTillLBD(pftDetail.getTotalSvnAmount());
 			}

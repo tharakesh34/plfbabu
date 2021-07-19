@@ -40,6 +40,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruction>
 		implements AddDisbursementService {
@@ -355,7 +356,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			String subModule = financeDetail.getFinScheduleData().getFinanceType().getFinCategory();
 			errorDetailList = extendedFieldDetailsService.validateExtendedFieldDetails(
 					finServiceInstruction.getExtendedDetails(), ExtendedFieldConstants.MODULE_LOAN, subModule,
-					FinanceConstants.FINSER_EVENT_ADDDISB);
+					FinServiceEvent.ADDDISB);
 			if (errorDetailList != null && !errorDetailList.isEmpty()) {
 				for (ErrorDetail errorDetails : errorDetailList) {
 					auditDetail.setErrorDetail(errorDetails);

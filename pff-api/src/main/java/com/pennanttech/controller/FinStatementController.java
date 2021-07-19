@@ -87,6 +87,7 @@ import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.statement.FinStatementRequest;
 import com.pennanttech.ws.model.statement.FinStatementResponse;
@@ -127,7 +128,7 @@ public class FinStatementController extends SummaryDetailService {
 		try {
 			for (String finReference : finReferences) {
 				FinanceDetail financeDetail = financeDetailService.getFinanceDetailById(finReference, false, "", false,
-						FinanceConstants.FINSER_EVENT_ORG, "");
+						FinServiceEvent.ORG, "");
 				if (financeDetail == null) {
 					stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 					return stmtResponse;
@@ -186,7 +187,7 @@ public class FinStatementController extends SummaryDetailService {
 		try {
 			for (String finReference : finReferences) {
 				FinanceDetail financeDetail = financeDetailService.getFinanceDetailById(finReference, false, "", false,
-						FinanceConstants.FINSER_EVENT_ORG, "");
+						FinServiceEvent.ORG, "");
 				if (financeDetail == null) {
 					stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 					return stmtResponse;
@@ -225,7 +226,7 @@ public class FinStatementController extends SummaryDetailService {
 
 				if (StringUtils.equals(APIConstants.STMT_FORECLOSUREV1, serviceName)) {
 					FinReceiptData receiptData = receiptService.getFinReceiptDataById(finReference,
-							AccountEventConstants.ACCEVENT_EARLYSTL, FinanceConstants.FINSER_EVENT_RECEIPT, "");
+							AccountEventConstants.ACCEVENT_EARLYSTL, FinServiceEvent.RECEIPT, "");
 					getForeClosureReport(receiptData, stmtResponse);
 				}
 				// generate response info
@@ -275,8 +276,8 @@ public class FinStatementController extends SummaryDetailService {
 
 		FinServiceInstruction serviceInstruction = new FinServiceInstruction();
 		serviceInstruction.setAmount(repayAmt);
-		serviceInstruction.setModuleDefiner(FinanceConstants.FINSER_EVENT_EARLYSTLENQ);
-		finMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_EARLYSTLENQ);
+		serviceInstruction.setModuleDefiner(FinServiceEvent.EARLYSTLENQ);
+		finMain.setRcdMaintainSts(FinServiceEvent.EARLYSTLENQ);
 		if (serviceInstruction.getToDate() == null) {
 			serviceInstruction.setToDate(finScheduleData.getFinanceMain().getMaturityDate());
 		}
@@ -608,7 +609,7 @@ public class FinStatementController extends SummaryDetailService {
 			receiptHeader.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 			receiptHeader.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 			receiptHeader.setReceiptDate(SysParamUtil.getAppDate());
-			receiptHeader.setReceiptPurpose(FinanceConstants.FINSER_EVENT_EARLYSETTLE);
+			receiptHeader.setReceiptPurpose(FinServiceEvent.EARLYSETTLE);
 			receiptHeader.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
 			receiptHeader.setNewRecord(true);
 			FinReceiptDetail finReceiptDetail = new FinReceiptDetail();

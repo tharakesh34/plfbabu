@@ -79,7 +79,6 @@ import com.pennant.backend.model.staticparms.InterestRateBasisCode;
 import com.pennant.backend.model.staticparms.ScheduleMethod;
 import com.pennant.backend.service.finance.FeeWaiverHeaderService;
 import com.pennant.backend.service.finance.FinanceDetailService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.webui.finance.financemain.model.FinanceMainSelectItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -91,6 +90,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul file.
@@ -611,7 +611,7 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	public void onClick$btnSearchSchdMethod(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering " + event.toString());
 		String whereClause = "";
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD)) {
+		if (moduleDefiner.equals(FinServiceEvent.OVERDRAFTSCHD)) {
 			whereClause = new String(
 					" SchdMethod NOT IN ('EQUAL','GRCNDPAY','MAN_PRI','MANUAL','PRI','PRI_PFT','PFTCAP') ");
 		}
@@ -1094,8 +1094,8 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		//Filter[] rcdTypeFilter = new Filter[2];
 		//rcdTypeFilter[0] = new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL);
 		//	rcdTypeFilter[1] = new Filter("RecordType", "", Filter.OP_EQUAL);
-		if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)) {
+		if (!moduleDefiner.equals(FinServiceEvent.COVENANTS)
+				&& !moduleDefiner.equals(FinServiceEvent.FEEWAIVERS)) {
 			//this.searchObject.addFilterOr(rcdTypeFilter);
 		}
 

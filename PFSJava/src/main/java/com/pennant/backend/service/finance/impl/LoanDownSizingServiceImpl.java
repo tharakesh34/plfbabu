@@ -76,6 +76,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 public class LoanDownSizingServiceImpl extends GenericFinanceDetailService implements LoanDownSizingService {
@@ -204,7 +205,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 
 		if (financeMain.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
-			rcdMaintainSts = FinanceConstants.FINSER_EVENT_LOANDOWNSIZING;
+			rcdMaintainSts = FinServiceEvent.LOANDOWNSIZING;
 		}
 		financeMain.setRcdMaintainSts(rcdMaintainSts);
 
@@ -246,7 +247,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		}
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_LOANDOWNSIZING);
+		financeDetail.setModuleDefiner(FinServiceEvent.LOANDOWNSIZING);
 
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinServiceInstruction finServInst = finScheduleData.getFinServiceInstructions().get(0);
@@ -300,7 +301,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 
 		// Delete from Staging Tables
 		financeMainDAO.delete(financeMain, TableType.TEMP_TAB, false, true);
-		finServiceInstructionDAO.deleteList(financeMain.getFinReference(), FinanceConstants.FINSER_EVENT_LOANDOWNSIZING,
+		finServiceInstructionDAO.deleteList(financeMain.getFinReference(), FinServiceEvent.LOANDOWNSIZING,
 				"_Temp");
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
@@ -407,7 +408,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 
 		financeMainDAO.delete(financeMain, TableType.TEMP_TAB, false, true);
-		finServiceInstructionDAO.deleteList(financeMain.getFinReference(), FinanceConstants.FINSER_EVENT_LOANDOWNSIZING,
+		finServiceInstructionDAO.deleteList(financeMain.getFinReference(), FinServiceEvent.LOANDOWNSIZING,
 				"_Temp");
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());

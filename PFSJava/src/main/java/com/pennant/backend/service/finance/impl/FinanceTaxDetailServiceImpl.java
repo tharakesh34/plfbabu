@@ -80,12 +80,12 @@ import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -144,7 +144,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 			getFinanceTaxDetailDAO().update(financeTaxDetail, tableType);
 		}
 
-		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_GSTDETAILS;
+		String rcdMaintainSts = FinServiceEvent.GSTDETAILS;
 		financeMainDAO.updateMaintainceStatus(financeTaxDetail.getFinReference(), rcdMaintainSts);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -422,7 +422,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
 		String finReference = financeTaxDetail.getFinReference();
 		String rcdMntnSts = financeMainDAO.getFinanceMainByRcdMaintenance(finReference, "_View");
-		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinanceConstants.FINSER_EVENT_GSTDETAILS.equals(rcdMntnSts)) {
+		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.GSTDETAILS.equals(rcdMntnSts)) {
 			String[] valueParm1 = new String[1];
 			valueParm1[0] = rcdMntnSts;
 			auditDetail.setErrorDetail(new ErrorDetail("LMS001", valueParm1));

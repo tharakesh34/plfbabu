@@ -68,7 +68,6 @@ import com.pennant.backend.model.FinServicingEvent;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.lmtmasters.financeworkflow.model.FinanceWorkFlowListModelItemRenderer;
@@ -77,6 +76,7 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SolutionFactory/FinanceWorkFlow/FinanceWorkFlowList.zul file.
@@ -187,13 +187,13 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 				this.searchObject.addFilter(new Filter("lovDescProductName", "", Filter.OP_EQUAL));
 			}
 
-			if (FinanceConstants.FINSER_EVENT_ORG.equals(eventAction)) {
+			if (FinServiceEvent.ORG.equals(eventAction)) {
 				this.searchObject.addFilter(new Filter("finEvent",
-						new String[] { FinanceConstants.FINSER_EVENT_ORG, FinanceConstants.FINSER_EVENT_PREAPPROVAL },
+						new String[] { FinServiceEvent.ORG, FinServiceEvent.PREAPPROVAL },
 						Filter.OP_IN));
 			} else {
 				this.searchObject.addFilter(new Filter("finEvent",
-						new String[] { FinanceConstants.FINSER_EVENT_ORG, FinanceConstants.FINSER_EVENT_PREAPPROVAL },
+						new String[] { FinServiceEvent.ORG, FinServiceEvent.PREAPPROVAL },
 						Filter.OP_NOT_IN));
 			}
 		}
@@ -213,7 +213,7 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 		// Get the finance servicing events.
 		List<FinServicingEvent> events = new ArrayList<>();
 
-		if (FinanceConstants.FINSER_EVENT_ORG.equals(eventAction)) {
+		if (FinServiceEvent.ORG.equals(eventAction)) {
 			events = PennantStaticListUtil.getFinServiceEvents(false);
 		} else {
 			events = PennantStaticListUtil.getFinServiceEvents(true);
@@ -242,7 +242,7 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 		registerField("ModuleName");
 		registerField("ReferenceId");
 
-		if (FinanceConstants.FINSER_EVENT_ORG.equals(eventAction)) {
+		if (FinServiceEvent.ORG.equals(eventAction)) {
 			listheader_FinEvent.setVisible(false);
 			this.row_finevent.setVisible(false);
 		} else {

@@ -85,6 +85,7 @@ import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.service.LegalVerificationService;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private static final Logger logger = LogManager.getLogger(SelectTVInitiationDialogCtrl.class);
@@ -251,7 +252,7 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		}
 
 		List<FinanceReferenceDetail> financeReferenceDetails = getFinanceReferenceDetailDAO()
-				.getFinanceProcessEditorDetails(financeMain.getFinType(), FinanceConstants.FINSER_EVENT_ORG,
+				.getFinanceProcessEditorDetails(financeMain.getFinType(), FinServiceEvent.ORG,
 						FinanceConstants.PROCEDT_LIMIT, "_FINVIEW");
 
 		boolean iniitiation = false;

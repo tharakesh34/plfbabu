@@ -53,7 +53,6 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.util.AssetConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -79,6 +78,7 @@ import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationService;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 @Component(value = "tVerificationDialogCtrl")
@@ -255,7 +255,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		verifications = getFinalVerifications(collaterls, financeDetail);
 
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDDISB)) {
+		if (StringUtils.equals(moduleDefiner, FinServiceEvent.ADDDISB)) {
 			List<Verification> tempList = new ArrayList<Verification>();
 			for (Verification verification : verifications) {
 				if (verification.getModule() != 0) {
@@ -483,7 +483,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				exists = false;
 				current.setId(previous.getId());
 
-				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner) && (StringUtils
+				if (StringUtils.equals(FinServiceEvent.ADDDISB, moduleDefiner) && (StringUtils
 						.equals("Approved", financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus()))) {
 					current.setNewRecord(true);
 				} else {

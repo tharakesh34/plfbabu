@@ -71,7 +71,6 @@ import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Row;
@@ -79,11 +78,8 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.AccountSelectionBox;
-import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
@@ -122,7 +118,6 @@ import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
-import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinanceBaseCtrl;
 import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
@@ -131,6 +126,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
@@ -1123,7 +1119,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		// save it to database
 		try {
-			aFinanceMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_WRITEOFF);
+			aFinanceMain.setRcdMaintainSts(FinServiceEvent.WRITEOFF);
 			aFinanceWriteoffHeader.getFinanceDetail().getFinScheduleData().setFinanceMain(aFinanceMain);
 			if (doProcess(aFinanceWriteoffHeader, tranType)) {
 
@@ -1149,7 +1145,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
 					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
 					notification.setModule("WRITE_OFF");
-					notification.setSubModule(FinanceConstants.FINSER_EVENT_WRITEOFF);
+					notification.setSubModule(FinServiceEvent.WRITEOFF);
 					notification.setKeyReference(financeMain.getFinReference());
 					notification.setStage(financeMain.getRoleCode());
 					notification.setReceivedBy(getUserWorkspace().getUserId());
@@ -1552,7 +1548,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public FinanceDetail onExecuteStageAccDetail()
 			throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		getFinanceDetail().setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
+				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 		return getFinanceDetail();
 	}
 
@@ -1650,7 +1646,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		amountCodes.setPftChg(totalPftSchdNew.subtract(totalPftSchdOld));
 		amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
 
-		aeEvent.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
+		aeEvent.setModuleDefiner(FinServiceEvent.ORG);
 		amountCodes.setDisburse(finMain.getFinCurrAssetValue());
 
 		if (finMain.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(finMain.getRecordType())) {
@@ -1683,7 +1679,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			for (int i = 0; i < advPayList.size(); i++) {
 				FinAdvancePayments advPayment = advPayList.get(i);
 
-				aeEvent.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
+				aeEvent.setModuleDefiner(FinServiceEvent.ORG);
 				amountCodes.setDisbInstAmt(advPayment.getAmtToBeReleased());
 				amountCodes.setPartnerBankAc(advPayment.getPartnerBankAc());
 				amountCodes.setPartnerBankAcType(advPayment.getPartnerBankAcType());

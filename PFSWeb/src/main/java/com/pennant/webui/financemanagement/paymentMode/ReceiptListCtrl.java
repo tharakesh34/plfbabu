@@ -62,6 +62,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
@@ -148,7 +149,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	private String module;
 	private ReceiptService receiptService;
 
-	private String workflowCode = FinanceConstants.FINSER_EVENT_RECEIPT;;
+	private String workflowCode = FinServiceEvent.RECEIPT;;
 	private transient FinanceWorkFlowService financeWorkFlowService;
 
 	private transient WorkFlowDetails workFlowDetails = null;
@@ -301,7 +302,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 		if (enqiryModule) {
 			List<String> filterList = new ArrayList<>();
-			filterList.add(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
+			filterList.add(FinServiceEvent.FEEPAYMENT);
 			filterList.add(RepayConstants.NONLAN_RECEIPT_NOTAPPLICABLE);
 			searchObject.addFilterNotIn("RECEIPTPURPOSE", filterList);
 			// searchObject.addWhereClause(" PAYAGAINSTID = 0");
@@ -608,7 +609,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			lc.setParent(item);
 
 			String receiptPurpose = finReceiptHeader.getReceiptPurpose();
-			if (FinanceConstants.FINSER_EVENT_EARLYRPY.equals(receiptPurpose)) {
+			if (FinServiceEvent.EARLYRPY.equals(receiptPurpose)) {
 				receiptPurpose = "Partial Payment";
 			}
 			lc = new Listcell(receiptPurpose);
@@ -790,21 +791,21 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		if (isWorkFlowEnabled()) {
 			String eventCode = "";
 
-			if (StringUtils.equals(finReceiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+			if (StringUtils.equals(finReceiptHeader.getReceiptPurpose(), FinServiceEvent.SCHDRPY)) {
 				eventCode = AccountEventConstants.ACCEVENT_REPAY;
 
 			} else if (StringUtils.equals(finReceiptHeader.getReceiptPurpose(),
-					FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+					FinServiceEvent.EARLYRPY)) {
 				eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
 
 			} else if (StringUtils.equals(finReceiptHeader.getReceiptPurpose(),
-					FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+					FinServiceEvent.EARLYSETTLE)) {
 				eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
 
 			}
 
 			finReceiptData = receiptService.getFinReceiptDataByReceiptId(finRcptHeader.getReceiptID(), eventCode,
-					FinanceConstants.FINSER_EVENT_RECEIPT, userRole);
+					FinServiceEvent.RECEIPT, userRole);
 			if (isKnockOff) {
 				FinReceiptHeader rch = finReceiptData.getReceiptHeader();
 				rch.setKnockOffRefId(rch.getReceiptDetails().get(0).getPayAgainstID());
@@ -913,8 +914,8 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		 * if (StringUtils.equals(module, FinanceConstants.DEPOSIT_MAKER)) { roleCode = FinanceConstants.DEPOSIT_MAKER;
 		 * nextRoleCode = FinanceConstants.DEPOSIT_APPROVER; }
 		 * 
-		 * if (StringUtils.equals(module, FinanceConstants.RECEIPTREALIZE_MAKER)) { roleCode =
-		 * FinanceConstants.RECEIPTREALIZE_MAKER; nextRoleCode = FinanceConstants.RECEIPTREALIZE_APPROVER; }
+		 * if (StringUtils.equals(module, FinServiceEvent.RECEIPTREALIZE_MAKER)) { roleCode =
+		 * FinServiceEvent.RECEIPTREALIZE_MAKER; nextRoleCode = FinServiceEvent.RECEIPTREALIZE_APPROVER; }
 		 */
 		doShowMultiReceipt();
 		logger.debug("Leaving");
@@ -928,8 +929,8 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		 * if (StringUtils.equals(module, FinanceConstants.DEPOSIT_APPROVER)) { roleCode =
 		 * FinanceConstants.DEPOSIT_APPROVER; nextRoleCode = FinanceConstants.DEPOSIT_MAKER; }
 		 * 
-		 * if (StringUtils.equals(module, FinanceConstants.RECEIPTREALIZE_APPROVER)) { roleCode =
-		 * FinanceConstants.RECEIPTREALIZE_APPROVER; nextRoleCode = FinanceConstants.RECEIPTREALIZE_MAKER; }
+		 * if (StringUtils.equals(module, FinServiceEvent.RECEIPTREALIZE_APPROVER)) { roleCode =
+		 * FinServiceEvent.RECEIPTREALIZE_APPROVER; nextRoleCode = FinServiceEvent.RECEIPTREALIZE_MAKER; }
 		 */
 		doShowMultiReceipt();
 		logger.debug("Leaving");
@@ -941,10 +942,10 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		recordAction = PennantConstants.RCD_STATUS_APPROVED;
 		/*
 		 * if (StringUtils.equals(module, FinanceConstants.DEPOSIT_APPROVER)) { roleCode =
-		 * FinanceConstants.DEPOSIT_APPROVER; nextRoleCode = FinanceConstants.RECEIPTREALIZE_MAKER; }
+		 * FinanceConstants.DEPOSIT_APPROVER; nextRoleCode = FinServiceEvent.RECEIPTREALIZE_MAKER; }
 		 * 
-		 * if (StringUtils.equals(module, FinanceConstants.RECEIPTREALIZE_APPROVER)) { roleCode =
-		 * FinanceConstants.RECEIPTREALIZE_APPROVER; nextRoleCode = null; }
+		 * if (StringUtils.equals(module, FinServiceEvent.RECEIPTREALIZE_APPROVER)) { roleCode =
+		 * FinServiceEvent.RECEIPTREALIZE_APPROVER; nextRoleCode = null; }
 		 */
 		doShowMultiReceipt();
 		logger.debug("Leaving");

@@ -24,10 +24,10 @@ import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 import com.pennant.backend.service.approvalstatusenquiry.ApprovalStatusEnquiryService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 
@@ -161,9 +161,9 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 	}
 
 	private boolean isActivityLogVisible(String finEvent) {
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_LIABILITYREQ, finEvent)
-				|| StringUtils.equals(FinanceConstants.FINSER_EVENT_NOCISSUANCE, finEvent)
-				|| StringUtils.equals(FinanceConstants.FINSER_EVENT_TIMELYCLOSURE, finEvent)) {
+		if (StringUtils.equals(FinServiceEvent.LIABILITYREQ, finEvent)
+				|| StringUtils.equals(FinServiceEvent.NOCISSUANCE, finEvent)
+				|| StringUtils.equals(FinServiceEvent.TIMELYCLOSURE, finEvent)) {
 			return false;
 		}
 		return true;

@@ -91,7 +91,6 @@ import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.CommitmentConstants;
 import com.pennant.backend.util.DeviationConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleReturnType;
@@ -104,6 +103,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.util.CollectionUtil;
 
 /**
@@ -681,7 +681,7 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 			if (!prevAnswersMap.containsKey(questionId)) {
 				FinanceReferenceDetail finRefDetail = presentAnswersMap.get(questionId).getLovDescFinRefDetail();
 				if (StringUtils.trimToEmpty(finChkListRef.getRecordType()).equals("")) {
-					if (FinanceConstants.FINSER_EVENT_ADDDISB.equals(finRefDetail.getFinEvent())) {
+					if (FinServiceEvent.ADDDISB.equals(finRefDetail.getFinEvent())) {
 						finChkListRef.setRecordType(finRefDetail.getRecordType());
 						finChkListRef.setNewRecord(finRefDetail.isNewRecord());
 					} else {

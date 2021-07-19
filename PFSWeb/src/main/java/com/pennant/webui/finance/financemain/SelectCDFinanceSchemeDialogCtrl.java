@@ -126,6 +126,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.CustomerDedupCheckService;
 import com.pennanttech.pff.external.CustomerInterfaceService;
@@ -444,7 +445,7 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 		financeDetail.setBefImage(befImage);
 
 		// Resetting Finance Event based on Request Resource
-		String financeEvent = FinanceConstants.FINSER_EVENT_ORG;
+		String financeEvent = FinServiceEvent.ORG;
 
 		// If User requested through What-if Reference
 		FinanceType financeType = null;

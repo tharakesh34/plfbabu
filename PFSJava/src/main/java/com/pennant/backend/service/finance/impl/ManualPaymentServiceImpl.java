@@ -114,6 +114,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -207,7 +208,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			// =======================================
 			repayData.getFinanceDetail().setStageTransactionEntries(
 					getTransactionEntryDAO().getListTransactionEntryByRefType(financeType.getFinType(),
-							StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent,
+							StringUtils.isEmpty(procEdtEvent) ? FinServiceEvent.ORG : procEdtEvent,
 							FinanceConstants.PROCEDT_STAGEACC, userRole, "_AEView", true));
 
 			if (StringUtils.isNotBlank(financeMain.getRecordType())) {
@@ -1368,7 +1369,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		// calculate repayments
 		repayData = calculateRepayments(repayData, financeDetail, finServiceInst, false, null);
 
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
+		if (moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
 			Cloner cloner = new Cloner();
 			List<FinanceScheduleDetail> finschDetailList = cloner
 					.deepClone(finScheduleData.getFinanceScheduleDetails());
@@ -1401,8 +1402,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		repayData.setBuildProcess("R");
 		repayData.getRepayMain().setRepayAmountNow(finServiceInst.getAmount());
 
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)
-				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+		if (moduleDefiner.equals(FinServiceEvent.EARLYRPY)
+				|| moduleDefiner.equals(FinServiceEvent.SCHDRPY)) {
 			repayData.getRepayMain().setPayApportionment(PennantConstants.List_Select);
 		} else {
 			repayData.getRepayMain().setPayApportionment(PennantConstants.List_Select);
@@ -1411,8 +1412,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		SubHeadRule subHeadRule = null;
 		String sqlRule = null;
 
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)
-				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
+		if (moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)
+				|| moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
 			Rule rule = getRuleService().getApprovedRuleById("REFUND", RuleConstants.MODULE_REFUND,
 					RuleConstants.EVENT_REFUND);
 			if (rule != null) {
@@ -1459,8 +1460,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				isReCal, method, finServiceInst.getFromDate(), moduleDefiner);
 
 		// Calculation for Insurance Refund
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)
-				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
+		if (moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)
+				|| moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
 			int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(),
 					repayData.getRepayMain().getRefundCalStartDate() == null ? financeMain.getMaturityDate()
 							: repayData.getRepayMain().getRefundCalStartDate(),

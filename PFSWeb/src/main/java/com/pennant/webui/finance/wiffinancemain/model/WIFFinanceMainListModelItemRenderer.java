@@ -51,10 +51,8 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.

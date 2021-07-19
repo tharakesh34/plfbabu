@@ -20,13 +20,13 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
-import org.zkoss.zul.Filedownload;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
@@ -57,6 +57,7 @@ import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.external.DocumentManagementService;
 
 public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
@@ -807,7 +808,7 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				collateralSetup.setFromLoan(true);
 				collateralSetup.setSourceId(DMSModule.DMS.name());
 				List<DocumentDetails> existingDocList = documentDetailsDAO.getDocumentDetailsByRef(collateralRef,
-						CollateralConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "");
+						CollateralConstants.MODULE_NAME, FinServiceEvent.ORG, "");
 				if (CollectionUtils.isNotEmpty(existingDocList)) {
 					for (DocumentDetails documentDetail : existingDocList) {
 						//Already approved documents need to synch with DMS so if docUri is blank setting the record type as update.

@@ -82,7 +82,6 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.financemanagement.ProvisionService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -98,6 +97,7 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -251,7 +251,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 
 		if ("PROV".equals(moduleName.getValue())) {
 			this.module = "Provision";
-			moduleDefiner = FinanceConstants.FINSER_EVENT_PROVISION;
+			moduleDefiner = FinServiceEvent.PROVISION;
 		} else if ("PROVENQ".equals(moduleName.getValue())) {
 			this.module = "ProvisionEnquiry";
 		}

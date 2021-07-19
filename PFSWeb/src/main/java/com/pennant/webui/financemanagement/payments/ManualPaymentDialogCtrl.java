@@ -93,13 +93,11 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.AccountSelectionBox;
 import com.pennant.ChartType;
 import com.pennant.CurrencyBox;
 import com.pennant.Interface.model.IAccounts;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
@@ -108,7 +106,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RepayCalculator;
 import com.pennant.app.util.ReportsUtil;
-import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
@@ -134,7 +131,6 @@ import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.rulefactory.SubHeadRule;
@@ -154,7 +150,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
-import com.pennant.backend.util.RuleReturnType;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartsConfig;
@@ -174,6 +169,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
@@ -415,8 +411,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if (StringUtils.isNotBlank(financeMain.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				} else {
-					if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)
-							|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+					if (moduleDefiner.equals(FinServiceEvent.EARLYRPY)
+							|| moduleDefiner.equals(FinServiceEvent.SCHDRPY)) {
 						//this.btnPay.setDisabled(true);
 						this.btnChangeRepay.setDisabled(true);
 
@@ -459,7 +455,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
+		if (!moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
 			getUserWorkspace().allocateAuthorities("ManualPaymentDialog", getRole(), menuItemRightName);
 
 			this.btnPay.setVisible(getUserWorkspace().isAllowed("button_ManualPaymentDialog_btnPay"));
@@ -544,8 +540,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 */
 	private void doEdit(boolean isChgRpy) {
 		logger.debug("Entering");
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)
-				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+		if (moduleDefiner.equals(FinServiceEvent.EARLYRPY)
+				|| moduleDefiner.equals(FinServiceEvent.SCHDRPY)) {
 			this.rpyAmount.setDisabled(isReadOnly("ManualPaymentDialog_RepayAmount"));
 			if (!isChgRpy) {
 				if (getRepaySchdList() != null && !getRepaySchdList().isEmpty()) {
@@ -556,8 +552,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.rpyAmount.setDisabled(true);
 		}
 
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)
-				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
+		if (moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)
+				|| moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
 			this.totRefundAmt.setDisabled(isReadOnly("ManualPaymentDialog_refundPft"));
 		} else {
 			this.totRefundAmt.setDisabled(true);
@@ -576,8 +572,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (StringUtils.trimToEmpty(payApprtnMent).equals(FinanceConstants.PAY_APPORTIONMENT_TO_NONE)) {
 			this.paymentApportionment.setDisabled(true);
 		} else {
-			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)
-					|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+			if (moduleDefiner.equals(FinServiceEvent.EARLYRPY)
+					|| moduleDefiner.equals(FinServiceEvent.SCHDRPY)) {
 				if (StringUtils.trimToEmpty(payApprtnMent).equals(FinanceConstants.PAY_APPORTIONMENT_TO_ALL)) {
 					this.row_payApportionment.setVisible(true);
 				} else if (StringUtils.trimToEmpty(payApprtnMent)
@@ -647,12 +643,12 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		financeScheduleDetails = sortSchdDetails(financeScheduleDetails);
 		String accTypeEvent = "";
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+		if (moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)) {
 			accTypeEvent = AccountConstants.FinanceAccount_ERLS;
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.EARLYRPY)) {
 			accTypeEvent = AccountConstants.FinanceAccount_REPY;
 			this.row_EarlyRepayEffectOnSchd.setVisible(true);
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.SCHDRPY)) {
 			accTypeEvent = AccountConstants.FinanceAccount_REPY;
 		}
 
@@ -729,15 +725,15 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.pendingODC.setValue(PennantAppUtil.formateAmount(pendingODC, finformatter));
 
 		//Fill Schedule data
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)
-				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
+		if (moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)
+				|| moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
 
 			//Fetch Total Repayment Amount till Maturity date for Early Settlement
 			BigDecimal repayAmt = getFinanceDetailService().getTotalRepayAmount(aFinanceMain.getFinReference());
 			this.rpyAmount.setValue(PennantAppUtil.formateAmount(repayAmt, finformatter));
 			this.row_EarlySettleDate.setVisible(true);
 
-			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			if (moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)) {
 
 				if (getRepaySchdList() == null || getRepaySchdList().isEmpty()) {
 
@@ -765,7 +761,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 
 			this.row_paidByCustomer.setVisible(true);
-			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
+			if (moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
 				Events.sendEvent("onClick$btnCalcRepayments", this.window_ManualPaymentDialog, isChgRpy);
 
 				this.earlySettlementBal.setVisible(true);
@@ -855,15 +851,15 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		if (isValid(isChgRpy, false)) {
 
-			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)
-					|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
+			if (moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)
+					|| moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
 				this.totRefundAmt.setDisabled(isReadOnly("ManualPaymentDialog_refundPft"));
 			} else {
 				this.totRefundAmt.setDisabled(true);
 			}
 
 			RepayData repayData = null;
-			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
+			if (moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
 				Cloner cloner = new Cloner();
 				List<FinanceScheduleDetail> finschDetailList = cloner
 						.deepClone(getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
@@ -879,14 +875,14 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			} else {
 				Date valueDate = null;
-				if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+				if (moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)) {
 					valueDate = this.earlySettlementDate.getValue();
 				}
 				repayData = calculateRepayments(getFinanceDetail().getFinScheduleData().getFinanceMain(),
 						getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), false, null, valueDate);
 			}
 
-			if (repayData.getRepayMain().isEarlyPay() && moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+			if (repayData.getRepayMain().isEarlyPay() && moduleDefiner.equals(FinServiceEvent.EARLYRPY)) {
 
 				// Show a confirm box
 				final String msg = Labels.getLabel("label_EarlypayEffectOnSchedule_Method_Confirm",
@@ -932,9 +928,9 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (this.earlySettlementDate.getValue() == null) {
 			this.earlySettlementDate.setValue(curBussDate);
 		}
-		if (this.moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
+		if (this.moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
 			fillUnpaidSchDates();
-		} else if (this.moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+		} else if (this.moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)) {
 
 			//Check Early Settlement Date, EITHER Equal to Current Buss Date or Last Business Value Date
 			Date lastBussDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_LAST);
@@ -1075,8 +1071,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		//Total Outstanding Paid Amount By customer
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)
-				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+		if (moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)
+				|| moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)) {
 
 			BigDecimal refundVal = totRefundAmt.getValue() == null ? BigDecimal.ZERO : totRefundAmt.getValue();
 			this.paidByCustomer.setValue(this.rpyAmount.getActualValue().subtract(refundVal));
@@ -1343,8 +1339,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		getRepayData().getRepayMain().setRepayAmountNow(PennantAppUtil.unFormateAmount(this.rpyAmount.getActualValue(),
 				getRepayData().getRepayMain().getLovDescFinFormatter()));
 
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)
-				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+		if (moduleDefiner.equals(FinServiceEvent.EARLYRPY)
+				|| moduleDefiner.equals(FinServiceEvent.SCHDRPY)) {
 			getRepayData().getRepayMain()
 					.setPayApportionment(this.paymentApportionment.getSelectedItem().getValue().toString());
 		} else {
@@ -1354,8 +1350,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		SubHeadRule subHeadRule = null;
 		String sqlRule = null;
 
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)
-				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
+		if (moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)
+				|| moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
 			Rule rule = getRuleService().getApprovedRuleById("REFUND", RuleConstants.MODULE_REFUND,
 					RuleConstants.EVENT_REFUND);
 			if (rule != null) {
@@ -1401,8 +1397,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				isReCal, method, valueDate, moduleDefiner);
 
 		//Calculation for Insurance Refund
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)
-				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
+		if (moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)
+				|| moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
 			int months = DateUtility
 					.getMonthsBetween(
 							financeMain.getMaturityDate(), repayData.getRepayMain().getRefundCalStartDate() == null
@@ -1430,7 +1426,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.btnPay.setDisabled(!getUserWorkspace().isAllowed("button_ManualPaymentDialog_btnPay"));
 		this.btnChangeRepay.setDisabled(!getUserWorkspace().isAllowed("button_ManualPaymentDialog_btnChangeRepay"));
 		this.rpyAmount.setDisabled(true);
-		if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
+		if (!moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
 			this.btnCalcRepayments.setDisabled(true);
 		} else {
 			BigDecimal paidNow = getRepayMain().getPrincipalPayNow().add(getRepayMain().getProfitPayNow());
@@ -1442,8 +1438,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		//Total Outstanding Paid Amount By customer
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)
-				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+		if (moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)
+				|| moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)) {
 			this.paidByCustomer.setValue(this.rpyAmount.getActualValue().subtract(this.totRefundAmt.getValue()));
 			this.unEarnedAmount.setValue(this.totPftDue.getValue().subtract(this.accruedPft.getValue()));
 		}
@@ -1533,7 +1529,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					if (!(this.earlyRpyEffectOnSchd.getSelectedItem().getValue().toString()
 							.equals(PennantConstants.List_Select)
 							|| "NOEFCT".equals(this.earlyRpyEffectOnSchd.getSelectedItem().getValue().toString()))
-							&& moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+							&& moduleDefiner.equals(FinServiceEvent.EARLYRPY)) {
 
 						processRepayScheduleList(getFinanceDetail().getFinScheduleData().getFinanceMain(),
 								getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(),
@@ -1783,8 +1779,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		//Total Outstanding Paid Amount By customer
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)
-				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+		if (moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)
+				|| moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)) {
 			this.paidByCustomer.setValue(this.rpyAmount.getActualValue().subtract(this.totRefundAmt.getValue()));
 			this.unEarnedAmount.setValue(this.totPftDue.getValue().subtract(this.accruedPft.getValue()));
 		}
@@ -1792,7 +1788,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (!(this.earlyRpyEffectOnSchd.getSelectedItem().getValue().toString().equals(PennantConstants.List_Select)
 				|| this.earlyRpyEffectOnSchd.getSelectedItem().getValue().toString()
 						.equals(CalculationConstants.EARLYPAY_NOEFCT))
-				&& moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+				&& moduleDefiner.equals(FinServiceEvent.EARLYRPY)) {
 
 			FinanceDetail financeDetail = getFinanceDetail();
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
@@ -1810,7 +1806,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		getFinanceDetail().setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
+				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 
 		//Customer Details   
 		appendCustomerDetailTab();
@@ -1837,7 +1833,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		appendStageAccountingDetailsTab(true);
 
 		//Show Accounting Tab Details Based upon Role Condition using Work flow
-		if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)
+		if (!moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)
 				&& "Accounting".equals(getTaskTabs(getTaskId(getRole())))) {
 			//Accounting Details Tab Addition
 			appendAccountingDetailTab(true);
@@ -1853,7 +1849,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 
 		FinRepayHeader header = getFinRepayHeader();
-		if (header == null || (isSchdRecal && moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY))) {
+		if (header == null || (isSchdRecal && moduleDefiner.equals(FinServiceEvent.EARLYRPY))) {
 			header = new FinRepayHeader();
 			header.setSchdRegenerated(isSchdRegenerated);
 		}
@@ -1936,7 +1932,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public FinanceDetail onExecuteStageAccDetail()
 			throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		getFinanceDetail().setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
+				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 		return getFinanceDetail();
 	}
 
@@ -2605,7 +2601,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		//Check Early Settlement Date, EITHER Equal to Current Buss Date or Last Business Value Date
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+		if (moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)) {
 
 			this.earlySettlementDate.setConstraint("");
 			this.earlySettlementDate.setErrorMessage("");
@@ -2624,7 +2620,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
+		if (moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
 			if (this.earlySettlementDate.getValue() == null) {
 				this.earlySettlementDate.setValue(curBussDate);
 			}
@@ -2647,7 +2643,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			return false;
 		} else if (!this.rpyAmount.isDisabled() && this.rpyAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0) {
 
-			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+			if (moduleDefiner.equals(FinServiceEvent.EARLYRPY)) {
 
 				// Check Whether Any Future Payments already done in Schedule or not
 				List<FinanceScheduleDetail> scheduleList = getFinanceDetail().getFinScheduleData()
@@ -2712,8 +2708,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		//Refund Rule Validation Process Check
 		if (isSaveProcess
-				&& (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)
-						|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ))
+				&& (moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)
+						|| moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ))
 				&& !isRefundAmtValidated()) {
 			setRefundAmtValidated(true);
 			return false;

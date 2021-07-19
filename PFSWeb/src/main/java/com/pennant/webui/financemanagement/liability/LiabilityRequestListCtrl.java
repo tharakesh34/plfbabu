@@ -73,7 +73,6 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.liability.service.LiabilityRequestService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -89,6 +88,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -454,14 +454,14 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 	public void onClick$btnSearchFinRef(Event event) {
 		logger.debug("Entering " + event.toString());
 		Filter[] module = new Filter[1];
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_NOCISSUANCE)) {
-			module[0] = new Filter("FinEvent", FinanceConstants.FINSER_EVENT_NOCISSUANCE, Filter.OP_EQUAL);
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_LIABILITYREQ)) {
-			module[0] = new Filter("FinEvent", FinanceConstants.FINSER_EVENT_LIABILITYREQ, Filter.OP_EQUAL);
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_TIMELYCLOSURE)) {
-			module[0] = new Filter("FinEvent", FinanceConstants.FINSER_EVENT_TIMELYCLOSURE, Filter.OP_EQUAL);
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_INSCLAIM)) {
-			module[0] = new Filter("FinEvent", FinanceConstants.FINSER_EVENT_INSCLAIM, Filter.OP_EQUAL);
+		if (moduleDefiner.equals(FinServiceEvent.NOCISSUANCE)) {
+			module[0] = new Filter("FinEvent", FinServiceEvent.NOCISSUANCE, Filter.OP_EQUAL);
+		} else if (moduleDefiner.equals(FinServiceEvent.LIABILITYREQ)) {
+			module[0] = new Filter("FinEvent", FinServiceEvent.LIABILITYREQ, Filter.OP_EQUAL);
+		} else if (moduleDefiner.equals(FinServiceEvent.TIMELYCLOSURE)) {
+			module[0] = new Filter("FinEvent", FinServiceEvent.TIMELYCLOSURE, Filter.OP_EQUAL);
+		} else if (moduleDefiner.equals(FinServiceEvent.INSCLAIM)) {
+			module[0] = new Filter("FinEvent", FinServiceEvent.INSCLAIM, Filter.OP_EQUAL);
 		}
 		if (this.oldVar_sortOperator_finReference == Filter.OP_IN
 				|| this.oldVar_sortOperator_finReference == Filter.OP_NOT_IN) {
@@ -593,17 +593,17 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 			Tab tab = tabbox.getSelectedTab();
 			if (tab != null) {
 				if ("tab_LiabilityRequest".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_LIABILITYREQ;
+					moduleDefiner = FinServiceEvent.LIABILITYREQ;
 					eventCodeRef = AccountEventConstants.ACCEVENT_LIABILITY;
-					workflowCode = FinanceConstants.FINSER_EVENT_LIABILITYREQ;
+					workflowCode = FinServiceEvent.LIABILITYREQ;
 				} else if ("tab_NOCIssuance".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_NOCISSUANCE;
+					moduleDefiner = FinServiceEvent.NOCISSUANCE;
 					eventCodeRef = AccountEventConstants.ACCEVENT_NOCISSUANCE;
-					workflowCode = FinanceConstants.FINSER_EVENT_NOCISSUANCE;
+					workflowCode = FinServiceEvent.NOCISSUANCE;
 				} else if ("tab_TimelyClosure".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_TIMELYCLOSURE;
+					moduleDefiner = FinServiceEvent.TIMELYCLOSURE;
 					eventCodeRef = AccountEventConstants.ACCEVENT_TIMELYCLOSURE;
-					workflowCode = FinanceConstants.FINSER_EVENT_TIMELYCLOSURE;
+					workflowCode = FinServiceEvent.TIMELYCLOSURE;
 				}
 				return;
 			}

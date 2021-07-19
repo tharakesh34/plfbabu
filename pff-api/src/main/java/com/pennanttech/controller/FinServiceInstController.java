@@ -176,6 +176,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.finance.DisbRequest;
@@ -262,7 +263,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeMain.setRecalType(finServiceInst.getRecalType());
 			financeMain.setRecalSchdMethod(financeMain.getScheduleMethod());
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
-			financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_RATECHG);
+			financeMain.setRcdMaintainSts(FinServiceEvent.RATECHG);
 
 			if (CalculationConstants.RPYCHG_TILLMDT.equals(finServiceInst.getRecalType())) {
 				financeMain.setRecalToDate(financeMain.getMaturityDate());
@@ -273,8 +274,8 @@ public class FinServiceInstController extends SummaryDetailService {
 				finServiceInst.setPftDaysBasis(financeMain.getProfitDaysBasis());
 			}
 
-			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_RATECHG);
-			financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_RATECHG);
+			finServiceInst.setModuleDefiner(FinServiceEvent.RATECHG);
+			financeDetail.setModuleDefiner(FinServiceEvent.RATECHG);
 			try {
 				// execute fee charges
 				executeFeeCharges(financeDetail, finServiceInst, eventCode);
@@ -290,7 +291,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 				// call schedule calculator for Rate change
 				finScheduleData = rateChangeService.getRateChangeDetails(finScheduleData, finServiceInst,
-						FinanceConstants.FINSER_EVENT_RATECHG);
+						FinServiceEvent.RATECHG);
 
 				if (finScheduleData.getErrorDetails() != null) {
 					for (ErrorDetail errorDetail : finScheduleData.getErrorDetails()) {
@@ -376,7 +377,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			// financeMain.setScheduleMethod(finServiceInst.getSchdMethod());
 			// financeMain.setRecalSchdMethod(finServiceInst.getSchdMethod());
 			finServiceInst.setSchdMethod(financeMain.getScheduleMethod());
-			financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_CHGRPY);
+			financeMain.setRcdMaintainSts(FinServiceEvent.CHGRPY);
 
 			financeMain.setRecalType(finServiceInst.getRecalType());
 			financeMain.setAdjTerms(finServiceInst.getTerms());
@@ -398,8 +399,8 @@ public class FinServiceInstController extends SummaryDetailService {
 			}
 
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
-			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_CHGRPY);
-			financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_CHGRPY);
+			finServiceInst.setModuleDefiner(FinServiceEvent.CHGRPY);
+			financeDetail.setModuleDefiner(FinServiceEvent.CHGRPY);
 			try {
 				// execute fee charges
 				executeFeeCharges(financeDetail, finServiceInst, eventCode);
@@ -414,7 +415,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				}
 				// Call Schedule calculator for Rate change
 				finScheduleData = addRepaymentService.getAddRepaymentDetails(finScheduleData, finServiceInst,
-						FinanceConstants.FINSER_EVENT_CHGRPY);
+						FinServiceEvent.CHGRPY);
 
 				if (finScheduleData.getErrorDetails() != null) {
 					for (ErrorDetail errorDetail : finScheduleData.getErrorDetails()) {
@@ -471,7 +472,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeMain.setEventFromDate(finServiceInst.getFromDate());
 			financeMain.setEventToDate(finServiceInst.getToDate());
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
-			financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_UNPLANEMIH);
+			financeMain.setRcdMaintainSts(FinServiceEvent.UNPLANEMIH);
 
 			if (StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
 				financeMain.setRecalFromDate(finServiceInst.getRecalFromDate());
@@ -488,7 +489,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				financeMain.setRecalToDate(financeMain.getMaturityDate());
 				// financeMain.setScheduleRegenerated(true);
 			}
-			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_UNPLANEMIH);
+			finServiceInst.setModuleDefiner(FinServiceEvent.UNPLANEMIH);
 			finScheduleData.setFinServiceInstruction(finServiceInst);
 			try {
 				// execute fee charges
@@ -564,11 +565,11 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeMain.setRecalType(CalculationConstants.RPYCHG_ADDRECAL);
 
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
-			finServiceInst.setFinEvent(FinanceConstants.FINSER_EVENT_RECALCULATE);
-			financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_ADDTERM);
+			finServiceInst.setFinEvent(FinServiceEvent.RECALCULATE);
+			financeMain.setRcdMaintainSts(FinServiceEvent.ADDTERM);
 
-			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_ADDTERM);
-			financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ADDTERM);
+			finServiceInst.setModuleDefiner(FinServiceEvent.ADDTERM);
+			financeDetail.setModuleDefiner(FinServiceEvent.ADDTERM);
 
 			try {
 				// execute fee charges
@@ -642,9 +643,9 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeMain.setAdjTerms(finServiceInst.getTerms());
 			financeMain.setRecalType(finServiceInst.getRecalType());
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
-			financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_RECALCULATE);
-			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_RECALCULATE);
-			financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_RECALCULATE);
+			financeMain.setRcdMaintainSts(FinServiceEvent.RECALCULATE);
+			finServiceInst.setModuleDefiner(FinServiceEvent.RECALCULATE);
+			financeDetail.setModuleDefiner(FinServiceEvent.RECALCULATE);
 
 			switch (finServiceInst.getRecalType()) {
 			case CalculationConstants.RPYCHG_TILLMDT:
@@ -739,9 +740,9 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeMain.setEventToDate(finServiceInst.getToDate());
 			financeMain.setPftIntact(true);
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
-			financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_CHGPFT);
-			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_CHGPFT);
-			financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_CHGPFT);
+			financeMain.setRcdMaintainSts(FinServiceEvent.CHGPFT);
+			finServiceInst.setModuleDefiner(FinServiceEvent.CHGPFT);
+			financeDetail.setModuleDefiner(FinServiceEvent.CHGPFT);
 			// profit amount
 			BigDecimal amount = finServiceInst.getAmount();
 			try {
@@ -814,7 +815,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeMain.setRecalSchdMethod(financeMain.getScheduleMethod());
 			financeMain.setRecalType(finServiceInst.getRecalType());
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
-			financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_ADDDISB);
+			financeMain.setRcdMaintainSts(FinServiceEvent.ADDDISB);
 
 			boolean posIntProcess = false;
 			Date maturityDate = null;
@@ -940,8 +941,8 @@ public class FinServiceInstController extends SummaryDetailService {
 			 * if(!finType.isAlwMaxDisbCheckReq()) { financeMain.setFinAssetValue(financeMain.getFinAmount()); }
 			 */
 
-			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_ADDDISB);
-			financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ADDDISB);
+			finServiceInst.setModuleDefiner(FinServiceEvent.ADDDISB);
+			financeDetail.setModuleDefiner(FinServiceEvent.ADDDISB);
 			try {
 				// execute fee charges
 				executeFeeCharges(financeDetail, finServiceInst, eventCode);
@@ -985,7 +986,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				// Call Schedule calculator for add disbursement
 				if (finScheduleData.getErrorDetails() == null || finScheduleData.getErrorDetails().isEmpty()) {
 					finScheduleData = addDisbursementService.getAddDisbDetails(finScheduleData, amount, BigDecimal.ZERO,
-							false, FinanceConstants.FINSER_EVENT_ADDDISB);
+							false, FinServiceEvent.ADDDISB);
 				}
 
 				if (finScheduleData.getErrorDetails() != null) {
@@ -1127,9 +1128,9 @@ public class FinServiceInstController extends SummaryDetailService {
 
 			finServiceInst.setAdjRpyTerms(adjRepayTerms);
 			finScheduleData.getFinanceMain().setFinSourceID(APIConstants.FINSOURCE_ID_API);
-			finScheduleData.getFinanceMain().setRcdMaintainSts(FinanceConstants.FINSER_EVENT_CHGFRQ);
-			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_CHGFRQ);
-			financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_CHGFRQ);
+			finScheduleData.getFinanceMain().setRcdMaintainSts(FinServiceEvent.CHGFRQ);
+			finServiceInst.setModuleDefiner(FinServiceEvent.CHGFRQ);
+			financeDetail.setModuleDefiner(FinServiceEvent.CHGFRQ);
 			try {
 				// execute fee charges
 				executeFeeCharges(financeDetail, finServiceInst, eventCode);
@@ -1193,9 +1194,9 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeMain.setRecalType(finServiceInst.getRecalType());
 			financeMain.setRecalSchdMethod(financeMain.getScheduleMethod());
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
-			financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_RMVTERM);
-			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_RMVTERM);
-			financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_RMVTERM);
+			financeMain.setRcdMaintainSts(FinServiceEvent.RMVTERM);
+			finServiceInst.setModuleDefiner(FinServiceEvent.RMVTERM);
+			financeDetail.setModuleDefiner(FinServiceEvent.RMVTERM);
 
 			if (StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
 				financeMain.setRecalFromDate(finServiceInst.getRecalFromDate());
@@ -1287,8 +1288,8 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeMain.setRecalFromDate(finServiceInst.getFromDate());
 			financeMain.setEventFromDate(finServiceInst.getFromDate());
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
-			financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_RESCHD);
-			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_RESCHD);
+			financeMain.setRcdMaintainSts(FinServiceEvent.RESCHD);
+			finServiceInst.setModuleDefiner(FinServiceEvent.RESCHD);
 
 			try {
 				// execute fee charges
@@ -1352,7 +1353,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		}
 		FinServiceInstruction finServiceInstruction = finScheduleData.getFinServiceInstruction();
 		if (StringUtils.equals(financeDetail.getFinScheduleData().getFinServiceInstruction().getModuleDefiner(),
-				FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+				FinServiceEvent.EARLYSETTLE)) {
 			receiptData.getReceiptHeader().setReasonCode(finServiceInstruction.getEarlySettlementReason());
 		}
 		if (StringUtils.equals(finServiceInstruction.getReqType(), APIConstants.REQTYPE_INQUIRY)) {
@@ -1376,7 +1377,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		try {
 			financeDetail = doProcessReceipt(receiptData, receiptPurpose);
 
-			if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			if (StringUtils.equals(receiptPurpose, FinServiceEvent.EARLYSETTLE)) {
 				if (finScheduleData.getErrorDetails() == null || !finScheduleData.getErrorDetails().isEmpty()) {
 					FinanceSummary summary = financeDetail.getFinScheduleData().getFinanceSummary();
 					// summary.setFinStatus("M");
@@ -1674,7 +1675,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				if (finServiceInst.isReceiptdetailExits()) {
 					FinReceiptData oldReceiptData = this.receiptService.getFinReceiptDataById(
 							finServiceInst.getFinReference(), AccountEventConstants.ACCEVENT_REPAY,
-							FinanceConstants.FINSER_EVENT_RECEIPT, FinanceConstants.REALIZATION_MAKER);
+							FinServiceEvent.RECEIPT, FinanceConstants.REALIZATION_MAKER);
 					receiptData = oldReceiptData;
 
 					version = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getVersion();
@@ -1711,7 +1712,7 @@ public class FinServiceInstController extends SummaryDetailService {
 					String nextTaskId = null;
 					long workFlowId = 0;
 
-					String finEvent = FinanceConstants.FINSER_EVENT_RECEIPT;
+					String finEvent = FinServiceEvent.RECEIPT;
 					FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(
 							financeMain.getFinType(), finEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
 
@@ -1732,7 +1733,7 @@ public class FinServiceInstController extends SummaryDetailService {
 						financeMain.setNextTaskId(nextTaskId + ";");
 						financeMain.setNewRecord(true);
 						financeMain.setVersion(version + 1);
-						financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_RECEIPT);
+						financeMain.setRcdMaintainSts(FinServiceEvent.RECEIPT);
 						financeMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 						financeMain.setRecordStatus(PennantConstants.RCD_STATUS_SUBMITTED);
 
@@ -1812,7 +1813,7 @@ public class FinServiceInstController extends SummaryDetailService {
 						String taskid = null;
 						String nextTaskId = null;
 						long workFlowId = 0;
-						String finEvent = FinanceConstants.FINSER_EVENT_RECEIPT;
+						String finEvent = FinServiceEvent.RECEIPT;
 
 						FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(
 								financeMain.getFinType(), finEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
@@ -1874,7 +1875,7 @@ public class FinServiceInstController extends SummaryDetailService {
 						financeMain.setNextTaskId(nextTaskId + ";");
 						financeMain.setNewRecord(true);
 						financeMain.setVersion(1);
-						financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_RECEIPT);
+						financeMain.setRcdMaintainSts(FinServiceEvent.RECEIPT);
 						financeMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 						financeMain.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
 						receiptData.getReceiptHeader();
@@ -2005,19 +2006,19 @@ public class FinServiceInstController extends SummaryDetailService {
 		String finReference = finScheduleData.getFinanceMain().getFinReference();
 
 		if (totReceiptAmt.compareTo(BigDecimal.ZERO) <= 0) {
-			if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSTLENQ)
+			if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinServiceEvent.EARLYSTLENQ)
 					|| StringUtils.equals(finServiceInst.getModuleDefiner(),
-							FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+							FinServiceEvent.EARLYSETTLE)) {
 				WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90330");
 				returnMap.put("ReturnCode", status.getReturnCode());
 				returnMap.put("ReturnText", status.getReturnText());
-			} else if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYRPY)
-					|| StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+			} else if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinServiceEvent.EARLYRPY)
+					|| StringUtils.equals(finServiceInst.getModuleDefiner(), FinServiceEvent.SCHDRPY)) {
 				WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90331");
 				returnMap.put("ReturnCode", status.getReturnCode());
 				returnMap.put("ReturnText", status.getReturnText());
 			}
-			if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+			if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinServiceEvent.EARLYRPY)) {
 				boolean isInSubvention = receiptService.isInSubVention(finScheduleData.getFinanceMain(),
 						curBussniessDate);
 				if (isInSubvention) {
@@ -2030,7 +2031,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			}
 		}
 
-		if (!StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+		if (!StringUtils.equals(finServiceInst.getModuleDefiner(), FinServiceEvent.SCHDRPY)) {
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
 			BigDecimal tdsMultiplier = BigDecimal.ONE;
 			if (TDSCalculator.isTDSApplicable(financeMain)) {
@@ -2073,9 +2074,9 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 				} else if (DateUtility.compare(curBussniessDate, schdDate) == 0) {
 
-					if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)
+					if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinServiceEvent.EARLYSETTLE)
 							|| StringUtils.equals(finServiceInst.getModuleDefiner(),
-									FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
+									FinServiceEvent.EARLYSTLENQ)) {
 
 						BigDecimal remPft = curSchd.getProfitCalc().subtract(curSchd.getSchdPftPaid());
 						pftBalance = pftBalance.add(curSchd.getProfitCalc().subtract(curSchd.getSchdPftPaid()));
@@ -2106,9 +2107,9 @@ public class FinServiceInstController extends SummaryDetailService {
 						}
 					}
 				} else {
-					if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)
+					if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinServiceEvent.EARLYSETTLE)
 							|| StringUtils.equals(finServiceInst.getModuleDefiner(),
-									FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
+									FinServiceEvent.EARLYSTLENQ)) {
 						if (partAccrualReq && prvSchd != null) {
 							partAccrualReq = false;
 							BigDecimal accruedPft = CalculationUtil.calInterest(prvSchd.getSchDate(), curBussniessDate,
@@ -2178,9 +2179,9 @@ public class FinServiceInstController extends SummaryDetailService {
 			returnMap.put("partPaidAmt", String.valueOf(partialPaidAmt));
 
 			// calculate Remaining balance after
-			if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSTLENQ)
+			if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinServiceEvent.EARLYSTLENQ)
 					|| StringUtils.equals(finServiceInst.getModuleDefiner(),
-							FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+							FinServiceEvent.EARLYSETTLE)) {
 				if (totReceiptAmt.compareTo(remBal) < 0) {
 					WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90330");
 					returnMap.put("ReturnCode", status.getReturnCode());
@@ -2275,11 +2276,11 @@ public class FinServiceInstController extends SummaryDetailService {
 			finServiceInst.setFromDate(finServiceInst.getFromDate());
 			financeMain.setEventFromDate(finServiceInst.getFromDate());
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
-			financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD);
+			financeMain.setRcdMaintainSts(FinServiceEvent.CHGSCHDMETHOD);
 			finServiceInst.setFinReference(financeMain.getFinReference());
 			financeMain.setRecalSchdMethod(finServiceInst.getSchdMethod());
 			financeMain.setDevFinCalReq(false);
-			finServiceInst.setFinEvent(FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD);
+			finServiceInst.setFinEvent(FinServiceEvent.CHGSCHDMETHOD);
 
 			try {
 				// execute fee charges
@@ -2367,7 +2368,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				financeMain.setNumberOfTerms(financeMain.getNumberOfTerms() - numberOfTerms);
 			}
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
-			financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_CHGGRCEND);
+			financeMain.setRcdMaintainSts(FinServiceEvent.CHGGRCEND);
 			finServiceInst.setFinReference(financeMain.getFinReference());
 			financeMain.setGraceTerms(finServiceInst.getGrcTerms());
 
@@ -2436,7 +2437,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				}
 			}
 			financeMain.setDevFinCalReq(false);
-			finServiceInst.setFinEvent(FinanceConstants.FINSER_EVENT_CHGGRCEND);
+			finServiceInst.setFinEvent(FinServiceEvent.CHGGRCEND);
 
 			try {
 				// execute fee charges
@@ -2753,7 +2754,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		String finReference = finServiceInst.getFinReference();
 		if (!finServiceInst.isWif()) {
 			financeDetail = financeDetailService.getFinanceDetailById(finReference, false, "", false,
-					FinanceConstants.FINSER_EVENT_ORG, "");
+					FinServiceEvent.ORG, "");
 		} else {
 			financeDetail = financeDetailService.getWIFFinance(finReference, false, null);
 		}
@@ -2795,11 +2796,11 @@ public class FinServiceInstController extends SummaryDetailService {
 		String finReference = finServiceInst.getFinReference();
 		String finSerEvent = "";
 		if ("SP".equalsIgnoreCase(finServiceInst.getReceiptPurpose())) {
-			finSerEvent = FinanceConstants.FINSER_EVENT_SCHDRPY;
+			finSerEvent = FinServiceEvent.SCHDRPY;
 		} else if ("EP".equalsIgnoreCase(finServiceInst.getReceiptPurpose())) {
-			finSerEvent = FinanceConstants.FINSER_EVENT_EARLYRPY;
+			finSerEvent = FinServiceEvent.EARLYRPY;
 		} else {
-			finSerEvent = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
+			finSerEvent = FinServiceEvent.EARLYSETTLE;
 		}
 		if (!finServiceInst.isWif()) {
 			financeDetail = financeDetailService.getFinanceDetailById(finReference, false, "", false, finSerEvent, "");
@@ -3406,10 +3407,10 @@ public class FinServiceInstController extends SummaryDetailService {
 			reference = Objects.toString(fsi.getCustID(), "");
 		}
 		boolean isInProgRec = finReceiptHeaderDAO.isReceiptsInProcess(reference,
-				FinanceConstants.FINSER_EVENT_FEEPAYMENT, Long.MIN_VALUE, "_Temp");
+				FinServiceEvent.FEEPAYMENT, Long.MIN_VALUE, "_Temp");
 		if (isInProgRec) {
 			valueParm = new String[1];
-			valueParm[0] = FinanceConstants.FINSER_EVENT_FEEPAYMENT;
+			valueParm[0] = FinServiceEvent.FEEPAYMENT;
 			return APIErrorHandlerService.getFailedStatus("IMD002", valueParm);
 		}
 
@@ -3968,7 +3969,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		feeWaiver.setUserDetails(userDetails);
 		feeWaiver.setVersion(1);
-		feeWaiver.setEvent(FinanceConstants.FINSER_EVENT_FEEWAIVERS);
+		feeWaiver.setEvent(FinServiceEvent.FEEWAIVERS);
 		feeWaiver.setLastMntBy(userDetails.getUserId());
 		feeWaiver.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		feeWaiver.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);

@@ -37,7 +37,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.CashBackProcessService;
 import com.pennant.backend.util.ExtendedFieldConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.DataEngineImport;
@@ -51,6 +50,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.settlement.dao.SettlementProcessDAO;
 import com.pennanttech.pff.settlementprocess.model.SettlementProcess;
 
@@ -316,7 +316,7 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 		if (settlementMapdata.getValue("TerminalId") != null && settlementMapdata.getValue("ManufactureId") != null) {
 			if (finMain != null) {
 				extData = extendedFieldDetailsService.getExtndedFieldDetails(ExtendedFieldConstants.MODULE_LOAN,
-						finMain.getFinCategory(), FinanceConstants.FINSER_EVENT_ORG, finMain.getFinReference());
+						finMain.getFinCategory(), FinServiceEvent.ORG, finMain.getFinReference());
 			}
 			Map<String, Object> mapValues = new HashMap<String, Object>();
 			if (extData != null) {

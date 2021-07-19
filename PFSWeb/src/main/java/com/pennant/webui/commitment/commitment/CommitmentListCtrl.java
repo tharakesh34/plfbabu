@@ -75,7 +75,6 @@ import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.CommitmentConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -88,6 +87,7 @@ import com.pennanttech.framework.web.components.SearchFilterControl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Commitment/Commitment/CommitmentList.zul file.
@@ -372,7 +372,7 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 
 		// Setting Workflow Details
 		FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(commitmentType,
-				FinanceConstants.FINSER_EVENT_ORG, CommitmentConstants.MODULE_NAME);
+				FinServiceEvent.ORG, CommitmentConstants.MODULE_NAME);
 
 		// Workflow Details Setup
 		if (financeWorkFlow != null) {

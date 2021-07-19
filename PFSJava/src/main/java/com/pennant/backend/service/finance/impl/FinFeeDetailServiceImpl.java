@@ -111,6 +111,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -936,7 +937,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			if ("saveOrUpdate".equals(method) && (isRcdType)) {
 				finFeeDetail.setNewRecord(true);
 				if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())
-						&& FinanceConstants.FINSER_EVENT_ORG.equals(finFeeDetail.getModuleDefiner())
+						&& FinServiceEvent.ORG.equals(finFeeDetail.getModuleDefiner())
 						&& PennantConstants.RECORD_TYPE_UPD.equals(finFeeDetail.getRecordType())) {
 					if (finFeeDetailDAO.isFinFeeDetailExists(finFeeDetail, TableType.TEMP_TAB.getSuffix())) {
 						finFeeDetail.setNewRecord(false);

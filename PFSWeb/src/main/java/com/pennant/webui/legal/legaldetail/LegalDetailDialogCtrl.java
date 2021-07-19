@@ -138,6 +138,7 @@ import com.pennanttech.pennapps.notification.email.configuration.EmailBodyType;
 import com.pennanttech.pennapps.notification.email.configuration.RecipientType;
 import com.pennanttech.pennapps.notification.email.model.MessageAddress;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
@@ -2393,7 +2394,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		}
 
 		FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowDAO().getFinanceWorkFlow(getLegalDetail().getFinType(),
-				FinanceConstants.FINSER_EVENT_ORG, PennantConstants.WORFLOW_MODULE_FINANCE, "_FTView");
+				FinServiceEvent.ORG, PennantConstants.WORFLOW_MODULE_FINANCE, "_FTView");
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkFlow.getWorkFlowType());
 		String roles = workFlowDetails.getWorkFlowRoles();
 		logger.debug(Literal.LEAVING);
@@ -2708,7 +2709,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		details.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		details.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
+		details.setFinEvent(FinServiceEvent.ORG);
 		details.setDocImage(legalDetail.getDocImage());
 		details.setReferenceId(legalDetail.getLegalReference());
 		details.setFinReference(legalDetail.getLoanReference());

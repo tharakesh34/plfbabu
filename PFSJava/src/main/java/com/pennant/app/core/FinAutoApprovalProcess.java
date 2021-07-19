@@ -37,7 +37,6 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.DisbursementConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -45,6 +44,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.logging.dao.FinAutoApprovalDetailDAO;
 
 public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetails> {
@@ -82,11 +82,11 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 
 		if (!servicing && !approvedLoan) {
 			financeDetail = financeDetailService.getOriginationFinance(finReference, nextRoleCode,
-					FinanceConstants.FINSER_EVENT_ORG, "");
-			financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
+					FinServiceEvent.ORG, "");
+			financeDetail.setModuleDefiner(FinServiceEvent.ORG);
 		} else {
 			financeDetail = financeDetailService.getServicingFinanceForQDP(finReference,
-					AccountEventConstants.ACCEVENT_ADDDBSN, FinanceConstants.FINSER_EVENT_ADDDISB, nextRoleCode);
+					AccountEventConstants.ACCEVENT_ADDDBSN, FinServiceEvent.ADDDISB, nextRoleCode);
 		}
 
 		if (financeDetail != null) {
@@ -175,7 +175,7 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 
 		try {
 
-			if (FinanceConstants.FINSER_EVENT_ORG.equals(moduleDefiner)) {
+			if (FinServiceEvent.ORG.equals(moduleDefiner)) {
 				approveLoan(fd, user, finAad, disbursement);
 			} else if (checkForServicing(fm.getFinReference())) {
 				approveAddDisbursemnt(fd, user, finAad);

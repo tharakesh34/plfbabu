@@ -155,6 +155,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
 /**
@@ -1837,7 +1838,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (this.row_FinAssetValue.isVisible()) {
 				//Validate if the total disbursement amount exceeds maximum disbursement Amount 
 				if (!buildEvent && ((StringUtils.isEmpty(moduleDefiner)
-						|| StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)))) {
+						|| StringUtils.equals(FinServiceEvent.ADDDISB, moduleDefiner)))) {
 					if (this.finCurrentAssetValue.getActualValue() != null
 							&& finAssetValue.getActualValue().compareTo(BigDecimal.ZERO) > 0
 							&& finCurrentAssetValue.getActualValue().compareTo(finAssetValue.getActualValue()) > 0) {
@@ -3903,7 +3904,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
 		aFinanceDetail.setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
+				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 
 		// force validation, if on, than execute by component.getValue()
 		// fill the financeMain object with the components data

@@ -62,6 +62,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class DeviationHelper {
 	private static final Logger logger = LogManager.getLogger(DeviationHelper.class);
@@ -350,7 +351,7 @@ public class DeviationHelper {
 		boolean allowed = false;
 		int finRefType = FinanceConstants.PROCEDT_LIMIT;
 		String quickDisbCode = FinanceConstants.MANUAL_DEVIATION;
-		String finEvent = FinanceConstants.FINSER_EVENT_ORG;
+		String finEvent = FinServiceEvent.ORG;
 		String roles = financeReferenceDetailDAO.getAllowedRolesByCode(finType, finRefType, quickDisbCode, finEvent);
 
 		if (StringUtils.isNotBlank(roles)) {

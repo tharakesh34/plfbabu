@@ -84,6 +84,7 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -360,7 +361,7 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		}
 		// Cancel All Transactions done by Finance Reference
 		// =======================================
-		cancelStageAccounting(financeMain.getFinReference(), FinanceConstants.FINSER_EVENT_PROVISION);
+		cancelStageAccounting(financeMain.getFinReference(), FinServiceEvent.PROVISION);
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		provisionDAO.deleteAmounts(provision.getId(), TableType.TEMP_TAB);

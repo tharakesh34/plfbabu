@@ -21,6 +21,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class RescheduleReportGenerationServiceImpl implements RescheduleReportGenerationService {
 	private static final Logger logger = LogManager.getLogger(RescheduleReportGenerationServiceImpl.class);
@@ -49,7 +50,7 @@ public class RescheduleReportGenerationServiceImpl implements RescheduleReportGe
 				continue;
 			}
 
-			if (!FinanceConstants.FINSER_EVENT_RESCHD.equals(instruction.getFinEvent())) {
+			if (!FinServiceEvent.RESCHD.equals(instruction.getFinEvent())) {
 				continue;
 			}
 

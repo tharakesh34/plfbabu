@@ -49,11 +49,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Model class for the <b>PartnerBank table</b>.<br>

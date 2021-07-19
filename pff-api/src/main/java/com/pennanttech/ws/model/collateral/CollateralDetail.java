@@ -3,14 +3,13 @@ package com.pennanttech.ws.model.collateral;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.collateral.CollateralSetup;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "cif", "collateralSetup", "returnStatus" })
 @XmlAccessorType(XmlAccessType.FIELD)

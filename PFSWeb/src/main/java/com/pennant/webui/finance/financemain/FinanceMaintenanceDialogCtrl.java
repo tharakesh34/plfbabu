@@ -85,10 +85,8 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.AccountSelectionBox;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
@@ -142,6 +140,7 @@ import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
 /**
@@ -326,7 +325,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.odFinAssetValue.setScale(format);
 		this.odFinAssetValue.setTextBoxWidth(200);
 
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
+		if (StringUtils.equals(moduleDefiner, FinServiceEvent.WRITEOFFPAY)) {
 			this.finWriteoffPayAmount.setFormat(PennantApplicationUtil.getAmountFormate(format));
 			this.finWriteoffPayAmount.setTextBoxWidth(200);
 			this.finWriteoffPayAmount.setScale(format);
@@ -341,7 +340,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		}
 
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN)) {
+		if (StringUtils.equals(moduleDefiner, FinServiceEvent.RPYBASICMAINTAIN)) {
 			this.mandateRef.setModuleName("Mandate");
 			this.mandateRef.setMandatoryStyle(true);
 			this.mandateRef.setValueColumn("MandateID");
@@ -641,10 +640,10 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		appendScheduleDetailTab(true, true);
 
 		// Co-applicants & joint account Holder Details
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_BASICMAINTAIN)) {
+		if (StringUtils.equals(moduleDefiner, FinServiceEvent.BASICMAINTAIN)) {
 			appendJointGuarantorDetailTab();
 		}
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
+		if (StringUtils.equals(moduleDefiner, FinServiceEvent.WRITEOFFPAY)) {
 			this.row_finWriteoff.setVisible(true);
 			this.finWriteoffPayAmount.setValue(PennantAppUtil
 					.formateAmount(aFinanceDetail.getFinwriteoffPayment().getWriteoffPayAmount(), format));
@@ -669,7 +668,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		appendDocumentDetailTab();
 
 		// Collateral Detail Tab
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_BASICMAINTAIN)) {
+		if (StringUtils.equals(moduleDefiner, FinServiceEvent.BASICMAINTAIN)) {
 			appendFinCollateralTab();
 		}
 
@@ -856,7 +855,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			wve.add(we);
 		}
 
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
+		if (StringUtils.equals(moduleDefiner, FinServiceEvent.WRITEOFFPAY)) {
 			try {
 				if (this.writeoffDate.getValue() == null) {
 					this.writeoffDate.setValue(DateUtility.getAppDate());
@@ -879,7 +878,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		FinanceMain finMain = aFinanceSchData.getFinanceMain();
 
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN)) {
+		if (StringUtils.equals(moduleDefiner, FinServiceEvent.RPYBASICMAINTAIN)) {
 			try {
 				this.mandateRef.clearErrorMessage();
 				this.mandateRef.setErrorMessage("");
@@ -903,7 +902,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		try {
 			if (isOverDraft) {
-				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD, this.moduleDefiner)) {
+				if (StringUtils.equals(FinServiceEvent.OVERDRAFTSCHD, this.moduleDefiner)) {
 					if (this.odFinAssetValue.getValidateValue()
 							.compareTo(PennantAppUtil.formateAmount(aFinanceMain.getFinAssetValue(), format)) < 0) {
 						throw new WrongValueException(this.odFinAssetValue.getCcyTextBox(),
@@ -918,7 +917,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				// Validate if the total disbursement amount exceeds maximum
 				// disbursement Amount
 				if (((StringUtils.isEmpty(moduleDefiner)
-						|| StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)))) {
+						|| StringUtils.equals(FinServiceEvent.ADDDISB, moduleDefiner)))) {
 					if (this.finCurrentAssetValue.getActualValue() != null
 							&& finAssetValue.getActualValue().compareTo(BigDecimal.ZERO) > 0
 							&& finCurrentAssetValue.getActualValue().compareTo(finAssetValue.getActualValue()) > 0) {
@@ -1153,7 +1152,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			wve.add(we);
 		}
 
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
+		if (StringUtils.equals(moduleDefiner, FinServiceEvent.WRITEOFFPAY)) {
 			try {
 				this.finWriteoffPayAmount.getValidateValue();
 			} catch (WrongValueException we) {
@@ -1198,7 +1197,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		wve = null;
 		doWriteComponentsToBean(getFinanceDetail());
 		getFinanceDetail().setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
+				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 		logger.debug("Leaving");
 		return getFinanceDetail();
 	}
@@ -1327,7 +1326,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.finIsActive.setChecked(this.oldVar_finIsActive);
 		this.finPurpose.setValue(this.oldVar_finPurpose);
 		this.finPurpose.setDescription(this.oldVar_lovDescFinPurpose);
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
+		if (StringUtils.equals(moduleDefiner, FinServiceEvent.WRITEOFFPAY)) {
 			this.finWriteoffPayAmount.setValue(this.oldVar_finWriteoffPayAmount);
 		}
 		// Step Finance Details
@@ -1423,7 +1422,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (oldDwnPaySupl.compareTo(newDwnPaySupl) != 0) {
 			return true;
 		}
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
+		if (StringUtils.equals(moduleDefiner, FinServiceEvent.WRITEOFFPAY)) {
 			BigDecimal oldFinwriteoffPayAmount = PennantAppUtil.unFormateAmount(this.oldVar_finWriteoffPayAmount,
 					formatter);
 			BigDecimal newFinwriteoffPayAmount = PennantAppUtil
@@ -1485,7 +1484,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					new PTStringValidator(Labels.getLabel("label_FinanceMainDialog_DSACode.value"), null, true, true));
 		}
 
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
+		if (StringUtils.equals(moduleDefiner, FinServiceEvent.WRITEOFFPAY)) {
 
 			if (!this.writeoffDate.isDisabled()) {
 				this.writeoffDate.setConstraint(
@@ -1903,7 +1902,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.odFinAssetValue.setDisabled(isReadOnly("FinanceMainDialog_finAmount"));
 
 		this.finWriteoffPayAmount.setReadonly(isReadOnly("FinanceMainDialog_WriteoffPayAmount"));
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
+		if (StringUtils.equals(moduleDefiner, FinServiceEvent.WRITEOFFPAY)) {
 			this.finWriteoffPayAmount.setMandatory(!isReadOnly("FinanceMainDialog_WriteoffPayAmount"));
 			// PSD# 145425
 			if (PennantConstants.RCD_STATUS_RESUBMITTED

@@ -45,9 +45,9 @@ package com.pennant.app.util;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.pennant.backend.util.PennantConstants;
-
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+
+import com.pennant.backend.util.PennantConstants;
 
 public class DateFormatterAdapter extends XmlAdapter<String, Date> {
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat(PennantConstants.XMLDateFormat);

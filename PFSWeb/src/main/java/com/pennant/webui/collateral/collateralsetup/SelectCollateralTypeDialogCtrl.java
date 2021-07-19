@@ -77,7 +77,6 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.CollateralConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -87,6 +86,7 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private static final long serialVersionUID = 1L;
@@ -193,7 +193,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 		this.collateralType.setValidateColumns(new String[] { "FinType" });
 
 		Filter[] filters = new Filter[1];
-		filters[0] = new Filter("FinEvent", FinanceConstants.FINSER_EVENT_ORG, Filter.OP_EQUAL);
+		filters[0] = new Filter("FinEvent", FinServiceEvent.ORG, Filter.OP_EQUAL);
 		this.collateralType.setFilters(filters);
 
 		if (fromLoan) {
@@ -316,7 +316,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 				.getApprovedCollateralStructureByType(collateralSetup.getCollateralType()));
 		// Fetching Finance Reference Detail
 		collateralSetup = getCollateralSetupService().getProcessEditorDetails(collateralSetup, getRole(),
-				FinanceConstants.FINSER_EVENT_ORG);
+				FinServiceEvent.ORG);
 	}
 
 	private boolean setCollateralSetupDetails() throws InterruptedException {
@@ -330,7 +330,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 		// Setting Workflow Details
 		if (getFinanceWorkFlow() == null) {
 			FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
-					this.collateralType.getValue(), FinanceConstants.FINSER_EVENT_ORG, CollateralConstants.MODULE_NAME);
+					this.collateralType.getValue(), FinServiceEvent.ORG, CollateralConstants.MODULE_NAME);
 			setFinanceWorkFlow(financeWorkFlow);
 		}
 
@@ -380,7 +380,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 		// Fetching Finance Reference Detail
 		if (getFinanceWorkFlow() != null) {
 			collateralSetup = getCollateralSetupService().getProcessEditorDetails(collateralSetup, getRole(),
-					FinanceConstants.FINSER_EVENT_ORG);
+					FinServiceEvent.ORG);
 		}
 		return false;
 	}

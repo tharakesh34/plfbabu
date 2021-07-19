@@ -53,9 +53,9 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/FinancePreApprovalDialog.zul file.
@@ -123,7 +123,7 @@ public class FinancePreApprovalDialogCtrl extends FinanceMainBaseCtrl {
 			listWindowTab = (Tab) arguments.get("tabbox");
 		}
 
-		moduleDefiner = FinanceConstants.FINSER_EVENT_PREAPPROVAL;
+		moduleDefiner = FinServiceEvent.PREAPPROVAL;
 		if (arguments.containsKey("eventCode")) {
 			eventCode = (String) arguments.get("eventCode");
 		}

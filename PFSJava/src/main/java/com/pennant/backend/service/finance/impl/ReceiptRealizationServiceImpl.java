@@ -37,6 +37,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -230,7 +231,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		}
 
 		// Making Finance Inactive Incase of Schedule Payment
-		if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+		if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinServiceEvent.SCHDRPY)) {
 			List<FinanceScheduleDetail> schdList = getFinanceScheduleDetailDAO()
 					.getFinScheduleDetails(receiptHeader.getReference(), "", false);
 			if (isSchdFullyPaid(receiptHeader.getReference(), schdList)) {
@@ -240,7 +241,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		}
 
 		// updating fixexcess amount after realization
-		if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+		if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinServiceEvent.SCHDRPY)) {
 			FinRepayHeader rph = receiptHeader.getReceiptDetails().get(0).getRepayHeader();
 			if (rph != null && rph.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
 				finExcessAmountDAO.updExcessAfterRealize(receiptHeader.getReference(),

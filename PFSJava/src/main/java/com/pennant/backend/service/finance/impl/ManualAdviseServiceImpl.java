@@ -96,6 +96,7 @@ import com.pennant.backend.util.UploadConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -197,7 +198,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 			auditHeader.setAuditDetails(auditDetails);
 		}
 
-		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_MANUALADVISE;
+		String rcdMaintainSts = FinServiceEvent.MANUALADVISE;
 		financeMainDAO.updateMaintainceStatus(manualAdvise.getFinReference(), rcdMaintainSts);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -249,7 +250,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 			// Document Details
 			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(
 					String.valueOf(manualAdvise.getAdviseID()), PennantConstants.PAYABLE_ADVISE_DOC_MODULE_NAME,
-					FinanceConstants.FINSER_EVENT_RECEIPT, "_View");
+					FinServiceEvent.RECEIPT, "_View");
 			if (CollectionUtils.isNotEmpty(manualAdvise.getDocumentDetails())) {
 				manualAdvise.getDocumentDetails().addAll(documentList);
 			} else {
@@ -274,7 +275,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 			// Document Details
 			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(
 					String.valueOf(manualAdvise.getAdviseID()), PennantConstants.PAYABLE_ADVISE_DOC_MODULE_NAME,
-					FinanceConstants.FINSER_EVENT_RECEIPT, "_AView");
+					FinServiceEvent.RECEIPT, "_AView");
 			if (CollectionUtils.isNotEmpty(manualAdvise.getDocumentDetails())) {
 				manualAdvise.getDocumentDetails().addAll(documentList);
 			} else {
@@ -977,7 +978,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 					if (StringUtils.isEmpty(documentDetails.getReferenceId())) {
 						documentDetails.setReferenceId(String.valueOf(manualAdvise.getId()));
 					}
-					documentDetails.setFinEvent(FinanceConstants.FINSER_EVENT_RECEIPT);
+					documentDetails.setFinEvent(FinServiceEvent.RECEIPT);
 					if (documentDetails.getDocImage() != null && documentDetails.getDocRefId() <= 0) {
 						DocumentManager documentManager = new DocumentManager();
 						documentManager.setDocImage(documentDetails.getDocImage());

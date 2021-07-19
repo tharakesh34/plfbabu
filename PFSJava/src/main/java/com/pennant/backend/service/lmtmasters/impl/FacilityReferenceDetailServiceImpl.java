@@ -71,6 +71,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * Service implementation for methods that depends on <b>FacilityReferenceDetail</b>.<br>
@@ -129,7 +130,7 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 	@Override
 	public FacilityReference getFacilityReference(String finType) {
 		FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowDAO().getFinanceWorkFlowById(finType,
-				FinanceConstants.FINSER_EVENT_ORG, FacilityConstants.MODULE_NAME, "_AView");
+				FinServiceEvent.ORG, FacilityConstants.MODULE_NAME, "_AView");
 		FacilityReference financeReference = new FacilityReference();
 		financeReference.setFinType(finType);
 

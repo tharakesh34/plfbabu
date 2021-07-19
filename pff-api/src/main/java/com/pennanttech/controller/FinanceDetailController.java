@@ -63,6 +63,7 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.finance.EmiResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
@@ -156,7 +157,7 @@ public class FinanceDetailController extends SummaryDetailService {
 				FinanceDetail afinanceDetail = new FinanceDetail();
 				afinanceDetail.setUserAction("");
 				afinanceDetail.setExtSource(false);
-				afinanceDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
+				afinanceDetail.setModuleDefiner(FinServiceEvent.ORG);
 
 				finScheduleData.setFinReference(financeMain.getFinReference());
 				doProcessPlanEMIHDays(finScheduleData);
@@ -558,7 +559,7 @@ public class FinanceDetailController extends SummaryDetailService {
 			FinanceDetail financeDetail = null;
 			if (StringUtils.equals(type, APIConstants.FINANCE_ORIGINATION)) {
 				financeDetail = getFinanceDetailService().getFinanceDetailById(finReference, false, "", false,
-						FinanceConstants.FINSER_EVENT_ORG, "");
+						FinServiceEvent.ORG, "");
 			} else {
 				financeDetail = getFinanceDetailService().getWIFFinance(finReference, false, null);
 			}

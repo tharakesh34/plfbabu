@@ -74,7 +74,6 @@ import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Row;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -119,6 +118,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
 /**
@@ -2367,7 +2367,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		financeMain.setCustID(customer.getCustID());
 		setFinanceDetail(getFinanceDetailService().fetchFinCustDetails(financeDetail, custCtgType,
-				financeMain.getFinType(), getRole(), FinanceConstants.FINSER_EVENT_ORG));
+				financeMain.getFinType(), getRole(), FinServiceEvent.ORG));
 		financeMain.setLovDescCustFName(StringUtils.trimToEmpty(customer.getCustFName()));
 		financeMain.setLovDescCustLName(StringUtils.trimToEmpty(customer.getCustLName()));
 		financeMain.setLovDescCustCIF(StringUtils.trimToEmpty(customer.getCustCIF()));

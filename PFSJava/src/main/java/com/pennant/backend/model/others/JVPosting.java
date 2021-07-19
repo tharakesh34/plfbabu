@@ -33,15 +33,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.audit.AuditDetail;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>JVPosting table</b>.<br>

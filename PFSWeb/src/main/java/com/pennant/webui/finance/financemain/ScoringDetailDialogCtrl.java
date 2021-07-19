@@ -75,7 +75,6 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.RuleExecutionUtil;
-import com.pennant.backend.model.bmtmasters.RatingCode;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -96,7 +95,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.webui.delegationdeviation.DeviationExecutionCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/FinanceMainDialog.zul file.

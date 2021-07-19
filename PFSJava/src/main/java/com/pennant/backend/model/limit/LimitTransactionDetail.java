@@ -5,17 +5,16 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.xml.datatype.XMLGregorianCalendar;
-
-import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.finance.FinanceMain;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.finance.FinanceMain;
 
 @XmlType(propOrder = { "headerId", "custCIF", "custGrpCode", "referenceCode", "referenceNumber", "limitCurrency",
 		"limitAmount", "returnStatus" })

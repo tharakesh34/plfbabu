@@ -34,6 +34,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 public class LoadFinanceData extends ServiceHelper {
@@ -340,7 +341,7 @@ public class LoadFinanceData extends ServiceHelper {
 
 				listSave(finEODEvent, "_Log", logKey);
 
-				listDeletion(finEODEvent, FinanceConstants.FINSER_EVENT_CHGGRCEND, "");
+				listDeletion(finEODEvent, FinServiceEvent.CHGGRCEND, "");
 
 				listSave(finEODEvent, "", 0);
 			}
@@ -661,7 +662,7 @@ public class LoadFinanceData extends ServiceHelper {
 			LMSServiceLog lmsServiceLog = new LMSServiceLog();
 			lmsServiceLog.setOldRate(oldRate);
 			lmsServiceLog.setNewRate(curSchd.getCalculatedRate());
-			lmsServiceLog.setEvent(FinanceConstants.FINSER_EVENT_RATECHG);
+			lmsServiceLog.setEvent(FinServiceEvent.RATECHG);
 			lmsServiceLog.setFinReference(finReference);
 			lmsServiceLog.setNotificationFlag(PennantConstants.NO);
 			lmsServiceLog.setEffectiveDate(appDate);
@@ -669,7 +670,7 @@ public class LoadFinanceData extends ServiceHelper {
 
 			if (CollectionUtils.isNotEmpty(lmsServiceLogs)) {
 				logger.info("Saving {} service event into LMSServiceLog table...",
-						FinanceConstants.FINSER_EVENT_RATECHG);
+						FinServiceEvent.RATECHG);
 				finServiceInstructionDAO.saveLMSServiceLOGList(lmsServiceLogs);
 			}
 		} catch (Exception e) {

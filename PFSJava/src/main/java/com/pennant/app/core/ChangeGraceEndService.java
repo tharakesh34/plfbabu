@@ -73,6 +73,7 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class ChangeGraceEndService extends ServiceHelper {
 
@@ -481,7 +482,7 @@ public class ChangeGraceEndService extends ServiceHelper {
 		}
 
 		finServInst.setFinReference(financeMain.getFinReference());
-		finServInst.setFinEvent(FinanceConstants.FINSER_EVENT_CHGGRCEND);
+		finServInst.setFinEvent(FinServiceEvent.CHGGRCEND);
 		finServInst.setGrcPeriodEndDate(financeMain.getGrcPeriodEndDate());
 		finServInst.setGrcTerms(financeMain.getGraceTerms());
 		finServInst.setGrcPftFrq(financeMain.getGrcPftFrq());

@@ -66,6 +66,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.advancepayment.model.AdvancePayment;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 public class AdvancePaymentService extends ServiceHelper {
@@ -390,7 +391,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		rch.setReceiptDate(valueDate);
 		rch.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		rch.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
-		rch.setReceiptPurpose(FinanceConstants.FINSER_EVENT_SCHDRPY);
+		rch.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		rch.setExcessAdjustTo(PennantConstants.List_Select);
 		rch.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
 		rch.setReceiptAmount(receiptAmount);
@@ -686,7 +687,7 @@ public class AdvancePaymentService extends ServiceHelper {
 
 	protected void updateExcess(AdvancePaymentDetail advPay, String excessType, String moduleDefiner, long lastMntBy) {
 		FinExcessAmount excess = null;
-		if (!StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ORG)) {
+		if (!StringUtils.equals(moduleDefiner, FinServiceEvent.ORG)) {
 			excess = finExcessAmountDAO.getFinExcessAmount(advPay.getFinReference(),
 					RepayConstants.EXAMOUNTTYPE_ADVINT);
 		}
@@ -746,10 +747,10 @@ public class AdvancePaymentService extends ServiceHelper {
 		finExcessAmountDAO.saveExcessMovement(movement);
 
 		// Create Advise based on Amount for the Excess Type
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ORG)) {
+		if (StringUtils.equals(moduleDefiner, FinServiceEvent.ORG)) {
 			return;
 		}
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDDISB)) {
+		if (StringUtils.equals(moduleDefiner, FinServiceEvent.ADDDISB)) {
 			if (!ImplementationConstants.RCVADV_CREATE_ON_INTEMI) {
 				return;
 			}

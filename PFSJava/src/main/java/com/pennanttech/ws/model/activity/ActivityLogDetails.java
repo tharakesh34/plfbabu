@@ -3,11 +3,11 @@ package com.pennanttech.ws.model.activity;
 import java.io.Serializable;
 import java.util.List;
 
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennanttech.activity.log.Activity;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennanttech.activity.log.Activity;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ActivityLogDetails implements Serializable {

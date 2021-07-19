@@ -4,13 +4,13 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(propOrder = { "cif", "customerName", "blocklimit", "expiryDate", "actualLimit", "customerPhoneNumber",

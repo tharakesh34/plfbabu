@@ -167,6 +167,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
@@ -1397,8 +1398,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		try {
 
 			Map<String, Object> map = getDefaultArguments();
-			if (!getFinanceDetail().getModuleDefiner().equals(FinanceConstants.FINSER_EVENT_ADDDISB)
-					&& !getFinanceDetail().getModuleDefiner().equals(FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN)) {
+			if (!getFinanceDetail().getModuleDefiner().equals(FinServiceEvent.ADDDISB)
+					&& !getFinanceDetail().getModuleDefiner().equals(FinServiceEvent.RPYBASICMAINTAIN)) {
 				map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
 				map.put("isEnqProcess", isEnquiry);
 			}
@@ -1772,7 +1773,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				return;
 			}
 			if (finEvent.isEmpty()) {
-				finEvent = FinanceConstants.FINSER_EVENT_ORG;
+				finEvent = FinServiceEvent.ORG;
 			}
 
 			extendedFieldCtrl = new ExtendedFieldCtrl();
@@ -2414,7 +2415,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (!isOverdraft && (!aFinanceMain.isNew() || StringUtils.isNotBlank(aFinanceMain.getFinReference()))) {
-			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+			if (moduleDefiner.equals(FinServiceEvent.CHGGRCEND)) {
 				// this.nextRepayDate.setValue(aFinanceMain.getNextRepayDate());
 				this.nextRepayCpzDate.setValue(aFinanceMain.getNextRepayCpzDate());
 				this.nextRepayRvwDate.setValue(aFinanceMain.getNextRepayRvwDate());
@@ -3495,7 +3496,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 
-				if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+				if (moduleDefiner.equals(FinServiceEvent.CHGGRCEND)) {
 					Date curBussDate = DateUtility.getAppDate();
 					if (this.gracePeriodEndDate_two.getValue().before(DateUtility.addDays(curBussDate, 1))) {
 						errorList.add(new ErrorDetail("gracePeriodEndDate", "30548",
@@ -5018,7 +5019,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				aFinanceMain.setMaturityDate(aFinanceSchData.getFinanceScheduleDetails().get(size - 1).getSchDate());
 
 				// Reset Grace period End Date while Change Frequency Option
-				if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGFRQ)) {
+				if (moduleDefiner.equals(FinServiceEvent.CHGFRQ)) {
 					for (int i = 0; i < aFinanceSchData.getFinanceScheduleDetails().size(); i++) {
 						FinanceScheduleDetail curSchd = aFinanceSchData.getFinanceScheduleDetails().get(i);
 						if (curSchd.getSpecifier().equals(CalculationConstants.SCH_SPECIFIER_GRACE_END)) {
@@ -6746,7 +6747,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		detail.getCustomerEligibilityCheck().setNoOfTerms(financeMain.getNumberOfTerms());
 
 		// DDA Modification Re-check with Existing Approved Data
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN)) {
+		if (StringUtils.equals(moduleDefiner, FinServiceEvent.RPYBASICMAINTAIN)) {
 			String oldRepayMethod = getFinanceDetailService().getApprovedRepayMethod(finReference.getValue(), "");
 			if (!StringUtils.equals(oldRepayMethod, getComboboxValue(this.finRepayMethod))) {
 				detail.getCustomerEligibilityCheck().setDdaModifiedCheck(true);

@@ -2,11 +2,11 @@ package com.pennanttech.ws.model.finance;
 
 import java.io.Serializable;
 
-import com.pennant.backend.model.WSReturnStatus;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+
+import com.pennant.backend.model.WSReturnStatus;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class EligibilityRespone implements Serializable {

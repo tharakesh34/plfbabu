@@ -121,6 +121,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -525,10 +526,10 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
 
 		String screenEvent = "";
-		if (StringUtils.equals(this.requestSource, FinanceConstants.FINSER_EVENT_PREAPPROVAL)) {
-			screenEvent = FinanceConstants.FINSER_EVENT_PREAPPROVAL;
+		if (StringUtils.equals(this.requestSource, FinServiceEvent.PREAPPROVAL)) {
+			screenEvent = FinServiceEvent.PREAPPROVAL;
 		} else {
-			screenEvent = FinanceConstants.FINSER_EVENT_ORG;
+			screenEvent = FinServiceEvent.ORG;
 		}
 
 		boolean custInMaintain = checkCustomerStatus(aFinanceMain.getCustCIF());
@@ -538,7 +539,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		if (SysParamUtil.isAllowed(SMTParameterConstants.CHECK_COLL_MAINTENANCE)
-				&& StringUtils.equals(screenEvent, FinanceConstants.FINSER_EVENT_ORG)) {
+				&& StringUtils.equals(screenEvent, FinServiceEvent.ORG)) {
 			String finReference = aFinanceMain.getFinReference();
 			List<CollateralAssignment> collateralAssignmentList = collateralAssignmentDAO
 					.getCollateralAssignmentByFinRef(finReference, FinanceConstants.MODULE_NAME,
@@ -797,7 +798,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 				if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 					if (tatDetail == null) {
 						tatDetail = new TATDetail();
-						tatDetail.setModule(FinanceConstants.FINSER_EVENT_ORG);
+						tatDetail.setModule(FinServiceEvent.ORG);
 						tatDetail.setReference(aFinanceMain.getFinReference());
 						tatDetail.setRoleCode(aFinanceMain.getNextRoleCode());
 						tatDetail.setFinType(aFinanceMain.getFinType());
@@ -899,7 +900,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			if ("QDE".equals(StringUtils.trimToEmpty(this.requestSource))) {
 				zulPath.append("QDEFinanceMainDialog.zul");
 				zulFound = true;
-			} else if (FinanceConstants.FINSER_EVENT_PREAPPROVAL.equals(this.requestSource)) {
+			} else if (FinServiceEvent.PREAPPROVAL.equals(this.requestSource)) {
 				zulPath.append("FinancePreApprovalDialog.zul");
 				zulFound = true;
 			}
@@ -1042,23 +1043,23 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		this.searchObj.addFilter(new Filter("DeviationApproval", 0, Filter.OP_EQUAL));
-		if (FinanceConstants.FINSER_EVENT_PREAPPROVAL.equals(this.requestSource)) {
+		if (FinServiceEvent.PREAPPROVAL.equals(this.requestSource)) {
 			this.searchObj.addFilter(
-					new Filter("FinPreApprovedRef", FinanceConstants.FINSER_EVENT_PREAPPROVAL, Filter.OP_EQUAL));
+					new Filter("FinPreApprovedRef", FinServiceEvent.PREAPPROVAL, Filter.OP_EQUAL));
 		} else {
 
 			if (StringUtils.equals(FinanceConstants.PRODUCT_CD, productCode)) {
 				Filter[] filters = new Filter[2];
-				filters[0] = new Filter("FinPreApprovedRef", FinanceConstants.FINSER_EVENT_PREAPPROVAL,
+				filters[0] = new Filter("FinPreApprovedRef", FinServiceEvent.PREAPPROVAL,
 						Filter.OP_NOT_EQUAL);
-				filters[1] = new Filter("FinPreApprovedRef", FinanceConstants.FINSER_EVENT_PREAPPROVAL, Filter.OP_NULL);
+				filters[1] = new Filter("FinPreApprovedRef", FinServiceEvent.PREAPPROVAL, Filter.OP_NULL);
 				this.searchObj.addFilterOr(filters);
 				this.searchObj.addFilter(new Filter("ProductCategory", FinanceConstants.PRODUCT_CD, Filter.OP_EQUAL));
 			} else {
 				Filter[] filters = new Filter[2];
-				filters[0] = new Filter("FinPreApprovedRef", FinanceConstants.FINSER_EVENT_PREAPPROVAL,
+				filters[0] = new Filter("FinPreApprovedRef", FinServiceEvent.PREAPPROVAL,
 						Filter.OP_NOT_EQUAL);
-				filters[1] = new Filter("FinPreApprovedRef", FinanceConstants.FINSER_EVENT_PREAPPROVAL, Filter.OP_NULL);
+				filters[1] = new Filter("FinPreApprovedRef", FinServiceEvent.PREAPPROVAL, Filter.OP_NULL);
 				this.searchObj.addFilterOr(filters);
 				this.searchObj
 						.addFilter(new Filter("ProductCategory", FinanceConstants.PRODUCT_CD, Filter.OP_NOT_EQUAL));

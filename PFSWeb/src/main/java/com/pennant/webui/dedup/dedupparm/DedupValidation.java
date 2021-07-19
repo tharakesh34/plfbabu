@@ -57,9 +57,9 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * Used to specify Date type selection in <b>DedupValidation</b> class.
@@ -209,7 +209,7 @@ public class DedupValidation implements Serializable {
 			// Return Cheques display or not validation based on Process editor Details
 			List<Long> list = getFinanceReferenceDetailService().getRefIdListByFinType(
 					aFinanceDetail.getFinScheduleData().getFinanceMain().getFinType(),
-					FinanceConstants.FINSER_EVENT_ORG, role, "_TRCView");
+					FinServiceEvent.ORG, role, "_TRCView");
 
 			//If List doesnot exists based on conditions , no need to display return cheques window.
 			if (list == null || list.isEmpty()) {

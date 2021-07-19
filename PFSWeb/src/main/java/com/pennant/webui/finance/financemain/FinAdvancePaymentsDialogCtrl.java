@@ -157,6 +157,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
 import com.pennanttech.pff.external.BankAccountValidationService;
@@ -1032,8 +1033,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			list.add(DisbursementConstants.PAYMENT_DETAIL_VENDOR);
 		}
 
-		if (StringUtils.equalsIgnoreCase(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDDISB) && !StringUtils
-				.equalsIgnoreCase(aFinAdvnancePayments.getPaymentDetail(), FinanceConstants.FINSER_EVENT_ADDDISB)) {
+		if (StringUtils.equalsIgnoreCase(moduleDefiner, FinServiceEvent.ADDDISB) && !StringUtils
+				.equalsIgnoreCase(aFinAdvnancePayments.getPaymentDetail(), FinServiceEvent.ADDDISB)) {
 			list.add(DisbursementConstants.PAYMENT_DETAIL_VAS);
 		}
 
@@ -1482,7 +1483,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 						} else {
 
 							if (financeMain.isInstBasedSchd()
-									&& StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)
+									&& StringUtils.equals(FinServiceEvent.ADDDISB, moduleDefiner)
 									&& insAmt.compareTo(disAmt) != 0) {
 								throw new WrongValueException(this.amtToBeReleased,
 										Labels.getLabel("NUMBER_EQ", new String[] {

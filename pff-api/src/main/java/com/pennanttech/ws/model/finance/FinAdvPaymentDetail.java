@@ -3,12 +3,12 @@ package com.pennanttech.ws.model.finance;
 import java.io.Serializable;
 import java.util.List;
 
-import com.pennant.backend.model.WSReturnStatus;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennant.backend.model.WSReturnStatus;
 
 @XmlType(propOrder = { "finReference", "disbResponse", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)

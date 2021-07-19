@@ -82,6 +82,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class FeeDetailService {
 	Logger logger = LogManager.getLogger(FeeDetailService.class);
@@ -248,7 +249,7 @@ public class FeeDetailService {
 			}
 		}
 
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, moduleDefiner)) {
+		if (StringUtils.equals(FinServiceEvent.ORG, moduleDefiner)) {
 			financeMain.setDeductFeeDisb(deductFromDisbursement);
 			financeMain.setFeeChargeAmt(feeAddToDisbTot);
 		} else {

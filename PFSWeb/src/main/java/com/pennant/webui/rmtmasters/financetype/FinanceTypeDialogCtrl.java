@@ -156,6 +156,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SolutionFactory/FinanceType/financeTypeDialog.zul file.
@@ -740,7 +741,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.product.setValidateColumns(new String[] { "FinType" });
 
 			Filter[] filter = new Filter[1];
-			filter[0] = new Filter("FinEvent", FinanceConstants.FINSER_EVENT_ORG, Filter.OP_EQUAL);
+			filter[0] = new Filter("FinEvent", FinServiceEvent.ORG, Filter.OP_EQUAL);
 			this.product.setFilters(filter);
 
 			this.startDate.setFormat(DateFormat.SHORT_DATE.getPattern());

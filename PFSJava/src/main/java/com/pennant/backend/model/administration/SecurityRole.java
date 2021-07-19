@@ -45,13 +45,13 @@ package com.pennant.backend.model.administration;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>SecurityRole table</b>.<br>

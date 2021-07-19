@@ -145,6 +145,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -691,7 +692,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	public void onClick$btnSearchSchdMethod(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering " + event.toString());
 		String whereClause = "";
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD)) {
+		if (moduleDefiner.equals(FinServiceEvent.OVERDRAFTSCHD)) {
 			whereClause = new String(
 					" SchdMethod NOT IN ('EQUAL','GRCNDPAY','MAN_PRI','MANUAL','PRI','PRI_PFT','PFTCAP') ");
 		}
@@ -1014,28 +1015,28 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		Date appDate = SysParamUtil.getAppDate();
 		StringBuilder whereClause = new StringBuilder();
 
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
+		if (moduleDefiner.equals(FinServiceEvent.WRITEOFFPAY)) {
 			whereClause = new StringBuilder(" FinIsActive = 0 ");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_BASICMAINTAIN)
-				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_LINKDELINK)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.BASICMAINTAIN)
+				|| moduleDefiner.equals(FinServiceEvent.LINKDELINK)) {
 			whereClause = new StringBuilder(" ");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COLLATERAL)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.COLLATERAL)) {
 			whereClause = new StringBuilder(" FinIsActive = 0");
-		} else if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RECEIPT)) {
+		} else if (!moduleDefiner.equals(FinServiceEvent.RECEIPT)) {
 			whereClause = new StringBuilder(" FinIsActive = 1 ");
 		}
 		// ### 11-10-2018,Ticket id:124998
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RECEIPT)) {
+		if (moduleDefiner.equals(FinServiceEvent.RECEIPT)) {
 			whereClause.append(" CLOSINGSTATUS!='" + FinanceConstants.CLOSE_STATUS_CANCELLED
 					+ "' or (CLOSINGSTATUS is null or CLOSINGSTATUS  in ('" + FinanceConstants.CLOSE_STATUS_EARLYSETTLE
 					+ "','" + FinanceConstants.CLOSE_STATUS_WRITEOFF + "','" + FinanceConstants.CLOSE_STATUS_MATURED
 					+ "')) and ProductCategory != '" + FinanceConstants.PRODUCT_GOLD + "'");
-		} else if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFF)) {
+		} else if (!moduleDefiner.equals(FinServiceEvent.WRITEOFF)) {
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_GOLD + "'");
 		}
 		if (StringUtils.isNotEmpty(buildedWhereCondition)) {
-			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_BASICMAINTAIN)
-					|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_LINKDELINK)) {
+			if (moduleDefiner.equals(FinServiceEvent.BASICMAINTAIN)
+					|| moduleDefiner.equals(FinServiceEvent.LINKDELINK)) {
 				whereClause = new StringBuilder(" (" + buildedWhereCondition + ") ");
 			} else {
 				whereClause.append(" AND (" + buildedWhereCondition + ") ");
@@ -1055,7 +1056,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		int backValueDays = SysParamUtil.getValueAsInt("MAINTAIN_RATECHG_BACK_DATE");
 		Date backValueDate = DateUtility.addDays(appDate, backValueDays);
 
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RATECHG)) {
+		if (moduleDefiner.equals(FinServiceEvent.RATECHG)) {
 			whereClause.append(" AND (AllowGrcPftRvw = 1 OR AllowRepayRvw = 1 OR RateChgAnyDay = 1) ");
 			whereClause.append(" AND FinCurrAssetValue > 0 ");
 
@@ -1063,79 +1064,79 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			 * whereClause.append(" OR (FinStartDate = LastRepayDate and FinStartDate = LastRepayPftDate AND ");
 			 * whereClause.append(" FinStartDate >= '" + backValueDate.toString() + "'))");
 			 */
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGRPY)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.CHGRPY)) {
 
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADDDISB)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.ADDDISB)) {
 			whereClause.append(" AND AlwMultiDisb = 1  AND MaturityDate > '" + appDate + "'");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RLSDISB)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.RLSDISB)) {
 			whereClause.append(" AND AlwMultiDisb = 1  AND MaturityDate > '" + appDate + "'");
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.POSTPONEMENT)) {
 			whereClause.append(" AND (Defferments - AvailedDefRpyChange > 0 OR RcdMaintainSts ='"
-					+ FinanceConstants.FINSER_EVENT_POSTPONEMENT + "' ) ");
+					+ FinServiceEvent.POSTPONEMENT + "' ) ");
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_UNPLANEMIH)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.UNPLANEMIH)) {
 			whereClause.append(" AND (MaxUnplannedEmi - AvailedUnPlanEmi > 0 OR RcdMaintainSts ='"
-					+ FinanceConstants.FINSER_EVENT_UNPLANEMIH + "') ");
+					+ FinServiceEvent.UNPLANEMIH + "') ");
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADDTERM)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.ADDTERM)) {
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RMVTERM)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.RMVTERM)) {
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RECALCULATE)) {
-			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
-
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SUBSCHD)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.RECALCULATE)) {
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
 
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGPFT)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.SUBSCHD)) {
+			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
+
+		} else if (moduleDefiner.equals(FinServiceEvent.CHGPFT)) {
 			whereClause.append(" AND (AllowGrcPftRvw = 1 OR AllowRepayRvw = 1) ");
 			/*
 			 * whereClause.append(" OR (FinStartDate = LastRepayDate and FinStartDate = LastRepayPftDate AND ");
 			 * whereClause.append(" FinStartDate >= '" + backValueDate.toString() + "'))");
 			 */
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGFRQ)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.CHGFRQ)) {
 			whereClause.append(" AND RepayRateBasis <> '" + CalculationConstants.RATE_BASIS_D + "' ");
 			whereClause.append(" AND RepayPftFrq <> '" + "D0000" + "'");
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RESCHD)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.RESCHD)) {
 			whereClause.append(" AND RepayRateBasis <> '" + CalculationConstants.RATE_BASIS_D + "' ");
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.CHGGRCEND)) {
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
 			whereClause.append(" AND AllowGrcPeriod = 1");
 			whereClause.append(" AND GrcPeriodEndDate >= '" + appDate + "' ");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RECEIPT)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.RECEIPT)) {
 			// whereClause.append(" AND FinStartDate < '" + appDate+"' " );
 			whereClause.append(" AND FinCurrAssetValue > 0 ");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.SCHDRPY)) {
 			whereClause.append(" AND FinStartDate < '" + appDate + "' ");
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)) {
 			whereClause.append(" AND FinStartDate < '" + appDate + "' ");
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
 			whereClause.append(" AND FinStartDate < '" + appDate + "' ");
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFF)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.WRITEOFF)) {
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
 			if (!this.allowPreMaturedCases.isChecked()) {
 				whereClause.append(" AND MaturityDate < '" + appDate + "'");
 			}
 			whereClause.append(" AND ((fincurrassetvalue+feechargeamt+ TotalCpz) - finRepaymentAmount) > 0 ");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.WRITEOFFPAY)) {
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
 		}
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFF)
-				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
+		if (moduleDefiner.equals(FinServiceEvent.WRITEOFF)
+				|| moduleDefiner.equals(FinServiceEvent.WRITEOFFPAY)) {
 			if (!this.allowPreMaturedCases.isChecked()) {
 				whereClause.append(" AND MaturityDate <= '" + appDate + "'");
 			} else {
 				whereClause.append(" AND MaturityDate > '" + appDate + "'");
 			}
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CANCELRPY)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.CANCELRPY)) {
 			// whereClause.append(" OR (FinIsActive = 0 AND ClosingStatus = 'M') ");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CANCELFIN)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.CANCELFIN)) {
 			backValueDays = SysParamUtil.getValueAsInt("MAINTAIN_CANFIN_BACK_DATE");
 			backValueDate = DateUtility.addDays(appDate, backValueDays);
 
@@ -1143,60 +1144,60 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" AND (FinStartDate = LastRepayDate and FinStartDate = LastRepayPftDate AND ");
 			whereClause.append(" FinStartDate >= '" + backValueDate.toString() + "')");
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CANCELDISB)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.CANCELDISB)) {
 			whereClause.append(" AND ( FinReference IN (select FinReference from FinDisbursementDetails");
 			whereClause.append(" where DisbDate >= '" + appDate + "') ");
 			whereClause.append(" AND ProductCategory = '" + FinanceConstants.PRODUCT_ODFACILITY + "' )");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.OVERDRAFTSCHD)) {
 			whereClause.append(" AND FinStartDate < '" + appDate + "' AND MaturityDate > '" + appDate + "'");
 			whereClause.append(" AND ProductCategory = '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
-		} else if ((moduleDefiner.equals(FinanceConstants.FINSER_EVENT_BASICMAINTAIN)
-				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_LINKDELINK))) {
+		} else if ((moduleDefiner.equals(FinServiceEvent.BASICMAINTAIN)
+				|| moduleDefiner.equals(FinServiceEvent.LINKDELINK))) {
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN)) {
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_INSCHANGE)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.RPYBASICMAINTAIN)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.INSCHANGE)) {
 			whereClause.append("AND FinReference IN (select  Reference from FinInsurances where PaymentMethod=" + "'"
 					+ InsuranceConstants.PAYTYPE_SCH_FRQ + "')");
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_PLANNEDEMI)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.PLANNEDEMI)) {
 			whereClause.append(" AND PlanEMIHAlw = 1");
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_REAGING)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.REAGING)) {
 			whereClause.append(" AND (MaxReAgeHolidays - AvailedReAgeH > 0 OR RcdMaintainSts ='"
-					+ FinanceConstants.FINSER_EVENT_REAGING + "') ");
+					+ FinServiceEvent.REAGING + "') ");
 			whereClause.append(
 					" AND FinReference IN ( Select D.FinReference From FinODDetails D Where D.FinCurODAmt > 0 AND D.FinODSchdDate > GrcPeriodEndDate) ");
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_HOLDEMI)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.HOLDEMI)) {
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.CHGSCHDMETHOD)) {
 			whereClause
 					.append(" AND RepayRateBasis <> '" + CalculationConstants.RATE_BASIS_D + "' AND StepFinance = 0 ");
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.FEEWAIVERS)) {
 			/*
 			 * whereClause.append(" AND FinReference IN (Select FinReference from ManualAdvise Where  AdviseType =" +
 			 * "'" + FinanceConstants.MANUAL_ADVISE_RECEIVABLE + "' and AdviseAmount-PaidAmount-WaivedAmount >0)");
 			 * whereClause.append(
 			 * " OR FinReference IN (Select FinReference from finoddetails Where  totpenaltybal > 0 or lpiBal > 0)");
 			 */
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHANGETDS)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.CHANGETDS)) {
 			whereClause.append(" AND  MaturityDate > '" + appDate + "' AND  FinStartDate <= '" + appDate + "'");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_LOANDOWNSIZING)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.LOANDOWNSIZING)) {
 			whereClause.append(" AND FinAssetvalue > FinCurrAssetValue ");
-		} else if (FinanceConstants.FINSER_EVENT_RESTRUCTURE.equals(moduleDefiner)) {
+		} else if (FinServiceEvent.RESTRUCTURE.equals(moduleDefiner)) {
 			whereClause.append(" AND RcdMaintainSts = 'Restructure' AND FinIsActive = 1 ");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COLLATERAL)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.COLLATERAL)) {
 			whereClause.append("AND FinReference IN (SELECT Reference From CollateralAssignment)");
 			whereClause.append(" AND ClosingStatus in ('W','E','C','M')");
 		}
 
 		// Written Off Finance Reference Details Condition
-		if (FinanceConstants.FINSER_EVENT_WRITEOFFPAY.equals(moduleDefiner)) {
+		if (FinServiceEvent.WRITEOFFPAY.equals(moduleDefiner)) {
 			whereClause.append(" AND FinReference IN (SELECT FinReference From FinWriteoffDetail) ");
-		} else if (!(FinanceConstants.FINSER_EVENT_BASICMAINTAIN.equals(moduleDefiner)
-				|| FinanceConstants.FINSER_EVENT_CHGFRQ.equals(moduleDefiner)
-				|| FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN.equals(moduleDefiner))) {
+		} else if (!(FinServiceEvent.BASICMAINTAIN.equals(moduleDefiner)
+				|| FinServiceEvent.CHGFRQ.equals(moduleDefiner)
+				|| FinServiceEvent.RPYBASICMAINTAIN.equals(moduleDefiner))) {
 			whereClause.append(" AND FinReference NOT IN (SELECT FinReference From FinWriteoffDetail) ");
 		}
 
@@ -1204,8 +1205,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		whereClause.append(" ) AND ( " + getUsrFinAuthenticationQry(false));
 
 		// Along with Above events WriteOff Loans
-		if (FinanceConstants.FINSER_EVENT_HOLDEMI.equals(this.moduleDefiner)
-				|| FinanceConstants.FINSER_EVENT_ADDDISB.equals(this.moduleDefiner)) {
+		if (FinServiceEvent.HOLDEMI.equals(this.moduleDefiner)
+				|| FinServiceEvent.ADDDISB.equals(this.moduleDefiner)) {
 			whereClause.append(" AND ( ClosingStatus IS NULL OR ClosingStatus !='"
 					+ FinanceConstants.CLOSE_STATUS_WRITEOFF + "')");
 		}
@@ -1270,7 +1271,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				return;
 			}
 
-			if (StringUtils.isNotEmpty(moduleDefiner) && moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADDDISB)) {
+			if (StringUtils.isNotEmpty(moduleDefiner) && moduleDefiner.equals(FinServiceEvent.ADDDISB)) {
 				boolean holdDisbursement = getFinanceDetailService()
 						.isholdDisbursementProcess(aFinanceMain.getFinReference());
 
@@ -1311,77 +1312,77 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		}
 
-		if (StringUtils.isNotEmpty(moduleDefiner) && !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RECEIPT)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFF)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CANCELFIN)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_BASICMAINTAIN)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CANCELRPY)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FINOPTION)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHANGETDS)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_LOANDOWNSIZING)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COLLATERAL)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_LINKDELINK)) {
+		if (StringUtils.isNotEmpty(moduleDefiner) && !moduleDefiner.equals(FinServiceEvent.EARLYRPY)
+				&& !moduleDefiner.equals(FinServiceEvent.RECEIPT)
+				&& !moduleDefiner.equals(FinServiceEvent.SCHDRPY)
+				&& !moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)
+				&& !moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)
+				&& !moduleDefiner.equals(FinServiceEvent.WRITEOFF)
+				&& !moduleDefiner.equals(FinServiceEvent.CANCELFIN)
+				&& !moduleDefiner.equals(FinServiceEvent.BASICMAINTAIN)
+				&& !moduleDefiner.equals(FinServiceEvent.RPYBASICMAINTAIN)
+				&& !moduleDefiner.equals(FinServiceEvent.CANCELRPY)
+				&& !moduleDefiner.equals(FinServiceEvent.WRITEOFFPAY)
+				&& !moduleDefiner.equals(FinServiceEvent.COVENANTS)
+				&& !moduleDefiner.equals(FinServiceEvent.FINOPTION)
+				&& !moduleDefiner.equals(FinServiceEvent.FEEWAIVERS)
+				&& !moduleDefiner.equals(FinServiceEvent.CHANGETDS)
+				&& !moduleDefiner.equals(FinServiceEvent.LOANDOWNSIZING)
+				&& !moduleDefiner.equals(FinServiceEvent.COLLATERAL)
+				&& !moduleDefiner.equals(FinServiceEvent.LINKDELINK)) {
 
 			openFinanceMainDialog(item);
 
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)
-				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY)
-				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)
-				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.EARLYRPY)
+				|| moduleDefiner.equals(FinServiceEvent.SCHDRPY)
+				|| moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)
+				|| moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
 
 			openFinanceRepaymentDialog(item);
 
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RECEIPT)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.RECEIPT)) {
 
 			openFinanceReceiptDialog(item);
 
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFF)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.WRITEOFF)) {
 
 			openFinanceWriteoffDialog(item);
 
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CANCELFIN)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.CANCELFIN)) {
 
 			openFinanceCancellationDialog(item);
 
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_BASICMAINTAIN)
-				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN)
-				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.BASICMAINTAIN)
+				|| moduleDefiner.equals(FinServiceEvent.RPYBASICMAINTAIN)
+				|| moduleDefiner.equals(FinServiceEvent.WRITEOFFPAY)) {
 
 			openFinMaintenanceDialog(item);
 
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CANCELRPY)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.CANCELRPY)) {
 
 			openFinanceRepayCancelDialog(item);
 
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.COVENANTS)) {
 
 			openFinCovenantMaintanceDialog(item);
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COLLATERAL)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.COLLATERAL)) {
 			openFinCollateralsMaintanceDialog(item);
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FINOPTION)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.FINOPTION)) {
 
 			openFinFinoptionMaintanceDialog(item);
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.FEEWAIVERS)) {
 
 			openFeeWaiverHeaderDialog(item);
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_LINKDELINK)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.LINKDELINK)) {
 
 			openLinkDelinkMaintenanceDialog(item);
 
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHANGETDS)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.CHANGETDS)) {
 
 			openFinChangeTDSMaintanceDialog(item);
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_LOANDOWNSIZING)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.LOANDOWNSIZING)) {
 			openLoanDownsizingDialog(item);
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_LOANDOWNSIZING)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.LOANDOWNSIZING)) {
 			openLoanDownsizingDialog(item);
 		} else {
 			if (this.getListBoxFinance().getSelectedItem() != null) {
@@ -1496,7 +1497,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
 				logger.debug("Leaving");
 				return;
-			} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+			} else if (moduleDefiner.equals(FinServiceEvent.CHGGRCEND)) {
 
 				Date validFrom = financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate();
 				List<FinanceScheduleDetail> scheduelist = financeDetail.getFinScheduleData()
@@ -1693,7 +1694,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			// Set Workflow Details
 			String userRole = "";
-			if (!StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
+			if (!StringUtils.equals(moduleDefiner, FinServiceEvent.EARLYSTLENQ)) {
 				setWorkflowDetails(aFinanceMain.getFinType(),
 						StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
 				if (workFlowDetails == null) {
@@ -2320,7 +2321,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_CONVENTIONAL)) {
 				String pageName = PennantAppUtil.getFinancePageName(false);
 				fileLocaation.append(pageName);
-			} else if (moduleDefiner.equalsIgnoreCase(FinanceConstants.FINSER_EVENT_LOANDOWNSIZING)) {
+			} else if (moduleDefiner.equalsIgnoreCase(FinServiceEvent.LOANDOWNSIZING)) {
 				fileLocaation.append("LoanDownSizingDialog.zul");
 			} else if (productType.equalsIgnoreCase(FinanceConstants.PRODUCT_ODFACILITY)) {
 				fileLocaation.append("ODFacilityFinanceMainDialog.zul");
@@ -3348,176 +3349,176 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			tab = tabbox.getSelectedTab();
 			if (tab != null) {
 				if ("tab_BasicDetail".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_BASICMAINTAIN;
+					moduleDefiner = FinServiceEvent.BASICMAINTAIN;
 					eventCodeRef = AccountEventConstants.ACCEVENT_AMENDMENT;
-					workflowCode = FinanceConstants.FINSER_EVENT_BASICMAINTAIN;
+					workflowCode = FinServiceEvent.BASICMAINTAIN;
 				} else if ("tab_RpyBasicDetail".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN;
+					moduleDefiner = FinServiceEvent.RPYBASICMAINTAIN;
 					eventCodeRef = AccountEventConstants.ACCEVENT_SEGMENT;
-					workflowCode = FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN;
+					workflowCode = FinServiceEvent.RPYBASICMAINTAIN;
 				} else if ("tab_AddRateChange".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_RATECHG;
+					moduleDefiner = FinServiceEvent.RATECHG;
 					eventCodeRef = AccountEventConstants.ACCEVENT_RATCHG;
-					workflowCode = FinanceConstants.FINSER_EVENT_RATECHG;
+					workflowCode = FinServiceEvent.RATECHG;
 				} else if ("tab_InsChange".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_INSCHANGE;
+					moduleDefiner = FinServiceEvent.INSCHANGE;
 					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
-					workflowCode = FinanceConstants.FINSER_EVENT_INSCHANGE;
+					workflowCode = FinServiceEvent.INSCHANGE;
 				} else if ("tab_ChangeRepayment".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_CHGRPY;
+					moduleDefiner = FinServiceEvent.CHGRPY;
 					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
-					workflowCode = FinanceConstants.FINSER_EVENT_CHGRPY;
+					workflowCode = FinServiceEvent.CHGRPY;
 				} else if ("tab_AddDisbursment".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_ADDDISB;
+					moduleDefiner = FinServiceEvent.ADDDISB;
 					eventCodeRef = AccountEventConstants.ACCEVENT_ADDDBSN;
-					workflowCode = FinanceConstants.FINSER_EVENT_ADDDISB;
+					workflowCode = FinServiceEvent.ADDDISB;
 				} else if ("tab_RlsHoldDisbursment".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_RLSDISB;
+					moduleDefiner = FinServiceEvent.RLSDISB;
 					eventCodeRef = "";
-					workflowCode = FinanceConstants.FINSER_EVENT_RLSDISB;
+					workflowCode = FinServiceEvent.RLSDISB;
 				} else if ("tab_Postponement".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_POSTPONEMENT;
+					moduleDefiner = FinServiceEvent.POSTPONEMENT;
 					eventCodeRef = AccountEventConstants.ACCEVENT_DEFRPY;
-					workflowCode = FinanceConstants.FINSER_EVENT_POSTPONEMENT;
+					workflowCode = FinServiceEvent.POSTPONEMENT;
 				} else if ("tab_UnPlannedEmi".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_UNPLANEMIH;
+					moduleDefiner = FinServiceEvent.UNPLANEMIH;
 					eventCodeRef = AccountEventConstants.ACCEVENT_EMIHOLIDAY;
-					workflowCode = FinanceConstants.FINSER_EVENT_UNPLANEMIH;
+					workflowCode = FinServiceEvent.UNPLANEMIH;
 				} else if ("tab_AddTerms".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_ADDTERM;
+					moduleDefiner = FinServiceEvent.ADDTERM;
 					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
-					workflowCode = FinanceConstants.FINSER_EVENT_ADDTERM;
+					workflowCode = FinServiceEvent.ADDTERM;
 				} else if ("tab_RmvTerms".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_RMVTERM;
+					moduleDefiner = FinServiceEvent.RMVTERM;
 					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
-					workflowCode = FinanceConstants.FINSER_EVENT_RMVTERM;
+					workflowCode = FinServiceEvent.RMVTERM;
 				} else if ("tab_Recalculate".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_RECALCULATE;
+					moduleDefiner = FinServiceEvent.RECALCULATE;
 					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
-					workflowCode = FinanceConstants.FINSER_EVENT_RECALCULATE;
+					workflowCode = FinServiceEvent.RECALCULATE;
 				} else if ("tab_SubSchedule".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_SUBSCHD;
+					moduleDefiner = FinServiceEvent.SUBSCHD;
 					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
-					workflowCode = FinanceConstants.FINSER_EVENT_SUBSCHD;
+					workflowCode = FinServiceEvent.SUBSCHD;
 				} else if ("tab_ChangeProfit".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_CHGPFT;
+					moduleDefiner = FinServiceEvent.CHGPFT;
 					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
-					workflowCode = FinanceConstants.FINSER_EVENT_CHGPFT;
+					workflowCode = FinServiceEvent.CHGPFT;
 				} else if ("tab_ChangeFrequency".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_CHGFRQ;
+					moduleDefiner = FinServiceEvent.CHGFRQ;
 					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
-					workflowCode = FinanceConstants.FINSER_EVENT_CHGFRQ;
+					workflowCode = FinServiceEvent.CHGFRQ;
 				} else if ("tab_ReSchedule".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_RESCHD;
+					moduleDefiner = FinServiceEvent.RESCHD;
 					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
-					workflowCode = FinanceConstants.FINSER_EVENT_RESCHD;
+					workflowCode = FinServiceEvent.RESCHD;
 				} else if ("tab_ChangeGestation".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_CHGGRCEND;
+					moduleDefiner = FinServiceEvent.CHGGRCEND;
 					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
-					workflowCode = FinanceConstants.FINSER_EVENT_CHGGRCEND;
+					workflowCode = FinServiceEvent.CHGGRCEND;
 				} else if ("tab_Receipts".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_RECEIPT;
+					moduleDefiner = FinServiceEvent.RECEIPT;
 					eventCodeRef = AccountEventConstants.ACCEVENT_REPAY;
 					setDialogCtrl("ReceiptDialogCtrl");
-					workflowCode = FinanceConstants.FINSER_EVENT_RECEIPT;
+					workflowCode = FinServiceEvent.RECEIPT;
 				} else if ("tab_PartialSettlement".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYRPY;
+					moduleDefiner = FinServiceEvent.EARLYRPY;
 					eventCodeRef = AccountEventConstants.ACCEVENT_EARLYPAY;
 					setDialogCtrl("ManualPaymentDialogCtrl");
-					workflowCode = FinanceConstants.FINSER_EVENT_EARLYRPY;
+					workflowCode = FinServiceEvent.EARLYRPY;
 				} else if ("tab_SchdRepayment".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_SCHDRPY;
+					moduleDefiner = FinServiceEvent.SCHDRPY;
 					eventCodeRef = AccountEventConstants.ACCEVENT_REPAY;
 					setDialogCtrl("ManualPaymentDialogCtrl");
-					workflowCode = FinanceConstants.FINSER_EVENT_SCHDRPY;
+					workflowCode = FinServiceEvent.SCHDRPY;
 				} else if ("tab_EarlySettlement".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
+					moduleDefiner = FinServiceEvent.EARLYSETTLE;
 					eventCodeRef = AccountEventConstants.ACCEVENT_EARLYSTL;
 					setDialogCtrl("ManualPaymentDialogCtrl");
-					workflowCode = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
+					workflowCode = FinServiceEvent.EARLYSETTLE;
 				} else if ("tab_EarlySettlementEnq".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYSTLENQ;
+					moduleDefiner = FinServiceEvent.EARLYSTLENQ;
 					setDialogCtrl("ManualPaymentDialogCtrl");
 				} else if ("tab_WriteOff".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_WRITEOFF;
+					moduleDefiner = FinServiceEvent.WRITEOFF;
 					setDialogCtrl("FinanceWriteoffDialogCtrl");
-					workflowCode = FinanceConstants.FINSER_EVENT_WRITEOFF;
+					workflowCode = FinServiceEvent.WRITEOFF;
 					eventCodeRef = AccountEventConstants.ACCEVENT_WRITEOFF;
 					this.allowPreMaturedCases.setVisible(true);
 					this.label_FinanceMainSelect_AllowPreMaturedCases.setVisible(true);
 				} else if ("tab_WriteoffPayment".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_WRITEOFFPAY;
+					moduleDefiner = FinServiceEvent.WRITEOFFPAY;
 					eventCodeRef = AccountEventConstants.ACCEVENT_WRITEBK;
-					workflowCode = FinanceConstants.FINSER_EVENT_WRITEOFFPAY;
+					workflowCode = FinServiceEvent.WRITEOFFPAY;
 					this.allowPreMaturedCases.setVisible(true);
 					this.label_FinanceMainSelect_AllowPreMaturedCases.setVisible(true);
 				} else if ("tab_CancelRepay".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_CANCELRPY;
+					moduleDefiner = FinServiceEvent.CANCELRPY;
 					setDialogCtrl("CancelRepayDialogCtrl");
-					workflowCode = FinanceConstants.FINSER_EVENT_CANCELRPY;
+					workflowCode = FinServiceEvent.CANCELRPY;
 				} else if ("tab_CancelFinance".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_CANCELFIN;
+					moduleDefiner = FinServiceEvent.CANCELFIN;
 					eventCodeRef = AccountEventConstants.ACCEVENT_CANCELFIN;
 					setDialogCtrl("CancelFinanceDialogCtrl");
-					workflowCode = FinanceConstants.FINSER_EVENT_CANCELFIN;
+					workflowCode = FinServiceEvent.CANCELFIN;
 				} else if ("tab_CancelDisbursement".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_CANCELDISB;
+					moduleDefiner = FinServiceEvent.CANCELDISB;
 					eventCodeRef = "";
-					workflowCode = FinanceConstants.FINSER_EVENT_CANCELDISB;
+					workflowCode = FinServiceEvent.CANCELDISB;
 				} else if ("tab_OverdraftSchedule".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD;
+					moduleDefiner = FinServiceEvent.OVERDRAFTSCHD;
 					eventCodeRef = "";
-					workflowCode = FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD;
+					workflowCode = FinServiceEvent.OVERDRAFTSCHD;
 				} else if ("tab_PlannedEMI".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_PLANNEDEMI;
+					moduleDefiner = FinServiceEvent.PLANNEDEMI;
 					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
-					workflowCode = FinanceConstants.FINSER_EVENT_PLANNEDEMI;
+					workflowCode = FinServiceEvent.PLANNEDEMI;
 				} else if ("tab_ReAgeHolidays".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_REAGING;
+					moduleDefiner = FinServiceEvent.REAGING;
 					eventCodeRef = AccountEventConstants.ACCEVENT_REAGING;
-					workflowCode = FinanceConstants.FINSER_EVENT_REAGING;
+					workflowCode = FinServiceEvent.REAGING;
 				} else if ("tab_HoldEMI".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_HOLDEMI;
+					moduleDefiner = FinServiceEvent.HOLDEMI;
 					eventCodeRef = AccountEventConstants.ACCEVENT_HOLDEMI;
-					workflowCode = FinanceConstants.FINSER_EVENT_HOLDEMI;
+					workflowCode = FinServiceEvent.HOLDEMI;
 				} else if ("tab_FinCovenants".equals(tab.getId())) {
 					eventCodeRef = "";
-					moduleDefiner = FinanceConstants.FINSER_EVENT_COVENANTS;
-					workflowCode = FinanceConstants.FINSER_EVENT_COVENANTS;
+					moduleDefiner = FinServiceEvent.COVENANTS;
+					workflowCode = FinServiceEvent.COVENANTS;
 				} else if ("tab_CollateralDelink".equals(tab.getId())) {
 					eventCodeRef = "";
-					moduleDefiner = FinanceConstants.FINSER_EVENT_COLLATERAL;
-					workflowCode = FinanceConstants.FINSER_EVENT_COLLATERAL;
+					moduleDefiner = FinServiceEvent.COLLATERAL;
+					workflowCode = FinServiceEvent.COLLATERAL;
 				} else if ("tab_FinOptions".equals(tab.getId())) {
 					eventCodeRef = "";
-					moduleDefiner = FinanceConstants.FINSER_EVENT_FINOPTION;
-					workflowCode = FinanceConstants.FINSER_EVENT_FINOPTION;
+					moduleDefiner = FinServiceEvent.FINOPTION;
+					workflowCode = FinServiceEvent.FINOPTION;
 				} else if ("tab_LinkingDelinking".equals(tab.getId())) {
 					eventCodeRef = "";
-					moduleDefiner = FinanceConstants.FINSER_EVENT_LINKDELINK;
-					workflowCode = FinanceConstants.FINSER_EVENT_LINKDELINK;
+					moduleDefiner = FinServiceEvent.LINKDELINK;
+					workflowCode = FinServiceEvent.LINKDELINK;
 				}
 
 				else if ("tab_FeeWaivers".equals(tab.getId())) {
 					eventCodeRef = "";
-					moduleDefiner = FinanceConstants.FINSER_EVENT_FEEWAIVERS;
-					workflowCode = FinanceConstants.FINSER_EVENT_FEEWAIVERS;
+					moduleDefiner = FinServiceEvent.FEEWAIVERS;
+					workflowCode = FinServiceEvent.FEEWAIVERS;
 				} else if ("tab_ChangeSchdMethod".equals(tab.getId())) {
-					moduleDefiner = FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD;
+					moduleDefiner = FinServiceEvent.CHGSCHDMETHOD;
 					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
-					workflowCode = FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD;
+					workflowCode = FinServiceEvent.CHGSCHDMETHOD;
 				} else if ("tab_ChangeTDS".equals(tab.getId())) {
 					eventCodeRef = "";
-					moduleDefiner = FinanceConstants.FINSER_EVENT_CHANGETDS;
-					workflowCode = FinanceConstants.FINSER_EVENT_CHANGETDS;
+					moduleDefiner = FinServiceEvent.CHANGETDS;
+					workflowCode = FinServiceEvent.CHANGETDS;
 				} else if ("tab_LoanDownSizing".equals(tab.getId())) {
 					eventCodeRef = "";
-					moduleDefiner = FinanceConstants.FINSER_EVENT_LOANDOWNSIZING;
-					workflowCode = FinanceConstants.FINSER_EVENT_LOANDOWNSIZING;
+					moduleDefiner = FinServiceEvent.LOANDOWNSIZING;
+					workflowCode = FinServiceEvent.LOANDOWNSIZING;
 				} else if ("tab_Restructure".equals(tab.getId())) {
 					eventCodeRef = "";
-					moduleDefiner = FinanceConstants.FINSER_EVENT_RESTRUCTURE;
-					workflowCode = FinanceConstants.FINSER_EVENT_RESTRUCTURE;
+					moduleDefiner = FinServiceEvent.RESTRUCTURE;
+					workflowCode = FinServiceEvent.RESTRUCTURE;
 					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
 					this.btnNew
 							.setVisible(getUserWorkspace().isAllowed("button_FinanceSelectList_NewRestructureDetail"));
@@ -3553,7 +3554,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		map.put("role", getUserWorkspace().getUserRoles());
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			if (FinanceConstants.FINSER_EVENT_RESTRUCTURE.equals(moduleDefiner)) {
+			if (FinServiceEvent.RESTRUCTURE.equals(moduleDefiner)) {
 				doSearch(true);
 				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/SelectRestructureDialog.zul", null,
 						map);
@@ -3582,17 +3583,17 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			searchObject.addWhereClause("");
 		}
 
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
+		if (moduleDefiner.equals(FinServiceEvent.COVENANTS)) {
 			this.searchObject.addTabelName("CovenantsMaintenance_View");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FINOPTION)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.FINOPTION)) {
 			this.searchObject.addTabelName("FinoptionsMaintenance_View");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COLLATERAL)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.COLLATERAL)) {
 			this.searchObject.addTabelName("CollateralsMaintenance_view");
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_LINKDELINK)) {
+		} else if (moduleDefiner.equals(FinServiceEvent.LINKDELINK)) {
 			this.searchObject.addTabelName("LinkedFinMaintenance_view");
 		}
 
-		else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)) {
+		else if (moduleDefiner.equals(FinServiceEvent.FEEWAIVERS)) {
 			this.searchObject.addTabelName("FeeWaivers_View");
 		} else {
 			this.searchObject.addTabelName("FinanceMaintenance_View");
@@ -3618,7 +3619,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					.concat(" ON WD.WorkFlowType = WF.WorkFlowType AND WF.WorkFlowActive = 1 ");
 			buildedWhereCondition = buildedWhereCondition.concat(" WHERE WD.FinEvent = '");
 
-			if (StringUtils.equals(workflowCode, FinanceConstants.FINSER_EVENT_ADDFLEXIDISB)) {
+			if (StringUtils.equals(workflowCode, FinServiceEvent.ADDFLEXIDISB)) {
 				buildedWhereCondition = buildedWhereCondition.concat(workflowCode);
 			} else {
 				buildedWhereCondition = buildedWhereCondition.concat(moduleDefiner);
@@ -3656,11 +3657,11 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		rcdTypeFilter[0] = new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL);
 		// rcdTypeFilter[1] = new Filter("RecordType", " ", Filter.OP_EQUAL);
 		rcdTypeFilter[1] = Filter.isNull("RecordType");
-		if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FINOPTION)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COLLATERAL)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_LINKDELINK)) {
+		if (!moduleDefiner.equals(FinServiceEvent.COVENANTS)
+				&& !moduleDefiner.equals(FinServiceEvent.FEEWAIVERS)
+				&& !moduleDefiner.equals(FinServiceEvent.FINOPTION)
+				&& !moduleDefiner.equals(FinServiceEvent.COLLATERAL)
+				&& !moduleDefiner.equals(FinServiceEvent.LINKDELINK)) {
 			this.searchObject.addFilterOr(rcdTypeFilter);
 		}
 

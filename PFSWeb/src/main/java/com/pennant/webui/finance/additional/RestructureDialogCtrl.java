@@ -77,7 +77,6 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.RestructureType;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
@@ -87,6 +86,7 @@ import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/RestructureDialog.zul file.
@@ -660,7 +660,7 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		getFinScheduleData().setRestructureDetail(rstDetail);
 		finServiceInstruction.setFinReference(financeMain.getFinReference());
-		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_RESTRUCTURE);
+		finServiceInstruction.setFinEvent(FinServiceEvent.RESTRUCTURE);
 		BigDecimal oldPft = getFinScheduleData().getFinanceMain().getTotalGrossPft();
 
 		// Service details calling for Schedule calculation

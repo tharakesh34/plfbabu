@@ -39,7 +39,6 @@ import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -58,6 +57,7 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/ReceiptCancellation/ReceiptCancellationList.zul
@@ -227,7 +227,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 			}
 
 			whereClause = whereClause.append(" AND  ReceiptPurpose = '");
-			whereClause = whereClause.append(FinanceConstants.FINSER_EVENT_SCHDRPY);
+			whereClause = whereClause.append(FinServiceEvent.SCHDRPY);
 			whereClause = whereClause.append("' AND (ReceiptModeStatus = '");
 			whereClause = whereClause.append(RepayConstants.PAYSTATUS_APPROVED);
 			whereClause = whereClause.append("' OR (ReceiptModeStatus = '");
@@ -258,7 +258,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 			StringBuilder whereClause = new StringBuilder();
 			whereClause = whereClause.append(" ((RECAGAINST In ('C','O') And FinIsActive = 0) OR(FinIsActive = 1))");
 			whereClause = whereClause.append("  AND  ReceiptPurpose = '");
-			whereClause = whereClause.append(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
+			whereClause = whereClause.append(FinServiceEvent.FEEPAYMENT);
 			whereClause = whereClause.append("' AND ((ReceiptModeStatus = '");
 			whereClause = whereClause.append(RepayConstants.PAYSTATUS_FEES);
 			if (App.DATABASE == Database.ORACLE) {
@@ -344,7 +344,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		// Get the selected entity.
 		FinReceiptHeader headerListItem = (FinReceiptHeader) selectedItem.getAttribute("data");
 		boolean isFeePayment = false;
-		if (StringUtils.equals(headerListItem.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_FEEPAYMENT)) {
+		if (StringUtils.equals(headerListItem.getReceiptPurpose(), FinServiceEvent.FEEPAYMENT)) {
 			isFeePayment = true;
 		}
 

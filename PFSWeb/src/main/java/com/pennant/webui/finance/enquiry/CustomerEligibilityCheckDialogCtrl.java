@@ -87,7 +87,6 @@ import com.pennant.backend.service.finance.EligibilityRule;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.service.rulefactory.RuleService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -96,6 +95,7 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Enquiry/FinanceInquiry/EligibilityCheck.zul file.
@@ -287,7 +287,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 		this.gb_KeyDetails.setVisible(false);
 
 		setElgRuleList(getFinanceReferenceDetailService().getFinRefDetByRoleAndFinType(this.finType.getValue(),
-				FinanceConstants.FINSER_EVENT_ORG, null, "_AEView"));
+				FinServiceEvent.ORG, null, "_AEView"));
 
 		if (getElgRuleList() != null && getElgRuleList().size() > 0) {
 			if (!fldsFetched) {

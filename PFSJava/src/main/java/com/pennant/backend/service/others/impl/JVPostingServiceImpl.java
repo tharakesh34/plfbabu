@@ -68,7 +68,6 @@ import com.pennant.backend.service.applicationmaster.CurrencyService;
 import com.pennant.backend.service.applicationmaster.TransactionCodeService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.others.JVPostingService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -76,6 +75,7 @@ import com.pennant.backend.util.UploadConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * Service implementation for methods that depends on <b>JVPosting</b>.<br>
@@ -214,7 +214,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			auditDetails.addAll(details);
 		}
 
-		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_JVPOSTING;
+		String rcdMaintainSts = FinServiceEvent.JVPOSTING;
 		financeMainDAO.updateMaintainceStatus(jVPosting.getReference(), rcdMaintainSts);
 
 		auditHeader.setAuditDetails(auditDetails);
@@ -661,7 +661,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
 		String reference = jVPosting.getReference();
 		String rcdMntnSts = financeMainDAO.getFinanceMainByRcdMaintenance(reference, "_View");
-		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinanceConstants.FINSER_EVENT_JVPOSTING.equals(rcdMntnSts)) {
+		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.JVPOSTING.equals(rcdMntnSts)) {
 			String[] valueParm1 = new String[1];
 			valueParm1[0] = rcdMntnSts;
 			auditDetail.setErrorDetail(new ErrorDetail("LMS001", valueParm1));

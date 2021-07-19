@@ -71,7 +71,6 @@ import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -83,6 +82,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -181,7 +181,7 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 
 		// Register buttons and fields.
 		boolean accessToCreateNewColl = getFinanceDetailService().checkFirstTaskOwnerAccess(
-				getUserWorkspace().getUserRoleSet(), FinanceConstants.FINSER_EVENT_ORG,
+				getUserWorkspace().getUserRoleSet(), FinServiceEvent.ORG,
 				PennantConstants.WORFLOW_MODULE_COLLATERAL);
 		setFirstTask(accessToCreateNewColl);
 
@@ -351,7 +351,7 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 
 		// Setting Workflow Details
 		FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(collateralType,
-				FinanceConstants.FINSER_EVENT_ORG, PennantConstants.WORFLOW_MODULE_COLLATERAL);
+				FinServiceEvent.ORG, PennantConstants.WORFLOW_MODULE_COLLATERAL);
 
 		// Workflow Details Setup
 		if (financeWorkFlow != null) {

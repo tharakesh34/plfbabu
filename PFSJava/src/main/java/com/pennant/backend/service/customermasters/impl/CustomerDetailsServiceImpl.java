@@ -228,6 +228,7 @@ import com.pennanttech.pennapps.dms.dao.DMSQueueDAO;
 import com.pennanttech.pennapps.dms.model.DMSQueue;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.dao.customer.income.IncomeDetailDAO;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
@@ -8041,7 +8042,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						documentDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 						documentDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 						documentDetails.setWorkflowId(0);
-						documentDetails.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
+						documentDetails.setFinEvent(FinServiceEvent.ORG);
 
 						if (DMSStorage.FS == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))
 								|| DMSStorage.EXTERNAL == DMSStorage

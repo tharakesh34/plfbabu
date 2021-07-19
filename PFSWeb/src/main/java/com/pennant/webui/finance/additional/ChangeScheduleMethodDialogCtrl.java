@@ -65,12 +65,12 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/ReScheduleDialog.zul file.
@@ -380,7 +380,7 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 
 		//finServiceInstruction.setPftIntact(this.pftIntact.isChecked());
 		finServiceInstruction.setFinReference(financeMain.getFinReference());
-		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD);
+		finServiceInstruction.setFinEvent(FinServiceEvent.CHGSCHDMETHOD);
 
 		// Service details calling for Schedule calculation
 		getFinScheduleData().getFinanceMain().setDevFinCalReq(false);

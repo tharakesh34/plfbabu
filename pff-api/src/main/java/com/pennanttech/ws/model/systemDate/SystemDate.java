@@ -3,12 +3,12 @@ package com.pennanttech.ws.model.systemDate;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.pennant.backend.model.WSReturnStatus;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennant.backend.model.WSReturnStatus;
 
 @XmlType(propOrder = { "appDate", "valueDate", "returnStatus" })
 @XmlRootElement(name = "systemDate")

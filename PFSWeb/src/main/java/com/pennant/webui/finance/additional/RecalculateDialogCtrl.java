@@ -73,13 +73,13 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = -6125624350998749280L;
@@ -236,14 +236,14 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (aFinSchData.getFinanceMain() != null) {
 
 			String excldValues = ",CURPRD,ADJMDT,ADDTERM,STEPPOS,ADJTERMS,";
-			if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_RMVTERM)) {
+			if (StringUtils.equals(moduleDefiner, FinServiceEvent.RMVTERM)) {
 
 				if (aFinSchData.getFinanceMain().isApplySanctionCheck()) {
 					excldValues = ",CURPRD,TILLDATE,TILLMDT,ADDTERM,ADDRECAL,STEPPOS,ADJTERMS,";
 				} else {
 					excldValues = ",CURPRD,ADJMDT,TILLDATE,ADDTERM,ADDRECAL,STEPPOS,ADJTERMS,";
 				}
-			} else if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDTERM)) {
+			} else if (StringUtils.equals(moduleDefiner, FinServiceEvent.ADDTERM)) {
 
 				if (aFinSchData.getFinanceMain().isApplySanctionCheck()) {
 					excldValues = ",CURPRD,ADDTERM,STEPPOS,ADJTERMS,";
@@ -459,7 +459,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		finServiceInstruction.setFinReference(finMain.getFinReference());
-		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_RECALCULATE);
+		finServiceInstruction.setFinEvent(FinServiceEvent.RECALCULATE);
 
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -519,7 +519,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				finServiceInstruction.setRecalToDate(finMain.getMaturityDate());
 
 				if (finMain.isApplySanctionCheck()
-						&& StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDTERM)) {
+						&& StringUtils.equals(moduleDefiner, FinServiceEvent.ADDTERM)) {
 					module = moduleDefiner;
 				}
 

@@ -135,6 +135,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.CustomerDedupCheckService;
 import com.pennanttech.pff.external.CustomerDedupService;
@@ -275,7 +276,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		fillComboBox(custCtgType, "", PennantAppUtil.getcustCtgCodeList(), "");
 
 		if (StringUtils.equals("QDE", requestSource)
-				|| StringUtils.equals(FinanceConstants.FINSER_EVENT_PREAPPROVAL, requestSource)) {
+				|| StringUtils.equals(FinServiceEvent.PREAPPROVAL, requestSource)) {
 			this.wIfReferenceRow.setVisible(false);
 			this.labelRow.setVisible(false);
 		}
@@ -303,7 +304,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			Events.postEvent("onClick$btnProceed", window_SelectFinanceTypeDialog, event);
 		}
 
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_PREAPPROVAL, requestSource)) {
+		if (StringUtils.equals(FinServiceEvent.PREAPPROVAL, requestSource)) {
 			this.preApprovedFinRefrow.setVisible(false);
 			this.preApprovedCust.setVisible(false);
 		}
@@ -333,10 +334,10 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		this.finType.setValidateColumns(new String[] { "FinType" });
 
 		Filter[] filters = new Filter[1];
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_PREAPPROVAL, requestSource)) {
-			filters[0] = new Filter("FinEvent", FinanceConstants.FINSER_EVENT_PREAPPROVAL, Filter.OP_EQUAL);
+		if (StringUtils.equals(FinServiceEvent.PREAPPROVAL, requestSource)) {
+			filters[0] = new Filter("FinEvent", FinServiceEvent.PREAPPROVAL, Filter.OP_EQUAL);
 		} else {
-			filters[0] = new Filter("FinEvent", FinanceConstants.FINSER_EVENT_ORG, Filter.OP_EQUAL);
+			filters[0] = new Filter("FinEvent", FinServiceEvent.ORG, Filter.OP_EQUAL);
 		}
 		this.finType.setFilters(filters);
 
@@ -578,10 +579,10 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		Date appDate = DateUtility.getAppDate();
 		filters[0] = new Filter("StartDate", appDate, Filter.OP_LESS_OR_EQUAL);
 		filters[1] = new Filter("EndDate", appDate, Filter.OP_GREATER_OR_EQUAL);
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_PREAPPROVAL, requestSource)) {
-			filters[2] = new Filter("FinEvent", FinanceConstants.FINSER_EVENT_PREAPPROVAL, Filter.OP_EQUAL);
+		if (StringUtils.equals(FinServiceEvent.PREAPPROVAL, requestSource)) {
+			filters[2] = new Filter("FinEvent", FinServiceEvent.PREAPPROVAL, Filter.OP_EQUAL);
 		} else {
-			filters[2] = new Filter("FinEvent", FinanceConstants.FINSER_EVENT_ORG, Filter.OP_EQUAL);
+			filters[2] = new Filter("FinEvent", FinServiceEvent.ORG, Filter.OP_EQUAL);
 		}
 
 		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
@@ -913,10 +914,10 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		// Resetting Finance Event based on Request Resource
 		String financeEvent = "";
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_PREAPPROVAL, requestSource)) {
-			financeEvent = FinanceConstants.FINSER_EVENT_PREAPPROVAL;
+		if (StringUtils.equals(FinServiceEvent.PREAPPROVAL, requestSource)) {
+			financeEvent = FinServiceEvent.PREAPPROVAL;
 		} else {
-			financeEvent = FinanceConstants.FINSER_EVENT_ORG;
+			financeEvent = FinServiceEvent.ORG;
 		}
 
 		// If User requested through What-if Reference
@@ -1218,7 +1219,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 			if (StringUtils.equals("QDE", requestSource)) {
 				fileLocation.append("QDEFinanceMainDialog.zul");
-			} else if (StringUtils.equals(requestSource, FinanceConstants.FINSER_EVENT_PREAPPROVAL)) {
+			} else if (StringUtils.equals(requestSource, FinServiceEvent.PREAPPROVAL)) {
 				fileLocation.append("FinancePreApprovalDialog.zul");
 			} else {
 				String productType = StringUtils.trimToEmpty(this.productCategory);

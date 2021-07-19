@@ -64,7 +64,6 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.finance.ReinstateFinance;
 import com.pennant.backend.service.finance.ReinstateFinanceService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.webui.finance.reinstatefinance.model.ReinstateFinanceListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -74,6 +73,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/ReinstateFinance/ReinstateFinanceList.zul file.
@@ -167,7 +167,7 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 		buildedWhereCondition = buildedWhereCondition
 				.concat(" ON WD.WorkFlowType = WF.WorkFlowType AND WF.WorkFlowActive = 1 ");
 		buildedWhereCondition = buildedWhereCondition.concat(" WHERE WD.FinEvent = '");
-		buildedWhereCondition = buildedWhereCondition.concat(FinanceConstants.FINSER_EVENT_REINSTATE);
+		buildedWhereCondition = buildedWhereCondition.concat(FinServiceEvent.REINSTATE);
 		buildedWhereCondition = buildedWhereCondition.concat("' AND WF.FirstTaskOwner IN(");
 		buildedWhereCondition = buildedWhereCondition.concat(rolecodeList);
 		buildedWhereCondition = buildedWhereCondition.concat("))) OR NextRoleCode IN(");
@@ -330,7 +330,7 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("reinstateFinance", aReinstateFinance);
 		arg.put("reinstateFinanceListCtrl", this);
-		arg.put("eventCode", FinanceConstants.FINSER_EVENT_REINSTATE);
+		arg.put("eventCode", FinServiceEvent.REINSTATE);
 		try {
 			if (aReinstateFinance.isNew()) {
 				Executions.createComponents(
@@ -489,7 +489,7 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 		buildedWhereCondition = buildedWhereCondition
 				.concat(" ON WD.WorkFlowType = WF.WorkFlowType AND WF.WorkFlowActive = 1 ");
 		buildedWhereCondition = buildedWhereCondition.concat(" WHERE WD.FinEvent = '");
-		buildedWhereCondition = buildedWhereCondition.concat(FinanceConstants.FINSER_EVENT_REINSTATE);
+		buildedWhereCondition = buildedWhereCondition.concat(FinServiceEvent.REINSTATE);
 		buildedWhereCondition = buildedWhereCondition.concat("' AND WF.FirstTaskOwner IN(");
 		buildedWhereCondition = buildedWhereCondition.concat(rolecodeList);
 		buildedWhereCondition = buildedWhereCondition.concat("))) OR NextRoleCode IN(");

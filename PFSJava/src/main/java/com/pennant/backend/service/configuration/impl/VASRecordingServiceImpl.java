@@ -151,6 +151,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -494,7 +495,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 			// Document Details
 			List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(vasReference,
-					VASConsatnts.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
+					VASConsatnts.MODULE_NAME, FinServiceEvent.ORG, "_View");
 			if (vasRecording.getDocuments() != null && !vasRecording.getDocuments().isEmpty()) {
 				vasRecording.getDocuments().addAll(documentList);
 			} else {
@@ -508,7 +509,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 						&& !StringUtils.equals(vasRecording.getRecordType(), PennantConstants.RECORD_TYPE_UPD)
 						&& !StringUtils.equals(vasRecording.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
 					vasRecording = getProcessEditorDetails(vasRecording, nextRoleCode,
-							FinanceConstants.FINSER_EVENT_ORG);
+							FinServiceEvent.ORG);
 				} else if (StringUtils.equals(VASConsatnts.STATUS_CANCEL, vasRecording.getVasStatus())
 						|| StringUtils.isEmpty(vasRecording.getRecordType())) {
 
@@ -1189,7 +1190,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 		// Fetch Total Process editor Details
 		List<FinanceReferenceDetail> finRefDetails = getFinanceReferenceDetailDAO().getFinanceProcessEditorDetails(
-				productCode, StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent,
+				productCode, StringUtils.isEmpty(procEdtEvent) ? FinServiceEvent.ORG : procEdtEvent,
 				"_VASVIEW");
 
 		if (finRefDetails != null && !finRefDetails.isEmpty()) {
@@ -1303,7 +1304,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					if (StringUtils.isEmpty(documentDetails.getReferenceId())) {
 						documentDetails.setReferenceId(vasRecording.getVasReference());
 					}
-					documentDetails.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
+					documentDetails.setFinEvent(FinServiceEvent.ORG);
 
 					saveDocument(DMSModule.FINANCE, DMSModule.VAS, documentDetails);
 
@@ -2092,7 +2093,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				return auditDetail;
 			}
 			FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
-					vasRecording.getProductCode(), FinanceConstants.FINSER_EVENT_ORG, VASConsatnts.MODULE_NAME);
+					vasRecording.getProductCode(), FinServiceEvent.ORG, VASConsatnts.MODULE_NAME);
 			if (financeWorkFlow == null) {
 				String[] valueParm = new String[2];
 				valueParm[0] = vasRecording.getProductCode();

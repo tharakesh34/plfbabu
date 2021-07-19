@@ -82,7 +82,6 @@ import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.IndicativeTermDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
@@ -106,6 +105,7 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 	private static final long serialVersionUID = 3257569537441008225L;
@@ -725,10 +725,10 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 
 					financeDetail.setElgRuleList(getEligibilityDetailService().setFinanceEligibilityDetails("",
 							financeType.getFinCcy(), BigDecimal.ZERO, true, financeType.getFinType(), null,
-							FinanceConstants.FINSER_EVENT_ORG));
+							FinServiceEvent.ORG));
 
 					getScoringDetailService().setFinanceScoringDetails(financeDetail, this.finType.getValue(), null,
-							wifcustomer.getLovDescCustCtgType(), FinanceConstants.FINSER_EVENT_ORG);
+							wifcustomer.getLovDescCustCtgType(), FinServiceEvent.ORG);
 
 					map.put("incomeDetailMap", incomeDetailMap);
 				} else if (StringUtils.equals(loanType, FinanceConstants.FIN_DIVISION_FACILITY)

@@ -88,6 +88,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
 public class ScheduleCalculator {
@@ -593,7 +594,7 @@ public class ScheduleCalculator {
 		String receivedRecalMethod = method;
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
-		finMain.setProcMethod(FinanceConstants.FINSER_EVENT_RECEIPT);
+		finMain.setProcMethod(FinServiceEvent.RECEIPT);
 
 		if (!finMain.isApplySanctionCheck()) {
 			finMain.setApplySanctionCheck(SanctionBasedSchedule.isApplySanctionBasedSchedule(finScheduleData));
@@ -1644,7 +1645,7 @@ public class ScheduleCalculator {
 		}
 
 		// call the process
-		finMain.setProcMethod(FinanceConstants.FINSER_EVENT_RATECHG);
+		finMain.setProcMethod(FinServiceEvent.RATECHG);
 		if (isCalSchedule) {
 			finScheduleData = setRecalAttributes(finScheduleData, PROC_CHANGERATE, BigDecimal.ZERO, BigDecimal.ZERO);
 
@@ -3785,7 +3786,7 @@ public class ScheduleCalculator {
 				boolean isFreezeSchd = false;
 
 				if (curSchd.getPresentmentId() != 0
-						&& !StringUtils.equals(finMain.getProcMethod(), FinanceConstants.FINSER_EVENT_RECEIPT)) {
+						&& !StringUtils.equals(finMain.getProcMethod(), FinServiceEvent.RECEIPT)) {
 					isFreezeSchd = true;
 				}
 
@@ -4001,7 +4002,7 @@ public class ScheduleCalculator {
 		// PSD#169262:Issue while decreasing ROI when by Adjusting terms.
 		// FIXME if Required: below condition added while decreasing the ROI for adjust terms.
 		// add rate change tenor showing wrong when rate is decreased.
-		if (!FinanceConstants.FINSER_EVENT_RATECHG.equals(finMain.getProcMethod())) {
+		if (!FinServiceEvent.RATECHG.equals(finMain.getProcMethod())) {
 			// PSD#166759
 			finMain.setCalTerms(calTerms);
 		}
@@ -4460,7 +4461,7 @@ public class ScheduleCalculator {
 		logger.debug("Entering");
 
 		if (StringUtils.equals(finScheduleData.getFinanceMain().getProcMethod(),
-				FinanceConstants.FINSER_EVENT_RECEIPT)) {
+				FinServiceEvent.RECEIPT)) {
 			logger.debug("Leaving");
 			return finScheduleData.getFinanceMain().getMaturityDate();
 		}
@@ -4789,7 +4790,7 @@ public class ScheduleCalculator {
 		// schedules
 		// Because of Installment dues already passed for the same
 		boolean cpzResetReq = true;
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_RATECHG, finMain.getProcMethod())) {
+		if (StringUtils.equals(FinServiceEvent.RATECHG, finMain.getProcMethod())) {
 			if (StringUtils.equals(CalculationConstants.RATEREVIEW_RVWFUR, finMain.getRvwRateApplFor())) {
 				if (DateUtility.compare(curSchd.getSchDate(), finMain.getAppDate()) <= 0) {
 					cpzResetReq = false;
@@ -4859,7 +4860,7 @@ public class ScheduleCalculator {
 			derivedMDT = schdDetails.get(schdDetails.size() - 1).getSchDate();
 		}
 		// common issue 8
-		if (FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(finMain.getReceiptPurpose())) {
+		if (FinServiceEvent.EARLYSETTLE.equals(finMain.getReceiptPurpose())) {
 			derivedMDT = finMain.getEventFromDate();
 		}
 
@@ -5162,7 +5163,7 @@ public class ScheduleCalculator {
 				// Due schedules
 				// Because of Installment dues already passed for the same
 				boolean cpzResetReq = true;
-				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_RATECHG, finMain.getProcMethod())) {
+				if (StringUtils.equals(FinServiceEvent.RATECHG, finMain.getProcMethod())) {
 					if (StringUtils.equals(CalculationConstants.RATEREVIEW_RVWFUR, finMain.getRvwRateApplFor())) {
 						if (DateUtility.compare(curSchd.getSchDate(), finMain.getAppDate()) <= 0) {
 							cpzResetReq = false;
@@ -5228,7 +5229,7 @@ public class ScheduleCalculator {
 		// FIX: PV: To address Postponements, Reage, Unplanned Holidays,
 		// Holidays without additional instructions
 		String bpiOrHoliday = curSchd.getBpiOrHoliday();
-		if (!FinanceConstants.FINSER_EVENT_RECEIPT.equals(finMain.getProcMethod())
+		if (!FinServiceEvent.RECEIPT.equals(finMain.getProcMethod())
 				|| DateUtility.compare(evtFromDate, curSchd.getSchDate()) != 0) {
 			if (FinanceConstants.FLAG_HOLIDAY.equals(bpiOrHoliday)
 					|| FinanceConstants.FLAG_POSTPONE.equals(bpiOrHoliday)
@@ -5262,7 +5263,7 @@ public class ScheduleCalculator {
 		// SIVA : For Presentment Detail Schedule should be recalculate on
 		// Schedule Maintenance
 		if (curSchd.getPresentmentId() > 0
-				&& !StringUtils.equals(FinanceConstants.FINSER_EVENT_RECEIPT, finMain.getProcMethod())) {
+				&& !StringUtils.equals(FinServiceEvent.RECEIPT, finMain.getProcMethod())) {
 
 			// This case should not be applicable only for Partial Settlement
 			// For Partial Settlement in case of Presentment exists after value
@@ -5283,7 +5284,7 @@ public class ScheduleCalculator {
 		// schedules
 		// Because of Installment dues already passed for the same
 		boolean protectPftSchd = finMain.isProtectSchdPft();
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_RATECHG, finMain.getProcMethod())) {
+		if (StringUtils.equals(FinServiceEvent.RATECHG, finMain.getProcMethod())) {
 			if (StringUtils.equals(CalculationConstants.RATEREVIEW_RVWFUR, finMain.getRvwRateApplFor())) {
 				if (DateUtility.compare(curSchd.getSchDate(), finMain.getAppDate()) <= 0) {
 					protectPftSchd = true;
@@ -5492,9 +5493,9 @@ public class ScheduleCalculator {
 				}
 
 				if (StringUtils.isNotBlank(finMain.getReceiptPurpose())
-						&& (StringUtils.equals(finMain.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYRPY)
+						&& (StringUtils.equals(finMain.getReceiptPurpose(), FinServiceEvent.EARLYRPY)
 								|| StringUtils.equals(finMain.getReceiptPurpose(),
-										FinanceConstants.FINSER_EVENT_EARLYSETTLE))) {
+										FinServiceEvent.EARLYSETTLE))) {
 
 					if (curSchd.getSchDate().compareTo(finMain.getAppDate()) <= 0) {
 						curSchd.setRepayAmount(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
@@ -5683,7 +5684,7 @@ public class ScheduleCalculator {
 		BigDecimal newProfit = BigDecimal.ZERO;
 
 		boolean protectPftSchd = finMain.isProtectSchdPft();
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_RATECHG, finMain.getProcMethod())) {
+		if (StringUtils.equals(FinServiceEvent.RATECHG, finMain.getProcMethod())) {
 			if (StringUtils.equals(CalculationConstants.RATEREVIEW_RVWFUR, finMain.getRvwRateApplFor())) {
 				if (DateUtility.compare(curSchd.getSchDate(), finMain.getAppDate()) <= 0) {
 					protectPftSchd = true;
@@ -7458,7 +7459,7 @@ public class ScheduleCalculator {
 							|| StringUtils.equals(recalSchdMethod, CalculationConstants.SCHMTHD_PFTCPZ)) {
 						recalSchdMethod = CalculationConstants.SCHMTHD_PRI_PFT;
 					}
-					if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+					if (StringUtils.equals(receiptPurpose, FinServiceEvent.EARLYSETTLE)) {
 						if (StringUtils.equals(recalSchdMethod, CalculationConstants.SCHMTHD_PRI)) {
 							recalSchdMethod = CalculationConstants.SCHMTHD_PRI_PFT;
 						}
@@ -7467,7 +7468,7 @@ public class ScheduleCalculator {
 					recalSchdMethod = CalculationConstants.SCHMTHD_PRI_PFT;
 				} else {
 					recalSchdMethod = CalculationConstants.SCHMTHD_PRI;
-					if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+					if (StringUtils.equals(receiptPurpose, FinServiceEvent.EARLYSETTLE)) {
 						recalSchdMethod = CalculationConstants.SCHMTHD_PRI_PFT;
 					}
 				}
@@ -7479,7 +7480,7 @@ public class ScheduleCalculator {
 						|| FinanceConstants.FLAG_MORTEMIHOLIDAY.equals(bpiOrHoliday)
 						|| FinanceConstants.FLAG_UNPLANNED.equals(bpiOrHoliday)) {
 
-					if (FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(receiptPurpose)) {
+					if (FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)) {
 						recalSchdMethod = CalculationConstants.SCHMTHD_PRI_PFT;
 					} else {
 						recalSchdMethod = CalculationConstants.SCHMTHD_PRI;
@@ -7506,9 +7507,9 @@ public class ScheduleCalculator {
 			finScheduleData = addSchdRcd(finScheduleData, eventFromDate, prvIndex, true);
 			openSchd = schedules.get(prvIndex + 1);
 
-			if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+			if (StringUtils.equals(receiptPurpose, FinServiceEvent.EARLYRPY)) {
 				recalSchdMethod = CalculationConstants.SCHMTHD_PRI;
-			} else if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			} else if (StringUtils.equals(receiptPurpose, FinServiceEvent.EARLYSETTLE)) {
 				recalSchdMethod = CalculationConstants.SCHMTHD_PRI_PFT;
 			}
 
@@ -7519,7 +7520,7 @@ public class ScheduleCalculator {
 			}
 		}
 
-		if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+		if (StringUtils.equals(receiptPurpose, FinServiceEvent.EARLYSETTLE)) {
 			openSchd.setPftOnSchDate(true);
 		} else {
 			openSchd.setPartialPaidAmt(openSchd.getPartialPaidAmt().add(amount));
@@ -8761,7 +8762,7 @@ public class ScheduleCalculator {
 
 			// 1. Principal Schedule : PrincipalSchd Calculation except for
 			// Early Settlement
-			if (!StringUtils.equals(finMain.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			if (!StringUtils.equals(finMain.getReceiptPurpose(), FinServiceEvent.EARLYSETTLE)) {
 
 				BigDecimal calPri = BigDecimal.ZERO;
 				if (dropLineLimit.compareTo(prvSchd.getClosingBalance()) <= 0) {

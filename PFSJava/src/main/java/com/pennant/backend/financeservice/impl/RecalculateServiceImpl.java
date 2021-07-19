@@ -22,9 +22,9 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.GenericService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class RecalculateServiceImpl extends GenericService<FinServiceInstruction> implements RecalculateService {
 	private static Logger logger = LogManager.getLogger(RecalculateServiceImpl.class);
@@ -64,7 +64,7 @@ public class RecalculateServiceImpl extends GenericService<FinServiceInstruction
 		}
 
 		//TODO: PV 19JAN17 schdMethod to be added
-		if (StringUtils.isNotBlank(module) && StringUtils.equals(module, FinanceConstants.FINSER_EVENT_ADDTERM)) {
+		if (StringUtils.isNotBlank(module) && StringUtils.equals(module, FinServiceEvent.ADDTERM)) {
 			finSchdData = ScheduleCalculator.addTerm(finScheduleData, finScheduleData.getFinanceMain().getAdjTerms());
 		} else {
 			finSchdData = ScheduleCalculator.reCalSchd(finScheduleData, "");

@@ -67,11 +67,11 @@ import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinCovenantMaintanceService;
 import com.pennant.backend.service.finance.covenant.CovenantsService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -177,7 +177,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 			auditDetails.addAll(covenantsService.doProcess(covenants, TableType.TEMP_TAB,
 					auditHeader.getAuditTranType(), false, 0));
 		}
-		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_COVENANT;
+		String rcdMaintainSts = FinServiceEvent.COVENANT;
 		financeMainDAO.updateMaintainceStatus(finMaintainInstruction.getFinReference(), rcdMaintainSts);
 
 		// Add Audit

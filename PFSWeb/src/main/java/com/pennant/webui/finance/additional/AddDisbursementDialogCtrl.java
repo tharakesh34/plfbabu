@@ -51,8 +51,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import javax.security.auth.login.AccountNotFoundException;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -64,7 +62,6 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
-import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
@@ -72,12 +69,10 @@ import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Row;
-import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
-import com.pennant.Interface.model.IAccounts;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
@@ -103,14 +98,13 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
-import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinFeeDetailListCtrl;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = 4583907397986780542L;
@@ -1065,7 +1059,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		finServiceInstruction.setFinReference(finMain.getFinReference());
-		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_ADDDISB);
+		finServiceInstruction.setFinEvent(FinServiceEvent.ADDDISB);
 		finServiceInstruction.setServiceReqNo(this.serviceReqNo.getValue());
 		finServiceInstruction.setRemarks(this.remarks.getValue());
 

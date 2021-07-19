@@ -80,6 +80,7 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -889,7 +890,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 		header.setReceiptID(receiptId);
-		header.setReceiptPurpose(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
+		header.setReceiptPurpose(FinServiceEvent.FEEPAYMENT);
 		header.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
 		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
 		header.setReceiptAmount(finServInst.getAmount());
@@ -986,7 +987,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		FinRepayHeader repayHeader = new FinRepayHeader();
 		repayHeader.setFinReference(header.getReference());
 		repayHeader.setValueDate(receiptDetail.getReceivedDate());
-		repayHeader.setFinEvent(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
+		repayHeader.setFinEvent(FinServiceEvent.FEEPAYMENT);
 		repayHeader.setRepayAmount(header.getReceiptAmount());
 
 		// Setting

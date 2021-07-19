@@ -47,14 +47,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-
-import javax.xml.bind.annotation.XmlElement;
 
 /**
  * Model class for the <b>VehicleDealer table</b>.<br>

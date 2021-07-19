@@ -80,12 +80,12 @@ import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.liability.service.LiabilityRequestService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * Service implementation for methods that depends on <b>LiabilityRequest</b>.<br>
@@ -419,7 +419,7 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 
 		// Liability Request deletion
 		getLiabilityRequestDAO().delete(liabilityRequest, "_Temp");
-		if (StringUtils.equals(liabilityRequest.getFinEvent(), FinanceConstants.FINSER_EVENT_INSCLAIM)) {
+		if (StringUtils.equals(liabilityRequest.getFinEvent(), FinServiceEvent.INSCLAIM)) {
 			Date curDate = SysParamUtil.getAppDate();
 			FinanceSuspHead finSuspHead = getFinanceSuspHeadDAO().getFinanceSuspHeadById(financeMain.getFinReference(),
 					"");
@@ -658,7 +658,7 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 				}
 			}
 		}
-		if (StringUtils.equals(liabilityRequest.getFinEvent(), FinanceConstants.FINSER_EVENT_INSCLAIM)) {
+		if (StringUtils.equals(liabilityRequest.getFinEvent(), FinServiceEvent.INSCLAIM)) {
 			FinanceProfitDetail financeProfitDetail = getProfitDetailsDAO()
 					.getFinProfitDetailsById(liabilityRequest.getFinReference());
 			if (financeProfitDetail != null) {

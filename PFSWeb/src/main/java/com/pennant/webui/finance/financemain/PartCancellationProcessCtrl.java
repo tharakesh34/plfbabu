@@ -24,7 +24,6 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.pff.core.schd.service.PartCancellationService;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -34,6 +33,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/PartCancellationProcess.zul file.
@@ -176,8 +176,8 @@ public class PartCancellationProcessCtrl extends GFCBaseListCtrl<FinServiceInstr
 		finServiceInstc.setFinReference(finref);
 		finServiceInstc.setRefund(refundAmt);
 		finServiceInstc.setPftChg(refundAmt);
-		finServiceInstc.setFinEvent(FinanceConstants.PART_CANCELLATION);
-		finServiceInstc.setModuleDefiner(FinanceConstants.PART_CANCELLATION);
+		finServiceInstc.setFinEvent(FinServiceEvent.PART_CANCELLATION);
+		finServiceInstc.setModuleDefiner(FinServiceEvent.PART_CANCELLATION);
 		finServiceInstc.setFromDate(refunddate);
 		finServiceInstc.setValueDate(refunddate);
 

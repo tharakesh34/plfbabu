@@ -59,6 +59,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.sampling.dao.SamplingDAO;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 public class ExtendedFieldDetailsService {
@@ -236,7 +237,7 @@ public class ExtendedFieldDetailsService {
 		String finCategory = extendedFieldRenderDAO.getCategory(reference);
 		if (finCategory != null) {
 			tableName = getTableName(ExtendedFieldConstants.MODULE_LOAN, finCategory,
-					FinanceConstants.FINSER_EVENT_ORG);
+					FinServiceEvent.ORG);
 		}
 
 		if (tableName != null) {
@@ -676,7 +677,7 @@ public class ExtendedFieldDetailsService {
 				}
 				String tableName = getTableName(module, extendedFieldRender.getTypeCode(), event);
 
-				if ((StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, event)) || (StringUtils
+				if ((StringUtils.equals(FinServiceEvent.ADDDISB, event)) || (StringUtils
 						.equals(extendedFieldRender.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)
 						&& StringUtils.equals(extendedFieldRender.getRecordType(), PennantConstants.RECORD_TYPE_UPD))) {
 					if (!extendedFieldRenderDAO.isExists(extendedFieldRender.getReference(),

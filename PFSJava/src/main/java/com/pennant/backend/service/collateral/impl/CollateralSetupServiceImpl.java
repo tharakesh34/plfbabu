@@ -139,6 +139,7 @@ import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.dao.customer.income.IncomeDetailDAO;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
 import com.pennanttech.pff.external.pan.dao.PrimaryAccountDAO;
@@ -574,7 +575,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 			// Document Details
 			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(collateralRef,
-					CollateralConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
+					CollateralConstants.MODULE_NAME, FinServiceEvent.ORG, "_View");
 			if (CollectionUtils.isNotEmpty(collateralSetup.getDocuments())) {
 				collateralSetup.getDocuments().addAll(documentList);
 			} else {
@@ -593,7 +594,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 						&& !StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_UPD)
 						&& !StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
 					collateralSetup = getProcessEditorDetails(collateralSetup, nextRoleCode,
-							FinanceConstants.FINSER_EVENT_ORG);
+							FinServiceEvent.ORG);
 				}
 			}
 		}
@@ -630,7 +631,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 			// Document Details
 			List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(collateralRef,
-					CollateralConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
+					CollateralConstants.MODULE_NAME, FinServiceEvent.ORG, "_View");
 			if (collateralSetup.getDocuments() != null && !collateralSetup.getDocuments().isEmpty()) {
 				collateralSetup.getDocuments().addAll(documentList);
 			} else {
@@ -662,7 +663,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 		// Fetch Total Process editor Details
 		List<FinanceReferenceDetail> finRefDetails = getFinanceReferenceDetailDAO().getFinanceProcessEditorDetails(
-				collateralType, StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent,
+				collateralType, StringUtils.isEmpty(procEdtEvent) ? FinServiceEvent.ORG : procEdtEvent,
 				"_CLTVIEW");
 
 		if (finRefDetails != null && !finRefDetails.isEmpty()) {
@@ -2917,7 +2918,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 			// Document Details
 			List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(reference,
-					CollateralConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
+					CollateralConstants.MODULE_NAME, FinServiceEvent.ORG, "_View");
 			if (collateralSetup.getDocuments() != null && !collateralSetup.getDocuments().isEmpty()) {
 				collateralSetup.getDocuments().addAll(documentList);
 			} else {
@@ -2929,7 +2930,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 					&& !StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_UPD)
 					&& !StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
 				collateralSetup = getProcessEditorDetails(collateralSetup, collateralSetup.getRoleCode(),
-						FinanceConstants.FINSER_EVENT_ORG);// FIXME
+						FinServiceEvent.ORG);// FIXME
 			}
 		}
 	}
@@ -3344,7 +3345,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 			// Document Details
 			List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(collateralRef,
-					CollateralConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
+					CollateralConstants.MODULE_NAME, FinServiceEvent.ORG, "_View");
 			if (collateralSetup.getDocuments() != null && !collateralSetup.getDocuments().isEmpty()) {
 				collateralSetup.getDocuments().addAll(documentList);
 			} else {
@@ -3356,7 +3357,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 					&& !StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_UPD)
 					&& !StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
 				collateralSetup = getProcessEditorDetails(collateralSetup, collateralSetup.getRoleCode(),
-						FinanceConstants.FINSER_EVENT_ORG);// FIXME
+						FinServiceEvent.ORG);// FIXME
 			}
 		}
 		logger.debug("Leaving");

@@ -21,10 +21,10 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.LinkedFinances;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.LinkedFinancesService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> implements LinkedFinancesService {
@@ -62,13 +62,13 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinMaintainInstruction finMainInst = finScheduleData.getFinMaintainInstruction();
 
-		if (!FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
+		if (!FinServiceEvent.ORG.equals(financeDetail.getModuleDefiner())) {
 			TableType tableType = TableType.MAIN_TAB;
 			if (finMainInst.isWorkflow()) {
 				tableType = TableType.TEMP_TAB;
 			}
 
-			finMainInst.setEvent(FinanceConstants.FINSER_EVENT_LINKDELINK);
+			finMainInst.setEvent(FinServiceEvent.LINKDELINK);
 			// Setting work FLow Details for child
 			for (LinkedFinances linkedFin : financeDetail.getLinkedFinancesList()) {
 				linkedFin.setRoleCode(finMainInst.getRoleCode());
@@ -144,7 +144,7 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 		List<AuditDetail> auditDetails = new ArrayList<>();
 		List<AuditDetail> oldAuditDetails = new ArrayList<>();
 
-		if (!FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
+		if (!FinServiceEvent.ORG.equals(financeDetail.getModuleDefiner())) {
 			FinMaintainInstruction finMainInst = new FinMaintainInstruction();
 			BeanUtils.copyProperties(finMaintainInstruction, finMainInst);
 
@@ -263,7 +263,7 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 		FinMaintainInstruction finMainInst = finScheduleData.getFinMaintainInstruction();
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		if (!FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
+		if (!FinServiceEvent.ORG.equals(financeDetail.getModuleDefiner())) {
 			finMaintainInstructionDAO.delete(finMainInst, TableType.TEMP_TAB);
 		}
 

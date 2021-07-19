@@ -17,11 +17,11 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.backend.model.finance.FinAutoApprovalDetails;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.logging.dao.FinAutoApprovalDetailDAO;
 
 /**
@@ -145,7 +145,7 @@ public class FinAutoApprovalDetailDAOImpl extends SequenceDao<FinAutoApprovalDet
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcOperations.queryForObject(sql, new Object[] { finReference, FinanceConstants.FINSER_EVENT_ADDDISB },
+			jdbcOperations.queryForObject(sql, new Object[] { finReference, FinServiceEvent.ADDDISB },
 					String.class);
 		} catch (EmptyResultDataAccessException e) {
 			return false;

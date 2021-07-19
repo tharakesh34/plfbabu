@@ -84,6 +84,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.BankAccountValidationService;
 
@@ -191,7 +192,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			payOrderIssueHeaderDAO.update(payOrderIssueHeader, tableType);
 		}
 
-		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_DISBINST;
+		String rcdMaintainSts = FinServiceEvent.DISBINST;
 		financeMainDAO.updateMaintainceStatus(payOrderIssueHeader.getFinReference(), rcdMaintainSts);
 
 		List<AuditDetail> details = processFinAdvancepayments(payOrderIssueHeader, tableType, null);
@@ -932,7 +933,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		details.setLastMntBy(finPayment.getLastMntBy());
 		details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		details.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		details.setFinEvent(FinanceConstants.FINSER_EVENT_BASICMAINTAIN);
+		details.setFinEvent(FinServiceEvent.BASICMAINTAIN);
 		details.setDocImage(finPayment.getDocImage());
 		details.setReferenceId(String.valueOf(finPayment.getPaymentId()));
 		details.setFinReference(finPayment.getFinReference());

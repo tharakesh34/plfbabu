@@ -35,7 +35,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.finance.FinanceDetailService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.pff.model.ratechangeupload.RateChangeUpload;
@@ -48,6 +47,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 	private RateChangeUploadDAO rateChangeUploadDAO;
@@ -208,7 +208,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 		finMain.setRecalType(fsi.getRecalType());
 		finMain.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		finMain.setRecalSchdMethod(finMain.getScheduleMethod());
-		finMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_RATECHG);
+		finMain.setRcdMaintainSts(FinServiceEvent.RATECHG);
 
 		if (CalculationConstants.RPYCHG_TILLMDT.equals(fsi.getRecalType())) {
 			finMain.setRecalToDate(finMain.getMaturityDate());
@@ -220,10 +220,10 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 			fsi.setPftDaysBasis(finMain.getProfitDaysBasis());
 		}
 
-		fsi.setModuleDefiner(FinanceConstants.FINSER_EVENT_RATECHG);
+		fsi.setModuleDefiner(FinServiceEvent.RATECHG);
 
 		// call schedule calculator for Rate change
-		fsd = rateChangeService.getRateChangeDetails(fsd, fsi, FinanceConstants.FINSER_EVENT_RATECHG);
+		fsd = rateChangeService.getRateChangeDetails(fsd, fsi, FinServiceEvent.RATECHG);
 		fd.setFinScheduleData(fsd);
 		int version = fd.getFinScheduleData().getFinanceMain().getVersion();
 		finMain.setVersion(version + 1);

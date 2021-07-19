@@ -46,9 +46,9 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.pennant.backend.util.PennantConstants;
-
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+
+import com.pennant.backend.util.PennantConstants;
 
 public class TimestampFormatterAdapter extends XmlAdapter<String, Timestamp> {
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat(PennantConstants.dateTimeFormat);

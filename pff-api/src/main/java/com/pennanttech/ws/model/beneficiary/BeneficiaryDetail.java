@@ -2,15 +2,15 @@ package com.pennanttech.ws.model.beneficiary;
 
 import java.util.List;
 
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.beneficiary.Beneficiary;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.beneficiary.Beneficiary;
 
 @XmlType(propOrder = { "beneficiaryList", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)

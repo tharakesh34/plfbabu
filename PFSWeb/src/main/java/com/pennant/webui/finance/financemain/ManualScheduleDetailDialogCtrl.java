@@ -96,7 +96,6 @@ import com.pennant.backend.model.finance.FinanceScheduleReportData;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.service.finance.FinanceDetailService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;

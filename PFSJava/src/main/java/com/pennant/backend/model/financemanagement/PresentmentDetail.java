@@ -31,16 +31,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.pennant.backend.model.finance.FinExcessAmount;
-import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 @XmlType(propOrder = { "id", "finReference", "custCif", "finType", "schDate", "presentmentAmt", "presentmentRef",
 		"batchReference", "presentmentId", "status", "mandateType", })

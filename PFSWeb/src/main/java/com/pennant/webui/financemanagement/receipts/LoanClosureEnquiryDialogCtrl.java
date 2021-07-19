@@ -168,6 +168,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
 public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
@@ -754,7 +755,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 		// FIXME: PV: Resetting receipt data and finschdeduledata was deleted
 		receiptData.setBuildProcess("I");
-		receiptData.getReceiptHeader().setReceiptPurpose(FinanceConstants.FINSER_EVENT_EARLYSETTLE);
+		receiptData.getReceiptHeader().setReceiptPurpose(FinServiceEvent.EARLYSETTLE);
 		receiptData.getReceiptHeader().getAllocations().clear();
 		FinScheduleData schData = receiptData.getFinanceDetail().getFinScheduleData();
 
@@ -1143,7 +1144,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			setRepayDetailData();
 		}
 
-		getFinanceDetail().setModuleDefiner(FinanceConstants.FINSER_EVENT_RECEIPT);
+		getFinanceDetail().setModuleDefiner(FinServiceEvent.RECEIPT);
 
 		if (visibleSchdTab) {
 			appendScheduleDetailTab(true, false);
@@ -1163,13 +1164,13 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				allocationListData = receiptData.getReceiptHeader().getAllocations();
 			}
 			receiptData = receiptService.getFinReceiptDataById(finReference, AccountEventConstants.ACCEVENT_EARLYSTL,
-					FinanceConstants.FINSER_EVENT_RECEIPT, "");
+					FinServiceEvent.RECEIPT, "");
 			FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
 			receiptHeader.setReference(finReference);
 			receiptHeader.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 			receiptHeader.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 			receiptHeader.setReceiptDate(SysParamUtil.getAppDate());
-			receiptHeader.setReceiptPurpose(FinanceConstants.FINSER_EVENT_EARLYSETTLE);
+			receiptHeader.setReceiptPurpose(FinServiceEvent.EARLYSETTLE);
 			receiptHeader.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
 			receiptHeader.setNewRecord(true);
 
@@ -1786,7 +1787,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			// Finance Accounting Details Execution
 			executeAccounting(true);
 		} else {
-			receiptData.getFinanceDetail().setModuleDefiner(FinanceConstants.FINSER_EVENT_RECEIPT);
+			receiptData.getFinanceDetail().setModuleDefiner(FinServiceEvent.RECEIPT);
 		}
 
 		logger.debug("Leaving");
@@ -1847,7 +1848,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 			FinReceiptDetail receiptDetail = receiptDetails.get(rcpt);
 			if (!payableLoopProcess && !StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(),
-					FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+					FinServiceEvent.EARLYSETTLE)) {
 				extDataMap = new HashMap<>();
 				totPayable = BigDecimal.ZERO;
 			}
@@ -1950,9 +1951,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			// OLD CODE
 			payableLoopProcess = false;
 
-			if (!StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent())
-					&& !StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent())
-					&& !StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, repayHeader.getFinEvent())) {
+			if (!StringUtils.equals(FinServiceEvent.SCHDRPY, repayHeader.getFinEvent())
+					&& !StringUtils.equals(FinServiceEvent.EARLYRPY, repayHeader.getFinEvent())
+					&& !StringUtils.equals(FinServiceEvent.EARLYSETTLE, repayHeader.getFinEvent())) {
 
 				// Accounting Postings Process Execution
 				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_REPAY);
@@ -1999,7 +2000,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				}
 
 				if (!feesExecuted && StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(),
-						FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+						FinServiceEvent.SCHDRPY)) {
 					feesExecuted = true;
 					prepareFeeRulesMap(dataMap, receiptDetail.getPaymentType());
 				}
@@ -2093,7 +2094,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			}
 
 			// Accrual & Future Paid Details
-			if (StringUtils.equals(repayHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			if (StringUtils.equals(repayHeader.getFinEvent(), FinServiceEvent.EARLYSETTLE)) {
 
 				int schSize = receiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size();
 				FinanceScheduleDetail lastSchd = receiptData.getFinanceDetail().getFinScheduleData()
@@ -2346,15 +2347,15 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 			// Accounting Event Code Setting
 			aeEvent.getAcSetIDList().clear();
-			if (StringUtils.equals(repayHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+			if (StringUtils.equals(repayHeader.getFinEvent(), FinServiceEvent.SCHDRPY)) {
 				eventCode = AccountEventConstants.ACCEVENT_REPAY;
-			} else if (StringUtils.equals(repayHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+			} else if (StringUtils.equals(repayHeader.getFinEvent(), FinServiceEvent.EARLYRPY)) {
 				eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
 				if (pftChgExecuted) {
 					amountCodes.setPftChg(BigDecimal.ZERO);
 				}
 				pftChgExecuted = true;
-			} else if (StringUtils.equals(repayHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			} else if (StringUtils.equals(repayHeader.getFinEvent(), FinServiceEvent.EARLYSETTLE)) {
 				eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
 				if (pftChgExecuted) {
 					amountCodes.setPftChg(BigDecimal.ZERO);
@@ -2399,9 +2400,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			dataMap.putAll(extDataMap);
 
 			if (!feesExecuted && (StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(),
-					FinanceConstants.FINSER_EVENT_SCHDRPY)
+					FinServiceEvent.SCHDRPY)
 					|| (!StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(),
-							FinanceConstants.FINSER_EVENT_SCHDRPY)
+							FinServiceEvent.SCHDRPY)
 							&& StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(),
 									repayHeader.getFinEvent())))) {
 				feesExecuted = true;

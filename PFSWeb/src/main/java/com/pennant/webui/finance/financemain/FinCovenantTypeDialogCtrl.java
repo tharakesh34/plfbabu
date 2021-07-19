@@ -84,7 +84,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.PagedListService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
@@ -96,6 +95,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/LMTMasters/FinCovenantTypeDetail/finCovenantTypesDetailDialog.zul
@@ -439,7 +439,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			this.space_receivableDate.setSclass("");
 			this.label_FinCovenantTypeDialog_RecvbleDate.setVisible(false);
 			this.receivableDate.setVisible(false);
-			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
+			if (moduleDefiner.equals(FinServiceEvent.COVENANTS)) {
 				this.mandRole.setVisible(false);
 				this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
 			}
@@ -870,7 +870,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 					int retValue = auditHeader.getProcessStatus();
 					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 
-						if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
+						if (moduleDefiner.equals(FinServiceEvent.COVENANTS)) {
 							getFinCovenantMaintanceDialogCtrl()
 									.doFillFinCovenantTypeDetails(this.finCovenantTypesDetails);
 						} else {
@@ -982,7 +982,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 
-					if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
+					if (moduleDefiner.equals(FinServiceEvent.COVENANTS)) {
 						getFinCovenantMaintanceDialogCtrl().doFillFinCovenantTypeDetails(this.finCovenantTypesDetails);
 					} else {
 						getFinCovenantTypeListCtrl().doFillFinCovenantTypeDetails(this.finCovenantTypesDetails);
@@ -1013,7 +1013,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		errParm[1] = PennantJavaUtil.getLabel("FinCovenantType_CovenantType") + ":" + valueParm[1];
 
 		List<FinCovenantType> covenantsList = new ArrayList<FinCovenantType>();
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
+		if (moduleDefiner.equals(FinServiceEvent.COVENANTS)) {
 			covenantsList = getFinCovenantMaintanceDialogCtrl().getFinCovenantTypesDetailList();
 		} else {
 			covenantsList = getFinCovenantTypeListCtrl().getFinCovenantTypeDetailList();
@@ -1119,7 +1119,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			this.mandRole.setVisible(false);
 			this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
 		} else {
-			if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
+			if (!moduleDefiner.equals(FinServiceEvent.COVENANTS)) {
 				this.mandRole.setVisible(true);
 				this.label_FinCovenantTypeDialog_MandRole.setVisible(true);
 				this.mandRole.setReadonly(isReadOnly("FinCovenantTypeDialog_mandRole"));
@@ -1149,7 +1149,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 				this.mandRole.setVisible(false);
 				this.label_FinCovenantTypeDialog_MandRole.setVisible(false);
 			} else {
-				if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
+				if (moduleDefiner.equals(FinServiceEvent.COVENANTS)) {
 					this.mandRole.setVisible(true);
 					this.label_FinCovenantTypeDialog_MandRole.setVisible(true);
 					this.alwOtc.setDisabled(true);

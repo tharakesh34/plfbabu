@@ -32,6 +32,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class ReceiptPaymentService extends ServiceHelper {
 	private static final long serialVersionUID = 1442146139821584760L;
@@ -151,7 +152,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 
-		header.setReceiptPurpose(FinanceConstants.FINSER_EVENT_SCHDRPY);
+		header.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		header.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
 		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
 		header.setReceiptAmount(presentmentAmt);// header.setReceiptAmount(advanceAmt.add(presentmentAmt));
@@ -254,7 +255,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		header.setReceiptDate(schDate);
 		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
-		header.setReceiptPurpose(FinanceConstants.FINSER_EVENT_SCHDRPY);
+		header.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		header.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
 		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
 		header.setReceiptAmount(detail.getAdvanceAmt());

@@ -105,6 +105,7 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -216,7 +217,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 					.processPaymentInstrDetails(paymentInstrAuditDetails, tableType, "");
 			auditDetails.addAll(paymentInstrAuditDetails);
 		}
-		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_PAYMENTINST;
+		String rcdMaintainSts = FinServiceEvent.PAYMENTINST;
 		financeMainDAO.updateMaintainceStatus(paymentHeader.getFinReference(), rcdMaintainSts);
 
 		auditHeader.setAuditDetails(auditDetails);

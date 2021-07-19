@@ -58,6 +58,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -150,7 +151,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 		if (financeMain.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-		financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_CANCELRPY);
+		financeMain.setRcdMaintainSts(FinServiceEvent.CANCELRPY);
 		if (tableType == TableType.MAIN_TAB) {
 			financeMain.setRcdMaintainSts("");
 		}
@@ -465,7 +466,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 					repayment.getLinkedTranId(), "");
 			String finEventCode = "";
 			if (repayHeader == null) {
-				finEventCode = FinanceConstants.FINSER_EVENT_EARLYRPY;
+				finEventCode = FinServiceEvent.EARLYRPY;
 			} else {
 				finEventCode = repayHeader.getFinEvent();
 			}
@@ -489,7 +490,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 
 				detail = new FinLogEntryDetail();
 				detail.setFinReference(finReference);
-				detail.setEventAction(FinanceConstants.FINSER_EVENT_EARLYRPY);
+				detail.setEventAction(FinServiceEvent.EARLYRPY);
 				detail.setSchdlRecal(false);
 				detail.setPostDate(curBDay);
 				detail.setReversalCompleted(false);

@@ -124,6 +124,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
 /**
@@ -444,7 +445,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 
 		aFinanceDetail.setAccountingEventCode(eventCode);
 		aFinanceDetail.setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
+				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 
 		// Resetting Service Task ID's from Original State
 		aFinanceMain.setRoleCode(this.curRoleCode);
@@ -651,7 +652,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		liabilityRequest.setCustCIF(aFinanceDetail.getCustomerDetails().getCustomer().getCustCIF());
 		liabilityRequest.setFinReference(this.finReference.getValue());
 
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_INSCLAIM)) {
+		if (StringUtils.equals(moduleDefiner, FinServiceEvent.INSCLAIM)) {
 			ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 			try {
@@ -1237,7 +1238,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		}
 
 		// if Insurance Claim then claim amount, paidStatus, claim reason fields should be visible
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_INSCLAIM)) {
+		if (StringUtils.equals(moduleDefiner, FinServiceEvent.INSCLAIM)) {
 			this.row_ClaimReason.setVisible(true);
 			this.row_InsPaidStatus.setVisible(true);
 			fillComboBox(this.insClaimReason, getLiabilityRequest().getInsClaimReason(),
@@ -1571,7 +1572,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		}
 
 		if (!aFinanceMain.isNew() || !StringUtils.isNotBlank(aFinanceMain.getFinReference())) {
-			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+			if (moduleDefiner.equals(FinServiceEvent.CHGGRCEND)) {
 
 				this.nextRepayCpzDate.setValue(aFinanceMain.getNextRepayCpzDate());
 				this.nextRepayRvwDate.setValue(aFinanceMain.getNextRepayRvwDate());

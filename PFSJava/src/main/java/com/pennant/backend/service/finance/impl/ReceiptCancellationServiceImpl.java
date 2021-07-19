@@ -155,6 +155,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -256,7 +257,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			// Document Details
 			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(
 					String.valueOf(receiptHeader.getReceiptID()), PennantConstants.FEE_DOC_MODULE_NAME,
-					FinanceConstants.FINSER_EVENT_RECEIPT, "_View");
+					FinServiceEvent.RECEIPT, "_View");
 			if (CollectionUtils.isNotEmpty(receiptHeader.getDocumentDetails())) {
 				receiptHeader.getDocumentDetails().addAll(documentList);
 			} else {
@@ -445,7 +446,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		// =====================================
 		String errorCode = "";
 		boolean isGoldLoanProcess = false;
-		if (FinanceConstants.FINSER_EVENT_FEEPAYMENT.equals(receiptHeader.getReceiptPurpose())) {
+		if (FinServiceEvent.FEEPAYMENT.equals(receiptHeader.getReceiptPurpose())) {
 			List<FinReceiptDetail> receiptdetails = receiptHeader.getReceiptDetails();
 			FinReceiptDetail receiptdetail = receiptdetails.get(0);
 			FinRepayHeader repayHeader = receiptdetail.getRepayHeader();
@@ -512,7 +513,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		// Receipt Header Updation
 		// =======================================
 
-		if (!FinanceConstants.FINSER_EVENT_FEEPAYMENT.equals(receiptHeader.getReceiptPurpose())) {
+		if (!FinServiceEvent.FEEPAYMENT.equals(receiptHeader.getReceiptPurpose())) {
 
 			tranType = PennantConstants.TRAN_UPD;
 			receiptHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -524,7 +525,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			receiptHeader.setWorkflowId(0);
 			receiptHeader.setRcdMaintainSts(null);
 			// FIXME:Checking the record is available in main table or not to fix PK issue
-			if (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(receiptHeader.getReceiptPurpose())
+			if (FinServiceEvent.SCHDRPY.equals(receiptHeader.getReceiptPurpose())
 					&& finReceiptHeader != null) {
 				finReceiptHeaderDAO.update(receiptHeader, TableType.MAIN_TAB);
 			} else {
@@ -659,13 +660,13 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		String eventCode = "";
 
-		if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+		if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinServiceEvent.SCHDRPY)) {
 			eventCode = AccountEventConstants.ACCEVENT_REPAY;
 
-		} else if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+		} else if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinServiceEvent.EARLYRPY)) {
 			eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
 
-		} else if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+		} else if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinServiceEvent.EARLYSETTLE)) {
 			eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
 
 		}
@@ -806,7 +807,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		// Fee Payment Cancellation or Bounce cancellation stopped When Loan is
 		// not in Workflow Process
-		if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_FEEPAYMENT)) {
+		if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinServiceEvent.FEEPAYMENT)) {
 			String finReference = receiptHeader.getReference();
 
 			if (RepayConstants.RECEIPTTO_FINANCE.equals(receiptHeader.getRecAgainst())) {
@@ -2904,7 +2905,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					if (StringUtils.isEmpty(documentDetails.getReferenceId())) {
 						documentDetails.setReferenceId(String.valueOf(receiptHeader.getId()));
 					}
-					documentDetails.setFinEvent(FinanceConstants.FINSER_EVENT_RECEIPT);
+					documentDetails.setFinEvent(FinServiceEvent.RECEIPT);
 					if (documentDetails.getDocImage() != null && documentDetails.getDocRefId() <= 0) {
 						saveDocument(DMSModule.FINANCE, DMSModule.RECEIPT, documentDetails);
 						documentDetailsDAO.save(documentDetails, type);
@@ -3183,7 +3184,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		// Receipt Header Updation
 		// =======================================
 
-		if (!FinanceConstants.FINSER_EVENT_FEEPAYMENT.equals(receiptHeader.getReceiptPurpose())) {
+		if (!FinServiceEvent.FEEPAYMENT.equals(receiptHeader.getReceiptPurpose())) {
 			String recType = receiptHeader.getRecordType();
 			tranType = PennantConstants.TRAN_UPD;
 			receiptHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);

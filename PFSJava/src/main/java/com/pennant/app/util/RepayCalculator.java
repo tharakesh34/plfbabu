@@ -74,6 +74,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
 public class RepayCalculator implements Serializable {
@@ -845,7 +846,7 @@ public class RepayCalculator implements Serializable {
 			// Addition for Penalty Amount not added before calculation.
 			// First add Penalty amount to Total Repayment Amount / Balance Repayment amount and 
 			// adjust same to each schedule in reverse entries
-			if (processMethod.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			if (processMethod.equals(FinServiceEvent.EARLYSETTLE)) {
 				balanceRepayAmount = balanceRepayAmount.add(rsd.getPenaltyPayNow());
 			}
 

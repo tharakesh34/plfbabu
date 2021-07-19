@@ -90,7 +90,6 @@ import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.finance.FinCovenantMaintanceService;
 import com.pennant.backend.service.finance.FinCovenantTypeService;
 import com.pennant.backend.util.CollateralConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -110,6 +109,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
 public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
@@ -374,7 +374,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	public void doShowDialog() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
-		if (FinanceConstants.FINSER_EVENT_COVENANTS.equals(moduleCode)) {
+		if (FinServiceEvent.COVENANTS.equals(moduleCode)) {
 			north.setVisible(true);
 			south.setVisible(true);
 		}

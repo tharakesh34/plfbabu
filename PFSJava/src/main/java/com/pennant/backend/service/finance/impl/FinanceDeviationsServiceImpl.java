@@ -35,7 +35,6 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.service.finance.EligibilityDetailService;
 import com.pennant.backend.service.finance.FinanceDeviationsService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -44,6 +43,7 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
@@ -115,17 +115,17 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 		//Finance Eligibility Rule Details List
 		//=======================================
 		String screenEvent = "";
-		if (StringUtils.trimToEmpty(finPreApprovedRef).equals(FinanceConstants.FINSER_EVENT_PREAPPROVAL)) {
-			screenEvent = FinanceConstants.FINSER_EVENT_PREAPPROVAL;
+		if (StringUtils.trimToEmpty(finPreApprovedRef).equals(FinServiceEvent.PREAPPROVAL)) {
+			screenEvent = FinServiceEvent.PREAPPROVAL;
 		} else {
-			screenEvent = FinanceConstants.FINSER_EVENT_ORG;
+			screenEvent = FinServiceEvent.ORG;
 		}
 
 		finDetail.setElgRuleList(eligibilityDetailService.setFinanceEligibilityDetails(finRef, finCcy, finAmount,
 				newRecord, finType, "", screenEvent));
 
 		//Check List Details 
-		checkListDetailService.setFinanceCheckListDetails(finDetail, finType, FinanceConstants.FINSER_EVENT_ORG, "");
+		checkListDetailService.setFinanceCheckListDetails(finDetail, finType, FinServiceEvent.ORG, "");
 
 		//Set Scoring details
 		List<FinanceScoreHeader> list = financeScoreHeaderDAO.getFinScoreHeaderList(finRef, "_View");

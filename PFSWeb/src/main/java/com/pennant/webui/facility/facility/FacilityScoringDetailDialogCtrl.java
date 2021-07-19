@@ -72,7 +72,6 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.bmtmasters.RatingCode;
 import com.pennant.backend.model.facility.Facility;
 import com.pennant.backend.model.finance.FinanceScoreDetail;
 import com.pennant.backend.model.finance.FinanceScoreHeader;

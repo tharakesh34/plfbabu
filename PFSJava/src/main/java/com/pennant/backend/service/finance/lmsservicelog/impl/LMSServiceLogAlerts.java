@@ -16,12 +16,12 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.LMSServiceLog;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.notification.Notification;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class LMSServiceLogAlerts {
@@ -80,8 +80,8 @@ public class LMSServiceLogAlerts {
 		lmsServiceNotifyCust.setTemplateCode(NotificationConstants.ADD_RATE_CHANGE_NOTIFICATION);
 		lmsServiceNotifyCust.setKeyReference(financeDetail.getFinReference());
 		lmsServiceNotifyCust.setModule("LOAN");
-		lmsServiceNotifyCust.setSubModule(FinanceConstants.FINSER_EVENT_RATECHG);
-		financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_RATECHG);
+		lmsServiceNotifyCust.setSubModule(FinServiceEvent.RATECHG);
+		financeDetail.setModuleDefiner(FinServiceEvent.RATECHG);
 		lmsServiceNotifyCust.setEmails(emails);
 
 		long lmsServiceNotifyId = sendNotification(financeDetail, lmsServiceNotifyCust, customerDetails);

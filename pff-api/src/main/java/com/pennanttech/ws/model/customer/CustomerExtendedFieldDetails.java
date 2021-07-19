@@ -4,17 +4,17 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.extendedfield.ExtendedField;
-import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
-import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.extendedfield.ExtendedField;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(propOrder = { "cif", "extendedDetails", "returnStatus" })

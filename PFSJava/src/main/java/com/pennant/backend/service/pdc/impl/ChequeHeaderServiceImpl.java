@@ -107,6 +107,7 @@ import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.dms.service.DMSService;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.dao.customer.income.IncomeDetailDAO;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
@@ -231,7 +232,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 			details = processingChequeDetailList(details, tableType, chequeHeader.getHeaderID());
 			auditDetails.addAll(details);
 		}
-		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_CHEQUEDETAILS;
+		String rcdMaintainSts = FinServiceEvent.CHEQUEDETAILS;
 		financeMainDAO.updateMaintainceStatus(chequeHeader.getFinReference(), rcdMaintainSts);
 
 		auditHeader.setAuditDetails(auditDetails);

@@ -77,12 +77,12 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.service.finance.FinCovenantTypeService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> implements FinCovenantTypeService {
 	private static final Logger logger = LogManager.getLogger(FinCovenantTypeServiceImpl.class);
@@ -491,9 +491,9 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 		boolean referenceExitsinLQ = financeMainDAO.isFinReferenceExists(finReference, "_Temp", false);
 		String finEvent = "";
 		if (referenceExitsinLQ) {
-			finEvent = FinanceConstants.FINSER_EVENT_ORG;
+			finEvent = FinServiceEvent.ORG;
 		} else {
-			finEvent = FinanceConstants.FINSER_EVENT_COVENANTS;
+			finEvent = FinServiceEvent.COVENANTS;
 		}
 		FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(
 				financeMain.getFinType(), finEvent, PennantConstants.WORFLOW_MODULE_FINANCE);

@@ -101,6 +101,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SolutionFactory/FinanceReferenceDetail
@@ -460,7 +461,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		logger.debug("Entering");
 
 		List<FinServicingEvent> events;
-		if (StringUtils.equals(eventAction, FinanceConstants.FINSER_EVENT_ORG)) {
+		if (StringUtils.equals(eventAction, FinServiceEvent.ORG)) {
 			events = PennantStaticListUtil.getFinServiceEvents(false);
 		} else {
 			events = PennantStaticListUtil.getFinServiceEvents(true);
@@ -780,8 +781,8 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 	 */
 	private void doCheckEvent() {
 		logger.debug(" Entering ");
-		if ((!StringUtils.equals(eventAction, FinanceConstants.FINSER_EVENT_ORG)
-				&& !StringUtils.equals(eventAction, FinanceConstants.FINSER_EVENT_PREAPPROVAL))
+		if ((!StringUtils.equals(eventAction, FinServiceEvent.ORG)
+				&& !StringUtils.equals(eventAction, FinServiceEvent.PREAPPROVAL))
 				|| StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_COLLATERAL)
 				|| StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_VAS)
 				|| StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_COMMITMENT)) {
@@ -801,11 +802,11 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 			}
 		}
 
-		if (StringUtils.equals(eventAction, FinanceConstants.FINSER_EVENT_PREAPPROVAL)) {
+		if (StringUtils.equals(eventAction, FinServiceEvent.PREAPPROVAL)) {
 			this.tabDeviation.setVisible(false);
 			this.tabFinanceTabs.setVisible(false);
 		}
-		if (StringUtils.equals(eventAction, FinanceConstants.FINSER_EVENT_ADDDISB)) {
+		if (StringUtils.equals(eventAction, FinServiceEvent.ADDDISB)) {
 			this.tabCustLimitCheck.setVisible(true);
 		}
 		if (isOverDraft) {
@@ -1121,7 +1122,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 			aFinanceReferenceDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			aFinanceReferenceDetail.setRecordType(PennantConstants.RCD_ADD);
 
-			if (FinanceConstants.FINSER_EVENT_ADDDISB.equals(aFinanceReferenceDetail.getFinEvent())) {
+			if (FinServiceEvent.ADDDISB.equals(aFinanceReferenceDetail.getFinEvent())) {
 				aFinanceReferenceDetail.setRecordType("");
 			}
 
@@ -1131,7 +1132,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 
 		}
 
-		if (StringUtils.equals(eventAction, FinanceConstants.FINSER_EVENT_ORG)) {
+		if (StringUtils.equals(eventAction, FinServiceEvent.ORG)) {
 			deviationConfigCtrl.processDeviationDelegation(this.finType.getValue(),
 					getUserWorkspace().getLoggedInUser());
 		}

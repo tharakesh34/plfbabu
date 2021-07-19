@@ -60,11 +60,11 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.util.DisbursementConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
 /**
@@ -222,7 +222,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities("FinAdvancePaymentsList", roleCode);
-		if (!StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CANCELDISB)) {
+		if (!StringUtils.equals(moduleDefiner, FinServiceEvent.CANCELDISB)) {
 			this.btnNew_NewFinAdvancePayments
 					.setVisible(getUserWorkspace().isAllowed("FinAdvancePaymentsList_NewFinAdvancePaymentsDetail"));
 		}
@@ -333,7 +333,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		String moduleDef = finDetail.getModuleDefiner();
 
 		if (fm.isQuickDisb() && CollectionUtils.isNotEmpty(advPayments)
-				&& (StringUtils.isBlank(moduleDef) || FinanceConstants.FINSER_EVENT_ORG.equals(moduleDef))) {
+				&& (StringUtils.isBlank(moduleDef) || FinServiceEvent.ORG.equals(moduleDef))) {
 			boolean realized = false;
 			boolean disbDownload = false;
 			for (FinAdvancePayments advancePayments : advPayments) {
@@ -413,7 +413,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 					boolean validate = getUserWorkspace()
 							.isAllowed("FinAdvancePaymentsList_NewFinAdvancePaymentsDetail") || isFinalStage;
 
-					if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CANCELDISB)
+					if (StringUtils.equals(moduleDefiner, FinServiceEvent.CANCELDISB)
 							|| userAction.contains("Resubmit")) {
 						validate = false;
 					}
@@ -422,7 +422,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 							.validateOrgFinAdvancePayment(getFinAdvancePaymentsList(), validate);
 					// VAS FrontEndFunctionality Validations
 					if (ImplementationConstants.VAS_INST_ON_DISB
-							&& !StringUtils.equalsIgnoreCase(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDDISB)) {
+							&& !StringUtils.equalsIgnoreCase(moduleDefiner, FinServiceEvent.ADDDISB)) {
 						List<ErrorDetail> vasErrList = null;
 						disbursementInstCtrl.setVasRecordingList(vasRecordingList);
 						vasErrList = disbursementInstCtrl.validateVasInstructions(getFinAdvancePaymentsList(),

@@ -71,6 +71,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.upload.MultiReceiptThreadProcess;
 
 public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
@@ -725,20 +726,20 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (isWorkFlowEnabled()) {
 			String eventCode = "";
 
-			if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+			if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinServiceEvent.SCHDRPY)) {
 				eventCode = AccountEventConstants.ACCEVENT_REPAY;
 
-			} else if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+			} else if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinServiceEvent.EARLYRPY)) {
 				eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
 
 			} else if (StringUtils.equals(receiptHeader.getReceiptPurpose(),
-					FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+					FinServiceEvent.EARLYSETTLE)) {
 				eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
 
 			}
 
 			receiptData = receiptService.getFinReceiptDataByReceiptId(receiptHeader.getReceiptID(), eventCode,
-					FinanceConstants.FINSER_EVENT_RECEIPT, userRole);
+					FinServiceEvent.RECEIPT, userRole);
 			if (!enqiryModule && receiptData.isCalReq()) {
 				ErrorDetail errorDetail = receiptService.doInstrumentValidation(receiptData);
 				if (errorDetail != null) {

@@ -92,6 +92,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -139,15 +140,15 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 					getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, "", false));
 
 			scheduleData.setFeeRules(getFinFeeChargesDAO().getFeeChargesByFinRef(finReference,
-					FinanceConstants.FINSER_EVENT_WRITEOFF, false, ""));
+					FinServiceEvent.WRITEOFF, false, ""));
 
 			if (StringUtils.isNotBlank(scheduleData.getFinanceMain().getPromotionCode())) {
 				financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(
-						scheduleData.getFinanceMain().getPromotionCode(), FinanceConstants.FINSER_EVENT_WRITEOFF,
+						scheduleData.getFinanceMain().getPromotionCode(), FinServiceEvent.WRITEOFF,
 						"_AView", false, FinanceConstants.MODULEID_PROMOTION));
 			} else {
 				financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(
-						scheduleData.getFinanceMain().getFinType(), FinanceConstants.FINSER_EVENT_WRITEOFF, "_AView",
+						scheduleData.getFinanceMain().getFinType(), FinServiceEvent.WRITEOFF, "_AView",
 						false, FinanceConstants.MODULEID_FINTYPE));
 			}
 
@@ -187,7 +188,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			// Finance Stage Accounting Posting Details
 			// =======================================
 			financeDetail.setStageTransactionEntries(getTransactionEntryDAO().getListTransactionEntryByRefType(finType,
-					StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent,
+					StringUtils.isEmpty(procEdtEvent) ? FinServiceEvent.ORG : procEdtEvent,
 					FinanceConstants.PROCEDT_STAGEACC, userRole, "_AEView", true));
 
 			// Docuument Details
@@ -295,7 +296,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		if (financeMain.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-		financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_WRITEOFF);
+		financeMain.setRcdMaintainSts(FinServiceEvent.WRITEOFF);
 		if (tableType == TableType.MAIN_TAB) {
 			financeMain.setRcdMaintainSts("");
 		}
@@ -848,7 +849,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		amountCodes.setPftChg(totalPftSchdNew.subtract(totalPftSchdOld));
 		amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
 
-		aeEvent.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
+		aeEvent.setModuleDefiner(FinServiceEvent.ORG);
 		amountCodes.setDisburse(finMain.getFinCurrAssetValue());
 
 		if (finMain.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(finMain.getRecordType())) {

@@ -24,11 +24,11 @@ import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinOptionMaintanceService;
 import com.pennant.backend.service.finance.putcall.FinOptionService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainInstruction>
@@ -83,7 +83,7 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 					auditHeader.getAuditTranType(), false));
 		}
 
-		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_PUTCALL;
+		String rcdMaintainSts = FinServiceEvent.PUTCALL;
 		financeMainDAO.updateMaintainceStatus(finMaintainInstruction.getFinReference(), rcdMaintainSts);
 
 		// Add Audit

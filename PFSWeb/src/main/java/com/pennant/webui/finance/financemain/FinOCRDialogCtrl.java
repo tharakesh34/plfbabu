@@ -63,7 +63,6 @@ import com.pennant.backend.service.finance.FinOCRHeaderService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.systemmasters.OCRHeaderService;
 import com.pennant.backend.util.DisbursementConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -82,6 +81,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
@@ -257,7 +257,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 					ocrHeader = ocrHeaderService.getOCRHeaderByOCRId(finOCRHeader.getOcrID(),
 							TableType.AVIEW.getSuffix());
 					if (getFinanceDetail() != null && StringUtils.equals(getFinanceDetail().getModuleDefiner(),
-							FinanceConstants.FINSER_EVENT_ORG)) {
+							FinServiceEvent.ORG)) {
 						setFinOCRHeader(copyOCRHeaderProperties(ocrHeader, finOCRHeader));
 					}
 					if (getFinanceDetail().getFinOCRHeader() != null

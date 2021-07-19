@@ -70,6 +70,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * Item renderer for list items in the list box.
@@ -89,7 +90,7 @@ public class ApprovalScreenEventHistory {
 				FinServiceInstruction finServiceInstruction = finServiceInstructionsList.get(i);
 				String finEvent = finServiceInstruction.getFinEvent();
 
-				if (FinanceConstants.FINSER_EVENT_RATECHG.equals(finEvent)) {
+				if (FinServiceEvent.RATECHG.equals(finEvent)) {
 					Listitem item = new Listitem();
 					Listcell lc;
 					lc = new Listcell(DateUtil.formatToLongDate(finServiceInstruction.getFromDate()));
@@ -126,7 +127,7 @@ public class ApprovalScreenEventHistory {
 					listBox.appendChild(item);
 				}
 
-				if (FinanceConstants.FINSER_EVENT_ADDDISB.equals(finEvent)) {
+				if (FinServiceEvent.ADDDISB.equals(finEvent)) {
 					Listitem item = new Listitem();
 					Listcell lc;
 					lc = new Listcell(DateUtil.formatToLongDate(finServiceInstruction.getFromDate()));
@@ -147,7 +148,7 @@ public class ApprovalScreenEventHistory {
 					listBox.appendChild(item);
 				}
 
-				if (FinanceConstants.FINSER_EVENT_CANCELDISB.equals(finEvent)) {
+				if (FinServiceEvent.CANCELDISB.equals(finEvent)) {
 					Listcell lc;
 					Listitem item = new Listitem();
 					lc = new Listcell(
@@ -166,7 +167,7 @@ public class ApprovalScreenEventHistory {
 					listBox.appendChild(item);
 				}
 
-				if (FinanceConstants.FINSER_EVENT_ADDTERM.equals(finEvent)) {
+				if (FinServiceEvent.ADDTERM.equals(finEvent)) {
 					Listitem item = new Listitem();
 					Listcell lc;
 					// PSD Ticket 130142 (LMS: Add term history is not correctly reflected on approval screen)
@@ -195,7 +196,7 @@ public class ApprovalScreenEventHistory {
 					listBox.appendChild(item);
 				}
 
-				if (FinanceConstants.FINSER_EVENT_CHGFRQ.equals(finEvent)) {
+				if (FinServiceEvent.CHGFRQ.equals(finEvent)) {
 					Listitem item = new Listitem();
 					Listcell lc;
 					FrequencyDetails freqDetail = FrequencyUtil
@@ -210,7 +211,7 @@ public class ApprovalScreenEventHistory {
 					listBox.appendChild(item);
 				}
 
-				if (FinanceConstants.FINSER_EVENT_HOLDEMI.equals(finEvent)) {
+				if (FinServiceEvent.HOLDEMI.equals(finEvent)) {
 					Listitem item = new Listitem();
 					Listcell lc;
 					lc = new Listcell(DateUtil.formatToLongDate(finServiceInstruction.getFromDate()));
@@ -220,7 +221,7 @@ public class ApprovalScreenEventHistory {
 					listBox.appendChild(item);
 				}
 
-				if (FinanceConstants.FINSER_EVENT_POSTPONEMENT.equals(finEvent)) {
+				if (FinServiceEvent.POSTPONEMENT.equals(finEvent)) {
 					Listitem item = new Listitem();
 					Listcell lc;
 					lc = new Listcell(DateUtil.formatToLongDate(finServiceInstruction.getFromDate()));
@@ -230,7 +231,7 @@ public class ApprovalScreenEventHistory {
 					listBox.appendChild(item);
 				}
 
-				if (FinanceConstants.FINSER_EVENT_REAGING.equals(finEvent)) {
+				if (FinServiceEvent.REAGING.equals(finEvent)) {
 					Listitem item = new Listitem();
 					Listcell lc;
 					lc = new Listcell(DateUtil.formatToLongDate(finServiceInstruction.getFromDate()));
@@ -240,7 +241,7 @@ public class ApprovalScreenEventHistory {
 					listBox.appendChild(item);
 				}
 
-				if (FinanceConstants.FINSER_EVENT_RMVTERM.equals(finEvent)) {
+				if (FinServiceEvent.RMVTERM.equals(finEvent)) {
 					Listitem item = new Listitem();
 					Listcell lc;
 					lc = new Listcell(DateUtil.formatToLongDate(finServiceInstruction.getFromDate()));
@@ -253,7 +254,7 @@ public class ApprovalScreenEventHistory {
 					listBox.appendChild(item);
 				}
 
-				if (FinanceConstants.FINSER_EVENT_UNPLANEMIH.equals(finEvent)) {
+				if (FinServiceEvent.UNPLANEMIH.equals(finEvent)) {
 					Listitem item = new Listitem();
 					Listcell lc;
 					lc = new Listcell(DateUtil.formatToLongDate(finServiceInstruction.getFromDate()));
@@ -277,7 +278,7 @@ public class ApprovalScreenEventHistory {
 					listBox.appendChild(item);
 				}
 
-				if (FinanceConstants.FINSER_EVENT_RESCHD.equals(finEvent)) {
+				if (FinServiceEvent.RESCHD.equals(finEvent)) {
 					Listitem item = new Listitem();
 					Listcell lc;
 
@@ -342,7 +343,7 @@ public class ApprovalScreenEventHistory {
 					listBox.appendChild(item);
 				}
 
-				if (FinanceConstants.FINSER_EVENT_CHGRPY.equals(finEvent)) {
+				if (FinServiceEvent.CHGRPY.equals(finEvent)) {
 					Listitem item = new Listitem();
 					Listcell lc;
 					lc = new Listcell(DateUtil.formatToLongDate(finServiceInstruction.getFromDate()));
@@ -361,7 +362,7 @@ public class ApprovalScreenEventHistory {
 					listBox.appendChild(item);
 				}
 
-				if (FinanceConstants.FINSER_EVENT_CHANGETDS.equals(finEvent)) {
+				if (FinServiceEvent.CHANGETDS.equals(finEvent)) {
 					Listitem item = new Listitem();
 					Listcell lc;
 					lc = new Listcell(DateUtil.formatToLongDate(finServiceInstruction.getGrcPeriodEndDate()));
@@ -371,7 +372,7 @@ public class ApprovalScreenEventHistory {
 					listBox.appendChild(item);
 				}
 
-				if (FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD.equals(finEvent)) {
+				if (FinServiceEvent.CHGSCHDMETHOD.equals(finEvent)) {
 					Listitem item = new Listitem();
 					Listcell lc;
 					lc = new Listcell(
@@ -386,7 +387,7 @@ public class ApprovalScreenEventHistory {
 					listBox.appendChild(item);
 				}
 
-				if (FinanceConstants.FINSER_EVENT_RECALCULATE.equals(finEvent)) {
+				if (FinServiceEvent.RECALCULATE.equals(finEvent)) {
 					Listitem item = new Listitem();
 					Listcell lc;
 					lc = new Listcell(DateUtil.formatToLongDate(finServiceInstruction.getFromDate()));
@@ -407,7 +408,7 @@ public class ApprovalScreenEventHistory {
 					listBox.appendChild(item);
 				}
 
-				if (FinanceConstants.FINSER_EVENT_RESTRUCTURE.equals(finEvent)
+				if (FinServiceEvent.RESTRUCTURE.equals(finEvent)
 						&& !StringUtils.isEmpty(finServiceInstruction.getRecalType())) {
 					Listitem item = new Listitem();
 					Listcell lc;
@@ -451,7 +452,7 @@ public class ApprovalScreenEventHistory {
 
 		List<FinanceMain> financeMains = pagedListService.getBySearchObject(searchObject);
 
-		if (FinanceConstants.FINSER_EVENT_CHGGRCEND.equals(moduleDefiner)) {
+		if (FinServiceEvent.CHGGRCEND.equals(moduleDefiner)) {
 			Listitem item = new Listitem();
 			Listcell lc;
 			lc = new Listcell(DateUtil.formatToLongDate(financeMains.get(0).getGrcPeriodEndDate()));
@@ -459,7 +460,7 @@ public class ApprovalScreenEventHistory {
 			lc = new Listcell(DateUtil.formatToLongDate(finScheduleData.getFinanceMain().getGrcPeriodEndDate()));
 			lc.setParent(item);
 			listBox.appendChild(item);
-		} else if (FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN.equals(moduleDefiner)) {
+		} else if (FinServiceEvent.RPYBASICMAINTAIN.equals(moduleDefiner)) {
 			pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 
 			JdbcSearchObject<Mandate> mandateSearch = new JdbcSearchObject<Mandate>(Mandate.class);
@@ -498,7 +499,7 @@ public class ApprovalScreenEventHistory {
 			listBox.appendChild(item);
 		}
 
-		if (FinanceConstants.FINSER_EVENT_PLANNEDEMI.equals(moduleDefiner)) {
+		if (FinServiceEvent.PLANNEDEMI.equals(moduleDefiner)) {
 
 			pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 

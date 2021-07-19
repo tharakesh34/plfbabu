@@ -45,13 +45,13 @@ import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinanceDetailService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.external.service.PartCancellationSchd;
 
 public class PartCancellationServiceImpl extends GenericService<FinServiceInstruction>
@@ -80,7 +80,7 @@ public class PartCancellationServiceImpl extends GenericService<FinServiceInstru
 		String finReference = finServiceInst.getFinReference();
 		if (!finServiceInst.isWif()) {
 			financeDetail = financeDetailService.getFinanceDetailById(finReference, false, "", false,
-					FinanceConstants.FINSER_EVENT_ORG, "");
+					FinServiceEvent.ORG, "");
 		} else {
 			financeDetail = financeDetailService.getWIFFinance(finReference, false, null);
 		}
@@ -133,8 +133,8 @@ public class PartCancellationServiceImpl extends GenericService<FinServiceInstru
 			financeMain.setRecalType(finServiceInst.getRecalType());
 			financeMain.setFinSourceID("API");
 			financeMain.setMiscAmount(finServiceInst.getRefund());
-			financeMain.setRcdMaintainSts(FinanceConstants.PART_CANCELLATION);
-			financeDetail.setModuleDefiner(FinanceConstants.PART_CANCELLATION);
+			financeMain.setRcdMaintainSts(FinServiceEvent.PART_CANCELLATION);
+			financeDetail.setModuleDefiner(FinServiceEvent.PART_CANCELLATION);
 
 			// Call Schedule calculator for part cancellation
 			if (finScheduleData.getErrorDetails() == null || finScheduleData.getErrorDetails().isEmpty()) {
@@ -362,7 +362,7 @@ public class PartCancellationServiceImpl extends GenericService<FinServiceInstru
 		 * Checking whether the part cancellation is on same date should be not be allowed more than once.
 		 */
 		Date eventDate = finServiceInstruction.getFromDate();
-		String eventCode = FinanceConstants.PART_CANCELLATION;
+		String eventCode = FinServiceEvent.PART_CANCELLATION;
 		List<FinServiceInstruction> serviceInstructions;
 		serviceInstructions = finServiceInstructionDAO.getFinServiceInstAddDisbDetail(finReference, eventDate,
 				eventCode);

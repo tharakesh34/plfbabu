@@ -64,7 +64,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.service.customermasters.CustomerService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.financemanagement.suspense.model.CustSuspenseListModelItemRenderer;
@@ -73,6 +72,7 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/FinanceManagement/Suspense/SuspenseList.zul file.
@@ -284,7 +284,7 @@ public class CustSuspenseListCtrl extends GFCBaseListCtrl<Customer> {
 		arg.put("custSuspense", aCustomer);
 		arg.put("custSuspenseListCtrl", this);
 		arg.put("menuItemRightName", menuItemRightName);
-		arg.put("eventCode", FinanceConstants.FINSER_EVENT_FINFLAGS);
+		arg.put("eventCode", FinServiceEvent.FINFLAGS);
 
 		try {
 			if ("CustSuspense".equals(this.module)) {

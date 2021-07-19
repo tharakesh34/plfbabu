@@ -74,10 +74,10 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.XcessPayables;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class AutoKnockOffProcessService extends ServiceHelper {
 	private static final long serialVersionUID = 1L;
@@ -110,7 +110,7 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 		header.setKnockOffType(RepayConstants.KNOCKOFF_TYPE_AUTO);
 		//header.setPayAgainstId(knockOffData.getPayableId());
-		header.setReceiptPurpose(FinanceConstants.FINSER_EVENT_SCHDRPY);
+		header.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		header.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
 		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
 		header.setEffectSchdMethod(PennantConstants.List_Select);

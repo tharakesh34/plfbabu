@@ -70,13 +70,12 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/ChangeFrequencyDialog.zul file.
@@ -533,7 +532,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		finServiceInstruction.setPftIntact(this.pftIntact.isChecked());
 		finServiceInstruction.setFinReference(financeMain.getFinReference());
-		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_CHGFRQ);
+		finServiceInstruction.setFinEvent(FinServiceEvent.CHGFRQ);
 		finServiceInstruction.setFromDate(fromDate);
 		finServiceInstruction.setRepayFrq(frq);
 		finServiceInstruction.setGrcPeriodEndDate(this.grcPeriodEndDate.getValue());

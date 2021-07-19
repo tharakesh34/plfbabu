@@ -21,11 +21,11 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.finance.FinCovenantMaintanceService;
 import com.pennant.backend.service.finance.FinCovenantTypeService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class FinCovenantController {
@@ -78,7 +78,7 @@ public class FinCovenantController {
 			}
 			finMaintainInstruction.setFinReference(financeDetail.getFinReference());
 			finMaintainInstruction.setNewRecord(true);
-			finMaintainInstruction.setEvent(FinanceConstants.FINSER_EVENT_COVENANTS);
+			finMaintainInstruction.setEvent(FinServiceEvent.COVENANTS);
 			finMaintainInstruction.setVersion(1);
 			finMaintainInstruction.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			finMaintainInstruction.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -152,7 +152,7 @@ public class FinCovenantController {
 				finCovenantType.setVersion(fm.getVersion() + 1);
 			}
 			finMaintainInstruction.setFinReference(financeDetail.getFinReference());
-			finMaintainInstruction.setEvent(FinanceConstants.FINSER_EVENT_COVENANTS);
+			finMaintainInstruction.setEvent(FinServiceEvent.COVENANTS);
 			finMaintainInstruction.setNewRecord(true);
 			finMaintainInstruction.setVersion(1);
 			finMaintainInstruction.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -211,7 +211,7 @@ public class FinCovenantController {
 			}
 			finMaintainInstruction.setFinReference(financeDetail.getFinReference());
 			finMaintainInstruction.setNewRecord(true);
-			finMaintainInstruction.setEvent(FinanceConstants.FINSER_EVENT_COVENANTS);
+			finMaintainInstruction.setEvent(FinServiceEvent.COVENANTS);
 			finMaintainInstruction.setVersion(1);
 			finMaintainInstruction.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			finMaintainInstruction.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);

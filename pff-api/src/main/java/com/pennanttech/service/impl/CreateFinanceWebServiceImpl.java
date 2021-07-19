@@ -70,6 +70,7 @@ import com.pennanttech.controller.CreateFinanceController;
 import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pffws.CreateFinanceRestService;
 import com.pennanttech.pffws.CreateFinanceSoapService;
 import com.pennanttech.util.APIConstants;
@@ -413,7 +414,7 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 
 			FinanceDetail financeDetailRes = null;
 			String finReference = financeDetail.getFinReference();
-			String procEdtEvent = FinanceConstants.FINSER_EVENT_ORG;
+			String procEdtEvent = FinServiceEvent.ORG;
 
 			FinanceDetail wifFinanceDetail = null;
 			int countInWIF = financeMainDAO.getFinanceCountById(finReference, "", true);

@@ -35,10 +35,10 @@ import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.reports.CashFlowService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class CashFlowServiceImpl implements CashFlowService {
 	private static final Logger logger = LogManager.getLogger(CashFlowServiceImpl.class);
@@ -89,20 +89,20 @@ public class CashFlowServiceImpl implements CashFlowService {
 		if (CollectionUtils.isNotEmpty(finRepayHeaders)) {
 			for (FinRepayHeader finRepayHeader : finRepayHeaders) {
 				CashFlow cashFlow = new CashFlow();
-				if (FinanceConstants.FINSER_EVENT_FEEPAYMENT.equals(finRepayHeader.getFinEvent())) {
+				if (FinServiceEvent.FEEPAYMENT.equals(finRepayHeader.getFinEvent())) {
 					cashFlow.setDate(finRepayHeader.getValueDate());
 					cashFlow.setLan(finRepayHeader.getFinReference());
 					cashFlow.setPfReceipt(finRepayHeader.getRepayAmount());
 					cashFlow.setType("Unamortized Fee Received");
 					cashFlowList.add(cashFlow);
-				} else if (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(finRepayHeader.getFinEvent())
-						|| FinanceConstants.FINSER_EVENT_EARLYRPY.equals(finRepayHeader.getFinEvent())) {
+				} else if (FinServiceEvent.SCHDRPY.equals(finRepayHeader.getFinEvent())
+						|| FinServiceEvent.EARLYRPY.equals(finRepayHeader.getFinEvent())) {
 					cashFlow.setDate(finRepayHeader.getValueDate());
 					cashFlow.setLan(finRepayHeader.getFinReference());
 					cashFlow.setPrePayment(finRepayHeader.getRepayAmount());
 					cashFlow.setType("Repaid");
 					cashFlowList.add(cashFlow);
-				} else if (FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(finRepayHeader.getFinEvent())) {
+				} else if (FinServiceEvent.EARLYSETTLE.equals(finRepayHeader.getFinEvent())) {
 					forclosureAmt = forclosureAmt.add(finRepayHeader.getRepayAmount());
 					if (finRepayHeader.getPriAmount().compareTo(BigDecimal.ZERO) >= 1
 							|| finRepayHeader.getPftAmount().compareTo(BigDecimal.ZERO) >= 1) {

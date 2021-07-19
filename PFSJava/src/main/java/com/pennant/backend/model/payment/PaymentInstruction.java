@@ -49,16 +49,16 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.pennant.app.util.DateFormatterAdapter;
-import com.pennant.backend.model.Entity;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import com.pennant.app.util.DateFormatterAdapter;
+import com.pennant.backend.model.Entity;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>PaymentInstruction table</b>.<br>

@@ -65,6 +65,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.external.PresentmentImportProcess;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
@@ -508,7 +509,7 @@ public class PresentmentResponseProcess implements Runnable {
 		}
 
 		for (FinRepayHeader rph : repayHeaders) {
-			if (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(rh.getReceiptPurpose())) {
+			if (FinServiceEvent.SCHDRPY.equals(rh.getReceiptPurpose())) {
 				if (rph.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
 					finExcessAmountDAO.updExcessAfterRealize(reference, excessAdjustTo, rph.getExcessAmount());
 				}

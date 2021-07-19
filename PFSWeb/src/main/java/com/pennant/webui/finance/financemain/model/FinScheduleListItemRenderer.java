@@ -103,6 +103,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class FinScheduleListItemRenderer implements Serializable {
 
@@ -1749,7 +1750,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 				lc = new Listcell();
 				Checkbox planEMIHDate = new Checkbox();
 
-				if (StringUtils.equals(getModuleDefiner(), FinanceConstants.FINSER_EVENT_PLANNEDEMI)
+				if (StringUtils.equals(getModuleDefiner(), FinServiceEvent.PLANNEDEMI)
 						&& DateUtility.compare(data.getSchDate(), DateUtility.getAppDate()) <= 0) {
 					planEMIHDate.setDisabled(true);
 				} else {

@@ -105,6 +105,7 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/ReinstateFinance/ReinstateFinanceDialog.zul file.
@@ -891,8 +892,8 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 					List<String> finTypeList = getReinstateFinanceService().getScheduleEffectModuleList(true);
 					boolean isScheduleModify = false;
 					for (String fintypeList : finTypeList) {
-						if (StringUtils.isNotEmpty(FinanceConstants.FINSER_EVENT_REINSTATE)
-								&& StringUtils.equals(FinanceConstants.FINSER_EVENT_REINSTATE, fintypeList)) {
+						if (StringUtils.isNotEmpty(FinServiceEvent.REINSTATE)
+								&& StringUtils.equals(FinServiceEvent.REINSTATE, fintypeList)) {
 							isScheduleModify = true;
 							break;
 						}
@@ -1064,11 +1065,11 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						String finEvent = "";
-						if (StringUtils.equals(FinanceConstants.FINSER_EVENT_PREAPPROVAL,
+						if (StringUtils.equals(FinServiceEvent.PREAPPROVAL,
 								aReinstateFinance.getFinPreApprovedRef())) {
-							finEvent = FinanceConstants.FINSER_EVENT_PREAPPROVAL;
+							finEvent = FinServiceEvent.PREAPPROVAL;
 						} else {
-							finEvent = FinanceConstants.FINSER_EVENT_ORG;
+							finEvent = FinServiceEvent.ORG;
 						}
 						FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
 								aReinstateFinance.getFinType(), finEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
@@ -1294,9 +1295,9 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 
 		// Finance Maintenance Workflow Check & Assignment
 		WorkFlowDetails workFlowDetails = null;
-		if (StringUtils.isNotEmpty(FinanceConstants.FINSER_EVENT_REINSTATE)) {
+		if (StringUtils.isNotEmpty(FinServiceEvent.REINSTATE)) {
 			FinanceWorkFlow financeWorkflow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(finType,
-					FinanceConstants.FINSER_EVENT_REINSTATE, PennantConstants.WORFLOW_MODULE_FINANCE);//TODO : Check Promotion case
+					FinServiceEvent.REINSTATE, PennantConstants.WORFLOW_MODULE_FINANCE);//TODO : Check Promotion case
 			if (financeWorkflow != null && financeWorkflow.getWorkFlowType() != null) {
 				workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkflow.getWorkFlowType());
 			}

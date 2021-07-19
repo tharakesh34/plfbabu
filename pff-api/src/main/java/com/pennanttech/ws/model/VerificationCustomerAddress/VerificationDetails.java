@@ -44,18 +44,18 @@ package com.pennanttech.ws.model.VerificationCustomerAddress;
 
 import java.util.List;
 
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.customermasters.CustomerAddres;
-import com.pennant.backend.model.customermasters.CustomerDocument;
-import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennanttech.pennapps.pff.verification.model.Verification;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennanttech.pennapps.pff.verification.model.Verification;
 
 @XmlType(propOrder = { "VerificationDetailsList", "primaryCustomerAddress", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)

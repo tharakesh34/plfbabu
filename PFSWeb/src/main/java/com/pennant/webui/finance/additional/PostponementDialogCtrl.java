@@ -80,6 +80,7 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = -7778031557272602004L;
@@ -184,17 +185,17 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.remarks.setMaxlength(200);
 
 		// Postponement Details
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT, moduleDefiner)) {
+		if (StringUtils.equals(FinServiceEvent.POSTPONEMENT, moduleDefiner)) {
 			this.recalTypeRow.setVisible(false);
 			this.recallFromDateRow.setVisible(false);
 			this.recallToDateRow.setVisible(false);
 			this.numOfTermsRow.setVisible(false);
-		} else if (StringUtils.equals(FinanceConstants.FINSER_EVENT_UNPLANEMIH, moduleDefiner)) {
+		} else if (StringUtils.equals(FinServiceEvent.UNPLANEMIH, moduleDefiner)) {
 			this.window_PostponementDialog.setTitle(Labels.getLabel("window_UnPlannedEMiHDialog.title"));
 			this.btnPostponement.setLabel(Labels.getLabel("btnUnPlannedEMiH.label"));
 			this.btnPostponement.setTooltiptext(Labels.getLabel("btnUnPlannedEMiH.tooltiptext"));
 			this.recalTypeRow.setVisible(true);
-		} else if (StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)) {
+		} else if (StringUtils.equals(FinServiceEvent.REAGING, moduleDefiner)) {
 			this.window_PostponementDialog.setTitle(Labels.getLabel("window_ReAgeHolidayDialog.title"));
 			this.btnPostponement.setLabel(Labels.getLabel("btnReAgeHoliday.label"));
 			this.btnPostponement.setTooltiptext(Labels.getLabel("btnReAgeHoliday.tooltiptext"));
@@ -265,7 +266,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
 
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)) {
+		if (StringUtils.equals(FinServiceEvent.REAGING, moduleDefiner)) {
 			fillODSchDates(this.cbFromDate, aFinSchData, aFinSchData.getFinanceMain().getFinStartDate(), false);
 			fillODSchDates(this.cbToDate, aFinSchData, aFinSchData.getFinanceMain().getFinStartDate(), false);
 		} else {
@@ -276,8 +277,8 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 		fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), ",CURPRD,ADDLAST,ADJTERMS,STEPPOS,");
 
-		if (!StringUtils.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT, moduleDefiner)
-				&& !StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)) {
+		if (!StringUtils.equals(FinServiceEvent.POSTPONEMENT, moduleDefiner)
+				&& !StringUtils.equals(FinServiceEvent.REAGING, moduleDefiner)) {
 			if (StringUtils.equalsIgnoreCase(getFinScheduleData().getFinanceMain().getRecalType(),
 					CalculationConstants.RPYCHG_TILLDATE)
 					|| StringUtils.equalsIgnoreCase(getFinScheduleData().getFinanceMain().getRecalType(),
@@ -363,7 +364,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
-				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_UNPLANEMIH, moduleDefiner)) {
+				if (StringUtils.equals(FinServiceEvent.UNPLANEMIH, moduleDefiner)) {
 					if (DateUtility.compare(curSchd.getSchDate(), unplanEMIHStart) <= 0) {
 						continue;
 					}
@@ -597,7 +598,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 		}
 
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT, moduleDefiner)) {
+		if (StringUtils.equals(FinServiceEvent.POSTPONEMENT, moduleDefiner)) {
 			sdSize = getFinScheduleData().getFinanceScheduleDetails().size();
 			for (int i = 0; i < sdSize; i++) {
 				FinanceScheduleDetail curSchd = getFinScheduleData().getFinanceScheduleDetails().get(i);
@@ -616,7 +617,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						new String[] { String.valueOf(getFinScheduleData().getFinanceMain().getDefferments()) }));
 				return;
 			}
-		} else if (StringUtils.equals(FinanceConstants.FINSER_EVENT_UNPLANEMIH, moduleDefiner)) {
+		} else if (StringUtils.equals(FinServiceEvent.UNPLANEMIH, moduleDefiner)) {
 			//Check max limit
 			if (getFinScheduleData().getFinanceMain().getAvailedUnPlanEmi() + adjTerms > getFinScheduleData()
 					.getFinanceMain().getMaxUnplannedEmi()) {
@@ -624,7 +625,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						new String[] { String.valueOf(getFinScheduleData().getFinanceMain().getMaxUnplannedEmi()) }));
 				return;
 			}
-		} else if (StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)) {
+		} else if (StringUtils.equals(FinServiceEvent.REAGING, moduleDefiner)) {
 			//Check max limit
 			if (getFinScheduleData().getFinanceMain().getAvailedReAgeH() + adjTerms > getFinScheduleData()
 					.getFinanceMain().getMaxReAgeHolidays()) {
@@ -638,8 +639,8 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		getFinScheduleData().getFinanceMain().setRecalFromDate(recalFromDate);
 		finServiceInstruction.setRecalToDate(recalToDate);
 		getFinScheduleData().getFinanceMain().setRecalToDate(recalToDate);
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT, moduleDefiner)
-				|| StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)) {
+		if (StringUtils.equals(FinServiceEvent.POSTPONEMENT, moduleDefiner)
+				|| StringUtils.equals(FinServiceEvent.REAGING, moduleDefiner)) {
 			finServiceInstruction.setRecalType(CalculationConstants.RPYCHG_ADDTERM);
 		}
 
@@ -649,12 +650,12 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		// Service details calling for Schedule calculation
 		getFinScheduleData().getFinanceMain().setDevFinCalReq(false);
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT, moduleDefiner)) {
+		if (StringUtils.equals(FinServiceEvent.POSTPONEMENT, moduleDefiner)) {
 			setFinScheduleData(this.postponementService.doPostponement(getFinScheduleData(), finServiceInstruction,
 					getFinScheduleData().getFinanceMain().getScheduleMethod()));
-		} else if (StringUtils.equals(FinanceConstants.FINSER_EVENT_UNPLANEMIH, moduleDefiner)) {
+		} else if (StringUtils.equals(FinServiceEvent.UNPLANEMIH, moduleDefiner)) {
 			setFinScheduleData(this.postponementService.doUnPlannedEMIH(getFinScheduleData()));
-		} else if (StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)) {
+		} else if (StringUtils.equals(FinServiceEvent.REAGING, moduleDefiner)) {
 			setFinScheduleData(this.postponementService.doReAging(getFinScheduleData(), finServiceInstruction,
 					getFinScheduleData().getFinanceMain().getScheduleMethod()));
 		}
@@ -672,13 +673,13 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 			getFinScheduleData().setSchduleGenerated(true);
 			if (StringUtils.isNotBlank(moduleDefiner)) {
-				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT, moduleDefiner)) {
+				if (StringUtils.equals(FinServiceEvent.POSTPONEMENT, moduleDefiner)) {
 					int availedDefRpyChange = getFinScheduleData().getFinanceMain().getAvailedDefRpyChange();
 					getFinScheduleData().getFinanceMain().setAvailedDefRpyChange(availedDefRpyChange + adjTerms);
-				} else if (StringUtils.equals(FinanceConstants.FINSER_EVENT_UNPLANEMIH, moduleDefiner)) {
+				} else if (StringUtils.equals(FinServiceEvent.UNPLANEMIH, moduleDefiner)) {
 					int availedUnPlanChange = getFinScheduleData().getFinanceMain().getAvailedUnPlanEmi();
 					getFinScheduleData().getFinanceMain().setAvailedUnPlanEmi(availedUnPlanChange + adjTerms);
-				} else if (StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)) {
+				} else if (StringUtils.equals(FinServiceEvent.REAGING, moduleDefiner)) {
 					int availedReAgeHChange = getFinScheduleData().getFinanceMain().getAvailedReAgeH();
 					getFinScheduleData().getFinanceMain().setAvailedReAgeH(availedReAgeHChange + adjTerms);
 
@@ -908,7 +909,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.cbRecalFromDate.getItems().clear();
 			if (isValidComboValue(this.cbFromDate, Labels.getLabel("label_PostponementDialog_FromDate.value"))) {
 
-				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)) {
+				if (StringUtils.equals(FinServiceEvent.REAGING, moduleDefiner)) {
 					fillODSchDates(this.cbToDate, getFinScheduleData(),
 							(Date) this.cbFromDate.getSelectedItem().getValue(), true);
 				} else {
@@ -939,7 +940,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (this.cbToDate.getSelectedIndex() > 0) {
 			this.cbRecalFromDate.getItems().clear();
 			this.cbRecalToDate.getItems().clear();
-			if (!StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)
+			if (!StringUtils.equals(FinServiceEvent.REAGING, moduleDefiner)
 					&& isValidComboValue(this.cbToDate, Labels.getLabel("label_PostponementDialog_ToDate.value"))) {
 				fillSchDates(this.cbRecalFromDate, getFinScheduleData(),
 						(Date) this.cbToDate.getSelectedItem().getValue(), false);
@@ -947,7 +948,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						(Date) this.cbToDate.getSelectedItem().getValue(), false);
 			}
 		} else {
-			if (!StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)) {
+			if (!StringUtils.equals(FinServiceEvent.REAGING, moduleDefiner)) {
 				this.cbReCalType.setSelectedIndex(0);
 				this.cbReCalType.setDisabled(true);
 				this.cbRecalFromDate.setSelectedIndex(0);

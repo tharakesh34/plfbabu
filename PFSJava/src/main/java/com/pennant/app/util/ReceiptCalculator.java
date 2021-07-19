@@ -112,6 +112,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
 public class ReceiptCalculator implements Serializable {
@@ -163,16 +164,16 @@ public class ReceiptCalculator implements Serializable {
 			return receiptPurposeCtg;
 		}
 		switch (receiptPurpose) {
-		case FinanceConstants.FINSER_EVENT_SCHDRPY:
+		case FinServiceEvent.SCHDRPY:
 			receiptPurposeCtg = 0;
 			break;
-		case FinanceConstants.FINSER_EVENT_EARLYRPY:
+		case FinServiceEvent.EARLYRPY:
 			receiptPurposeCtg = 1;
 			break;
-		case FinanceConstants.FINSER_EVENT_EARLYSETTLE:
+		case FinServiceEvent.EARLYSETTLE:
 			receiptPurposeCtg = 2;
 			break;
-		case FinanceConstants.FINSER_EVENT_EARLYSTLENQ:
+		case FinServiceEvent.EARLYSTLENQ:
 			receiptPurposeCtg = 3;
 			break;
 		default:
@@ -237,7 +238,7 @@ public class ReceiptCalculator implements Serializable {
 			schdData.setFeeEvent(AccountEventConstants.ACCEVENT_EARLYPAY);
 		}
 
-		rd.getFinanceDetail().setModuleDefiner(FinanceConstants.FINSER_EVENT_RECEIPT);
+		rd.getFinanceDetail().setModuleDefiner(FinServiceEvent.RECEIPT);
 
 		if (valueDate == null) {
 			// Temporary fix for API call
@@ -1669,10 +1670,10 @@ public class ReceiptCalculator implements Serializable {
 			event = rch.getExcessAdjustTo();
 			break;
 		case 1:
-			event = FinanceConstants.FINSER_EVENT_EARLYRPY;
+			event = FinServiceEvent.EARLYRPY;
 			break;
 		case 2:
-			event = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
+			event = FinServiceEvent.EARLYSETTLE;
 			break;
 
 		default:

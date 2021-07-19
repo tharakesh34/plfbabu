@@ -73,6 +73,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * ************************************************************<br>
@@ -791,12 +792,12 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			List<String> finEvents = uploadHeaderService.getFinEventByFinRef(finReference, "_Temp");
 
 			if (CollectionUtils.isNotEmpty(finEvents)) {
-				if (finEvents.contains(FinanceConstants.FINSER_EVENT_ADDDISB)
-						|| finEvents.contains(FinanceConstants.FINSER_EVENT_RATECHG)
-						|| finEvents.contains(FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+				if (finEvents.contains(FinServiceEvent.ADDDISB)
+						|| finEvents.contains(FinServiceEvent.RATECHG)
+						|| finEvents.contains(FinServiceEvent.EARLYRPY)) {
 					reason = Labels.getLabel("LOAN_SERVICE_PROCESS");
 					error = true;
-				} else if (finEvents.contains(FinanceConstants.FINSER_EVENT_CANCELFIN)) {
+				} else if (finEvents.contains(FinServiceEvent.CANCELFIN)) {
 					reason = Labels.getLabel("LOAN_CANCEL_PROCESS");
 					error = true;
 				}

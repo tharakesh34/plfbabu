@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.finance.FinanceDedup;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.finance.FinanceDedup;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FinanceDedupResponse implements Serializable {

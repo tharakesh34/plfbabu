@@ -67,6 +67,7 @@ import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private static final long serialVersionUID = 1L;
@@ -169,7 +170,7 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 
 		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
 		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(this.finReference.getValue(), "_View");
-		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinanceConstants.FINSER_EVENT_PAYMENTINST.equals(rcdMntnSts)) {
+		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.PAYMENTINST.equals(rcdMntnSts)) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
 			return;
 		}

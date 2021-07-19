@@ -350,6 +350,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
 import com.pennanttech.pff.external.HunterService;
@@ -1760,7 +1761,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Enquiry in Add Disbursement
 		if (ImplementationConstants.ALLOW_DISB_ENQUIRY) {
-			if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)) {
+			if (StringUtils.equals(FinServiceEvent.ADDDISB, moduleDefiner)) {
 				enquiryList.add(new ValueLabel("FINMANDENQ", Labels.getLabel("label_FINMANDEnquiry")));
 				enquiryList.add(new ValueLabel("ODENQ", Labels.getLabel("label_OverdueEnquiry")));
 				enquiryList.add(new ValueLabel("COVENQ", Labels.getLabel("label_CovenantEnquiry")));
@@ -1901,8 +1902,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		}
 		if (isReadOnly("FinanceMainDialog_NoScheduleGeneration")) {
-			if (FinanceConstants.FINSER_EVENT_ADDDISB.equals(financeDetail.getModuleDefiner())
-					|| FinanceConstants.FINSER_EVENT_RATECHG.equals(financeDetail.getModuleDefiner())) {
+			if (FinServiceEvent.ADDDISB.equals(financeDetail.getModuleDefiner())
+					|| FinServiceEvent.RATECHG.equals(financeDetail.getModuleDefiner())) {
 				FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 				List<FinanceStepPolicyDetail> financeStepPolicyDetailList = new ArrayList<FinanceStepPolicyDetail>();
 
@@ -1933,8 +1934,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if ((StringUtils.isEmpty(moduleDefiner) && !(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
 				aFinanceDetail.getFinScheduleData().getFinanceMain().getProductCategory())))
-				|| StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)
-				|| StringUtils.equals(FinanceConstants.FINSER_EVENT_CANCELDISB, moduleDefiner)) {
+				|| StringUtils.equals(FinServiceEvent.ADDDISB, moduleDefiner)
+				|| StringUtils.equals(FinServiceEvent.CANCELDISB, moduleDefiner)) {
 
 			if (isTabVisible(StageTabConstants.AdvancePayment)) {
 				appendAdvancePaymentsDetailTab(onLoad);
@@ -1986,7 +1987,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Document Detail Tab Addition
 		if (isTabVisible(StageTabConstants.Documents)
-				&& !FinanceConstants.FINSER_EVENT_RESTRUCTURE.equalsIgnoreCase(moduleDefiner)) {
+				&& !FinServiceEvent.RESTRUCTURE.equalsIgnoreCase(moduleDefiner)) {
 			appendDocumentDetailTab(onLoad);
 		} else {
 			this.btnSplitDoc.setVisible(false);
@@ -2040,7 +2041,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		} else {
 			// Collateral Detail Tab
-			if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)) {
+			if (StringUtils.equals(FinServiceEvent.ADDDISB, moduleDefiner)) {
 				appendFinCollateralTab(onLoad);
 			}
 
@@ -2052,7 +2053,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (PennantConstants.OLD_CREDITREVIEWTAB
 				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB))
 				&& isTabVisible(StageTabConstants.CreditReviewDetails) && StringUtils.isEmpty(moduleDefiner)
-				&& !FinanceConstants.FINSER_EVENT_RESTRUCTURE.equalsIgnoreCase(moduleDefiner)) {
+				&& !FinServiceEvent.RESTRUCTURE.equalsIgnoreCase(moduleDefiner)) {
 			appendCreditReviewDetailTab(false);
 		} else if (PennantConstants.NEW_CREDITREVIEWTAB
 				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB))
@@ -2062,7 +2063,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Show Accounting Tab Details Based upon Role Condition using Work flow
 		if ("Accounting".equals(getTaskTabs(getTaskId(getRole()))) && isReqToLoad
-				&& !StringUtils.equals(FinanceConstants.FINSER_EVENT_HOLDEMI, moduleDefiner)) {
+				&& !StringUtils.equals(FinServiceEvent.HOLDEMI, moduleDefiner)) {
 			// Accounting Details Tab Addition
 			appendAccountingDetailTab(onLoad);
 		}
@@ -2073,7 +2074,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// Recommend & Comments Details Tab Addition
-		if (!FinanceConstants.FINSER_EVENT_RESTRUCTURE.equalsIgnoreCase(moduleDefiner)) {
+		if (!FinServiceEvent.RESTRUCTURE.equalsIgnoreCase(moduleDefiner)) {
 			appendRecommendDetailTab(onLoad);
 		}
 
@@ -2445,8 +2446,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("stepReadonly", isReadOnly("FinanceMainDialog_stepFinance"));
 			map.put("isAlwNewStep", isReadOnly("FinanceMainDialog_btnFinStepPolicy"));
 			String moduleDefiner = getFinanceDetail().getModuleDefiner();
-			if (FinanceConstants.FINSER_EVENT_ADDDISB.equals(moduleDefiner)
-					|| FinanceConstants.FINSER_EVENT_RATECHG.equals(moduleDefiner)) {
+			if (FinServiceEvent.ADDDISB.equals(moduleDefiner)
+					|| FinServiceEvent.RATECHG.equals(moduleDefiner)) {
 				map.put("enquiryModule", true);
 			}
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/StepDetailDialog.zul",
@@ -2630,8 +2631,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				Map<String, Object> map = getDefaultArguments();
 				map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_ADVANCEPAYMENTS));
 				map.put("moduleDefiner", moduleDefiner);
-				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)
-						|| StringUtils.equals(FinanceConstants.FINSER_EVENT_CANCELDISB, moduleDefiner)) {
+				if (StringUtils.equals(FinServiceEvent.ADDDISB, moduleDefiner)
+						|| StringUtils.equals(FinServiceEvent.CANCELDISB, moduleDefiner)) {
 					FinanceMain finmain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 					map.put("approvedDisbursments",
 							getFinanceDetailService().getFinanceDisbursements(finmain.getFinReference(), "", false));
@@ -3769,7 +3770,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (this.manualSchedule.isChecked()) {
 				this.gracePeriodEndDate.setValue(aFinanceMain.getGrcPeriodEndDate());
 			} else {
-				if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+				if (StringUtils.equals(moduleDefiner, FinServiceEvent.CHGGRCEND)) {
 					this.gracePeriodEndDate.setValue(aFinanceMain.getGrcPeriodEndDate());
 				} else {
 					this.gracePeriodEndDate.setText("");
@@ -4199,7 +4200,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (!aFinanceMain.isNew() || StringUtils.isNotBlank(aFinanceMain.getFinReference())) {
-			if (StringUtils.isBlank(moduleDefiner) || moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+			if (StringUtils.isBlank(moduleDefiner) || moduleDefiner.equals(FinServiceEvent.CHGGRCEND)) {
 				this.nextRepayDate.setValue(aFinanceMain.getNextRepayDate());
 				this.nextRepayRvwDate.setValue(aFinanceMain.getNextRepayRvwDate());
 				this.nextRepayCpzDate.setValue(aFinanceMain.getNextRepayCpzDate());
@@ -4334,7 +4335,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Filling Child Window Details Tabs
 		aFinanceDetail.setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
+				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 		doFillTabs(aFinanceDetail, true, true);
 
 		// Setting Utilized Amoun for Collateral Assignment purpose calculations
@@ -4791,7 +4792,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				return;
 			}
 			if (finEvent.isEmpty()) {
-				finEvent = FinanceConstants.FINSER_EVENT_ORG;
+				finEvent = FinServiceEvent.ORG;
 			}
 
 			extendedFieldCtrl = new ExtendedFieldCtrl();
@@ -4947,8 +4948,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		boolean isOverDraft = false;
 		// Reset Maintenance Buttons for finance modification
 		if (StringUtils.isNotEmpty(moduleDefiner)) {
-			if (!StringUtils.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND, moduleDefiner) && !isFinPreApproved
-					&& !StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD)) {
+			if (!StringUtils.equals(FinServiceEvent.CHGGRCEND, moduleDefiner) && !isFinPreApproved
+					&& !StringUtils.equals(moduleDefiner, FinServiceEvent.OVERDRAFTSCHD)) {
 				this.btnValidate.setDisabled(true);
 				this.btnBuildSchedule.setDisabled(true);
 				this.btnValidate.setVisible(false);
@@ -5042,7 +5043,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			// Saving Gestation Period Next (Pft/Rvw/Cpz) Dates
-			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+			if (moduleDefiner.equals(FinServiceEvent.CHGGRCEND)) {
 				this.org_grcPeriodEndDate = this.gracePeriodEndDate_two.getValue();
 			}
 
@@ -5079,7 +5080,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			if (StringUtils.isEmpty(moduleDefiner)
-					|| StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_PLANNEDEMI)) {
+					|| StringUtils.equals(moduleDefiner, FinServiceEvent.PLANNEDEMI)) {
 				this.oldVar_planEMIMonths = getFinanceDetail().getFinScheduleData().getPlanEMIHmonths();
 				this.oldVar_planEMIDates = getFinanceDetail().getFinScheduleData().getPlanEMIHDates();
 			}
@@ -5933,7 +5934,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				Date validFrom = financeDate;
-				if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+				if (StringUtils.equals(moduleDefiner, FinServiceEvent.CHGGRCEND)) {
 					validFrom = org_grcPeriodEndDate;
 				}
 				this.gracePeriodEndDate.setConstraint(
@@ -5943,7 +5944,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				Date validFrom = financeDate;
 				if (!this.gracePeriodEndDate.isReadonly()
-						&& StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+						&& StringUtils.equals(moduleDefiner, FinServiceEvent.CHGGRCEND)) {
 
 					// Find Valid From Date by rendering
 					List<FinanceScheduleDetail> scheduelist = getFinanceDetail().getFinScheduleData()
@@ -6789,8 +6790,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.isNotBlank(moduleDefiner)) {
 			List<FinServiceInstruction> finServiceInstructions = null;
 
-			if (FinanceConstants.FINSER_EVENT_ADDDISB.equals(moduleDefiner)
-					|| FinanceConstants.FINSER_EVENT_RESTRUCTURE.equals(moduleDefiner)) {
+			if (FinServiceEvent.ADDDISB.equals(moduleDefiner)
+					|| FinServiceEvent.RESTRUCTURE.equals(moduleDefiner)) {
 				finServiceInstructions = getFinanceDetail().getFinScheduleData().getFinServiceInstructions();
 
 				if (CollectionUtils.isEmpty(finServiceInstructions)) {
@@ -6857,7 +6858,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		aFinanceDetail.setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
+				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 
 		// Resetting Service Task ID's from Original State
 		aFinanceMain.setRoleCode(this.curRoleCode);
@@ -6920,7 +6921,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				if (isOverdraft) {
 					if ((finType.isDroplineOD()
-							|| StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD, this.moduleDefiner))
+							|| StringUtils.equals(FinServiceEvent.OVERDRAFTSCHD, this.moduleDefiner))
 							&& isSchdlRegenerate()) {
 						MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
 						return;
@@ -7088,7 +7089,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// After Changing Planned EMI Dates / Months Validation for Recalculated
 		// or not
 		if (StringUtils.isEmpty(moduleDefiner)
-				|| StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_PLANNEDEMI)) {
+				|| StringUtils.equals(moduleDefiner, FinServiceEvent.PLANNEDEMI)) {
 
 			// Planned EMI Holiday Months
 			if (getScheduleDetailDialogCtrl() != null && aFinanceMain.isPlanEMIHAlw()) {
@@ -7350,7 +7351,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				MessageUtil.showError(errorMessage);
 				return;
 			}
-		} else if (FinanceConstants.FINSER_EVENT_ADDDISB.equals(moduleDefiner)) {
+		} else if (FinServiceEvent.ADDDISB.equals(moduleDefiner)) {
 			String errorMessage = setCovenantDetaisl(aFinanceDetail);
 			if (errorMessage != null) {
 				MessageUtil.showError(errorMessage);
@@ -7500,7 +7501,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				accVerificationReq = false;
 			}
 
-			if (StringUtils.equals(FinanceConstants.FINSER_EVENT_HOLDEMI, moduleDefiner)) {
+			if (StringUtils.equals(FinServiceEvent.HOLDEMI, moduleDefiner)) {
 				accVerificationReq = false;
 			}
 
@@ -7514,7 +7515,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 					if (ImplementationConstants.CLIENT_NFL) {
 						proceed = true;
-					} else if (FinanceConstants.FINSER_EVENT_RESTRUCTURE.equalsIgnoreCase(moduleDefiner)) {
+					} else if (FinServiceEvent.RESTRUCTURE.equalsIgnoreCase(moduleDefiner)) {
 						RestructureDetail restructureDetail = getFinanceDetail().getFinScheduleData()
 								.getRestructureDetail();
 						Date appDate = restructureDetail.getAppDate();
@@ -8251,7 +8252,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_DSAN);
 					notification.setModule("LOAN_ORG");
 
-					String finEvent = StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG
+					String finEvent = StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG
 							: moduleDefiner;
 					notification.setSubModule(finEvent);
 					notification.setKeyReference(financeMain.getFinReference());
@@ -8528,7 +8529,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					details.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-					details.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
+					details.setFinEvent(FinServiceEvent.ORG);
 					details.setDocImage(legalDetail.getDocImage());
 					details.setReferenceId(legalDetail.getLoanReference());
 					documentsList.add(details);
@@ -8598,7 +8599,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				details.setDocName(PennantConstants.CASDOC + PennantConstants.DOC_TYPE_PDF_EXT);
 				details.setDocImage(engine.getDocumentInByteArray(SaveFormat.PDF));
 				details.setVersion(1);
-				details.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
+				details.setFinEvent(FinServiceEvent.ORG);
 				details.setNewRecord(true);
 				details.setLastMntOn(DateUtility.getTimestamp(appDate));
 				details.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -9416,7 +9417,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain financeMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
-		if (StringUtils.equals(aFinanceDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)
+		if (StringUtils.equals(aFinanceDetail.getModuleDefiner(), FinServiceEvent.ORG)
 				&& financeMain.isQuickDisb() && CollectionUtils.isNotEmpty(aFinanceDetail.getAdvancePaymentsList())) {
 			for (FinAdvancePayments finAdvancePayments : aFinanceDetail.getAdvancePaymentsList()) {
 				if (userAction != null && StringUtils.equals(userAction.getSelectedItem().getValue().toString(),
@@ -9596,7 +9597,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onChange$gracePeriodEndDate(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug(Literal.ENTERING + event.toString());
 		if (StringUtils.isNotEmpty(moduleDefiner)
-				&& !StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+				&& !StringUtils.equals(moduleDefiner, FinServiceEvent.CHGGRCEND)) {
 
 			return;
 		} else {
@@ -11740,7 +11741,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 
-				if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+				if (moduleDefiner.equals(FinServiceEvent.CHGGRCEND)) {
 					Date curBussDate = appDate;
 					if (this.gracePeriodEndDate_two.getValue().before(DateUtility.addDays(curBussDate, 1))) {
 						errorList.add(new ErrorDetail("gracePeriodEndDate", "30569",
@@ -12284,7 +12285,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		wve = null;
 		doWriteComponentsToBean(getFinanceDetail().getFinScheduleData());
 		getFinanceDetail().setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
+				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 
 		logger.debug(Literal.LEAVING);
 		return getFinanceDetail();
@@ -12834,8 +12835,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// FinanceMain Details tab ---> 2. Grace Period Details
 		// Common issue 6
 		try {
-			if (StringUtils.isEmpty(moduleDefiner) || FinanceConstants.FINSER_EVENT_ORG.equals(moduleDefiner)
-					|| FinanceConstants.FINSER_EVENT_CHGGRCEND.equals(moduleDefiner)) {
+			if (StringUtils.isEmpty(moduleDefiner) || FinServiceEvent.ORG.equals(moduleDefiner)
+					|| FinServiceEvent.CHGGRCEND.equals(moduleDefiner)) {
 				if (this.gracePeriodEndDate.getValue() != null) {
 					this.gracePeriodEndDate_two.setValue(this.gracePeriodEndDate.getValue());
 				}
@@ -13203,7 +13204,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			// Grace / PRE EMI Period Maintenance, Auto Increment at Grace End
 			// flag set to false
-			if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+			if (StringUtils.equals(moduleDefiner, FinServiceEvent.CHGGRCEND)) {
 				aFinanceMain.setAutoIncGrcEndDate(false);
 			} else {
 				aFinanceMain.setAutoIncGrcEndDate(this.autoIncrGrcEndDate.isChecked());
@@ -13654,7 +13655,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// tasks # >>Start Advance EMI and DSF
 		String advTermsLabel = Labels.getLabel("label_financemainDialog_AdvanceTerms.value");
-		if (!FinanceConstants.FINSER_EVENT_NOCISSUANCE.equals(moduleDefiner)) {
+		if (!FinServiceEvent.NOCISSUANCE.equals(moduleDefiner)) {
 			aFinanceMain.setAdvType(getComboboxValue(this.advType));
 		}
 		try {
@@ -13690,7 +13691,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		if (!FinanceConstants.FINSER_EVENT_NOCISSUANCE.equals(moduleDefiner)) {
+		if (!FinServiceEvent.NOCISSUANCE.equals(moduleDefiner)) {
 			aFinanceMain.setAdvStage(getComboboxValue(this.advStage));
 		}
 		// tasks # >>End Advance EMI and DSF
@@ -13849,7 +13850,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				// disbursement Amount
 				if (!isBuildEvent()
 						&& ((StringUtils.isEmpty(moduleDefiner)
-								|| StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)))
+								|| StringUtils.equals(FinServiceEvent.ADDDISB, moduleDefiner)))
 						&& !(aFinanceMain.isAllowRevolving())) {
 					if (this.finCurrentAssetValue.getActualValue() != null
 							&& finAssetValue.getActualValue().compareTo(BigDecimal.ZERO) > 0
@@ -13936,7 +13937,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			try {
 				int tenor = 0;
 
-				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD, moduleDefiner) || isOverDraft) {
+				if (StringUtils.equals(FinServiceEvent.OVERDRAFTSCHD, moduleDefiner) || isOverDraft) {
 					String frqCode = this.repayFrq.getFrqCodeValue();
 
 					if (this.odYearlyTerms.intValue() < 1 && this.odMnthlyTerms.intValue() > 0) {
@@ -13955,7 +13956,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 					tenor = (this.odYearlyTerms.intValue() * 12) + this.odMnthlyTerms.intValue();
 
-					if (StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD, moduleDefiner)) {
+					if (StringUtils.equals(FinServiceEvent.OVERDRAFTSCHD, moduleDefiner)) {
 						// Validation in OverDraft Maintenance i.e..,Tenor
 						// should be greater than the current business date
 						int minNoofMonths;
@@ -14373,7 +14374,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			aFinanceMain.setFinIsActive(true);
 			if (isFinPreApproved) {
-				aFinanceMain.setFinPreApprovedRef(FinanceConstants.FINSER_EVENT_PREAPPROVAL);
+				aFinanceMain.setFinPreApprovedRef(FinServiceEvent.PREAPPROVAL);
 			}
 
 			// Maturity Calculation for Commercial
@@ -14394,7 +14395,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 
-			if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+			if (!moduleDefiner.equals(FinServiceEvent.CHGGRCEND)) {
 				aFinanceSchData = doWriteSchData(aFinanceSchData);
 			}
 
@@ -14404,7 +14405,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				List<FinServiceInstruction> instructions = aFinanceSchData.getFinServiceInstructions();
 
 				for (FinanceDisbursement financeDisbursement : disbList) {
-					if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADDDISB)) {
+					if (!moduleDefiner.equals(FinServiceEvent.ADDDISB)) {
 						financeDisbursement.setQuickDisb(aFinanceSchData.getFinanceMain().isQuickDisb());
 					} else {
 						if (PennantConstants.RCD_STATUS_APPROVED.equals(recordStatus)) {
@@ -14844,7 +14845,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					prepareFeeRulesMap(tempAmountCodes, dataMap);
 				}
 
-				if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDDISB)) {
+				if (StringUtils.equals(moduleDefiner, FinServiceEvent.ADDDISB)) {
 					tempAmountCodes.setDisburse(inst.getAmount());
 				}
 				tempAmountCodes.setPftChg(inst.getPftChg());
@@ -14861,7 +14862,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				setVASAcctCodes(dataMap);
 				aeEvent.setDataMap(dataMap);
 
-				if (FinanceConstants.FINSER_EVENT_RESTRUCTURE.equals(moduleDefiner)) {
+				if (FinServiceEvent.RESTRUCTURE.equals(moduleDefiner)) {
 					financeDetailService.processRestructureAccounting(aeEvent, getFinanceDetail());
 				}
 
@@ -14877,7 +14878,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				accountingSetEntries.addAll(AccountingEngine.execute(AccountingEvent.DISBINS, financeDetail, null));
 			}
 
-			if (FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
+			if (FinServiceEvent.ORG.equals(financeDetail.getModuleDefiner())) {
 				accountingSetEntries.addAll(AccountingEngine.execute(AccountingEvent.VASFEE, financeDetail, null));
 			}
 		}
@@ -14963,7 +14964,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
 
 		aeEvent.setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
+				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 		if (StringUtils.isEmpty(moduleDefiner)) {
 			amountCodes.setDisburse(finMain.getFinCurrAssetValue().add(finMain.getDownPayment()));
 			amountCodes.setIntTdsAdjusted(finMain.getIntTdsAdjusted());
@@ -17117,7 +17118,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD, moduleDefiner)) {
+		if (StringUtils.equals(FinServiceEvent.OVERDRAFTSCHD, moduleDefiner)) {
 			org_finAssetValue = getFinanceDetailService().getFinAssetValue(finReference.getValue());
 		}
 		if (collateralHeaderDialogCtrl != null) {
@@ -17157,7 +17158,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.ENTERING);
 		if (isvalidCheck) {
 			int format = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-			if (StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD, moduleDefiner)) {
+			if (StringUtils.equals(FinServiceEvent.OVERDRAFTSCHD, moduleDefiner)) {
 				BigDecimal minFinAssetValue = getFinanceDetailService().getFinAssetValue(finReference.getValue());
 				if (this.finAssetValue.getActualValue().compareTo(minFinAssetValue) < 0) {
 					MessageUtil.showError(Labels.getLabel("NUMBER_MINVALUE_EQ",
@@ -17518,7 +17519,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		getFinanceDetail().setFinScheduleData(scheduleData);
 
 		// For Rescheduling data should be re-correct
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_RESCHD)) {
+		if (StringUtils.equals(moduleDefiner, FinServiceEvent.RESCHD)) {
 			Date grcpftDate = null;
 			FinanceMain main = scheduleData.getFinanceMain();
 			this.gracePeriodEndDate.setText("");
@@ -17621,7 +17622,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.oldVar_nextRepayCpzDate = this.nextRepayCpzDate_two.getValue();
 			}
 
-		} else if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CHGFRQ)) {
+		} else if (StringUtils.equals(moduleDefiner, FinServiceEvent.CHGFRQ)) {
 
 			FinanceMain main = scheduleData.getFinanceMain();
 			this.gracePeriodEndDate.setText("");
@@ -18382,7 +18383,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		financeMain.setCustID(customer.getCustID());
 		setFinanceDetail(getFinanceDetailService().fetchFinCustDetails(financeDetail, custCtgCode,
 				financeMain.getFinType(), getRole(),
-				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner));
+				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner));
 
 		financeMain.setLovDescCustFName(StringUtils.trimToEmpty(customer.getCustFName()));
 		financeMain.setLovDescCustLName(StringUtils.trimToEmpty(customer.getCustLName()));
@@ -18912,7 +18913,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				// Overdraft Schedule Maintenance
 				FinScheduleData scheduleData = null;
-				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD, moduleDefiner)) {
+				if (StringUtils.equals(FinServiceEvent.OVERDRAFTSCHD, moduleDefiner)) {
 					scheduleData = rebuildODSchd(finScheduleData);
 				} else {
 					if (getFinanceDetail().getFinScheduleData().getOverdraftScheduleDetails() != null) {
@@ -18950,7 +18951,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				// Prepare Finance Schedule Generator Details List
-				if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+				if (!moduleDefiner.equals(FinServiceEvent.CHGGRCEND)) {
 					finScheduleData.setRepayInstructions(new ArrayList<RepayInstruction>());
 					finScheduleData.setPlanEMIHmonths(new ArrayList<Integer>());
 					finScheduleData.setPlanEMIHDates(new ArrayList<Date>());
@@ -18974,7 +18975,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				// Build Finance Schedule Details List
 				if (finScheduleData.getFinanceScheduleDetails().size() != 0) {
-					if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+					if (moduleDefiner.equals(FinServiceEvent.CHGGRCEND)) {
 						validFinScheduleData.getFinanceMain().setEventFromDate(org_grcPeriodEndDate);
 						finScheduleData.getFinanceMain().setDevFinCalReq(false);
 						finScheduleData = ScheduleCalculator.changeGraceEnd(finScheduleData);
@@ -19034,7 +19035,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				setNetFinanceAmount(false);
 			}
 
-			if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD)) {
+			if (StringUtils.equals(moduleDefiner, FinServiceEvent.OVERDRAFTSCHD)) {
 				financeMain.setScheduleRegenerated(true);
 			}
 
@@ -20763,7 +20764,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				details.setFinEvent(frefdata.getFinEvent());
 				details.setCategoryCode(agreementDefinition.getModuleName());
 				details.setLastMntOn(DateUtility.getTimestamp(appDate));
-				details.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
+				details.setFinEvent(FinServiceEvent.ORG);
 				details.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				details.setNewRecord(true);
 				engine.close();
@@ -21646,7 +21647,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (StringUtils.isNotEmpty(moduleDefiner)) {
 				defaultArguments.put("definitionApproved", true);
 			}
-			if (StringUtils.equals(getFinanceDetail().getModuleDefiner(), FinanceConstants.FINSER_EVENT_ADDDISB)) {
+			if (StringUtils.equals(getFinanceDetail().getModuleDefiner(), FinServiceEvent.ADDDISB)) {
 				defaultArguments.put("enqiryModule", true);
 			}
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinOCRDialog.zul",

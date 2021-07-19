@@ -35,6 +35,7 @@ import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
 import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 	private static Logger logger = LogManager.getLogger(DMSIdentificationServiceImpl.class);
@@ -102,7 +103,7 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 						}
 
 						List<DocumentDetails> documentDetailsList = documentDetailsDAO.getDocumentDetailsByRef(
-								finReference, FinanceConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
+								finReference, FinanceConstants.MODULE_NAME, FinServiceEvent.ORG, "_View");
 
 						if (CollectionUtils.isNotEmpty(documentDetailsList)) {
 							totDocumentDetailsList.addAll(documentDetailsList);

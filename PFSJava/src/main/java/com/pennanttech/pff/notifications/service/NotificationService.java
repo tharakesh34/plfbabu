@@ -82,7 +82,6 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.drawingpower.DrawingPowerService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FacilityConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -101,6 +100,7 @@ import com.pennanttech.pennapps.notification.email.model.MessageAddress;
 import com.pennanttech.pennapps.notification.email.model.MessageAttachment;
 import com.pennanttech.pennapps.notification.sms.SmsEngine;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.util.DataMapUtil;
 import com.pennanttech.pff.core.util.DataMapUtil.FieldPrefix;
 import com.pennanttech.pff.sms.PresentmentBounceService;
@@ -991,7 +991,7 @@ public class NotificationService extends GenericService<Notification> {
 		} else if (servInstructions != null && !servInstructions.isEmpty()) {
 
 			FinServiceInstruction instruction = servInstructions.get(0);
-			if (!StringUtils.equals(instruction.getFinEvent(), FinanceConstants.FINSER_EVENT_ORG)) {
+			if (!StringUtils.equals(instruction.getFinEvent(), FinServiceEvent.ORG)) {
 				data.setValueDate(DateUtility.formatToLongDate(instruction.getFromDate()));
 				data.setAmount(PennantApplicationUtil.amountFormate(instruction.getAmount(), format));
 			}

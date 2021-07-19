@@ -110,6 +110,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.notification.Notification;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
@@ -269,7 +270,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		if (financeMain.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-		financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_CANCELFIN);
+		financeMain.setRcdMaintainSts(FinServiceEvent.CANCELFIN);
 		if (tableType == TableType.MAIN_TAB) {
 			financeMain.setRcdMaintainSts("");
 			financeMain.setFinIsActive(false);
@@ -643,7 +644,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
 		notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
 		notification.setModule("LOAN_CANCELLATION");
-		notification.setSubModule(FinanceConstants.FINSER_EVENT_CANCELFIN);
+		notification.setSubModule(FinServiceEvent.CANCELFIN);
 		notification.setKeyReference(financeMain.getFinReference());
 		notification.setStage(PennantConstants.REC_ON_APPR);
 		notification.setReceivedBy(financeMain.getLastMntBy());

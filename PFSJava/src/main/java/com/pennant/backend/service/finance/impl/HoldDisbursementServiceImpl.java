@@ -62,11 +62,11 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.HoldDisbursement;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.HoldDisbursementService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -155,7 +155,7 @@ public class HoldDisbursementServiceImpl extends GenericService<HoldDisbursement
 		} else {
 			holdDisbursementDAO.update(holdDisbursement, tableType);
 		}
-		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_HOLDDISB;
+		String rcdMaintainSts = FinServiceEvent.HOLDDISB;
 		financeMainDAO.updateMaintainceStatus(holdDisbursement.getFinReference(), rcdMaintainSts);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -286,7 +286,7 @@ public class HoldDisbursementServiceImpl extends GenericService<HoldDisbursement
 		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
 		finServiceInstruction.setFinReference(holdDisbursement.getFinReference());
 		finServiceInstruction.setFromDate(DateUtility.getAppDate());
-		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_HOLDDISB);
+		finServiceInstruction.setFinEvent(FinServiceEvent.HOLDDISB);
 		finServiceInstruction.setAmount(holdDisbursement.getHoldLimitAmount());
 		getFinServiceInstructionDAO().save(finServiceInstruction, "");
 		financeMainDAO.updateMaintainceStatus(holdDisbursement.getFinReference(), "");

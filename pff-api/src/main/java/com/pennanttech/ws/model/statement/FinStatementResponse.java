@@ -2,16 +2,16 @@ package com.pennanttech.ws.model.statement;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.ForeClosureReport;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(propOrder = { "customer", "finance", "finReference", "docImage","foreclosureReport", "returnStatus" })

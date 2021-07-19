@@ -213,6 +213,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -1164,7 +1165,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		boolean chkSuspProcess = false;
 
 		// Checking Conditions for Suspense Calculations
-		if (processType.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT)) {
+		if (processType.equals(FinServiceEvent.POSTPONEMENT)) {
 
 			// Get Current Maximum Overdue Days after Deletion Past Due Terms
 			int curMaxODDays = getFinODDetailsDAO().getMaxODDaysOnDeferSchd(financeMain.getFinReference(), null);
@@ -1316,9 +1317,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		aeEvent.setModuleDefiner(
-				StringUtils.isEmpty(financeDetail.getModuleDefiner()) ? FinanceConstants.FINSER_EVENT_ORG
+				StringUtils.isEmpty(financeDetail.getModuleDefiner()) ? FinServiceEvent.ORG
 						: financeDetail.getModuleDefiner());
-		if (financeDetail.getModuleDefiner().equals(FinanceConstants.FINSER_EVENT_ORG)) {
+		if (financeDetail.getModuleDefiner().equals(FinServiceEvent.ORG)) {
 			// FIXME: PV. 18AUG19. Some confusion. As downpayment was not deducted from current asset value earlier
 			// addiing now gives double impact.
 			if (ImplementationConstants.ALW_DOWNPAY_IN_LOANENQ_AND_SOA) {
@@ -1485,7 +1486,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		boolean isNew = false;
 		String finReference = financeMain.getFinReference();
 
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())) {
+		if (StringUtils.equals(FinServiceEvent.ORG, financeDetail.getModuleDefiner())) {
 			pftDetail = new FinanceProfitDetail();
 			isNew = true;
 
@@ -1517,7 +1518,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		Map<String, Object> gstExecutionMap = null;
 
 		if (PennantConstants.FINSOURCE_ID_API.equals(financeMain.getFinSourceID()) && auditHeader.getApiHeader() != null
-				&& FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
+				&& FinServiceEvent.ORG.equals(financeDetail.getModuleDefiner())) {
 			String custDftBranch = null;
 			String custResdSts = null;
 			String highPriorityState = null;
@@ -1549,13 +1550,13 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		// On Origination processing based on Service instructions is not required
 		boolean feesExecuted = false;
 		boolean subventionExists = false;
-		if (FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
+		if (FinServiceEvent.ORG.equals(financeDetail.getModuleDefiner())) {
 			subventionExists = setSubventionFeeToDataMap(branchCode, financeDetail, financeMain, dataMap);
 			dataMap = prepareFeeRulesMap(amountCodes, dataMap, financeDetail);
 
 			// Advance payment Details Resetting
 			AdvancePaymentDetail curAdvpay = AdvancePaymentUtil.getDiffOnAdvIntAndAdvEMI(schdData, null,
-					FinanceConstants.FINSER_EVENT_ORG);
+					FinServiceEvent.ORG);
 			if (curAdvpay != null) {
 				amountCodes.setIntAdjusted(curAdvpay.getAdvInt());
 				amountCodes.setEmiAdjusted(curAdvpay.getAdvEMI());
@@ -1611,10 +1612,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					dataMap = prepareFeeRulesMap(tempAmountCodes, dataMap, financeDetail);
 				}
 
-				if (FinanceConstants.FINSER_EVENT_ADDDISB.equals(financeDetail.getModuleDefiner())) {
+				if (FinServiceEvent.ADDDISB.equals(financeDetail.getModuleDefiner())) {
 					tempAmountCodes.setDisburse(inst.getAmount());
 					tempAmountCodes.setIntAdjusted(financeMain.getIntTdsAdjusted());
-				} else if (FinanceConstants.PART_CANCELLATION.equals(financeDetail.getModuleDefiner())) {
+				} else if (FinServiceEvent.PART_CANCELLATION.equals(financeDetail.getModuleDefiner())) {
 					tempAmountCodes.setRefund(inst.getRefund());
 				}
 				tempAmountCodes.setPftChg(inst.getPftChg());
@@ -1648,7 +1649,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 				aeEvent.setDataMap(dataMap);
 
-				if (FinanceConstants.FINSER_EVENT_RESTRUCTURE.equals(financeDetail.getModuleDefiner())
+				if (FinServiceEvent.RESTRUCTURE.equals(financeDetail.getModuleDefiner())
 						&& restructureService != null) {
 					restructureService.processRestructureAccounting(aeEvent, financeDetail);
 				}
@@ -1664,7 +1665,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		// BPI Updation Checking for Deduct from Disbursement case only
-		if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)
+		if (StringUtils.equals(financeDetail.getModuleDefiner(), FinServiceEvent.ORG)
 				&& StringUtils.equals(FinanceConstants.BPI_DISBURSMENT, financeMain.getBpiTreatment())
 				&& aeEvent.isBpiIncomized() && SysParamUtil.isAllowed(SMTParameterConstants.BPI_INCOMIZED_ON_ORG)
 				&& !SysParamUtil.isAllowed(SMTParameterConstants.BPI_PAID_ON_INSTDATE)) {
@@ -1675,7 +1676,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		if (gstInvoiceTxnService != null && aeEvent.getLinkedTranId() > 0
 				&& CollectionUtils.isNotEmpty(schdData.getFinFeeDetailList())) {
 			boolean orgination = false;
-			if (FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
+			if (FinServiceEvent.ORG.equals(financeDetail.getModuleDefiner())) {
 				orgination = true;
 			}
 
@@ -1758,7 +1759,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			AccountingEngine.post(AccountingEvent.DISBINS, financeDetail, branchCode);
 		}
 
-		if (FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
+		if (FinServiceEvent.ORG.equals(financeDetail.getModuleDefiner())) {
 			AccountingEngine.post(AccountingEvent.VASFEE, financeDetail, branchCode);
 		}
 
@@ -1889,7 +1890,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		FinanceProfitDetail pftDetail;
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())) {
+		if (StringUtils.equals(FinServiceEvent.ORG, financeDetail.getModuleDefiner())) {
 			pftDetail = new FinanceProfitDetail();
 		} else {
 			pftDetail = getProfitDetailsDAO().getFinProfitDetailsById(finMain.getFinReference());

@@ -33,13 +33,13 @@ import com.pennant.backend.model.finance.covenant.CovenantDocument;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.DisbursementConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.logging.dao.InstBasedSchdDetailDAO;
 
 public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
@@ -66,12 +66,12 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 
 		// Check if Loan is not Approveda
 		if (!isLoanApproved) {
-			fd = financeDetailService.getOriginationFinance(finReference, nxtRoleCd, FinanceConstants.FINSER_EVENT_ORG,
+			fd = financeDetailService.getOriginationFinance(finReference, nxtRoleCd, FinServiceEvent.ORG,
 					"");
-			fd.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
+			fd.setModuleDefiner(FinServiceEvent.ORG);
 		} else if (StringUtils.isNotBlank(nxtRoleCd)) {
 			fd = financeDetailService.getServicingFinanceForQDP(finReference, AccountEventConstants.ACCEVENT_ADDDBSN,
-					FinanceConstants.FINSER_EVENT_ADDDISB, nxtRoleCd);
+					FinServiceEvent.ADDDISB, nxtRoleCd);
 		} else {
 			fd = financeDetailService.getFinSchdDetailByRef(finReference, "", false);
 		}

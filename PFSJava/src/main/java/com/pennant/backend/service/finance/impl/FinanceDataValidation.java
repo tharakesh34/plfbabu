@@ -176,6 +176,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
 import com.pennanttech.pff.staticlist.AppStaticList;
@@ -1805,7 +1806,7 @@ public class FinanceDataValidation {
 					|| (!financeDetail.isStp() && CollectionUtils.isNotEmpty(financeDetail.getExtendedDetails())))) {
 				errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(
 						financeDetail.getExtendedDetails(), ExtendedFieldConstants.MODULE_LOAN, subModule,
-						FinanceConstants.FINSER_EVENT_ORG);
+						FinServiceEvent.ORG);
 			}
 
 			// ### 02-05-2018-END
@@ -1896,7 +1897,7 @@ public class FinanceDataValidation {
 				&& !financeDetail.getExtendedDetails().isEmpty() && !financeDetail.isStp())) {
 			String subModule = financeDetail.getFinScheduleData().getFinanceMain().getFinCategory();
 			errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(financeDetail.getExtendedDetails(),
-					ExtendedFieldConstants.MODULE_LOAN, subModule, FinanceConstants.FINSER_EVENT_ORG);
+					ExtendedFieldConstants.MODULE_LOAN, subModule, FinServiceEvent.ORG);
 			if (!errorDetails.isEmpty()) {
 				return errorDetails;
 			}
@@ -3006,7 +3007,7 @@ public class FinanceDataValidation {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		String finEvent = FinanceConstants.FINSER_EVENT_ORG;
+		String finEvent = FinServiceEvent.ORG;
 		FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(
 				financeMain.getFinType(), finEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
 		String rolesName = financeWorkFlow.getLovDescWorkFlowRolesName();

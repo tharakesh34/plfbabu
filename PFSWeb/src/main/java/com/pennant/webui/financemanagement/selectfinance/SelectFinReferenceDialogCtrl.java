@@ -88,6 +88,7 @@ import com.pennant.webui.systemmasters.pmay.PMAYListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/ SelectFinanceTypeDialog.zul file.
@@ -262,7 +263,7 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		this.finReference.setValueColumn("FinReference");
 
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
-		if (StringUtils.equals(eventCode, FinanceConstants.FINSER_EVENT_REINSTATE)) {
+		if (StringUtils.equals(eventCode, FinServiceEvent.REINSTATE)) {
 			this.finReference.setModuleName("RejectFinanceMain");
 
 		}
@@ -284,10 +285,10 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		String buildedWhereCondition = " FinType IN(SELECT FinType FROM LMTFInanceworkflowdef WD JOIN WorkFlowDetails WF ";
 		buildedWhereCondition = buildedWhereCondition
 				.concat(" ON WD.WorkFlowType = WF.WorkFlowType AND WF.WorkFlowActive = 1 WHERE WD.FinEvent = '");
-		if (StringUtils.equals(eventCode, FinanceConstants.FINSER_EVENT_FINFLAGS)) {
-			buildedWhereCondition = buildedWhereCondition.concat(FinanceConstants.FINSER_EVENT_FINFLAGS);
-		} else if (StringUtils.equals(eventCode, FinanceConstants.FINSER_EVENT_REINSTATE)) {
-			buildedWhereCondition = buildedWhereCondition.concat(FinanceConstants.FINSER_EVENT_REINSTATE);
+		if (StringUtils.equals(eventCode, FinServiceEvent.FINFLAGS)) {
+			buildedWhereCondition = buildedWhereCondition.concat(FinServiceEvent.FINFLAGS);
+		} else if (StringUtils.equals(eventCode, FinServiceEvent.REINSTATE)) {
+			buildedWhereCondition = buildedWhereCondition.concat(FinServiceEvent.REINSTATE);
 
 		} else if (StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_PROVSN)) {
 			buildedWhereCondition = buildedWhereCondition.concat(moduleDefiner);
@@ -303,14 +304,14 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		this.finReference.setWhereClause(buildedWhereCondition);
 
-		if (StringUtils.equals(eventCode, FinanceConstants.FINSER_EVENT_REINSTATE)) {
+		if (StringUtils.equals(eventCode, FinServiceEvent.REINSTATE)) {
 			int allowedDays = SysParamUtil.getValueAsInt("REINSTATE_FINANCE_ALLOWEDDAYS");
 			Date appDate = DateUtility.getAppDate();
 			Date allowedDate = DateUtility.addDays(appDate, -allowedDays);
 			this.finReference.setFilters(new Filter[] { new Filter("LastMntOn", allowedDate, Filter.OP_GREATER_THAN),
 					new Filter("RcdMaintainSts", "", Filter.OP_EQUAL) });
 		}
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_NOCISSUANCE)) {
+		if (StringUtils.equals(moduleDefiner, FinServiceEvent.NOCISSUANCE)) {
 			this.finReference.setFilters(new Filter[] { new Filter("FinIsActive", 0, Filter.OP_EQUAL) });
 		}
 
@@ -358,7 +359,7 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				}
 
 				this.customerRow.setVisible(true);
-				if (StringUtils.equals(eventCode, FinanceConstants.FINSER_EVENT_REINSTATE)) {
+				if (StringUtils.equals(eventCode, FinServiceEvent.REINSTATE)) {
 					BeanUtils.copyProperties(finMain, financeMain);
 				} else {
 					financeMain = getFinanceDetailService().getFinanceMain(this.finReference.getValue(), "_AView");
@@ -408,7 +409,7 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		}
 
-		if (StringUtils.equals(eventCode, FinanceConstants.FINSER_EVENT_FINFLAGS)) {
+		if (StringUtils.equals(eventCode, FinServiceEvent.FINFLAGS)) {
 
 			map.put("financeFlag", this.financeFlag);
 			map.put("financeFlagsListCtrl", getFinanceFlagsListCtrl());
@@ -422,7 +423,7 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				MessageUtil.showError(e);
 			}
 		}
-		if (StringUtils.equals(eventCode, FinanceConstants.FINSER_EVENT_REINSTATE)) {
+		if (StringUtils.equals(eventCode, FinServiceEvent.REINSTATE)) {
 
 			map.put("reinstateFinance", getReinstateFinance());
 			map.put("reinstateFinanceListCtrl", getReinstateFinanceListCtrl());

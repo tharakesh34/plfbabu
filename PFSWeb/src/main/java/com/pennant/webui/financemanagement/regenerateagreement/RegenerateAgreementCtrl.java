@@ -36,12 +36,12 @@ import com.pennant.backend.service.applicationmaster.AgreementDefinitionService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.ExtendedFieldConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.AgreementEngine;
 import com.pennant.util.AgreementGeneration;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance Management/RegenerateAgreement/RegenerateAgreement.zul
@@ -261,13 +261,13 @@ public class RegenerateAgreementCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		FinanceDetail financeDetail = null;
 		try {
 			financeDetail = financeDetailService.getFinanceDetailById(referenceId, false, "", false,
-					FinanceConstants.FINSER_EVENT_ORG, "");
+					FinServiceEvent.ORG, "");
 
 			if (financeDetail != null) {
 				List<ExtendedField> extField = extendedFieldDetailsService.getExtndedFieldDetails(
 						ExtendedFieldConstants.MODULE_LOAN,
 						financeDetail.getFinScheduleData().getFinanceMain().getFinCategory(),
-						FinanceConstants.FINSER_EVENT_ORG, referenceId);
+						FinServiceEvent.ORG, referenceId);
 				ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
 				for (ExtendedField extendedField : extField) {
 					Map<String, Object> mapValues = new HashMap<String, Object>();

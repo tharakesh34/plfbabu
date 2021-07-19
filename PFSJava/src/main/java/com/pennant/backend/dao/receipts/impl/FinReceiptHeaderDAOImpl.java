@@ -59,7 +59,6 @@ import com.pennant.backend.model.finance.FinReceiptQueueLog;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.ReceiptAPIRequest;
 import com.pennant.backend.model.finance.ReceiptCancelDetail;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.ReceiptUploadConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -68,6 +67,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -708,11 +708,11 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		StringBuilder sql = new StringBuilder(" Select ReceiptID from FinreceiptHeader where Reference=:Reference");
 
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.UPFRONT_FEE_REVERSAL_REQ)) {
-			sql.append(" and ReceiptPurpose != '" + FinanceConstants.FINSER_EVENT_FEEPAYMENT + "'");
+			sql.append(" and ReceiptPurpose != '" + FinServiceEvent.FEEPAYMENT + "'");
 		}
 
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.REPAY_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL)) {
-			sql.append(" and ReceiptPurpose != '" + FinanceConstants.FINSER_EVENT_SCHDRPY + "'");
+			sql.append(" and ReceiptPurpose != '" + FinServiceEvent.SCHDRPY + "'");
 		}
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -1087,12 +1087,12 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 	@Override
 	public boolean checkEarlySettlementInitiation(String reference) {
-		return checkReceiptInitiation(reference, "_view", FinanceConstants.FINSER_EVENT_EARLYSETTLE);
+		return checkReceiptInitiation(reference, "_view", FinServiceEvent.EARLYSETTLE);
 	}
 
 	@Override
 	public boolean checkPartialSettlementInitiation(String reference) {
-		return checkReceiptInitiation(reference, "_Temp", FinanceConstants.FINSER_EVENT_EARLYRPY);
+		return checkReceiptInitiation(reference, "_Temp", FinServiceEvent.EARLYRPY);
 	}
 
 	private boolean checkReceiptInitiation(String reference, String type, String purpose) {

@@ -60,6 +60,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.settlementprocess.model.SettlementProcess;
 import com.pennanttech.pff.subvention.dao.SubventionProcessDAO;
 
@@ -393,7 +394,7 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 		if (subventionMapdata.getValue("Terminalid") != null && subventionMapdata.getValue("Manufactureid") != null) {
 			if (finMain != null) {
 				extData = extendedFieldDetailsService.getExtndedFieldDetails(ExtendedFieldConstants.MODULE_LOAN,
-						finMain.getFinCategory(), FinanceConstants.FINSER_EVENT_ORG, finMain.getFinReference());
+						finMain.getFinCategory(), FinServiceEvent.ORG, finMain.getFinReference());
 			}
 			Map<String, Object> mapValues = new HashMap<String, Object>();
 			if (extData != null) {

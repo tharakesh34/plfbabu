@@ -134,6 +134,7 @@ import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
 /**
@@ -1216,7 +1217,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 
 		// Identifying Transaction List
 		List<Long> tranIdList = new ArrayList<>();
-		if (!StringUtils.equals(header.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_FEEPAYMENT)) {
+		if (!StringUtils.equals(header.getReceiptPurpose(), FinServiceEvent.FEEPAYMENT)) {
 			if (header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()) {
 				for (int i = 0; i < header.getReceiptDetails().size(); i++) {
 

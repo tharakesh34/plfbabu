@@ -80,6 +80,7 @@ import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = 4583907397986780542L;
@@ -347,7 +348,7 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		finServiceInstruction.setFinReference(finMain.getFinReference());
-		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_CANCELDISB);
+		finServiceInstruction.setFinEvent(FinServiceEvent.CANCELDISB);
 
 		if (wve.size() > 0) {
 			doRemoveValidation();

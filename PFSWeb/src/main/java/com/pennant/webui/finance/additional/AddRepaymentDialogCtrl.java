@@ -85,6 +85,7 @@ import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/WIAddRateChange.zul file.
@@ -816,7 +817,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			finMain.setRecalToDate(finMain.getMaturityDate());
 
 		}
-		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_CHGRPY);
+		finServiceInstruction.setFinEvent(FinServiceEvent.CHGRPY);
 
 		// Schedule Calculator method calling
 		getFinScheduleData().getFinanceMain().setDevFinCalReq(false);

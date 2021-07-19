@@ -146,6 +146,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
 /**
@@ -1468,7 +1469,7 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		Date fromDate = rch.getValueDate();
 		Date toDate = DateUtility.getAppDate();
-		if (FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+		if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
 			fromDate = rch.getReceiptDate();
 		}
 

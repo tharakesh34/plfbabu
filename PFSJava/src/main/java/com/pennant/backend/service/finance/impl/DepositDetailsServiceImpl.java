@@ -72,11 +72,11 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.cashmanagement.impl.CashManagementAccounting;
 import com.pennant.backend.service.finance.DepositDetailsService;
 import com.pennant.backend.util.CashManagementConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 public class DepositDetailsServiceImpl extends GenericService<DepositDetails> implements DepositDetailsService {
@@ -455,8 +455,8 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 				depositChequesDAO.save(depositCheques, type);
 				if (approveRec) {
 					String tableType = "";
-					if (FinanceConstants.FINSER_EVENT_EARLYRPY.equals(depositCheques.getReceiptpurpose())
-							|| FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(depositCheques.getReceiptpurpose())) {
+					if (FinServiceEvent.EARLYRPY.equals(depositCheques.getReceiptpurpose())
+							|| FinServiceEvent.EARLYSETTLE.equals(depositCheques.getReceiptpurpose())) {
 						tableType = "_Temp";
 					}
 					finReceiptHeaderDAO.updateDepositProcessByReceiptID(depositCheques.getReceiptId(), false,

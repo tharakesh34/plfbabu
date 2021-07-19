@@ -1,12 +1,12 @@
 package com.pennanttech.ws.model.customer;
 
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.customermasters.CustomerExtLiability;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.customermasters.CustomerExtLiability;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(propOrder = { "cif", "externalLiability", "liabilitySeq", "returnStatus" })

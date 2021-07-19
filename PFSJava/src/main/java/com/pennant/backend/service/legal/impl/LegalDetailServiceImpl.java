@@ -113,6 +113,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -1455,7 +1456,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	@Override
 	public void saveDocumentDetails(DocumentDetails documentDetails) {
 		logger.debug(Literal.ENTERING);
-		documentDetails.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
+		documentDetails.setFinEvent(FinServiceEvent.ORG);
 
 		saveDocument(DMSModule.FINANCE, DMSModule.LEGAL, documentDetails);
 

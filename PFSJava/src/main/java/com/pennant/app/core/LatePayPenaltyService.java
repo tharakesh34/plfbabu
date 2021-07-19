@@ -65,6 +65,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.pff.eod.cache.RuleConfigCache;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.eod.EODUtil;
 
 public class LatePayPenaltyService extends ServiceHelper {
@@ -394,7 +395,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 				datamap.put("ft_product", fm.getFinCategory());
 
 				List<ExtendedField> extData = extendedFieldDetailsService.getExtndedFieldDetails(
-						ExtendedFieldConstants.MODULE_LOAN, fm.getFinCategory(), FinanceConstants.FINSER_EVENT_ORG,
+						ExtendedFieldConstants.MODULE_LOAN, fm.getFinCategory(), FinServiceEvent.ORG,
 						finReference);
 
 				if (extData != null && !extData.isEmpty()) {

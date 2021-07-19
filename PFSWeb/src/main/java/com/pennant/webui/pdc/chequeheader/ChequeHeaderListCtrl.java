@@ -68,13 +68,13 @@ import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.webui.pdc.chequeheader.model.ChequeHeaderListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/pdc/ChequeHeader/ChequeHeaderList.zul file.
@@ -224,7 +224,7 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
 		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(chequeheader.getFinReference(),
 				"_View");
-		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinanceConstants.FINSER_EVENT_CHEQUEDETAILS.equals(rcdMntnSts)) {
+		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.CHEQUEDETAILS.equals(rcdMntnSts)) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
 			return;
 		}

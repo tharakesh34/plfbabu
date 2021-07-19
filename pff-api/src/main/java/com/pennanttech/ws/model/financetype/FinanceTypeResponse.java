@@ -5,18 +5,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.rulefactory.FeeRule;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "promotionDesc", "startDate", "endDate", "finType", "finTypeDesc", "basicDetail", "graceDetail",
 		"repayDetail", "overdueDetail", "overdueProfitDetail", "insurance", "feeRule", "finTypeFeesList", "stepDetail",

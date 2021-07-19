@@ -69,7 +69,6 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.util.ExtendedFieldConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -77,6 +76,7 @@ import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class ExtendedFieldsEnquiryDialogCtrl extends GFCBaseCtrl<Object> {
 
@@ -167,7 +167,7 @@ public class ExtendedFieldsEnquiryDialogCtrl extends GFCBaseCtrl<Object> {
 	 * Filling the finance events
 	 */
 	private void doFillEvents() {
-		fillComboBox(eventName, FinanceConstants.FINSER_EVENT_ORG,
+		fillComboBox(eventName, FinServiceEvent.ORG,
 				PennantStaticListUtil.getValueLabels(PennantStaticListUtil.getFinEvents(true)));
 		onChangeEvent(this.eventName.getSelectedItem().getValue().toString());
 	}

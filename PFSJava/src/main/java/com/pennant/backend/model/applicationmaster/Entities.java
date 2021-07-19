@@ -4,11 +4,11 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.pennant.backend.model.systemmasters.Academic;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-
-import javax.xml.bind.annotation.XmlTransient;
 
 public class Entities extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -1472467289111692722L;

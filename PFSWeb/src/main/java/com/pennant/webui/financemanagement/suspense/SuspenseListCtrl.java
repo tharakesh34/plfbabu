@@ -66,7 +66,6 @@ import org.zkoss.zul.Window;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.service.financemanagement.SuspenseService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.webui.financemanagement.suspense.model.SuspenseListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -75,6 +74,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/FinanceManagement/Suspense/SuspenseList.zul file.
@@ -141,7 +141,7 @@ public class SuspenseListCtrl extends GFCBaseListCtrl<FinanceSuspHead> {
 		super.queueTableName = "FinSuspHead_View";
 
 		if (!enqiryModule) {
-			moduleDefiner = FinanceConstants.FINSER_EVENT_SUSPHEAD;
+			moduleDefiner = FinServiceEvent.SUSPHEAD;
 		}
 	}
 

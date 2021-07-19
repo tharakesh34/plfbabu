@@ -26,7 +26,6 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.ReceiptService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
@@ -39,6 +38,7 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/ReceiptRealization/ReceiptRealizationEnqListCtrl.zul
@@ -192,13 +192,13 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 			StringBuilder whereClause = new StringBuilder(" ReceiptPurpose = '"
-					+ FinanceConstants.FINSER_EVENT_FEEPAYMENT + "' AND  (RecordType IS NULL   OR RecordType='' )");
+					+ FinServiceEvent.FEEPAYMENT + "' AND  (RecordType IS NULL   OR RecordType='' )");
 			//whereClause.append("AND ( ");
 			//whereClause.append(getUsrFinAuthenticationQry(false, searchObject.getTabelName()));
 			//whereClause.append(")");
 			this.searchObject.addWhereClause(whereClause.toString());
 		} else {
-			this.searchObject.addWhereClause(" ReceiptPurpose != '" + FinanceConstants.FINSER_EVENT_FEEPAYMENT
+			this.searchObject.addWhereClause(" ReceiptPurpose != '" + FinServiceEvent.FEEPAYMENT
 					+ "' AND (RecordType IS NULL   OR RecordType='' )");
 		}
 	}

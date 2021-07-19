@@ -81,7 +81,6 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.CollateralConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.VerificationController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -111,6 +110,7 @@ import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pffws.VerificationsRestService;
 import com.pennanttech.util.APIConstants;
@@ -212,7 +212,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 		logger.debug(Literal.ENTERING);
 		FinanceDetail financeDetail = new FinanceDetail();
 		financeDetail = financeDetailService.getFinanceDetailById(keyReference, false, "", true,
-				FinanceConstants.FINSER_EVENT_ORG, "");
+				FinServiceEvent.ORG, "");
 		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}

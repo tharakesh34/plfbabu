@@ -94,6 +94,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 public class RepaymentProcessUtil {
@@ -301,8 +302,8 @@ public class RepaymentProcessUtil {
 		boolean isSchdLogReq = false;
 
 		String receiptPurpose = rch.getReceiptPurpose();
-		if (FinanceConstants.FINSER_EVENT_EARLYRPY.equals(receiptPurpose)
-				|| FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(receiptPurpose)) {
+		if (FinServiceEvent.EARLYRPY.equals(receiptPurpose)
+				|| FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)) {
 			isSchdLogReq = true;
 		}
 		BigDecimal receiptFromBank = BigDecimal.ZERO;
@@ -335,8 +336,8 @@ public class RepaymentProcessUtil {
 
 		}
 
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, receiptPurpose)
-				|| StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, receiptPurpose)) {
+		if (StringUtils.equals(FinServiceEvent.EARLYRPY, receiptPurpose)
+				|| StringUtils.equals(FinServiceEvent.EARLYSETTLE, receiptPurpose)) {
 			isSchdLogReq = true;
 		}
 
@@ -548,7 +549,7 @@ public class RepaymentProcessUtil {
 		adjustedToReceipt = adjustedToReceipt.add(rch.getTotalFees().getPaidAmount());
 
 		BigDecimal toExcess = receiptAmount.subtract(adjustedToReceipt);
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, receiptPurpose)) {
+		if (StringUtils.equals(FinServiceEvent.EARLYRPY, receiptPurpose)) {
 			adjustedToReceipt = adjustedToReceipt.add(toExcess);
 			toExcess = BigDecimal.ZERO;
 		}
@@ -583,7 +584,7 @@ public class RepaymentProcessUtil {
 			dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);
 		}
 
-		if (!feesExecuted && !FinanceConstants.FINSER_EVENT_SCHDRPY.equals(receiptPurpose)) {
+		if (!feesExecuted && !FinServiceEvent.SCHDRPY.equals(receiptPurpose)) {
 			Map<String, BigDecimal> feeMap = new HashMap<>();
 
 			if (finFeeDetailList != null) {
@@ -1021,7 +1022,7 @@ public class RepaymentProcessUtil {
 
 	private BigDecimal adjustExcessForAdvInt(FinReceiptHeader rch, AEAmountCodes amountCodes, BigDecimal toExcess) {
 		if (amountCodes.isIntAdv() && toExcess.compareTo(BigDecimal.ZERO) > 0) {
-			if (FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+			if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
 				for (ReceiptAllocationDetail rad : rch.getAllocations()) {
 					String allocationType = rad.getAllocationType();
 					if (RepayConstants.ALLOCATION_FUT_TDS.equals(allocationType)) {
@@ -2132,7 +2133,7 @@ public class RepaymentProcessUtil {
 			}
 
 			BigDecimal receiptAmount = rch.getReceiptAmount();
-			if (FinanceConstants.FINSER_EVENT_EARLYRPY.equals(rch.getReceiptPurpose())
+			if (FinServiceEvent.EARLYRPY.equals(rch.getReceiptPurpose())
 					&& receiptAmount.compareTo(totRecvAmount) > 0) {
 				rpyQueueHeader.setFutPrincipal(receiptAmount.subtract(totRecvAmount));
 			}
@@ -2399,16 +2400,16 @@ public class RepaymentProcessUtil {
 	 */
 	private String getEventCode(String finEvent, String receiptMode) {
 		switch (finEvent) {
-		case FinanceConstants.FINSER_EVENT_SCHDRPY:
+		case FinServiceEvent.SCHDRPY:
 			if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
 				if (RepayConstants.RECEIPTMODE_PRESENTMENT.equals(receiptMode)) {
 					return AccountEventConstants.ACCEVENT_PRSNT;
 				}
 			}
 			return AccountEventConstants.ACCEVENT_REPAY;
-		case FinanceConstants.FINSER_EVENT_EARLYRPY:
+		case FinServiceEvent.EARLYRPY:
 			return AccountEventConstants.ACCEVENT_EARLYPAY;
-		case FinanceConstants.FINSER_EVENT_EARLYSETTLE:
+		case FinServiceEvent.EARLYSETTLE:
 			return AccountEventConstants.ACCEVENT_EARLYSTL;
 		default:
 			return "";
@@ -2536,7 +2537,7 @@ public class RepaymentProcessUtil {
 		doSaveReceipts(rch, null, true);
 
 		Date reqMaxODDate = appDate;
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, rch.getReceiptPurpose())) {
+		if (StringUtils.equals(FinServiceEvent.EARLYSETTLE, rch.getReceiptPurpose())) {
 			reqMaxODDate = rch.getValueDate();
 		}
 		if (!ImplementationConstants.LPP_CALC_SOD) {
@@ -2566,7 +2567,7 @@ public class RepaymentProcessUtil {
 		for (FinReceiptDetail recDtl : rcdDtls) {
 			FinRepayHeader rph = financeRepaymentsDAO.getFinRepayHeadersByReceipt(recDtl.getReceiptSeqID(), "");
 			// updating fixexcess amount after realization
-			if (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(rch.getReceiptPurpose())) {
+			if (FinServiceEvent.SCHDRPY.equals(rch.getReceiptPurpose())) {
 				if (rph != null && rph.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
 					finExcessAmountDAO.updExcessAfterRealize(reference, excessAdjustTo, rph.getExcessAmount());
 				}

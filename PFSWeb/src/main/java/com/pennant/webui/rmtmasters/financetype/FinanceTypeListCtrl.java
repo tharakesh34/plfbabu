@@ -68,7 +68,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.applicationmaster.IRRFinanceType;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinTypeExpense;

@@ -63,6 +63,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
@@ -140,7 +141,7 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	private ReceiptService receiptService;
 	private NonLanReceiptService nonLanReceiptService;
 
-	private String workflowCode = FinanceConstants.FINSER_EVENT_RECEIPT;;
+	private String workflowCode = FinServiceEvent.RECEIPT;;
 	private transient FinanceWorkFlowService financeWorkFlowService;
 
 	private transient WorkFlowDetails workFlowDetails = null;
@@ -622,15 +623,15 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		if (isWorkFlowEnabled()) {
 			String eventCode = "";
 
-			if (StringUtils.equals(finReceiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+			if (StringUtils.equals(finReceiptHeader.getReceiptPurpose(), FinServiceEvent.SCHDRPY)) {
 				eventCode = AccountEventConstants.ACCEVENT_REPAY;
 
 			} else if (StringUtils.equals(finReceiptHeader.getReceiptPurpose(),
-					FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+					FinServiceEvent.EARLYRPY)) {
 				eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
 
 			} else if (StringUtils.equals(finReceiptHeader.getReceiptPurpose(),
-					FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+					FinServiceEvent.EARLYSETTLE)) {
 				eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
 
 			}

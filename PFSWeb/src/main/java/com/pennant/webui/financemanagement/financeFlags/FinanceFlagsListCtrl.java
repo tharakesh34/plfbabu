@@ -64,7 +64,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.financemanagement.FinanceFlag;
 import com.pennant.backend.service.finance.FinanceFlagsService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.webui.financemanagement.financeFlags.model.FinFlagsListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -73,6 +72,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class FinanceFlagsListCtrl extends GFCBaseListCtrl<FinanceFlag> {
 	private static final long serialVersionUID = -5081318673331825306L;
@@ -166,7 +166,7 @@ public class FinanceFlagsListCtrl extends GFCBaseListCtrl<FinanceFlag> {
 		buildedWhereCondition = buildedWhereCondition
 				.concat(" ON WD.WorkFlowType = WF.WorkFlowType AND WF.WorkFlowActive = 1 ");
 		buildedWhereCondition = buildedWhereCondition.concat(" WHERE WD.FinEvent = '");
-		buildedWhereCondition = buildedWhereCondition.concat(FinanceConstants.FINSER_EVENT_FINFLAGS);
+		buildedWhereCondition = buildedWhereCondition.concat(FinServiceEvent.FINFLAGS);
 		buildedWhereCondition = buildedWhereCondition.concat("' AND WF.FirstTaskOwner IN(");
 		buildedWhereCondition = buildedWhereCondition.concat(rolecodeList);
 		buildedWhereCondition = buildedWhereCondition.concat("))) OR NextRoleCode IN(");
@@ -320,7 +320,7 @@ public class FinanceFlagsListCtrl extends GFCBaseListCtrl<FinanceFlag> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("financeFlag", afinanceFlag);
 		arg.put("financeFlagsListCtrl", this);
-		arg.put("eventCode", FinanceConstants.FINSER_EVENT_FINFLAGS);
+		arg.put("eventCode", FinServiceEvent.FINFLAGS);
 
 		try {
 			if (afinanceFlag.isNew()) {

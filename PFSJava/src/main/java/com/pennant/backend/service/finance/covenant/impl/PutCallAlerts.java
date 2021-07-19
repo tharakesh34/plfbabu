@@ -34,6 +34,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.notification.Notification;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.pff.process.PutCallFreqUpdateService;
 
@@ -166,7 +167,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 			Notification putCallNotifyCust = new Notification();
 			putCallNotifyCust.setKeyReference(finOption.getFinReference());
 			putCallNotifyCust.setModule("LOAN");
-			putCallNotifyCust.setSubModule(FinanceConstants.FINSER_EVENT_PUTCALL);
+			putCallNotifyCust.setSubModule(FinServiceEvent.PUTCALL);
 			putCallNotifyCust.setTemplateCode(finOption.getCustomerTemplateCode());
 			putCallNotifyCust.setEmails(emails);
 			long putCallNotifyId = sendNotification(financeDetail, putCallNotifyCust);
@@ -180,7 +181,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 			Notification intReviewNotifyCust = new Notification();
 			intReviewNotifyCust.setKeyReference(finOption.getFinReference());
 			intReviewNotifyCust.setModule("LOAN");
-			intReviewNotifyCust.setSubModule(FinanceConstants.FINSER_EVENT_PUTCALL);
+			intReviewNotifyCust.setSubModule(FinServiceEvent.PUTCALL);
 			intReviewNotifyCust.setTemplateCode("INTEREST_REVIEW_CUST");
 			intReviewNotifyCust.setEmails(emails);
 			long intReviewNotifyId = sendNotification(financeDetail, intReviewNotifyCust);
@@ -194,7 +195,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 			Notification assetReviewNotifyCust = new Notification();
 			assetReviewNotifyCust.setKeyReference(finOption.getFinReference());
 			assetReviewNotifyCust.setModule("LOAN");
-			assetReviewNotifyCust.setSubModule(FinanceConstants.FINSER_EVENT_PUTCALL);
+			assetReviewNotifyCust.setSubModule(FinServiceEvent.PUTCALL);
 			assetReviewNotifyCust.setTemplateCode("ASSET_REVIEW_CUST");
 			assetReviewNotifyCust.setEmails(emails);
 			long assetReviewNotifyId = sendNotification(financeDetail, assetReviewNotifyCust);
@@ -218,7 +219,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 			Notification putCallNotifyUser = new Notification();
 			putCallNotifyUser.setKeyReference(finOption.getFinReference());
 			putCallNotifyUser.setModule("LOAN");
-			putCallNotifyUser.setSubModule(FinanceConstants.FINSER_EVENT_PUTCALL);
+			putCallNotifyUser.setSubModule(FinServiceEvent.PUTCALL);
 			putCallNotifyUser.setTemplateCode(finOption.getUserTemplateCode());
 			putCallNotifyUser.setEmails(emails);
 			long putCallNotifyId = sendNotification(financeDetail, putCallNotifyUser);
@@ -232,7 +233,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 			Notification intReviewNotifyUser = new Notification();
 			intReviewNotifyUser.setKeyReference(finOption.getFinReference());
 			intReviewNotifyUser.setModule("LOAN");
-			intReviewNotifyUser.setSubModule(FinanceConstants.FINSER_EVENT_PUTCALL);
+			intReviewNotifyUser.setSubModule(FinServiceEvent.PUTCALL);
 			intReviewNotifyUser.setTemplateCode("INTEREST_REVIEW_USER");
 			intReviewNotifyUser.setEmails(emails);
 			long intReviewNotifyId = sendNotification(financeDetail, intReviewNotifyUser);
@@ -246,7 +247,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 			Notification assetReviewNotifyUser = new Notification();
 			assetReviewNotifyUser.setKeyReference(finOption.getFinReference());
 			assetReviewNotifyUser.setModule("LOAN");
-			assetReviewNotifyUser.setSubModule(FinanceConstants.FINSER_EVENT_PUTCALL);
+			assetReviewNotifyUser.setSubModule(FinServiceEvent.PUTCALL);
 			assetReviewNotifyUser.setTemplateCode("ASSET_REVIEW_USER");
 			assetReviewNotifyUser.setEmails(emails);
 			long assetReviewNotifyId = sendNotification(financeDetail, assetReviewNotifyUser);

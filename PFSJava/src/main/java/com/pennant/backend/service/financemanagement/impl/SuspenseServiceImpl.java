@@ -84,6 +84,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * Service implementation for methods that depends on <b>FinanceSuspHead</b>.<br>
@@ -207,7 +208,7 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 			//Finance Stage Accounting Posting Details 
 			//=======================================
 			financeDetail.setStageTransactionEntries(getTransactionEntryDAO().getListTransactionEntryByRefType(finType,
-					StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent,
+					StringUtils.isEmpty(procEdtEvent) ? FinServiceEvent.ORG : procEdtEvent,
 					FinanceConstants.PROCEDT_STAGEACC, userRole, "_AEView", true));
 
 			// Docuument Details
@@ -570,7 +571,7 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 
 		// Cancel All Transactions done by Finance Reference
 		//=======================================
-		cancelStageAccounting(financeMain.getFinReference(), FinanceConstants.FINSER_EVENT_SUSPHEAD);
+		cancelStageAccounting(financeMain.getFinReference(), FinServiceEvent.SUSPHEAD);
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getFinanceSuspHeadDAO().delete(financeSuspHead, "_Temp");

@@ -72,7 +72,6 @@ import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -82,6 +81,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/SelectFinanceTypeDialog.zul file.
@@ -287,7 +287,7 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// TODO:Removing feed in Restructure event
 		List<FinTypeFees> finTypeFeesList = financeDetail.getFinTypeFeesList();
-		if (FinanceConstants.FINSER_EVENT_RESTRUCTURE.equals(moduleDefiner)
+		if (FinServiceEvent.RESTRUCTURE.equals(moduleDefiner)
 				&& CollectionUtils.isNotEmpty(finTypeFeesList)) {
 			financeDetail.setFinTypeFeesList(finTypeFeesList);
 		} else {

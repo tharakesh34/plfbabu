@@ -33,10 +33,10 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.LowerTaxDeduction;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.ChangeTDSService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction> implements ChangeTDSService {
@@ -125,7 +125,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 
 		financeMain.setNextRoleCode(finMaintainInstruction.getNextRoleCode());
 		financeMain.setRecordStatus(finMaintainInstruction.getRecordStatus());
-		financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_CHANGETDS);
+		financeMain.setRcdMaintainSts(FinServiceEvent.CHANGETDS);
 		financeMain.setRoleCode(finMaintainInstruction.getRoleCode());
 		financeMain.setTaskId(finMaintainInstruction.getTaskId());
 		financeMain.setNextTaskId(finMaintainInstruction.getNextTaskId());
@@ -135,7 +135,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		financeMain.setVersion(finMaintainInstruction.getVersion());
 
 		FinServiceInstruction inst = new FinServiceInstruction();
-		inst.setFinEvent(FinanceConstants.FINSER_EVENT_CHANGETDS);
+		inst.setFinEvent(FinServiceEvent.CHANGETDS);
 		inst.setFinReference(financeMain.getFinReference());
 		inst.setMaker(auditHeader.getAuditUsrId());
 		inst.setMakerAppDate(DateUtility.getAppDate());
@@ -154,7 +154,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 
 		finScheduleData.setLowerTaxDeductionDetails(ltdList);
 
-		getFinServiceInstructionDAO().deleteList(financeMain.getFinReference(), FinanceConstants.FINSER_EVENT_CHANGETDS,
+		getFinServiceInstructionDAO().deleteList(financeMain.getFinReference(), FinServiceEvent.CHANGETDS,
 				tableType.getSuffix());
 
 		if (finMaintainInstruction.isNew()) {
@@ -296,7 +296,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		// save FinInstruction to maintain records
 		FinServiceInstruction finServiceInstruction = null;
 		List<FinServiceInstruction> finServInstList = getFinServiceInstructionDAO().getFinServiceInstructions(
-				finScheduleData.getFinanceMain().getFinReference(), "_Temp", FinanceConstants.FINSER_EVENT_CHANGETDS);
+				finScheduleData.getFinanceMain().getFinReference(), "_Temp", FinServiceEvent.CHANGETDS);
 		Date appDate = SysParamUtil.getAppDate();
 		if (finServInstList.size() > 0) {
 			finServiceInstruction = finServInstList.get(0);
@@ -308,7 +308,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 			finServiceInstruction = new FinServiceInstruction();
 			finServiceInstruction.setFinReference(finMaintainInstruction.getFinReference());
 			finServiceInstruction.setFromDate(appDate);
-			finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_CHANGETDS);
+			finServiceInstruction.setFinEvent(FinServiceEvent.CHANGETDS);
 			finServiceInstruction.setChecker(auditHeader.getAuditUsrId());
 			finServiceInstruction.setCheckerAppDate(appDate);
 			finServiceInstruction.setCheckerSysDate(DateUtility.getSysDate());
@@ -392,7 +392,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		financeMain.setFinReference(finMaintainInstruction.getFinReference());
 		getFinanceMainDAO().deleteFinreference(financeMain, TableType.TEMP_TAB, false, false);
 
-		getFinServiceInstructionDAO().deleteList(financeMain.getFinReference(), FinanceConstants.FINSER_EVENT_CHANGETDS,
+		getFinServiceInstructionDAO().deleteList(financeMain.getFinReference(), FinServiceEvent.CHANGETDS,
 				TableType.TEMP_TAB.getSuffix());
 
 		getFinMaintainInstructionDAO().delete(finMaintainInstruction, TableType.TEMP_TAB);

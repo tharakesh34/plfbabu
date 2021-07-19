@@ -182,6 +182,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -264,7 +265,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		FinanceMain fm = finScheduleData.getFinanceMain();
 		FinanceType financeType = finScheduleData.getFinanceType();
 
-		String finEvent = FinanceConstants.FINSER_EVENT_ORG;
+		String finEvent = FinServiceEvent.ORG;
 		String finType = financeType.getFinType();
 		String entityCode = financeType.getLovDescEntityCode();
 
@@ -710,7 +711,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		String finType = financeDetail.getFinScheduleData().getFinanceMain().getFinType();
 		List<Long> finRefIds = financeReferenceDetailDAO.getRefIdListByRefType(
-				financeDetail.getFinScheduleData().getFinanceMain().getFinType(), FinanceConstants.FINSER_EVENT_ORG,
+				financeDetail.getFinScheduleData().getFinanceMain().getFinType(), FinServiceEvent.ORG,
 				PennantConstants.REC_ON_APPR, FinanceConstants.PROCEDT_TEMPLATE);
 		if (!CollectionUtils.isEmpty(finRefIds)) {
 			notifications = notificationsService.getApprovedNotificationsByRuleIdList(finRefIds);
@@ -724,7 +725,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 			}
 			List<FinanceReferenceDetail> finRefDetails = financeReferenceDetailDAO
-					.getFinanceProcessEditorDetails(finType, FinanceConstants.FINSER_EVENT_ORG, "_FINVIEW");
+					.getFinanceProcessEditorDetails(finType, FinServiceEvent.ORG, "_FINVIEW");
 
 			for (FinanceReferenceDetail financeReferenceDetail : finRefDetails) {
 				if (FinanceConstants.PROCEDT_AGREEMENT == financeReferenceDetail.getFinRefType()) {
@@ -874,7 +875,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				details.setFinEvent(frefdata.getFinEvent());
 				// details.setCategoryCode(agreementDefinition.getModuleName());
 				details.setLastMntOn(DateUtility.getTimestamp(SysParamUtil.getAppDate()));
-				details.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
+				details.setFinEvent(FinServiceEvent.ORG);
 				details.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				details.setNewRecord(true);
 				engine.close();
@@ -1037,7 +1038,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private FinanceDetail nonStpProcess(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		String finEvent = FinanceConstants.FINSER_EVENT_ORG;
+		String finEvent = FinServiceEvent.ORG;
 		FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(
 				financeMain.getFinType(), finEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
 		WorkFlowDetails workFlowDetails = null;
@@ -1133,7 +1134,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			throws IllegalAccessException, InvocationTargetException {
 		logger.debug(Literal.ENTERING);
 
-		financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
+		financeDetail.setModuleDefiner(FinServiceEvent.ORG);
 		financeDetail.setUserDetails(userDetails);
 		financeDetail.setNewRecord(true);
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
@@ -1684,7 +1685,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		// Get the ExtendedFieldHeader for given module and subModule
 		// ### 02-05-2018-Start- story #334 Extended fields for loan servicing
 		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
-				ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinCategory(), FinanceConstants.FINSER_EVENT_ORG,
+				ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinCategory(), FinServiceEvent.ORG,
 				"");
 		// ### 02-05-2018-END
 
@@ -2451,13 +2452,13 @@ public class CreateFinanceController extends SummaryDetailService {
 		FinanceDetail financeDetail = null;
 		try {
 			financeDetail = financeDetailService.getFinanceDetailById(finReference, false, "", false,
-					FinanceConstants.FINSER_EVENT_ORG, "");
+					FinServiceEvent.ORG, "");
 
 			if (financeDetail != null) {
 				List<ExtendedField> extData = extendedFieldDetailsService.getExtndedFieldDetails(
 						ExtendedFieldConstants.MODULE_LOAN,
 						financeDetail.getFinScheduleData().getFinanceMain().getFinCategory(),
-						FinanceConstants.FINSER_EVENT_ORG, finReference);
+						FinServiceEvent.ORG, finReference);
 				financeDetail.setExtendedDetails(extData);
 				financeDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			} else {
@@ -2512,7 +2513,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			doSetRequiredDetails(financeDetail, false, userDetails, stp, true, false);
 			// Temporary FIXME
 			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(
-					financeMain.getFinReference(), FinanceConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG,
+					financeMain.getFinReference(), FinanceConstants.MODULE_NAME, FinServiceEvent.ORG,
 					"_View");
 			financeDetail.setDocumentDetailsList(documentList);
 			finScheduleData.getFinanceMain().setFinRemarks("SUCCESS");
@@ -2595,7 +2596,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		FinanceDetail financeDetail = null;
 		try {
 			financeDetail = financeDetailService.getFinanceDetailById(finReference, false, "", false,
-					FinanceConstants.FINSER_EVENT_ORG, "");
+					FinServiceEvent.ORG, "");
 
 			if (financeDetail != null) {
 				FinanceMain fm = financeDetail.getFinScheduleData().getFinanceMain();
@@ -2646,7 +2647,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				List<ExtendedField> extData = extendedFieldDetailsService.getExtndedFieldDetails(
 						ExtendedFieldConstants.MODULE_LOAN,
 						financeDetail.getFinScheduleData().getFinanceMain().getFinCategory(),
-						FinanceConstants.FINSER_EVENT_ORG, finReference);
+						FinServiceEvent.ORG, finReference);
 				financeDetail.setExtendedDetails(extData);
 				financeDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			} else {
@@ -3634,7 +3635,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		financeMain.setVersion(1);
 		financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		financeMain.setRecordStatus(PennantConstants.RCD_STATUS_REJECTED);
-		financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
+		financeDetail.setModuleDefiner(FinServiceEvent.ORG);
 
 		// customer details
 		Customer customer = customerDetailsService.getCustomerByCIF(financeMain.getCustCIF());
@@ -3708,7 +3709,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		FinanceDetail response = null;
 		FinanceDetail findetail = financeDetailService.getFinanceDetailById(financeDetail.getFinReference(), false, "",
-				false, FinanceConstants.FINSER_EVENT_ORG, "");
+				false, FinServiceEvent.ORG, "");
 		FinanceMain financeMain = findetail.getFinScheduleData().getFinanceMain();
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		findetail.getFinScheduleData().getFinanceMain()
@@ -3719,7 +3720,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			String subModule = findetail.getFinScheduleData().getFinanceType().getFinCategory();
 			errorDetailList = extendedFieldDetailsService.validateExtendedFieldDetails(
 					financeDetail.getExtendedDetails(), ExtendedFieldConstants.MODULE_LOAN, subModule,
-					FinanceConstants.FINSER_EVENT_CANCELFIN);
+					FinServiceEvent.CANCELFIN);
 
 			for (ErrorDetail errorDetail : errorDetailList) {
 				response = new FinanceDetail();
@@ -3755,7 +3756,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		// Get the ExtendedFieldHeader for given module and subModule
 		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
 				ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinCategory(),
-				FinanceConstants.FINSER_EVENT_CANCELFIN, "");
+				FinServiceEvent.CANCELFIN, "");
 		// ### 02-05-2018-END
 		findetail.setExtendedFieldHeader(extendedFieldHeader);
 		List<ExtendedField> extendedFields = financeDetail.getExtendedDetails();
@@ -3915,8 +3916,8 @@ public class CreateFinanceController extends SummaryDetailService {
 			financeMain.setVersion(1);
 			financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			financeMain.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
-			finDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
+			financeDetail.setModuleDefiner(FinServiceEvent.ORG);
+			finDetail.setModuleDefiner(FinServiceEvent.ORG);
 			finDetail.getFinScheduleData().getFinanceMain().setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			finDetail.getFinScheduleData().setFinReference(finReference);
 			for (FinanceScheduleDetail schdDetail : finDetail.getFinScheduleData().getFinanceScheduleDetails()) {
@@ -3959,7 +3960,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			// process Extended field details
 			// Get the ExtendedFieldHeader for given module and subModule
 			ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
-					ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinCategory(), FinanceConstants.FINSER_EVENT_ORG,
+					ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinCategory(), FinServiceEvent.ORG,
 					"");
 			// ### 02-05-2018-END
 			finDetail.setExtendedFieldHeader(extendedFieldHeader);
@@ -4081,7 +4082,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			finDetail.setChequeHeader(chequeHeader);
 
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-			String finEvent = FinanceConstants.FINSER_EVENT_ORG;
+			String finEvent = FinServiceEvent.ORG;
 			FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(
 					financeMain.getFinType(), finEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
 			WorkFlowDetails workFlowDetails = null;
@@ -4577,7 +4578,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	}
 
 	public Map<String, String> getUserActions(FinanceMain finMain) {
-		String finEvent = FinanceConstants.FINSER_EVENT_ORG;
+		String finEvent = FinServiceEvent.ORG;
 		FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(finMain.getFinType(),
 				finEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
 		WorkFlowDetails workFlowDetails = null;

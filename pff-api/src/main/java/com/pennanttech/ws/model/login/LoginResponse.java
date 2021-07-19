@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
-import com.pennant.backend.model.WSReturnStatus;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+
+import com.pennant.backend.model.WSReturnStatus;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoginResponse implements Serializable {

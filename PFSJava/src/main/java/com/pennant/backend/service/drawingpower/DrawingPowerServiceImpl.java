@@ -31,6 +31,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.external.DrawingPower;
 
 public class DrawingPowerServiceImpl implements DrawingPowerService {
@@ -57,7 +58,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
 
 		// Add disbursement validations.
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADDDISB)) {
+		if (moduleDefiner.equals(FinServiceEvent.ADDDISB)) {
 
 			if (!"Cancel".equalsIgnoreCase(userAction) && !"Resubmit".equalsIgnoreCase(userAction)
 					&& !"Reject".equalsIgnoreCase(userAction)) {
@@ -84,7 +85,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 		// LOS validations.
 		if (financeType.isAllowDrawingPower()) {
 			if (StringUtils.isEmpty(moduleDefiner)
-					|| StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ORG)) {
+					|| StringUtils.equals(moduleDefiner, FinServiceEvent.ORG)) {
 
 				if (!"Cancel".equalsIgnoreCase(userAction) && !"Resubmit".equalsIgnoreCase(userAction)
 						&& !"Reject".equalsIgnoreCase(userAction) && "Submit".equalsIgnoreCase(userAction)) {
@@ -113,7 +114,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 
 		if (CollectionUtils.isNotEmpty(instructions)) {
 			for (FinServiceInstruction instruction : instructions) {
-				if (FinanceConstants.FINSER_EVENT_ADDDISB.equals(instruction.getFinEvent())) {
+				if (FinServiceEvent.ADDDISB.equals(instruction.getFinEvent())) {
 					disbAmt = disbAmt.add(instruction.getAmount());
 				}
 			}
@@ -177,7 +178,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 		}
 
 		if (!StringUtils.isEmpty(moduleDefiner)
-				&& (!StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ORG))) {
+				&& (!StringUtils.equals(moduleDefiner, FinServiceEvent.ORG))) {
 			if (profitDetail == null) {
 				profitDetail = this.financeProfitDetailDAO.getFinProfitDetailsById(financeMain.getFinReference());
 			}
@@ -219,7 +220,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 			if (drawingPower != null) {
 				BigDecimal drawingPowerAmt = drawingPower.getDrawingPower(financeMain.getFinReference());
 				if (StringUtils.isEmpty(moduleDefiner)
-						|| StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ORG)) {
+						|| StringUtils.equals(moduleDefiner, FinServiceEvent.ORG)) {
 					checkingAmt = financeMain.getFinCurrAssetValue();
 					if (checkingAmt.compareTo(drawingPowerAmt) > 0) {
 

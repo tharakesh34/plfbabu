@@ -75,6 +75,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.SubReceiptPaymentModes;
 
@@ -231,7 +232,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		this.valueDate.setValue(this.receiptDate.getValue());
 
 		String recPurpose = this.receiptPurpose.getSelectedItem().getValue().toString();
-		if (!StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+		if (!StringUtils.equals(recPurpose, FinServiceEvent.EARLYSETTLE)) {
 			return;
 		}
 
@@ -373,7 +374,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			this.row_receiptDues.setVisible(false);
 			this.row_ReceiptMode.setVisible(false);
 			this.row_ReceiptPurpose.setVisible(false);
-			fillComboBox(this.receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE,
+			fillComboBox(this.receiptPurpose, FinServiceEvent.EARLYSETTLE,
 					PennantStaticListUtil.getReceiptPurpose(), ",FeePayment,SchdlRepayment,EarlyPayment,");
 		} else {
 			fillComboBox(this.receiptPurpose, "", PennantStaticListUtil.getReceiptPurpose(), ",FeePayment,");
@@ -520,13 +521,13 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			}
 		}
 		if (isForeClosure) {
-			receiptPurpose = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
+			receiptPurpose = FinServiceEvent.EARLYSETTLE;
 		} else {
 			receiptPurpose = this.receiptPurpose.getSelectedItem().getValue();
 		}
 
-		if (receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)
-				|| receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+		if (receiptPurpose.equals(FinServiceEvent.EARLYRPY)
+				|| receiptPurpose.equals(FinServiceEvent.EARLYSETTLE)) {
 			Date startDate = ((FinanceMain) this.finReference.getObject()).getFinStartDate();
 			errorDetail = financeMainService.rescheduleValidation(this.receiptDate.getValue(),
 					this.finReference.getValue(), startDate);
@@ -540,8 +541,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		 */
 
 		// PSD:138262
-		if (receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)
-				|| receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+		if (receiptPurpose.equals(FinServiceEvent.EARLYSETTLE)
+				|| receiptPurpose.equals(FinServiceEvent.EARLYRPY)) {
 			boolean initiated = receiptService
 					.isEarlySettlementInitiated(StringUtils.trimToEmpty(this.finReference.getValue()));
 			if (initiated) {
@@ -553,8 +554,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		}
 		// PSD:138262
-		if (receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)
-				|| receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+		if (receiptPurpose.equals(FinServiceEvent.EARLYRPY)
+				|| receiptPurpose.equals(FinServiceEvent.EARLYSETTLE)) {
 			boolean initiated = receiptService
 					.isPartialSettlementInitiated(StringUtils.trimToEmpty(this.finReference.getValue()));
 			if (initiated) {
@@ -571,7 +572,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		// Validate Loan is INPROGRESS in WRITEOFF or NOT ?
 		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(this.finReference.getValue(), "_View");
-		if (FinanceConstants.FINSER_EVENT_WRITEOFF.equals(rcdMaintainSts)) {
+		if (FinServiceEvent.WRITEOFF.equals(rcdMaintainSts)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = rcdMaintainSts;
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("LMS001", valueParm));
@@ -605,13 +606,13 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		String receiptPurpose = "";
 
 		if (isForeClosure) {
-			receiptPurpose = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
+			receiptPurpose = FinServiceEvent.EARLYSETTLE;
 		} else {
 			receiptPurpose = this.receiptPurpose.getSelectedItem().getValue();
 		}
 
-		if (receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)
-				|| receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+		if (receiptPurpose.equals(FinServiceEvent.EARLYRPY)
+				|| receiptPurpose.equals(FinServiceEvent.EARLYSETTLE)) {
 			Date startDate = ((FinanceMain) this.finReference.getObject()).getFinStartDate();
 			errorDetail = financeMainService.rescheduleValidation(this.receiptDate.getValue(),
 					this.finReference.getValue(), startDate);
@@ -645,7 +646,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		FinanceMain finMain = fsd.getFinanceMain();
 
 		if (StringUtils.equals(this.receiptPurpose.getSelectedItem().getValue(),
-				FinanceConstants.FINSER_EVENT_EARLYSETTLE)
+				FinServiceEvent.EARLYSETTLE)
 				&& DateUtility.compare(valueDate.getValue(), finMain.getMaturityDate()) > 0) {
 			MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("RM0001", null)));
 			return;
@@ -685,7 +686,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			BigDecimal receiptDues = this.receiptDues.getActualValue();
 			BigDecimal knockOffAmount = this.receiptAmount.getActualValue();
 			String receiptPurpose = this.receiptPurpose.getSelectedItem().getValue();
-			if (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(receiptPurpose)
+			if (FinServiceEvent.SCHDRPY.equals(receiptPurpose)
 					&& knockOffAmount.compareTo(receiptDues) > 0) {
 				MessageUtil.showError(Labels.getLabel("label_Allocation_More_Due_KnockedOff"));
 				return;
@@ -802,21 +803,21 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		String recPurpose = getComboboxValue(this.receiptPurpose);
 		if (isForeClosure) {
-			recPurpose = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
-			method = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
+			recPurpose = FinServiceEvent.EARLYSETTLE;
+			method = FinServiceEvent.EARLYSETTLE;
 		}
 
 		switch (recPurpose) {
-		case FinanceConstants.FINSER_EVENT_SCHDRPY:
-			method = FinanceConstants.FINSER_EVENT_SCHDRPY;
+		case FinServiceEvent.SCHDRPY:
+			method = FinServiceEvent.SCHDRPY;
 			eventCode = AccountEventConstants.ACCEVENT_REPAY;
 			break;
-		case FinanceConstants.FINSER_EVENT_EARLYRPY:
-			method = FinanceConstants.FINSER_EVENT_EARLYRPY;
+		case FinServiceEvent.EARLYRPY:
+			method = FinServiceEvent.EARLYRPY;
 			eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
 			break;
-		case FinanceConstants.FINSER_EVENT_EARLYSETTLE:
-			method = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
+		case FinServiceEvent.EARLYSETTLE:
+			method = FinServiceEvent.EARLYSETTLE;
 			eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
 			break;
 		default:
@@ -828,7 +829,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		 */
 		boolean isEnquiry = receiptData.isEnquiry();
 		receiptData = receiptService.getFinReceiptDataById(loanReference, eventCode,
-				FinanceConstants.FINSER_EVENT_RECEIPT, "");
+				FinServiceEvent.RECEIPT, "");
 		receiptData.setEnquiry(isEnquiry);
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
@@ -930,19 +931,19 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	private void setWorkflowDetails(String finType, boolean isPromotion) {
 
 		// Finance Maintenance Workflow Check & Assignment
-		if (StringUtils.isNotEmpty(FinanceConstants.FINSER_EVENT_RECEIPT)) {
+		if (StringUtils.isNotEmpty(FinServiceEvent.RECEIPT)) {
 			String workflowTye = "";
 			if (isKnockOff) {
 				workflowTye = getFinanceWorkFlowService().getFinanceWorkFlowType(finType,
-						FinanceConstants.FINSER_EVENT_RECEIPTKNOCKOFF, isPromotion
+						FinServiceEvent.RECEIPTKNOCKOFF, isPromotion
 								? PennantConstants.WORFLOW_MODULE_PROMOTION : PennantConstants.WORFLOW_MODULE_FINANCE);
 			} else if (isForeClosure) {
 				workflowTye = getFinanceWorkFlowService().getFinanceWorkFlowType(finType,
-						FinanceConstants.FINSER_EVENT_RECEIPTFORECLOSURE, isPromotion
+						FinServiceEvent.RECEIPTFORECLOSURE, isPromotion
 								? PennantConstants.WORFLOW_MODULE_PROMOTION : PennantConstants.WORFLOW_MODULE_FINANCE);
 			} else {
 				workflowTye = getFinanceWorkFlowService().getFinanceWorkFlowType(finType,
-						FinanceConstants.FINSER_EVENT_RECEIPT, isPromotion ? PennantConstants.WORFLOW_MODULE_PROMOTION
+						FinServiceEvent.RECEIPT, isPromotion ? PennantConstants.WORFLOW_MODULE_PROMOTION
 								: PennantConstants.WORFLOW_MODULE_FINANCE);
 			}
 			if (workflowTye != null) {
@@ -1234,7 +1235,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		if (!financeMain.isFinIsActive()
 				|| DateUtility.compare(SysParamUtil.getAppDate(), financeMain.getMaturityDate()) > 0) {
-			fillComboBox(receiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY,
+			fillComboBox(receiptPurpose, FinServiceEvent.SCHDRPY,
 					PennantStaticListUtil.getReceiptPurpose(), ",EarlyPayment, EarlySettlement, FeePayment,");
 			receiptPurpose.setDisabled(true);
 		} else if (StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_MAKER)) {

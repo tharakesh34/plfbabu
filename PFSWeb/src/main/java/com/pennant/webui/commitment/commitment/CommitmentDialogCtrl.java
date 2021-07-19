@@ -177,6 +177,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
@@ -784,7 +785,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		// Fetching Commitment Check Lists Details
 		if (isWorkFlowEnabled()) {
 			setCommitment(getCommitmentService().getProcessEditorDetails(getCommitment(), getRole(),
-					FinanceConstants.FINSER_EVENT_ORG));//TODO role or NextRole
+					FinServiceEvent.ORG));//TODO role or NextRole
 		}
 
 		//Agreement Details Tab
@@ -2852,7 +2853,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
 
 					notification.setModule("COMMITMENT");
-					notification.setSubModule(FinanceConstants.FINSER_EVENT_ORG);
+					notification.setSubModule(FinServiceEvent.ORG);
 					notification.setKeyReference(aCommitment.getCmtReference());
 					notification.setStage(aCommitment.getRoleCode());
 					notification.setReceivedBy(getUserWorkspace().getUserId());

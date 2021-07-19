@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.pennant.backend.model.finance.JointAccountDetail;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+
+import com.pennant.backend.model.finance.JointAccountDetail;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinInquiryDetail {

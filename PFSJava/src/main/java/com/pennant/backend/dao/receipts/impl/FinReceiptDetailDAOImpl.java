@@ -67,11 +67,11 @@ import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.util.DisbursementConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -710,7 +710,7 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		source.addValue("Finreference", receiptHeader.getReference());
 		source.addValue("STARTDATE", startDate);
 		source.addValue("ENDDATE", endDate);
-		source.addValue("FINEVENT", FinanceConstants.FINSER_EVENT_EARLYRPY);
+		source.addValue("FINEVENT", FinServiceEvent.EARLYRPY);
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");

@@ -66,6 +66,7 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
 public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
@@ -465,7 +466,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	@Override
 	public Notes getNotes(AbstractWorkflowEntity entity) {
 		Notes notes = new Notes();
-		notes.setModuleName(FinanceConstants.FINSER_EVENT_LOANDOWNSIZING);
+		notes.setModuleName(FinServiceEvent.LOANDOWNSIZING);
 		notes.setReference(getFinanceMain().getFinReference());
 		notes.setVersion(entity.getVersion());
 		return notes;
@@ -955,7 +956,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		finServiceInstruction.setFromDate(SysParamUtil.getAppDate());
 		finServiceInstruction.setFinReference(aFinanceMain.getFinReference());
 		finServiceInstruction.setSchdMethod(aFinanceMain.getScheduleMethod());
-		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_LOANDOWNSIZING);
+		finServiceInstruction.setFinEvent(FinServiceEvent.LOANDOWNSIZING);
 
 		// DownSizing Amount
 		try {

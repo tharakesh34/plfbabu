@@ -111,6 +111,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/LMTMasters/FinanceReferenceDetail
@@ -1410,7 +1411,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		logger.debug("Entering" + event.toString());
 
 		Object dataObject = null;
-		if (StringUtils.equals(eventAction, FinanceConstants.FINSER_EVENT_ADDDISB)) {
+		if (StringUtils.equals(eventAction, FinServiceEvent.ADDDISB)) {
 			Filter[] filter = new Filter[1];
 			filter[0] = new Filter("LimitCode", FinanceConstants.QUICK_DISBURSEMENT, Filter.OP_NOT_EQUAL);
 

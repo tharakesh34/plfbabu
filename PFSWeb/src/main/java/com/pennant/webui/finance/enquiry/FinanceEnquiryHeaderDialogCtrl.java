@@ -96,7 +96,6 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.expenses.FinExpenseDetails;
 import com.pennant.backend.model.finance.CreditReviewData;
 import com.pennant.backend.model.finance.CreditReviewDetails;
-import com.pennant.backend.model.finance.FinAgreementDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -158,6 +157,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.pff.finsampling.service.FinSamplingService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -711,7 +711,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						customerDetailsService.getCustomerDetailsById(enquiry.getCustID(), true, "_AView"));
 			}
 			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(this.finReference,
-					FinanceConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_TView");
+					FinanceConstants.MODULE_NAME, FinServiceEvent.ORG, "_TView");
 			if (financeDetail.getDocumentDetailsList() != null && !financeDetail.getDocumentDetailsList().isEmpty()) {
 				financeDetail.getDocumentDetailsList().addAll(documentList);
 			} else {
@@ -826,7 +826,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_RestructureEnquiry.value"));
 			FinanceDetail financeDetail = new FinanceDetail();
 			financeDetail = getFinanceDetailService().getServicingFinance(finReference, null,
-					FinanceConstants.FINSER_EVENT_RESTRUCTURE, SessionUserDetails.getLogiedInUser().getUsername());
+					FinServiceEvent.RESTRUCTURE, SessionUserDetails.getLogiedInUser().getUsername());
 
 			if (financeDetail.getFinScheduleData().getRestructureDetail() == null) {
 				closeDialog();

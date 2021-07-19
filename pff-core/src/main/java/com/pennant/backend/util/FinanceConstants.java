@@ -139,81 +139,6 @@ public class FinanceConstants {
 	public static final String QUEUEPRIORITY_LOW = "1";
 	public static final String QUEUEPRIORITY_NORMAL = "0";
 
-	// Finance Service Event Actions
-	public static final String FINSER_EVENT_ORG = "Origination";
-	public static final String FINSER_EVENT_PREAPPROVAL = "PreApproval";
-	public static final String FINSER_EVENT_RATECHG = "AddRateChange";
-	public static final String FINSER_EVENT_CHGRPY = "ChangeRepay";
-	public static final String FINSER_EVENT_ADDDISB = "AddDisbursement";
-	public static final String FINSER_EVENT_ADDFLEXIDISB = "AddFlexiDisbursement";
-	public static final String FINSER_EVENT_RLSDISB = "RlsHoldDisbursement";
-	public static final String FINSER_EVENT_POSTPONEMENT = "Postponement";
-	public static final String FINSER_EVENT_UNPLANEMIH = "UnPlannedEMIH";
-	public static final String FINSER_EVENT_ADDTERM = "AddTerms";
-	public static final String FINSER_EVENT_RMVTERM = "RmvTerms";
-	public static final String FINSER_EVENT_RECALCULATE = "Recalculate";
-	public static final String FINSER_EVENT_SUBSCHD = "SubSchedule";
-	public static final String FINSER_EVENT_CHGPFT = "ChangeProfit";
-	public static final String FINSER_EVENT_CHGFRQ = "ChangeFrequency";
-	public static final String FINSER_EVENT_RESCHD = "ReSchedule";
-	public static final String FINSER_EVENT_CHGGRCEND = "ChangeGestation";
-	public static final String FINSER_EVENT_INSCHANGE = "InsuranceChange";
-	public static final String FINSER_EVENT_RECEIPT = "Receipt";
-	public static final String FINSER_EVENT_COVENANT = "Covenants";
-	public static final String FINSER_EVENT_COLLATERAL = "Collaterals";
-	public static final String FINSER_EVENT_RECEIPTFORECLOSURE = "ReceiptForeClosure";
-	public static final String FINSER_EVENT_SCHDRPY = "SchdlRepayment";
-	public static final String FINSER_EVENT_EARLYRPY = "EarlyPayment";
-	public static final String FINSER_EVENT_RECEIPTKNOCKOFF = "ReceiptKnockOff";
-	public static final String FINSER_EVENT_RECEIPTKNOCKOFF_CAN = "ReceiptKnockOffCan";
-	public static final String FINSER_EVENT_EARLYSETTLE = "EarlySettlement";
-	public static final String FINSER_EVENT_WRITEOFF = "WriteOff";
-	public static final String FINSER_EVENT_WRITEOFFPAY = "WriteOffPay";
-	public static final String FINSER_EVENT_PROVISION = "Provision";
-	public static final String FINSER_EVENT_SUSPHEAD = "Suspense";
-	public static final String FINSER_EVENT_CANCELFIN = "CancelFinance";
-	public static final String FINSER_EVENT_DUEALERTS = "DueAlerts";
-	public static final String FINSER_EVENT_BASICMAINTAIN = "MaintainBasicDetail";
-	public static final String FINSER_EVENT_RPYBASICMAINTAIN = "MaintainRepayDetail";
-	public static final String FINSER_EVENT_CANCELRPY = "CancelRepay";
-	public static final String FINSER_EVENT_LIABILITYREQ = "LiabilityRequest";
-	public static final String FINSER_EVENT_NOCISSUANCE = "NOCIssuance";
-	public static final String FINSER_EVENT_TIMELYCLOSURE = "TimelyClosure";
-	public static final String FINSER_EVENT_INSCLAIM = "InsuranceClaim";
-	public static final String FINSER_EVENT_EARLYSTLENQ = "EarlySettlementEnq";
-	public static final String FINSER_EVENT_FINFLAGS = "FinanceFlag";
-	public static final String FINSER_EVENT_REINSTATE = "ReInstate";
-	public static final String FINSER_EVENT_REAGING = "ReAging";
-	public static final String FINSER_EVENT_CANCELDISB = "CancelDisbursement";
-	public static final String FINSER_EVENT_OVERDRAFTSCHD = "OverdraftSchedule";
-	public static final String FINSER_EVENT_PLANNEDEMI = "PlannedEMI";
-	public static final String FINSER_EVENT_HOLDEMI = "HoldEMI";
-	public static final String FINSER_EVENT_FEEPAYMENT = "FeePayment";
-	public static final String FINSER_EVENT_CHGSCHDMETHOD = "ChangeSchdlMethod";
-	public static final String FINSER_EVENT_GOLDLOANCANCEL = "GoldLoanCancel";
-	public static final String FINSER_EVENT_STORAGE = "StorageDetails";
-	public static final String FINSER_EVENT_NOMINEE = "NomineeDetails";
-	public static final String FINSER_EVENT_REPLEDGE = "Repledge";
-	public static final String FINSER_EVENT_HOLDDISB = "HoldDisbursement";
-	public static final String FINSER_EVENT_STARTPERIODHDAY = "StartPeriodHoliday";
-	public static final String FINSER_EVENT_LOANDOWNSIZING = "LoanDownsizing";
-	public static final String FINSER_EVENT_LINKDELINK = "LinkDelink";
-	public static final String PART_CANCELLATION = "PartCancellation";
-	// This value is Hard coded in View "CovenantsMaintenance_View"
-	public static final String FINSER_EVENT_COVENANTS = "Covenants";
-	// This value is Hard coded in View "CovenantsMaintenance_View"
-	public static final String FINSER_EVENT_FINOPTION = "FinOptions";
-	public static final String FINSER_EVENT_RECADV = "RecAdvise";
-	public static final String FINSER_EVENT_PAYADV = "PayAdvise";
-	public static final String FINSER_EVENT_RESTRUCTURE = "Restructure";
-	public static final String FINSER_EVENT_DISBINST = "DisbInstruction";
-	public static final String FINSER_EVENT_GSTDETAILS = "GSTDetails";
-	public static final String FINSER_EVENT_CHEQUEDETAILS = "ChequeDetails";
-	public static final String FINSER_EVENT_MANUALADVISE = "ManualAdvise";
-	public static final String FINSER_EVENT_FEEPOSTING = "FeePosting";
-	public static final String FINSER_EVENT_JVPOSTING = "JVPosting";
-	public static final String FINSER_EVENT_PAYMENTINST = "PaymentInst";
-
 	// Finance Collateral Details
 	public static final String COLLATERAL_FIXEDDEPOSIT = "FD";
 	public static final String COLLATERAL_SECURITYCHEQUE = "SC";
@@ -363,8 +288,6 @@ public class FinanceConstants {
 	// GDR Availablity Check Rule
 	public static final String FEETYPE_GDR = "GDR";
 
-	public static final String FINSER_EVENT_CHANGETDS = "ChangeTDS";
-
 	// Interest Subvention Method
 	public static final String INTEREST_SUBVENTION_METHOD_UPFRONT = "U";
 	public static final String INTEREST_SUBVENTION_METHOD_MONTHLY = "M";
@@ -407,18 +330,12 @@ public class FinanceConstants {
 	public static final String QUERY_MANAGEMENT = "QUERY_MGMT";
 	public static final String FEE_UPFRONT_REQ = "UPFTFEE";
 
-	// Fee Waivers
-	public static final String FINSER_EVENT_FEEWAIVERS = "FeeWaivers";
-
 	public static final String FIN_OPTIONS_PUT = "Put";
 	public static final String FIN_OPTIONS_CALL = "Call";
 	public static final String FIN_OPTIONS_PUTCALL = "Put-Call";
 	public static final String FIN_OPTIONS_INTEREST_REVIEW = "Interest Review";
 	public static final String FIN_ASSET_REVIEW = "Asset Review";
 	public static final String FIN_OPTION_OTHERS = "Others";
-
-	public static final String FINSER_EVENT_PUTCALL = "Putcall";
-	public static final String FINSER_EVENT_COLLATERAL_LTV_BREACHS = "CollateralLTVBreachs";
 
 	// DownSizing
 	public static final String MOVEMENTTYPE_DOWNSIZING = "DS";

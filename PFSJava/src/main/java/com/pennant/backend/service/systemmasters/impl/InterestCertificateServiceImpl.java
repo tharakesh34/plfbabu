@@ -82,11 +82,11 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.InterestCertificateService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.service.extended.fields.ExtendedFieldService;
 
 /**
@@ -367,7 +367,7 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 
 		if (finReceiptHeaderDAO != null && finReceiptDetailDAO != null) {
 			List<FinReceiptHeader> frhs = finReceiptHeaderDAO.getReceiptHeaderByID(finReference,
-					FinanceConstants.FINSER_EVENT_EARLYRPY, fromDate, toDate, "");
+					FinServiceEvent.EARLYRPY, fromDate, toDate, "");
 			// Receipt Header
 			if (CollectionUtils.isNotEmpty(frhs)) {
 				for (FinReceiptHeader frh : frhs) {

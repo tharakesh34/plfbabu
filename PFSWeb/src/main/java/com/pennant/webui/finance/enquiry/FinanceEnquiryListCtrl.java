@@ -85,7 +85,6 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.ReinstateFinanceService;
 import com.pennant.backend.service.financemanagement.OverdueChargeRecoveryService;
 import com.pennant.backend.service.financemanagement.SuspenseService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -100,6 +99,7 @@ import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Reports/FinanceEnquiryList.zul.
@@ -1150,7 +1150,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 				arg.put("reinstateFinance", aReinstateFinance);
 				arg.put("financeEnquiryListCtrl", this);
 				arg.put("enqModule", true);
-				arg.put("eventCode", FinanceConstants.FINSER_EVENT_REINSTATE);
+				arg.put("eventCode", FinServiceEvent.REINSTATE);
 				arg.put("rejectedList", rejectedList);
 				try {
 

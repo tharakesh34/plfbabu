@@ -46,6 +46,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class FeeCalculator {
 	private static Logger logger = LogManager.getLogger(FeeCalculator.class);
@@ -371,7 +372,7 @@ public class FeeCalculator {
 			fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));
 		}
 
-		if (FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
+		if (FinServiceEvent.ORG.equals(financeDetail.getModuleDefiner())) {
 			fm.setDeductFeeDisb(deductFeeFromDisbTot);
 			fm.setFeeChargeAmt(feeAddToDisbTot);
 			logger.debug(Literal.LEAVING);

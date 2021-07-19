@@ -103,6 +103,7 @@ import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 
@@ -566,8 +567,8 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 					List<String> finTypeList = getFinanceFlagsService().getScheduleEffectModuleList(true);
 					boolean isScheduleModify = false;
 					for (String fintypeList : finTypeList) {
-						if (StringUtils.isNotEmpty(FinanceConstants.FINSER_EVENT_FINFLAGS)
-								&& StringUtils.equals(FinanceConstants.FINSER_EVENT_FINFLAGS, fintypeList)) {
+						if (StringUtils.isNotEmpty(FinServiceEvent.FINFLAGS)
+								&& StringUtils.equals(FinServiceEvent.FINFLAGS, fintypeList)) {
 							isScheduleModify = true;
 							break;
 						}
@@ -906,9 +907,9 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 
 		//Finance Maintenance Workflow Check & Assignment
 		WorkFlowDetails workFlowDetails = null;
-		if (StringUtils.isNotEmpty(FinanceConstants.FINSER_EVENT_FINFLAGS)) {
+		if (StringUtils.isNotEmpty(FinServiceEvent.FINFLAGS)) {
 			FinanceWorkFlow financeWorkflow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(finType,
-					FinanceConstants.FINSER_EVENT_FINFLAGS, PennantConstants.WORFLOW_MODULE_FINANCE);//TODO: Check Promotion case
+					FinServiceEvent.FINFLAGS, PennantConstants.WORFLOW_MODULE_FINANCE);//TODO: Check Promotion case
 			if (financeWorkflow != null && financeWorkflow.getWorkFlowType() != null) {
 				workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkflow.getWorkFlowType());
 			}
