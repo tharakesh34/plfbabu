@@ -3,7 +3,7 @@
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 <zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-	<window id="window_JointAccountDetailDialog" border="none" apply="${jointAccountDetailDialogCtrl}" width="100%"
+	<window id="window_MasterJointAccountDetailDialog" border="none" apply="${masterJointAccountDetailDialogCtrl}" width="100%"
 		sizable="false">
 		<borderlayout id="borderlayoutJointAccountDetail">
 			<north>

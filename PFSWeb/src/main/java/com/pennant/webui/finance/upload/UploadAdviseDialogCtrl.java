@@ -401,9 +401,10 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		// Excel file downloading automatically using Jasper Report
 		try {
-			ReportsUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(),
-					"ManualAdviseUploadReport", whereCond, searchCriteriaDesc);
+			ReportsUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(), "ManualAdviseUploadReport",
+					whereCond, searchCriteriaDesc);
 		} catch (Exception e) {
+			MessageUtil.showError(e);
 			logger.debug(Literal.EXCEPTION, e);
 		}
 
@@ -1287,6 +1288,13 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.ENTERING);
 		boolean isUpload = this.upload.isChecked();
 
+		// Set focus point
+		if (isUpload) {
+			this.uploadEntity.focus();
+		} else {
+			this.downloadEntity.focus();
+		}
+
 		this.uploadEntity.setReadonly(!isUpload);
 		this.btnBrowse.setDisabled(!isUpload);
 		this.downloadEntity.setMandatoryStyle(!isUpload);
@@ -1299,12 +1307,6 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		this.uploadEntity.setMandatoryStyle(isUpload);
 		this.space_txtFileName.setSclass(isUpload ? PennantConstants.mandateSclass : "");
 
-		// Set focus point
-		if (isUpload) {
-			this.uploadEntity.focus();
-		} else {
-			this.downloadEntity.focus();
-		}
 		logger.debug("Leaving ");
 	}
 
@@ -1325,11 +1327,12 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	public void onCheck$upload(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
+		doClearMessage();
+
 		this.downloadEntity.setValue("");
 		this.dateOfUpload.setValue(null);
 		this.fileName.setValue("");
 
-		doClearMessage();
 		doCheckFields();
 		logger.debug(Literal.LEAVING);
 	}

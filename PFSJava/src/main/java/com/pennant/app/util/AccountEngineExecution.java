@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  AccountEngineExecution.java											*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : AccountEngineExecution.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.util;
@@ -281,15 +272,13 @@ public class AccountEngineExecution implements Serializable {
 		Map<String, Object> dataMap = aeEvent.getDataMap();
 		List<Long> acSetList = aeEvent.getAcSetIDList();
 		List<ReturnDataSet> returnDataSets = new ArrayList<ReturnDataSet>();
-		List<TransactionEntry> teList = new ArrayList<>();
-
-		// Working Transaction Entry list to avoid multiple times subhead rule calling
-		List<TransactionEntry> wteList = new ArrayList<>(1);
+		List<TransactionEntry> txnEntries = new ArrayList<>();
 
 		if (aeEvent.isEOD()) {
-			acSetList.stream().forEach(acSet -> teList.addAll(AccountingConfigCache.getCacheTransactionEntry(acSet)));
+			acSetList.stream()
+					.forEach(acSet -> txnEntries.addAll(AccountingConfigCache.getCacheTransactionEntry(acSet)));
 		} else {
-			acSetList.stream().forEach(acSet -> teList.addAll(AccountingConfigCache.getTransactionEntry(acSet)));
+			acSetList.stream().forEach(acSet -> txnEntries.addAll(AccountingConfigCache.getTransactionEntry(acSet)));
 		}
 
 		EventProperties eventProperties = aeEvent.getEventProperties();
@@ -321,26 +310,12 @@ public class AccountEngineExecution implements Serializable {
 			appCurrency = SysParamUtil.getAppCurrency();
 		}
 
-		/*
-		 * Map<String, Object> accountsMap = new HashMap<>(); List<IAccounts> accountsList = new ArrayList<>();
-		 * Map<String, String> accountCcyMap = new HashMap<>();
-		 */
-
-		for (TransactionEntry transactionEntry : teList) {
-			dataMap = addFeeCodesToDataMap(dataMap, transactionEntry);
+		for (TransactionEntry txnEntry : txnEntries) {
+			addFeeCodes(dataMap, txnEntry);
 		}
 
-		/**
-		 * For temporary use
-		 */
-		try {
-			dataMap.forEach((k, v) -> logger.trace("Fee Code = {}, Value = {}", k, v));
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-
-		for (TransactionEntry te : teList) {
-			getAccountNumber(aeEvent, te, wteList, dataMap);
+		for (TransactionEntry txnEntry : txnEntries) {
+			setAccountNumber(aeEvent, txnEntry, dataMap);
 		}
 
 		ReturnDataSet returnDataSet;
@@ -356,77 +331,77 @@ public class AccountEngineExecution implements Serializable {
 			}
 		}
 
-		for (TransactionEntry transactionEntry : teList) {
+		for (TransactionEntry txnEntry : txnEntries) {
 			returnDataSet = new ReturnDataSet();
 
 			// Set Object Data of ReturnDataSet(s)
 			returnDataSet.setLinkedTranId(aeEvent.getLinkedTranId());
 			returnDataSet.setFinReference(aeEvent.getFinReference());
 			returnDataSet.setFinEvent(aeEvent.getAccountingEvent());
-			returnDataSet.setLovDescEventCodeName(transactionEntry.getLovDescEventCodeDesc());
-			returnDataSet.setAccSetCodeName(transactionEntry.getLovDescAccSetCodeName());
-			returnDataSet.setAccSetId(transactionEntry.getAccountSetid());
+			returnDataSet.setLovDescEventCodeName(txnEntry.getLovDescEventCodeDesc());
+			returnDataSet.setAccSetCodeName(txnEntry.getLovDescAccSetCodeName());
+			returnDataSet.setAccSetId(txnEntry.getAccountSetid());
 			returnDataSet.setCustId(aeEvent.getCustID());
-			returnDataSet.setTranDesc(transactionEntry.getTransDesc());
+			returnDataSet.setTranDesc(txnEntry.getTransDesc());
 			returnDataSet.setPostDate(aeEvent.getPostDate());
 			returnDataSet.setValueDate(aeEvent.getValueDate());
-			returnDataSet.setShadowPosting(transactionEntry.isShadowPosting());
-			returnDataSet.setPostToSys(transactionEntry.getPostToSys());
-			returnDataSet.setDerivedTranOrder(transactionEntry.getDerivedTranOrder());
+			returnDataSet.setShadowPosting(txnEntry.isShadowPosting());
+			returnDataSet.setPostToSys(txnEntry.getPostToSys());
+			returnDataSet.setDerivedTranOrder(txnEntry.getDerivedTranOrder());
 			returnDataSet.setTransOrder(++seq);
 			if (aeEvent.getPostingId() > 0) {
 				returnDataSet.setPostingId(String.valueOf(aeEvent.getPostingId()));
 			} else {
 				String ref = aeEvent.getFinReference() + "/" + aeEvent.getAccountingEvent() + "/"
-						+ transactionEntry.getTransOrder();
+						+ txnEntry.getTransOrder();
 				returnDataSet.setPostingId(ref);
 
 			}
 			String ccy = aeEvent.getCcy();
 			if (aeEvent.getPostRefId() <= 0) {
-				returnDataSet.setPostref(aeEvent.getBranch() + "-" + transactionEntry.getAccountType() + "-" + ccy);
+				returnDataSet.setPostref(aeEvent.getBranch() + "-" + txnEntry.getAccountType() + "-" + ccy);
 			} else {
 				returnDataSet.setPostref(String.valueOf(aeEvent.getPostRefId()));
 			}
 			returnDataSet.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
-			returnDataSet.setAmountType(transactionEntry.getChargeType());
+			returnDataSet.setAmountType(txnEntry.getChargeType());
 			returnDataSet.setUserBranch(aeEvent.getPostingUserBranch());
 			returnDataSet.setPostBranch(aeEvent.getBranch());
 			returnDataSet.setEntityCode(aeEvent.getEntityCode());
-			BigDecimal postAmt = executeAmountRule(aeEvent.getAccountingEvent(), transactionEntry, ccy, dataMap);
+			BigDecimal postAmt = executeAmountRule(aeEvent.getAccountingEvent(), txnEntry, ccy, dataMap);
 
 			// If parameter flag is 'N' for zero postings not allow to insert zero postings
 			if (BigDecimal.ZERO.compareTo(postAmt) == 0 && !isPostZeroEntries) {
 				continue;
 			}
 
-			if (StringUtils.isBlank(transactionEntry.getAccount())) {
+			if (StringUtils.isBlank(txnEntry.getAccount())) {
 				if (BigDecimal.ZERO.compareTo(postAmt) != 0) {
 					throw new AppException(String.format(
 							"Accounting for %S Event is invalid for order id : %S , please contact administrator",
-							aeEvent.getAccountingEvent(), transactionEntry.getTransOrder()));
+							aeEvent.getAccountingEvent(), txnEntry.getTransOrder()));
 				}
 				continue;
 			}
 
 			// Un Realized Amortization Income Field Exists
-			if (StringUtils.contains(transactionEntry.getAmountRule(), "dAmz")) {
+			if (StringUtils.contains(txnEntry.getAmountRule(), "dAmz")) {
 				aeEvent.setuAmzExists(true);
 			}
 
 			// Un Realized Amortization LPP Field Exists
-			if (StringUtils.contains(transactionEntry.getAmountRule(), "bpi")) {
+			if (StringUtils.contains(txnEntry.getAmountRule(), "bpi")) {
 				aeEvent.setBpiIncomized(true);
 			}
 
-			returnDataSet.setTranOrderId(String.valueOf(transactionEntry.getTransOrder()));
-			returnDataSet.setAccount(transactionEntry.getAccount());
+			returnDataSet.setTranOrderId(String.valueOf(txnEntry.getTransOrder()));
+			returnDataSet.setAccount(txnEntry.getAccount());
 			// returnDataSet.setPostStatus(acc.getFlagPostStatus());
 			// returnDataSet.setErrorId(acc.getErrorCode());
 			// returnDataSet.setErrorMsg(acc.getErrorMsg());
 
 			// Regarding to Posting Data
-			returnDataSet.setAccountType(transactionEntry.getAccountType());
+			returnDataSet.setAccountType(txnEntry.getAccountType());
 			returnDataSet.setFinType(aeEvent.getFinType());
 
 			returnDataSet.setCustCIF(aeEvent.getCustCIF());
@@ -438,14 +413,14 @@ public class AccountEngineExecution implements Serializable {
 			// Amount Rule Execution for Amount Calculation
 			if (postAmt.compareTo(BigDecimal.ZERO) >= 0) {
 				returnDataSet.setPostAmount(postAmt);
-				returnDataSet.setTranCode(transactionEntry.getTranscationCode());
-				returnDataSet.setRevTranCode(transactionEntry.getRvsTransactionCode());
-				returnDataSet.setDrOrCr(transactionEntry.getDebitcredit());
+				returnDataSet.setTranCode(txnEntry.getTranscationCode());
+				returnDataSet.setRevTranCode(txnEntry.getRvsTransactionCode());
+				returnDataSet.setDrOrCr(txnEntry.getDebitcredit());
 			} else {
 				returnDataSet.setPostAmount(postAmt.abs());
-				returnDataSet.setRevTranCode(transactionEntry.getTranscationCode());
-				returnDataSet.setTranCode(transactionEntry.getRvsTransactionCode());
-				if (transactionEntry.getDebitcredit().equals(AccountConstants.TRANTYPE_CREDIT)) {
+				returnDataSet.setRevTranCode(txnEntry.getTranscationCode());
+				returnDataSet.setTranCode(txnEntry.getRvsTransactionCode());
+				if (txnEntry.getDebitcredit().equals(AccountConstants.TRANTYPE_CREDIT)) {
 					returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
 				} else {
 					returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
@@ -498,16 +473,12 @@ public class AccountEngineExecution implements Serializable {
 		return returnDataSets;
 	}
 
-	private Map<String, Object> addFeeCodesToDataMap(Map<String, Object> dataMap, TransactionEntry transactionEntry) {
+	private void addFeeCodes(Map<String, Object> dataMap, TransactionEntry txnEntry) {
 		// Place fee (codes) used in Transaction Entries to executing map
-		String feeCodes = transactionEntry.getFeeCode();
+		String feeCodes = txnEntry.getFeeCode();
 
-		if (feeCodes == null) {
-			return dataMap;
-		}
-
-		if (feeCodes.isEmpty()) {
-			return dataMap;
+		if (StringUtils.isEmpty(feeCodes)) {
+			return;
 		}
 
 		for (String feeCode : feeCodes.split(",")) {
@@ -582,7 +553,6 @@ public class AccountEngineExecution implements Serializable {
 			}
 		}
 
-		return dataMap;
 	}
 
 	private void addZeroifNotContains(Map<String, Object> dataMap, String key) {
@@ -648,30 +618,19 @@ public class AccountEngineExecution implements Serializable {
 		}
 	}
 
-	private void getAccountNumber(AEEvent aeEvent, TransactionEntry te, List<TransactionEntry> wteList,
-			Map<String, Object> dataMap) {
+	private void setAccountNumber(AEEvent aeEvent, TransactionEntry txnEntry, Map<String, Object> dataMap) {
+		String accountType = StringUtils.trimToEmpty(txnEntry.getAccountType());
+		String subHeadRule = StringUtils.trimToEmpty(txnEntry.getAccountSubHeadRule());
 
-		// Find if same account is already part of the List
-		for (int iWte = 0; iWte < wteList.size(); iWte++) {
-			TransactionEntry wte = wteList.get(iWte);
-			if (StringUtils.equals(te.getAccountType(), wte.getAccountType())
-					&& StringUtils.equals(te.getAccountSubHeadRule(), wte.getAccountSubHeadRule())) {
-				te.setAccount(wte.getAccount());
-				return;
-			}
-		}
-
-		// String txnOrder = String.valueOf(te.getTransOrder());
-
-		TransactionEntry wte = new TransactionEntry();
-		wte.setAccountType(te.getAccountType());
-		wte.setAccountSubHeadRule(te.getAccountSubHeadRule());
-		wte.setAccount(te.getAccount());
+		txnEntry.setAccountType(accountType);
+		txnEntry.setAccountSubHeadRule(subHeadRule);
+		txnEntry.setAccount(txnEntry.getAccount());
 
 		Rule rule = null;
-		String accountSubHeadRule = te.getAccountSubHeadRule();
+		String accountSubHeadRule = subHeadRule;
 		String moduleSubhead = RuleConstants.MODULE_SUBHEAD;
 
+		dataMap.put("acType", txnEntry.getAccountType());
 		if (aeEvent.isEOD()) {
 			rule = AccountingConfigCache.getCacheRule(accountSubHeadRule, moduleSubhead, moduleSubhead);
 		} else {
@@ -679,14 +638,10 @@ public class AccountEngineExecution implements Serializable {
 		}
 
 		if (rule != null) {
-			String accountNumber = (String) RuleExecutionUtil.executeRule(rule.getSQLRule(), dataMap, aeEvent.getCcy(),
-					RuleReturnType.STRING);
-			wte.setAccount(accountNumber);
+			String sqlRule = rule.getSQLRule();
+			String ccy = aeEvent.getCcy();
+			txnEntry.setAccount((String) RuleExecutionUtil.executeRule(sqlRule, dataMap, ccy, RuleReturnType.STRING));
 		}
-
-		wteList.add(te);
-
-		return;
 	}
 
 	private BigDecimal executeAmountRule(String event, TransactionEntry transactionEntry, String finCcy,

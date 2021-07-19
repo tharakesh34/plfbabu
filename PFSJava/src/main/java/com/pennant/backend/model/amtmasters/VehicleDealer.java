@@ -566,7 +566,8 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 	}
 
 	public String getDealerShortCode() {
-		return dealerShortCode;
+		// FIXME : All the dealer code settings in accounting move to single place
+		return StringUtils.trimToEmpty(dealerShortCode);
 	}
 
 	public void setDealerShortCode(String dealerShortCode) {

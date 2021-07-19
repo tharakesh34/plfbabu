@@ -166,6 +166,9 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 
 		if (UploadConstants.MANUAL_ADVISE_APPROVER.equals(this.module)) {
 			this.listBoxUpload.setCheckmark(true);
+			this.btnDownload.setVisible(true);
+			this.btnApprove.setVisible(true);
+			this.btnReject.setVisible(true);
 		}
 		this.transactionDate.setFormat(PennantConstants.dateFormat);
 	}

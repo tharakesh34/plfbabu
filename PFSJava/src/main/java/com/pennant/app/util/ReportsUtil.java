@@ -60,6 +60,14 @@ public class ReportsUtil {
 		Executions.createComponents(URL_REPORT_PDF_VIEW, null, dataMap);
 	}
 
+	public static void showPDF(String reportSrc, String reportName, Object object, List<Object> listData,
+			String userName) {
+		byte[] buf = generatePDF(reportSrc, reportName, object, listData, userName);
+
+		Map<String, Object> dataMap = getDataMap(reportName, listData, buf, null);
+		Executions.createComponents(URL_REPORT_PDF_VIEW, null, dataMap);
+	}
+
 	public static void showPDF(String reportName, Object object, List<Object> listData, String userName,
 			Window window) {
 		byte[] buf = generatePDF(reportName, object, listData, userName);
@@ -82,6 +90,30 @@ public class ReportsUtil {
 		byte[] buf = null;
 
 		String template = getTemplate(reportName);
+
+		Map<String, Object> parameters = getParameters(userName, reportName, object);
+
+		JRBeanCollectionDataSource mainDS = getDataSource(object);
+
+		setDataSource(parameters, listData);
+
+		try {
+			buf = JasperRunManager.runReportToPdf(template, parameters, mainDS);
+		} catch (JRException e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new AppException(String.format(RPT_EXCEPTION, reportName));
+		}
+		logger.info(Literal.LEAVING);
+		return buf;
+	}
+
+	public static byte[] generatePDF(String reportSrc, String reportName, Object object, List<Object> listData,
+			String userName) {
+		logger.info(Literal.ENTERING);
+
+		byte[] buf = null;
+
+		String template = getTemplate(reportSrc, reportName);
 
 		Map<String, Object> parameters = getParameters(userName, reportName, object);
 

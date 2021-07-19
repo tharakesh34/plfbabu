@@ -1835,12 +1835,12 @@
 
 	<!--============ Joint Account Details ============== -->
 
-	<bean id="jountAccountDetailListCtrl" class="com.pennant.webui.finance.jointaccountdetail.JointAccountDetailListCtrl"
+	<bean id="masterJointAccountDetailListCtrl" class="com.pennant.webui.finance.jointaccountdetail.JointAccountDetailListCtrl"
 		parent="basisListCtrl" scope="prototype">
 		<property name="jointAccountDetailService" ref="jointAccountDetailService" />
 	</bean>
 
-	<bean id="jountAccountDetailDialogCtrl" class="com.pennant.webui.finance.jointaccountdetail.JointAccountDetailDialogCtrl"
+	<bean id="masterJointAccountDetailDialogCtrl" class="com.pennant.webui.finance.jointaccountdetail.JointAccountDetailDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="pagedListService" ref="pagedListService" />
 		<property name="jointAccountDetailService" ref="jointAccountDetailService" />

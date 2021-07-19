@@ -8299,7 +8299,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (pricingDetailListCtrl != null && pricingDetailListCtrl.hbox_Split != null
 						&& pricingDetailListCtrl.split != null && pricingDetailListCtrl.hbox_Split.isVisible()
 						&& pricingDetailListCtrl.split.isChecked()
-						&& pricingDetailListCtrl.getPricingDetail().isNewRecord()) {
+						&& ("Submit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()))) {
 					List<FinanceMain> financeMains = pricingDetailListCtrl.getPricingDetail().getFinanceMains();
 					if (CollectionUtils.isNotEmpty(financeMains)) {
 						financeMains.forEach(l1 -> splitRef.add(l1.getFinReference()));
@@ -14870,12 +14870,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				accountingSetEntries.addAll(aeEvent.getReturnDataSet());
 			}
 
-			// Subvention Accounting Entries
-
-			if (getFinanceDetail().getFinScheduleData().getFinanceType().isSubventionReq()) {
-				accountingSetEntries.addAll(getFinanceDetailService().prepareSubVenAccounting(aeEvent, financeDetail));
-			}
-
 		}
 
 		// Disb Instruction Posting
@@ -14887,6 +14881,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
 				accountingSetEntries.addAll(AccountingEngine.execute(AccountingEvent.VASFEE, financeDetail, null));
 			}
+		}
+
+		if (StringUtils.isEmpty(moduleDefiner)) {
+			// Subvention Accounting Entries
+			if (financeDetail.getFinScheduleData().getFinanceType().isSubventionReq()) {
+				accountingSetEntries.addAll(financeDetailService.prepareSubVenAccounting(aeEvent, financeDetail));
+			}
+
 		}
 
 		getFinanceDetail().setReturnDataSetList(accountingSetEntries);

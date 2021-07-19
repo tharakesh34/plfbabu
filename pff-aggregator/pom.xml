@@ -20,7 +20,7 @@
 		<spring.web.version>5.3.8</spring.web.version>
 		<zk.version>8.6.2</zk.version>
 		<atlantic.version>8.0.1</atlantic.version>
-		<jasperreports.version>6.6.0</jasperreports.version>
+		<jasperreports.version>6.17.0</jasperreports.version>
 		<jackson.version>1.9.13</jackson.version>
 		<cxf.version>3.4.4</cxf.version>
 		<log4j.version>2.14.1</log4j.version>
@@ -622,7 +622,7 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>5.0.0</version>
+			<version>4.1.1</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.apache.poi</groupId>
@@ -635,10 +635,6 @@
 				<exclusion>
 					<groupId>de.rototor.pdfbox</groupId>
 					<artifactId>graphics2d</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.zaxxer</groupId>
-					<artifactId>SparseBitSet</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.slf4j</groupId>

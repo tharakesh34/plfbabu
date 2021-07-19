@@ -1049,7 +1049,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			for (int i = 0; i < finTypeExistingList.size(); i++) {
 				FinTypeFees finTypeFees = finTypeExistingList.get(i);
 				if (finTypeFees.getFinEvent().equals(aFinTypeFees.getFinEvent())
-						&& finTypeFees.getFeeTypeID() == aFinTypeFees.getFeeTypeID()
+						&& finTypeFees.getFeeTypeID().equals(aFinTypeFees.getFeeTypeID())
 						&& finTypeFees.isOriginationFee() == aFinTypeFees.isOriginationFee()) {
 					// Both Current and Existing list rating same
 					if (aFinTypeFees.isNew()) {

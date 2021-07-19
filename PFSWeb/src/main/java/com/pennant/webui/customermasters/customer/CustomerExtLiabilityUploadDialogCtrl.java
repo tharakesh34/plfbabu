@@ -412,8 +412,12 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 			break;
 		case 32:
 			// MOB
-			BigDecimal bd = new BigDecimal(cellValue);
-			ce.setMob(getValueAsInt(bd.toString()));
+			if (getValue(cellValue) == null) {
+				ce.setMob(0);
+			} else {
+				BigDecimal bd = new BigDecimal(cellValue);
+				ce.setMob(getValueAsInt(bd.toString()));
+			}
 			break;
 		case 33:
 			// Remarks
@@ -734,8 +738,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);

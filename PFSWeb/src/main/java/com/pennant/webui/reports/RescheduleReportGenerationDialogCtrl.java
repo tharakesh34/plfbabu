@@ -135,33 +135,24 @@ public class RescheduleReportGenerationDialogCtrl extends GFCBaseCtrl<Reschedule
 		doWriteComponentsToBean();
 
 		RescheduleLog reschedulementLog = new RescheduleLog();
-
-		List<Object> list = new ArrayList<Object>();
+		List<Object> list = new ArrayList<>();
 		list.add(this.reschedulementList);
 
-		if (CollectionUtils.isEmpty(reschedulementList)) {
-			if (MessageUtil.confirm("Reschedule service event is not occured between these dates for Loan Reference:"
-					+ this.finReference.getValue(), MessageUtil.OK) != MessageUtil.OK) {
-				try {
-					String reportSrc = PathUtil.getPath(PathUtil.REPORTS_ORGANIZATION) + "/" + "RescheduleMentReport"
-							+ ".jasper";
-					createReport("RescheduleMentReport", reschedulementLog, list, reportSrc,
-							getUserWorkspace().getLoggedInUser().getFullName(), window, false);
-				} catch (InterruptedException | JRException e) {
-					e.printStackTrace();
-				}
-			}
-		} else {
-			try {
-				String reportSrc = PathUtil.getPath(PathUtil.REPORTS_ORGANIZATION) + "/" + "RescheduleMentReport"
-						+ ".jasper";
-				createReport("RescheduleMentReport", reschedulementLog, list, reportSrc,
-						getUserWorkspace().getLoggedInUser().getFullName(), window, false);
-			} catch (InterruptedException | JRException e) {
-				e.printStackTrace();
-			}
+		String reportName = "RescheduleMentReport";
+
+		if (CollectionUtils.isEmpty(reschedulementList)
+				&& MessageUtil.confirm("Reschedule service event is not occured between these dates for Loan Reference:"
+						+ this.finReference.getValue(), MessageUtil.OK) == MessageUtil.OK) {
+			return;
 		}
 
+		String userName = getUserWorkspace().getLoggedInUser().getFullName();
+		try {
+			ReportsUtil.showPDF(PathUtil.REPORTS_ORGANIZATION, reportName, reschedulementLog, list, userName);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+			closeDialog();
+		}
 		this.window_RescheduleMentReportGenerationDialogCtrl.setVisible(true);
 		logger.debug(Literal.LEAVING);
 	}
@@ -309,19 +300,16 @@ public class RescheduleReportGenerationDialogCtrl extends GFCBaseCtrl<Reschedule
 		logger.debug(Literal.ENTERING);
 		try {
 			byte[] buf = ReportsUtil.generatePDF(reportName, object, listData, userName);
-			boolean reportView = true;
-			// Assignments
 
-			if (reportView) {
-				final HashMap<String, Object> auditMap = new HashMap<String, Object>();
-				auditMap.put("reportBuffer", buf);
-				String genReportName = Labels.getLabel(reportName);
-				auditMap.put("reportName", StringUtils.isBlank(genReportName) ? reportName : genReportName);
-				if (dialogWindow != null) {
-					auditMap.put("dialogWindow", dialogWindow);
-				}
-				Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, auditMap);
+			final HashMap<String, Object> auditMap = new HashMap<String, Object>();
+			auditMap.put("reportBuffer", buf);
+			String genReportName = Labels.getLabel(reportName);
+			auditMap.put("reportName", StringUtils.isBlank(genReportName) ? reportName : genReportName);
+			if (dialogWindow != null) {
+				auditMap.put("dialogWindow", dialogWindow);
 			}
+			Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, auditMap);
+
 		} catch (AppException e) {
 			logger.error(Literal.EXCEPTION, e);
 			MessageUtil.showError("Template does not exist.");

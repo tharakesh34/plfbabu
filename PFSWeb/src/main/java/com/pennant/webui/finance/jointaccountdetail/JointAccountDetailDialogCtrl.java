@@ -1,42 +1,24 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  JointAccountDetailDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  10-09-2013    														*
- *                                                                  						*
- * Modified Date    :  10-09-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : JointAccountDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 10-09-2013 * *
+ * Modified Date : 10-09-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-09-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-09-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.jointaccountdetail;
@@ -78,7 +60,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.AccountSelectionBox;
-import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -126,7 +107,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_JointAccountDetailDialog;
+	protected Window window_MasterJointAccountDetailDialog;
 	protected Row row0;
 	protected Label label_CustCIF;
 	protected Hbox hbox_CustCIF;
@@ -247,11 +228,11 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_JointAccountDetailDialog(Event event) throws Exception {
+	public void onCreate$window_MasterJointAccountDetailDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
-		setPageComponents(window_JointAccountDetailDialog);
+		setPageComponents(window_MasterJointAccountDetailDialog);
 
 		try {
 
@@ -447,15 +428,14 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		MessageUtil.showHelpWindow(event, window_JointAccountDetailDialog);
+		MessageUtil.showHelpWindow(event, window_MasterJointAccountDetailDialog);
 		logger.debug("Leaving" + event.toString());
 	}
 
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -464,15 +444,14 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
 			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_JointAccountDetailDialog, auditHeader);
+			ErrorControl.showErrorControl(this.window_MasterJointAccountDetailDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -482,8 +461,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -697,8 +675,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	}
 
 	/**
-	 * @param event
-	 *            Event for Create a new customer
+	 * @param event Event for Create a new customer
 	 */
 	public void onClick$btn_NewCust(Event event) {
 		logger.debug("Entering" + event.toString());
@@ -752,8 +729,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param customerDetails
-	 *            The entity that need to be passed to the dialog.
+	 * @param customerDetails The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(CustomerDetails customerDetails) {
 		logger.debug("Entering");
@@ -815,10 +791,10 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				map.put("finance", true);
 				if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
 					Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/FinCustomerDetailsEnq.zul",
-							this.window_JointAccountDetailDialog, map);
+							this.window_MasterJointAccountDetailDialog, map);
 				} else {
 					Executions.createComponents("/WEB-INF/pages/CustomerMasters/Enquiry/CustomerSummary.zul",
-							this.window_JointAccountDetailDialog, map);
+							this.window_MasterJointAccountDetailDialog, map);
 				}
 			}
 		} catch (Exception e) {
@@ -828,7 +804,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 	public void onCheck$includeRepay(Event event) {
 		logger.debug("Entering" + event.toString());
-		//doCheckIncludeRepay();
+		// doCheckIncludeRepay();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -894,13 +870,13 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			doWriteBeanToComponents(aJointAccountDetail);
 			// set ReadOnly mode accordingly if the object is new or not.
 			// displayComponents(ScreenCTL.getMode(enqModule,isWorkFlowEnabled(),aJointAccountDetail.isNewRecord()));
-			//doCheckIncludeRepay();
+			// doCheckIncludeRepay();
 			// setDialog(DialogType.EMBEDDED);
-			this.window_JointAccountDetailDialog.setWidth("90%");
-			this.window_JointAccountDetailDialog.setHeight("90%");
+			this.window_MasterJointAccountDetailDialog.setWidth("90%");
+			this.window_MasterJointAccountDetailDialog.setHeight("90%");
 			if (isNewContributor()) {
 				this.groupboxWf.setVisible(false);
-				this.window_JointAccountDetailDialog.doModal();
+				this.window_MasterJointAccountDetailDialog.doModal();
 			} else {
 				setDialog(DialogType.EMBEDDED);
 			}
@@ -965,6 +941,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		readOnlyComponent(isReadOnly("JointAccountDetailDialog_catOfCoApplicant"), this.catOfCoApplicant);
 		readOnlyComponent(isReadOnly("JointAccountDetailDialog_authoritySignatory"), this.authoritySignatory);
 		readOnlyComponent(isReadOnly("JointAccountDetailDialog_includeIncome"), this.includeIncome);
+		getRole();
 		if (SysParamUtil.isAllowed(SMTParameterConstants.COAPP_CUST_CREATE)) {
 			readOnlyComponent(isReadOnly("button_JointAccountDetailDialog_btnCreateCustomer"), this.btn_NewCust);
 			readOnlyComponent(isReadOnly("button_JointAccountDetailDialog_btnEditCustomer"), this.btn_EditCust);
@@ -999,7 +976,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					btnCancel.setVisible(false);
 				} else {
 					this.btnCtrl.setWFBtnStatus_Edit(newContributor);
-					//this.btnSave.setVisible(false);
+					// this.btnSave.setVisible(false);
 				}
 			} else {
 				this.btnCtrl.setBtnStatus_Edit();
@@ -1062,9 +1039,11 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		this.custCIFName.setMaxlength(200);
 		this.custCIFName.setReadonly(true);
 		if (!enqModule) {
-			/*this.repayAccountId.setAccountDetails(
-					getFinanceMainDialogCtrl().getFinanceDetail().getFinScheduleData().getFinanceType().getFinType(),
-					AccountConstants.FinanceAccount_REPY, finCcy);*/
+			/*
+			 * this.repayAccountId.setAccountDetails(
+			 * getFinanceMainDialogCtrl().getFinanceDetail().getFinScheduleData().getFinanceType().getFinType(),
+			 * AccountConstants.FinanceAccount_REPY, finCcy);
+			 */
 			this.repayAccountId.setFormatter(CurrencyUtil.getFormat(
 					getFinanceMainDialogCtrl().getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
 			this.repayAccountId.setBranchCode(
@@ -1073,7 +1052,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		if (!isNewRecord()) {
 			this.row1.setVisible(false);
 			this.row2.setVisible(true);
-			//this.btnSearchCustCIF.setVisible(false);
+			// this.btnSearchCustCIF.setVisible(false);
 			this.custCIF.setReadonly(false);
 			this.gb_JointAccountPrimaryJoint.setVisible(true);
 			this.gb_JointAccountSecondaryJoint.setVisible(true);
@@ -1086,8 +1065,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aJointAccountDetail
-	 *            JointAccountDetail
+	 * @param aJointAccountDetail JointAccountDetail
 	 */
 	public void doWriteBeanToComponents(JointAccountDetail aJointAccountDetail) {
 		logger.debug("Entering");
@@ -1516,7 +1494,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			}
 			throw new WrongValuesException(wvea);
 		}
-		//setting the customer details while save
+		// setting the customer details while save
 		aJointAccountDetail.setCustomerDetails(customerDetailsService.getCustById(aJointAccountDetail.getCustID()));
 		aJointAccountDetail.setRecordStatus(this.recordStatus.getValue());
 		setJointAccountDetail(aJointAccountDetail);
@@ -1611,7 +1589,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				if (isNewContributor()) {
 					tranType = PennantConstants.TRAN_DEL;
 					AuditHeader auditHeader = newJointAccountProcess(aJointAccountDetail, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_JointAccountDetailDialog, auditHeader);
+					auditHeader = ErrorControl.showErrorDetails(this.window_MasterJointAccountDetailDialog,
+							auditHeader);
 					int retValue = auditHeader.getProcessStatus();
 					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 						getFinanceMainDialogCtrl().doFillJointDetails(this.jointAccountDetailList);
@@ -1703,7 +1682,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		try {
 			if (isNewContributor()) {
 				AuditHeader auditHeader = newJointAccountProcess(aJointAccountDetail, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.window_JointAccountDetailDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_MasterJointAccountDetailDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 					if (financeDetail != null && financeDetail.getSampling() != null) {
@@ -1723,11 +1702,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
