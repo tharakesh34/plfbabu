@@ -4701,6 +4701,7 @@
 		<comment>psd # 150541 </comment>
 		<addUniqueConstraint tableName="PerfiosInstitutions" columnNames="plfbankcode,perfiosbankcode" />
 
+
 	</changeSet>
 
 	<changeSet id="543" author="madhuri.n">
@@ -32956,7 +32957,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 					T2.ENDDATE,
 					T1.FINEVENT,
 					T5.PRODUCTCATEGORY,
-					COALESCE(t9.REFERENCEID, 0::BIGINT) REFERENCEID
+					COALESCE(t9.REFERENCEID, 0) REFERENCEID
 				FROM LMTFINANCEWORKFLOWDEF T1
 				LEFT JOIN RMTFINANCETYPES_AVIEW T2 ON T1.FINTYPE = T2.FINTYPE
 				JOIN WORKFLOWDETAILS T3 ON T1.WORKFLOWTYPE = T3.WORKFLOWTYPE AND T3.WORKFLOWACTIVE = 1
@@ -33279,7 +33280,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 					T1.WORKFLOWID,
 					T2.BRANCHDESC,
 					T3.FINBRANCH,
-					T4.FINDIVISION
+					T4.FINDIVISION,
 					COALESCE(T5.ROLEDESC, ${add.schema}FN_GET_ROLEDESC(T1.NEXTROLECODE)) REQUESTSTAGE,
 					COALESCE(T6.PROPERTYOWNERSNAME, T7.CUSTSHRTNAME) APPLICANTNAME
 				FROM LEGALDETAILS_TEMP T1
@@ -33318,7 +33319,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 					T1.WORKFLOWID,
 					T2.BRANCHDESC,
 					T3.FINBRANCH,
-					T4.FINDIVISION
+					T4.FINDIVISION,
 					COALESCE(T5.ROLEDESC, ${add.schema}FN_GET_ROLEDESC(T1.NEXTROLECODE)) REQUESTSTAGE,
 					COALESCE(T6.PROPERTYOWNERSNAME, T7.CUSTSHRTNAME) APPLICANTNAME
 				FROM LEGALDETAILS T1

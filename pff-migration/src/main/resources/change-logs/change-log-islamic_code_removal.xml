@@ -29,60 +29,60 @@
 	</changeSet>
 
 	 <changeSet id="ST#2361.1" author="Gopal.p">
-		<dropNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="allowdownpaypgm"/>
-		<dropNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="alwadvancerent"/>
-		<dropNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="rolloverfinance"/>
-		<dropNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="FINDEPRECIATIONREQ"/>
-		<dropNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="finisopenpftpayacc"/>
-		<dropNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="finisopennewfinac"/>
+		<dropNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="allowdownpaypgm"  	columnDataType="smallint"/>
+		<dropNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="alwadvancerent" 	columnDataType="tinyint" />
+		<dropNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="rolloverfinance" 	columnDataType="tinyint" />
+		<dropNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="FINDEPRECIATIONREQ" columnDataType="tinyint" />
+		<dropNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="finisopenpftpayacc" columnDataType="tinyint" />
+		<dropNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="finisopennewfinac" 	columnDataType="tinyint" />
 	</changeSet>
 	
 	<changeSet id="ST#2361.2" author="Gopal.p">
-		<dropNotNullConstraint tableName="RMTFINANCETYPES" columnName="allowdownpaypgm"/>
-		<dropNotNullConstraint tableName="RMTFINANCETYPES" columnName="alwadvancerent"/>
-		<dropNotNullConstraint tableName="RMTFINANCETYPES" columnName="rolloverfinance"/>
-		<dropNotNullConstraint tableName="RMTFINANCETYPES" columnName="FINDEPRECIATIONREQ"/>
-		<dropNotNullConstraint tableName="RMTFINANCETYPES" columnName="finisopenpftpayacc"/>
-		<dropNotNullConstraint tableName="RMTFINANCETYPES" columnName="finisopennewfinac"/>
+		<dropNotNullConstraint tableName="RMTFINANCETYPES" columnName="allowdownpaypgm" 	columnDataType="smallint"/>
+		<dropNotNullConstraint tableName="RMTFINANCETYPES" columnName="alwadvancerent" 		columnDataType="smallint"/>
+		<dropNotNullConstraint tableName="RMTFINANCETYPES" columnName="rolloverfinance" 	columnDataType="smallint"/>
+		<dropNotNullConstraint tableName="RMTFINANCETYPES" columnName="FINDEPRECIATIONREQ" 	columnDataType="smallint"/>
+		<dropNotNullConstraint tableName="RMTFINANCETYPES" columnName="finisopenpftpayacc" 	columnDataType="smallint"/>
+		<dropNotNullConstraint tableName="RMTFINANCETYPES" columnName="finisopennewfinac" 	columnDataType="smallint"/>
 	</changeSet>
 	
 	<changeSet id="ST#2361.3" author="Gireesh.G">
-		<dropNotNullConstraint tableName="FINSCHEDULEDETAILS_TEMP" columnName="CALONINDRATE"/>
-		<dropNotNullConstraint tableName="FINSCHEDULEDETAILS_TEMP" columnName="ROLLOVERONSCHDATE"/>
+		<dropNotNullConstraint tableName="FINSCHEDULEDETAILS_TEMP" columnName="CALONINDRATE" 		columnDataType="smallint"/>
+		<dropNotNullConstraint tableName="FINSCHEDULEDETAILS_TEMP" columnName="ROLLOVERONSCHDATE" 	columnDataType="smallint"/>
 	</changeSet>
 	
 	<changeSet id="ST#2361.4" author="Gireesh.G">
-		<dropNotNullConstraint tableName="FINSCHEDULEDETAILS" columnName="CALONINDRATE"/>
-		<dropNotNullConstraint tableName="FINSCHEDULEDETAILS" columnName="ROLLOVERONSCHDATE"/>
+		<dropNotNullConstraint tableName="FINSCHEDULEDETAILS" columnName="CALONINDRATE" 	  columnDataType="smallint"/>
+		<dropNotNullConstraint tableName="FINSCHEDULEDETAILS" columnName="ROLLOVERONSCHDATE"  columnDataType="smallint"/>
 	</changeSet>
 	
 	<changeSet id="ST#2361.5" author="Gireesh.G">
-		<dropNotNullConstraint tableName="FINDISBURSEMENTDETAILS_TEMP" columnName="DISBDISBURSED"/>
+		<dropNotNullConstraint tableName="FINDISBURSEMENTDETAILS_TEMP" columnName="DISBDISBURSED" columnDataType="smallint"/>
 	</changeSet>
 	
 	<changeSet id="ST#2361.6" author="Gireesh.G">
-		<dropNotNullConstraint tableName="FINDISBURSEMENTDETAILS" columnName="DISBDISBURSED"/>
+		<dropNotNullConstraint tableName="FINDISBURSEMENTDETAILS" columnName="DISBDISBURSED" columnDataType="smallint"/>
 	</changeSet>
 	
 	<changeSet id="ST#2361.7" author="Gireesh.G">
-		<dropNotNullConstraint tableName="FINSCHEDULEDETAILS_LOG" columnName="CALONINDRATE"/>
-		<dropNotNullConstraint tableName="FINSCHEDULEDETAILS_LOG" columnName="ROLLOVERONSCHDATE"/>
+		<dropNotNullConstraint tableName="FINSCHEDULEDETAILS_LOG" columnName="CALONINDRATE"      columnDataType="smallint"/> 	
+		<dropNotNullConstraint tableName="FINSCHEDULEDETAILS_LOG" columnName="ROLLOVERONSCHDATE" columnDataType="smallint"/>
 	</changeSet>
 	
 	<changeSet id="ST#2361.8" author="Gireesh.G">
-		<dropNotNullConstraint tableName="FINDISBURSEMENTDETAILS_LOG" columnName="DISBDISBURSED"/>
+		<dropNotNullConstraint tableName="FINDISBURSEMENTDETAILS_LOG" columnName="DISBDISBURSED" columnDataType="smallint"/>
 	</changeSet> 
 	
 	 <changeSet id="ST#2361.9" author="Saikiran.n">
-		<dropNotNullConstraint tableName="FINANCEMAIN_TEMP" columnName="TAKEOVERFINANCE"/>
+		<dropNotNullConstraint tableName="FINANCEMAIN_TEMP" columnName="TAKEOVERFINANCE" columnDataType="smallint"/>
 	</changeSet>
 	
 	<changeSet id="ST#2361.10" author="Saikiran.n">
-		<dropNotNullConstraint tableName="FINANCEMAIN" columnName="TAKEOVERFINANCE"/>
+		<dropNotNullConstraint tableName="FINANCEMAIN" columnName="TAKEOVERFINANCE" columnDataType="smallint"/>
 	</changeSet> 
 	
 	<changeSet id="ST#2361.11" author="Saikiran.n">
-		<dropNotNullConstraint tableName="REJECTFINANCEMAIN" columnName="TAKEOVERFINANCE"/>
+		<dropNotNullConstraint tableName="REJECTFINANCEMAIN" columnName="TAKEOVERFINANCE" columnDataType="smallint"/>
 	</changeSet> 
 	
 	<changeSet id="ST#2361.12" author="Gireesh.G">

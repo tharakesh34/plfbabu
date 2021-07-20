@@ -40,23 +40,23 @@
 	</changeSet>
 	
 	<changeSet id="ST#2361.1" author="Gopal.p">
-		<dropNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="allowdownpaypgm"/>
-		<dropNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="alwadvancerent"/>
-		<dropNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="rolloverfinance"/>
-		<dropNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="finisopenpftpayacc"/>
-		<dropNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="finisopennewfinac"/>
+		<dropNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="allowdownpaypgm"   	columnDataType="smallint"/>
+		<dropNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="alwadvancerent"  		columnDataType="smallint"/>
+		<dropNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="rolloverfinance"  	columnDataType="smallint"/>
+		<dropNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="finisopenpftpayacc"  	columnDataType="smallint"/>
+		<dropNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="finisopennewfinac" 	columnDataType="smallint"/>
 	</changeSet>
 	
 	<changeSet id="ST#2361.2" author="Gireesh.G">
-		<dropNotNullConstraint tableName="ADTFINSCHEDULEDETAILS" columnName="CALONINDRATE"/>
+		<dropNotNullConstraint tableName="ADTFINSCHEDULEDETAILS" columnName="CALONINDRATE"  columnDataType="smallint"/>
 	</changeSet>
 	
 	<changeSet id="ST#2361.3" author="Gireesh.G">
-		<dropNotNullConstraint tableName="ADTFINDISBURSEMENTDETAILS" columnName="DISBDISBURSED"/>
+		<dropNotNullConstraint tableName="ADTFINDISBURSEMENTDETAILS" columnName="DISBDISBURSED"  columnDataType="smallint"/>
 	</changeSet>
 	
 	<changeSet id="ST#2361.4" author="Saikiran.n">
-		<dropNotNullConstraint tableName="ADTFINANCEMAIN" columnName="TAKEOVERFINANCE"/>
+		<dropNotNullConstraint tableName="ADTFINANCEMAIN" columnName="TAKEOVERFINANCE"  columnDataType="smallint"/>
 	</changeSet>
 	
 </databaseChangeLog>

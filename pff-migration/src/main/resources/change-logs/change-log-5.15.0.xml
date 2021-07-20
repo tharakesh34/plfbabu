@@ -7287,10 +7287,9 @@
 	<changeSet id="ST#2469.1" author="kavya.n">
 		<sql>
 			<![CDATA[
-				Update REPORTFILTERFIELDS set lovtextfieldmethod='getCustShrtName' where reportid=179 and fieldid=1;
+				UPDATE REPORTFILTERFIELDS SET LOVTEXTFIELDMETHOD = 'getCustShrtName' WHERE REPORTID = (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_LMSReceiptReport') AND FIELDID = 1;
 			]]>
 		</sql>
 	</changeSet>
-	
 	
 </databaseChangeLog>
