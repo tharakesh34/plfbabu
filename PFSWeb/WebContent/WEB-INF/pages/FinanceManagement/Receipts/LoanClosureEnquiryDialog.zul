@@ -320,16 +320,22 @@
 											label="${c:l('listheader_ScheduleEvent.label')}" />
 										<listheader id="listheader_ReceiptSchedule_CalProfit" hflex="min" align="right"
 											label="${c:l('listheader_CalProfit.label')}" />
+										<listheader id="listheader_ScheduleDetailDialog_MiscAmount" hflex="min"
+												align="right" visible="false"/>
+										<listheader hflex="min" visible="false"/>
 										<listheader id="listheader_ReceiptSchedule_SchFee" hflex="min" align="right"
 											label="${c:l('listheader_SchFee.label')}" visible="false" />
 										<listheader id="listheader_ScheduleDetailDialog_SchTax" hflex="min" label="${c:l('listheader_SchTax.label')}"
 											align="right" />
 										<listheader id="listheader_ReceiptSchedule_TDSAmount" hflex="min" align="right"
 											label="${c:l('listheader_TDSAmount.label')}" />
+										<listheader hflex="min" visible="false"/>
 										<listheader id="listheader_ReceiptSchedule_SchProfit" hflex="min" align="right"
 											label="${c:l('listheader_SchProfit.label')}" />
 										<listheader id="listheader_ReceiptSchedule_Principal" hflex="min" align="right"
 											label="${c:l('listheader_Principal.label')}" />
+										<listheader hflex="min" visible="false"/>
+										<listheader hflex="min" visible="false"/>
 										<listheader id="listheader_ReceiptSchedule_Total" hflex="min" align="right"
 											label="${c:l('listheader_Total.label')}" />
 										<listheader id="listheader_ScheduleEndBal" hflex="min" align="right"
@@ -338,6 +344,8 @@
 										<listheader id="listheader_AvailableLimit" hflex="min" align="right" visible="false" />
 										<listheader id="listheader_ODLimit" hflex="min" align="right" visible="false" />
 										<listheader visible="false" id="listHeader_planEMIHDates" hflex="min" align="center" />
+										<listheader hflex="min" visible="false"/>
+										<listheader hflex="min" visible="false"/>
 										<listheader id="listHeader_orgPrincipalDue" hflex="min" align="right" visible="false" />
 									</listhead>
 								</listbox>
