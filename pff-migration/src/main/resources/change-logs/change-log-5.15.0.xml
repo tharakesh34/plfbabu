@@ -7284,4 +7284,13 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#2469.1" author="kavya.n">
+		<sql>
+			<![CDATA[
+				Update REPORTFILTERFIELDS set lovtextfieldmethod='getCustShrtName' where reportid=179 and fieldid=1;
+			]]>
+		</sql>
+	</changeSet>
+	
+	
 </databaseChangeLog>
