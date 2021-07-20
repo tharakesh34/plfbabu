@@ -276,6 +276,17 @@
 															<checkbox id="finIsRateRvwAtGrcEnd" checked="false" />
 														</hbox>
 													</row>
+													<row id="row_Subvention">
+														<label id="label_FinanceMainDialog_SubventionFrom"
+															value="${c:l('label_FinanceMainDialog_SubventionFrom.value')}" />
+														<hbox>
+															<space spacing="2px" id="space_subVentionFrom"/>
+															<combobox id="subVentionFrom" width="200px" readonly="true" />
+														</hbox>
+														<label id="label_FinanceMainDialog_ManufacturerDealer"
+															value="${c:l('label_FinanceMainDialog_ManufacturerDealer.value')}" />
+														<extendedcombobox id="manufacturerDealer" readonly="true"/>
+													</row>
 													<row>
 														<label id="label_FinanceMainDialog_FinRepayMethod" value="${c:l('label_FinanceMainDialog_FinRepayMethod.value')}" />
 														<hbox>

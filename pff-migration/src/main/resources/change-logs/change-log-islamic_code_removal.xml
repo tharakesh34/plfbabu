@@ -85,4 +85,21 @@
 		<dropNotNullConstraint tableName="REJECTFINANCEMAIN" columnName="TAKEOVERFINANCE"/>
 	</changeSet> 
 	
+	<changeSet id="ST#2361.12" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				UPDATE SECRIGHTS SET RIGHTNAME = 'button_JointAccountDetailDialog_btnSave', PAGE = 'JointAccountDetailDialog' WHERE RIGHTNAME = 'button_JountAccountDetailDialog_btnSave';	
+				UPDATE SECRIGHTS SET RIGHTNAME = 'button_JointAccountDetailDialog_btnEdit', PAGE = 'JointAccountDetailDialog' WHERE RIGHTNAME = 'button_JountAccountDetailDialog_btnEdit';
+				UPDATE SECRIGHTS SET RIGHTNAME = 'button_JointAccountDetailDialog_btnDelete', PAGE = 'JointAccountDetailDialog' WHERE RIGHTNAME = 'button_JountAccountDetailDialog_btnEdit';
+				UPDATE SECRIGHTS SET RIGHTNAME = 'button_JointAccountDetailDialog_btnSearchCustCIF', PAGE = 'JointAccountDetailDialog' WHERE RIGHTNAME = 'button_JountAccountDetailDialog_btnSearchCustCIF';
+				UPDATE SECRIGHTS SET RIGHTNAME = 'button_JointAccountDetailDialog_btnNew', PAGE = 'JointAccountDetailDialog'  WHERE RIGHTNAME = 'button_JountAccountDetailDialog_btnNew';
+				UPDATE SECRIGHTS SET RIGHTNAME = 'button_JointAccountDetailDialog_btnCreateCustomer', PAGE = 'JointAccountDetailDialog' WHERE RIGHTNAME = 'button_JountAccountDetailDialog_btnCreateCustomer';
+				UPDATE SECRIGHTS SET RIGHTNAME = 'button_JointAccountDetailDialog_btnEditCustomer', PAGE = 'JointAccountDetailDialog' WHERE RIGHTNAME = 'button_JountAccountDetailDialog_btnEditCustomer';
+				UPDATE SECRIGHTS SET RIGHTNAME = 'JointAccountDetailDialog_catOfCoApplicant', PAGE = 'JointAccountDetailDialog' WHERE RIGHTNAME = 'JountAccountDetailDialog_catOfCoApplicant';
+				UPDATE SECRIGHTS SET RIGHTNAME = 'JointAccountDetailDialog_authoritySignatory', PAGE = 'JointAccountDetailDialog' WHERE RIGHTNAME = 'JountAccountDetailDialog_authoritySignatory';
+				UPDATE SECRIGHTS SET RIGHTNAME = 'JointAccountDetailDialog_includeIncome', PAGE = 'JointAccountDetailDialog' WHERE RIGHTNAME = 'JountAccountDetailDialog_includeIncome';
+			]]>
+		</sql>
+	</changeSet> 
+	
 </databaseChangeLog>

@@ -267,6 +267,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		this.btnCancel.setVisible(false);
 		this.btnDelete.setVisible(false);
 		this.btnFlagDetails.setVisible(false);
+		this.subVentionFrom.setDisabled(true);
 		if (getLiabilityRequest().isNewRecord()) {
 			doShowLiabilityDialog();
 		} else {
@@ -1180,6 +1181,9 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 			this.referralId.setValue(aFinanceMain.getReferralId());
 			this.referralId.setDescription(aFinanceMain.getReferralIdDesc());
 		}
+		fillComboBox(this.subVentionFrom, aFinanceMain.getSubVentionFrom(), PennantStaticListUtil.getSubVentionFrom(),
+				"");
+
 		if (aFinanceMain.getDmaCode() != null) {
 			this.dmaCode.setValue(aFinanceMain.getDmaCode());
 			this.dmaCode.setDescription(aFinanceMain.getDmaName());

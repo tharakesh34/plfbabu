@@ -14544,8 +14544,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// FinanceMain Details Tab Validation Error Throwing
-		if (!getProductCode().equalsIgnoreCase(FinanceConstants.PRODUCT_CONVENTIONAL)) {
-			showErrorDetails(wve, financeTypeDetailsTab);
+			if (!FinanceConstants.PRODUCT_CONVENTIONAL.equalsIgnoreCase(getProductCode())) {
+				showErrorDetails(wve, financeTypeDetailsTab);
 		}
 
 		long intiateUser = aFinanceMain.getInitiateUser();
