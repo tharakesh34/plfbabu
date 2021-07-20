@@ -357,12 +357,19 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 
 		aNotes.setRemarks(remarks.getValue());
 
-		if (!isFinanceNotes
-				&& (this.remarksText.getValue() == null || this.remarksText.getValue().trim().length() <= 0)) {
+		if (!isFinanceNotes) {
+
+			if (this.remarksText.getValue() == null || this.remarksText.getValue().trim().length() <= 0) {
 				wve.add(new WrongValueException(this.remarksText, Labels.getLabel("Notes_NotEmpty")));
 			} else {
 				aNotes.setRemarks(this.remarksText.getValue().trim());
 			}
+
+		} else if (this.remarks.getValue() != null) {
+			String remarkVal = remarks.getValue().split("\t")[1].split("<")[0];
+			remarks.setValue(remarkVal);
+			aNotes.setRemarks(remarks.getValue());
+		}
 
 		if (wve.size() > 0) {
 
