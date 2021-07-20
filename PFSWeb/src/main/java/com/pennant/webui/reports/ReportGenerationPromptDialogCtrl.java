@@ -2735,9 +2735,16 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				Map<String, Object> lovSearchMap = new HashMap<String, Object>(1);
 
 				Map<String, Object> filterMap = (Map<String, Object>) lovSearchBufferMap.get(valuestextBox.getId());
-				lovSearchMap = (Map<String, Object>) ExtendedMultipleSearchListBox.show(
-						this.window_ReportPromptFilterCtrl, button.getId(),
-						filterMap == null ? new HashMap<String, Object>() : filterMap, filters);
+				if (reportMenuCode.equals("menu_Item_SubventionAmortReport")
+						|| reportMenuCode.equals("menu_Item_SubventionMISReport")) {
+					lovSearchMap = (Map<String, Object>) ExtendedMultipleSearchListBox.show(
+							this.window_ReportPromptFilterCtrl, button.getId(),
+							filterMap == null ? new HashMap<String, Object>() : filterMap, filters);
+				} else {
+					lovSearchMap = (Map<String, Object>) ExtendedMultipleSearchListBox.show(
+							this.window_ReportPromptFilterCtrl, button.getId(),
+							filterMap == null ? new HashMap<String, Object>() : filterMap);
+				}
 
 				// Put in map for select next time
 				lovSearchBufferMap.put(valuestextBox.getId(), lovSearchMap);
