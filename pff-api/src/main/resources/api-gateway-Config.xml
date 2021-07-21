@@ -821,7 +821,7 @@
 		address="/relationshipOfficersSoap" publish="false" />
 
 	<!-- rest container Disbursement API GateWay -->
-	<bean id="wsDisbursementService" class="com.pennanttech.pff.api.ws.impl.DisbursementWebServiceImpl" />
+	<bean id="wsDisbursementService" class="com.pennanttech.service.impl.DisbursementWebServiceImpl" />
 
 	<jaxrs:server id="disbursementRestService" address="/disbursementRest">
 		<jaxrs:serviceBeans>
