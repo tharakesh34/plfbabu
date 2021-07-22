@@ -721,7 +721,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				}
 			} else {
 				for (FinTypeFees fee : fees) {
-					if (fee.getFeeTypeID() != feeTypeId) {
+					if (!(fee.getFeeTypeID().equals(feeTypeId))) {
 						continue;
 					}
 
@@ -778,7 +778,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			} else {
 				for (FinTypeFees fee : fees) {
 
-					if (fee.getFeeTypeID() != feeTypeId) {
+					if (!(fee.getFeeTypeID().equals(feeTypeId))) {
 						continue;
 					}
 					exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
@@ -836,7 +836,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			}
 		} else {
 			for (FinTypeFees fee : fees) {
-				if (fee.getFeeTypeID() != feeTypeId) {
+				if (!(fee.getFeeTypeID().equals(feeTypeId))) {
 					continue;
 				}
 
