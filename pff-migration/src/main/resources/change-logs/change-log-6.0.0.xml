@@ -33626,15 +33626,15 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
-	<changeSet id="700.1" author="Gireesh.G">
+	<changeSet id="700" author="Gireesh.G">
 		<createView viewName="COVENANTS_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.ID,
 				    T1.KEYREFERENCE,
 				    T1.MODULE,
 				    T1.COVENANTTYPEID,
-				    T2.CODE AS COVENANTTYPECODE,
-				    T2.DESCRIPTION AS COVENANTTYPEDESCRIPTION,
+				    T2.CODE COVENANTTYPECODE,
+				    T2.DESCRIPTION COVENANTTYPEDESCRIPTION,
 				    T2.COVENANTTYPE,
 				    T2.CATEGORY,
 				    T1.LOS,
@@ -33674,15 +33674,15 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 				    T1.RECORDTYPE,
 				    T1.WORKFLOWID,
 					T1.REMARKS1
-			  	FROM PLF.COVENANTS_TEMP T1
-    		  	JOIN PLF.COVENANT_TYPES T2 ON T2.ID = T1.COVENANTTYPEID
-			UNION ALL
+			  	FROM COVENANTS_TEMP T1
+    		  	JOIN COVENANT_TYPES T2 ON T2.ID = T1.COVENANTTYPEID
+				UNION ALL
  				SELECT T1.ID,
 				    T1.KEYREFERENCE,
 				    T1.MODULE,
 				    T1.COVENANTTYPEID,
-				    T2.CODE AS COVENANTTYPECODE,
-				    T2.DESCRIPTION AS COVENANTTYPEDESCRIPTION,
+				    T2.CODE COVENANTTYPECODE,
+				    T2.DESCRIPTION COVENANTTYPEDESCRIPTION,
 				    T2.COVENANTTYPE,
 				    T2.CATEGORY,
 				    T1.LOS,
@@ -33722,8 +33722,8 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 				    T1.RECORDTYPE,
 				    T1.WORKFLOWID,
 					T1.REMARKS1
-   			 	FROM PLF.COVENANTS T1
-     		 	JOIN PLF.COVENANT_TYPES T2 ON T2.ID = T1.COVENANTTYPEID
+   			 	FROM COVENANTS T1
+     		 	JOIN COVENANT_TYPES T2 ON T2.ID = T1.COVENANTTYPEID
 			]]>
 		</createView>
 	</changeSet>
@@ -33744,15 +33744,15 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
-	<changeSet id="701.1" author="Gireesh.G">
+	<changeSet id="701" author="Gireesh.G">
 		<createView viewName="COVENANTS_AVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.ID,
 				    T1.KEYREFERENCE,
 				    T1.MODULE,
 				    T1.COVENANTTYPEID,
-				    T2.CODE AS COVENANTTYPECODE,
-				    T2.DESCRIPTION AS COVENANTTYPEDESCRIPTION,
+				    T2.CODE COVENANTTYPECODE,
+				    T2.DESCRIPTION COVENANTTYPEDESCRIPTION,
 				    T2.COVENANTTYPE,
 				    T2.CATEGORY,
 				    T1.LOS,
@@ -33792,8 +33792,8 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 				    T1.RECORDTYPE,
 				    T1.WORKFLOWID,
 					T1.REMARKS1
-   				FROM PLF.COVENANTS T1
-     			JOIN PLF.COVENANT_TYPES T2 ON T2.ID = T1.COVENANTTYPEID;
+   				FROM COVENANTS T1
+     			JOIN COVENANT_TYPES T2 ON T2.ID = T1.COVENANTTYPEID
 			]]>
 		</createView>
 	</changeSet>
