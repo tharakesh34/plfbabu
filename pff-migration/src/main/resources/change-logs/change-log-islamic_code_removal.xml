@@ -102,4 +102,8 @@
 		</sql>
 	</changeSet> 
 	
+	<changeSet id="ST#2361.13" author="Gireesh.G">
+		<dropNotNullConstraint tableName="WIFFINANCEMAIN" columnName="TAKEOVERFINANCE" columnDataType="smallint"/>
+	</changeSet>
+	
 </databaseChangeLog>
