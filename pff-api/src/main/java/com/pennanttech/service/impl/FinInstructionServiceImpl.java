@@ -3339,17 +3339,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
 
-		int actualFeeTypeCode = feeWaiver.getFeeWaiverDetails().size();
-		int feeTypeCode = feeWaiverHeader.getFeeWaiverDetails().size();
-		if (actualFeeTypeCode != feeTypeCode) {
-			String valueParm[] = new String[4];
-			valueParm[0] = "FeeType Codes";
-			valueParm[1] = "Should";
-			valueParm[2] = "be Matched With Existing: ";
-			valueParm[3] = finReference;
-			return APIErrorHandlerService.getFailedStatus("30550", valueParm);
-		}
-
 		financeMain = financeMainDAO.getFinanceMain(finReference,
 				new String[] { "FinIsActive", "FinReference", "CustID" }, "_View");
 		if (financeMain == null || !financeMain.isFinIsActive()) {
@@ -3427,6 +3416,17 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 		// Setting the actual feewaiver values to the feewaiver
 		feeWaiver.setFeeWaiverDetails(actaulfeeWaiverDetails);
+
+		int actualFeeTypeCode = feeWaiver.getFeeWaiverDetails().size();
+		int feeTypeCode = feeWaiverHeader.getFeeWaiverDetails().size();
+		if (actualFeeTypeCode != feeTypeCode) {
+			String valueParm[] = new String[4];
+			valueParm[0] = "FeeType Codes";
+			valueParm[1] = "Should";
+			valueParm[2] = "be Matched With Existing: ";
+			valueParm[3] = finReference;
+			return APIErrorHandlerService.getFailedStatus("30550", valueParm);
+		}
 
 		List<FeeWaiverDetail> feeWaiverDetails = feeWaiverHeader.getFeeWaiverDetails();
 
