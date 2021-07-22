@@ -3067,7 +3067,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		if (!this.custQualification.isReadonly()) {
 			// PSD#163298 Issue addressed for mandatory validations While Resubmitting.
 			this.custQualification.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_CustomerDialog_CustQualification.value"), null, isMandValidate, true));
+					Labels.getLabel("label_CustomerDialog_CustQualification.value"), null, false, true));
 		}
 		if (!this.custSector.isReadonly() && nonWorking) {
 			// PSD#163298 Issue addressed for mandatory validations While Resubmitting.
@@ -3105,7 +3105,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		if (!this.custSegment.isReadonly() && this.custSegment.isVisible() && nonWorking) {
 			// PSD#163298 Issue addressed for mandatory validations While Resubmitting.
 			this.custSegment.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_CustomerDialog_CustSegment.value"), null, isMandValidate, true));
+					Labels.getLabel("label_CustomerDialog_CustSegment.value"), null, false, true));
 		}
 
 		if (isRetailCustomer) {
@@ -3425,7 +3425,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.custFirstName.setReadonly(isReadOnly("CustomerDialog_custFirstName"));
 				this.custMiddleName.setReadonly(isReadOnly("CustomerDialog_custMiddleName"));
 				this.custLastName.setReadonly(isReadOnly("CustomerDialog_custLastName"));
-				this.custLocalLngName.setReadonly(isReadOnly("CustomerDialog_custLastName"));
+				this.custLocalLngName.setReadonly(isReadOnly("CustomerDialog_custLngName"));
 				this.motherMaidenName.setReadonly(isReadOnly("CustomerDialog_custMotherMaiden"));
 				this.custDftBranch.setReadonly(isReadOnly("CustomerDialog_custDftBranch"));
 				this.custBaseCcy.setReadonly(isReadOnly("CustomerDialog_custBaseCcy"));
