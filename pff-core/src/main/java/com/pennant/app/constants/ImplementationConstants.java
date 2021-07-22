@@ -575,9 +575,9 @@ public class ImplementationConstants {
 	public static boolean ALLOW_PMAY;
 	public static boolean ALLOW_OCR;
 
-	public static boolean ADVANCE_PAYMENT_INT = false;
-	public static boolean ADVANCE_PAYMENT_EMI = false;
-	public static boolean COVENANT_MODULE_NEW = false;
+	public static boolean ADVANCE_PAYMENT_INT;
+	public static boolean ADVANCE_PAYMENT_EMI;
+	public static boolean COVENANT_MODULE_NEW;
 
 	/* ADVANCE INT / EMI Constants */
 	public static boolean ADV_EMI_STAGE_FRONT_END;
