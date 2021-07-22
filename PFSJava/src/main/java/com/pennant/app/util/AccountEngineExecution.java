@@ -271,7 +271,7 @@ public class AccountEngineExecution implements Serializable {
 	private List<ReturnDataSet> prepareAccountingSetResults(AEEvent aeEvent) {
 		Map<String, Object> dataMap = aeEvent.getDataMap();
 		List<Long> acSetList = aeEvent.getAcSetIDList();
-		List<ReturnDataSet> returnDataSets = new ArrayList<ReturnDataSet>();
+		List<ReturnDataSet> returnDataSets = new ArrayList<>();
 		List<TransactionEntry> txnEntries = new ArrayList<>();
 
 		if (aeEvent.isEOD()) {
@@ -482,6 +482,17 @@ public class AccountEngineExecution implements Serializable {
 		}
 
 		for (String feeTypeCode : feeCodes.split(",")) {
+			boolean feeExecuted = false;
+			for (String code : dataMap.keySet()) {
+				if (code.contains(feeTypeCode)) {
+					feeExecuted = true;
+					break;
+				}
+			}
+
+			if (feeExecuted) {
+				continue;
+			}
 
 			FinFeeDetail fd = new FinFeeDetail();
 
