@@ -103,6 +103,10 @@
 	</changeSet> 
 	
 	<changeSet id="ST#2361.13" author="Gireesh.G">
+		<dropNotNullConstraint tableName="WIFFINANCEMAIN_TEMP" columnName="TAKEOVERFINANCE" columnDataType="smallint"/>
+	</changeSet>
+	
+	<changeSet id="ST#2361.14" author="Gireesh.G">
 		<dropNotNullConstraint tableName="WIFFINANCEMAIN" columnName="TAKEOVERFINANCE" columnDataType="smallint"/>
 	</changeSet>
 	
