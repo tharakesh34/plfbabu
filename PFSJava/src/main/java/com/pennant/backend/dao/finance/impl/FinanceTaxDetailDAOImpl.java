@@ -139,7 +139,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 				td.setNextTaskId(rs.getString("NextTaskId"));
 				td.setRecordType(rs.getString("RecordType"));
 				td.setWorkflowId(rs.getLong("WorkflowId"));
-				td.setPinCodeId((Long) rs.getObject("PinCodeId"));
+				td.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
 
 				return td;
 			});
