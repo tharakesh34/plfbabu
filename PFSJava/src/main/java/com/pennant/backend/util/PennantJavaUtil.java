@@ -2917,7 +2917,7 @@ public class PennantJavaUtil {
 
 		// GST Invoice Report
 		ModuleUtil.register("GSTInvoiceReport",
-				new ModuleMapping("GSTInvoiceReport", GSTInvoiceTxn.class,
+				new ModuleMapping("GSTInvoiceTxn", GSTInvoiceTxn.class,
 						new String[] { "GST_Invoice_Txn", "GST_Invoice_Txn_View" }, null,
 						new String[] { "InvoiceNo", "LoanAccountNo" }, null, 600));
 
@@ -3576,6 +3576,11 @@ public class PennantJavaUtil {
 				new ModuleMapping("RateChangeUploadFileStatus", RateChangeUploadHeader.class,
 						new String[] { "ratechange_upload_header", "ratechange_upload_header" }, null,
 						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("GSTInvoiceTxn",
+				new ModuleMapping("GSTInvoiceTxn", GSTInvoiceTxn.class,
+						new String[] { "GST_Invoice_Txn", "GST_Invoice_Txn_View" }, null,
+						new String[] { "InvoiceNo", "LoanAccountNo" }, null, 600));
 
 		registerCustomModules();
 	}
