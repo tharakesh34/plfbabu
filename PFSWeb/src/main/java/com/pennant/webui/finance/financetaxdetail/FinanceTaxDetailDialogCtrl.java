@@ -266,7 +266,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 			if (financeMainDialogCtrl != null) {
 				try {
 					jntDialogCtrl = (JointAccountDetailDialogCtrl) getFinanceMainDialogCtrl().getClass()
-							.getMethod("getFmJointAccountDetailDialogCtrl").invoke(getFinanceMainDialogCtrl());
+							.getMethod("getJointAccountDetailDialogCtrl").invoke(getFinanceMainDialogCtrl());
 				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
 						| NoSuchMethodException | SecurityException e) {
 					logger.error(e);
