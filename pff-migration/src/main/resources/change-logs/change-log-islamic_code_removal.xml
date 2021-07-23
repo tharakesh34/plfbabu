@@ -110,4 +110,12 @@
 		<dropNotNullConstraint tableName="WIFFINANCEMAIN" columnName="TAKEOVERFINANCE" columnDataType="smallint"/>
 	</changeSet>
 	
+	<changeSet id="ST#2361.15" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				UPDATE SECRIGHTS SET RIGHTNAME = 'button_JointAccountDetailDialog_btnDelete', PAGE = 'JointAccountDetailDialog' WHERE RIGHTNAME = 'button_JountAccountDetailDialog_btnDelete';
+			]]>
+		</sql>
+	</changeSet> 
+	
 </databaseChangeLog>
