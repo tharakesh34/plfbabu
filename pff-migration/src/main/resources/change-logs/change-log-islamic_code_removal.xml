@@ -118,4 +118,22 @@
 		</sql>
 	</changeSet> 
 	
+	<changeSet id="ST#2361.16" author="Gireesh.G">
+		<dropNotNullConstraint tableName="WIFFINSCHEDULEDETAILS_TEMP" columnName="CALONINDRATE" columnDataType="smallint"/>
+		<dropNotNullConstraint tableName="WIFFINSCHEDULEDETAILS_TEMP" columnName="ROLLOVERONSCHDATE" columnDataType="smallint"/>
+	</changeSet>
+	
+	<changeSet id="ST#2361.17" author="Gireesh.G">
+		<dropNotNullConstraint tableName="WIFFINSCHEDULEDETAILS" columnName="CALONINDRATE" columnDataType="smallint"/>
+		<dropNotNullConstraint tableName="WIFFINSCHEDULEDETAILS" columnName="ROLLOVERONSCHDATE" columnDataType="smallint"/>
+	</changeSet>
+	
+	<changeSet id="ST#2361.18" author="Gireesh.G">
+		<dropNotNullConstraint tableName="WIFFINDISBURSEMENTDETAILS_TEMP" columnName="DISBDISBURSED" columnDataType="smallint"/>
+	</changeSet>
+	
+	<changeSet id="ST#2361.19" author="Gireesh.G">
+		<dropNotNullConstraint tableName="WIFFINDISBURSEMENTDETAILS" columnName="DISBDISBURSED" columnDataType="smallint"/>
+	</changeSet>
+	
 </databaseChangeLog>
