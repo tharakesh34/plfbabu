@@ -561,8 +561,8 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
-		valueParm[0] = String.valueOf(finAdvancePay.getPaymentId());
-		errParm[0] = PennantJavaUtil.getLabel("label_PaymentId") + ": " + valueParm[0];
+		valueParm[0] = finAdvancePay.getFinReference();
+		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + valueParm[0];
 
 		if (finAdvancePay.isNew()) { // for New record or new record into work flow
 
