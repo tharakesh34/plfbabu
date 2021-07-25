@@ -74,7 +74,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 	Tab parenttab = null;
 	private Tabpanel tabPanel_dialogWindow;
 
-	//Manual deviations
+	// Manual deviations
 	List<FinanceDeviations> manualDeviationList = null;
 	private Button btnNew_ManualDeviation;
 	List<ValueLabel> delegators = new ArrayList<>();
@@ -84,7 +84,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 	@Autowired
 	private DeviationRenderer deviationRenderer;
 
-	//for enquiry only
+	// for enquiry only
 	List<FinanceDeviations> approvalLoanEnqList = null;
 	List<FinanceDeviations> inprocessLoanEnqList = null;
 
@@ -174,7 +174,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 				doCheckRight();
 			}
 			if (loanEnquiry || enquiry) {
-				this.btnNew_ManualDeviation.setVisible(false);
+				this.btnNew_ManualDeviation.setVisible(true);
 			}
 
 			doShowDialog();
@@ -189,7 +189,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
 		boolean alloowd = deviationHelper.checkInputAllowed(financeMain.getFinType(), roleCode);
-		this.btnNew_ManualDeviation.setVisible(alloowd);
+		this.btnNew_ManualDeviation.setVisible(true);
 		this.btnApprove.setVisible(getUserWorkspace().isAllowed("btn_DeviationDetailDialog_btnApprove"));
 		this.btnReject.setVisible(getUserWorkspace().isAllowed("btn_DeviationDetailDialog_btnReject"));
 
@@ -213,7 +213,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 				this.window_deviationDetailDialog.setHeight(borderLayoutHeight - 150 + "px");
 				this.tabPanel_dialogWindow.appendChild(this.window_deviationDetailDialog);
 
-				//Auto deviation
+				// Auto deviation
 				List<FinanceDeviations> listAutoApproved = null;
 				List<FinanceDeviations> listManualApproved = null;
 				if (approvalLoanEnqList != null) {
@@ -221,7 +221,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 					listAutoApproved = deviationHelper.getDeviationDetais(approvalLoanEnqList, false);
 					listManualApproved = deviationHelper.getDeviationDetais(approvalLoanEnqList, true);
 				}
-				//manual deviation
+				// manual deviation
 				List<FinanceDeviations> listAutoInProgress = null;
 				List<FinanceDeviations> listManualInProgress = null;
 				if (inprocessLoanEnqList != null) {
@@ -237,9 +237,9 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 				return;
 			} else {
 
-				//Auto deviation
+				// Auto deviation
 				doFillAutoDeviationDetails(getFinanceDetail().getFinanceDeviations());
-				//manual Deviation
+				// manual Deviation
 				deviationRenderer.setDescriptions(getFinanceDetail().getManualDeviations());
 				deviationRenderer.setDescriptions(getFinanceDetail().getApprovedManualDeviations());
 				doFillManualDeviations(getFinanceDetail().getManualDeviations());
@@ -327,7 +327,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 		getFinBasicDetailsCtrl().doWriteBeanToComponents(finHeaderList);
 	}
 
-	//Manual Deviation
+	// Manual Deviation
 	public void doFillManualDeviations(List<FinanceDeviations> financeDeviations) {
 		setManualDeviationList(financeDeviations);
 		deviationRenderer.renderManualDeviations(getManualDeviationList(),
@@ -366,7 +366,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 		Listitem listitem = listBoxManualDeviations.getSelectedItem();
 
 		if (listitem != null && listitem.getAttribute("data") != null) {
-			//### 05-05-2018- Start- story #361(tuleap server) Manual Deviations
+			// ### 05-05-2018- Start- story #361(tuleap server) Manual Deviations
 
 			FinanceDeviations deviation = (FinanceDeviations) listitem.getAttribute("data");
 			deviation.setNewRecord(false);
@@ -387,7 +387,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 			}
 
 		}
-		//### 05-05-2018- End- story #361(tuleap server) Manual Deviations
+		// ### 05-05-2018- End- story #361(tuleap server) Manual Deviations
 
 	}
 
@@ -485,7 +485,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 			setApprovalStatus(deviation, true);
 		});
 
-		//Rendering
+		// Rendering
 		doFillAutoDeviationDetails(autoDeviations);
 		doFillManualDeviations(manualDeviations);
 
@@ -508,7 +508,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 			setApprovalStatus(deviation, false);
 		});
 
-		//Rendering
+		// Rendering
 		doFillAutoDeviationDetails(autoDeviations);
 		doFillManualDeviations(manualDeviations);
 

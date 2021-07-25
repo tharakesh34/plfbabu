@@ -66,8 +66,7 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 
 		// Check if Loan is not Approveda
 		if (!isLoanApproved) {
-			fd = financeDetailService.getOriginationFinance(finReference, nxtRoleCd, FinServiceEvent.ORG,
-					"");
+			fd = financeDetailService.getOriginationFinance(finReference, nxtRoleCd, FinServiceEvent.ORG, "");
 			fd.setModuleDefiner(FinServiceEvent.ORG);
 		} else if (StringUtils.isNotBlank(nxtRoleCd)) {
 			fd = financeDetailService.getServicingFinanceForQDP(finReference, AccountEventConstants.ACCEVENT_ADDDBSN,
@@ -127,6 +126,10 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 
 		if (DateUtil.compare(fm.getNextRepayRvwDate(), instSchdDetail.getRealizedDate()) < 0) {
 			throw new AppException("Payment Date is crossed Next Interest Review Frequency Date..");
+		}
+
+		if (DateUtil.compare(instSchdDetail.getRealizedDate(), fm.getFinStartDate()) < 0) {
+			throw new AppException("Payment Date is before Loan Start Date..");
 		}
 
 		if (!fm.isFinIsActive()) {

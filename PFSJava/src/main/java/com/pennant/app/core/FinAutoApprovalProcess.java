@@ -81,8 +81,8 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 		boolean servicing = finAutoApprovalDetailDAO.getFinanceServiceInstruction(finReference);
 
 		if (!servicing && !approvedLoan) {
-			financeDetail = financeDetailService.getOriginationFinance(finReference, nextRoleCode,
-					FinServiceEvent.ORG, "");
+			financeDetail = financeDetailService.getOriginationFinance(finReference, nextRoleCode, FinServiceEvent.ORG,
+					"");
 			financeDetail.setModuleDefiner(FinServiceEvent.ORG);
 		} else {
 			financeDetail = financeDetailService.getServicingFinanceForQDP(finReference,
@@ -151,6 +151,10 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 
 		if (DateUtil.compare(fm.getNextRepayRvwDate(), finAad.getRealizedDate()) < 0) {
 			throw new AppException("Payment Date is crossed Next Interest Review Frequency Date..");
+		}
+
+		if (DateUtil.compare(finAad.getRealizedDate(), fm.getFinStartDate()) < 0) {
+			throw new AppException("Payment Date is before Loan Start Date..");
 		}
 
 		if (!fm.isFinIsActive()) {

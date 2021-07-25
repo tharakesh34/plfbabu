@@ -200,6 +200,18 @@ public class FinChangeCustomerDAOImpl extends SequenceDao<FinChangeCustomer> imp
 	}
 
 	@Override
+	public void deleteByReference(String finReference) {
+		StringBuilder sql = new StringBuilder("Delete from FinChangeCustomer");
+		sql.append(" where FinReference = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		jdbcOperations.update(sql.toString(), ps -> {
+			ps.setString(1, finReference);
+		});
+	}
+
+	@Override
 	public boolean isDuplicateKey(long id, String finReference, TableType tableType) {
 
 		/*

@@ -510,8 +510,8 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, reference);
-			ps.setLong(2, depositorId);
+			ps.setLong(1, depositorId);
+			ps.setString(2, reference);
 		}, (rs, i) -> {
 			CollateralSetup cs = new CollateralSetup();
 

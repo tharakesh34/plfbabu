@@ -1986,8 +1986,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		appendCheckListDetailTab(aFinanceDetail, onLoad);
 
 		// Document Detail Tab Addition
-		if (isTabVisible(StageTabConstants.Documents)
-				&& !FinServiceEvent.RESTRUCTURE.equalsIgnoreCase(moduleDefiner)) {
+		if (isTabVisible(StageTabConstants.Documents) && !FinServiceEvent.RESTRUCTURE.equalsIgnoreCase(moduleDefiner)) {
 			appendDocumentDetailTab(onLoad);
 		} else {
 			this.btnSplitDoc.setVisible(false);
@@ -2446,8 +2445,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("stepReadonly", isReadOnly("FinanceMainDialog_stepFinance"));
 			map.put("isAlwNewStep", isReadOnly("FinanceMainDialog_btnFinStepPolicy"));
 			String moduleDefiner = getFinanceDetail().getModuleDefiner();
-			if (FinServiceEvent.ADDDISB.equals(moduleDefiner)
-					|| FinServiceEvent.RATECHG.equals(moduleDefiner)) {
+			if (FinServiceEvent.ADDDISB.equals(moduleDefiner) || FinServiceEvent.RATECHG.equals(moduleDefiner)) {
 				map.put("enquiryModule", true);
 			}
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/StepDetailDialog.zul",
@@ -3755,6 +3753,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		this.quickDisb.setChecked(aFinanceMain.isQuickDisb());
+
+		if (financeType.isQuickDisb()) {
+			this.quickDisb.setChecked(true);
+			this.quickDisb.setDisabled(true);
+		}
+
 		this.finOCRRequired.setChecked(aFinanceMain.isFinOcrRequired());
 
 		// Finance MainDetails Tab ---> 2. Grace Period Details
@@ -4334,8 +4338,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		checkQDPProcess(getFinanceDetail());
 
 		// Filling Child Window Details Tabs
-		aFinanceDetail.setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
+		aFinanceDetail.setModuleDefiner(StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 		doFillTabs(aFinanceDetail, true, true);
 
 		// Setting Utilized Amoun for Collateral Assignment purpose calculations
@@ -5079,8 +5082,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.windowTitle.setValue(Labels.getLabel(moduleDefiner + "_Window.Title"));
 			}
 
-			if (StringUtils.isEmpty(moduleDefiner)
-					|| StringUtils.equals(moduleDefiner, FinServiceEvent.PLANNEDEMI)) {
+			if (StringUtils.isEmpty(moduleDefiner) || StringUtils.equals(moduleDefiner, FinServiceEvent.PLANNEDEMI)) {
 				this.oldVar_planEMIMonths = getFinanceDetail().getFinScheduleData().getPlanEMIHmonths();
 				this.oldVar_planEMIDates = getFinanceDetail().getFinScheduleData().getPlanEMIHDates();
 			}
@@ -6790,8 +6792,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.isNotBlank(moduleDefiner)) {
 			List<FinServiceInstruction> finServiceInstructions = null;
 
-			if (FinServiceEvent.ADDDISB.equals(moduleDefiner)
-					|| FinServiceEvent.RESTRUCTURE.equals(moduleDefiner)) {
+			if (FinServiceEvent.ADDDISB.equals(moduleDefiner) || FinServiceEvent.RESTRUCTURE.equals(moduleDefiner)) {
 				finServiceInstructions = getFinanceDetail().getFinScheduleData().getFinServiceInstructions();
 
 				if (CollectionUtils.isEmpty(finServiceInstructions)) {
@@ -6857,8 +6858,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceDetail.setUserAction(this.userAction.getSelectedItem().getLabel());
 		}
 
-		aFinanceDetail.setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
+		aFinanceDetail.setModuleDefiner(StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 
 		// Resetting Service Task ID's from Original State
 		aFinanceMain.setRoleCode(this.curRoleCode);
@@ -7088,8 +7088,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// After Changing Planned EMI Dates / Months Validation for Recalculated
 		// or not
-		if (StringUtils.isEmpty(moduleDefiner)
-				|| StringUtils.equals(moduleDefiner, FinServiceEvent.PLANNEDEMI)) {
+		if (StringUtils.isEmpty(moduleDefiner) || StringUtils.equals(moduleDefiner, FinServiceEvent.PLANNEDEMI)) {
 
 			// Planned EMI Holiday Months
 			if (getScheduleDetailDialogCtrl() != null && aFinanceMain.isPlanEMIHAlw()) {
@@ -8252,8 +8251,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_DSAN);
 					notification.setModule("LOAN_ORG");
 
-					String finEvent = StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG
-							: moduleDefiner;
+					String finEvent = StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner;
 					notification.setSubModule(finEvent);
 					notification.setKeyReference(financeMain.getFinReference());
 					notification.setStage(financeMain.getRoleCode());
@@ -9417,8 +9415,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain financeMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
-		if (StringUtils.equals(aFinanceDetail.getModuleDefiner(), FinServiceEvent.ORG)
-				&& financeMain.isQuickDisb() && CollectionUtils.isNotEmpty(aFinanceDetail.getAdvancePaymentsList())) {
+		if (StringUtils.equals(aFinanceDetail.getModuleDefiner(), FinServiceEvent.ORG) && financeMain.isQuickDisb()
+				&& CollectionUtils.isNotEmpty(aFinanceDetail.getAdvancePaymentsList())) {
 			for (FinAdvancePayments finAdvancePayments : aFinanceDetail.getAdvancePaymentsList()) {
 				if (userAction != null && StringUtils.equals(userAction.getSelectedItem().getValue().toString(),
 						PennantConstants.RCD_STATUS_APPROVED)) {
@@ -9596,8 +9594,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void onChange$gracePeriodEndDate(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug(Literal.ENTERING + event.toString());
-		if (StringUtils.isNotEmpty(moduleDefiner)
-				&& !StringUtils.equals(moduleDefiner, FinServiceEvent.CHGGRCEND)) {
+		if (StringUtils.isNotEmpty(moduleDefiner) && !StringUtils.equals(moduleDefiner, FinServiceEvent.CHGGRCEND)) {
 
 			return;
 		} else {
@@ -12284,8 +12281,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		showErrorDetails(wve, financeTypeDetailsTab);
 		wve = null;
 		doWriteComponentsToBean(getFinanceDetail().getFinScheduleData());
-		getFinanceDetail().setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
+		getFinanceDetail().setModuleDefiner(StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 
 		logger.debug(Literal.LEAVING);
 		return getFinanceDetail();
@@ -14544,8 +14540,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// FinanceMain Details Tab Validation Error Throwing
-			if (!FinanceConstants.PRODUCT_CONVENTIONAL.equalsIgnoreCase(getProductCode())) {
-				showErrorDetails(wve, financeTypeDetailsTab);
+		if (!FinanceConstants.PRODUCT_CONVENTIONAL.equalsIgnoreCase(getProductCode())) {
+			showErrorDetails(wve, financeTypeDetailsTab);
 		}
 
 		long intiateUser = aFinanceMain.getInitiateUser();
@@ -14963,8 +14959,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		amountCodes.setPftChg(totalPftSchdNew.subtract(totalPftSchdOld));
 		amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
 
-		aeEvent.setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
+		aeEvent.setModuleDefiner(StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 		if (StringUtils.isEmpty(moduleDefiner)) {
 			amountCodes.setDisburse(finMain.getFinCurrAssetValue().add(finMain.getDownPayment()));
 			amountCodes.setIntTdsAdjusted(finMain.getIntTdsAdjusted());
@@ -18381,9 +18376,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		financeMain.setFinBranch(customer.getCustDftBranch());
 
 		financeMain.setCustID(customer.getCustID());
-		setFinanceDetail(getFinanceDetailService().fetchFinCustDetails(financeDetail, custCtgCode,
-				financeMain.getFinType(), getRole(),
-				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner));
+		setFinanceDetail(
+				getFinanceDetailService().fetchFinCustDetails(financeDetail, custCtgCode, financeMain.getFinType(),
+						getRole(), StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner));
 
 		financeMain.setLovDescCustFName(StringUtils.trimToEmpty(customer.getCustFName()));
 		financeMain.setLovDescCustLName(StringUtils.trimToEmpty(customer.getCustLName()));

@@ -90,12 +90,12 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 
 		fap.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 
-		if (statusFlag && fm.isQuickDisb()) {
-			executeQDP(fap);
-		}
-
 		if (statusFlag && fm.isInstBasedSchd()) {
 			processInstBasedSchd(fap);
+		}
+
+		if (statusFlag && fm.isQuickDisb()) {
+			executeQDP(fap);
 		}
 
 		logger.info(Literal.LEAVING);

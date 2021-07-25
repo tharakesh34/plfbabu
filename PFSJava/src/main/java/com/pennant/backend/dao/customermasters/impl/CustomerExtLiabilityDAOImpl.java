@@ -556,7 +556,10 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 	@Override
 	public void delete(long linkId, String type) {
 		StringBuilder sql = new StringBuilder(" Delete From EXTERNAL_LIABILITIES_PD");
-		sql.append(" Where LiabilityId IN (select ID from EXTERNAL_LIABILITIES Where linkId =:linkId)");
+		sql.append(type);
+		sql.append(" Where LiabilityId IN (select ID from EXTERNAL_LIABILITIES");
+		sql.append(type);
+		sql.append(" Where linkId =:linkId)");
 		logger.trace(Literal.SQL + sql.toString());
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("linkId", linkId);

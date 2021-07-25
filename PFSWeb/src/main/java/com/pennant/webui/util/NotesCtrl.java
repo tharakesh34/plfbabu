@@ -234,7 +234,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 		doShowDialog(getNotes());
 		doCheckEnquiry();
 
-		this.remarks.setValue(" ");
+		this.remarks.setValue("");
 
 		logger.debug("Leaving" + event.toString());
 	}
@@ -258,7 +258,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 			this.div_toolbar.setVisible(false);
 			this.separator1.setVisible(false);
 			this.separator2.setVisible(false);
-			//listboxNotes.setHeight(borderLayoutHeight-175+"px");
+			// listboxNotes.setHeight(borderLayoutHeight-175+"px");
 		}
 	}
 
@@ -271,7 +271,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 			this.hlayout_cbType.setVisible(false);
 			this.separator1.setVisible(false);
 			this.separator2.setVisible(false);
-			//listboxNotes.setHeight(borderLayoutHeight-175+"px");
+			// listboxNotes.setHeight(borderLayoutHeight-175+"px");
 		}
 	}
 
@@ -292,8 +292,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug("Entering");
@@ -324,8 +323,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -339,7 +337,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	 */
 	private void doCancel() {
 		logger.debug("Entering");
-		//window_notesDialog.detach();
+		// window_notesDialog.detach();
 		logger.debug("Leaving");
 	}
 
@@ -350,25 +348,25 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	 */
 
 	public void doWriteComponentsToBean() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		Notes aNotes = new Notes();
 		doClearMessage();
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		ArrayList<WrongValueException> wve = new ArrayList<>();
 
-		aNotes.setRemarks(remarks.getValue());
+		String rmrks = remarks.getValue();
+		aNotes.setRemarks(rmrks);
 
 		if (!isFinanceNotes) {
-
 			if (this.remarksText.getValue() == null || this.remarksText.getValue().trim().length() <= 0) {
 				wve.add(new WrongValueException(this.remarksText, Labels.getLabel("Notes_NotEmpty")));
 			} else {
 				aNotes.setRemarks(this.remarksText.getValue().trim());
 			}
-
-		} else if (this.remarks.getValue() != null) {
-			String remarkVal = remarks.getValue().split("\t")[1].split("<")[0];
+		} else if (StringUtils.isNotEmpty(rmrks) && rmrks.contains("<")) {
+			String remarkVal = rmrks.split("\t")[1].split("<")[0];
 			remarks.setValue(remarkVal);
-			aNotes.setRemarks(remarks.getValue());
+			aNotes.setRemarks(remarkVal);
 		}
 
 		if (wve.size() > 0) {
@@ -410,7 +408,8 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 		}
 		aNotes.setRoleCode(getNotes().getRoleCode());
 		this.newNotes = aNotes;
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void doShowDialog(Notes aNotes) throws Exception {

@@ -28,6 +28,7 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.model.Table;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 
 public class SubventionKnockOffUpload extends BasicDao<Subvention> implements ProcessRecord {
 
@@ -102,17 +103,17 @@ public class SubventionKnockOffUpload extends BasicDao<Subvention> implements Pr
 	public void saveOrUpdate(DataEngineAttributes attributes, MapSqlParameterSource record, Table table) {
 		Subvention subvention = new Subvention();
 
-		subvention.setBatchId((Long) record.getValue("BATCHID"));
-		subvention.setFinReference((String) record.getValue("FINREFERENCE"));
-		subvention.setFinType((String) record.getValue("FINTYPE"));
-		subvention.setReferenceCode((String) record.getValue("REFERENCECODE"));
-		subvention.setCustomerName((String) record.getValue("CUSTOMERNAME"));
+		subvention.setBatchId(JdbcUtil.getLong(record.getValue("BATCHID")));
+		subvention.setFinReference(String.valueOf(record.getValue("FINREFERENCE")));
+		subvention.setFinType(String.valueOf(record.getValue("FINTYPE")));
+		subvention.setReferenceCode(String.valueOf(record.getValue("REFERENCECODE")));
+		subvention.setCustomerName(String.valueOf(record.getValue("CUSTOMERNAME")));
 		subvention.setPostDate((Date) record.getValue("POSTDATE"));
 		subvention.setValueDate((Date) record.getValue("VALUEDATE"));
-		subvention.setTransref((String) record.getValue("TRANSREF"));
-		subvention.setPartnerBankId((Long) record.getValue("PARTNERBANKID"));
-		subvention.setPartnerAccNo((String) record.getValue("PARTNERACCNO"));
-		BigDecimal subAmt = new BigDecimal((Integer) record.getValue("AMOUNT"));
+		subvention.setTransref(String.valueOf(record.getValue("TRANSREF")));
+		subvention.setPartnerBankId(JdbcUtil.getLong(record.getValue("PARTNERBANKID")));
+		subvention.setPartnerAccNo(String.valueOf(record.getValue("PARTNERACCNO")));
+		BigDecimal subAmt = new BigDecimal(String.valueOf(record.getValue("AMOUNT")));
 		BigDecimal amount = subAmt.multiply(new BigDecimal(100));
 		subvention.setAmount(amount);
 

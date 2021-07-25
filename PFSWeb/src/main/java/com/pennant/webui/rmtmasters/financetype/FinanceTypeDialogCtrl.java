@@ -3647,6 +3647,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
 		showErrorDetails(wve, extendedDetails);
 		logger.debug(Literal.LEAVING);
 	}
@@ -4837,6 +4838,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				aFinanceType.setIrrFinanceTypeList(getIrrFinanceTypeList());
 			} else {
 				aFinanceType.setIrrFinanceTypeList(null);
+			}
+		}
+
+		if (aFinanceType.isInstBasedSchd()) {
+			if (!aFinanceType.isQuickDisb() || !aFinanceType.isAutoApprove()) {
+				MessageUtil.showError("To process the instruction based schedule auto approval process is Mandatory");
+				return;
 			}
 		}
 

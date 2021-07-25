@@ -549,26 +549,17 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 					if (customerExtLiability != null) {
 						doWriteComponentsToBean(customerExtLiability);
 						extendedComboValidations(customerExtLiability);
-						// setting the linkId
 						customerExtLiabilityDAO.setLinkId(customerExtLiability);
 						if (!flag) {
-							// delete the existing data first while upload
-							externalLiabilityDAO.deleteByLinkId(customerExtLiability.getLinkId(), "");
-							// delete the existing data first while upload
-							customerExtLiabilityDAO.delete(customerExtLiability.getLinkId(), "");
+							deleteExistingRecords(customerExtLiability);
 							flag = true;
 						}
 
-						// Saving the Data
 						externalLiabilityDAO.save(customerExtLiability, "");
-						if (customerExtLiability.getExtLiabilitiesPayments() != null
-								&& !customerExtLiability.getExtLiabilitiesPayments().isEmpty()) {
-							for (ExtLiabilityPaymentdetails extLiabilityPaymentdetails : customerExtLiability
-									.getExtLiabilitiesPayments()) {
-								extLiabilityPaymentdetails.setLiabilityId(customerExtLiability.getId());
-							}
-							// saving the list
-							customerExtLiabilityDAO.save(customerExtLiability.getExtLiabilitiesPayments(), "");
+						List<ExtLiabilityPaymentdetails> payments = customerExtLiability.getExtLiabilitiesPayments();
+						if (CollectionUtils.isNotEmpty(payments)) {
+							payments.forEach(l1 -> l1.setLiabilityId(l1.getId()));
+							customerExtLiabilityDAO.save(payments, "");
 						}
 					}
 				}
@@ -594,6 +585,13 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		} catch (WrongValueException e) {
 			MessageUtil.showError(e.getMessage());
 		}
+	}
+
+	private void deleteExistingRecords(CustomerExtLiability customerExtLiability) {
+		externalLiabilityDAO.deleteByLinkId(customerExtLiability.getLinkId(), "_Temp");
+		externalLiabilityDAO.deleteByLinkId(customerExtLiability.getLinkId(), "");
+		customerExtLiabilityDAO.delete(customerExtLiability.getLinkId(), "_Temp");
+		customerExtLiabilityDAO.delete(customerExtLiability.getLinkId(), "");
 	}
 
 	public void doWriteComponentsToBean(CustomerExtLiability ce) {

@@ -56,16 +56,12 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.dao.beneficiary.BeneficiaryDAO;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
-import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinChangeCustomerDAO;
-import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.JointAccountDetailDAO;
-import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
@@ -76,7 +72,6 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinChangeCustomerService;
-import com.pennant.backend.service.limit.LimitDetailService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -94,117 +89,11 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinChangeCustomerDAO finChangeCustomerDAO;
-	private FinServiceInstrutionDAO finServiceInstructionDAO;
 	private FinanceMainDAO financeMainDAO;
-	private BeneficiaryDAO beneficiaryDAO;
 	private CollateralAssignmentDAO collateralAssignmentDAO;
-	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
-	private MandateDAO mandateDAO;
-	private transient LimitDetailService limitDetailService;
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
 	private JointAccountDetailDAO jointAccountDetailDAO;
-
 	private CollateralSetupDAO collateralSetupDAO;
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	public JointAccountDetailDAO getJointAccountDetailDAO() {
-		return jointAccountDetailDAO;
-	}
-
-	public void setJointAccountDetailDAO(JointAccountDetailDAO jointAccountDetailDAO) {
-		this.jointAccountDetailDAO = jointAccountDetailDAO;
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public FinanceTaxDetailDAO getFinanceTaxDetailDAO() {
-		return financeTaxDetailDAO;
-	}
-
-	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
-		this.financeTaxDetailDAO = financeTaxDetailDAO;
-	}
-
-	public FinChangeCustomerDAO getFinChangeCustomerDAO() {
-		return finChangeCustomerDAO;
-	}
-
-	public void setFinChangeCustomerDAO(FinChangeCustomerDAO finChangeCustomerDAO) {
-		this.finChangeCustomerDAO = finChangeCustomerDAO;
-	}
-
-	public FinServiceInstrutionDAO getFinServiceInstructionDAO() {
-		return finServiceInstructionDAO;
-	}
-
-	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
-		this.finServiceInstructionDAO = finServiceInstructionDAO;
-	}
-
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
-	}
-
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
-	public BeneficiaryDAO getBeneficiaryDAO() {
-		return beneficiaryDAO;
-	}
-
-	public void setBeneficiaryDAO(BeneficiaryDAO beneficiaryDAO) {
-		this.beneficiaryDAO = beneficiaryDAO;
-	}
-
-	public CollateralAssignmentDAO getCollateralAssignmentDAO() {
-		return collateralAssignmentDAO;
-	}
-
-	public void setCollateralAssignmentDAO(CollateralAssignmentDAO collateralAssignmentDAO) {
-		this.collateralAssignmentDAO = collateralAssignmentDAO;
-	}
-
-	public FinAdvancePaymentsDAO getFinAdvancePaymentsDAO() {
-		return finAdvancePaymentsDAO;
-	}
-
-	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
-		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
-	}
-
-	public MandateDAO getMandateDAO() {
-		return mandateDAO;
-	}
-
-	public void setMandateDAO(MandateDAO mandateDAO) {
-		this.mandateDAO = mandateDAO;
-	}
-
-	public LimitDetailService getLimitDetailService() {
-		return limitDetailService;
-	}
-
-	public void setLimitDetailService(LimitDetailService limitDetailService) {
-		this.limitDetailService = limitDetailService;
-	}
-
-	public CollateralSetupDAO getCollateralSetupDAO() {
-		return collateralSetupDAO;
-	}
-
-	public void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
-		this.collateralSetupDAO = collateralSetupDAO;
-	}
 
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -225,12 +114,13 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 		}
 
 		if (finChangeCustomer.isNew()) {
-			getFinChangeCustomerDAO().save(finChangeCustomer, tableType);
+			finChangeCustomerDAO.save(finChangeCustomer, tableType);
 		} else {
-			getFinChangeCustomerDAO().update(finChangeCustomer, tableType);
+			finChangeCustomerDAO.update(finChangeCustomer, tableType);
 		}
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
+
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
@@ -256,9 +146,9 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 		}
 
 		FinChangeCustomer FinChangeCustomer = (FinChangeCustomer) auditHeader.getAuditDetail().getModelData();
-		getFinChangeCustomerDAO().delete(FinChangeCustomer, TableType.MAIN_TAB);
+		finChangeCustomerDAO.delete(FinChangeCustomer, TableType.MAIN_TAB);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -273,7 +163,7 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 	 */
 	@Override
 	public FinChangeCustomer getFinChangeCustomerById(long id) {
-		FinChangeCustomer finChangeCustomer = getFinChangeCustomerDAO().getFinChangeCustomerById(id, "_View");
+		FinChangeCustomer finChangeCustomer = finChangeCustomerDAO.getFinChangeCustomerById(id, "_View");
 		List<CollateralSetup> collateralByReference = getCollateralByReference(finChangeCustomer.getFinReference(),
 				finChangeCustomer.getOldCustId());
 		if (collateralByReference != null) {
@@ -292,7 +182,7 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 	 */
 	@Override
 	public FinChangeCustomer getApprovedFinChangeCustomerById(long id) {
-		return getFinChangeCustomerDAO().getFinChangeCustomerById(id, "_AView");
+		return finChangeCustomerDAO.getFinChangeCustomerById(id, "_AView");
 	}
 
 	/**
@@ -322,45 +212,45 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 			return auditHeader;
 		}
 
-		FinChangeCustomer finChangeCustomer = new FinChangeCustomer();
-		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), finChangeCustomer);
+		FinChangeCustomer fcc = new FinChangeCustomer();
+		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), fcc);
 
-		getFinChangeCustomerDAO().delete(finChangeCustomer, TableType.TEMP_TAB);
+		finChangeCustomerDAO.delete(fcc, TableType.TEMP_TAB);
 
-		if (!PennantConstants.RECORD_TYPE_NEW.equals(finChangeCustomer.getRecordType())) {
-			auditHeader.getAuditDetail()
-					.setBefImage(finChangeCustomerDAO.getFinChangeCustomerById(finChangeCustomer.getId(), ""));
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(fcc.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(finChangeCustomerDAO.getFinChangeCustomerById(fcc.getId(), ""));
 		}
 
-		if (finChangeCustomer.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+		if (PennantConstants.RECORD_TYPE_DEL.equals(fcc.getRecordType())) {
 			tranType = PennantConstants.TRAN_DEL;
-			getFinChangeCustomerDAO().delete(finChangeCustomer, TableType.MAIN_TAB);
+			finChangeCustomerDAO.delete(fcc, TableType.MAIN_TAB);
 		} else {
-			finChangeCustomer.setRoleCode("");
-			finChangeCustomer.setNextRoleCode("");
-			finChangeCustomer.setTaskId("");
-			finChangeCustomer.setNextTaskId("");
-			finChangeCustomer.setWorkflowId(0);
+			fcc.setRoleCode("");
+			fcc.setNextRoleCode("");
+			fcc.setTaskId("");
+			fcc.setNextTaskId("");
+			fcc.setWorkflowId(0);
 
-			if (finChangeCustomer.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			if (PennantConstants.RECORD_TYPE_NEW.equals(fcc.getRecordType())) {
 				tranType = PennantConstants.TRAN_ADD;
-				finChangeCustomer.setRecordType("");
-				getFinChangeCustomerDAO().save(finChangeCustomer, TableType.MAIN_TAB);
+				fcc.setRecordType("");
+				finChangeCustomerDAO.deleteByReference(fcc.getFinReference());
+				finChangeCustomerDAO.save(fcc, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
-				finChangeCustomer.setRecordType("");
-				getFinChangeCustomerDAO().update(finChangeCustomer, TableType.MAIN_TAB);
+				fcc.setRecordType("");
+				finChangeCustomerDAO.update(fcc, TableType.MAIN_TAB);
 			}
 		}
-		doProcess(finChangeCustomer);
+		doProcess(fcc);
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
-		auditHeader.getAuditDetail().setModelData(finChangeCustomer);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeader.getAuditDetail().setModelData(fcc);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -377,10 +267,10 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 		String finRef = finReference;
 		changeCustomerDetails(finChangeCustomer);
 
-		FinanceTaxDetail financeTaxDetail = getFinanceTaxDetailDAO().getFinanceTaxDetail(finRef, "_Temp");
+		FinanceTaxDetail financeTaxDetail = financeTaxDetailDAO.getFinanceTaxDetail(finRef, "_Temp");
 
 		if (financeTaxDetail != null) {
-			getFinanceTaxDetailDAO().deleteFinTaxDetails(financeTaxDetail, TableType.TEMP_TAB);
+			financeTaxDetailDAO.deleteFinTaxDetails(financeTaxDetail, TableType.TEMP_TAB);
 		}
 
 		JointAccountDetail ajd = finChangeCustomer.getJointAccountDetail();
@@ -470,9 +360,9 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 		FinChangeCustomer FinChangeCustomer = (FinChangeCustomer) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getFinChangeCustomerDAO().delete(FinChangeCustomer, TableType.TEMP_TAB);
+		finChangeCustomerDAO.delete(FinChangeCustomer, TableType.TEMP_TAB);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -523,8 +413,7 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 
 		// Check the unique keys.
 		if (FinChangeCustomer.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(FinChangeCustomer.getRecordType())
-				&& getFinChangeCustomerDAO().isDuplicateKey(FinChangeCustomer.getId(),
-						FinChangeCustomer.getFinReference(),
+				&& finChangeCustomerDAO.isDuplicateKey(FinChangeCustomer.getId(), FinChangeCustomer.getFinReference(),
 						FinChangeCustomer.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
@@ -677,20 +566,46 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 	}
 
 	public void changeCustomerDetails(FinChangeCustomer finChangeCustomer) {
-
-		getFinanceMainDAO().updateCustChange(finChangeCustomer.getCoApplicantId(), 0,
-				finChangeCustomer.getFinReference(), "_Temp");
-
+		financeMainDAO.updateCustChange(finChangeCustomer.getCoApplicantId(), 0, finChangeCustomer.getFinReference(),
+				"_Temp");
 	}
 
-	// is loan reference is proccess in change customer
 	@Override
 	public boolean isFinReferenceProcess(String finReference) {
-		return getFinChangeCustomerDAO().isFinReferenceProcess(finReference, "_Temp");
+		return finChangeCustomerDAO.isFinReferenceProcess(finReference, "_Temp");
 	}
 
 	@Override
 	public List<CollateralSetup> getCollateralByReference(String reference, long depositorId) {
 		return collateralSetupDAO.getCollateralByRef(reference, depositorId, "_View");
 	}
+
+	public void setJointAccountDetailDAO(JointAccountDetailDAO jointAccountDetailDAO) {
+		this.jointAccountDetailDAO = jointAccountDetailDAO;
+	}
+
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
+		this.financeTaxDetailDAO = financeTaxDetailDAO;
+	}
+
+	public void setFinChangeCustomerDAO(FinChangeCustomerDAO finChangeCustomerDAO) {
+		this.finChangeCustomerDAO = finChangeCustomerDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public void setCollateralAssignmentDAO(CollateralAssignmentDAO collateralAssignmentDAO) {
+		this.collateralAssignmentDAO = collateralAssignmentDAO;
+	}
+
+	public void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
+		this.collateralSetupDAO = collateralSetupDAO;
+	}
+
 }

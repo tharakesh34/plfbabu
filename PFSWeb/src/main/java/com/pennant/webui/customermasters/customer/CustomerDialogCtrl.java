@@ -2422,10 +2422,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 			}
 			doEdit();
-			this.btnUploadExternalLiability
-					.setVisible(getUserWorkspace().isAllowed("button_CustomerDialog_btnUploadExternalLiability"));
-			this.btnDownloadExternalLiability
-					.setVisible(getUserWorkspace().isAllowed("button_CustomerDialog_btnDownloadExternalLiability"));
+			if (!PennantConstants.RECORD_TYPE_NEW.equals(aCustomerDetails.getCustomer().getRecordType())) {
+				this.btnUploadExternalLiability
+						.setVisible(getUserWorkspace().isAllowed("button_CustomerDialog_btnUploadExternalLiability"));
+				this.btnDownloadExternalLiability
+						.setVisible(getUserWorkspace().isAllowed("button_CustomerDialog_btnDownloadExternalLiability"));
+			}
 		}
 		this.custCIF.focus();
 

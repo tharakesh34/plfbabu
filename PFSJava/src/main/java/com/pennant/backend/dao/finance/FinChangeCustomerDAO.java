@@ -48,21 +48,12 @@ import com.pennanttech.pff.core.TableType;
 
 public interface FinChangeCustomerDAO extends BasicCrudDao<FinChangeCustomer> {
 
-	/**
-	 * Fetch the Record FinChangeCustomer by key field
-	 * 
-	 * @param entityCode
-	 *            entityCode of the FinChangeCustomer.
-	 * @param finReference
-	 *            finReference of the FinChangeCustomer.
-	 * @param tableType
-	 *            The type of the table.
-	 * @return FinChangeCustomer
-	 */
 	FinChangeCustomer getFinChangeCustomerById(long id, String type);
 
 	boolean isDuplicateKey(long id, String finReference, TableType tableType);
 
 	boolean isFinReferenceProcess(String finReference, String type);
+
+	void deleteByReference(String finReference);
 
 }
