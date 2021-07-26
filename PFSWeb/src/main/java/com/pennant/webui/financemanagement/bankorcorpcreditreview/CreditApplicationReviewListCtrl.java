@@ -125,6 +125,7 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 	protected Button button_CreditApplicationReviewList_FileUploadCreditApplicationReview;
 
 	protected Button button_CreditAppReviewList_CreditAppReviewSearch;
+	protected Button button_CreditApplicationReviewList_PrintList;
 
 	private transient CreditApplicationReviewService creditApplicationReviewService;
 
@@ -464,7 +465,7 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onClick$print(Event event) throws InterruptedException {
+	public void onClick$button_CreditApplicationReviewList_PrintList(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		String code = "CRRVW";
 		if (isMaintinence) {
