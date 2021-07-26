@@ -147,6 +147,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.model.dms.DMSModule;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -1794,6 +1795,9 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			// Based on VAS Created Against, details will be captured
 			if (StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, vASRecording.getPostingAgainst())) {
 				FinanceMain financeMain = financeMainDAO.getFinanceMainForBatch(vASRecording.getPrimaryLinkRef());
+				if (financeMain == null) {
+					throw new AppException("Selected LAN is either rejected or not active.");
+				}
 				amountCodes.setFinType(financeMain.getFinType());
 				aeEvent.setBranch(financeMain.getFinBranch());
 				aeEvent.setCcy(financeMain.getFinCcy());
