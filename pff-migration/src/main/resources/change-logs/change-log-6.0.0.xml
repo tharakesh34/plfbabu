@@ -33805,5 +33805,14 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="702" author="Varaprasad.k">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID in (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_CollateralDetails');
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_CollateralDetails';
+
+			 ]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
