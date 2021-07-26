@@ -6,7 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
@@ -22,6 +21,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.PricingDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.AccountingEvent;
 
 public class PricingDetailServiceImpl implements PricingDetailService {
 	private static Logger logger = LogManager.getLogger(PricingDetailServiceImpl.class);

@@ -10,7 +10,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
@@ -35,6 +34,7 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
+import com.pennanttech.pff.constants.AccountingEvent;
 
 public class InstallmentDueService extends ServiceHelper {
 	private static final long serialVersionUID = 1442146139821584760L;
@@ -112,7 +112,7 @@ public class InstallmentDueService extends ServiceHelper {
 			amountCodes.setPriSB(BigDecimal.ZERO);
 		}
 
-		//Provision and Fin Od days Greater than zero
+		// Provision and Fin Od days Greater than zero
 		if (fpd.isProvision() && fpd.getCurODDays() > 0) {
 			setProvisionData(amountCodes);
 		}
@@ -122,7 +122,7 @@ public class InstallmentDueService extends ServiceHelper {
 		List<FinFeeScheduleDetail> feelist = finEODEvent.getFinFeeScheduleDetails();
 		if (feelist != null && !feelist.isEmpty()) {
 			for (FinFeeScheduleDetail feeSchd : feelist) {
-				//"_C" Should be there to post then amount
+				// "_C" Should be there to post then amount
 				String feeTypeCode = feeSchd.getFeeTypeCode();
 				dataMap.put(feeTypeCode + "_C", feeSchd.getSchAmount());
 				dataMap.put(feeTypeCode + "_SCH", feeSchd.getSchAmount());
@@ -134,7 +134,7 @@ public class InstallmentDueService extends ServiceHelper {
 		aeEvent.setDataMap(dataMap);
 		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
 		aeEvent.setPostDate(custEODEvent.getCustomer().getCustAppDate());
-		//Postings Process and save all postings related to finance for one time accounts update
+		// Postings Process and save all postings related to finance for one time accounts update
 
 		EventProperties eventProperties = fm.getEventProperties();
 		aeEvent.setAppDate(eventProperties.getAppDate());
@@ -154,7 +154,7 @@ public class InstallmentDueService extends ServiceHelper {
 			createInovice(financeDetail, schd, linkedTranId);
 		}
 
-		//Accrual posted on the installment due postings
+		// Accrual posted on the installment due postings
 		if (aeEvent.isuAmzExists()) {
 			fpd.setAmzTillLBD(fpd.getAmzTillLBD().add(aeEvent.getAeAmountCodes().getuAmz()));
 			finEODEvent.setUpdLBDPostings(true);
@@ -273,7 +273,7 @@ public class InstallmentDueService extends ServiceHelper {
 		EventProperties eventProperties = fm.getEventProperties();
 
 		Long accountingID = Long.MIN_VALUE;
-		//FIXME: PV:  28AUG19. No Separate Accounting for Promotion
+		// FIXME: PV: 28AUG19. No Separate Accounting for Promotion
 		/*
 		 * if (StringUtils.isNotBlank(main.getPromotionCode())) { accountingID =
 		 * AccountingConfigCache.getCacheAccountSetID(main.getPromotionCode(), AccountEventConstants.ACCEVENT_INSTDATE,
@@ -282,8 +282,8 @@ public class InstallmentDueService extends ServiceHelper {
 		 * FinanceConstants.MODULEID_FINTYPE); }
 		 */
 
-		accountingID = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(),
-				AccountingEvent.INSTDATE, FinanceConstants.MODULEID_FINTYPE);
+		accountingID = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(), AccountingEvent.INSTDATE,
+				FinanceConstants.MODULEID_FINTYPE);
 
 		if (accountingID == null || accountingID == Long.MIN_VALUE) {
 			logger.debug(Literal.LEAVING);
@@ -295,7 +295,7 @@ public class InstallmentDueService extends ServiceHelper {
 			return datasets;
 		}
 
-		//prepare schedule based fees
+		// prepare schedule based fees
 		List<FinFeeDetail> totalFees = fd.getFinScheduleData().getFinFeeDetailList();
 		List<FinFeeScheduleDetail> scheduleFees = new ArrayList<>();
 
@@ -311,7 +311,7 @@ public class InstallmentDueService extends ServiceHelper {
 		}
 
 		BigDecimal totPft = BigDecimal.ZERO;
-		//check the schedule is back dated or not if yes then post them
+		// check the schedule is back dated or not if yes then post them
 		for (FinanceScheduleDetail curSchd : schedules) {
 
 			if (curSchd.getDefSchdDate().compareTo(SysParamUtil.getAppDate()) > 0) {
@@ -338,7 +338,7 @@ public class InstallmentDueService extends ServiceHelper {
 			dueAmount = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
 			Date schDate = curSchd.getSchDate();
 
-			//prepare fee list
+			// prepare fee list
 			if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
 				for (FinFeeScheduleDetail scheduleFee : scheduleFees) {
 					if (scheduleFee.getSchDate().compareTo(schDate) == 0) {
@@ -347,8 +347,8 @@ public class InstallmentDueService extends ServiceHelper {
 				}
 			}
 
-			AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, pfd, schedules, AccountingEvent.INSTDATE,
-					schDate, schDate);
+			AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, pfd, schedules, AccountingEvent.INSTDATE, schDate,
+					schDate);
 			aeEvent.getAcSetIDList().add(accountingID);
 
 			aeEvent.setPostingUserBranch(postBranch);
@@ -377,7 +377,7 @@ public class InstallmentDueService extends ServiceHelper {
 
 			if (CollectionUtils.isNotEmpty(feelist)) {
 				for (FinFeeScheduleDetail feeSchd : feelist) {
-					//"_C" Should be there to post then amount
+					// "_C" Should be there to post then amount
 					dataMap.put(feeSchd.getFeeTypeCode() + "_C", feeSchd.getSchAmount());
 					dataMap.put(feeSchd.getFeeTypeCode() + "_SCH", feeSchd.getSchAmount());
 					dataMap.put(feeSchd.getFeeTypeCode() + "_P", feeSchd.getPaidAmount());

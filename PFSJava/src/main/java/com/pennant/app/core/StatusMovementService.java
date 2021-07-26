@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  RepaymentService.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : RepaymentService.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.core;
@@ -53,10 +44,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennanttech.pff.constants.AccountingEvent;
 
 public class StatusMovementService extends ServiceHelper {
 
@@ -81,7 +72,7 @@ public class StatusMovementService extends ServiceHelper {
 			}
 			processMovement(connection, date, custId, AccountingEvent.NORM_PD, NORM_PD);
 			processMovement(connection, date, custId, AccountingEvent.PD_NORM, PD_NORM);
-			processMovement(connection, date, custId, AccountingEvent.ACCEVENT_PD_PIS, PD_PIS);
+			processMovement(connection, date, custId, AccountingEvent.PD_PIS, PD_PIS);
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;
@@ -161,10 +152,10 @@ public class StatusMovementService extends ServiceHelper {
 		// Amount Codes preparation using FinProfitDetails
 		AEEvent aeEvent = getAEAmountCodes(resultSet, event, valueDate);
 
-		//FIXME: PV 07MAY17 to be addressed when status movement postings are required
-		//Postings Process and save all postings related to finance for one time accounts update
+		// FIXME: PV 07MAY17 to be addressed when status movement postings are required
+		// Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent);
-		//finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
+		// finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 	}
 
 	private AEEvent getAEAmountCodes(ResultSet resultSet, String event, Date valueDate) throws SQLException {

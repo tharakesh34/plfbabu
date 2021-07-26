@@ -22,7 +22,6 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import org.zkoss.zkplus.spring.SpringUtil;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
@@ -49,6 +48,7 @@ import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
+import com.pennanttech.pff.constants.AccountingEvent;
 
 public class PennantApplicationUtil {
 	private static final Logger logger = LogManager.getLogger(PennantApplicationUtil.class);

@@ -1,46 +1,27 @@
 /**
-
+ * 
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *                       																	*
- * FileName      :  FinanceTypeDialogCtrl.java                                              *    
- *                                                                          				*
- * Author        :  PENNANT TECHONOLOGIES                       							*
- *                                                                        					*
- * Creation Date    :  30-06-2011                  											*
- *                                                                        					*
- * Modified Date    :  30-06-2011                  											*
- *                                                                        					*
- * Description   :                                                    						*
- *                                                                                          *
+ * * FileName : FinanceTypeDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 30-06-2011 * *
+ * Modified Date : 30-06-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 30-06-2011       Pennant                  0.1                                            * 
- *                                                                                          * 
- * 29-04-2018		Raju/Vinay				 0.2		To avoid Postgres issue also as it 	*
- * 														is primary key no need to check 	*
- * 														for null	                        * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 30-06-2011 Pennant 0.1 * * 29-04-2018 Raju/Vinay 0.2 To avoid Postgres issue also as it * is primary key no need to
+ * check * for null * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.rmtmasters.financetype;
@@ -99,7 +80,6 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
 import com.pennant.RateBox;
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
@@ -156,6 +136,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
 /**
@@ -5562,76 +5543,41 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (getFinTypeAccountingListCtrl() != null) {
 			getFinTypeAccountingListCtrl().setAllowRIAInvestment(allowRIAInvestmentFlag);
 
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.ADDDBSP,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.ADDDBSF,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.ADDDBSN,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.CMTDISB,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMZPD,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMZ_MON,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMZ,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMZSUSP,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMZSUSP,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.NORM_PD,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.NORM_PIS,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.PD_NORM,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.ACCEVENT_PD_PIS,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.PIS_PD,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.PIS_NORM,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.RATCHG,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.REPAY,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.LATEPAY,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.INSTDATE,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.GRACEEND,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.PROVSN,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.SCDCHG,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.DEFFRQ,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.DEFRPY,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.COMPOUND,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.WRITEOFF,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.WRITEBK,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.MATURITY,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.EARLYSTL,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.EARLYPAY,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMENDMENT,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.SEGMENT,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.CANCELFIN,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.EMIHOLIDAY,
-					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.REAGING,
-					allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.ADDDBSP, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.ADDDBSF, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.ADDDBSN, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.CMTDISB, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMZPD, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMZ_MON, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMZ, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMZSUSP, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMZSUSP, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.NORM_PD, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.NORM_PIS, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.PD_NORM, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.PD_PIS, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.PIS_PD, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.PIS_NORM, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.RATCHG, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.REPAY, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.LATEPAY, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.INSTDATE, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.GRACEEND, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.PROVSN, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.SCDCHG, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.DEFFRQ, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.DEFRPY, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.COMPOUND, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.WRITEOFF, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.WRITEBK, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.MATURITY, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.EARLYSTL, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.EARLYPAY, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMENDMENT, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.SEGMENT, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.CANCELFIN, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.EMIHOLIDAY, allowRIAInvestmentFlag);
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.REAGING, allowRIAInvestmentFlag);
 		}
 
 		logger.debug(Literal.LEAVING + event.toString());
@@ -5972,8 +5918,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (this.finIsIntCpz.isChecked() || finGrcIsIntCpz.isChecked()) {
 			if (!isCompReadonly) {
 				if (getFinTypeAccountingListCtrl() != null) {
-					getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountingEvent.COMPOUND,
-							true);
+					getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountingEvent.COMPOUND, true);
 				}
 			}
 		} else {
@@ -6035,8 +5980,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (this.finIsIntCpz.isChecked() || finGrcIsIntCpz.isChecked()) {
 			if (!isCompReadonly) {
 				if (getFinTypeAccountingListCtrl() != null) {
-					getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountingEvent.COMPOUND,
-							true);
+					getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountingEvent.COMPOUND, true);
 				}
 			}
 		} else {
@@ -6774,8 +6718,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				space_finMaxDifferment);
 
 		if (getFinTypeAccountingListCtrl() != null) {
-			getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountingEvent.DEFRPY,
-					finIsAlwDiffermentFlag);
+			getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountingEvent.DEFRPY, finIsAlwDiffermentFlag);
 		}
 
 		logger.debug("Leaving onCheck$finIsAlwDifferment()");
@@ -6790,8 +6733,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		doDisableOrEnableDifferments(alwPlanDefermentFlag, this.planDeferCount, isCompReadonly, space_planDeferCount);
 
 		if (getFinTypeAccountingListCtrl() != null) {
-			getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountingEvent.DEFFRQ,
-					alwPlanDefermentFlag);
+			getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountingEvent.DEFFRQ, alwPlanDefermentFlag);
 		}
 
 		logger.debug("Leaving onCheck$alwPlanDeferment()");

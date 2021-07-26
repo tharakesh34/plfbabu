@@ -61,7 +61,6 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -76,6 +75,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.eod.EODUtil;
 
 public class ProvisionPostings implements Tasklet {

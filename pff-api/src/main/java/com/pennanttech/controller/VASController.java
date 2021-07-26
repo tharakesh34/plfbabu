@@ -11,7 +11,6 @@ import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.ReferenceUtil;
 import com.pennant.app.util.SessionUserDetails;
@@ -34,6 +33,7 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.vas.VASRecordingDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;

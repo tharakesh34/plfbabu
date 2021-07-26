@@ -132,8 +132,6 @@ import com.pennant.FrequencyBox;
 import com.pennant.RateBox;
 import com.pennant.Interface.service.CustomerInterfaceService;
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountingEvent;
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.HolidayHandlerTypes;
@@ -350,6 +348,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
@@ -14875,7 +14874,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			if (FinServiceEvent.ORG.equals(financeDetail.getModuleDefiner())) {
-				accountingSetEntries.addAll(AccountingEngine.execute(AccountingEvent.VASFEE, financeDetail, null));
+				accountingSetEntries.addAll(AccountingEngine.execute(AccountingEvent.VAS_FEE, financeDetail, null));
 			}
 		}
 

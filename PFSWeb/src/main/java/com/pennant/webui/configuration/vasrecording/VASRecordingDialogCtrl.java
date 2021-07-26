@@ -81,7 +81,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
@@ -165,6 +164,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.external.InsuranceProspectService;
 import com.pennanttech.pff.external.insurance.InsuranceCalculatorService;
 import com.pennanttech.pff.model.InsPremiumCalculatorRequest;

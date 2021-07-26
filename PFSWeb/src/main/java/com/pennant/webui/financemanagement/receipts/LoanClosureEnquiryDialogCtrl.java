@@ -66,7 +66,6 @@ import com.aspose.words.SaveFormat;
 import com.pennant.ChartType;
 import com.pennant.CurrencyBox;
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
@@ -168,6 +167,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
@@ -2401,8 +2401,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 			if (!feesExecuted && (StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(),
 					FinServiceEvent.SCHDRPY)
-					|| (!StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(),
-							FinServiceEvent.SCHDRPY)
+					|| (!StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(), FinServiceEvent.SCHDRPY)
 							&& StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(),
 									repayHeader.getFinEvent())))) {
 				feesExecuted = true;
@@ -2768,8 +2767,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			moduleID = FinanceConstants.MODULEID_PROMOTION;
 		}
 
-		accountSetId = AccountingConfigCache.getAccountSetID(finType, AccountingEvent.EARLYSTL,
-				moduleID);
+		accountSetId = AccountingConfigCache.getAccountSetID(finType, AccountingEvent.EARLYSTL, moduleID);
 
 		// Accounting Detail Tab
 		final Map<String, Object> map = new HashMap<String, Object>();

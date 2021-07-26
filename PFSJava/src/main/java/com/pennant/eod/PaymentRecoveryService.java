@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
@@ -23,6 +22,7 @@ import com.pennant.eod.beans.PaymentRecoveryDetail;
 import com.pennant.eod.beans.PaymentRecoveryHeader;
 import com.pennant.eod.dao.PaymentRecoveryDetailDAO;
 import com.pennant.eod.dao.PaymentRecoveryHeaderDAO;
+import com.pennanttech.pff.constants.AccountingEvent;
 
 public class PaymentRecoveryService {
 

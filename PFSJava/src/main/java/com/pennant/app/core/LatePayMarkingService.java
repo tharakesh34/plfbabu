@@ -48,7 +48,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
@@ -88,6 +87,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.eod.cache.FeeTypeConfigCache;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.eod.EODUtil;
 
 public class LatePayMarkingService extends ServiceHelper {

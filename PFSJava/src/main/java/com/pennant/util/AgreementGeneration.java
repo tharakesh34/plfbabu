@@ -1,43 +1,35 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  AgreementGeneration.java												*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  27-07-2015															*
- *                                                                  
- * Modified Date    :  23-07-2018															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : AgreementGeneration.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 27-07-2015 *
+ * 
+ * Modified Date : 23-07-2018 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-05-2018       Pennant	                 1.0          Updated as part of Agreements     * 
- * 23-07-2018       Pennant                  1.1          Adding the Collateral Extended    * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-05-2018 Pennant 1.0 Updated as part of Agreements * 23-07-2018 Pennant 1.1 Adding the Collateral Extended * * * *
+ * * * * *
  ********************************************************************************************
  */
 package com.pennant.util;
@@ -79,7 +71,6 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zul.Filedownload;
 
 import com.aspose.words.SaveFormat;
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.ImplementationConstants;
@@ -267,6 +258,7 @@ import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.rits.cloning.Cloner;
 
 public class AgreementGeneration extends GenericService<AgreementDetail> implements Serializable {

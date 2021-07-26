@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CommitmentServiceImpl.java  	                                        * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  25-03-2013    														*
- *                                                                  						*
- * Modified Date    :  25-03-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CommitmentServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 25-03-2013 * *
+ * Modified Date : 25-03-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 25-03-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 25-03-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.commitment.impl;
@@ -55,7 +37,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -106,6 +87,7 @@ import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class CommitmentServiceImpl extends GenericService<Commitment> implements CommitmentService {
@@ -153,8 +135,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -233,8 +214,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	 * getApprovedCommitmentById fetch the details by using CommitmentDAO's getCommitmentById method . with parameter id
 	 * and type as blank. it fetches the approved records from the Commitments.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return Commitment
 	 */
 
@@ -251,10 +231,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	/**
 	 * getCommitmentById fetch the details by using CommitmentDAO's getCommitmentById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Commitment
 	 */
 
@@ -369,8 +347,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	 * by using CommitmentDAO's update method 3) Audit the record in to AuditHeader and AdtCommitments by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -386,10 +363,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	 * by using CommitmentDAO's update method 3) Audit the record in to AuditHeader and AdtCommitments by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -499,8 +474,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	 * Commitments by using CommitmentDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtCommitments by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -535,8 +509,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtCommitments by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -682,8 +655,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	 * workFlow table by using getCommitmentDAO().delete with parameters commitment,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtCommitments by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -717,10 +689,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
 	 * assign the to auditHeader 3) identify the next process
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -792,10 +762,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	 * mismatch conditions Fetch the error details from getCommitmentDAO().getErrorDetail with Error ID and language as
 	 * parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -824,20 +792,20 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		if (commitment.isNew()) { // for New record or new record into work flow
 
 			if (!commitment.isWorkflow()) {// With out Work flow only new
-												// records
+											// records
 				if (befCommitment != null) { // Record Already Exists in the
-													// table then error
+												// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (commitment.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																								// records
+																							// records
 																							// type
 																							// is
 																							// new
 					if (befCommitment != null || tempCommitment != null) { // if
-																				// records
+																			// records
 																			// already
 																			// exists
 																			// in
@@ -883,7 +851,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				}
 			} else {
 
-				if (tempCommitment == null) { // if records not exists in the Work flow table 
+				if (tempCommitment == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -975,8 +943,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	/**
 	 * Get record count from commitment table
 	 * 
-	 * @param id
-	 *            (commitment Reference)
+	 * @param id (commitment Reference)
 	 * @return Integer
 	 */
 	@Override
@@ -1014,8 +981,9 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			for (AuditDetail auditDetail : auditDetails) {
 				auditDetailMap1.put("CommitmentMovement", auditDetail);
 			}
-			//auditDetailMap.put("CommitmentMovement", setCommitmentMovementAuditData(commitmentmovement,auditTranType,method));
-			//auditDetails.add(auditDetailMap.get("" + ""));
+			// auditDetailMap.put("CommitmentMovement",
+			// setCommitmentMovementAuditData(commitmentmovement,auditTranType,method));
+			// auditDetails.add(auditDetailMap.get("" + ""));
 		}
 
 		// Commitment Flag details
@@ -1211,8 +1179,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	/**
 	 * Methods for Creating List of Audit Details with detailed fields
 	 * 
-	 * @param Commitment
-	 *            Rates
+	 * @param Commitment    Rates
 	 * @param auditTranType
 	 * @param method
 	 * @return
@@ -2246,8 +2213,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	// Setters/getters
 
 	/**
-	 * @param commitmentDAO
-	 *            the commitmentDAO to set
+	 * @param commitmentDAO the commitmentDAO to set
 	 */
 	public void setCommitmentDAO(CommitmentDAO commitmentDAO) {
 		this.commitmentDAO = commitmentDAO;

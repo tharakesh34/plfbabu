@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LoanEnquiryDialogCtrl.java                                           * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :   1-02-2011    														*
- *                                                                  						*
- * Modified Date    :   1-02-2011      														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LoanEnquiryDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 1-02-2011 * * Modified
+ * Date : 1-02-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- *  1-02-2011  s       Pennant	                 0.1                                        * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 1-02-2011 s Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.enquiry;
@@ -76,7 +58,6 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
@@ -157,6 +138,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.pff.finsampling.service.FinSamplingService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
@@ -412,7 +394,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			List<CollateralAssignment> collateralAssignmentByFinRef;
 			collateralAssignmentByFinRef = getCollateralSetupService().getCollateralAssignmentByFinRef(
 					this.finReference, FinanceConstants.MODULE_NAME, fromApproved ? "_AView" : "_View");
-			//If Collateral is created from loan and it is not approved
+			// If Collateral is created from loan and it is not approved
 			if (financeDetail.getCollateralAssignmentList() != null) {
 				collateralAssignmentByFinRef.addAll(getCollateralSetupService()
 						.getCollateralAssignmentByFinRef(finReference, FinanceConstants.MODULE_NAME, "_CTView"));
@@ -932,7 +914,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				if ("FINMANDENQ".equals(value) && !mandate) {
 					continue;
 				}
-				//skipping the OCR Enquiry menu if not applicable
+				// skipping the OCR Enquiry menu if not applicable
 				if ("OCRENQ".equals(value) && !getFinanceEnquiry().isFinOcrRequired()) {
 					continue;
 				}
@@ -1005,7 +987,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			byte[] buf = ReportsUtil.generatePDF(reportName, object, listData, userName);
 
 			boolean reportView = true;
-			//Assignments
+			// Assignments
 			if ("AssignmentUploadDetails".equals(reportName) || "AccountMappingUpload".equals(reportName)) {
 				reportView = false;
 			}

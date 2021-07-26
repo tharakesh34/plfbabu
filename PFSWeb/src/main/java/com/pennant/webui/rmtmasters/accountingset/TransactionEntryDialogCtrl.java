@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  TransactionEntryDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-12-2011    														*
- *                                                                  						*
- * Modified Date    :  14-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : TransactionEntryDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-12-2011 * *
+ * Modified Date : 14-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.rmtmasters.accountingset;
@@ -86,7 +68,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.ErrorUtil;
@@ -120,6 +101,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.AccountingEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/RulesFactory/TransactionEntry/transactionEntryDialog.zul file.
@@ -411,8 +393,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		if (doClose(this.btnSave.isVisible())) {
@@ -437,8 +418,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aTransactionEntry
-	 *            TransactionEntry
+	 * @param aTransactionEntry TransactionEntry
 	 */
 	public void doWriteBeanToComponents(TransactionEntry aTransactionEntry) {
 		logger.debug("Entering");
@@ -696,9 +676,9 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		btnCancel.setVisible(false);
 
 		String lovDescEventCodeName2 = aTransactionEntry.getLovDescEventCodeName();
-		tab_expense.setVisible(ImplementationConstants.ALLOW_IND_AS
-				&& AccountingEvent.EXPENSE.equals(lovDescEventCodeName2)
-				|| AccountingEvent.INDAS.equals(lovDescEventCodeName2));
+		tab_expense.setVisible(
+				ImplementationConstants.ALLOW_IND_AS && AccountingEvent.EXPENSE.equals(lovDescEventCodeName2)
+						|| AccountingEvent.INDAS.equals(lovDescEventCodeName2));
 
 		try {
 			// fill the components with the data
@@ -1336,7 +1316,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			derivedEntry.setDerivedTranOrder(aTransactionEntry.getTransOrder());
 			derivedEntry.setTransOrder(aTransactionEntry.getTransOrder() + 1);
 			derivedEntry.setDebitcredit(aTransactionEntry.getDebitcredit().equals(AccountConstants.TRANTYPE_CREDIT)
-					? AccountConstants.TRANTYPE_DEBIT : AccountConstants.TRANTYPE_CREDIT);
+					? AccountConstants.TRANTYPE_DEBIT
+					: AccountConstants.TRANTYPE_CREDIT);
 			derivedEntry.setRecordType(PennantConstants.RCD_ADD);
 			derivedEntry.setRecordStatus("");
 		} else {
@@ -1751,8 +1732,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	private Map<String, String> fillAccountingDetails() {
 		Map<String, String> feeMap = new HashMap<>();
 
-		if (ImplementationConstants.ALLOW_IND_AS
-				&& AccountingEvent.INDAS.equals(this.eventCode.getValue())) {
+		if (ImplementationConstants.ALLOW_IND_AS && AccountingEvent.INDAS.equals(this.eventCode.getValue())) {
 			feeMap.put("_AMZ", Labels.getLabel("label_TransactionEntryDialog_Fee_AMZ"));
 			return feeMap;
 		}
@@ -1800,7 +1780,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		feeMap.put("_CESS_AF", Labels.getLabel("label_TransactionEntryDialog_CESS"));
 		feeMap.put("_CESS_R", Labels.getLabel("label_TransactionEntryDialog_R_CESS"));
 
-		//Waivers
+		// Waivers
 		feeMap.put("_CGST_W", Labels.getLabel("label_TransactionEntryDialog_W_CGST"));
 		feeMap.put("_SGST_W", Labels.getLabel("label_TransactionEntryDialog_W_SGST"));
 		feeMap.put("_UGST_W", Labels.getLabel("label_TransactionEntryDialog_W_UGST"));
@@ -1814,7 +1794,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			feeMap.put("_TDS_R", Labels.getLabel("label_TransactionEntryDialog_R_TDS"));
 		}
 
-		//REFUND
+		// REFUND
 		feeMap.put("_R", Labels.getLabel("label_TransactionEntryDialog_FeeReFunded"));
 		feeMap.put("_CGST_R", Labels.getLabel("label_TransactionEntryDialog_R_CGST"));
 		feeMap.put("_SGST_R", Labels.getLabel("label_TransactionEntryDialog_R_SGST"));
@@ -2067,8 +2047,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -2085,8 +2064,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

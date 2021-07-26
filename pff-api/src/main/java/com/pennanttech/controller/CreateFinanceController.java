@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.aspose.words.SaveFormat;
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.CDScheduleCalculator;
@@ -182,6 +181,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
@@ -1685,8 +1685,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		// Get the ExtendedFieldHeader for given module and subModule
 		// ### 02-05-2018-Start- story #334 Extended fields for loan servicing
 		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
-				ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinCategory(), FinServiceEvent.ORG,
-				"");
+				ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinCategory(), FinServiceEvent.ORG, "");
 		// ### 02-05-2018-END
 
 		financeDetail.setExtendedFieldHeader(extendedFieldHeader);
@@ -2457,8 +2456,8 @@ public class CreateFinanceController extends SummaryDetailService {
 			if (financeDetail != null) {
 				List<ExtendedField> extData = extendedFieldDetailsService.getExtndedFieldDetails(
 						ExtendedFieldConstants.MODULE_LOAN,
-						financeDetail.getFinScheduleData().getFinanceMain().getFinCategory(),
-						FinServiceEvent.ORG, finReference);
+						financeDetail.getFinScheduleData().getFinanceMain().getFinCategory(), FinServiceEvent.ORG,
+						finReference);
 				financeDetail.setExtendedDetails(extData);
 				financeDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			} else {
@@ -2513,8 +2512,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			doSetRequiredDetails(financeDetail, false, userDetails, stp, true, false);
 			// Temporary FIXME
 			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(
-					financeMain.getFinReference(), FinanceConstants.MODULE_NAME, FinServiceEvent.ORG,
-					"_View");
+					financeMain.getFinReference(), FinanceConstants.MODULE_NAME, FinServiceEvent.ORG, "_View");
 			financeDetail.setDocumentDetailsList(documentList);
 			finScheduleData.getFinanceMain().setFinRemarks("SUCCESS");
 			financeDetail.setStp(false);
@@ -2646,8 +2644,8 @@ public class CreateFinanceController extends SummaryDetailService {
 				prepareResponse(financeDetail);
 				List<ExtendedField> extData = extendedFieldDetailsService.getExtndedFieldDetails(
 						ExtendedFieldConstants.MODULE_LOAN,
-						financeDetail.getFinScheduleData().getFinanceMain().getFinCategory(),
-						FinServiceEvent.ORG, finReference);
+						financeDetail.getFinScheduleData().getFinanceMain().getFinCategory(), FinServiceEvent.ORG,
+						finReference);
 				financeDetail.setExtendedDetails(extData);
 				financeDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			} else {
@@ -3755,8 +3753,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		// process Extended field details
 		// Get the ExtendedFieldHeader for given module and subModule
 		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
-				ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinCategory(),
-				FinServiceEvent.CANCELFIN, "");
+				ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinCategory(), FinServiceEvent.CANCELFIN, "");
 		// ### 02-05-2018-END
 		findetail.setExtendedFieldHeader(extendedFieldHeader);
 		List<ExtendedField> extendedFields = financeDetail.getExtendedDetails();
@@ -3960,8 +3957,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			// process Extended field details
 			// Get the ExtendedFieldHeader for given module and subModule
 			ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
-					ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinCategory(), FinServiceEvent.ORG,
-					"");
+					ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinCategory(), FinServiceEvent.ORG, "");
 			// ### 02-05-2018-END
 			finDetail.setExtendedFieldHeader(extendedFieldHeader);
 			List<ExtendedField> extendedFields = finDetail.getExtendedDetails();

@@ -18,7 +18,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FeeScheduleCalculator;
@@ -63,6 +62,7 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.finance.EmiResponse;

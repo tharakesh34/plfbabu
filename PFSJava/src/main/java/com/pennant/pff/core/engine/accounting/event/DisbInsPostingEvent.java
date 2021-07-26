@@ -6,8 +6,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.pennant.app.constants.AccountingEvent;
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -22,6 +20,7 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class DisbInsPostingEvent extends PostingEvent {

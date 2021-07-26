@@ -5,45 +5,27 @@ import java.math.BigDecimal;
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  insuranceDetailsDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-09-2018    														*
- *                                                                  						*
- * Modified Date    :  12-09-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : insuranceDetailsDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-09-2018 * *
+ * Modified Date : 12-09-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-09-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-09-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -72,7 +54,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -107,6 +88,7 @@ import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.AccountingEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/ApplicationMaster/insuranceDetails/insuranceDetailsDialog.zul
@@ -135,7 +117,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	protected Textbox remarks;
 	private InsuranceDetails insuranceDetails;
 
-	//Accounting
+	// Accounting
 	protected Tab tabPostingDetails;
 	protected Tabpanel tabPanelPostingDetails;
 	private long accountsetId;
@@ -173,8 +155,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_InsuranceDetailsDialog(Event event) throws Exception {
@@ -256,8 +237,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
@@ -270,8 +250,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -282,8 +261,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -294,8 +272,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onClick$btnDelete(Event event) throws Exception {
@@ -307,8 +284,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -319,8 +295,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -331,8 +306,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -451,8 +425,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param insuranceDetails
-	 *            The entity that need to be render.
+	 * @param insuranceDetails The entity that need to be render.
 	 */
 	public void doShowDialog(InsuranceDetails insuranceDetails) {
 		logger.debug(Literal.ENTERING);
@@ -536,8 +509,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 		this.tabPanelPostingDetails.setVisible(true);
 		this.tabPanelPostingDetails.setHeight(getListBoxHeight(7));
 		if (!onLoadProcess) {
-			accountsetId = getAccountingSetDAO().getAccountingSetId(AccountingEvent.INSADJ,
-					AccountingEvent.INSADJ);
+			accountsetId = getAccountingSetDAO().getAccountingSetId(AccountingEvent.INSADJ, AccountingEvent.INSADJ);
 			final Map<String, Object> map = new HashMap<>();
 			map.put("insuranceDetails", insuranceDetails);
 			map.put("acSetID", accountsetId);
@@ -797,11 +769,9 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * @throws Exception
@@ -888,10 +858,8 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * @throws Exception
 	 * 

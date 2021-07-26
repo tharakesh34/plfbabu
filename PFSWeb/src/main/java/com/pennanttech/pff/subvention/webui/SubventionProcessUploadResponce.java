@@ -22,7 +22,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.zkoss.util.media.Media;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -60,6 +59,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.settlementprocess.model.SettlementProcess;
 import com.pennanttech.pff.subvention.dao.SubventionProcessDAO;

@@ -56,7 +56,6 @@ import javax.security.auth.login.AccountNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
@@ -69,6 +68,7 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pff.constants.AccountingEvent;
 
 public class SuspensePostingUtil implements Serializable {
 	private static final long serialVersionUID = -7469564513544156223L;

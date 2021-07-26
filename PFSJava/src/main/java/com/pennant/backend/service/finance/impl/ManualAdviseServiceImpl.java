@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ManualAdviseServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-04-2017    														*
- *                                                                  						*
- * Modified Date    :  21-04-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ManualAdviseServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-04-2017 * *
+ * Modified Date : 21-04-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-04-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-04-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.finance.impl;
@@ -55,7 +37,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -96,6 +77,7 @@ import com.pennant.backend.util.UploadConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
@@ -129,8 +111,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -144,8 +125,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	}
 
 	/**
-	 * @param manualAdviseDAO
-	 *            the manualAdviseDAO to set
+	 * @param manualAdviseDAO the manualAdviseDAO to set
 	 */
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
@@ -159,8 +139,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	 * Configuration. by using ManualAdviseDAO's update method 3) Audit the record in to AuditHeader and AdtManualAdvise
 	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -189,7 +168,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 			getManualAdviseDAO().update(manualAdvise, tableType);
 		}
 
-		//Document Details
+		// Document Details
 		List<DocumentDetails> documentsList = manualAdvise.getDocumentDetails();
 		if (CollectionUtils.isNotEmpty(documentsList)) {
 			List<AuditDetail> details = manualAdvise.getAuditDetailMap().get("DocumentDetails");
@@ -213,8 +192,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	 * ManualAdvise by using ManualAdviseDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
 	 * and AdtManualAdvise by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -239,8 +217,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	/**
 	 * getManualAdvise fetch the details by using ManualAdviseDAO's getManualAdviseById method.
 	 * 
-	 * @param adviseID
-	 *            adviseID of the ManualAdvise.
+	 * @param adviseID adviseID of the ManualAdvise.
 	 * @return ManualAdvise
 	 */
 	@Override
@@ -265,8 +242,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	 * getApprovedManualAdviseById fetch the details by using ManualAdviseDAO's getManualAdviseById method . with
 	 * parameter id and type as blank. it fetches the approved records from the ManualAdvise.
 	 * 
-	 * @param adviseID
-	 *            adviseID of the ManualAdvise. (String)
+	 * @param adviseID adviseID of the ManualAdvise. (String)
 	 * @return ManualAdvise
 	 */
 	public ManualAdvise getApprovedManualAdvise(long adviseID) {
@@ -318,8 +294,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtManualAdvise by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -377,7 +352,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 				getManualAdviseDAO().update(manualAdvise, TableType.MAIN_TAB);
 			}
 
-			//Document Details
+			// Document Details
 			List<DocumentDetails> documentsList = manualAdvise.getDocumentDetails();
 			if (CollectionUtils.isNotEmpty(documentsList)) {
 				List<AuditDetail> details = manualAdvise.getAuditDetailMap().get("DocumentDetails");
@@ -387,7 +362,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		}
 
 		if (!manualAdvise.isNewRecord()) {
-			//deleting data from _temp tables while Approve
+			// deleting data from _temp tables while Approve
 			auditHeader.setAuditDetails(
 					listDeletion(manualAdvise, TableType.TEMP_TAB.getSuffix(), auditHeader.getAuditTranType()));
 		}
@@ -413,8 +388,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	 * workFlow table by using getManualAdviseDAO().delete with parameters manualAdvise,"_Temp" 3) Audit the record in
 	 * to AuditHeader and AdtManualAdvise by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -625,27 +599,27 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 				taxHeader.setTaxDetails(new ArrayList<>());
 			}
 
-			//CGST
+			// CGST
 			Taxes cgstTax = getTaxDetail(RuleConstants.CODE_CGST, taxPercentages.get(RuleConstants.CODE_CGST),
 					taxHeader);
 			taxHeader.getTaxDetails().add(cgstTax);
 
-			//SGST
+			// SGST
 			Taxes sgstTax = getTaxDetail(RuleConstants.CODE_SGST, taxPercentages.get(RuleConstants.CODE_SGST),
 					taxHeader);
 			taxHeader.getTaxDetails().add(sgstTax);
 
-			//IGST
+			// IGST
 			Taxes igstTax = getTaxDetail(RuleConstants.CODE_IGST, taxPercentages.get(RuleConstants.CODE_IGST),
 					taxHeader);
 			taxHeader.getTaxDetails().add(igstTax);
 
-			//UGST
+			// UGST
 			Taxes ugstTax = getTaxDetail(RuleConstants.CODE_UGST, taxPercentages.get(RuleConstants.CODE_UGST),
 					taxHeader);
 			taxHeader.getTaxDetails().add(ugstTax);
 
-			//CESS percentage
+			// CESS percentage
 			Taxes cessTax = getTaxDetail(RuleConstants.CODE_CESS, taxPercentages.get(RuleConstants.CODE_CESS),
 					taxHeader);
 			taxHeader.getTaxDetails().add(cessTax);
@@ -815,7 +789,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
-		//Document Details
+		// Document Details
 		if (CollectionUtils.isNotEmpty(manualAdvise.getDocumentDetails())) {
 			auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(manualAdvise, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
@@ -1025,7 +999,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
 
-		// Document Details. 
+		// Document Details.
 		List<AuditDetail> documentDetails = manualAdvise.getAuditDetailMap().get("DocumentDetails");
 		if (documentDetails != null && documentDetails.size() > 0) {
 			DocumentDetails document = new DocumentDetails();

@@ -55,7 +55,6 @@ import javax.security.auth.login.AccountNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
@@ -73,6 +72,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.AccountingEvent;
 
 public class ProvisionCalculationUtil implements Serializable {
 	private static final long serialVersionUID = 193855810060181970L;

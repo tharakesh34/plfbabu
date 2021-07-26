@@ -20,7 +20,6 @@ import org.springframework.stereotype.Component;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
@@ -33,6 +32,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.staticlist.AppStaticList;
 import com.pennanttech.pff.staticlist.ExtFieldStaticList;
@@ -2159,8 +2159,8 @@ public class PennantStaticListUtil {
 		}
 
 		// Add origination.
-		events.add(0, new FinServicingEvent(FinServiceEvent.ORG,
-				Labels.getLabel("label_FinSerEvent_Origination"), "ORG"));
+		events.add(0,
+				new FinServicingEvent(FinServiceEvent.ORG, Labels.getLabel("label_FinSerEvent_Origination"), "ORG"));
 
 		return events;
 	}
@@ -2179,8 +2179,8 @@ public class PennantStaticListUtil {
 		List<FinServicingEvent> events = new ArrayList<>();
 
 		if (!isService) {
-			events.add(new FinServicingEvent(FinServiceEvent.ORG,
-					Labels.getLabel("label_FinSerEvent_Origination"), "ORG"));
+			events.add(new FinServicingEvent(FinServiceEvent.ORG, Labels.getLabel("label_FinSerEvent_Origination"),
+					"ORG"));
 			events.add(new FinServicingEvent(FinServiceEvent.PREAPPROVAL,
 					Labels.getLabel("label_FinSerEvent_PreApproval"), ""));
 		} else {
@@ -2196,8 +2196,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_FinSerEvent_Postponement"), "EPP"));
 			events.add(new FinServicingEvent(FinServiceEvent.UNPLANEMIH,
 					Labels.getLabel("label_FinSerEvent_UnPlanEmiHolidays"), "UPEH"));
-			events.add(new FinServicingEvent(FinServiceEvent.RESCHD,
-					Labels.getLabel("label_FinSerEvent_ReSchedule"), "RSCH"));
+			events.add(new FinServicingEvent(FinServiceEvent.RESCHD, Labels.getLabel("label_FinSerEvent_ReSchedule"),
+					"RSCH"));
 			events.add(new FinServicingEvent(FinServiceEvent.CHGGRCEND,
 					Labels.getLabel("label_FinSerEvent_ChangeGestation"), "CGE"));
 			// finServiceEvents.add(new
@@ -2206,8 +2206,8 @@ public class PennantStaticListUtil {
 			// ValueLabel(FinanceConstants.FINSER_EVENT_EARLYRPY,Labels.getLabel("label_FinSerEvent_EarlyPayment")));
 			// finServiceEvents.add(new
 			// ValueLabel(FinanceConstants.FINSER_EVENT_EARLYSETTLE,Labels.getLabel("label_FinSerEvent_EarlySettlement")));
-			events.add(new FinServicingEvent(FinServiceEvent.WRITEOFF,
-					Labels.getLabel("label_FinSerEvent_WriteOff"), "WO"));
+			events.add(new FinServicingEvent(FinServiceEvent.WRITEOFF, Labels.getLabel("label_FinSerEvent_WriteOff"),
+					"WO"));
 			events.add(new FinServicingEvent(FinServiceEvent.WRITEOFFPAY,
 					Labels.getLabel("label_FinSerEvent_WriteOffPay"), "WOP"));
 			events.add(new FinServicingEvent(FinServiceEvent.CANCELFIN,
@@ -2222,16 +2222,16 @@ public class PennantStaticListUtil {
 			// ValueLabel(FinanceConstants.FINSER_EVENT_INSCLAIM,Labels.getLabel("label_FinSerEvent_TakafulClaim")));
 			events.add(new FinServicingEvent(FinServiceEvent.RATECHG,
 					Labels.getLabel("label_FinSerEvent_AddRateChange"), "RCHG"));
-			events.add(new FinServicingEvent(FinServiceEvent.CHGRPY,
-					Labels.getLabel("label_FinSerEvent_ChangeRepay"), "CPA"));
-			events.add(new FinServicingEvent(FinServiceEvent.ADDTERM,
-					Labels.getLabel("label_FinSerEvent_AddTerms"), "ATRM"));
-			events.add(new FinServicingEvent(FinServiceEvent.RMVTERM,
-					Labels.getLabel("label_FinSerEvent_RmvTerms"), "RTRM"));
+			events.add(new FinServicingEvent(FinServiceEvent.CHGRPY, Labels.getLabel("label_FinSerEvent_ChangeRepay"),
+					"CPA"));
+			events.add(new FinServicingEvent(FinServiceEvent.ADDTERM, Labels.getLabel("label_FinSerEvent_AddTerms"),
+					"ATRM"));
+			events.add(new FinServicingEvent(FinServiceEvent.RMVTERM, Labels.getLabel("label_FinSerEvent_RmvTerms"),
+					"RTRM"));
 			events.add(new FinServicingEvent(FinServiceEvent.RECALCULATE,
 					Labels.getLabel("label_FinSerEvent_Recalculate"), "RCAL"));
-			events.add(new FinServicingEvent(FinServiceEvent.RECEIPT,
-					Labels.getLabel("label_FinSerEvent_Receipt"), "RCPT"));
+			events.add(new FinServicingEvent(FinServiceEvent.RECEIPT, Labels.getLabel("label_FinSerEvent_Receipt"),
+					"RCPT"));
 			// finServiceEvents.add(new
 			// ValueLabel(FinanceConstants.FINSER_EVENT_SUBSCHD,Labels.getLabel("label_FinSerEvent_SubSchedule")));
 			// finServiceEvents.add(new
@@ -2242,44 +2242,44 @@ public class PennantStaticListUtil {
 			// ValueLabel(FinanceConstants.FINSER_EVENT_FAIRVALREVAL,Labels.getLabel("label_FinSerEvent_FairValueRevaluation")));
 			// finServiceEvents.add(new
 			// ValueLabel(FinanceConstants.FINSER_EVENT_INSCHANGE,Labels.getLabel("label_FinSerEvent_InsuranceChange")));
-			events.add(new FinServicingEvent(FinServiceEvent.PROVISION,
-					Labels.getLabel("label_FinSerEvent_Provision"), "PROV"));
+			events.add(new FinServicingEvent(FinServiceEvent.PROVISION, Labels.getLabel("label_FinSerEvent_Provision"),
+					"PROV"));
 			events.add(new FinServicingEvent(FinServiceEvent.SUSPHEAD,
 					Labels.getLabel("label_FinSerEvent_FinanceSuspHead"), "NPA"));
 			// finServiceEvents.add(new
 			// ValueLabel(FinanceConstants.FINSER_EVENT_CANCELRPY,Labels.getLabel("label_FinSerEvent_CancelRepay")));
 			// finServiceEvents.add(new
 			// ValueLabel(FinanceConstants.FINSER_EVENT_FINFLAGS,Labels.getLabel("label_FinSerEvent_FinFlags")));
-			events.add(new FinServicingEvent(FinServiceEvent.REINSTATE,
-					Labels.getLabel("label_FinSerEvent_ReIstate"), "RINS"));
+			events.add(new FinServicingEvent(FinServiceEvent.REINSTATE, Labels.getLabel("label_FinSerEvent_ReIstate"),
+					"RINS"));
 			events.add(new FinServicingEvent(FinServiceEvent.CANCELDISB,
 					Labels.getLabel("label_FinSerEvent_CancelDisbursement"), "CDSB"));
 			events.add(new FinServicingEvent(FinServiceEvent.OVERDRAFTSCHD,
 					Labels.getLabel("label_FinSerEvent_OverdraftSchedule"), "OSCH"));
 			events.add(new FinServicingEvent(FinServiceEvent.PLANNEDEMI,
 					Labels.getLabel("label_FinSerEvent_PlannedEMI"), "PEH"));
-			events.add(new FinServicingEvent(FinServiceEvent.REAGING,
-					Labels.getLabel("label_FinSerEvent_ReAging"), "RAGE"));
-			events.add(new FinServicingEvent(FinServiceEvent.HOLDEMI,
-					Labels.getLabel("label_FinSerEvent_HoldEMI"), "HLDE"));
-			events.add(new FinServicingEvent(FinServiceEvent.COVENANTS,
-					Labels.getLabel("label_FinSerEvent_Covenants"), "COVN"));
+			events.add(new FinServicingEvent(FinServiceEvent.REAGING, Labels.getLabel("label_FinSerEvent_ReAging"),
+					"RAGE"));
+			events.add(new FinServicingEvent(FinServiceEvent.HOLDEMI, Labels.getLabel("label_FinSerEvent_HoldEMI"),
+					"HLDE"));
+			events.add(new FinServicingEvent(FinServiceEvent.COVENANTS, Labels.getLabel("label_FinSerEvent_Covenants"),
+					"COVN"));
 			events.add(new FinServicingEvent(FinServiceEvent.COLLATERAL,
 					Labels.getLabel("label_FinSerEvent_Collateral"), "COLL"));
 			events.add(new FinServicingEvent(FinServiceEvent.CHGSCHDMETHOD,
 					Labels.getLabel("label_FinSerEvent_ChangeSchdMtd"), "CSCH"));
 			events.add(new FinServicingEvent(FinServiceEvent.FEEWAIVERS,
 					Labels.getLabel("label_FinSerEvent_FeeWaivers"), "FWO"));
-			events.add(new FinServicingEvent(FinServiceEvent.FINOPTION,
-					Labels.getLabel("label_FinSerEvent_FinOption"), "FINO"));
+			events.add(new FinServicingEvent(FinServiceEvent.FINOPTION, Labels.getLabel("label_FinSerEvent_FinOption"),
+					"FINO"));
 			events.add(new FinServicingEvent(FinServiceEvent.RECEIPTKNOCKOFF,
 					Labels.getLabel("label_FinSerEvent_ReceiptKnockOff"), "RKNOF"));
 			events.add(new FinServicingEvent(FinServiceEvent.RECEIPTFORECLOSURE,
 					Labels.getLabel("label_FinSerEvent_ReceiptForeClosure"), "RFC"));
 			events.add(new FinServicingEvent(FinServiceEvent.RECEIPTKNOCKOFF_CAN,
 					Labels.getLabel("label_FinSerEvent_ReceiptKnockOffCancel"), "RKNC"));
-			events.add(new FinServicingEvent(FinServiceEvent.CHANGETDS,
-					Labels.getLabel("label_FinSerEvent_ChangeTDS"), "CTDS"));
+			events.add(new FinServicingEvent(FinServiceEvent.CHANGETDS, Labels.getLabel("label_FinSerEvent_ChangeTDS"),
+					"CTDS"));
 			events.add(new FinServicingEvent(FinServiceEvent.LOANDOWNSIZING,
 					Labels.getLabel("label_FinSerEvent_LoanDownSizing"), "LDS"));
 
@@ -2297,24 +2297,20 @@ public class PennantStaticListUtil {
 
 		if (templateEvents == null) {
 			templateEvents = new ArrayList<>(5);
-			templateEvents.add(new ValueLabel(FinServiceEvent.ORG,
-					Labels.getLabel("label_FinSerEvent_Origination")));
-			templateEvents.add(new ValueLabel(FinServiceEvent.RATECHG,
-					Labels.getLabel("label_FinSerEvent_AddRateChange")));
-			templateEvents.add(new ValueLabel(FinServiceEvent.ADDDISB,
-					Labels.getLabel("label_FinSerEvent_AddDisbursement")));
-			templateEvents.add(new ValueLabel(FinServiceEvent.RECEIPT,
-					Labels.getLabel("label_FinSerEvent_Receipt")));
-			templateEvents.add(new ValueLabel(FinServiceEvent.COVENANT,
-					Labels.getLabel("label_FinSerEvent_Covenants")));
-			templateEvents.add(new ValueLabel(FinServiceEvent.PUTCALL,
-					Labels.getLabel("label_FinSerEvent_PutCall")));
+			templateEvents.add(new ValueLabel(FinServiceEvent.ORG, Labels.getLabel("label_FinSerEvent_Origination")));
+			templateEvents
+					.add(new ValueLabel(FinServiceEvent.RATECHG, Labels.getLabel("label_FinSerEvent_AddRateChange")));
+			templateEvents
+					.add(new ValueLabel(FinServiceEvent.ADDDISB, Labels.getLabel("label_FinSerEvent_AddDisbursement")));
+			templateEvents.add(new ValueLabel(FinServiceEvent.RECEIPT, Labels.getLabel("label_FinSerEvent_Receipt")));
+			templateEvents
+					.add(new ValueLabel(FinServiceEvent.COVENANT, Labels.getLabel("label_FinSerEvent_Covenants")));
+			templateEvents.add(new ValueLabel(FinServiceEvent.PUTCALL, Labels.getLabel("label_FinSerEvent_PutCall")));
 			templateEvents.add(new ValueLabel(FinServiceEvent.COLLATERAL_LTV_BREACHS,
 					Labels.getLabel("label_FinSerEvent_Collateral_Ltv_Breaches")));
-			templateEvents.add(new ValueLabel(FinServiceEvent.CANCELFIN,
-					Labels.getLabel("label_VasEvent_Cancellation")));
-			templateEvents.add(new ValueLabel(FinServiceEvent.DUEALERTS,
-					Labels.getLabel("label_VasEvent_DueAlerts")));
+			templateEvents
+					.add(new ValueLabel(FinServiceEvent.CANCELFIN, Labels.getLabel("label_VasEvent_Cancellation")));
+			templateEvents.add(new ValueLabel(FinServiceEvent.DUEALERTS, Labels.getLabel("label_VasEvent_DueAlerts")));
 
 		}
 		return templateEvents;
@@ -2893,7 +2889,7 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_AccountingEvent_FinAENormToPIS"), true));
 			accountingEventsOverdraft.add(new AccountEngineEvent(AccountingEvent.PD_NORM,
 					Labels.getLabel("label_AccountingEvent_FinAEPDToNorm"), true));
-			accountingEventsOverdraft.add(new AccountEngineEvent(AccountingEvent.ACCEVENT_PD_PIS,
+			accountingEventsOverdraft.add(new AccountEngineEvent(AccountingEvent.PD_PIS,
 					Labels.getLabel("label_AccountingEvent_FinAEPDToPIS"), true));
 			accountingEventsOverdraft.add(new AccountEngineEvent(AccountingEvent.PIS_NORM,
 					Labels.getLabel("label_AccountingEvent_FinAEPISToNorm"), true));
@@ -2936,7 +2932,7 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_AccountingEvent_FinAENormToPIS"), true));
 			accountingEventsServicing.add(new AccountEngineEvent(AccountingEvent.PD_NORM,
 					Labels.getLabel("label_AccountingEvent_FinAEPDToNorm"), true));
-			accountingEventsServicing.add(new AccountEngineEvent(AccountingEvent.ACCEVENT_PD_PIS,
+			accountingEventsServicing.add(new AccountEngineEvent(AccountingEvent.PD_PIS,
 					Labels.getLabel("label_AccountingEvent_FinAEPDToPIS"), true));
 			accountingEventsServicing.add(new AccountEngineEvent(AccountingEvent.PIS_NORM,
 					Labels.getLabel("label_AccountingEvent_FinAEPISToNorm"), true));
@@ -3128,14 +3124,14 @@ public class PennantStaticListUtil {
 	public static List<ValueLabel> getReceiptPurpose() {
 		if (receiptPurposes == null) {
 			receiptPurposes = new ArrayList<ValueLabel>(4);
-			receiptPurposes.add(new ValueLabel(FinServiceEvent.SCHDRPY,
-					Labels.getLabel("label_ReceiptPurpose_SchedulePayment")));
+			receiptPurposes.add(
+					new ValueLabel(FinServiceEvent.SCHDRPY, Labels.getLabel("label_ReceiptPurpose_SchedulePayment")));
 			receiptPurposes.add(new ValueLabel(FinServiceEvent.EARLYRPY,
 					Labels.getLabel("label_ReceiptPurpose_PartialSettlement")));
 			receiptPurposes.add(new ValueLabel(FinServiceEvent.EARLYSETTLE,
 					Labels.getLabel("label_ReceiptPurpose_EarlySettlement")));
-			receiptPurposes.add(new ValueLabel(FinServiceEvent.FEEPAYMENT,
-					Labels.getLabel("label_ReceiptPurpose_FeePayment")));
+			receiptPurposes.add(
+					new ValueLabel(FinServiceEvent.FEEPAYMENT, Labels.getLabel("label_ReceiptPurpose_FeePayment")));
 		}
 		return receiptPurposes;
 	}

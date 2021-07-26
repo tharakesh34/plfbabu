@@ -62,7 +62,6 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
@@ -73,6 +72,7 @@ import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
+import com.pennanttech.pff.constants.AccountingEvent;
 
 /**
  * DAO methods implementation for the <b>FinFeeDetail model</b> class.<br>

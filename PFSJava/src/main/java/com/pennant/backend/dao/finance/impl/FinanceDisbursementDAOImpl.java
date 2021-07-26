@@ -1,42 +1,24 @@
 /**
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceDisbursementDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  15-11-2011    														*
- *                                                                  						*
- * Modified Date    :  15-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceDisbursementDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 15-11-2011 * *
+ * Modified Date : 15-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 15-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 15-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -64,7 +46,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.util.FinanceConstants;
@@ -73,6 +54,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.AccountingEvent;
 
 /**
  * DAO methods implementation for the <b>FinanceDisbursement model</b> class.<br>
@@ -89,10 +71,8 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 	/**
 	 * Fetch the Record Finance Disbursement Details details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceDisbursement
 	 */
 	@Override
@@ -130,10 +110,8 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 	 * This method Deletes the Record from the FinDisbursementDetails or FinDisbursementDetails_Temp. if Record not
 	 * deleted then throws DataAccessException with error 41003. delete Finance Disbursement Details by key FinReference
 	 * 
-	 * @param Finance
-	 *            Disbursement Details (financeDisbursement)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Disbursement Details (financeDisbursement)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -168,10 +146,8 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 	 * This method Deletes the Record from the FinDisbursementDetails or FinDisbursementDetails_Temp. if Record not
 	 * deleted then throws DataAccessException with error 41003. delete Finance Disbursement Details by key FinReference
 	 * 
-	 * @param Finance
-	 *            Disbursement Details (financeDisbursement)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Disbursement Details (financeDisbursement)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -210,10 +186,8 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 	 * 
 	 * save Finance Disbursement Details
 	 * 
-	 * @param Finance
-	 *            Disbursement Details (financeDisbursement)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Disbursement Details (financeDisbursement)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -230,8 +204,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 			insertSql.append(" FinDisbursementDetails");
 		}
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(
-				" (FinReference, DisbDate, DisbSeq, DisbDesc, DisbAmount, DisbReqDate, FeeChargeAmt,");
+		insertSql.append(" (FinReference, DisbDate, DisbSeq, DisbDesc, DisbAmount, DisbReqDate, FeeChargeAmt,");
 		if (!isWIF) {
 			insertSql.append(" DisbStatus, DisbType, AutoDisb,");
 			insertSql.append(" instructionUID,InstCalReq,LinkedDisbId,");
@@ -261,10 +234,8 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 	 * 
 	 * save Finance Disbursement Details
 	 * 
-	 * @param Finance
-	 *            Disbursement Details (financeDisbursement)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Disbursement Details (financeDisbursement)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -281,8 +252,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 			insertSql.append(" FinDisbursementDetails");
 		}
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(
-				" (FinReference, DisbDate, DisbSeq, DisbDesc, DisbAmount, DisbReqDate, FeeChargeAmt,");
+		insertSql.append(" (FinReference, DisbDate, DisbSeq, DisbDesc, DisbAmount, DisbReqDate, FeeChargeAmt,");
 		if (!isWIF) {
 			insertSql.append(" DisbStatus, QuickDisb, DisbType, AutoDisb,");
 			insertSql.append(" LinkedTranId, instructionUID,InstCalReq,LinkedDisbId, ");
@@ -316,10 +286,8 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 	 * This method updates the Record FinDisbursementDetails or FinDisbursementDetails_Temp. if Record not updated then
 	 * throws DataAccessException with error 41004. update Finance Disbursement Details by key FinReference and Version
 	 * 
-	 * @param Finance
-	 *            Disbursement Details (financeDisbursement)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Disbursement Details (financeDisbursement)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -336,8 +304,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 			updateSql.append(" FinDisbursementDetails");
 		}
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(
-				" Set DisbDesc = :DisbDesc, DisbAmount = :DisbAmount, FeeChargeAmt=:FeeChargeAmt, ");
+		updateSql.append(" Set DisbDesc = :DisbDesc, DisbAmount = :DisbAmount, FeeChargeAmt=:FeeChargeAmt, ");
 		if (!isWIF) {
 			updateSql.append(" DisbStatus=:DisbStatus, DisbType=:DisbType, AutoDisb=:AutoDisb,");
 			updateSql.append(" instructionUID=:instructionUID, InstCalReq=:InstCalReq, LinkedDisbId=:LinkedDisbId,");
@@ -393,10 +360,8 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 	/**
 	 * This method updates the LinkedTranId
 	 * 
-	 * @param Finance
-	 *            Disbursement Details (financeDisbursement)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Disbursement Details (financeDisbursement)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -423,10 +388,8 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 	/**
 	 * Fetch the List of Finance Disbursement Detail Records by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return WIFFinanceDisbursement
 	 */
 	@Override
@@ -470,10 +433,8 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 	/**
 	 * Fetch the List of Finance Disbursement Detail Records by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return WIFFinanceDisbursement
 	 */
 	@Override
@@ -624,8 +585,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
-		source.addValue("FinEvent", Arrays.asList(
-				new String[] { AccountingEvent.ADDDBSN, AccountingEvent.ADDDBSP }));
+		source.addValue("FinEvent", Arrays.asList(new String[] { AccountingEvent.ADDDBSN, AccountingEvent.ADDDBSP }));
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select F.FinReference, D.DisbSeq");

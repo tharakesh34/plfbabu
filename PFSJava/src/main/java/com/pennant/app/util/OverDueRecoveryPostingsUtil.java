@@ -54,7 +54,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.dao.applicationmaster.AssignmentDAO;
 import com.pennant.backend.dao.applicationmaster.AssignmentDealDAO;
@@ -94,6 +93,7 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.AccountingEvent;
 
 public class OverDueRecoveryPostingsUtil implements Serializable {
 	private static final long serialVersionUID = 6161809223570900644L;

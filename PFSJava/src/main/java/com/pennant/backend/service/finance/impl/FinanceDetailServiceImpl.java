@@ -55,7 +55,6 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.finance.limits.LimitCheckDetails;
@@ -294,6 +293,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.model.AdvancePayment;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.eod.EODUtil;
@@ -1567,9 +1567,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		List<Rule> feeChargeList = new ArrayList<Rule>();
 		if (!accSetIdList.isEmpty()) {
 			feeChargeList = getTransactionEntryDAO().getListFeeChargeRules(accSetIdList,
-					eventCode.startsWith(AccountingEvent.ADDDBS) ? AccountingEvent.ADDDBS
-							: eventCode,
-					"", 0);
+					eventCode.startsWith(AccountingEvent.ADDDBS) ? AccountingEvent.ADDDBS : eventCode, "", 0);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -2175,8 +2173,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// set Customer Details Audit
 			if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)
 					|| auditHeader.getApiHeader() == null) {
-				if (fd.getCustomerDetails() != null
-						&& StringUtils.equals(fd.getModuleDefiner(), FinServiceEvent.ORG)) {
+				if (fd.getCustomerDetails() != null && StringUtils.equals(fd.getModuleDefiner(), FinServiceEvent.ORG)) {
 					auditDetails.addAll(getCustomerDetailsService().saveOrUpdate(fd, ""));
 				}
 			}
@@ -2711,8 +2708,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// SubventionDetails
-		if (fd.getFinScheduleData().getSubventionDetail() != null && (StringUtils.isBlank(fd.getModuleDefiner())
-				|| FinServiceEvent.ORG.equals(fd.getModuleDefiner()))) {
+		if (fd.getFinScheduleData().getSubventionDetail() != null
+				&& (StringUtils.isBlank(fd.getModuleDefiner()) || FinServiceEvent.ORG.equals(fd.getModuleDefiner()))) {
 			if (subventionService != null) {
 				List<AuditDetail> details = fd.getAuditDetailMap().get("SubventionDetails");
 				details = subventionService.processSubventionDetails(details, tableType, fd);
@@ -3967,8 +3964,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// GHF 166278 - Frequency and dates update in finance main - END
 
 			// Suspense Process Check after Overdue Details Recalculation
-			suspenseCheckProcess(financeMain, FinServiceEvent.CHGFRQ, curBDay, financeMain.getFinStatus(),
-					0);
+			suspenseCheckProcess(financeMain, FinServiceEvent.CHGFRQ, curBDay, financeMain.getFinStatus(), 0);
 
 		}
 
@@ -4277,8 +4273,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					// =======================================
 					FinLogEntryDetail entryDetail = new FinLogEntryDetail();
 					entryDetail.setFinReference(finScheduleData.getFinReference());
-					entryDetail.setEventAction(
-							StringUtils.isBlank(fd.getAccountingEventCode()) ? AccountingEvent.ADDDBSN
+					entryDetail
+							.setEventAction(StringUtils.isBlank(fd.getAccountingEventCode()) ? AccountingEvent.ADDDBSN
 									: fd.getAccountingEventCode());
 					entryDetail.setSchdlRecal(finScheduleData.getFinanceMain().isScheduleRegenerated());
 					entryDetail.setPostDate(curBDay);
@@ -4346,8 +4342,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// set Customer Details Audit
 			if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
-				if (fd.getCustomerDetails() != null
-						&& StringUtils.equals(moduleDefiner, FinServiceEvent.ORG)) {
+				if (fd.getCustomerDetails() != null && StringUtils.equals(moduleDefiner, FinServiceEvent.ORG)) {
 					auditDetails.addAll(getCustomerDetailsService().saveOrUpdate(fd, ""));
 				}
 			}
@@ -4899,12 +4894,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			if ((grcAdvType != null || repayAdvType != null)) {
-				if (FinServiceEvent.ORG.equals(moduleDefiner)
-						|| FinServiceEvent.ADDDISB.equals(moduleDefiner)) {
+				if (FinServiceEvent.ORG.equals(moduleDefiner) || FinServiceEvent.ADDDISB.equals(moduleDefiner)) {
 					processAdvancePayment(finFeeDetails, finScheduleData);
 				} else if (ImplementationConstants.ALW_ADV_INTEMI_ADVICE_CREATION) {
-					if (FinServiceEvent.RATECHG.equals(moduleDefiner)
-							|| FinServiceEvent.ADDTERM.equals(moduleDefiner)
+					if (FinServiceEvent.RATECHG.equals(moduleDefiner) || FinServiceEvent.ADDTERM.equals(moduleDefiner)
 							|| FinServiceEvent.RMVTERM.equals(moduleDefiner)
 							|| FinServiceEvent.CANCELDISB.equals(moduleDefiner)
 							|| FinServiceEvent.CHGPFT.equals(moduleDefiner)
@@ -7348,8 +7341,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// SubventionDetails ,if grace tenure less than subvention tenure
 		if ((StringUtils.isBlank(financeDetail.getModuleDefiner())
-				|| FinServiceEvent.ORG.equals(financeDetail.getModuleDefiner()))
-				&& financeMain.isAllowSubvention()
+				|| FinServiceEvent.ORG.equals(financeDetail.getModuleDefiner())) && financeMain.isAllowSubvention()
 				&& financeDetail.getFinScheduleData().getSubventionDetail().getTenure() > financeMain.getGraceTerms()) {
 
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
@@ -7384,8 +7376,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// validation for Loan amount less than sum of capitalized interest & disbursement amount
 		String moduleDefiner = financeDetail.getModuleDefiner();
-		if ((FinServiceEvent.ORG.equals(moduleDefiner)
-				|| FinServiceEvent.ADDDISB.equals(moduleDefiner)
+		if ((FinServiceEvent.ORG.equals(moduleDefiner) || FinServiceEvent.ADDDISB.equals(moduleDefiner)
 				|| FinServiceEvent.RATECHG.equals(moduleDefiner)) && financeMain.isStepFinance()
 				&& PennantConstants.STEPPING_CALC_AMT.equals(financeMain.getCalcOfSteps())) {
 
@@ -8776,8 +8767,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Reset Finance Document Details
 		String preAppref = StringUtils.trimToEmpty(financeMain.getFinPreApprovedRef());
-		if (financeMain.isNewRecord()
-				&& ("".equals(preAppref) || preAppref.equals(FinServiceEvent.PREAPPROVAL))) {
+		if (financeMain.isNewRecord() && ("".equals(preAppref) || preAppref.equals(FinServiceEvent.PREAPPROVAL))) {
 			financeDetail.setDocumentDetailsList(new ArrayList<DocumentDetails>(1));
 		}
 

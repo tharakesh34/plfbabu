@@ -49,7 +49,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.RuleExecutionUtil;
@@ -80,6 +79,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.service.extended.fields.ExtendedFieldService;
 

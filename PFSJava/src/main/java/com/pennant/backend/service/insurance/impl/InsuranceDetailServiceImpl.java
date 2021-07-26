@@ -11,7 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -63,6 +62,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -95,8 +95,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 	 * the table. based on the module workFlow Configuration. by using InsuranceDetailsDAO's update method 3) Audit the
 	 * record in to AuditHeader and AdtBMTInsuranceDetailss by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -253,8 +252,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
@@ -354,8 +352,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		details.getDeclaredFieldValues(aeEvent.getDataMap());
 
-		long accountsetId = getAccountingSetDAO().getAccountingSetId(AccountingEvent.INSADJ,
-				AccountingEvent.INSADJ);
+		long accountsetId = getAccountingSetDAO().getAccountingSetId(AccountingEvent.INSADJ, AccountingEvent.INSADJ);
 		aeEvent.getAcSetIDList().add(accountsetId);
 		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 
@@ -402,8 +399,8 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		details.getDeclaredFieldValues(aeEvent.getDataMap());
 
-		long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
-				AccountingEvent.INSPAY, FinanceConstants.MODULEID_FINTYPE);
+		long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(), AccountingEvent.INSPAY,
+				FinanceConstants.MODULEID_FINTYPE);
 		aeEvent.getAcSetIDList().add(accountsetId);
 		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 		logger.debug(Literal.LEAVING);
@@ -458,8 +455,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		details.getDeclaredFieldValues(aeEvent.getDataMap());
 
-		long accountsetId = getAccountingSetDAO().getAccountingSetId(AccountingEvent.INSPAY,
-				AccountingEvent.INSPAY);
+		long accountsetId = getAccountingSetDAO().getAccountingSetId(AccountingEvent.INSPAY, AccountingEvent.INSPAY);
 		aeEvent.getAcSetIDList().add(accountsetId);
 		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 		logger.debug(Literal.LEAVING);
@@ -485,7 +481,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 			processMaualAdvisePayments(details);
 		}
 
-		//Accounting for Total Amount paid to insurance provider.
+		// Accounting for Total Amount paid to insurance provider.
 		if (details.getPaymentAmount().compareTo(BigDecimal.ZERO) > 0) {
 			Cloner cloner = new Cloner();
 			InsurancePaymentInstructions payToPatner = cloner.deepClone(details);
@@ -494,7 +490,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 			details.setLinkedTranId(executeInsPaymentsAccountingProcess(payToPatner));
 		}
 
-		//Accounting for the individual Insurances payment. 
+		// Accounting for the individual Insurances payment.
 		Cloner cloner = new Cloner();
 		InsurancePaymentInstructions newDetails = cloner.deepClone(details);
 		if (CollectionUtils.isNotEmpty(newDetails.getVasRecordindList())) {
@@ -581,12 +577,12 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		movement.setPaidAmount(manualAdvise.getBalanceAmt());
 		getManualAdviseDAO().saveMovement(movement, TableType.MAIN_TAB.getSuffix());
 
-		//Executing Accounting for partner receivables.
+		// Executing Accounting for partner receivables.
 		VASRecording vasRecording = getvASRecordingService().getVASRecordingByReference(manualAdvise.getFinReference());
 		if (vasRecording != null) {
 			InsurancePaymentInstructions instructionsForRecivable = new InsurancePaymentInstructions();
 			instructionsForRecivable.setPayableAmount(BigDecimal.ZERO);
-			instructionsForRecivable.setReceivableAmount(manualAdvise.getBalanceAmt());//Receivable amount
+			instructionsForRecivable.setReceivableAmount(manualAdvise.getBalanceAmt());// Receivable amount
 			instructionsForRecivable.setPaymentAmount(BigDecimal.ZERO);
 			vasRecording.setUserDetails(instructions.getUserDetails());
 
@@ -630,7 +626,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 				payments.setLastMntBy(loginUser.getUserId());
 				payments.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				payments.setUserDetails(loginUser);
-				
+
 				FinAdvancePayments fap = financeDetail.getAdvancePaymentsList().get(0);
 				if (financeDetail.isDisbStp() || DisbursementConstants.STATUS_AWAITCON.equals(fap.getStatus())) {
 					payments.setStatus(DisbursementConstants.STATUS_AWAITCON);

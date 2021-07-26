@@ -1,40 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  DepositDetailsServiceImpl.java									    *                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  10-09-2018															*
- *                                                                  
- * Modified Date    :  10-09-2018															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : DepositDetailsServiceImpl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 10-09-2018 *
+ * 
+ * Modified Date : 10-09-2018 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-09-2018       Pennant	                 0.1                                            * 
- * 																					        * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-09-2018 Pennant 0.1 * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.finance.impl;
@@ -51,7 +45,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.receipts.CashDenominationDAO;
@@ -76,6 +69,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
@@ -163,8 +157,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 	 * using CasteDAO's update method 3) Audit the record in to AuditHeader and AdtBMTCastes by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * 
 	 * @return auditHeader
 	 */
@@ -489,8 +482,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 	 * BMTCastes by using CasteDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtBMTCastes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -522,12 +514,12 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		if (CollectionUtils.isNotEmpty(depositDetails.getDepositMovementsList())) {
 
 			for (DepositMovements movements : depositDetails.getDepositMovementsList()) {
-				//Denominations
+				// Denominations
 				if (CollectionUtils.isNotEmpty(movements.getDenominationList())) {
 					auditDetailsList.addAll(deleteCashDenomination(movements.getDenominationList(), tableType,
 							auditTranType, movements.getMovementId()));
 				}
-				//Deposit Cheques
+				// Deposit Cheques
 				if (CollectionUtils.isNotEmpty(movements.getDepositChequesList())) {
 					auditDetailsList.addAll(deleteDepositCheques(movements.getDepositChequesList(), tableType,
 							auditTranType, movements.getMovementId()));
@@ -652,10 +644,8 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 	/**
 	 * getCasteById fetch the details by using CasteDAO's getCasteById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Caste
 	 */
 	@Override
@@ -666,11 +656,11 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 			DepositMovements depositMovements = getDepositDetailsDAO().getDepositMovementsByDepositId(depositId,
 					"_TView");
 			if (depositMovements != null) {
-				//Cash Denominations
+				// Cash Denominations
 				List<CashDenomination> denominationsList = getCashDenominationDAO()
 						.getCashDenominationList(depositMovements.getMovementId(), "_TView");
 				depositMovements.setDenominationList(denominationsList);
-				//Deposit Cheques
+				// Deposit Cheques
 				List<DepositCheques> chequesList = getDepositChequesDAO()
 						.getDepositChequesList(depositMovements.getMovementId(), "_TView");
 				depositMovements.setDepositChequesList(chequesList);
@@ -684,8 +674,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 	 * getApprovedCasteById fetch the details by using CasteDAO's getCasteById method . with parameter id and type as
 	 * blank. it fetches the approved records from the BMTCastes.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return Caste
 	 */
 	public DepositDetails getApprovedDepositDetailsById(long id) {
@@ -702,8 +691,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 	 * AuditHeader and AdtBMTCastes by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in
 	 * to AuditHeader and AdtBMTCastes by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@SuppressWarnings("unused")
@@ -831,8 +819,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 			if (CollectionUtils.isNotEmpty(depositChequesAuditDetails)) {
 				for (int i = 0; i < depositChequesAuditDetails.size(); i++) {
 					DepositCheques depositCheques = (DepositCheques) depositChequesAuditDetails.get(i).getModelData();
-					aeEvent = this.cashManagementAccounting.generateAccounting(
-							AccountingEvent.CHEQUETOBANK,
+					aeEvent = this.cashManagementAccounting.generateAccounting(AccountingEvent.CHEQUETOBANK,
 							depositDetails.getUserDetails().getBranchCode(), depositDetails.getBranchCode(),
 							depositCheques.getAmount(),
 							depositDetails.getDepositMovementsList().get(0).getPartnerBankId(),
@@ -855,8 +842,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 	 * workFlow table by using getCasteDAO().delete with parameters caste,"_Temp" 3) Audit the record in to AuditHeader
 	 * and AdtBMTCastes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -885,8 +871,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -913,7 +898,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		DepositDetails depositDetails = (DepositDetails) auditHeader.getAuditDetail().getModelData();
 		List<AuditDetail> auditDetails = null;
 
-		//Deposit Movements
+		// Deposit Movements
 		if (depositDetails.getAuditDetailMap().get("DepositMovements") != null) {
 			auditDetails = depositDetails.getAuditDetailMap().get("DepositMovements");
 			for (AuditDetail auditDetail : auditDetails) {
@@ -924,7 +909,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 			}
 		}
 
-		//Cash Denominations
+		// Cash Denominations
 		if (depositDetails.getAuditDetailMap().get("Denominations") != null) {
 			auditDetails = depositDetails.getAuditDetailMap().get("Denominations");
 			for (AuditDetail auditDetail : auditDetails) {
@@ -935,7 +920,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 			}
 		}
 
-		//Deposit Cheques
+		// Deposit Cheques
 		if (depositDetails.getAuditDetailMap().get("DepositCheques") != null) {
 			auditDetails = depositDetails.getAuditDetailMap().get("DepositCheques");
 			for (AuditDetail auditDetail : auditDetails) {
@@ -1146,7 +1131,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		for (int i = 0; i < depositMovementsList.size(); i++) {
 			DepositMovements depositMovement = depositMovementsList.get(i);
 
-			//for Cash Denominations and Deposit Cheques Maintenance
+			// for Cash Denominations and Deposit Cheques Maintenance
 			/*
 			 * if (StringUtils.isEmpty(depositMovement.getRecordType())) { continue; }
 			 */
@@ -1304,14 +1289,14 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
 
-		//Validation for Available amount is less than Reserved Amount
+		// Validation for Available amount is less than Reserved Amount
 		if (!PennantConstants.method_doReject.equals(method)
 				&& !PennantConstants.RCD_STATUS_RESUBMITTED.equals(depositDetails.getRecordStatus())
 				&& depositDetails.getActualAmount().compareTo(depositDetails.getReservedAmount()) < 0) {
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65035", parameters, null));
 		}
 
-		//Validation for Receipt Cancellation process if any available
+		// Validation for Receipt Cancellation process if any available
 		if (!PennantConstants.method_doReject.equals(method)
 				&& !PennantConstants.RCD_STATUS_RESUBMITTED.equals(depositDetails.getRecordStatus())
 				&& CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CASH.equals(depositDetails.getDepositType())) {

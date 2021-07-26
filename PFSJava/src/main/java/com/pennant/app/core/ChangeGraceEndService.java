@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ChangeGraceEndService.java                                           * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  11-06-2015    														*
- *                                                                  						*
- * Modified Date    :  11-06-2015    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ChangeGraceEndService.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 11-06-2015 * *
+ * Modified Date : 11-06-2015 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 11-06-2015       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 11-06-2015 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.core;
@@ -53,7 +35,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
@@ -73,6 +54,7 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class ChangeGraceEndService extends ServiceHelper {
@@ -94,13 +76,13 @@ public class ChangeGraceEndService extends ServiceHelper {
 			 * 
 			 * continue; }
 			 */
-			//Above condition was splitted as separate conditions for better understanding
-			//If Grace is not allowed
+			// Above condition was splitted as separate conditions for better understanding
+			// If Grace is not allowed
 			if (!fm.isAllowGrcPeriod()) {
 				continue;
 			}
 
-			//If it is Fully Disbursed
+			// If it is Fully Disbursed
 			if (!(fm.getFinAssetValue().compareTo(fm.getFinCurrAssetValue()) != 0)) {
 				continue;
 			}
@@ -135,16 +117,16 @@ public class ChangeGraceEndService extends ServiceHelper {
 						break;
 					}
 				}
-				//Pending emi count is greater than threshold count
+				// Pending emi count is greater than threshold count
 				if (thrldfound) {
 					continue;
 				}
-				//if there is no pending emi's
+				// if there is no pending emi's
 				if (pendingGraceEMICount == 0) {
 					continue;
 				}
 			} else {
-				//If EOD value date is other than grace end date
+				// If EOD value date is other than grace end date
 				if (!(grcPeriodEndDate.compareTo(eodValueDate) == 0)) {
 					continue;
 				}
@@ -393,8 +375,7 @@ public class ChangeGraceEndService extends ServiceHelper {
 		BigDecimal totalPftCpzNew = newProfitDetail.getTotalPftCpz();
 
 		// Amount Codes Details Preparation
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, pd, schedules, AccountingEvent.SCDCHG,
-				valueDate, valueDate);
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, pd, schedules, AccountingEvent.SCDCHG, valueDate, valueDate);
 
 		Map<String, Object> dataMap = aeEvent.getDataMap();
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -427,7 +408,7 @@ public class ChangeGraceEndService extends ServiceHelper {
 			aeEvent.getAcSetIDList().add(accountingID);
 		}
 
-		//Postings Process and save all postings related to finance for one time accounts update
+		// Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent);
 
 		fsd.setPftChg(amountCodes.getPftChg());
@@ -496,7 +477,7 @@ public class ChangeGraceEndService extends ServiceHelper {
 		finServInst.setMakerSysDate(sysDate);
 		finServInst.setMaker(999); // EOD
 
-		// PftChg is the POST AMOUNT in Posting entries 
+		// PftChg is the POST AMOUNT in Posting entries
 		finServInst.setPftChg(finScheduleData.getPftChg());
 
 		finServInstList.add(finServInst);

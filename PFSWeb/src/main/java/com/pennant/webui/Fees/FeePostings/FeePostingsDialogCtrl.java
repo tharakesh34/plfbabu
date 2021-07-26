@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FeePostingsDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-06-2013    														*
- *                                                                  						*
- * Modified Date    :  21-06-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FeePostingsDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-06-2013 * *
+ * Modified Date : 21-06-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-05-2017       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-05-2017 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.Fees.FeePostings;
@@ -77,7 +59,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.DateUtility;
@@ -122,6 +103,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.AccountingEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/others/JVPosting/jVPostingDialog.zul file.
@@ -245,7 +227,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 			doCheckRights();
 
 			doSetFieldProperties();
-			//this.listBoxJVPostingAccounting.setHeight(this.borderLayoutHeight - 350 + "px");
+			// this.listBoxJVPostingAccounting.setHeight(this.borderLayoutHeight - 350 + "px");
 			doShowDialog(getFeePostings());
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -286,7 +268,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug("Entering" + event.toString());
-		//doWriteBeanToComponents(this.feePostings.getBefImage());
+		// doWriteBeanToComponents(this.feePostings.getBefImage());
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -305,8 +287,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		if (doClose(this.btnSave.isVisible())) {
@@ -317,8 +298,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -425,7 +405,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			//btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}
@@ -662,8 +642,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aJVPosting
-	 *            JVPosting
+	 * @param aJVPosting JVPosting
 	 */
 	public void doWriteBeanToComponents(FeePostings aFeePostings) {
 		logger.debug("Entering");
@@ -1064,7 +1043,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 			return;
 		}
 
-		//if Accounting set not configured stop to save
+		// if Accounting set not configured stop to save
 		if (StringUtils.isEmpty(aFeePosting.getAccountSetId())) {
 			Tab tab = getTab(AssetConstants.UNIQUE_ID_ACCOUNTING);
 			if (tab != null) {
@@ -1147,11 +1126,9 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * @throws InterfaceException
@@ -1242,10 +1219,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * @throws InterfaceException
 	 * 

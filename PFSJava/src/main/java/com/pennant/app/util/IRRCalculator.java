@@ -53,7 +53,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.dao.applicationmaster.IRRFeeTypeDAO;
 import com.pennant.backend.dao.applicationmaster.IRRFinanceTypeDAO;
@@ -67,6 +66,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.IRRCashFlow;
 import com.pennant.backend.model.finance.IRRScheduleDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.rits.cloning.Cloner;
 
 public class IRRCalculator {

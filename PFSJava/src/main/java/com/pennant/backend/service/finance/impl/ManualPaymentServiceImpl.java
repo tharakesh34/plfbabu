@@ -1,41 +1,36 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  ManualPaymentServiceImpl.java												*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : ManualPaymentServiceImpl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
-
- * 13-06-2018       Siva					 0.2        Stage Accounting Modifications      * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 *
+ * 
+ * 13-06-2018 Siva 0.2 Stage Accounting Modifications * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.finance.impl;
@@ -59,7 +54,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.finance.limits.LimitCheckDetails;
@@ -114,6 +108,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
@@ -274,8 +269,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(),
 					AccountingEvent.EARLYPAY, FinanceConstants.MODULEID_FINTYPE);
 		} else if (eventCode.equals(AccountingEvent.REPAY)) {
-			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(),
-					AccountingEvent.REPAY, FinanceConstants.MODULEID_FINTYPE);
+			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), AccountingEvent.REPAY,
+					FinanceConstants.MODULEID_FINTYPE);
 		}
 		logger.debug("Leaving");
 		return accountingSetId;
@@ -1402,8 +1397,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		repayData.setBuildProcess("R");
 		repayData.getRepayMain().setRepayAmountNow(finServiceInst.getAmount());
 
-		if (moduleDefiner.equals(FinServiceEvent.EARLYRPY)
-				|| moduleDefiner.equals(FinServiceEvent.SCHDRPY)) {
+		if (moduleDefiner.equals(FinServiceEvent.EARLYRPY) || moduleDefiner.equals(FinServiceEvent.SCHDRPY)) {
 			repayData.getRepayMain().setPayApportionment(PennantConstants.List_Select);
 		} else {
 			repayData.getRepayMain().setPayApportionment(PennantConstants.List_Select);
@@ -1412,8 +1406,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		SubHeadRule subHeadRule = null;
 		String sqlRule = null;
 
-		if (moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)
-				|| moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
+		if (moduleDefiner.equals(FinServiceEvent.EARLYSETTLE) || moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
 			Rule rule = getRuleService().getApprovedRuleById("REFUND", RuleConstants.MODULE_REFUND,
 					RuleConstants.EVENT_REFUND);
 			if (rule != null) {
@@ -1460,8 +1453,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				isReCal, method, finServiceInst.getFromDate(), moduleDefiner);
 
 		// Calculation for Insurance Refund
-		if (moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)
-				|| moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
+		if (moduleDefiner.equals(FinServiceEvent.EARLYSETTLE) || moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
 			int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(),
 					repayData.getRepayMain().getRefundCalStartDate() == null ? financeMain.getMaturityDate()
 							: repayData.getRepayMain().getRefundCalStartDate(),

@@ -12,7 +12,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.amortization.ProjectedAmortization;
@@ -34,6 +33,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
@@ -669,8 +669,7 @@ public class LoadFinanceData extends ServiceHelper {
 			lmsServiceLogs.add(lmsServiceLog);
 
 			if (CollectionUtils.isNotEmpty(lmsServiceLogs)) {
-				logger.info("Saving {} service event into LMSServiceLog table...",
-						FinServiceEvent.RATECHG);
+				logger.info("Saving {} service event into LMSServiceLog table...", FinServiceEvent.RATECHG);
 				finServiceInstructionDAO.saveLMSServiceLOGList(lmsServiceLogs);
 			}
 		} catch (Exception e) {

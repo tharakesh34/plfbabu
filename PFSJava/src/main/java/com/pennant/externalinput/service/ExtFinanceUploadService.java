@@ -25,7 +25,6 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.jaxen.JaxenException;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
@@ -69,6 +68,7 @@ import com.pennant.externalinput.ExtFinanceData;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pff.constants.AccountingEvent;
 
 public class ExtFinanceUploadService {
 	private static final Logger logger = LogManager.getLogger(ExtFinanceUploadService.class);

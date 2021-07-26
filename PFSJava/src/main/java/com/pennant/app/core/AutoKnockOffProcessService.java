@@ -49,7 +49,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentProcessUtil;
 import com.pennant.backend.dao.applicationmaster.EntityDAO;
@@ -77,6 +76,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class AutoKnockOffProcessService extends ServiceHelper {

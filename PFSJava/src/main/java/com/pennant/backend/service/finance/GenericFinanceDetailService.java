@@ -58,8 +58,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountingEvent;
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
@@ -213,6 +211,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
@@ -1316,9 +1315,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			}
 		}
 
-		aeEvent.setModuleDefiner(
-				StringUtils.isEmpty(financeDetail.getModuleDefiner()) ? FinServiceEvent.ORG
-						: financeDetail.getModuleDefiner());
+		aeEvent.setModuleDefiner(StringUtils.isEmpty(financeDetail.getModuleDefiner()) ? FinServiceEvent.ORG
+				: financeDetail.getModuleDefiner());
 		if (financeDetail.getModuleDefiner().equals(FinServiceEvent.ORG)) {
 			// FIXME: PV. 18AUG19. Some confusion. As downpayment was not deducted from current asset value earlier
 			// addiing now gives double impact.
@@ -1760,7 +1758,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		if (FinServiceEvent.ORG.equals(financeDetail.getModuleDefiner())) {
-			AccountingEngine.post(AccountingEvent.VASFEE, financeDetail, branchCode);
+			AccountingEngine.post(AccountingEvent.VAS_FEE, financeDetail, branchCode);
 		}
 
 		if (isNew) {

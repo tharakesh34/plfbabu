@@ -12,7 +12,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -27,6 +26,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.AccountingEvent;
 
 @Deprecated
 public class DisbursementPostings {
@@ -86,7 +86,7 @@ public class DisbursementPostings {
 			if (StringUtils.equals(finAdvancePayments.getPaymentDetail(), DisbursementConstants.PAYMENT_DETAIL_VAS)) {
 				amountCodes.setVasInstAmt(finAdvancePayments.getAmtToBeReleased());
 				aeEvent.setAccountingEvent(AccountingEvent.INSPAY);
-				//For GL Code
+				// For GL Code
 				dataMap.put("ae_productCode", finAdvancePayments.getProductShortCode());
 				dataMap.put("ae_dealerCode", finAdvancePayments.getDealerShortCode());
 				dataMap.put("id_totPayAmount", finAdvancePayments.getAmtToBeReleased());
@@ -197,7 +197,7 @@ public class DisbursementPostings {
 							DisbursementConstants.PAYMENT_DETAIL_VAS)) {
 						amountCodes.setVasInstAmt(finAdvancePayments.getAmtToBeReleased());
 						aeEvent.setAccountingEvent(AccountingEvent.INSPAY);
-						//For GL Code
+						// For GL Code
 						dataMap.put("ae_productCode", finAdvancePayments.getProductShortCode());
 						dataMap.put("ae_dealerCode", finAdvancePayments.getDealerShortCode());
 						dataMap.put("id_totPayAmount", finAdvancePayments.getAmtToBeReleased());
@@ -236,7 +236,7 @@ public class DisbursementPostings {
 					}
 
 					if (!posted) {
-						disbMap.put(finAdvancePayments.getPaymentSeq(), Long.MIN_VALUE);//To Identify
+						disbMap.put(finAdvancePayments.getPaymentSeq(), Long.MIN_VALUE);// To Identify
 					} else {
 						disbMap.put(finAdvancePayments.getPaymentSeq(), aeEvent.getLinkedTranId());
 					}

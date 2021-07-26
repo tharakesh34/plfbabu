@@ -1,41 +1,36 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  FinanceWriteoffServiceImpl.java												*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : FinanceWriteoffServiceImpl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
-
- * 13-06-2018       Siva					 0.2        Stage Accounting Modifications      * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 *
+ * 
+ * 13-06-2018 Siva 0.2 Stage Accounting Modifications * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.finance.impl;
@@ -55,7 +50,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -92,6 +86,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
@@ -139,17 +134,17 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			scheduleData.setDisbursementDetails(
 					getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, "", false));
 
-			scheduleData.setFeeRules(getFinFeeChargesDAO().getFeeChargesByFinRef(finReference,
-					FinServiceEvent.WRITEOFF, false, ""));
+			scheduleData.setFeeRules(
+					getFinFeeChargesDAO().getFeeChargesByFinRef(finReference, FinServiceEvent.WRITEOFF, false, ""));
 
 			if (StringUtils.isNotBlank(scheduleData.getFinanceMain().getPromotionCode())) {
-				financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(
-						scheduleData.getFinanceMain().getPromotionCode(), FinServiceEvent.WRITEOFF,
-						"_AView", false, FinanceConstants.MODULEID_PROMOTION));
+				financeDetail.setFinTypeFeesList(
+						getFinTypeFeesDAO().getFinTypeFeesList(scheduleData.getFinanceMain().getPromotionCode(),
+								FinServiceEvent.WRITEOFF, "_AView", false, FinanceConstants.MODULEID_PROMOTION));
 			} else {
-				financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(
-						scheduleData.getFinanceMain().getFinType(), FinServiceEvent.WRITEOFF, "_AView",
-						false, FinanceConstants.MODULEID_FINTYPE));
+				financeDetail.setFinTypeFeesList(
+						getFinTypeFeesDAO().getFinTypeFeesList(scheduleData.getFinanceMain().getFinType(),
+								FinServiceEvent.WRITEOFF, "_AView", false, FinanceConstants.MODULEID_FINTYPE));
 			}
 
 			scheduleData.setRepayDetails(getFinanceRepaymentsDAO().getFinRepayListByFinRef(finReference, false, ""));

@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  *********************************************************************************************
- *                                 FILE HEADER                                               *
+ * FILE HEADER *
  *********************************************************************************************
  *
- * FileName    		:  FinanceWriteoffDialogCtrl.java                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES              			
- *                                                                  
- * Creation Date    :  03-06-2011    
- *                                                                  
- * Modified Date    :  03-06-2011    
- *                                                                  
- * Description 		:                                             
- *                                                                                          
+ * FileName : FinanceWriteoffDialogCtrl.java
+ * 
+ * Author : PENNANT TECHONOLOGIES
+ * 
+ * Creation Date : 03-06-2011
+ * 
+ * Modified Date : 03-06-2011
+ * 
+ * Description :
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-06-2011       Pennant	                 0.1                                         * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-06-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.payments;
@@ -78,7 +69,6 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.AEAmounts;
@@ -126,6 +116,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
@@ -144,7 +135,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Window window_FinWriteoffDialog;
 	protected Borderlayout borderlayoutFinWriteoffDialog;
 
-	//Summary Details
+	// Summary Details
 	protected Textbox finReference;
 	protected Textbox finType;
 	protected Textbox finBranch;
@@ -340,7 +331,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 */
 	protected void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		format = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
 		this.finStartDate.setFormat(DateFormat.LONG_DATE.getPattern());
@@ -438,7 +429,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public void doEdit() {
 		logger.debug("Entering");
 
-		this.writeoffDate.setDisabled(true);//isReadOnly("FinWriteoffDialog_writeoffDate")
+		this.writeoffDate.setDisabled(true);// isReadOnly("FinWriteoffDialog_writeoffDate")
 		this.writeoffPriAmt.setDisabled(isReadOnly("FinWriteoffDialog_writeoffPriAmt"));
 		this.writeoffPftAmt.setDisabled(isReadOnly("FinWriteoffDialog_writeoffPftAmt"));
 		this.adjAmount.setDisabled(isReadOnly("FinWriteoffDialog_adjAmount"));
@@ -538,7 +529,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		}
 
-		// For Full Writeoff amount based on Constant defined 
+		// For Full Writeoff amount based on Constant defined
 		if (WRITEOFF_FULLAMOUNT) {
 			this.btnWriteoffReCal.setVisible(false);
 			this.btnWriteoffCal.setVisible(false);
@@ -578,12 +569,12 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// Document Details Tab
 		appendDocumentDetailTab();
 
-		//Stage Accounting Details 
+		// Stage Accounting Details
 		appendStageAccountingDetailsTab(true);
 
-		//Show Accounting Tab Details Based upon Role Condition using Work flow
+		// Show Accounting Tab Details Based upon Role Condition using Work flow
 		if ("Accounting".equals(getTaskTabs(getTaskId(getRole())))) {
-			//Accounting Details
+			// Accounting Details
 			appendAccountingDetailTab(true);
 		}
 
@@ -634,8 +625,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnWriteoffPay.isVisible());
@@ -666,7 +656,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.finScheduleTab.setVisible(true);
 		this.listBoxSchedule.getItems().clear();
 
-		//Reset only Schedule Details Data
+		// Reset only Schedule Details Data
 		Cloner cloner = new Cloner();
 		FinanceWriteoffHeader schdData = cloner.deepClone(financeWriteoffHeader);
 		schdData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(
@@ -682,7 +672,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
-		//Copy Total Finance Schedule Data for Calculation without Effecting the Original Schedule Data
+		// Copy Total Finance Schedule Data for Calculation without Effecting the Original Schedule Data
 		Cloner cloner = new Cloner();
 		effectFinScheduleData = cloner.deepClone(financeWriteoffHeader);
 
@@ -698,7 +688,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				FinanceScheduleDetail curSchdl = effectedFinSchDetails.get(i);
 
-				//Reset Write-off Principal Amount
+				// Reset Write-off Principal Amount
 				if (woPriAmt.compareTo(BigDecimal.ZERO) > 0) {
 					BigDecimal schPriBal = curSchdl.getPrincipalSchd().subtract(curSchdl.getSchdPriPaid())
 							.subtract(curSchdl.getWriteoffPrincipal());
@@ -712,7 +702,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						}
 					}
 				}
-				//Reset Write-off Profit Amount
+				// Reset Write-off Profit Amount
 				if (woPftAmt.compareTo(BigDecimal.ZERO) > 0) {
 					BigDecimal schPftBal = curSchdl.getProfitSchd().subtract(curSchdl.getSchdPftPaid())
 							.subtract(curSchdl.getWriteoffProfit());
@@ -727,7 +717,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					}
 				}
 
-				//Reset Write-off Schedule Fee
+				// Reset Write-off Schedule Fee
 				if (woSchFee.compareTo(BigDecimal.ZERO) > 0) {
 					BigDecimal schFee = curSchdl.getFeeSchd()
 							.subtract(curSchdl.getSchdFeePaid().subtract(curSchdl.getWriteoffSchFee()));
@@ -768,8 +758,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	/**
 	 * Method to fill the Finance Schedule Detail List
 	 * 
-	 * @param aFinScheduleData
-	 *            (FinScheduleData)
+	 * @param aFinScheduleData (FinScheduleData)
 	 * 
 	 */
 	public void doFillScheduleList(FinanceWriteoffHeader writeoffHeader) {
@@ -777,7 +766,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		FinanceScheduleDetail prvSchDetail = null;
 
-		//Reset To Finance Schedule Data Object For rendering purpose
+		// Reset To Finance Schedule Data Object For rendering purpose
 		FinScheduleData aFinScheduleData = new FinScheduleData();
 		aFinScheduleData.setFinanceMain(writeoffHeader.getFinanceDetail().getFinScheduleData().getFinanceMain());
 		aFinScheduleData.setFinanceScheduleDetails(
@@ -827,7 +816,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 
-			//Clear all the listitems in listbox
+			// Clear all the listitems in listbox
 			int formatter = CurrencyUtil.getFormat(aFinScheduleData.getFinanceMain().getFinCcy());
 			aFinScheduleData.setFinanceScheduleDetails(sortSchdDetails(aFinScheduleData.getFinanceScheduleDetails()));
 			for (int i = 0; i < aFinScheduleData.getFinanceScheduleDetails().size(); i++) {
@@ -1040,26 +1029,26 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		aFinanceDetail.setAccountingEventCode(eventCode);
 
-		//Resetting Service Task ID's from Original State
+		// Resetting Service Task ID's from Original State
 		aFinanceMain.setRoleCode(this.curRoleCode);
 		aFinanceMain.setNextRoleCode(this.curNextRoleCode);
 		aFinanceMain.setTaskId(this.curTaskId);
 		aFinanceMain.setNextTaskId(this.curNextTaskId);
 		aFinanceMain.setNextUserId(this.curNextUserId);
 
-		//Prepare Validation & Calling
+		// Prepare Validation & Calling
 		if (!isValidated()) {
 			return;
 		}
 
-		//Document Details Saving
+		// Document Details Saving
 		if (getDocumentDetailDialogCtrl() != null) {
 			aFinanceDetail.setDocumentDetailsList(getDocumentDetailDialogCtrl().getDocumentDetailsList());
 		} else {
 			aFinanceDetail.setDocumentDetailsList(null);
 		}
 
-		//Finance Stage Accounting Details Tab
+		// Finance Stage Accounting Details Tab
 		if (!recSave && getStageAccountingDetailDialogCtrl() != null) {
 			// check if accounting rules executed or not
 			if (!getStageAccountingDetailDialogCtrl().isStageAccountingsExecuted()) {
@@ -1089,7 +1078,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 
-		//Finance CheckList Details Tab
+		// Finance CheckList Details Tab
 		if (checkListChildWindow != null) {
 			boolean validationSuccess = doSave_CheckList(aFinanceDetail, false);
 			if (!validationSuccess) {
@@ -1099,7 +1088,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			aFinanceDetail.setFinanceCheckList(null);
 		}
 
-		//loading Write Off Object Entered Data into Bean
+		// loading Write Off Object Entered Data into Bean
 		aFinanceWriteoffHeader.setFinanceWriteoff(doWriteComponentsToBean());
 
 		String tranType = "";
@@ -1127,7 +1116,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					refreshMaintainList();
 				}
 
-				//Customer Notification for Role Identification
+				// Customer Notification for Role Identification
 				if (StringUtils.isBlank(aFinanceMain.getNextTaskId())) {
 					aFinanceMain.setNextRoleCode("");
 				}
@@ -1136,7 +1125,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						aFinanceMain.getRecordStatus());
 				Clients.showNotification(msg, "info", null, null, -1);
 
-				//Mail Alert Notification for Customer/Dealer/Provider...etc
+				// Mail Alert Notification for Customer/Dealer/Provider...etc
 				FinanceDetail financeDetail = aFinanceWriteoffHeader.getFinanceDetail();
 				if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
 
@@ -1533,7 +1522,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		getAccountingDetailDialogCtrl().getLabel_AccountingDisbCrVal().setValue("");
 		getAccountingDetailDialogCtrl().getLabel_AccountingDisbDrVal().setValue("");
 
-		//Finance Accounting Details Execution
+		// Finance Accounting Details Execution
 		executeAccounting(onLoadProcess);
 		logger.debug("Leaving");
 	}
@@ -1547,8 +1536,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 */
 	public FinanceDetail onExecuteStageAccDetail()
 			throws InterruptedException, IllegalAccessException, InvocationTargetException {
-		getFinanceDetail().setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
+		getFinanceDetail().setModuleDefiner(StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 		return getFinanceDetail();
 	}
 
@@ -1584,11 +1572,9 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		getEngineExecution().getAccEngineExecResults(aeEvent);
 		accountingSetEntries.addAll(aeEvent.getReturnDataSet());
 
-		//Disb Instruction Posting
-		if (eventCode.equals(AccountingEvent.ADDDBS)
-				|| eventCode.equals(AccountingEvent.ADDDBSF)
-				|| eventCode.equals(AccountingEvent.ADDDBSN)
-				|| eventCode.equals(AccountingEvent.ADDDBSP)) {
+		// Disb Instruction Posting
+		if (eventCode.equals(AccountingEvent.ADDDBS) || eventCode.equals(AccountingEvent.ADDDBSF)
+				|| eventCode.equals(AccountingEvent.ADDDBSN) || eventCode.equals(AccountingEvent.ADDDBSP)) {
 			prepareDisbInstructionPosting(accountingSetEntries, aeEvent);
 		}
 
@@ -1618,9 +1604,9 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		BigDecimal totalPftSchdOld = BigDecimal.ZERO;
 		BigDecimal totalPftCpzOld = BigDecimal.ZERO;
-		//For New Records Profit Details will be set inside the AEAmounts 
+		// For New Records Profit Details will be set inside the AEAmounts
 		FinanceProfitDetail newProfitDetail = new FinanceProfitDetail();
-		if (profitDetail != null) {//FIXME
+		if (profitDetail != null) {// FIXME
 			BeanUtils.copyProperties(profitDetail, newProfitDetail);
 			totalPftSchdOld = profitDetail.getTotalPftSchd();
 			totalPftCpzOld = profitDetail.getTotalPftCpz();
@@ -1673,7 +1659,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					AccountingEvent.DISBINS, FinanceConstants.MODULEID_FINTYPE));
 		}
 
-		//loop through the disbursements.
+		// loop through the disbursements.
 		if (advPayList != null && !advPayList.isEmpty()) {
 
 			for (int i = 0; i < advPayList.size(); i++) {

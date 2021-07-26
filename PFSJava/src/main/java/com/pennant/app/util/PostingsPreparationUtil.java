@@ -52,7 +52,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.backend.dao.commitment.CommitmentDAO;
 import com.pennant.backend.dao.commitment.CommitmentMovementDAO;
 import com.pennant.backend.dao.finance.FinContributorDetailDAO;
@@ -68,6 +67,7 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.AccountingEvent;
 
 public class PostingsPreparationUtil implements Serializable {
 	private static final long serialVersionUID = 1715547921928620037L;

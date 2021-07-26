@@ -1,14 +1,13 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 package com.pennant.backend.service.finance.impl;
@@ -28,7 +27,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -62,6 +60,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.constants.AccountingEvent;
 
 /**
  * Service implementation for methods that depends on <b>AssignmentUpload</b>.<br>
@@ -92,8 +91,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -107,8 +105,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 	}
 
 	/**
-	 * @param assignmentUploadDAO
-	 *            the assignmentUploadDAO to set
+	 * @param assignmentUploadDAO the assignmentUploadDAO to set
 	 */
 	public void setAssignmentUploadDAO(AssignmentUploadDAO assignmentUploadDAO) {
 		this.assignmentUploadDAO = assignmentUploadDAO;
@@ -130,8 +127,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 	 * table. based on the module workFlow Configuration. by using AssignmentUploadsDAO's update method 3) Audit the
 	 * record in to AuditHeader and AdtAssignmentUploads by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -170,10 +166,8 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 	 * getAssignmentUploadsByUploadId fetch the details by using AssignmentUploadsDAO's getAssignmentUploadsByUploadId
 	 * method.
 	 * 
-	 * @param finType
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param finType (String)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return AssignmentUploads
 	 */
 	@Override
@@ -184,8 +178,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 	/**
 	 * getAssignmentUploadsById fetch the details by using AssignmentUploadsDAO's getAssignmentUploadByRef method.
 	 * 
-	 * @param uploadId
-	 *            (long)
+	 * @param uploadId (long)
 	 * @return AssignmentUploads
 	 */
 	@Override
@@ -204,8 +197,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtAssignmentUploads
 	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -224,7 +216,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 
 		if (PennantConstants.RECORD_TYPE_DEL.equals(assignmentUpload.getRecordType())) {
 			tranType = PennantConstants.TRAN_DEL;
-			//getAssignmentUploadDAO().delete(assignmentUpload, ""); // because delete will not be applicable here 
+			// getAssignmentUploadDAO().delete(assignmentUpload, ""); // because delete will not be applicable here
 		} else {
 			assignmentUpload.setRoleCode("");
 			assignmentUpload.setNextRoleCode("");
@@ -264,8 +256,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 	 * workFlow table by using getAssignmentUploadDAO().delete with parameters promotionFee,"_Temp" 3) Audit the record
 	 * in to AuditHeader and AdtAssignmentUploads by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -277,10 +268,10 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			return auditHeader;
 		}
 
-		//AssignmentUpload assignmentUpload = (AssignmentUpload) auditHeader.getAuditDetail().getModelData();
+		// AssignmentUpload assignmentUpload = (AssignmentUpload) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		//getAssignmentUploadDAO().delete(assignmentUpload, "_TEMP"); // because delete will not be applicable here 
+		// getAssignmentUploadDAO().delete(assignmentUpload, "_TEMP"); // because delete will not be applicable here
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -293,8 +284,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -339,7 +329,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 				}
 			}
 
-			//Success and failed count updation
+			// Success and failed count updation
 			uploadHeader.setSuccessCount(successCount);
 			uploadHeader.setFailedCount(failCount);
 			uploadHeader.setTotalRecords(successCount + failCount);
@@ -505,10 +495,10 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			if (saveRecord) {
 				getAssignmentUploadDAO().save(assignmentUpload, type);
 
-				//Success case updating the Assignment Id
+				// Success case updating the Assignment Id
 				if (approveRec && UploadConstants.REFUND_UPLOAD_STATUS_SUCCESS.equals(assignmentUpload.getStatus())) {
 					generateAccounting(assignmentUpload, postingBranch);
-					//Update Assignment Id in Finance Main
+					// Update Assignment Id in Finance Main
 					getFinanceMainDAO().updateAssignmentId(assignmentUpload.getFinReference(),
 							assignmentUpload.getAssignmentId());
 				}
@@ -517,7 +507,8 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 				getAssignmentUploadDAO().update(assignmentUpload, type);
 			}
 			if (deleteRecord) {
-				//getAssignmentUploadDAO().delete(assignmentUpload, type); // because delete will not be applicable here 
+				// getAssignmentUploadDAO().delete(assignmentUpload, type); // because delete will not be applicable
+				// here
 			}
 			if (approveRec) {
 				assignmentUpload.setRecordType(rcdType);
@@ -537,13 +528,13 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 		Assignment assignment = this.assignmentDAO.getAssignment(assignUpload.getAssignmentId(), "");
 		FinanceMain financeMain = this.financeMainDAO.getFinanceForAssignments(finReference);
 
-		//if assignment is not available or actual days is less than or equal to 0
+		// if assignment is not available or actual days is less than or equal to 0
 		if (assignment == null || financeMain == null) {
 			return;
 		}
 		BigDecimal sharePercent = assignment.getSharingPercentage();
 
-		//Get the Finance Schedule details
+		// Get the Finance Schedule details
 		List<FinanceScheduleDetail> finScheduleDetails = getFinanceScheduleDetailDAO()
 				.getFinScheduleDetails(finReference, "", false);
 
@@ -551,22 +542,26 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			FinanceScheduleDetail curSchd = null;
 			FinanceScheduleDetail nextSchd = null;
 			int scheduleCount = -1;
-			BigDecimal schAmount = BigDecimal.ZERO; //for dues calculation
-			BigDecimal schPaidAmount = BigDecimal.ZERO; //for dues calculation
+			BigDecimal schAmount = BigDecimal.ZERO; // for dues calculation
+			BigDecimal schPaidAmount = BigDecimal.ZERO; // for dues calculation
 
-			//get the next schedule payment
+			// get the next schedule payment
 			for (FinanceScheduleDetail schedule : finScheduleDetails) {
 
 				if (DateUtility.compare(schedule.getSchDate(), assignUpload.getAssignmentDate()) >= 0) {
-					//Partial Settlement schedule
+					// Partial Settlement schedule
 					if (schedule.getPartialPaidAmt().compareTo(BigDecimal.ZERO) > 0) {
-						if (schedule.getProfitSchd().compareTo(schedule.getProfitCalc()) == 0) { //if schedule payment and partial settlement both should be in same day
+						if (schedule.getProfitSchd().compareTo(schedule.getProfitCalc()) == 0) { // if schedule payment
+																									// and partial
+																									// settlement both
+																									// should be in same
+																									// day
 							nextSchd = schedule;
 							break;
 						} else {
 							continue;
 						}
-					} else { //normal schedule
+					} else { // normal schedule
 						nextSchd = schedule;
 						break;
 					}
@@ -577,17 +572,17 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 				scheduleCount++;
 			}
 
-			//get the current schedule payment
+			// get the current schedule payment
 			if (scheduleCount == -1) {
 				curSchd = nextSchd;
 			} else {
 				curSchd = finScheduleDetails.get(scheduleCount);
 			}
 
-			//difference between assignment date and current schedule date
+			// difference between assignment date and current schedule date
 			int effectiveDiffDays = DateUtility.getDaysBetween(assignUpload.getAssignmentDate(), curSchd.getSchDate());
 
-			//Effective days Interest amount calculation  
+			// Effective days Interest amount calculation
 			BigDecimal effectiveProfit = BigDecimal.ZERO;
 
 			if (nextSchd != null) {
@@ -595,7 +590,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 						.divide(new BigDecimal(nextSchd.getNoOfDays()), 9, RoundingMode.HALF_DOWN);
 			}
 
-			//Total Interest calculation from Current schedule date.
+			// Total Interest calculation from Current schedule date.
 			BigDecimal afterAssignProfit = BigDecimal.ZERO;
 			for (FinanceScheduleDetail schedule : finScheduleDetails) {
 				if (DateUtility.compare(schedule.getSchDate(), nextSchd.getSchDate()) >= 0) {
@@ -608,12 +603,12 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			FinanceScheduleDetail effectNextSchd = null;
 			BigDecimal assignAmount = BigDecimal.ZERO;
 
-			//get the Effective next date schedule
+			// get the Effective next date schedule
 			for (FinanceScheduleDetail schedule : finScheduleDetails) {
 				if (DateUtility.compare(schedule.getSchDate(), assignUpload.getEffectiveDate()) > 0) {
-					if (schedule.getPartialPaidAmt().compareTo(BigDecimal.ZERO) > 0) { //Partial Settlement case
+					if (schedule.getPartialPaidAmt().compareTo(BigDecimal.ZERO) > 0) { // Partial Settlement case
 						if (schedule.getProfitSchd().compareTo(schedule.getProfitCalc()) == 0) {
-							//if schedule payment and partial settlement both should be in same day
+							// if schedule payment and partial settlement both should be in same day
 							effectNextSchd = schedule;
 							break;
 						} else {
@@ -624,9 +619,9 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 						break;
 					}
 				} else if (DateUtility.compare(schedule.getSchDate(), assignUpload.getEffectiveDate()) == 0) {
-					if (schedule.getPartialPaidAmt().compareTo(BigDecimal.ZERO) > 0) { //Partial Settlement case
+					if (schedule.getPartialPaidAmt().compareTo(BigDecimal.ZERO) > 0) { // Partial Settlement case
 						if (schedule.getProfitSchd().compareTo(schedule.getProfitCalc()) == 0) {
-							//if schedule payment and partial settlement both should be in same day
+							// if schedule payment and partial settlement both should be in same day
 							assignAmount = schedule.getClosingBalance();
 							effectNextSchd = schedule;
 							break;
@@ -643,28 +638,33 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 				effectSchdCount++;
 			}
 
-			//Assigning Principal Amount
+			// Assigning Principal Amount
 			if (assignAmount.compareTo(BigDecimal.ZERO) == 0) {
 				effectSchd = finScheduleDetails.get(effectSchdCount);
 				assignAmount = effectSchd.getClosingBalance();
 			}
 			assignAmount = assignAmount.multiply(sharePercent).divide(new BigDecimal(100), 9, RoundingMode.HALF_DOWN);
-			assignAmount = CalculationUtil.roundAmount(assignAmount, RoundingMode.HALF_DOWN.name(), 0); //if rounding required 
+			assignAmount = CalculationUtil.roundAmount(assignAmount, RoundingMode.HALF_DOWN.name(), 0); // if rounding
+																										// required
 
-			//if customer paid any Schedule amount between the assignment date and effective date
+			// if customer paid any Schedule amount between the assignment date and effective date
 			BigDecimal effectivePaidPriAmt = BigDecimal.ZERO;
 
 			if (effectNextSchd != null) {
 				if (DateUtility.compare(effectNextSchd.getSchDate(), nextSchd.getSchDate()) != 0) {
-					effectivePaidPriAmt = effectNextSchd.getSchdPriPaid().subtract(effectNextSchd.getPartialPaidAmt()); //Because of Partial Settlement Case
+					effectivePaidPriAmt = effectNextSchd.getSchdPriPaid().subtract(effectNextSchd.getPartialPaidAmt()); // Because
+																														// of
+																														// Partial
+																														// Settlement
+																														// Case
 					effectivePaidPriAmt = effectivePaidPriAmt.multiply(sharePercent).divide(new BigDecimal(100), 9,
 							RoundingMode.HALF_DOWN);
 					effectivePaidPriAmt = CalculationUtil.roundAmount(effectivePaidPriAmt,
-							RoundingMode.HALF_DOWN.name(), 0); //if rounding required 
+							RoundingMode.HALF_DOWN.name(), 0); // if rounding required
 				}
 			}
 
-			//If we have any excess Amount
+			// If we have any excess Amount
 			BigDecimal assginExcessAmt = BigDecimal.ZERO;
 			FinExcessAmount finExcessAmount = getFinExcessAmountDAO().getExcessAmountsByRefAndType(finReference,
 					RepayConstants.EXAMOUNTTYPE_EXCESS);
@@ -672,10 +672,12 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 				assginExcessAmt = assginExcessAmt.add(finExcessAmount.getBalanceAmt());
 				assginExcessAmt = assginExcessAmt.multiply(sharePercent).divide(new BigDecimal(100), 9,
 						RoundingMode.HALF_DOWN);
-				assginExcessAmt = CalculationUtil.roundAmount(assginExcessAmt, RoundingMode.HALF_DOWN.name(), 0); //if rounding required 
+				assginExcessAmt = CalculationUtil.roundAmount(assginExcessAmt, RoundingMode.HALF_DOWN.name(), 0); // if
+																													// rounding
+																													// required
 			}
 
-			//If we have any EMI Advance Amount
+			// If we have any EMI Advance Amount
 			BigDecimal assignEMIAdvAmt = BigDecimal.ZERO;
 			FinExcessAmount emiAdvanceAmount = getFinExcessAmountDAO().getExcessAmountsByRefAndType(finReference,
 					RepayConstants.EXAMOUNTTYPE_EMIINADV);
@@ -683,26 +685,32 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 				assignEMIAdvAmt = assignEMIAdvAmt.add(emiAdvanceAmount.getBalanceAmt());
 				assignEMIAdvAmt = assignEMIAdvAmt.multiply(sharePercent).divide(new BigDecimal(100), 9,
 						RoundingMode.HALF_DOWN);
-				assignEMIAdvAmt = CalculationUtil.roundAmount(assignEMIAdvAmt, RoundingMode.HALF_DOWN.name(), 0); //if rounding required 
+				assignEMIAdvAmt = CalculationUtil.roundAmount(assignEMIAdvAmt, RoundingMode.HALF_DOWN.name(), 0); // if
+																													// rounding
+																													// required
 			}
 
-			//BPI amount calculation
+			// BPI amount calculation
 			BigDecimal bpi1Amount = bpi1Calculation(finScheduleDetails, assignUpload, sharePercent);
 			BigDecimal bpi2Amount = bpi2Calculation(finScheduleDetails, assignUpload, nextSchd, sharePercent);
 
-			//AssignPftAmount
+			// AssignPftAmount
 			BigDecimal assignPftAmount = afterAssignProfit.subtract(effectiveProfit);
 			assignPftAmount = assignPftAmount.multiply(sharePercent).divide(new BigDecimal(100), 9,
 					RoundingMode.HALF_DOWN);
-			assignPftAmount = CalculationUtil.roundAmount(assignPftAmount, RoundingMode.HALF_DOWN.name(), 0); //if rounding required 
+			assignPftAmount = CalculationUtil.roundAmount(assignPftAmount, RoundingMode.HALF_DOWN.name(), 0); // if
+																												// rounding
+																												// required
 
-			//AssignODAmount
+			// AssignODAmount
 			BigDecimal assignODAmount = schAmount.subtract(schPaidAmount);
 			assignODAmount = assignODAmount.multiply(sharePercent).divide(new BigDecimal(100), 9,
 					RoundingMode.HALF_DOWN);
-			assignODAmount = CalculationUtil.roundAmount(assignODAmount, RoundingMode.HALF_DOWN.name(), 0); //if rounding required 
+			assignODAmount = CalculationUtil.roundAmount(assignODAmount, RoundingMode.HALF_DOWN.name(), 0); // if
+																											// rounding
+																											// required
 
-			//if customer paid any Part Payment amount between the assignment date and effective date
+			// if customer paid any Part Payment amount between the assignment date and effective date
 			BigDecimal assignPartPayment = BigDecimal.ZERO;
 			for (FinanceScheduleDetail schedule : finScheduleDetails) {
 				if (schedule.getPartialPaidAmt().compareTo(BigDecimal.ZERO) > 0
@@ -714,22 +722,28 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			if (assignPartPayment.compareTo(BigDecimal.ZERO) > 0) {
 				assignPartPayment = assignPartPayment.multiply(sharePercent).divide(new BigDecimal(100), 9,
 						RoundingMode.HALF_DOWN);
-				assignPartPayment = CalculationUtil.roundAmount(assignPartPayment, RoundingMode.HALF_DOWN.name(), 0); //if rounding required 
+				assignPartPayment = CalculationUtil.roundAmount(assignPartPayment, RoundingMode.HALF_DOWN.name(), 0); // if
+																														// rounding
+																														// required
 			}
 
-			//Amount codes mapping
+			// Amount codes mapping
 			AEAmountCodes amountCodes = new AEAmountCodes();
-			amountCodes.setAssignPriAmount(assignAmount); //Assignment Principal Amount
-			amountCodes.setAssignPftAmount(assignPftAmount); //Assignment Profit Amount
+			amountCodes.setAssignPriAmount(assignAmount); // Assignment Principal Amount
+			amountCodes.setAssignPftAmount(assignPftAmount); // Assignment Profit Amount
 			amountCodes.setAssignODAmount(assignODAmount); // Assignment OD Amount
-			amountCodes.setAssignPaidPriAmt(effectivePaidPriAmt); // Assignment Principal paid amount (if any schedule happens between Effective date and Assignment Dates)
-			amountCodes.setAssignExcessAmt(assginExcessAmt); //Assignment Excess Amount
-			amountCodes.setAssignEMIAdvAmt(assignEMIAdvAmt); //Assignment EMI in Advance Amount
-			amountCodes.setAssignPartPayment(assignPartPayment); //Assignment Part Payment amount (if any part payments happens between Effective date and Assignment Date)
+			amountCodes.setAssignPaidPriAmt(effectivePaidPriAmt); // Assignment Principal paid amount (if any schedule
+																	// happens between Effective date and Assignment
+																	// Dates)
+			amountCodes.setAssignExcessAmt(assginExcessAmt); // Assignment Excess Amount
+			amountCodes.setAssignEMIAdvAmt(assignEMIAdvAmt); // Assignment EMI in Advance Amount
+			amountCodes.setAssignPartPayment(assignPartPayment); // Assignment Part Payment amount (if any part payments
+																	// happens between Effective date and Assignment
+																	// Date)
 			amountCodes.setAssignmentPerc(sharePercent); // Assignment Percentage
-			amountCodes.setFinType(financeMain.getFinType()); //Loan Type
+			amountCodes.setFinType(financeMain.getFinType()); // Loan Type
 
-			//Postings preparation
+			// Postings preparation
 			AEEvent aeEvent = new AEEvent();
 			aeEvent.setFinReference(finReference);
 			aeEvent.setAccountingEvent(AccountingEvent.ASSIGNMENT);
@@ -780,10 +794,10 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			dataMap.put("btloan", financeMain.getLoanCategory());
 			aeEvent.setDataMap(dataMap);
 
-			// Prepared Postings execution 
+			// Prepared Postings execution
 			getPostingsPreparationUtil().postAccounting(aeEvent);
 
-			//update BPI Amounts for Reporting purpose in Finance Profit Details
+			// update BPI Amounts for Reporting purpose in Finance Profit Details
 			FinanceProfitDetail finProfitDetails = new FinanceProfitDetail();
 			finProfitDetails.setFinReference(finReference);
 			finProfitDetails.setAssignBPI1(bpi1Amount);
@@ -795,17 +809,17 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 	private BigDecimal bpi1Calculation(List<FinanceScheduleDetail> finScheduleDetails,
 			AssignmentUpload assignmentUpload, BigDecimal sharePercent) {
 
-		//BPI calculation
+		// BPI calculation
 		FinanceScheduleDetail prvSchd = null;
 		FinanceScheduleDetail curSchd = null;
 		int prvSchdCount = -1;
 
-		//get the current schedule
+		// get the current schedule
 		for (FinanceScheduleDetail schedule : finScheduleDetails) {
 			if (DateUtility.compare(schedule.getSchDate(), assignmentUpload.getEffectiveDate()) >= 0) {
-				if (schedule.getPartialPaidAmt().compareTo(BigDecimal.ZERO) > 0) { //Partial Settlement case
+				if (schedule.getPartialPaidAmt().compareTo(BigDecimal.ZERO) > 0) { // Partial Settlement case
 					if (schedule.getProfitSchd().compareTo(schedule.getProfitCalc()) == 0) {
-						//if schedule payment and partial settlement both should be in same day
+						// if schedule payment and partial settlement both should be in same day
 						curSchd = schedule;
 						break;
 					} else {
@@ -819,22 +833,23 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			prvSchdCount++;
 		}
 
-		//get the previous schedule
+		// get the previous schedule
 		prvSchd = finScheduleDetails.get(prvSchdCount);
 
-		//get the actual difference days from Effective date and previous schedule date
+		// get the actual difference days from Effective date and previous schedule date
 		int effectiveDaysDiff = DateUtility.getDaysBetween(assignmentUpload.getEffectiveDate(), prvSchd.getSchDate());
 
 		BigDecimal bpi1Amount = BigDecimal.ZERO;
 
 		if (curSchd != null) {
 			bpi1Amount = curSchd.getProfitCalc().divide(new BigDecimal(curSchd.getNoOfDays()), 9,
-					RoundingMode.HALF_DOWN); //Gives profit for 1 day
+					RoundingMode.HALF_DOWN); // Gives profit for 1 day
 		}
 
 		bpi1Amount = bpi1Amount.multiply(new BigDecimal(effectiveDaysDiff));
-		bpi1Amount = bpi1Amount.multiply(sharePercent).divide(new BigDecimal(100), 9, RoundingMode.HALF_DOWN);//Sharing percentage
-		bpi1Amount = CalculationUtil.roundAmount(bpi1Amount, RoundingMode.HALF_DOWN.name(), 0); //if rounding required 
+		bpi1Amount = bpi1Amount.multiply(sharePercent).divide(new BigDecimal(100), 9, RoundingMode.HALF_DOWN);// Sharing
+																												// percentage
+		bpi1Amount = CalculationUtil.roundAmount(bpi1Amount, RoundingMode.HALF_DOWN.name(), 0); // if rounding required
 
 		return bpi1Amount;
 	}
@@ -852,12 +867,12 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			AssignmentUpload assignmentUpload, FinanceScheduleDetail nextSchd, BigDecimal sharePercent) {
 
 		FinanceScheduleDetail curSchd = null;
-		//get the current schedule
+		// get the current schedule
 		for (FinanceScheduleDetail schedule : finScheduleDetails) {
 			if (DateUtility.compare(schedule.getSchDate(), assignmentUpload.getEffectiveDate()) >= 0) {
-				if (schedule.getPartialPaidAmt().compareTo(BigDecimal.ZERO) > 0) { //Partial Settlement case
+				if (schedule.getPartialPaidAmt().compareTo(BigDecimal.ZERO) > 0) { // Partial Settlement case
 					if (schedule.getProfitSchd().compareTo(schedule.getProfitCalc()) == 0) {
-						//if schedule payment and partial settlement both should be in same day
+						// if schedule payment and partial settlement both should be in same day
 						curSchd = schedule;
 						break;
 					} else {
@@ -870,7 +885,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			}
 		}
 
-		//get the actual difference days from effective date and current schedule date
+		// get the actual difference days from effective date and current schedule date
 		int effectDaysDiff = 0;
 		BigDecimal intrestAmount = BigDecimal.ZERO;
 		BigDecimal intrestAmount2 = BigDecimal.ZERO;
@@ -879,9 +894,9 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 		if (curSchd != null && nextSchd != null) {
 			effectDaysDiff = DateUtility.getDaysBetween(curSchd.getSchDate(), assignmentUpload.getEffectiveDate());
 			intrestAmount = curSchd.getProfitCalc().divide(new BigDecimal(curSchd.getNoOfDays()), 9,
-					RoundingMode.HALF_DOWN);//Gives 1 day profit
+					RoundingMode.HALF_DOWN);// Gives 1 day profit
 			intrestAmount = intrestAmount.multiply(new BigDecimal(effectDaysDiff));
-			//Difference between assignment date and current schedule date
+			// Difference between assignment date and current schedule date
 			assignDiffDays = DateUtility.getDaysBetween(assignmentUpload.getAssignmentDate(), curSchd.getSchDate());
 
 			intrestAmount2 = nextSchd.getProfitCalc().divide(new BigDecimal(nextSchd.getNoOfDays()), 9,
@@ -892,7 +907,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 		BigDecimal bpi2Amount = BigDecimal.ZERO;
 		bpi2Amount = bpi2Amount.add(intrestAmount).add(intrestAmount2);
 		bpi2Amount = bpi2Amount.multiply(sharePercent).divide(new BigDecimal(100), 9, RoundingMode.HALF_DOWN);
-		bpi2Amount = CalculationUtil.roundAmount(bpi2Amount, RoundingMode.HALF_DOWN.name(), 0); //if rounding required 
+		bpi2Amount = CalculationUtil.roundAmount(bpi2Amount, RoundingMode.HALF_DOWN.name(), 0); // if rounding required
 
 		return bpi2Amount;
 	}
@@ -923,7 +938,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 		int errorCount = 0;
 		String reason = "";
 
-		//Fin Reference
+		// Fin Reference
 		if (StringUtils.isNotBlank(assignmentUpload.getFinReference())
 				&& assignmentUpload.getFinReference().length() > 20) {
 			errorCount++;
@@ -946,7 +961,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 		String reason = "";
 		FinanceMain financeMain = null;
 
-		//FinReference
+		// FinReference
 		String finReference = assignmentUpload.getFinReference();
 		if (StringUtils.isBlank(finReference)) {
 			errorCount++;
@@ -982,7 +997,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			}
 		}
 
-		//Assignment Code
+		// Assignment Code
 		Assignment assignment = this.assignmentDAO.getAssignment(assignmentUpload.getAssignmentId(), "_AView");
 		if (assignment == null) {
 			errorCount++;
@@ -1016,7 +1031,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			}
 		}
 
-		//Effective Date
+		// Effective Date
 		if (DateUtility.compare(assignmentUpload.getEffectiveDate(), DateUtility.getAppDate()) > 0) {
 			errorCount++;
 			if (StringUtils.isBlank(reason)) {
@@ -1042,7 +1057,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			}
 		}
 
-		//Assignment Date
+		// Assignment Date
 		if (DateUtility.compare(assignmentUpload.getAssignmentDate(), DateUtility.getAppDate()) > 0) {
 			errorCount++;
 			if (StringUtils.isBlank(reason)) {

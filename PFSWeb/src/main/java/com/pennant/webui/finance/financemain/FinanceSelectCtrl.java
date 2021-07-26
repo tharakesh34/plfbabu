@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceSelectCtrl.java                                               * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2011    														*
- *                                                                  						*
- * Modified Date    :  27-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceSelectCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2011 * * Modified
+ * Date : 27-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -76,7 +58,6 @@ import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
@@ -145,6 +126,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -1127,8 +1109,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		} else if (moduleDefiner.equals(FinServiceEvent.WRITEOFFPAY)) {
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
 		}
-		if (moduleDefiner.equals(FinServiceEvent.WRITEOFF)
-				|| moduleDefiner.equals(FinServiceEvent.WRITEOFFPAY)) {
+		if (moduleDefiner.equals(FinServiceEvent.WRITEOFF) || moduleDefiner.equals(FinServiceEvent.WRITEOFFPAY)) {
 			if (!this.allowPreMaturedCases.isChecked()) {
 				whereClause.append(" AND MaturityDate <= '" + appDate + "'");
 			} else {
@@ -1195,8 +1176,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// Written Off Finance Reference Details Condition
 		if (FinServiceEvent.WRITEOFFPAY.equals(moduleDefiner)) {
 			whereClause.append(" AND FinReference IN (SELECT FinReference From FinWriteoffDetail) ");
-		} else if (!(FinServiceEvent.BASICMAINTAIN.equals(moduleDefiner)
-				|| FinServiceEvent.CHGFRQ.equals(moduleDefiner)
+		} else if (!(FinServiceEvent.BASICMAINTAIN.equals(moduleDefiner) || FinServiceEvent.CHGFRQ.equals(moduleDefiner)
 				|| FinServiceEvent.RPYBASICMAINTAIN.equals(moduleDefiner))) {
 			whereClause.append(" AND FinReference NOT IN (SELECT FinReference From FinWriteoffDetail) ");
 		}
@@ -1205,8 +1185,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		whereClause.append(" ) AND ( " + getUsrFinAuthenticationQry(false));
 
 		// Along with Above events WriteOff Loans
-		if (FinServiceEvent.HOLDEMI.equals(this.moduleDefiner)
-				|| FinServiceEvent.ADDDISB.equals(this.moduleDefiner)) {
+		if (FinServiceEvent.HOLDEMI.equals(this.moduleDefiner) || FinServiceEvent.ADDDISB.equals(this.moduleDefiner)) {
 			whereClause.append(" AND ( ClosingStatus IS NULL OR ClosingStatus !='"
 					+ FinanceConstants.CLOSE_STATUS_WRITEOFF + "')");
 		}
@@ -1313,28 +1292,23 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		if (StringUtils.isNotEmpty(moduleDefiner) && !moduleDefiner.equals(FinServiceEvent.EARLYRPY)
-				&& !moduleDefiner.equals(FinServiceEvent.RECEIPT)
-				&& !moduleDefiner.equals(FinServiceEvent.SCHDRPY)
+				&& !moduleDefiner.equals(FinServiceEvent.RECEIPT) && !moduleDefiner.equals(FinServiceEvent.SCHDRPY)
 				&& !moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)
-				&& !moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)
-				&& !moduleDefiner.equals(FinServiceEvent.WRITEOFF)
+				&& !moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ) && !moduleDefiner.equals(FinServiceEvent.WRITEOFF)
 				&& !moduleDefiner.equals(FinServiceEvent.CANCELFIN)
 				&& !moduleDefiner.equals(FinServiceEvent.BASICMAINTAIN)
 				&& !moduleDefiner.equals(FinServiceEvent.RPYBASICMAINTAIN)
 				&& !moduleDefiner.equals(FinServiceEvent.CANCELRPY)
 				&& !moduleDefiner.equals(FinServiceEvent.WRITEOFFPAY)
-				&& !moduleDefiner.equals(FinServiceEvent.COVENANTS)
-				&& !moduleDefiner.equals(FinServiceEvent.FINOPTION)
-				&& !moduleDefiner.equals(FinServiceEvent.FEEWAIVERS)
-				&& !moduleDefiner.equals(FinServiceEvent.CHANGETDS)
+				&& !moduleDefiner.equals(FinServiceEvent.COVENANTS) && !moduleDefiner.equals(FinServiceEvent.FINOPTION)
+				&& !moduleDefiner.equals(FinServiceEvent.FEEWAIVERS) && !moduleDefiner.equals(FinServiceEvent.CHANGETDS)
 				&& !moduleDefiner.equals(FinServiceEvent.LOANDOWNSIZING)
 				&& !moduleDefiner.equals(FinServiceEvent.COLLATERAL)
 				&& !moduleDefiner.equals(FinServiceEvent.LINKDELINK)) {
 
 			openFinanceMainDialog(item);
 
-		} else if (moduleDefiner.equals(FinServiceEvent.EARLYRPY)
-				|| moduleDefiner.equals(FinServiceEvent.SCHDRPY)
+		} else if (moduleDefiner.equals(FinServiceEvent.EARLYRPY) || moduleDefiner.equals(FinServiceEvent.SCHDRPY)
 				|| moduleDefiner.equals(FinServiceEvent.EARLYSETTLE)
 				|| moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
 
@@ -3657,10 +3631,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		rcdTypeFilter[0] = new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL);
 		// rcdTypeFilter[1] = new Filter("RecordType", " ", Filter.OP_EQUAL);
 		rcdTypeFilter[1] = Filter.isNull("RecordType");
-		if (!moduleDefiner.equals(FinServiceEvent.COVENANTS)
-				&& !moduleDefiner.equals(FinServiceEvent.FEEWAIVERS)
-				&& !moduleDefiner.equals(FinServiceEvent.FINOPTION)
-				&& !moduleDefiner.equals(FinServiceEvent.COLLATERAL)
+		if (!moduleDefiner.equals(FinServiceEvent.COVENANTS) && !moduleDefiner.equals(FinServiceEvent.FEEWAIVERS)
+				&& !moduleDefiner.equals(FinServiceEvent.FINOPTION) && !moduleDefiner.equals(FinServiceEvent.COLLATERAL)
 				&& !moduleDefiner.equals(FinServiceEvent.LINKDELINK)) {
 			this.searchObject.addFilterOr(rcdTypeFilter);
 		}
