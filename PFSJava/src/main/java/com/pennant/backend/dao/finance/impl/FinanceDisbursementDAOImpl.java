@@ -64,7 +64,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.util.FinanceConstants;
@@ -625,7 +625,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 		source.addValue("FinEvent", Arrays.asList(
-				new String[] { AccountEventConstants.ACCEVENT_ADDDBSN, AccountEventConstants.ACCEVENT_ADDDBSP }));
+				new String[] { AccountingEvent.ADDDBSN, AccountingEvent.ADDDBSP }));
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select F.FinReference, D.DisbSeq");

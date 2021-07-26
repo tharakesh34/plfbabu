@@ -71,7 +71,7 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.CheckList;
@@ -973,7 +973,7 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 	public void onClick$btnSearchAccounting(Event event) {
 		logger.debug("Entering");
 		Filter[] filter = new Filter[1];
-		filter[0] = new Filter("EventCode", AccountEventConstants.ACCEVENT_STAGE, Filter.OP_EQUAL);
+		filter[0] = new Filter("EventCode", AccountingEvent.STAGE, Filter.OP_EQUAL);
 		Object dataObject = ExtendedSearchListBox.show(this.window_FacilityReferenceDetailDialogLink, "AccountingSet",
 				filter);
 		if (dataObject instanceof String) {

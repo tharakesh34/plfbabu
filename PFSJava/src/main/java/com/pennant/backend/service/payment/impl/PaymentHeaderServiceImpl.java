@@ -58,7 +58,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -750,7 +750,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	public void executeAccountingProcess(AEEvent aeEvent, PaymentHeader paymentHeader) {
 		logger.debug(Literal.ENTERING);
 
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_PAYMTINS);
+		aeEvent.setAccountingEvent(AccountingEvent.PAYMTINS);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 		if (amountCodes == null) {
@@ -902,7 +902,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		}
 
 		long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
-				AccountEventConstants.ACCEVENT_PAYMTINS, FinanceConstants.MODULEID_FINTYPE);
+				AccountingEvent.PAYMTINS, FinanceConstants.MODULEID_FINTYPE);
 
 		aeEvent.getAcSetIDList().add(accountsetId);
 

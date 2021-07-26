@@ -33,7 +33,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -639,7 +639,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		// Finance Accounting Details Tab
 		aFinanceDetail.setModuleDefiner(moduleDefiner);
-		aFinanceDetail.setAccountingEventCode(AccountEventConstants.ACCEVENT_SCDCHG);
+		aFinanceDetail.setAccountingEventCode(AccountingEvent.SCDCHG);
 
 		// Validations and fill the FinServiceInstruction object with the components data
 		doSetValidation();
@@ -1167,7 +1167,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		if (!onLoadProcess) {
 
-			eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
+			eventCode = AccountingEvent.SCDCHG;
 			financeDetail.setAccountingEventCode(eventCode);
 
 			long acSetID = Long.MIN_VALUE;

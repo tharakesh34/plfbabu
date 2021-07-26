@@ -99,7 +99,7 @@ import com.pennant.ChartType;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
@@ -779,11 +779,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		String purpose = getComboboxValue(receiptPurpose);
 		if (StringUtils.equals(purpose, FinServiceEvent.EARLYSETTLE)) {
-			acSetID = AccountingConfigCache.getAccountSetID(finType, AccountEventConstants.ACCEVENT_EARLYSTL, moduleID);
+			acSetID = AccountingConfigCache.getAccountSetID(finType, AccountingEvent.EARLYSTL, moduleID);
 		} else if (StringUtils.equals(purpose, FinServiceEvent.EARLYRPY)) {
-			acSetID = AccountingConfigCache.getAccountSetID(finType, AccountEventConstants.ACCEVENT_EARLYPAY, moduleID);
+			acSetID = AccountingConfigCache.getAccountSetID(finType, AccountingEvent.EARLYPAY, moduleID);
 		} else {
-			acSetID = AccountingConfigCache.getAccountSetID(finType, AccountEventConstants.ACCEVENT_REPAY, moduleID);
+			acSetID = AccountingConfigCache.getAccountSetID(finType, AccountingEvent.REPAY, moduleID);
 		}
 
 		final Map<String, Object> map = new HashMap<String, Object>();
@@ -5012,7 +5012,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					&& !StringUtils.equals(FinServiceEvent.EARLYSETTLE, repayHeader.getFinEvent())) {
 
 				// Accounting Postings Process Execution
-				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_REPAY);
+				aeEvent.setAccountingEvent(AccountingEvent.REPAY);
 				amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
 				amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
 				amountCodes.setToExcessAmt(BigDecimal.ZERO);
@@ -5026,10 +5026,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				aeEvent.getAcSetIDList().clear();
 				if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
 					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-							AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_PROMOTION));
+							AccountingEvent.REPAY, FinanceConstants.MODULEID_PROMOTION));
 				} else {
 					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(),
-							AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_FINTYPE));
+							AccountingEvent.REPAY, FinanceConstants.MODULEID_FINTYPE));
 				}
 
 				// Assignment Percentage
@@ -5345,15 +5345,15 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			// Accounting Event Code Setting
 			aeEvent.getAcSetIDList().clear();
 			if (StringUtils.equals(repayHeader.getFinEvent(), FinServiceEvent.SCHDRPY)) {
-				eventCode = AccountEventConstants.ACCEVENT_REPAY;
+				eventCode = AccountingEvent.REPAY;
 			} else if (StringUtils.equals(repayHeader.getFinEvent(), FinServiceEvent.EARLYRPY)) {
-				eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
+				eventCode = AccountingEvent.EARLYPAY;
 				if (pftChgExecuted) {
 					amountCodes.setPftChg(BigDecimal.ZERO);
 				}
 				pftChgExecuted = true;
 			} else if (StringUtils.equals(repayHeader.getFinEvent(), FinServiceEvent.EARLYSETTLE)) {
-				eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
+				eventCode = AccountingEvent.EARLYSTL;
 				if (pftChgExecuted) {
 					amountCodes.setPftChg(BigDecimal.ZERO);
 				}
@@ -5478,13 +5478,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				aeEvent.getAcSetIDList().clear();
 				if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
 					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-							AccountEventConstants.ACCEVENT_LATEPAY, FinanceConstants.MODULEID_PROMOTION));
+							AccountingEvent.LATEPAY, FinanceConstants.MODULEID_PROMOTION));
 				} else {
 					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(),
-							AccountEventConstants.ACCEVENT_LATEPAY, FinanceConstants.MODULEID_FINTYPE));
+							AccountingEvent.LATEPAY, FinanceConstants.MODULEID_FINTYPE));
 				}
 
-				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);
+				aeEvent.setAccountingEvent(AccountingEvent.LATEPAY);
 				aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 
 				// LPP GST Amount setting
@@ -5652,7 +5652,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				}
 
 				// Accounting Postings Process Execution
-				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_REPAY);
+				aeEvent.setAccountingEvent(AccountingEvent.REPAY);
 				amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
 				amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
 				amountCodes.setPaymentType(receiptDetail.getPaymentType());
@@ -5660,10 +5660,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				aeEvent.getAcSetIDList().clear();
 				if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
 					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-							AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_PROMOTION));
+							AccountingEvent.REPAY, FinanceConstants.MODULEID_PROMOTION));
 				} else {
 					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(),
-							AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_FINTYPE));
+							AccountingEvent.REPAY, FinanceConstants.MODULEID_FINTYPE));
 				}
 
 				// Paid GST Details
@@ -5733,7 +5733,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				int format = CurrencyUtil.getFormat(commitment.getCmtCcy());
 
 				if (commitment != null && commitment.isRevolving()) {
-					aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_CMTRPY);
+					aeEvent.setAccountingEvent(AccountingEvent.CMTRPY);
 					amountCodes.setCmtAmt(BigDecimal.ZERO);
 					amountCodes.setChgAmt(BigDecimal.ZERO);
 					amountCodes.setDisburse(BigDecimal.ZERO);
@@ -5843,13 +5843,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		if (receiptPurposeCtg == 2) {
-			accountSetId = AccountingConfigCache.getAccountSetID(finType, AccountEventConstants.ACCEVENT_EARLYSTL,
+			accountSetId = AccountingConfigCache.getAccountSetID(finType, AccountingEvent.EARLYSTL,
 					moduleID);
 		} else if (receiptPurposeCtg == 1) {
-			accountSetId = AccountingConfigCache.getAccountSetID(finType, AccountEventConstants.ACCEVENT_EARLYPAY,
+			accountSetId = AccountingConfigCache.getAccountSetID(finType, AccountingEvent.EARLYPAY,
 					moduleID);
 		} else {
-			accountSetId = AccountingConfigCache.getAccountSetID(finType, AccountEventConstants.ACCEVENT_REPAY,
+			accountSetId = AccountingConfigCache.getAccountSetID(finType, AccountingEvent.REPAY,
 					moduleID);
 		}
 
@@ -7179,9 +7179,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	public void getFinFeeTypeList(String eventCode) {
 		// FIXME: OV. should be removed. already part of receipt calculator
 		if (receiptPurposeCtg == 1) {
-			eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
+			eventCode = AccountingEvent.EARLYPAY;
 		} else if (receiptPurposeCtg == 2) {
-			eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
+			eventCode = AccountingEvent.EARLYSTL;
 		}
 
 		FinanceMain financeMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();

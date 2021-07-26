@@ -36,7 +36,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
@@ -1512,7 +1512,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			List<ReturnDataSet> accountingSetEntries = postingsPreparationUtil
 					.getReveralsByFinreference(finMain.getFinReference());
 			for (ReturnDataSet returnDataSet : accountingSetEntries) {
-				if (!AccountEventConstants.ACCEVENT_FEEPAY.equalsIgnoreCase(returnDataSet.getFinEvent())) {
+				if (!AccountingEvent.FEEPAY.equalsIgnoreCase(returnDataSet.getFinEvent())) {
 					returnDataSets.add(returnDataSet);
 				}
 			}

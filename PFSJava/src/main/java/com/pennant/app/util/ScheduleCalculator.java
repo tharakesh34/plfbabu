@@ -54,7 +54,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.HolidayHandlerTypes;
@@ -2470,13 +2470,13 @@ public class ScheduleCalculator {
 					}
 				}
 
-				if (StringUtils.equals(finFeeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_ADDDBSP)
+				if (StringUtils.equals(finFeeDetail.getFinEvent(), AccountingEvent.ADDDBSP)
 						&& StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
 								CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
 					deductDisbFee = deductDisbFee.add(finFeeDetail.getRemainingFee());
 				}
 
-				if (StringUtils.equals(finFeeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_ADDDBSP)
+				if (StringUtils.equals(finFeeDetail.getFinEvent(), AccountingEvent.ADDDBSP)
 						&& StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
 								CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
 					newFeeAmt = newFeeAmt.add(finFeeDetail.getRemainingFee());

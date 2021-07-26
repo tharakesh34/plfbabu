@@ -59,7 +59,7 @@ import org.jaxen.JaxenException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CalculationUtil;
@@ -206,7 +206,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 				.setAdvancePaymentsList(finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(finReference, "_View"));
 
 		financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(finType,
-				AccountEventConstants.ACCEVENT_CANCELFIN, "_AView", false, FinanceConstants.MODULEID_FINTYPE));
+				AccountingEvent.CANCELFIN, "_AView", false, FinanceConstants.MODULEID_FINTYPE));
 
 		// Finance Fee Details
 		scheduleData.setFinFeeDetailList(getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView"));

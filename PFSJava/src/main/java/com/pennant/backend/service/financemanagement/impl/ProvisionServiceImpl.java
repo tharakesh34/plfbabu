@@ -55,7 +55,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ProvisionCalculationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -575,9 +575,9 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		FinanceMain financeMain = provision.getFinanceDetail().getFinScheduleData().getFinanceMain();
 
 		AEEvent aeEvent = new AEEvent();
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_PROVSN);
+		aeEvent.setAccountingEvent(AccountingEvent.PROVSN);
 		Long accountingID = AccountingConfigCache.getCacheAccountSetID(financeMain.getFinType(),
-				AccountEventConstants.ACCEVENT_PROVSN, FinanceConstants.MODULEID_FINTYPE);
+				AccountingEvent.PROVSN, FinanceConstants.MODULEID_FINTYPE);
 
 		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
 		aeEvent.setFinReference(provision.getFinReference());

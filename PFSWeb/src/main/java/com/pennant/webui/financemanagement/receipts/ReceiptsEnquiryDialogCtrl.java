@@ -102,7 +102,7 @@ import com.pennant.AccountSelectionBox;
 import com.pennant.ChartType;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.AccountEngineExecution;
@@ -2263,9 +2263,9 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	public void getFinFeeTypeList(String eventCode) {
 		// FIXME: OV. should be removed. already part of receipt calculator
 		if (receiptPurposeCtg == 1) {
-			eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
+			eventCode = AccountingEvent.EARLYPAY;
 		} else if (receiptPurposeCtg == 2) {
-			eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
+			eventCode = AccountingEvent.EARLYSTL;
 		}
 
 		FinanceMain financeMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();

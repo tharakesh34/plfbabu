@@ -76,7 +76,7 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
@@ -1141,7 +1141,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				List<FinFeeDetail> ffdl = finScheduleData.getFinFeeDetailList();
 				for (FinFeeDetail finFeeDetail : ffdl) {
-					if (finFeeDetail.getFinEvent().equals(AccountEventConstants.ACCEVENT_VAS_FEE)) {
+					if (finFeeDetail.getFinEvent().equals(AccountingEvent.VAS_FEE)) {
 						String productCode = vASRecordingDAO.getProductCodeByReference(finFeeDetail.getFinReference(),
 								finFeeDetail.getVasReference());
 						finFeeDetail.setFeeTypeDesc(productCode);

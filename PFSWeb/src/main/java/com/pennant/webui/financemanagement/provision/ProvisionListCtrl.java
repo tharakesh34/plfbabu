@@ -68,7 +68,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -418,7 +418,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 				financeDetail.setDocumentDetailsList(getFinanceDetailService()
 						.getFinDocByFinRef(provision.getFinReference(), moduleDefiner, "_View"));
 				financeDetail = getFinanceDetailService().getFinanceReferenceDetails(financeDetail, userRole, "DDE",
-						AccountEventConstants.ACCEVENT_PROVSN, moduleDefiner, false);
+						AccountingEvent.PROVSN, moduleDefiner, false);
 				if (financeDetail != null) {
 					provision.setFinanceDetail(financeDetail);
 				}
@@ -488,7 +488,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 		map.put("provisionListCtrl", this);
 		map.put("menuItemRightName", menuItemRightName);
 		map.put("moduleDefiner", moduleDefiner);
-		map.put("eventCode", AccountEventConstants.ACCEVENT_PROVSN);
+		map.put("eventCode", AccountingEvent.PROVSN);
 
 		// call the zul-file with the parameters packed in a map
 		try {

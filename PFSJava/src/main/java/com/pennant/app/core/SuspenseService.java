@@ -50,7 +50,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -141,7 +141,7 @@ public class SuspenseService extends ServiceHelper {
 		AEEvent aeEvent = new AEEvent();
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		amountCodes.setSuspNow(suspAmount);
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_NORM_PIS);
+		aeEvent.setAccountingEvent(AccountingEvent.NORM_PIS);
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setSchdDate(valueDate);
 
@@ -234,7 +234,7 @@ public class SuspenseService extends ServiceHelper {
 		}
 
 		amountCodes.setSuspRls(suspAmtToMove);
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_PIS_NORM);
+		aeEvent.setAccountingEvent(AccountingEvent.PIS_NORM);
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setSchdDate(suspFromDate);
 

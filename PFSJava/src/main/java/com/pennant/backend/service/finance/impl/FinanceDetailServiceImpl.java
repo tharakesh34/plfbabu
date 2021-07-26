@@ -55,7 +55,7 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.finance.limits.LimitCheckDetails;
@@ -1567,7 +1567,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		List<Rule> feeChargeList = new ArrayList<Rule>();
 		if (!accSetIdList.isEmpty()) {
 			feeChargeList = getTransactionEntryDAO().getListFeeChargeRules(accSetIdList,
-					eventCode.startsWith(AccountEventConstants.ACCEVENT_ADDDBS) ? AccountEventConstants.ACCEVENT_ADDDBS
+					eventCode.startsWith(AccountingEvent.ADDDBS) ? AccountingEvent.ADDDBS
 							: eventCode,
 					"", 0);
 		}
@@ -1976,7 +1976,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (StringUtils.isBlank(eventCode)) {
 
 			if (StringUtils.equalsIgnoreCase(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
-				eventCode = AccountEventConstants.ACCEVENT_CMTDISB;
+				eventCode = AccountingEvent.CMTDISB;
 			} else {
 				eventCode = PennantApplicationUtil.getEventCode(financeMain.getFinStartDate());
 			}
@@ -1987,8 +1987,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())) {
 			if (financeType.isFinCommitmentReq() && StringUtils.isNotBlank(financeMain.getFinCommitmentRef())) {
 
-				long accountingSetId = accountingSetDAO.getAccountingSetId(AccountEventConstants.ACCEVENT_CMTDISB,
-						AccountEventConstants.ACCEVENT_CMTDISB);// TODO :
+				long accountingSetId = accountingSetDAO.getAccountingSetId(AccountingEvent.CMTDISB,
+						AccountingEvent.CMTDISB);// TODO :
 
 				if (accountingSetId != 0) {
 					financeDetail.setCmtFinanceEntries(AccountingConfigCache.getTransactionEntry(accountingSetId));
@@ -4278,7 +4278,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					FinLogEntryDetail entryDetail = new FinLogEntryDetail();
 					entryDetail.setFinReference(finScheduleData.getFinReference());
 					entryDetail.setEventAction(
-							StringUtils.isBlank(fd.getAccountingEventCode()) ? AccountEventConstants.ACCEVENT_ADDDBSN
+							StringUtils.isBlank(fd.getAccountingEventCode()) ? AccountingEvent.ADDDBSN
 									: fd.getAccountingEventCode());
 					entryDetail.setSchdlRecal(finScheduleData.getFinanceMain().isScheduleRegenerated());
 					entryDetail.setPostDate(curBDay);
@@ -8752,8 +8752,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeDetail.getFinScheduleData().getFinanceType().isFinCommitmentReq() && StringUtils
 					.isNotBlank(financeDetail.getFinScheduleData().getFinanceMain().getFinCommitmentRef())) {
 
-				long accountingSetId = accountingSetDAO.getAccountingSetId(AccountEventConstants.ACCEVENT_CMTDISB,
-						AccountEventConstants.ACCEVENT_CMTDISB);
+				long accountingSetId = accountingSetDAO.getAccountingSetId(AccountingEvent.CMTDISB,
+						AccountingEvent.CMTDISB);
 				if (accountingSetId != 0) {
 					financeDetail.setCmtFinanceEntries(
 							getTransactionEntryDAO().getListTransactionEntryById(accountingSetId, "_AEView", true));

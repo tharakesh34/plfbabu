@@ -99,7 +99,7 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
 import com.pennant.RateBox;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
@@ -5562,75 +5562,75 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (getFinTypeAccountingListCtrl() != null) {
 			getFinTypeAccountingListCtrl().setAllowRIAInvestment(allowRIAInvestmentFlag);
 
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_ADDDBSP,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.ADDDBSP,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_ADDDBSF,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.ADDDBSF,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_ADDDBSN,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.ADDDBSN,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_CMTDISB,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.CMTDISB,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_AMZPD,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMZPD,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_AMZ_MON,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMZ_MON,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_AMZ,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMZ,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_AMZSUSP,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMZSUSP,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_AMZSUSP,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMZSUSP,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_NORM_PD,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.NORM_PD,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_NORM_PIS,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.NORM_PIS,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_PD_NORM,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.PD_NORM,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_PD_PIS,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.ACCEVENT_PD_PIS,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_PIS_PD,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.PIS_PD,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_PIS_NORM,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.PIS_NORM,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_RATCHG,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.RATCHG,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_REPAY,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.REPAY,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_LATEPAY,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.LATEPAY,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_INSTDATE,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.INSTDATE,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_GRACEEND,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.GRACEEND,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_PROVSN,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.PROVSN,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_SCDCHG,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.SCDCHG,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_DEFFRQ,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.DEFFRQ,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_DEFRPY,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.DEFRPY,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_COMPOUND,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.COMPOUND,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_WRITEOFF,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.WRITEOFF,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_WRITEBK,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.WRITEBK,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_MATURITY,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.MATURITY,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_EARLYSTL,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.EARLYSTL,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_EARLYPAY,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.EARLYPAY,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_AMENDMENT,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMENDMENT,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_SEGMENT,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.SEGMENT,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_CANCELFIN,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.CANCELFIN,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_EMIHOLIDAY,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.EMIHOLIDAY,
 					allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountEventConstants.ACCEVENT_REAGING,
+			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.REAGING,
 					allowRIAInvestmentFlag);
 		}
 
@@ -5972,13 +5972,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (this.finIsIntCpz.isChecked() || finGrcIsIntCpz.isChecked()) {
 			if (!isCompReadonly) {
 				if (getFinTypeAccountingListCtrl() != null) {
-					getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountEventConstants.ACCEVENT_COMPOUND,
+					getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountingEvent.COMPOUND,
 							true);
 				}
 			}
 		} else {
 			if (getFinTypeAccountingListCtrl() != null) {
-				getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountEventConstants.ACCEVENT_COMPOUND, false);
+				getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountingEvent.COMPOUND, false);
 			}
 		}
 
@@ -6035,13 +6035,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (this.finIsIntCpz.isChecked() || finGrcIsIntCpz.isChecked()) {
 			if (!isCompReadonly) {
 				if (getFinTypeAccountingListCtrl() != null) {
-					getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountEventConstants.ACCEVENT_COMPOUND,
+					getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountingEvent.COMPOUND,
 							true);
 				}
 			}
 		} else {
 			if (getFinTypeAccountingListCtrl() != null) {
-				getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountEventConstants.ACCEVENT_COMPOUND, false);
+				getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountingEvent.COMPOUND, false);
 			}
 		}
 
@@ -6774,7 +6774,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				space_finMaxDifferment);
 
 		if (getFinTypeAccountingListCtrl() != null) {
-			getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountEventConstants.ACCEVENT_DEFRPY,
+			getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountingEvent.DEFRPY,
 					finIsAlwDiffermentFlag);
 		}
 
@@ -6790,7 +6790,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		doDisableOrEnableDifferments(alwPlanDefermentFlag, this.planDeferCount, isCompReadonly, space_planDeferCount);
 
 		if (getFinTypeAccountingListCtrl() != null) {
-			getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountEventConstants.ACCEVENT_DEFFRQ,
+			getFinTypeAccountingListCtrl().setAccountingMandStyle(AccountingEvent.DEFFRQ,
 					alwPlanDefermentFlag);
 		}
 
@@ -7622,8 +7622,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			if (StringUtils.isNotBlank(this.alwdVasProduct.getValue())) {
 				vasFlag = true;
 			}
-			this.finTypeAccountingListCtrl.setAccountingMandStyle(AccountEventConstants.ACCEVENT_VAS_ACCRUAL, vasFlag);
-			this.finTypeAccountingListCtrl.setAccountingMandStyle(AccountEventConstants.ACCEVENT_VAS_FEE, vasFlag);
+			this.finTypeAccountingListCtrl.setAccountingMandStyle(AccountingEvent.VAS_ACCRUAL, vasFlag);
+			this.finTypeAccountingListCtrl.setAccountingMandStyle(AccountingEvent.VAS_FEE, vasFlag);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -8033,11 +8033,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	private List<AccountEngineEvent> getAccountingEvents() {
-		String categoryCode = AccountEventConstants.EVENTCTG_FINANCE;
+		String categoryCode = AccountingEvent.EVENTCTG_FINANCE;
 		if (this.isOverdraft) {
-			categoryCode = AccountEventConstants.EVENTCTG_OVERDRAFT;
+			categoryCode = AccountingEvent.EVENTCTG_OVERDRAFT;
 		} else if (this.consumerDurable) {
-			categoryCode = AccountEventConstants.EVENTCTG_CD;
+			categoryCode = AccountingEvent.EVENTCTG_CD;
 		}
 
 		return PennantAppUtil.getCategoryWiseEvents(categoryCode);

@@ -56,7 +56,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
@@ -737,12 +737,12 @@ public class AccrualService extends ServiceHelper {
 	 * @throws Exception
 	 */
 	public void postAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
-		String eventCode = AccountEventConstants.ACCEVENT_AMZ;
+		String eventCode = AccountingEvent.AMZ;
 		FinanceProfitDetail pfd = finEODEvent.getFinProfitDetail();
 		FinanceMain fm = finEODEvent.getFinanceMain();
 
 		if (pfd.isPftInSusp()) {
-			eventCode = AccountEventConstants.ACCEVENT_AMZSUSP;
+			eventCode = AccountingEvent.AMZSUSP;
 		}
 
 		Long accountingID = getAccountingID(fm, eventCode);

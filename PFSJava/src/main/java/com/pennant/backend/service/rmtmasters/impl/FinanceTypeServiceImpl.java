@@ -56,7 +56,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -584,8 +584,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		}
 
 		FinTypeFees finTypeFee = null;
-		String orgFinEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-		String serFinEvent = AccountEventConstants.ACCEVENT_ADDDBSN;
+		String orgFinEvent = AccountingEvent.ADDDBSP;
+		String serFinEvent = AccountingEvent.ADDDBSN;
 		boolean exist = false;
 		int orgFeeOrder = 0;
 		int servFeeOrder = 0;

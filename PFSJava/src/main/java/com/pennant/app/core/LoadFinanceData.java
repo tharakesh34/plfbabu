@@ -12,7 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.amortization.ProjectedAmortization;
@@ -607,7 +607,7 @@ public class LoadFinanceData extends ServiceHelper {
 		entryDetail.setPostDate(fm.getEventProperties().getAppDate());
 		entryDetail.setFinReference(fm.getFinReference());
 		entryDetail.setSchdlRecal(fm.isScheduleChange());
-		entryDetail.setEventAction(AccountEventConstants.ACCEVENT_GRACEEND);
+		entryDetail.setEventAction(AccountingEvent.GRACEEND);
 
 		return finLogEntryDetailDAO.save(entryDetail);
 	}

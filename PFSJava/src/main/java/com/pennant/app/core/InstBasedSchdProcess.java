@@ -12,7 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
@@ -69,7 +69,7 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 			fd = financeDetailService.getOriginationFinance(finReference, nxtRoleCd, FinServiceEvent.ORG, "");
 			fd.setModuleDefiner(FinServiceEvent.ORG);
 		} else if (StringUtils.isNotBlank(nxtRoleCd)) {
-			fd = financeDetailService.getServicingFinanceForQDP(finReference, AccountEventConstants.ACCEVENT_ADDDBSN,
+			fd = financeDetailService.getServicingFinanceForQDP(finReference, AccountingEvent.ADDDBSN,
 					FinServiceEvent.ADDDISB, nxtRoleCd);
 		} else {
 			fd = financeDetailService.getFinSchdDetailByRef(finReference, "", false);

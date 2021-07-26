@@ -65,7 +65,7 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
@@ -204,11 +204,11 @@ public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
 			throws IllegalAccessException, IllegalArgumentException, NoSuchMethodException, SecurityException {
 		logger.debug("Entering");
 
-		String categoryCode = AccountEventConstants.EVENTCTG_FINANCE;
+		String categoryCode = AccountingEvent.EVENTCTG_FINANCE;
 		if (this.isOverdraft) {
-			categoryCode = AccountEventConstants.EVENTCTG_OVERDRAFT;
+			categoryCode = AccountingEvent.EVENTCTG_OVERDRAFT;
 		} else if (consumerDurable) {
-			categoryCode = AccountEventConstants.EVENTCTG_CD;
+			categoryCode = AccountingEvent.EVENTCTG_CD;
 		}
 
 		accEventStaticList = PennantAppUtil.getCategoryWiseEvents(categoryCode);
@@ -244,64 +244,64 @@ public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
 
 		if (ImplementationConstants.ALLOW_ADDDBSF) {
 			if (isOverdraft) {
-				setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSF, false);
+				setAccountingMandStyle(AccountingEvent.ADDDBSF, false);
 			} else {
-				setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSF, true);
+				setAccountingMandStyle(AccountingEvent.ADDDBSF, true);
 			}
 		}
-		setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSN, true);
+		setAccountingMandStyle(AccountingEvent.ADDDBSN, true);
 		if (isOverdraft) {
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSP, false);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_INSTDATE, false);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_AMZ, false);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_PROVSN, false);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_WRITEOFF, false);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_AMZPD, true);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_CMTDISB, true);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_RATCHG, false);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_SCDCHG, false);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_EMIHOLIDAY, false);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_REAGING, false);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_EARLYPAY, true);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_REPAY, true);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_EARLYSTL, false);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_AMENDMENT, false);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_SEGMENT, false);
+			setAccountingMandStyle(AccountingEvent.ADDDBSP, false);
+			setAccountingMandStyle(AccountingEvent.INSTDATE, false);
+			setAccountingMandStyle(AccountingEvent.AMZ, false);
+			setAccountingMandStyle(AccountingEvent.PROVSN, false);
+			setAccountingMandStyle(AccountingEvent.WRITEOFF, false);
+			setAccountingMandStyle(AccountingEvent.AMZPD, true);
+			setAccountingMandStyle(AccountingEvent.CMTDISB, true);
+			setAccountingMandStyle(AccountingEvent.RATCHG, false);
+			setAccountingMandStyle(AccountingEvent.SCDCHG, false);
+			setAccountingMandStyle(AccountingEvent.EMIHOLIDAY, false);
+			setAccountingMandStyle(AccountingEvent.REAGING, false);
+			setAccountingMandStyle(AccountingEvent.EARLYPAY, true);
+			setAccountingMandStyle(AccountingEvent.REPAY, true);
+			setAccountingMandStyle(AccountingEvent.EARLYSTL, false);
+			setAccountingMandStyle(AccountingEvent.AMENDMENT, false);
+			setAccountingMandStyle(AccountingEvent.SEGMENT, false);
 		} else {
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_RATCHG, true);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_SCDCHG, true);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_EMIHOLIDAY, true);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_REAGING, true);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_EARLYPAY, true);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_EARLYSTL, true);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_AMENDMENT, true);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_SEGMENT, true);
+			setAccountingMandStyle(AccountingEvent.RATCHG, true);
+			setAccountingMandStyle(AccountingEvent.SCDCHG, true);
+			setAccountingMandStyle(AccountingEvent.EMIHOLIDAY, true);
+			setAccountingMandStyle(AccountingEvent.REAGING, true);
+			setAccountingMandStyle(AccountingEvent.EARLYPAY, true);
+			setAccountingMandStyle(AccountingEvent.EARLYSTL, true);
+			setAccountingMandStyle(AccountingEvent.AMENDMENT, true);
+			setAccountingMandStyle(AccountingEvent.SEGMENT, true);
 		}
 
-		setAccountingMandStyle(AccountEventConstants.ACCEVENT_CANCELFIN, true);
-		setAccountingMandStyle(AccountEventConstants.ACCEVENT_DISBINS, true);
+		setAccountingMandStyle(AccountingEvent.CANCELFIN, true);
+		setAccountingMandStyle(AccountingEvent.DISBINS, true);
 
 		boolean vasFlag = false;
 		if (StringUtils.isNotBlank(financeTypeDialogCtrl.alwdVasProduct.getValue())) {
 			vasFlag = true;
 		}
-		setAccountingMandStyle(AccountEventConstants.ACCEVENT_VAS_ACCRUAL, vasFlag);
-		setAccountingMandStyle(AccountEventConstants.ACCEVENT_VAS_FEE, vasFlag);
+		setAccountingMandStyle(AccountingEvent.VAS_ACCRUAL, vasFlag);
+		setAccountingMandStyle(AccountingEvent.VAS_FEE, vasFlag);
 
 		if (financeTypeDialogCtrl.alwPlanDeferment.isChecked()) {
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_DEFFRQ, true);
+			setAccountingMandStyle(AccountingEvent.DEFFRQ, true);
 		}
 
 		if (financeTypeDialogCtrl.finIsAlwDifferment.isChecked()) {
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_DEFRPY, true);
+			setAccountingMandStyle(AccountingEvent.DEFRPY, true);
 		}
 
 		if (financeTypeDialogCtrl.finIsIntCpz.isChecked() || financeTypeDialogCtrl.finGrcIsIntCpz.isChecked()) {
 			if (!isCompReadonly) {
-				setAccountingMandStyle(AccountEventConstants.ACCEVENT_COMPOUND, true);
+				setAccountingMandStyle(AccountingEvent.COMPOUND, true);
 			}
 		} else {
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_COMPOUND, false);
+			setAccountingMandStyle(AccountingEvent.COMPOUND, false);
 		}
 
 		logger.debug("leaving");

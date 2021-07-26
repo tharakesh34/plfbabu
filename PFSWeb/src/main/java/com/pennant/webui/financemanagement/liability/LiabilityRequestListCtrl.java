@@ -63,7 +63,7 @@ import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -594,15 +594,15 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 			if (tab != null) {
 				if ("tab_LiabilityRequest".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.LIABILITYREQ;
-					eventCodeRef = AccountEventConstants.ACCEVENT_LIABILITY;
+					eventCodeRef = AccountingEvent.LIABILITY;
 					workflowCode = FinServiceEvent.LIABILITYREQ;
 				} else if ("tab_NOCIssuance".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.NOCISSUANCE;
-					eventCodeRef = AccountEventConstants.ACCEVENT_NOCISSUANCE;
+					eventCodeRef = AccountingEvent.NOCISSUANCE;
 					workflowCode = FinServiceEvent.NOCISSUANCE;
 				} else if ("tab_TimelyClosure".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.TIMELYCLOSURE;
-					eventCodeRef = AccountEventConstants.ACCEVENT_TIMELYCLOSURE;
+					eventCodeRef = AccountingEvent.TIMELYCLOSURE;
 					workflowCode = FinServiceEvent.TIMELYCLOSURE;
 				}
 				return;

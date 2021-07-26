@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.backend.dao.reports.ReschedulReportGenerationDAO;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -38,7 +38,7 @@ public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> i
 			ps.setString(index++, finReference);
 			ps.setDate(index++, fromDate);
 			ps.setDate(index++, toDate);
-			ps.setString(index, AccountEventConstants.ACCEVENT_SCDCHG);
+			ps.setString(index, AccountingEvent.SCDCHG);
 		}, rowMapper);
 	}
 

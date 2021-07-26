@@ -72,7 +72,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
@@ -1101,7 +1101,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
 					financeDetail.getFinScheduleData().getFinanceType().getProductCategory())) {
-				finEvent = AccountEventConstants.ACCEVENT_CMTDISB;
+				finEvent = AccountingEvent.CMTDISB;
 			}
 
 			financeDetail.getFinScheduleData().setFeeEvent(finEvent);

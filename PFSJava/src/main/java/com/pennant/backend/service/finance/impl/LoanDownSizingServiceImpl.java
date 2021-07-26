@@ -53,7 +53,7 @@ import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.core.ChangeGraceEndService;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -341,7 +341,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		entryDetail.setFinReference(finReference);
 		entryDetail.setPostDate(SysParamUtil.getAppDate());
 		entryDetail.setSchdlRecal(financeMain.isScheduleRegenerated());
-		entryDetail.setEventAction(AccountEventConstants.ACCEVENT_GRACEEND);
+		entryDetail.setEventAction(AccountingEvent.GRACEEND);
 
 		long logKey = finLogEntryDetailDAO.save(entryDetail);
 		// END

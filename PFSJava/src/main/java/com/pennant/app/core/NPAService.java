@@ -49,7 +49,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.RuleExecutionUtil;
@@ -625,7 +625,7 @@ public class NPAService extends ServiceHelper {
 	private FinEODEvent processProvAccounting(FinEODEvent finEODEvent, CustEODEvent custEODEvent, Provision provision)
 			throws Exception {
 
-		String eventCode = AccountEventConstants.ACCEVENT_PROVSN;
+		String eventCode = AccountingEvent.PROVSN;
 		FinanceProfitDetail finPftDetail = finEODEvent.getFinProfitDetail();
 		FinanceMain main = finEODEvent.getFinanceMain();
 
@@ -662,7 +662,7 @@ public class NPAService extends ServiceHelper {
 	private FinEODEvent processProvAccountingReversal(FinEODEvent finEODEvent, CustEODEvent custEODEvent,
 			Provision provision) throws Exception {
 
-		String eventCode = AccountEventConstants.ACCEVENT_PRVSN_MN;
+		String eventCode = AccountingEvent.PRVSN_MN;
 		FinanceProfitDetail finPftDetail = finEODEvent.getFinProfitDetail();
 		FinanceMain main = finEODEvent.getFinanceMain();
 
@@ -717,7 +717,7 @@ public class NPAService extends ServiceHelper {
 	private AEEvent executeNPAAccounting(FinEODEvent finEODEvent, CustEODEvent custEODEvent, Provision provision)
 			throws Exception {
 
-		String eventCode = AccountEventConstants.ACCEVENT_PROVCHG;
+		String eventCode = AccountingEvent.PROVCHG;
 		FinanceProfitDetail finPftDetail = finEODEvent.getFinProfitDetail();
 		FinanceMain main = finEODEvent.getFinanceMain();
 

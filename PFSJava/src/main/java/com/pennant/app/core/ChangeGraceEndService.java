@@ -53,7 +53,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
@@ -393,7 +393,7 @@ public class ChangeGraceEndService extends ServiceHelper {
 		BigDecimal totalPftCpzNew = newProfitDetail.getTotalPftCpz();
 
 		// Amount Codes Details Preparation
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, pd, schedules, AccountEventConstants.ACCEVENT_SCDCHG,
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, pd, schedules, AccountingEvent.SCDCHG,
 				valueDate, valueDate);
 
 		Map<String, Object> dataMap = aeEvent.getDataMap();
@@ -420,7 +420,7 @@ public class ChangeGraceEndService extends ServiceHelper {
 		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 		aeEvent.setDataMap(dataMap);
 
-		Long accountingID = getAccountingID(fm, AccountEventConstants.ACCEVENT_SCDCHG);
+		Long accountingID = getAccountingID(fm, AccountingEvent.SCDCHG);
 		if (accountingID == null || accountingID == Long.MIN_VALUE) {
 			return null;
 		} else {

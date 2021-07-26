@@ -49,7 +49,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentProcessUtil;
 import com.pennant.backend.dao.applicationmaster.EntityDAO;
@@ -95,7 +95,7 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 		String finreference = knockOffData.getFinReference();
 		List<AutoKnockOffFeeMapping> feeMappingList = knockOffData.getFeeMappingList();
 
-		FinReceiptData receiptData = getFinReceiptDataById(finreference, AccountEventConstants.ACCEVENT_REPAY);
+		FinReceiptData receiptData = getFinReceiptDataById(finreference, AccountingEvent.REPAY);
 
 		BigDecimal receiptAmount = BigDecimal.ZERO;
 		BigDecimal availableAmount = knockOffData.getBalAmount();

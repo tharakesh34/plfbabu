@@ -91,7 +91,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CurrencyUtil;
@@ -2223,7 +2223,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
 		getVASRecording().setFee(PennantAppUtil.unFormateAmount(this.fee.getActualValue(), getCcyFormat()));
 		AEEvent aeEvent = new AEEvent();
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+		aeEvent.setAccountingEvent(AccountingEvent.VAS_FEE);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		if (amountCodes == null) {
 			amountCodes = new AEAmountCodes();

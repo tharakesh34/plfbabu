@@ -48,7 +48,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
@@ -629,7 +629,7 @@ public class LatePayMarkingService extends ServiceHelper {
 			throws Exception {
 		logger.info(Literal.ENTERING);
 
-		String eventCode = AccountEventConstants.ACCEVENT_LPPAMZ;
+		String eventCode = AccountingEvent.LPPAMZ;
 		FinanceProfitDetail pfd = finEODEvent.getFinProfitDetail();
 		FinanceMain fm = finEODEvent.getFinanceMain();
 

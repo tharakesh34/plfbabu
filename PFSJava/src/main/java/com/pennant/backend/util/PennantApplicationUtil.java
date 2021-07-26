@@ -22,7 +22,7 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import org.zkoss.zkplus.spring.SpringUtil;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
@@ -719,11 +719,11 @@ public class PennantApplicationUtil {
 	}
 
 	public static String getEventCode(Date date) {
-		String feeEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
+		String feeEvent = AccountingEvent.ADDDBSP;
 
 		if (date.after(SysParamUtil.getAppDate())) {
 			if (ImplementationConstants.ALLOW_ADDDBSF) {
-				feeEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
+				feeEvent = AccountingEvent.ADDDBSF;
 			}
 		}
 

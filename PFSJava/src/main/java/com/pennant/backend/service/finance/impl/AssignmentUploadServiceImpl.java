@@ -28,7 +28,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -732,7 +732,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			//Postings preparation
 			AEEvent aeEvent = new AEEvent();
 			aeEvent.setFinReference(finReference);
-			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_ASSIGNMENT);
+			aeEvent.setAccountingEvent(AccountingEvent.ASSIGNMENT);
 			aeEvent.setPostDate(DateUtility.getAppDate());
 			aeEvent.setValueDate(DateUtility.getDerivedAppDate());
 			aeEvent.setFinType(financeMain.getFinType());
@@ -745,10 +745,10 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			long accountSetId = 0;
 			if (StringUtils.isNotBlank(financeMain.getPromotionCode()) && financeMain.getPromotionSeqId() == 0) {
 				accountSetId = AccountingConfigCache.getAccountSetID(financeMain.getPromotionCode(),
-						AccountEventConstants.ACCEVENT_ASSIGNMENT, FinanceConstants.MODULEID_PROMOTION);
+						AccountingEvent.ASSIGNMENT, FinanceConstants.MODULEID_PROMOTION);
 			} else {
 				accountSetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
-						AccountEventConstants.ACCEVENT_ASSIGNMENT, FinanceConstants.MODULEID_FINTYPE);
+						AccountingEvent.ASSIGNMENT, FinanceConstants.MODULEID_FINTYPE);
 			}
 			aeEvent.getAcSetIDList().add(accountSetId);
 			aeEvent.setNewRecord(true);

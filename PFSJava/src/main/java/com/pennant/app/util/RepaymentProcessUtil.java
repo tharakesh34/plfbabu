@@ -20,7 +20,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
@@ -495,7 +495,7 @@ public class RepaymentProcessUtil {
 		aeEvent.setCcy(fm.getFinCcy());
 		aeEvent.setPostingUserBranch(cashierBranch);
 		aeEvent.setLinkedTranId(0);
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_REPAY);
+		aeEvent.setAccountingEvent(AccountingEvent.REPAY);
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setAppDate(eventProperties.getAppDate());
 		aeEvent.setAppValueDate(eventProperties.getAppValueDate());
@@ -517,10 +517,10 @@ public class RepaymentProcessUtil {
 		if (StringUtils.isNotBlank(fm.getPromotionCode())
 				&& (fm.getPromotionSeqId() != null && fm.getPromotionSeqId() == 0)) {
 			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getPromotionCode(),
-					AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_PROMOTION));
+					AccountingEvent.REPAY, FinanceConstants.MODULEID_PROMOTION));
 		} else {
 			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getFinType(),
-					AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_FINTYPE));
+					AccountingEvent.REPAY, FinanceConstants.MODULEID_FINTYPE));
 		}
 
 		// Assignment Percentage
@@ -1070,7 +1070,7 @@ public class RepaymentProcessUtil {
 		aeEvent.setPostingUserBranch(postBranch);
 		aeEvent.setLinkedTranId(repayHeader.getLinkedTranId());
 		aeEvent.setTransOrder(transOrder);
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_REPAY);
+		aeEvent.setAccountingEvent(AccountingEvent.REPAY);
 		aeEvent.setValueDate(dateValueDate);
 		aeEvent.setPostRefId(rcd.getReceiptID());
 		aeEvent.setPostingId(financeMain.getPostingId());
@@ -1078,10 +1078,10 @@ public class RepaymentProcessUtil {
 		aeEvent.getAcSetIDList().clear();
 		if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
 			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getPromotionCode(),
-					AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_PROMOTION));
+					AccountingEvent.REPAY, FinanceConstants.MODULEID_PROMOTION));
 		} else {
 			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
-					AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_FINTYPE));
+					AccountingEvent.REPAY, FinanceConstants.MODULEID_FINTYPE));
 		}
 
 		amountCodes.setFinType(financeMain.getFinType());
@@ -2403,14 +2403,14 @@ public class RepaymentProcessUtil {
 		case FinServiceEvent.SCHDRPY:
 			if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
 				if (RepayConstants.RECEIPTMODE_PRESENTMENT.equals(receiptMode)) {
-					return AccountEventConstants.ACCEVENT_PRSNT;
+					return AccountingEvent.PRSNT;
 				}
 			}
-			return AccountEventConstants.ACCEVENT_REPAY;
+			return AccountingEvent.REPAY;
 		case FinServiceEvent.EARLYRPY:
-			return AccountEventConstants.ACCEVENT_EARLYPAY;
+			return AccountingEvent.EARLYPAY;
 		case FinServiceEvent.EARLYSETTLE:
-			return AccountEventConstants.ACCEVENT_EARLYSTL;
+			return AccountingEvent.EARLYSTL;
 		default:
 			return "";
 		}

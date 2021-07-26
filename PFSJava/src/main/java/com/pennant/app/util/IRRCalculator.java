@@ -53,7 +53,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.dao.applicationmaster.IRRFeeTypeDAO;
 import com.pennant.backend.dao.applicationmaster.IRRFinanceTypeDAO;
@@ -369,7 +369,7 @@ public class IRRCalculator {
 		// ALL FEE RECEIPTS AND REFUNDS TOO
 		for (int iFfd = 0; iFfd < ffdList.size(); iFfd++) {
 			FinFeeDetail ffd = ffdList.get(iFfd);
-			if (!StringUtils.equals(ffd.getFinEvent(), AccountEventConstants.ACCEVENT_ADDDBSP)) {
+			if (!StringUtils.equals(ffd.getFinEvent(), AccountingEvent.ADDDBSP)) {
 				continue;
 			}
 

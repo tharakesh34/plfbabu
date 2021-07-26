@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SessionUserDetails;
@@ -119,7 +119,7 @@ public class PartCancellationServiceImpl extends GenericService<FinServiceInstru
 	public FinanceDetail doPartCancellation(FinServiceInstruction finServiceInst, FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
-		String eventCode = AccountEventConstants.PART_CANCELATION;
+		String eventCode = AccountingEvent.PART_CANCELATION;
 		String finReference = "";
 
 		if (financeDetail != null) {

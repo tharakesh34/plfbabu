@@ -62,7 +62,7 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
@@ -783,7 +783,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FeeTypeCode", feeTypeCode);
 		source.addValue("FinReference", finReference);
-		source.addValue("FinEvent", AccountEventConstants.ACCEVENT_VAS_FEE);
+		source.addValue("FinEvent", AccountingEvent.VAS_FEE);
 
 		try {
 			feeTypeId = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
@@ -952,7 +952,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReferee);
 		source.addValue("FinEvent",
-				Arrays.asList(AccountEventConstants.ACCEVENT_ADDDBSP, AccountEventConstants.ACCEVENT_ADDDBSN));
+				Arrays.asList(AccountingEvent.ADDDBSP, AccountingEvent.ADDDBSN));
 		source.addValue("FeeTypeCode", Arrays.asList(AdvanceRuleCode.ADVINT.name(), AdvanceRuleCode.ADVEMI.name()));
 
 		RowMapper<FinFeeDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeDetail.class);

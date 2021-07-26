@@ -21,7 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SessionUserDetails;
@@ -572,7 +572,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		aeEvent.setEntityCode(receiptHeader.getEntityCode());
 		aeEvent.setBranch(receiptHeader.getCashierBranch());
 		aeEvent.setPostingUserBranch(receiptHeader.getCashierBranch());
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_NLRCPT);
+		aeEvent.setAccountingEvent(AccountingEvent.NLRCPT);
 		aeEvent.setFinReference(receiptHeader.getReference());
 		aeEvent.setValueDate(SysParamUtil.getAppDate());
 		aeEvent.setPostRefId(receiptHeader.getReceiptID());
@@ -615,8 +615,8 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		aeEvent.getDataMap().put("ae_receiptSource", receiptHeader.getReceiptSource());
 		aeEvent.getDataMap().put("ae_receiptSourceAcType", receiptHeader.getReceiptSourceAcType());
 
-		long accountsetId = accountingSetDAO.getAccountingSetId(AccountEventConstants.ACCEVENT_NLRCPT,
-				AccountEventConstants.ACCEVENT_NLRCPT);
+		long accountsetId = accountingSetDAO.getAccountingSetId(AccountingEvent.NLRCPT,
+				AccountingEvent.NLRCPT);
 		aeEvent.getAcSetIDList().add(accountsetId);
 		aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 		logger.debug(Literal.LEAVING);

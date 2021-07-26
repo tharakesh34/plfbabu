@@ -89,7 +89,7 @@ import org.zkoss.zul.Window;
 import com.pennant.AccountSelectionBox;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AccountEngineExecution;
@@ -1552,7 +1552,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			// Fetch Accounting Set ID
 			AccountingSet accountingSet = accountingSetService.getAccSetSysDflByEvent(
-					AccountEventConstants.ACCEVENT_FEEPAY, AccountEventConstants.ACCEVENT_FEEPAY, "");
+					AccountingEvent.FEEPAY, AccountingEvent.FEEPAY, "");
 
 			long acSetID = 0;
 			if (accountingSet != null) {
@@ -1663,7 +1663,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
 		AEEvent aeEvent = new AEEvent();
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_FEEPAY);
+		aeEvent.setAccountingEvent(AccountingEvent.FEEPAY);
 		aeEvent.setFinReference(getReceiptHeader().getReference());
 		aeEvent.setCustCIF(getReceiptHeader().getCustCIF());
 		aeEvent.setBranch(getReceiptHeader().getPostBranch());
@@ -1679,10 +1679,10 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (this.groupbox_Finance.isVisible()) {
 			map = getFeeReceiptService().getGLSubHeadCodes(getReceiptHeader().getReference());
 			accountingSetID = AccountingConfigCache.getAccountSetID(getReceiptHeader().getFinType(),
-					AccountEventConstants.ACCEVENT_FEEPAY, FinanceConstants.MODULEID_FINTYPE);
+					AccountingEvent.FEEPAY, FinanceConstants.MODULEID_FINTYPE);
 		} else {
-			accountingSetID = getFeeReceiptService().getAccountingSetId(AccountEventConstants.ACCEVENT_FEEPAY,
-					AccountEventConstants.ACCEVENT_FEEPAY);
+			accountingSetID = getFeeReceiptService().getAccountingSetId(AccountingEvent.FEEPAY,
+					AccountingEvent.FEEPAY);
 		}
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();

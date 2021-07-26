@@ -68,7 +68,7 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.ImplementationConstants;
@@ -1807,7 +1807,7 @@ public class PennantAppUtil {
 		List<String> list = new ArrayList<String>();
 
 		if (!ImplementationConstants.ALLOW_ADDDBSF) {
-			list.add(AccountEventConstants.ACCEVENT_ADDDBSF);
+			list.add(AccountingEvent.ADDDBSF);
 		}
 
 		filters = new Filter[2];
@@ -1838,10 +1838,10 @@ public class PennantAppUtil {
 		Filter[] filters = null;
 
 		List<String> list = new ArrayList<String>();
-		list.add(AccountEventConstants.ACCEVENT_ADDDBSP);
+		list.add(AccountingEvent.ADDDBSP);
 
 		if (!ImplementationConstants.ALLOW_ADDDBSF) {
-			list.add(AccountEventConstants.ACCEVENT_ADDDBSF);
+			list.add(AccountingEvent.ADDDBSF);
 		}
 
 		filters = new Filter[2];
@@ -1864,11 +1864,11 @@ public class PennantAppUtil {
 
 		JdbcSearchObject<AccountEngineEvent> searchObject = new JdbcSearchObject<AccountEngineEvent>(
 				AccountEngineEvent.class);
-		accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSP);
+		accEngineEventsList.add(AccountingEvent.ADDDBSP);
 
 		if (ImplementationConstants.ALLOW_ADDDBSF) {
-			accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSN);
-			accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSF);
+			accEngineEventsList.add(AccountingEvent.ADDDBSN);
+			accEngineEventsList.add(AccountingEvent.ADDDBSF);
 		}
 
 		Filter[] filters = new Filter[2];
@@ -1882,7 +1882,7 @@ public class PennantAppUtil {
 
 		if (ImplementationConstants.ALLOW_ADDDBSF) {
 			for (AccountEngineEvent accountEngineEvent : accountEngineEventsList) {
-				if (StringUtils.equals(AccountEventConstants.ACCEVENT_ADDDBSF, accountEngineEvent.getId())) {
+				if (StringUtils.equals(AccountingEvent.ADDDBSF, accountEngineEvent.getId())) {
 					accountEngineEvent.setMandatory(true);
 				}
 			}
@@ -1901,7 +1901,7 @@ public class PennantAppUtil {
 
 		Filter[] filters = new Filter[2];
 		filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
-		filters[1] = new Filter("AEEventCode", AccountEventConstants.ACCEVENT_CMTDISB, Filter.OP_EQUAL);
+		filters[1] = new Filter("AEEventCode", AccountingEvent.CMTDISB, Filter.OP_EQUAL);
 
 		searchObject.addFilters(filters);
 		searchObject.addTabelName("BMTAEevents");
@@ -1949,18 +1949,18 @@ public class PennantAppUtil {
 		List<String> excludeEvents = new ArrayList<String>();
 
 		if (!ImplementationConstants.ALLOW_ADDDBSF) {
-			excludeEvents.add(AccountEventConstants.ACCEVENT_ADDDBSF);
+			excludeEvents.add(AccountingEvent.ADDDBSF);
 		}
 
 		if (!ImplementationConstants.ALLOW_IND_AS) {
-			excludeEvents.add(AccountEventConstants.ACCEVENT_EXPENSE);
-			excludeEvents.add(AccountEventConstants.ACCEVENT_INDAS);
+			excludeEvents.add(AccountingEvent.EXPENSE);
+			excludeEvents.add(AccountingEvent.INDAS);
 		}
 
 		if (!ImplementationConstants.ALLOW_NPA_PROVISION) {
-			excludeEvents.add(AccountEventConstants.ACCEVENT_PROVSN);
-			excludeEvents.add(AccountEventConstants.ACCEVENT_PRVSN_MN);
-			excludeEvents.add(AccountEventConstants.ACCEVENT_PROVCHG);
+			excludeEvents.add(AccountingEvent.PROVSN);
+			excludeEvents.add(AccountingEvent.PRVSN_MN);
+			excludeEvents.add(AccountingEvent.PROVCHG);
 		}
 
 		return excludeEvents;

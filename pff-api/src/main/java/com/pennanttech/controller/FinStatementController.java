@@ -29,7 +29,7 @@ import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.jndi.JndiObjectFactoryBean;
 
 import com.aspose.words.SaveFormat;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
@@ -226,7 +226,7 @@ public class FinStatementController extends SummaryDetailService {
 
 				if (StringUtils.equals(APIConstants.STMT_FORECLOSUREV1, serviceName)) {
 					FinReceiptData receiptData = receiptService.getFinReceiptDataById(finReference,
-							AccountEventConstants.ACCEVENT_EARLYSTL, FinServiceEvent.RECEIPT, "");
+							AccountingEvent.EARLYSTL, FinServiceEvent.RECEIPT, "");
 					getForeClosureReport(receiptData, stmtResponse);
 				}
 				// generate response info
@@ -525,11 +525,11 @@ public class FinStatementController extends SummaryDetailService {
 
 		// foreclosure fees
 		List<FinFeeDetail> foreClosureFees = new ArrayList<>();
-		finScheduleData.getFinanceMain().setFinSourceID(AccountEventConstants.ACCEVENT_EARLYSTL);
-		feeDetailService.doExecuteFeeCharges(financeDetail, AccountEventConstants.ACCEVENT_EARLYSTL, null, true);
+		finScheduleData.getFinanceMain().setFinSourceID(AccountingEvent.EARLYSTL);
+		feeDetailService.doExecuteFeeCharges(financeDetail, AccountingEvent.EARLYSTL, null, true);
 		if (finScheduleData.getFinFeeDetailList() != null) {
 			for (FinFeeDetail fee : finScheduleData.getFinFeeDetailList()) {
-				if (StringUtils.equals(fee.getFinEvent(), AccountEventConstants.ACCEVENT_EARLYSTL)) {
+				if (StringUtils.equals(fee.getFinEvent(), AccountingEvent.EARLYSTL)) {
 					totServFees = totServFees.add(fee.getActualAmount());
 					if (StringUtils.equals(fee.getFeeScheduleMethod(), PennantConstants.List_Select)) {
 						fee.setFeeScheduleMethod(null);

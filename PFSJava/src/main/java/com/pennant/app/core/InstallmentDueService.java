@@ -10,7 +10,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
@@ -49,7 +49,7 @@ public class InstallmentDueService extends ServiceHelper {
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 
-			Long accountingID = getAccountingID(finEODEvent.getFinanceMain(), AccountEventConstants.ACCEVENT_INSTDATE);
+			Long accountingID = getAccountingID(finEODEvent.getFinanceMain(), AccountingEvent.INSTDATE);
 
 			if (accountingID == null || accountingID == Long.MIN_VALUE) {
 				return;
@@ -82,7 +82,7 @@ public class InstallmentDueService extends ServiceHelper {
 
 		FinanceProfitDetail fpd = finEODEvent.getFinProfitDetail();
 		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, fpd, finEODEvent.getFinanceScheduleDetails(),
-				AccountEventConstants.ACCEVENT_INSTDATE, valueDate, schd.getSchDate());
+				AccountingEvent.INSTDATE, valueDate, schd.getSchDate());
 		aeEvent.getAcSetIDList().add(accountingID);
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -283,7 +283,7 @@ public class InstallmentDueService extends ServiceHelper {
 		 */
 
 		accountingID = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(),
-				AccountEventConstants.ACCEVENT_INSTDATE, FinanceConstants.MODULEID_FINTYPE);
+				AccountingEvent.INSTDATE, FinanceConstants.MODULEID_FINTYPE);
 
 		if (accountingID == null || accountingID == Long.MIN_VALUE) {
 			logger.debug(Literal.LEAVING);
@@ -347,7 +347,7 @@ public class InstallmentDueService extends ServiceHelper {
 				}
 			}
 
-			AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, pfd, schedules, AccountEventConstants.ACCEVENT_INSTDATE,
+			AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, pfd, schedules, AccountingEvent.INSTDATE,
 					schDate, schDate);
 			aeEvent.getAcSetIDList().add(accountingID);
 

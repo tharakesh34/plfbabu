@@ -54,7 +54,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
@@ -877,12 +877,12 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		String accEventCode = "";
 		if (StringUtils.equals(financeDetail.getModuleDefiner(), FinServiceEvent.WRITEOFFPAY)) {
-			accEventCode = AccountEventConstants.ACCEVENT_WRITEBK;
+			accEventCode = AccountingEvent.WRITEBK;
 		} else if (StringUtils.equals(financeDetail.getModuleDefiner(), FinServiceEvent.BASICMAINTAIN)) {
-			accEventCode = AccountEventConstants.ACCEVENT_AMENDMENT;
+			accEventCode = AccountingEvent.AMENDMENT;
 		} else if (StringUtils.equals(financeDetail.getModuleDefiner(),
 				FinServiceEvent.RPYBASICMAINTAIN)) {
-			accEventCode = AccountEventConstants.ACCEVENT_SEGMENT;
+			accEventCode = AccountingEvent.SEGMENT;
 		}
 
 		long linkedTranId = 0;

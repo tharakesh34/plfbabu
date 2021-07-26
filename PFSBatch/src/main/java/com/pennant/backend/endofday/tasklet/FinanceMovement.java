@@ -56,7 +56,7 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.core.ServiceHelper;
 import com.pennant.app.core.StatusMovementService;
 import com.pennant.app.util.DateUtility;
@@ -86,13 +86,13 @@ public class FinanceMovement extends ServiceHelper implements Tasklet {
 			connection = DataSourceUtils.doGetConnection(getDataSource());
 			//Normal to PD
 			statusMovementService.processMovement(context, connection, getNormalToPD(),
-					AccountEventConstants.ACCEVENT_NORM_PD, valueDate, processed);
+					AccountingEvent.NORM_PD, valueDate, processed);
 			//PD to Normal
 			statusMovementService.processMovement(context, connection, getPDToNormal(),
-					AccountEventConstants.ACCEVENT_PD_NORM, valueDate, processed);
+					AccountingEvent.PD_NORM, valueDate, processed);
 			//PD to PIS
 			statusMovementService.processMovement(context, connection, getPDToPIS(),
-					AccountEventConstants.ACCEVENT_PD_PIS, valueDate, processed);
+					AccountingEvent.ACCEVENT_PD_PIS, valueDate, processed);
 
 		} catch (Exception e) {
 			logger.error("Exception: ", e);

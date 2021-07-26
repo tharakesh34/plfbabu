@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -140,7 +140,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 		aeEvent.setDataMap(dataMap);
 		// Fetch Accounting Set ID
 		long accountingSetID = AccountingConfigCache.getAccountSetID(refundHeader.getFinType(),
-				AccountEventConstants.ACCEVENT_FEEREFUND, FinanceConstants.MODULEID_FINTYPE);
+				AccountingEvent.FEEREFUND, FinanceConstants.MODULEID_FINTYPE);
 		if (accountingSetID == 0 || accountingSetID == Long.MIN_VALUE) {
 			auditHeader.setErrorDetails(
 					ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65015", null, null)));
@@ -738,7 +738,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 	public AEEvent processAccounting(FinFeeRefundHeader feeRefundHeader) {
 		logger.debug(Literal.ENTERING);
 		AEEvent aeEvent = new AEEvent();
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_FEEREFUND);
+		aeEvent.setAccountingEvent(AccountingEvent.FEEREFUND);
 		aeEvent.setFinReference(feeRefundHeader.getFinReference());
 		aeEvent.setCustCIF(feeRefundHeader.getLovDescCustCIF());
 		aeEvent.setBranch(feeRefundHeader.getFinBranch());
@@ -774,7 +774,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 			FinFeeDetail finFeeDetail = getFeeDetailByFeeID(list, refundDetail.getFeeId());
 			PrvsFinFeeRefund prvsFinFeeRefund = getPrvsRefundsByFeeId(refundDetail.getFeeId());
 			//Incase of Vas FEE
-			if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(refundDetail.getFinEvent())) {
+			if (AccountingEvent.VAS_FEE.equals(refundDetail.getFinEvent())) {
 				BigDecimal vasPaidFee = (BigDecimal) dataMap.get("ae_refundVasFee");
 				vasPaidFee = vasPaidFee.add(refundDetail.getRefundAmtOriginal());
 				dataMap.put("ae_refundVasFee", vasPaidFee);

@@ -68,7 +68,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
@@ -953,8 +953,8 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 
 		list = this.jdbcOperations.query(sql.toString(), ps -> {
 			ps.setString(1, finReference);
-			ps.setString(2, AccountEventConstants.ACCEVENT_DISBINS);
-			ps.setString(3, AccountEventConstants.ACCEVENT_INSPAY);
+			ps.setString(2, AccountingEvent.DISBINS);
+			ps.setString(3, AccountingEvent.INSPAY);
 		}, (rs, i) -> {
 			ReturnDataSet rds = new ReturnDataSet();
 

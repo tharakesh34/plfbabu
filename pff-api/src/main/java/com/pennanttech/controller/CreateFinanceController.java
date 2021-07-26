@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.aspose.words.SaveFormat;
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.CDScheduleCalculator;
@@ -1548,7 +1548,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				feeTypeCode = extractFeeCode(feeTypeCode);
 				productCode = extractFeeCode(productCode);
 
-				if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(feeDetail.getFinEvent())
+				if (AccountingEvent.VAS_FEE.equals(feeDetail.getFinEvent())
 						&& StringUtils.equals(feeTypeCode, productCode)) {
 					feeDetail.setFeeTypeCode(vasRecording.getVasReference());
 					feeDetail.setVasReference(vasRecording.getVasReference());

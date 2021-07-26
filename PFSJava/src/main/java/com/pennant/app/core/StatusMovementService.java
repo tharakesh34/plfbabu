@@ -53,7 +53,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
@@ -79,9 +79,9 @@ public class StatusMovementService extends ServiceHelper {
 			if (connection == null) {
 				connection = DataSourceUtils.doGetConnection(getDataSource());
 			}
-			processMovement(connection, date, custId, AccountEventConstants.ACCEVENT_NORM_PD, NORM_PD);
-			processMovement(connection, date, custId, AccountEventConstants.ACCEVENT_PD_NORM, PD_NORM);
-			processMovement(connection, date, custId, AccountEventConstants.ACCEVENT_PD_PIS, PD_PIS);
+			processMovement(connection, date, custId, AccountingEvent.NORM_PD, NORM_PD);
+			processMovement(connection, date, custId, AccountingEvent.PD_NORM, PD_NORM);
+			processMovement(connection, date, custId, AccountingEvent.ACCEVENT_PD_PIS, PD_PIS);
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;

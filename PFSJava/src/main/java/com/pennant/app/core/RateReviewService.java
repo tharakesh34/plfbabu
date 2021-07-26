@@ -50,7 +50,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.ScheduleCalculator;
@@ -250,7 +250,7 @@ public class RateReviewService extends ServiceHelper {
 		FinanceProfitDetail newProfitDetail = new FinanceProfitDetail();
 		newProfitDetail = accrualService.calProfitDetails(fm, schedules, profitDetail, valueDate);
 		// Amount Codes Details Preparation
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, profitDetail, schedules, AccountEventConstants.ACCEVENT_RATCHG,
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, profitDetail, schedules, AccountingEvent.RATCHG,
 				valueDate, valueDate);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
@@ -284,7 +284,7 @@ public class RateReviewService extends ServiceHelper {
 		rateReview.setRecalToDate(fm.getRecalToDate());
 		financeRateReviewDAO.save(rateReview);
 		aeEvent.setFinType(fm.getFinType());
-		Long accountingID = getAccountingID(fm, AccountEventConstants.ACCEVENT_RATCHG);
+		Long accountingID = getAccountingID(fm, AccountingEvent.RATCHG);
 
 		if (accountingID == null || accountingID == Long.MIN_VALUE) {
 			return;

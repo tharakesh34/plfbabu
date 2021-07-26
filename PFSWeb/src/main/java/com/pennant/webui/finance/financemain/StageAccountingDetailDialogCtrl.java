@@ -70,7 +70,7 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CurrencyUtil;
@@ -372,7 +372,7 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 		}
 
 		aeEvent = AEAmounts.procAEAmounts(getFinanceMain(), getFinScheduleData().getFinanceScheduleDetails(),
-				new FinanceProfitDetail(), AccountEventConstants.ACCEVENT_STAGE, getFinanceMain().getFinStartDate(),
+				new FinanceProfitDetail(), AccountingEvent.STAGE, getFinanceMain().getFinStartDate(),
 				getFinanceMain().getFinStartDate());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 

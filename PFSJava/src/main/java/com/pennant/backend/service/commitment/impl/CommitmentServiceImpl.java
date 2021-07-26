@@ -55,7 +55,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -573,7 +573,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				tranType = PennantConstants.TRAN_ADD;
 				commitment.setRecordType("");
 
-				List<Object> returnList = processPosting(commitment, AccountEventConstants.ACCEVENT_NEWCMT);
+				List<Object> returnList = processPosting(commitment, AccountingEvent.NEWCMT);
 
 				if (returnList != null && (returnList.get(3) == null)) {
 					linkTranid = (Long) returnList.get(1);
@@ -595,7 +595,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				tranType = PennantConstants.TRAN_UPD;
 				commitment.setRecordType("");
 
-				List<Object> returnList = processPosting(commitment, AccountEventConstants.ACCEVENT_MNTCMT);
+				List<Object> returnList = processPosting(commitment, AccountingEvent.MNTCMT);
 				if (returnList != null && (returnList.get(3) == null)) {
 					linkTranid = (Long) returnList.get(1);
 				} else if (returnList != null) {
@@ -918,7 +918,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			// Preparation for Commitment Postings
 			AEEvent aeEvent = new AEEvent();
 			Date dateAppDate = SysParamUtil.getAppDate();
-			if (AccountEventConstants.ACCEVENT_MNTCMT.equals(event)) {
+			if (AccountingEvent.MNTCMT.equals(event)) {
 				Commitment prvCommitment = getCommitmentDAO().getCommitmentById(commitment.getId(), "");
 				BigDecimal diffAmount = commitment.getCmtAmount().subtract(prvCommitment.getCmtAmount());
 				Commitment tempCommitment = new Commitment();

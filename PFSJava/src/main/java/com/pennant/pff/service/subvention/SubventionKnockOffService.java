@@ -11,7 +11,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -474,7 +474,7 @@ public class SubventionKnockOffService extends BasicDao<Subvention> {
 	private AEEvent prepareAccSetData(Subvention subvention, BigDecimal amount) {
 		AEEvent aeEvent = new AEEvent();
 
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_OEMSBV);
+		aeEvent.setAccountingEvent(AccountingEvent.OEMSBV);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		if (amountCodes == null) {
 			amountCodes = new AEAmountCodes();
@@ -509,7 +509,7 @@ public class SubventionKnockOffService extends BasicDao<Subvention> {
 
 		aeEvent.setDataMap(eventMapping);
 		long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
-				AccountEventConstants.ACCEVENT_OEMSBV, FinanceConstants.MODULEID_FINTYPE);
+				AccountingEvent.OEMSBV, FinanceConstants.MODULEID_FINTYPE);
 		aeEvent.getAcSetIDList().add(accountsetId);
 
 		logger.debug(Literal.LEAVING);

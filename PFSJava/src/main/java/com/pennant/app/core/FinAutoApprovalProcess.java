@@ -15,7 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.model.RateDetail;
@@ -86,7 +86,7 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 			financeDetail.setModuleDefiner(FinServiceEvent.ORG);
 		} else {
 			financeDetail = financeDetailService.getServicingFinanceForQDP(finReference,
-					AccountEventConstants.ACCEVENT_ADDDBSN, FinServiceEvent.ADDDISB, nextRoleCode);
+					AccountingEvent.ADDDBSN, FinServiceEvent.ADDDISB, nextRoleCode);
 		}
 
 		if (financeDetail != null) {

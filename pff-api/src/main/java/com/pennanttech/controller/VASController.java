@@ -11,7 +11,7 @@ import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.ReferenceUtil;
 import com.pennant.app.util.SessionUserDetails;
@@ -314,7 +314,7 @@ public class VASController extends ExtendedTestClass {
 				FinanceMain financeMain = financeMainDAO.getFinanceMainById(vasRecording.getPrimaryLinkRef(), "_View",
 						false);
 				for (FinFeeDetail finFeeDetail : vasRecording.getFinFeeDetailsList()) {
-					finFeeDetail.setFinEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+					finFeeDetail.setFinEvent(AccountingEvent.VAS_FEE);
 					finFeeDetail.setFinReference(financeMain.getFinReference());
 					finFeeDetail.setFeeTypeCode(vasRecording.getVasReference());
 					finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);

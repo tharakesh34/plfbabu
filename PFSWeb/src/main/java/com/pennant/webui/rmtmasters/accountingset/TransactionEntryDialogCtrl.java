@@ -86,7 +86,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.ErrorUtil;
@@ -697,8 +697,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 
 		String lovDescEventCodeName2 = aTransactionEntry.getLovDescEventCodeName();
 		tab_expense.setVisible(ImplementationConstants.ALLOW_IND_AS
-				&& AccountEventConstants.ACCEVENT_EXPENSE.equals(lovDescEventCodeName2)
-				|| AccountEventConstants.ACCEVENT_INDAS.equals(lovDescEventCodeName2));
+				&& AccountingEvent.EXPENSE.equals(lovDescEventCodeName2)
+				|| AccountingEvent.INDAS.equals(lovDescEventCodeName2));
 
 		try {
 			// fill the components with the data
@@ -1551,7 +1551,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		searchObj.addFilter(new Filter("Active", 1, Filter.OP_EQUAL));
 
 		String event = this.eventCode.getValue();
-		if (ImplementationConstants.ALLOW_IND_AS && AccountEventConstants.ACCEVENT_INDAS.equals(event)) {
+		if (ImplementationConstants.ALLOW_IND_AS && AccountingEvent.INDAS.equals(event)) {
 			searchObj.addFilter(new Filter("AmortzReq", 1, Filter.OP_EQUAL));
 		}
 
@@ -1635,7 +1635,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			this.expenseCodeListbox.appendChild(group);
 			group.setOpen(false);
 
-			if (AccountEventConstants.ACCEVENT_EXPENSE.equals(this.eventCode.getValue())) {
+			if (AccountingEvent.EXPENSE.equals(this.eventCode.getValue())) {
 				String amountCode = code + "_AMZ_N";
 				item = new Listitem();
 				lc = new Listcell(amountCode);
@@ -1650,7 +1650,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 				this.expenseCodeListbox.appendChild(item);
 			}
 
-			if (AccountEventConstants.ACCEVENT_INDAS.equals(this.eventCode.getValue())) {
+			if (AccountingEvent.INDAS.equals(this.eventCode.getValue())) {
 				String amountCode = code + "_AMZ";
 				item = new Listitem();
 				lc = new Listcell(amountCode);
@@ -1752,7 +1752,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		Map<String, String> feeMap = new HashMap<>();
 
 		if (ImplementationConstants.ALLOW_IND_AS
-				&& AccountEventConstants.ACCEVENT_INDAS.equals(this.eventCode.getValue())) {
+				&& AccountingEvent.INDAS.equals(this.eventCode.getValue())) {
 			feeMap.put("_AMZ", Labels.getLabel("label_TransactionEntryDialog_Fee_AMZ"));
 			return feeMap;
 		}

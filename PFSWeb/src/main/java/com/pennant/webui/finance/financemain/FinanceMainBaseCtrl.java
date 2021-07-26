@@ -132,7 +132,7 @@ import com.pennant.FrequencyBox;
 import com.pennant.RateBox;
 import com.pennant.Interface.service.CustomerInterfaceService;
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
@@ -14869,7 +14869,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// Disb Instruction Posting
-		if (AccountEventConstants.isDisbursementEvent(eventCode)) {
+		if (AccountingEvent.isDisbursementEvent(eventCode)) {
 			if (!ImplementationConstants.HOLD_DISB_INST_POST) {
 				accountingSetEntries.addAll(AccountingEngine.execute(AccountingEvent.DISBINS, financeDetail, null));
 			}
@@ -15010,12 +15010,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
 				deductFeeDisb = deductFeeDisb.add(finFeeDetail.getRemainingFee());
-				if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())) {
+				if (AccountingEvent.VAS_FEE.equals(finFeeDetail.getFinEvent())) {
 					deductVasDisb = deductVasDisb.add(finFeeDetail.getRemainingFee());
 				}
 			} else if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
 				addFeeToFinance = addFeeToFinance.add(finFeeDetail.getRemainingFee());
-				if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())) {
+				if (AccountingEvent.VAS_FEE.equals(finFeeDetail.getFinEvent())) {
 					addVasToFinance = addVasToFinance.add(finFeeDetail.getRemainingFee());
 				}
 			}
@@ -15023,7 +15023,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			paidFee = paidFee.add(finFeeDetail.getPaidAmount());
 			feeWaived = feeWaived.add(finFeeDetail.getWaivedAmount());
 
-			if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())) {
+			if (AccountingEvent.VAS_FEE.equals(finFeeDetail.getFinEvent())) {
 				paidVasFee = paidVasFee.add(finFeeDetail.getPaidAmount());
 				vasFeeWaived = vasFeeWaived.add(finFeeDetail.getWaivedAmount());
 			}
@@ -15047,7 +15047,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		for (FinFeeDetail fee : finFeeDetailList) {
 			String vasProductCode = fee.getVasProductCode();
-			if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(fee.getFinEvent())) {
+			if (AccountingEvent.VAS_FEE.equals(fee.getFinEvent())) {
 				if (fee.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
 					dataMap.put("VAS_" + vasProductCode + "_DD", fee.getRemainingFee());
 					dataMap.put("VAS_" + vasProductCode + "_AF", BigDecimal.ZERO);

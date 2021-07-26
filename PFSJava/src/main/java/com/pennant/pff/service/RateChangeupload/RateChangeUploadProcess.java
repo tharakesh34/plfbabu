@@ -18,7 +18,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SessionUserDetails;
@@ -147,7 +147,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 			}
 
 			// fetch finance data
-			String eventCode = AccountEventConstants.ACCEVENT_RATCHG;
+			String eventCode = AccountingEvent.RATCHG;
 			FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(finReference, "_AView", false);
 
 			financeDetail.setAccountingEventCode(eventCode);

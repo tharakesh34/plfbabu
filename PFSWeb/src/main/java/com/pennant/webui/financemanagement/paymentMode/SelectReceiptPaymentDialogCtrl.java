@@ -29,7 +29,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -810,15 +810,15 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		switch (recPurpose) {
 		case FinServiceEvent.SCHDRPY:
 			method = FinServiceEvent.SCHDRPY;
-			eventCode = AccountEventConstants.ACCEVENT_REPAY;
+			eventCode = AccountingEvent.REPAY;
 			break;
 		case FinServiceEvent.EARLYRPY:
 			method = FinServiceEvent.EARLYRPY;
-			eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
+			eventCode = AccountingEvent.EARLYPAY;
 			break;
 		case FinServiceEvent.EARLYSETTLE:
 			method = FinServiceEvent.EARLYSETTLE;
-			eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
+			eventCode = AccountingEvent.EARLYSTL;
 			break;
 		default:
 			break;

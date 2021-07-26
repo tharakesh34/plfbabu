@@ -54,7 +54,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
@@ -1022,7 +1022,7 @@ public class RepaymentPostingsUtil {
 		amountCodes.setPftDueWaived(pftDueWaived);
 
 		// Accrual & Future Paid Details
-		if (StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_EARLYSTL)) {
+		if (StringUtils.equals(eventCode, AccountingEvent.EARLYSTL)) {
 
 			int schSize = scheduleDetails.size();
 			FinanceScheduleDetail lastSchd = scheduleDetails.get(schSize - 1);
@@ -1209,7 +1209,7 @@ public class RepaymentPostingsUtil {
 			}
 		}
 
-		if (StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_REPAY)) {
+		if (StringUtils.equals(eventCode, AccountingEvent.REPAY)) {
 			if (financeProfitDetail.getTotalPftPaid().add(rpyQueueHeader.getProfit())
 					.compareTo(financeProfitDetail.getTotalPftSchd()) >= 0) {
 				amountCodes
@@ -1428,7 +1428,7 @@ public class RepaymentPostingsUtil {
 		}
 
 		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-			if (StringUtils.startsWith(finFeeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_ADDDBS)) {
+			if (StringUtils.startsWith(finFeeDetail.getFinEvent(), AccountingEvent.ADDDBS)) {
 				continue;
 			}
 
@@ -1668,9 +1668,9 @@ public class RepaymentPostingsUtil {
 					// If Finance Still in Suspense case, no need to do Any Accounting further.
 					if (!curFinIsSusp) {
 						if (curMaxODDays > 0) {
-							execEventCode = AccountEventConstants.ACCEVENT_PIS_PD;
+							execEventCode = AccountingEvent.PIS_PD;
 						} else {
-							execEventCode = AccountEventConstants.ACCEVENT_PIS_NORM;
+							execEventCode = AccountingEvent.PIS_NORM;
 						}
 					}
 				}
@@ -1680,7 +1680,7 @@ public class RepaymentPostingsUtil {
 				int curMaxODDays = finODDetailsDAO.getFinODDays(financeMain.getFinReference(), "");
 
 				if (curMaxODDays == 0) {
-					execEventCode = AccountEventConstants.ACCEVENT_PD_NORM;
+					execEventCode = AccountingEvent.PD_NORM;
 				}
 			}
 

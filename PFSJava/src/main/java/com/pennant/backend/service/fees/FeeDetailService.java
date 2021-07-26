@@ -49,7 +49,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
@@ -168,7 +168,7 @@ public class FeeDetailService {
 		if (finScheduleData.getVasRecordingList() != null && !finScheduleData.getVasRecordingList().isEmpty()) {
 			List<FinFeeDetail> vasFees = new ArrayList<FinFeeDetail>();
 			for (FinFeeDetail detail : finScheduleData.getFinFeeDetailList()) {
-				if (StringUtils.equals(detail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)) {
+				if (StringUtils.equals(detail.getFinEvent(), AccountingEvent.VAS_FEE)) {
 					detail.setRemainingFee(detail.getActualAmount().subtract(detail.getPaidAmount())
 							.subtract(detail.getWaivedAmount()));
 					vasFees.add(detail);
@@ -198,7 +198,7 @@ public class FeeDetailService {
 			}
 		}
 
-		if (AccountEventConstants.ACCEVENT_EARLYSTL.equals(fm.getFinSourceID())) {
+		if (AccountingEvent.EARLYSTL.equals(fm.getFinSourceID())) {
 			finScheduleData.setFinFeeDetailList(finFeeDetailList);
 		}
 
@@ -212,7 +212,7 @@ public class FeeDetailService {
 		BigDecimal feeAddToDisbTot = BigDecimal.ZERO;
 
 		for (FinFeeDetail fee : fees) {
-			if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(fee.getFinEvent())
+			if (AccountingEvent.VAS_FEE.equals(fee.getFinEvent())
 					&& PennantConstants.RECORD_TYPE_CAN.equals(fee.getRecordType())) {
 				continue;
 			}
@@ -1145,7 +1145,7 @@ public class FeeDetailService {
 		}
 		if (isOriginationFee) {
 			for (FinFeeDetail finFeeDetail : financeDetail.getFinScheduleData().getFinFeeDetailList()) {
-				if (StringUtils.equals(finFeeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)) {
+				if (StringUtils.equals(finFeeDetail.getFinEvent(), AccountingEvent.VAS_FEE)) {
 					finFeeDetail.setNewRecord(true);
 					finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
 					finFeeDetail.setFinReference(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());

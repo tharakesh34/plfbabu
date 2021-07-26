@@ -17,7 +17,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.FinEODEvent;
@@ -429,7 +429,7 @@ public class PresentmentResponseProcess implements Runnable {
 		aeEvent.setValueDate(pd.getSchDate());
 		aeEvent.setPostDate(SysParamUtil.getAppDate());
 		aeEvent.setEntityCode(fm.getEntityCode());
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_PRSNTRSP);
+		aeEvent.setAccountingEvent(AccountingEvent.PRSNTRSP);
 		aeEvent.setPostRefId(pd.getHeaderId());
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -446,7 +446,7 @@ public class PresentmentResponseProcess implements Runnable {
 
 		try {
 			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getFinType(),
-					AccountEventConstants.ACCEVENT_PRSNTRSP, FinanceConstants.MODULEID_FINTYPE));
+					AccountingEvent.PRSNTRSP, FinanceConstants.MODULEID_FINTYPE));
 			aeEvent.setDataMap(dataMap);
 			aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 		} catch (Exception e) {

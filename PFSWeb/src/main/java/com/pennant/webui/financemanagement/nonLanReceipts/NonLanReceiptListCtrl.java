@@ -35,7 +35,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -624,15 +624,15 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			String eventCode = "";
 
 			if (StringUtils.equals(finReceiptHeader.getReceiptPurpose(), FinServiceEvent.SCHDRPY)) {
-				eventCode = AccountEventConstants.ACCEVENT_REPAY;
+				eventCode = AccountingEvent.REPAY;
 
 			} else if (StringUtils.equals(finReceiptHeader.getReceiptPurpose(),
 					FinServiceEvent.EARLYRPY)) {
-				eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
+				eventCode = AccountingEvent.EARLYPAY;
 
 			} else if (StringUtils.equals(finReceiptHeader.getReceiptPurpose(),
 					FinServiceEvent.EARLYSETTLE)) {
-				eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
+				eventCode = AccountingEvent.EARLYSTL;
 
 			}
 

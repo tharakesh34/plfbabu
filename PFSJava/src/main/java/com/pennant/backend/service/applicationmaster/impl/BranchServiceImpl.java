@@ -56,7 +56,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.util.CollectionUtils;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -241,7 +241,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 					revDataSet = new ReturnDataSet();
 					revDataSet.setAccount(returnDataSet.getAccount());
 					revDataSet.setFinReference(returnDataSet.getFinReference());
-					revDataSet.setFinEvent(AccountEventConstants.ACCEVENT_BRANCH_CLOSE);
+					revDataSet.setFinEvent(AccountingEvent.BRANCH_CLOSE);
 					revDataSet.setPostAmount(returnDataSet.getPostAmount());
 					revDataSet.setAcCcy(returnDataSet.getAcCcy());
 					if (isReversal) {

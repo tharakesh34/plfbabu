@@ -62,7 +62,7 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.SuspensePostingUtil;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -132,7 +132,7 @@ public class CapitalizationPostings implements Tasklet {
 				// **** Accounting Set Execution for Amortization ******//
 
 				aeEvent.setFinReference(resultSet.getString("FinReference"));
-				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_COMPOUND);
+				aeEvent.setAccountingEvent(AccountingEvent.COMPOUND);
 				aeEvent.setBranch(resultSet.getString("FinBranch"));
 				aeEvent.setCcy(resultSet.getString("FinCcy"));
 				aeEvent.setPostDate(dateAppDate);

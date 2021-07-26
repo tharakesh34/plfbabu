@@ -84,7 +84,7 @@ import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
@@ -598,7 +598,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		}
 		if (!onLoadProcess) {
 			accountsetId = AccountingConfigCache.getAccountSetID(this.financeMain.getFinType(),
-					AccountEventConstants.ACCEVENT_PAYMTINS, FinanceConstants.MODULEID_FINTYPE);
+					AccountingEvent.PAYMTINS, FinanceConstants.MODULEID_FINTYPE);
 			final Map<String, Object> map = new HashMap<>();
 			map.put("paymentInstruction", paymentInstruction);
 			map.put("acSetID", accountsetId);

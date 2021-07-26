@@ -58,7 +58,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CalculationUtil;
@@ -936,7 +936,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 			if ("saveOrUpdate".equals(method) && (isRcdType)) {
 				finFeeDetail.setNewRecord(true);
-				if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())
+				if (AccountingEvent.VAS_FEE.equals(finFeeDetail.getFinEvent())
 						&& FinServiceEvent.ORG.equals(finFeeDetail.getModuleDefiner())
 						&& PennantConstants.RECORD_TYPE_UPD.equals(finFeeDetail.getRecordType())) {
 					if (finFeeDetailDAO.isFinFeeDetailExists(finFeeDetail, TableType.TEMP_TAB.getSuffix())) {
@@ -948,7 +948,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 				}
 			} else if ("doApprove".equals(method)
-					&& (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent()))) {
+					&& (AccountingEvent.VAS_FEE.equals(finFeeDetail.getFinEvent()))) {
 				if (!isRcdType || PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(finFeeDetail.getRecordType())) {
 					finFeeDetail.setNewRecord(false);
 					if (!finFeeDetailDAO.isFinFeeDetailExists(finFeeDetail, TableType.MAIN_TAB.getSuffix())) {
@@ -1095,7 +1095,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			List<Long> feeIds = new ArrayList<Long>(1);
 			for (FinFeeDetail finFeeDetail : feeDetails) {
 				// If we Select VAS Fee Payment Mode as Cash or Cheque getting error "Fees not paid"
-				if (!AccountEventConstants.ACCEVENT_VAS_FEE.equalsIgnoreCase(finFeeDetail.getFinEvent())) {
+				if (!AccountingEvent.VAS_FEE.equalsIgnoreCase(finFeeDetail.getFinEvent())) {
 					feeIds.add(finFeeDetail.getFeeID());
 					if (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) != 0) {
 						totalPaidFee = totalPaidFee.add(finFeeDetail.getPaidAmount());
@@ -1607,15 +1607,15 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 		String finEvent = fee.getFinEvent();
 
-		if (AccountEventConstants.ACCEVENT_ADDDBSP.equals(finEvent)) {
+		if (AccountingEvent.ADDDBSP.equals(finEvent)) {
 			AdvancePaymentUtil.calculateLOSAdvPayment(scheduleData, fee);
-		} else if (AccountEventConstants.ACCEVENT_ADDDBSN.equals(finEvent)) {
+		} else if (AccountingEvent.ADDDBSN.equals(finEvent)) {
 			AdvanceRuleCode advanceRule = AdvanceRuleCode.getRule(fee.getFeeTypeCode());
 			if (advanceRule != null
 					&& (advanceRule == AdvanceRuleCode.ADVINT || advanceRule == AdvanceRuleCode.ADVEMI)) {
 				List<String> list = new ArrayList<>();
-				list.add(AccountEventConstants.ACCEVENT_ADDDBSP);
-				list.add(AccountEventConstants.ACCEVENT_ADDDBSN);
+				list.add(AccountingEvent.ADDDBSP);
+				list.add(AccountingEvent.ADDDBSN);
 				String finReference = financeMain.getFinReference();
 				List<FinFeeDetail> fees = finFeeDetailDAO.getFeeDetails(finReference, advanceRule.name(), list);
 				AdvancePaymentUtil.calculateLMSAdvPayment(scheduleData, fee, fees);

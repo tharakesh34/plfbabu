@@ -59,7 +59,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CalculationUtil;
@@ -1697,14 +1697,14 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		aeEvent = new AEEvent();
 		aeEvent.setPostingUserBranch(feeWaiverHeader.getUserDetails().getBranchCode());
 		aeEvent.setEntityCode(financeMain.getEntityCode());
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_WAIVER);
+		aeEvent.setAccountingEvent(AccountingEvent.WAIVER);
 		aeEvent.setFinReference(financeMain.getFinReference());
 		aeEvent.setValueDate(SysParamUtil.getAppDate());
 		aeEvent.setBranch(financeMain.getFinBranch());
 		aeEvent.setCcy(financeMain.getFinCcy());
 		aeEvent.setCustID(financeMain.getCustID());
 		aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
-				AccountEventConstants.ACCEVENT_WAIVER, FinanceConstants.MODULEID_FINTYPE));
+				AccountingEvent.WAIVER, FinanceConstants.MODULEID_FINTYPE));
 
 		return aeEvent;
 	}
@@ -1747,7 +1747,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		FinRepayHeader finRepayHeader = new FinRepayHeader();
 		finRepayHeader.setFinReference(financeMain.getFinReference());
 		finRepayHeader.setValueDate(DateUtility.getAppDate());
-		finRepayHeader.setFinEvent(AccountEventConstants.ACCEVENT_WAIVER);
+		finRepayHeader.setFinEvent(AccountingEvent.WAIVER);
 		long id = getFinanceRepaymentsDAO().saveFinRepayHeader(finRepayHeader, TableType.MAIN_TAB);
 
 		RepayScheduleDetail rsd = new RepayScheduleDetail();

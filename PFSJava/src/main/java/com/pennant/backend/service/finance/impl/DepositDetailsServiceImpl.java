@@ -51,7 +51,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.receipts.CashDenominationDAO;
@@ -821,7 +821,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 
 		AEEvent aeEvent = null;
 		if (CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CASH.equals(depositDetails.getDepositType())) {
-			aeEvent = this.cashManagementAccounting.generateAccounting(AccountEventConstants.ACCEVENT_CASHTOBANK,
+			aeEvent = this.cashManagementAccounting.generateAccounting(AccountingEvent.CASHTOBANK,
 					depositDetails.getUserDetails().getBranchCode(), depositDetails.getBranchCode(),
 					depositDetails.getReservedAmount(),
 					depositDetails.getDepositMovementsList().get(0).getPartnerBankId(),
@@ -832,7 +832,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 				for (int i = 0; i < depositChequesAuditDetails.size(); i++) {
 					DepositCheques depositCheques = (DepositCheques) depositChequesAuditDetails.get(i).getModelData();
 					aeEvent = this.cashManagementAccounting.generateAccounting(
-							AccountEventConstants.ACCEVENT_CHEQUETOBANK,
+							AccountingEvent.CHEQUETOBANK,
 							depositDetails.getUserDetails().getBranchCode(), depositDetails.getBranchCode(),
 							depositCheques.getAmount(),
 							depositDetails.getDepositMovementsList().get(0).getPartnerBankId(),

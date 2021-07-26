@@ -57,7 +57,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -202,7 +202,7 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 					getFinanceReferenceDetailDAO().getRefIdListByFinType(finType, procEdtEvent, null, "_ACView"));
 			if (!accSetIdList.isEmpty()) {
 				financeDetail.setFeeCharges(getTransactionEntryDAO().getListFeeChargeRules(accSetIdList,
-						AccountEventConstants.ACCEVENT_NORM_PIS, "_AView", 0));
+						AccountingEvent.NORM_PIS, "_AView", 0));
 			}
 
 			//Finance Stage Accounting Posting Details 
@@ -302,7 +302,7 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 
 			AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain,
 					financeSuspHead.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), profitDetail,
-					AccountEventConstants.ACCEVENT_WRITEOFF, curBDay, financeMain.getMaturityDate());
+					AccountingEvent.WRITEOFF, curBDay, financeMain.getMaturityDate());
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 			Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();

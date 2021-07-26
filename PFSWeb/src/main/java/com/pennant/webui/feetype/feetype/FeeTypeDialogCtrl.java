@@ -65,7 +65,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
@@ -491,7 +491,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.accountingSetID.setMandatoryStyle(false);
 
 		Filter filters[] = new Filter[1];
-		filters[0] = new Filter("EventCode", AccountEventConstants.ACCEVENT_MANFEE, Filter.OP_EQUAL);
+		filters[0] = new Filter("EventCode", AccountingEvent.MANFEE, Filter.OP_EQUAL);
 		this.accountingSetID.setFilters(filters);
 		// dueAccounting set
 		this.dueAccSet.setModuleName("AccountingSet");

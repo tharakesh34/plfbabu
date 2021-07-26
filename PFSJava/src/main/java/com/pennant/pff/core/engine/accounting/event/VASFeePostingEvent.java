@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.AccountingEvent;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.configuration.VASRecording;
@@ -28,7 +28,7 @@ public class VASFeePostingEvent extends PostingEvent {
 
 		for (VASRecording recording : vasRecordings) {
 			AEEvent aeEvent = new AEEvent();
-			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+			aeEvent.setAccountingEvent(AccountingEvent.VAS_FEE);
 			aeEvent.setPostingUserBranch(userBranch);
 			aeEvent.setCcy("INR");
 			aeEvent.setEntityCode(recording.getEntityCode());

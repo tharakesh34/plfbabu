@@ -66,7 +66,7 @@ import com.aspose.words.SaveFormat;
 import com.pennant.ChartType;
 import com.pennant.CurrencyBox;
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
@@ -1163,7 +1163,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			if (receiptData != null) {
 				allocationListData = receiptData.getReceiptHeader().getAllocations();
 			}
-			receiptData = receiptService.getFinReceiptDataById(finReference, AccountEventConstants.ACCEVENT_EARLYSTL,
+			receiptData = receiptService.getFinReceiptDataById(finReference, AccountingEvent.EARLYSTL,
 					FinServiceEvent.RECEIPT, "");
 			FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
 			receiptHeader.setReference(finReference);
@@ -1956,7 +1956,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					&& !StringUtils.equals(FinServiceEvent.EARLYSETTLE, repayHeader.getFinEvent())) {
 
 				// Accounting Postings Process Execution
-				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_REPAY);
+				aeEvent.setAccountingEvent(AccountingEvent.REPAY);
 				amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
 				amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
 				amountCodes.setToExcessAmt(BigDecimal.ZERO);
@@ -1970,10 +1970,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				aeEvent.getAcSetIDList().clear();
 				if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
 					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-							AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_PROMOTION));
+							AccountingEvent.REPAY, FinanceConstants.MODULEID_PROMOTION));
 				} else {
 					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(),
-							AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_FINTYPE));
+							AccountingEvent.REPAY, FinanceConstants.MODULEID_FINTYPE));
 				}
 
 				// Assignment Percentage
@@ -2348,15 +2348,15 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			// Accounting Event Code Setting
 			aeEvent.getAcSetIDList().clear();
 			if (StringUtils.equals(repayHeader.getFinEvent(), FinServiceEvent.SCHDRPY)) {
-				eventCode = AccountEventConstants.ACCEVENT_REPAY;
+				eventCode = AccountingEvent.REPAY;
 			} else if (StringUtils.equals(repayHeader.getFinEvent(), FinServiceEvent.EARLYRPY)) {
-				eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
+				eventCode = AccountingEvent.EARLYPAY;
 				if (pftChgExecuted) {
 					amountCodes.setPftChg(BigDecimal.ZERO);
 				}
 				pftChgExecuted = true;
 			} else if (StringUtils.equals(repayHeader.getFinEvent(), FinServiceEvent.EARLYSETTLE)) {
-				eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
+				eventCode = AccountingEvent.EARLYSTL;
 				if (pftChgExecuted) {
 					amountCodes.setPftChg(BigDecimal.ZERO);
 				}
@@ -2418,13 +2418,13 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				aeEvent.getAcSetIDList().clear();
 				if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
 					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-							AccountEventConstants.ACCEVENT_LATEPAY, FinanceConstants.MODULEID_PROMOTION));
+							AccountingEvent.LATEPAY, FinanceConstants.MODULEID_PROMOTION));
 				} else {
 					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(),
-							AccountEventConstants.ACCEVENT_LATEPAY, FinanceConstants.MODULEID_FINTYPE));
+							AccountingEvent.LATEPAY, FinanceConstants.MODULEID_FINTYPE));
 				}
 
-				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);
+				aeEvent.setAccountingEvent(AccountingEvent.LATEPAY);
 				aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 
 				// LPP GST Amount setting
@@ -2591,7 +2591,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				}
 
 				// Accounting Postings Process Execution
-				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_REPAY);
+				aeEvent.setAccountingEvent(AccountingEvent.REPAY);
 				amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
 				amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
 				amountCodes.setPaymentType(receiptDetail.getPaymentType());
@@ -2599,10 +2599,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				aeEvent.getAcSetIDList().clear();
 				if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
 					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-							AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_PROMOTION));
+							AccountingEvent.REPAY, FinanceConstants.MODULEID_PROMOTION));
 				} else {
 					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(),
-							AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_FINTYPE));
+							AccountingEvent.REPAY, FinanceConstants.MODULEID_FINTYPE));
 				}
 
 				addZeroifNotContains(movementMap, "bounceChargePaid");
@@ -2660,7 +2660,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				int format = CurrencyUtil.getFormat(commitment.getCmtCcy());
 
 				if (commitment != null && commitment.isRevolving()) {
-					aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_CMTRPY);
+					aeEvent.setAccountingEvent(AccountingEvent.CMTRPY);
 					amountCodes.setCmtAmt(BigDecimal.ZERO);
 					amountCodes.setChgAmt(BigDecimal.ZERO);
 					amountCodes.setDisburse(BigDecimal.ZERO);
@@ -2768,7 +2768,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			moduleID = FinanceConstants.MODULEID_PROMOTION;
 		}
 
-		accountSetId = AccountingConfigCache.getAccountSetID(finType, AccountEventConstants.ACCEVENT_EARLYSTL,
+		accountSetId = AccountingConfigCache.getAccountSetID(finType, AccountingEvent.EARLYSTL,
 				moduleID);
 
 		// Accounting Detail Tab
@@ -4000,7 +4000,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	public void getFinFeeTypeList(String eventCode) {
 		// FIXME: OV. should be removed. already part of receipt calculator
 
-		eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
+		eventCode = AccountingEvent.EARLYSTL;
 
 		FinanceMain financeMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
 		int moduleID = FinanceConstants.MODULEID_FINTYPE;

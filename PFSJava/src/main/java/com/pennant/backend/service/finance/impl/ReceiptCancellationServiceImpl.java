@@ -55,7 +55,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.FinEODEvent;
@@ -644,7 +644,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		aeEvent.setCcy(financeMain.getFinCcy());
 		aeEvent.setPostingUserBranch(receiptHeader.getCashierBranch());
 		aeEvent.setLinkedTranId(0);
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_REPAY);
+		aeEvent.setAccountingEvent(AccountingEvent.REPAY);
 		aeEvent.setValueDate(receiptHeader.getValueDate());
 		aeEvent.setPostRefId(receiptHeader.getReceiptID());
 		aeEvent.setPostingId(postingId);
@@ -661,13 +661,13 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		String eventCode = "";
 
 		if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinServiceEvent.SCHDRPY)) {
-			eventCode = AccountEventConstants.ACCEVENT_REPAY;
+			eventCode = AccountingEvent.REPAY;
 
 		} else if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinServiceEvent.EARLYRPY)) {
-			eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
+			eventCode = AccountingEvent.EARLYPAY;
 
 		} else if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinServiceEvent.EARLYSETTLE)) {
-			eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
+			eventCode = AccountingEvent.EARLYSTL;
 
 		}
 
@@ -2135,7 +2135,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		// Accrual Difference Postings
 		Long accountingID = AccountingConfigCache.getCacheAccountSetID(financeMain.getFinType(),
-				AccountEventConstants.ACCEVENT_AMZ, FinanceConstants.MODULEID_FINTYPE);
+				AccountingEvent.AMZ, FinanceConstants.MODULEID_FINTYPE);
 
 		EventProperties eventProperties = financeMain.getEventProperties();
 
@@ -2173,7 +2173,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			}
 
 			AEEvent aeEvent = AEAmounts.procCalAEAmounts(financeMain, profitDetail,
-					scheduleData.getFinanceScheduleDetails(), AccountEventConstants.ACCEVENT_AMZ, derivedAppDate,
+					scheduleData.getFinanceScheduleDetails(), AccountingEvent.AMZ, derivedAppDate,
 					derivedAppDate);
 
 			// UnAccrual amount should not be zero in case of "UMFC" accounting

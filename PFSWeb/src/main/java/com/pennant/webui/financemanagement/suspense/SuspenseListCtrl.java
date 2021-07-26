@@ -63,7 +63,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.service.financemanagement.SuspenseService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -326,7 +326,7 @@ public class SuspenseListCtrl extends GFCBaseListCtrl<FinanceSuspHead> {
 		arg.put("moduleCode", super.moduleCode);
 		arg.put("menuItemRightName", rightName);
 		arg.put("moduleDefiner", moduleDefiner);
-		arg.put("eventCode", AccountEventConstants.ACCEVENT_NORM_PIS);
+		arg.put("eventCode", AccountingEvent.NORM_PIS);
 
 		try {
 

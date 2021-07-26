@@ -62,7 +62,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -290,10 +290,10 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		} else if (StringUtils.equals(eventCode, FinServiceEvent.REINSTATE)) {
 			buildedWhereCondition = buildedWhereCondition.concat(FinServiceEvent.REINSTATE);
 
-		} else if (StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_PROVSN)) {
+		} else if (StringUtils.equals(eventCode, AccountingEvent.PROVSN)) {
 			buildedWhereCondition = buildedWhereCondition.concat(moduleDefiner);
 
-		} else if (StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_NORM_PIS)) {
+		} else if (StringUtils.equals(eventCode, AccountingEvent.NORM_PIS)) {
 			buildedWhereCondition = buildedWhereCondition.concat(moduleDefiner);
 		} else {
 			buildedWhereCondition = buildedWhereCondition.concat(moduleDefiner);
@@ -389,8 +389,8 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		final Map<String, Object> map = new HashMap<String, Object>();
 
-		if (StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_LIABILITY)
-				|| StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_NOCISSUANCE)) {
+		if (StringUtils.equals(eventCode, AccountingEvent.LIABILITY)
+				|| StringUtils.equals(eventCode, AccountingEvent.NOCISSUANCE)) {
 			// Fetch Total Finance Details Object
 			this.customerRow.setVisible(true);
 			map.put("liabilityRequest", getLiabilityRequest());
@@ -438,7 +438,7 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			}
 		}
 
-		if (StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_PROVSN)) {
+		if (StringUtils.equals(eventCode, AccountingEvent.PROVSN)) {
 
 			map.put("provision", provision);
 			map.put("provisionListCtrl", getProvisionListCtrl());
@@ -455,7 +455,7 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			}
 		}
 
-		if (StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_NORM_PIS)) {
+		if (StringUtils.equals(eventCode, AccountingEvent.NORM_PIS)) {
 
 			map.put("suspHead", suspHead);
 			map.put("suspenseListCtrl", getSuspenseListCtrl());

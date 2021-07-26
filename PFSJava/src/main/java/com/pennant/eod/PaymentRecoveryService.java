@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
@@ -132,7 +132,7 @@ public class PaymentRecoveryService {
 				|| rpyMethod.equals(RepayConstants.REPAY_HIERARCHY_FPICS)) {
 
 			totalpaidAmount = getRepayPaid(finRepay.getFinReference(), finRepay.getRpyDate(),
-					AccountEventConstants.ACCEVENT_REPAY, bathRef);
+					AccountingEvent.REPAY, bathRef);
 
 			totalpaidAmount = totalpaidAmount.add(getPenaltyPaidSeparately(finRepay, finRepay.getRpyDate(), bathRef));
 

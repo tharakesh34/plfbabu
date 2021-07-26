@@ -55,7 +55,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.SysParamUtil;
@@ -122,8 +122,8 @@ public class LatePayDueCreationService extends ServiceHelper {
 	public void postLatePayAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
 		long custID = custEODEvent.getCustomer().getCustID();
 
-		String lppEventCode = AccountEventConstants.ACCEVENT_LPPAMZ;
-		String lpiEventCode = AccountEventConstants.ACCEVENT_LPIAMZ;
+		String lppEventCode = AccountingEvent.LPPAMZ;
+		String lpiEventCode = AccountingEvent.LPIAMZ;
 
 		FinanceProfitDetail pfd = finEODEvent.getFinProfitDetail();
 		FinanceMain fm = finEODEvent.getFinanceMain();

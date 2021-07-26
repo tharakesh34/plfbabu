@@ -76,7 +76,7 @@ import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
@@ -3350,27 +3350,27 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			if (tab != null) {
 				if ("tab_BasicDetail".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.BASICMAINTAIN;
-					eventCodeRef = AccountEventConstants.ACCEVENT_AMENDMENT;
+					eventCodeRef = AccountingEvent.AMENDMENT;
 					workflowCode = FinServiceEvent.BASICMAINTAIN;
 				} else if ("tab_RpyBasicDetail".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.RPYBASICMAINTAIN;
-					eventCodeRef = AccountEventConstants.ACCEVENT_SEGMENT;
+					eventCodeRef = AccountingEvent.SEGMENT;
 					workflowCode = FinServiceEvent.RPYBASICMAINTAIN;
 				} else if ("tab_AddRateChange".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.RATECHG;
-					eventCodeRef = AccountEventConstants.ACCEVENT_RATCHG;
+					eventCodeRef = AccountingEvent.RATCHG;
 					workflowCode = FinServiceEvent.RATECHG;
 				} else if ("tab_InsChange".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.INSCHANGE;
-					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
+					eventCodeRef = AccountingEvent.SCDCHG;
 					workflowCode = FinServiceEvent.INSCHANGE;
 				} else if ("tab_ChangeRepayment".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.CHGRPY;
-					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
+					eventCodeRef = AccountingEvent.SCDCHG;
 					workflowCode = FinServiceEvent.CHGRPY;
 				} else if ("tab_AddDisbursment".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.ADDDISB;
-					eventCodeRef = AccountEventConstants.ACCEVENT_ADDDBSN;
+					eventCodeRef = AccountingEvent.ADDDBSN;
 					workflowCode = FinServiceEvent.ADDDISB;
 				} else if ("tab_RlsHoldDisbursment".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.RLSDISB;
@@ -3378,62 +3378,62 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					workflowCode = FinServiceEvent.RLSDISB;
 				} else if ("tab_Postponement".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.POSTPONEMENT;
-					eventCodeRef = AccountEventConstants.ACCEVENT_DEFRPY;
+					eventCodeRef = AccountingEvent.DEFRPY;
 					workflowCode = FinServiceEvent.POSTPONEMENT;
 				} else if ("tab_UnPlannedEmi".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.UNPLANEMIH;
-					eventCodeRef = AccountEventConstants.ACCEVENT_EMIHOLIDAY;
+					eventCodeRef = AccountingEvent.EMIHOLIDAY;
 					workflowCode = FinServiceEvent.UNPLANEMIH;
 				} else if ("tab_AddTerms".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.ADDTERM;
-					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
+					eventCodeRef = AccountingEvent.SCDCHG;
 					workflowCode = FinServiceEvent.ADDTERM;
 				} else if ("tab_RmvTerms".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.RMVTERM;
-					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
+					eventCodeRef = AccountingEvent.SCDCHG;
 					workflowCode = FinServiceEvent.RMVTERM;
 				} else if ("tab_Recalculate".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.RECALCULATE;
-					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
+					eventCodeRef = AccountingEvent.SCDCHG;
 					workflowCode = FinServiceEvent.RECALCULATE;
 				} else if ("tab_SubSchedule".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.SUBSCHD;
-					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
+					eventCodeRef = AccountingEvent.SCDCHG;
 					workflowCode = FinServiceEvent.SUBSCHD;
 				} else if ("tab_ChangeProfit".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.CHGPFT;
-					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
+					eventCodeRef = AccountingEvent.SCDCHG;
 					workflowCode = FinServiceEvent.CHGPFT;
 				} else if ("tab_ChangeFrequency".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.CHGFRQ;
-					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
+					eventCodeRef = AccountingEvent.SCDCHG;
 					workflowCode = FinServiceEvent.CHGFRQ;
 				} else if ("tab_ReSchedule".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.RESCHD;
-					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
+					eventCodeRef = AccountingEvent.SCDCHG;
 					workflowCode = FinServiceEvent.RESCHD;
 				} else if ("tab_ChangeGestation".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.CHGGRCEND;
-					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
+					eventCodeRef = AccountingEvent.SCDCHG;
 					workflowCode = FinServiceEvent.CHGGRCEND;
 				} else if ("tab_Receipts".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.RECEIPT;
-					eventCodeRef = AccountEventConstants.ACCEVENT_REPAY;
+					eventCodeRef = AccountingEvent.REPAY;
 					setDialogCtrl("ReceiptDialogCtrl");
 					workflowCode = FinServiceEvent.RECEIPT;
 				} else if ("tab_PartialSettlement".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.EARLYRPY;
-					eventCodeRef = AccountEventConstants.ACCEVENT_EARLYPAY;
+					eventCodeRef = AccountingEvent.EARLYPAY;
 					setDialogCtrl("ManualPaymentDialogCtrl");
 					workflowCode = FinServiceEvent.EARLYRPY;
 				} else if ("tab_SchdRepayment".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.SCHDRPY;
-					eventCodeRef = AccountEventConstants.ACCEVENT_REPAY;
+					eventCodeRef = AccountingEvent.REPAY;
 					setDialogCtrl("ManualPaymentDialogCtrl");
 					workflowCode = FinServiceEvent.SCHDRPY;
 				} else if ("tab_EarlySettlement".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.EARLYSETTLE;
-					eventCodeRef = AccountEventConstants.ACCEVENT_EARLYSTL;
+					eventCodeRef = AccountingEvent.EARLYSTL;
 					setDialogCtrl("ManualPaymentDialogCtrl");
 					workflowCode = FinServiceEvent.EARLYSETTLE;
 				} else if ("tab_EarlySettlementEnq".equals(tab.getId())) {
@@ -3443,12 +3443,12 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					moduleDefiner = FinServiceEvent.WRITEOFF;
 					setDialogCtrl("FinanceWriteoffDialogCtrl");
 					workflowCode = FinServiceEvent.WRITEOFF;
-					eventCodeRef = AccountEventConstants.ACCEVENT_WRITEOFF;
+					eventCodeRef = AccountingEvent.WRITEOFF;
 					this.allowPreMaturedCases.setVisible(true);
 					this.label_FinanceMainSelect_AllowPreMaturedCases.setVisible(true);
 				} else if ("tab_WriteoffPayment".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.WRITEOFFPAY;
-					eventCodeRef = AccountEventConstants.ACCEVENT_WRITEBK;
+					eventCodeRef = AccountingEvent.WRITEBK;
 					workflowCode = FinServiceEvent.WRITEOFFPAY;
 					this.allowPreMaturedCases.setVisible(true);
 					this.label_FinanceMainSelect_AllowPreMaturedCases.setVisible(true);
@@ -3458,7 +3458,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					workflowCode = FinServiceEvent.CANCELRPY;
 				} else if ("tab_CancelFinance".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.CANCELFIN;
-					eventCodeRef = AccountEventConstants.ACCEVENT_CANCELFIN;
+					eventCodeRef = AccountingEvent.CANCELFIN;
 					setDialogCtrl("CancelFinanceDialogCtrl");
 					workflowCode = FinServiceEvent.CANCELFIN;
 				} else if ("tab_CancelDisbursement".equals(tab.getId())) {
@@ -3471,15 +3471,15 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					workflowCode = FinServiceEvent.OVERDRAFTSCHD;
 				} else if ("tab_PlannedEMI".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.PLANNEDEMI;
-					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
+					eventCodeRef = AccountingEvent.SCDCHG;
 					workflowCode = FinServiceEvent.PLANNEDEMI;
 				} else if ("tab_ReAgeHolidays".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.REAGING;
-					eventCodeRef = AccountEventConstants.ACCEVENT_REAGING;
+					eventCodeRef = AccountingEvent.REAGING;
 					workflowCode = FinServiceEvent.REAGING;
 				} else if ("tab_HoldEMI".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.HOLDEMI;
-					eventCodeRef = AccountEventConstants.ACCEVENT_HOLDEMI;
+					eventCodeRef = AccountingEvent.HOLDEMI;
 					workflowCode = FinServiceEvent.HOLDEMI;
 				} else if ("tab_FinCovenants".equals(tab.getId())) {
 					eventCodeRef = "";
@@ -3505,7 +3505,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					workflowCode = FinServiceEvent.FEEWAIVERS;
 				} else if ("tab_ChangeSchdMethod".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.CHGSCHDMETHOD;
-					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
+					eventCodeRef = AccountingEvent.SCDCHG;
 					workflowCode = FinServiceEvent.CHGSCHDMETHOD;
 				} else if ("tab_ChangeTDS".equals(tab.getId())) {
 					eventCodeRef = "";
@@ -3519,7 +3519,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					eventCodeRef = "";
 					moduleDefiner = FinServiceEvent.RESTRUCTURE;
 					workflowCode = FinServiceEvent.RESTRUCTURE;
-					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
+					eventCodeRef = AccountingEvent.SCDCHG;
 					this.btnNew
 							.setVisible(getUserWorkspace().isAllowed("button_FinanceSelectList_NewRestructureDetail"));
 				}

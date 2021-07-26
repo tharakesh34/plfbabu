@@ -63,7 +63,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
@@ -233,9 +233,9 @@ public class ReceiptCalculator implements Serializable {
 		int receiptPurposeCtg = setReceiptCategory(rd.getReceiptHeader().getReceiptPurpose());
 
 		if (receiptPurposeCtg == 2) {
-			schdData.setFeeEvent(AccountEventConstants.ACCEVENT_EARLYSTL);
+			schdData.setFeeEvent(AccountingEvent.EARLYSTL);
 		} else if (receiptPurposeCtg == 1) {
-			schdData.setFeeEvent(AccountEventConstants.ACCEVENT_EARLYPAY);
+			schdData.setFeeEvent(AccountingEvent.EARLYPAY);
 		}
 
 		rd.getFinanceDetail().setModuleDefiner(FinServiceEvent.RECEIPT);

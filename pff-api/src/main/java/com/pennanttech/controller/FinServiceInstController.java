@@ -28,7 +28,7 @@ import org.jaxen.JaxenException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.HolidayHandlerTypes;
@@ -1674,7 +1674,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				// Receipt upload process
 				if (finServiceInst.isReceiptdetailExits()) {
 					FinReceiptData oldReceiptData = this.receiptService.getFinReceiptDataById(
-							finServiceInst.getFinReference(), AccountEventConstants.ACCEVENT_REPAY,
+							finServiceInst.getFinReference(), AccountingEvent.REPAY,
 							FinServiceEvent.RECEIPT, FinanceConstants.REALIZATION_MAKER);
 					receiptData = oldReceiptData;
 
@@ -1741,9 +1741,9 @@ public class FinServiceInstController extends SummaryDetailService {
 
 						String eventCode = null;
 						if (receiptPurposeCtg == 2) {
-							eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
+							eventCode = AccountingEvent.EARLYSTL;
 						} else {
-							eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
+							eventCode = AccountingEvent.EARLYPAY;
 						}
 					}
 
@@ -2868,7 +2868,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				finServiceInst.getRecalType(), valueDate, finServiceInst.getModuleDefiner());
 		repayData.setRepayMain(repayData.getRepayMain());
 
-		String finEvent = AccountEventConstants.ACCEVENT_EARLYSTL;
+		String finEvent = AccountingEvent.EARLYSTL;
 		repayData.setEventCodeRef(finEvent);
 
 		// call change frequency service
@@ -3091,7 +3091,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 		boolean isOrigination = true;
 		List<FinTypeFees> finTypeFeeDetail = financeDetailService.getFinTypeFees(finType.getFinType(),
-				AccountEventConstants.ACCEVENT_ADDDBSP, isOrigination, FinanceConstants.MODULEID_FINTYPE);
+				AccountingEvent.ADDDBSP, isOrigination, FinanceConstants.MODULEID_FINTYPE);
 		if (CollectionUtils.isEmpty(finTypeFeeDetail)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = fsi.getFinType();

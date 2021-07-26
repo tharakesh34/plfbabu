@@ -55,7 +55,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
@@ -116,7 +116,7 @@ public class ProvisionCalculationUtil implements Serializable {
 				.getFinSchdDetailsForBatch(procProvision.getFinReference());
 
 		AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, schdDetails, pftDetail,
-				AccountEventConstants.ACCEVENT_PROVSN, dateValueDate, procProvision.getProvisionDate());
+				AccountingEvent.PROVSN, dateValueDate, procProvision.getProvisionDate());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 		/*
@@ -207,7 +207,7 @@ public class ProvisionCalculationUtil implements Serializable {
 				amountCodes
 						.setProvDue(movement.getProvisionDue() == null ? BigDecimal.ZERO : movement.getProvisionDue());
 
-				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_PROVSN);
+				aeEvent.setAccountingEvent(AccountingEvent.PROVSN);
 				aeEvent.setValueDate(dateValueDate);
 				//aeEvent.setSchdDate(procProvision.getProvisionCalDate());
 				Date dateAppDate = DateUtility.getAppDate();

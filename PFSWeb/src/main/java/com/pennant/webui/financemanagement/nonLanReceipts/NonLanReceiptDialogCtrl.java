@@ -94,7 +94,7 @@ import org.zkoss.zul.Window;
 import com.pennant.AccountSelectionBox;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.AccountEngineExecution;
@@ -410,7 +410,7 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private void doFillPostings(FinReceiptHeader finReceiptHeader) {
 		logger.debug("Entering");
 		List<ReturnDataSet> returnDataSet = nonLanReceiptService.getPostingsByPostRefAndFinEvent(
-				String.valueOf(finReceiptHeader.getReceiptID()), AccountEventConstants.ACCEVENT_NLRCPT);
+				String.valueOf(finReceiptHeader.getReceiptID()), AccountingEvent.NLRCPT);
 
 		for (ReturnDataSet returnData : returnDataSet) {
 

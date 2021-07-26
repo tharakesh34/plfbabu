@@ -17,7 +17,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -183,7 +183,7 @@ public class PartCancellationProcessCtrl extends GFCBaseListCtrl<FinServiceInstr
 
 		doRemoveValidation();
 
-		String eventCode = AccountEventConstants.PART_CANCELATION;
+		String eventCode = AccountingEvent.PART_CANCELATION;
 		FinanceDetail finDetails = partCancellationService.getFinanceDetails(finServiceInstc, eventCode);
 
 		// service level validations 

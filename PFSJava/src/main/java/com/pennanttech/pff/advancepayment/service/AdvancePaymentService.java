@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.FinEODEvent;
@@ -287,7 +287,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 		FinanceProfitDetail profiDetails = finEODEvent.getFinProfitDetail();
 
-		String finEvent = AccountEventConstants.ACCEVENT_REPAY;
+		String finEvent = AccountingEvent.REPAY;
 		Long accountingID = getAccountingID(fm, finEvent);
 		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, profiDetails, schedules, finEvent, valueDate, schDate);
 		aeEvent.getAcSetIDList().add(accountingID);

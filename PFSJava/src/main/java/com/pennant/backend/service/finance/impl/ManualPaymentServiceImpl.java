@@ -59,7 +59,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.finance.limits.LimitCheckDetails;
@@ -183,10 +183,10 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 			if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
 				financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(financeMain.getPromotionCode(),
-						AccountEventConstants.ACCEVENT_EARLYSTL, "_AView", false, FinanceConstants.MODULEID_PROMOTION));
+						AccountingEvent.EARLYSTL, "_AView", false, FinanceConstants.MODULEID_PROMOTION));
 			} else {
 				financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(financeMain.getFinType(),
-						AccountEventConstants.ACCEVENT_EARLYSTL, "_AView", false, FinanceConstants.MODULEID_FINTYPE));
+						AccountingEvent.EARLYSTL, "_AView", false, FinanceConstants.MODULEID_FINTYPE));
 			}
 
 			// Finance Fee Details
@@ -267,15 +267,15 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Entering ");
 		// Execute entries depend on Finance Event
 		Long accountingSetId = Long.MIN_VALUE;
-		if (eventCode.equals(AccountEventConstants.ACCEVENT_EARLYSTL)) {
+		if (eventCode.equals(AccountingEvent.EARLYSTL)) {
 			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(),
-					AccountEventConstants.ACCEVENT_EARLYSTL, FinanceConstants.MODULEID_FINTYPE);
-		} else if (eventCode.equals(AccountEventConstants.ACCEVENT_EARLYPAY)) {
+					AccountingEvent.EARLYSTL, FinanceConstants.MODULEID_FINTYPE);
+		} else if (eventCode.equals(AccountingEvent.EARLYPAY)) {
 			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(),
-					AccountEventConstants.ACCEVENT_EARLYPAY, FinanceConstants.MODULEID_FINTYPE);
-		} else if (eventCode.equals(AccountEventConstants.ACCEVENT_REPAY)) {
+					AccountingEvent.EARLYPAY, FinanceConstants.MODULEID_FINTYPE);
+		} else if (eventCode.equals(AccountingEvent.REPAY)) {
 			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(),
-					AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_FINTYPE);
+					AccountingEvent.REPAY, FinanceConstants.MODULEID_FINTYPE);
 		}
 		logger.debug("Leaving");
 		return accountingSetId;
@@ -297,8 +297,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 			Commitment commitment = getCommitmentDAO().getCommitmentById(commitmentRef, "");
 			if (commitment != null && commitment.isRevolving()) {
-				long accountingSetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_CMTRPY,
-						AccountEventConstants.ACCEVENT_CMTRPY);
+				long accountingSetId = getAccountingSetDAO().getAccountingSetId(AccountingEvent.CMTRPY,
+						AccountingEvent.CMTRPY);
 				if (accountingSetId != 0) {
 					financeDetail.setCmtFinanceEntries(
 							getTransactionEntryDAO().getListTransactionEntryById(accountingSetId, "_AEView", true));

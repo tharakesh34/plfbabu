@@ -39,7 +39,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
@@ -315,7 +315,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		issueHeader.setApprovedFinanceDisbursements(mainList);
 		// Fee details
 		List<FinFeeDetail> finFeeDetailList = finFeeDetailDAO.getFinFeeDetailByFinRef(finMian.getFinReference(), false,
-				"", AccountEventConstants.ACCEVENT_VAS_FEE);
+				"", AccountingEvent.VAS_FEE);
 		issueHeader.setFinFeeDetailList(finFeeDetailList);
 
 		if (ImplementationConstants.VAS_INST_ON_DISB) {

@@ -52,7 +52,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.backend.dao.commitment.CommitmentDAO;
 import com.pennant.backend.dao.commitment.CommitmentMovementDAO;
 import com.pennant.backend.dao.finance.FinContributorDetailDAO;
@@ -191,7 +191,7 @@ public class PostingsPreparationUtil implements Serializable {
 				amountCodes.setDisburse(BigDecimal.ZERO);
 				amountCodes.setRpPri(CalculationUtil.getConvertedAmount(aeEvent.getCcy(), commitment.getCmtCcy(),
 						amountCodes.getRpPri()));
-				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_CMTRPY);
+				aeEvent.setAccountingEvent(AccountingEvent.CMTRPY);
 				dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 				aeEvent.setDataMap(dataMap);
 				engineExecution.getAccEngineExecResults(aeEvent);
@@ -226,7 +226,7 @@ public class PostingsPreparationUtil implements Serializable {
 		List<ReturnDataSet> list = new ArrayList<>();
 
 		AEEvent aeEvent = new AEEvent();
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_NEWCMT);
+		aeEvent.setAccountingEvent(AccountingEvent.NEWCMT);
 
 		// FIXME: PV dates to be set properly
 		aeEvent.setAppDate(dateAppDate);
@@ -248,7 +248,7 @@ public class PostingsPreparationUtil implements Serializable {
 
 		if (list != null && list.size() > 0) {
 			aeEvent.setCommitment(false);
-			if (acSetEvent.equals(AccountEventConstants.ACCEVENT_NEWCMT) && commitment.isOpenAccount()) {
+			if (acSetEvent.equals(AccountingEvent.NEWCMT) && commitment.isOpenAccount()) {
 				aeEvent.setCommitment(true);
 			}
 			aeEvent = postingsExecProcess(aeEvent);
@@ -741,7 +741,7 @@ public class PostingsPreparationUtil implements Serializable {
 		List<ReturnDataSet> dataSetList = getReveralsByFinreference(finReference);
 
 		for (ReturnDataSet returnDataSet : dataSetList) {
-			if (!AccountEventConstants.ACCEVENT_FEEPAY.equalsIgnoreCase(returnDataSet.getFinEvent())) {
+			if (!AccountingEvent.FEEPAY.equalsIgnoreCase(returnDataSet.getFinEvent())) {
 				returnDataSets.add(returnDataSet);
 				linkedTranIds.add(returnDataSet.getLinkedTranId());
 			}

@@ -15,7 +15,7 @@ import org.jaxen.JaxenException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -284,7 +284,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		// validate fees
-		String eventCode = AccountEventConstants.ACCEVENT_RATCHG;
+		String eventCode = AccountingEvent.RATCHG;
 		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetail errorDetails : errors) {
@@ -363,7 +363,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		}
 		// validate fees
-		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
+		String eventCode = AccountingEvent.SCDCHG;
 		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetail errorDetails : errors) {
@@ -442,7 +442,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		// validate fees
-		String eventCode = AccountEventConstants.ACCEVENT_DEFRPY;
+		String eventCode = AccountingEvent.DEFRPY;
 		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetail errorDetails : errors) {
@@ -525,7 +525,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		// validate fees
-		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
+		String eventCode = AccountingEvent.SCDCHG;
 		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetail errorDetails : errors) {
@@ -636,7 +636,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		}
 		// validate fees
-		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
+		String eventCode = AccountingEvent.SCDCHG;
 		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetail errorDetails : errors) {
@@ -857,7 +857,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		}
 		// validate fees
-		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
+		String eventCode = AccountingEvent.SCDCHG;
 		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetail errorDetails : errors) {
@@ -937,7 +937,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		}
 		// validate fees
-		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
+		String eventCode = AccountingEvent.SCDCHG;
 		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetail errorDetails : errors) {
@@ -1012,7 +1012,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			financeDetail.setReturnStatus(returnStatus);
 			return financeDetail;
 		}
-		String eventCode = AccountEventConstants.ACCEVENT_ADDDBSN;
+		String eventCode = AccountingEvent.ADDDBSN;
 
 		financeDetail = finServiceInstController.getFinanceDetails(finServiceInstruction, eventCode);
 		List<FinFeeDetail> feeDetailList = financeDetail.getFinScheduleData().getFinFeeDetailList();
@@ -1051,7 +1051,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		}
 		// validate fees
-		financeDetail.setAccountingEventCode(AccountEventConstants.ACCEVENT_ADDDBSN);
+		financeDetail.setAccountingEventCode(AccountingEvent.ADDDBSN);
 		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetail errorDetails : errors) {
@@ -1122,7 +1122,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		}
 		// validate fees
-		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
+		String eventCode = AccountingEvent.SCDCHG;
 		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetail errorDetails : errors) {
@@ -1202,7 +1202,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		}
 		// validate fees
-		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
+		String eventCode = AccountingEvent.SCDCHG;
 		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetail errorDetails : errors) {
@@ -1451,21 +1451,21 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		String eventCode = null;
 		if (StringUtils.equals(moduleDefiner, FinServiceEvent.SCHDRPY)) {
-			eventCode = AccountEventConstants.ACCEVENT_REPAY;
+			eventCode = AccountingEvent.REPAY;
 			fsi.setModuleDefiner(FinServiceEvent.SCHDRPY);
 			fsi.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 			if (!fsi.isReceiptUpload()) {
 				validationUtility.validate(fsi, SchedulePaymentGroup.class);
 			}
 		} else if (StringUtils.equals(moduleDefiner, FinServiceEvent.EARLYRPY)) {
-			eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
+			eventCode = AccountingEvent.EARLYPAY;
 			fsi.setModuleDefiner(FinServiceEvent.EARLYRPY);
 			fsi.setReceiptPurpose(FinServiceEvent.EARLYRPY);
 			if (!fsi.isReceiptUpload()) {
 				validationUtility.validate(fsi, PartialSettlementGroup.class);
 			}
 		} else if (StringUtils.equals(moduleDefiner, FinServiceEvent.EARLYSETTLE)) {
-			eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
+			eventCode = AccountingEvent.EARLYSTL;
 			fsi.setModuleDefiner(FinServiceEvent.EARLYSETTLE);
 			fsi.setReceiptPurpose(FinServiceEvent.EARLYSETTLE);
 			if (!fsi.isReceiptUpload()) {
@@ -1598,7 +1598,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		}
 		// validate fees
-		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
+		String eventCode = AccountingEvent.SCDCHG;
 		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetail errorDetails : errors) {
@@ -1659,7 +1659,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		// validate fees
-		String eventCode = AccountEventConstants.ACCEVENT_GRACEEND;
+		String eventCode = AccountingEvent.GRACEEND;
 		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetail errorDetails : errors) {
@@ -2952,7 +2952,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
 
-			String eventCode = AccountEventConstants.ACCEVENT_ADDDBSN;
+			String eventCode = AccountingEvent.ADDDBSN;
 			FinanceDetail financeDetail = finServiceInstController.getFinanceDetails(finServiceInstRequest, eventCode);
 			financeDetail.setAdvancePaymentsList(disbursementDetailsList);
 			AuditDetail auditDetail = addDisbursementService.doCancelDisbValidations(financeDetail);
@@ -3112,7 +3112,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				return financeDetail;
 			}
 
-			String eventCode = AccountEventConstants.PART_CANCELATION;
+			String eventCode = AccountingEvent.PART_CANCELATION;
 			financeDetail = finServiceInstController.getFinanceDetails(finServiceInstruction, eventCode);
 
 			// validate service instruction data

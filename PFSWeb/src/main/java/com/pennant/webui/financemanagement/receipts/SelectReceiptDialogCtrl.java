@@ -27,7 +27,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
@@ -727,14 +727,14 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			String eventCode = "";
 
 			if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinServiceEvent.SCHDRPY)) {
-				eventCode = AccountEventConstants.ACCEVENT_REPAY;
+				eventCode = AccountingEvent.REPAY;
 
 			} else if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinServiceEvent.EARLYRPY)) {
-				eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
+				eventCode = AccountingEvent.EARLYPAY;
 
 			} else if (StringUtils.equals(receiptHeader.getReceiptPurpose(),
 					FinServiceEvent.EARLYSETTLE)) {
-				eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
+				eventCode = AccountingEvent.EARLYSTL;
 
 			}
 

@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.AccountingEvent;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.configuration.VASRecording;
@@ -151,7 +151,7 @@ public class DisbInsPostingEvent extends PostingEvent {
 			dataMap.putAll(amountCodes.getDeclaredFieldValues());
 
 			if (DisbursementConstants.PAYMENT_DETAIL_VAS.equals(fap.getPaymentDetail())) {
-				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSPAY);
+				aeEvent.setAccountingEvent(AccountingEvent.INSPAY);
 			} else {
 				// FIXME the below code needs to be moved to External layer
 				if (fd.getCustomerDetails() != null && fd.getFinScheduleData().getFinanceType() != null) {
@@ -160,7 +160,7 @@ public class DisbInsPostingEvent extends PostingEvent {
 					dataMap.put("division", fd.getFinScheduleData().getFinanceType().getFinDivision());
 				}
 
-				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_DISBINS);
+				aeEvent.setAccountingEvent(AccountingEvent.DISBINS);
 			}
 
 			if (PennantConstants.RCD_DEL.equals(fap.getRecordType())) {

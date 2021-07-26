@@ -81,7 +81,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
@@ -805,7 +805,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 						finFeeDetail.setModuleDefiner(getFinanceDetail().getModuleDefiner());
 						finFeeDetail.setVasReference(aVASRecording.getVasReference());
 						finFeeDetail.setOriginationFee(true);
-						finFeeDetail.setFinEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+						finFeeDetail.setFinEvent(AccountingEvent.VAS_FEE);
 						finFeeDetail.setFeeTypeID(0);
 						finFeeDetail.setFeeSeq(0);
 						finFeeDetail.setFeeOrder(0);
@@ -2727,7 +2727,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		} else {
 			getVASRecording().setFee(PennantApplicationUtil.unFormateAmount(this.fee.getActualValue(), getCcyFormat()));
 			AEEvent aeEvent = new AEEvent();
-			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+			aeEvent.setAccountingEvent(AccountingEvent.VAS_FEE);
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 			if (amountCodes == null) {
 				amountCodes = new AEAmountCodes();

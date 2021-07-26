@@ -61,7 +61,7 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -155,7 +155,7 @@ public class ProvisionPostings implements Tasklet {
 
 					Date dueFromDate = resultSet.getDate("DueFromDate");
 					AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, schdDetails, pftDetail,
-							AccountEventConstants.ACCEVENT_PROVSN, dateValueDate, dueFromDate);
+							AccountingEvent.PROVSN, dateValueDate, dueFromDate);
 					AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 					amountCodes.setProvDue(movement.getProvisionDue());
 					amountCodes.setProvAmt(movement.getProvisionedAmt());

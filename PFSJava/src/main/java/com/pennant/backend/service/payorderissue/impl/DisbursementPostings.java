@@ -12,7 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -85,13 +85,13 @@ public class DisbursementPostings {
 			aeEvent.setFinType(finMain.getFinType());
 			if (StringUtils.equals(finAdvancePayments.getPaymentDetail(), DisbursementConstants.PAYMENT_DETAIL_VAS)) {
 				amountCodes.setVasInstAmt(finAdvancePayments.getAmtToBeReleased());
-				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSPAY);
+				aeEvent.setAccountingEvent(AccountingEvent.INSPAY);
 				//For GL Code
 				dataMap.put("ae_productCode", finAdvancePayments.getProductShortCode());
 				dataMap.put("ae_dealerCode", finAdvancePayments.getDealerShortCode());
 				dataMap.put("id_totPayAmount", finAdvancePayments.getAmtToBeReleased());
 			} else {
-				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_DISBINS);
+				aeEvent.setAccountingEvent(AccountingEvent.DISBINS);
 				amountCodes.setDisbInstAmt(finAdvancePayments.getAmtToBeReleased());
 			}
 			amountCodes.setIntTdsAdjusted(finMain.getIntTdsAdjusted());
@@ -196,7 +196,7 @@ public class DisbursementPostings {
 					if (StringUtils.equals(finAdvancePayments.getPaymentDetail(),
 							DisbursementConstants.PAYMENT_DETAIL_VAS)) {
 						amountCodes.setVasInstAmt(finAdvancePayments.getAmtToBeReleased());
-						aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSPAY);
+						aeEvent.setAccountingEvent(AccountingEvent.INSPAY);
 						//For GL Code
 						dataMap.put("ae_productCode", finAdvancePayments.getProductShortCode());
 						dataMap.put("ae_dealerCode", finAdvancePayments.getDealerShortCode());
@@ -204,7 +204,7 @@ public class DisbursementPostings {
 
 					} else {
 						amountCodes.setDisbInstAmt(finAdvancePayments.getAmtToBeReleased());
-						aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_DISBINS);
+						aeEvent.setAccountingEvent(AccountingEvent.DISBINS);
 					}
 					amountCodes.setIntTdsAdjusted(finMain.getIntTdsAdjusted());
 					amountCodes.setPartnerBankAc(finAdvancePayments.getPartnerBankAc());

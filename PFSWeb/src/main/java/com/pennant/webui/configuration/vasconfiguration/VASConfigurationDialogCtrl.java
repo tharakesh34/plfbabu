@@ -95,7 +95,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
@@ -755,10 +755,10 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		this.manufacturer.setFilters(filters);
 
 		this.feeAccounting.setMandatoryStyle(true);
-		setPropertiesForAEExtCombobox(this.feeAccounting, AccountEventConstants.ACCEVENT_VAS_FEE);
+		setPropertiesForAEExtCombobox(this.feeAccounting, AccountingEvent.VAS_FEE);
 
 		this.accrualAccounting.setMandatoryStyle(true);
-		setPropertiesForAEExtCombobox(this.accrualAccounting, AccountEventConstants.ACCEVENT_VAS_ACCRUAL);
+		setPropertiesForAEExtCombobox(this.accrualAccounting, AccountingEvent.VAS_ACCRUAL);
 
 		this.cancellationFeeType.setMandatoryStyle(true);
 		this.cancellationFeeType.setModuleName("FeeType");

@@ -21,7 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeCalculator;
@@ -256,7 +256,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		Date appDate = SysParamUtil.getAppDate();
 		FinServiceInstruction finServInst = new FinServiceInstruction();
 		finServInst.setFinReference(receiptHeader.getReference());
-		finServInst.setFinEvent(AccountEventConstants.ACCEVENT_FEEPAY);
+		finServInst.setFinEvent(AccountingEvent.FEEPAY);
 		finServInst.setAppDate(appDate);
 		finServInst.setAmount(receiptHeader.getReceiptAmount());
 		finServInst.setSystemDate(DateUtility.getSysDate());
@@ -393,7 +393,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 
 		// Accounting Process Execution
 		AEEvent aeEvent = new AEEvent();
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_FEEPAY);
+		aeEvent.setAccountingEvent(AccountingEvent.FEEPAY);
 		aeEvent.setFinReference(receiptHeader.getReference());
 		if (StringUtils.isNotBlank(receiptHeader.getExtReference())) {
 			aeEvent.setFinReference(receiptHeader.getExtReference());
@@ -430,11 +430,11 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		if (RepayConstants.RECEIPTTO_FINANCE.equals(recAgainst) || (RepayConstants.RECEIPTTO_CUSTOMER.equals(recAgainst)
 				&& StringUtils.isNotBlank(receiptHeader.getExtReference()))) {
 			accountingSetID = AccountingConfigCache.getAccountSetID(receiptHeader.getFinType(),
-					AccountEventConstants.ACCEVENT_FEEPAY, FinanceConstants.MODULEID_FINTYPE);
+					AccountingEvent.FEEPAY, FinanceConstants.MODULEID_FINTYPE);
 			map = financeMainDAO.getGLSubHeadCodes(receiptHeader.getReference());
 		} else {
-			accountingSetID = accountingSetDAO.getAccountingSetId(AccountEventConstants.ACCEVENT_FEEPAY,
-					AccountEventConstants.ACCEVENT_FEEPAY);
+			accountingSetID = accountingSetDAO.getAccountingSetId(AccountingEvent.FEEPAY,
+					AccountingEvent.FEEPAY);
 		}
 		if (accountingSetID == 0 || accountingSetID == Long.MIN_VALUE) {
 			auditHeader.setErrorDetails(
@@ -800,7 +800,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			}
 
 			// Incase of Vas FEE
-			if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(fd.getFinEvent())) {
+			if (AccountingEvent.VAS_FEE.equals(fd.getFinEvent())) {
 				BigDecimal vasPaidFee = (BigDecimal) dataMap.get("ae_paidVasFee");
 				vasPaidFee = vasPaidFee.add(fd.getPaidAmountOriginal());
 				dataMap.put("ae_paidVasFee", vasPaidFee);
@@ -1128,7 +1128,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			fee.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			finFeeDetailService.updateFeesFromUpfront(fee, type);
 			// VAS need to update vasrecording also
-			if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(fee.getFinEvent())) {
+			if (AccountingEvent.VAS_FEE.equals(fee.getFinEvent())) {
 				BigDecimal paidAmount = fee.getPaidAmount();
 				if (BigDecimal.ZERO.compareTo(paidAmount) < 0) {
 					String vasReference = fee.getVasReference();
@@ -1365,7 +1365,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		// in case of PaidFee's contains vas
 		List<VASRecording> vasRecordingList = new ArrayList<>(1);
 		for (FinFeeDetail finFeeDetail : paidFeeList) {
-			if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())) {
+			if (AccountingEvent.VAS_FEE.equals(finFeeDetail.getFinEvent())) {
 				VASRecording vasRecording = null;
 				vasRecording = vASRecordingDAO.getVASRecordingByReference(finFeeDetail.getVasReference(), "_Temp");
 				if (vasRecording != null) {

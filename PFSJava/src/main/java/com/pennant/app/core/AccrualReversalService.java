@@ -49,7 +49,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -110,7 +110,7 @@ public class AccrualReversalService extends ServiceHelper {
 	 * @throws Exception
 	 */
 	public void postMonthEndReversals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
-		String eventCode = AccountEventConstants.ACCEVENT_AMZ_MON;
+		String eventCode = AccountingEvent.AMZ_MON;
 		FinanceProfitDetail finPftDetail = finEODEvent.getFinProfitDetail();
 		FinanceMain main = finEODEvent.getFinanceMain();
 		EventProperties eventProperties = custEODEvent.getEventProperties();

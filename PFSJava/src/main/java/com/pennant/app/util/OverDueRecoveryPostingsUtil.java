@@ -54,7 +54,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.dao.applicationmaster.AssignmentDAO;
 import com.pennant.backend.dao.applicationmaster.AssignmentDealDAO;
@@ -169,7 +169,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			aeEvent.setBranch(fm.getFinBranch());
 			aeEvent.setCcy(fm.getFinCcy());
 			aeEvent.setPostingUserBranch(rpyQueueHeader.getPostBranch());
-			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);
+			aeEvent.setAccountingEvent(AccountingEvent.LATEPAY);
 			aeEvent.setValueDate(dateValueDate);
 			aeEvent.setPostDate(postDate);
 			aeEvent.setEntityCode(fm.getLovDescEntityCode());
@@ -357,7 +357,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			dataMap.putAll(rpyQueueHeader.getGstExecutionMap());
 		}
 
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);
+		aeEvent.setAccountingEvent(AccountingEvent.LATEPAY);
 
 		aeEvent.setDataMap(dataMap);
 		aeEvent.getAcSetIDList().clear();
@@ -1100,7 +1100,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				aeEvent.setFinReference(fm.getFinReference());
 				amountCodes.setPenalty(penaltyPaidNow);
 				amountCodes.setWaiver(waiverAmt);
-				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);
+				aeEvent.setAccountingEvent(AccountingEvent.LATEPAY);
 				aeEvent.setValueDate(valueDate);
 				aeEvent.setSchdDate(schdDate);
 				aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());

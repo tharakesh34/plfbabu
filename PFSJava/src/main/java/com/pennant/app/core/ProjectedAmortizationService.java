@@ -63,7 +63,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.RuleExecutionUtil;
@@ -869,10 +869,10 @@ public class ProjectedAmortizationService {
 
 		// Post Accounting
 		Long accountingSetId = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(),
-				AccountEventConstants.ACCEVENT_INDAS, FinanceConstants.MODULEID_FINTYPE);
+				AccountingEvent.INDAS, FinanceConstants.MODULEID_FINTYPE);
 
 		AEEvent aeEvent = new AEEvent();
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INDAS);
+		aeEvent.setAccountingEvent(AccountingEvent.INDAS);
 
 		aeEvent.getAcSetIDList().add(accountingSetId);
 		aeEvent.setValueDate(SysParamUtil.getAppDate());

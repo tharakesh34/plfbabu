@@ -11,7 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -319,7 +319,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setPostingUserBranch(details.getUserDetails().getBranchCode());
 		aeEvent.setEntityCode(details.getEntityCode());
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSADJ);
+		aeEvent.setAccountingEvent(AccountingEvent.INSADJ);
 		aeEvent.setFinReference(details.getReference());
 		aeEvent.setValueDate(SysParamUtil.getAppDate());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -354,8 +354,8 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		details.getDeclaredFieldValues(aeEvent.getDataMap());
 
-		long accountsetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_INSADJ,
-				AccountEventConstants.ACCEVENT_INSADJ);
+		long accountsetId = getAccountingSetDAO().getAccountingSetId(AccountingEvent.INSADJ,
+				AccountingEvent.INSADJ);
 		aeEvent.getAcSetIDList().add(accountsetId);
 		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 
@@ -381,7 +381,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 			aeEvent.setBranch(financeMain.getFinBranch());// FIXME Branch
 		}
 		aeEvent.setEntityCode(details.getEntityCode());
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSPAY);
+		aeEvent.setAccountingEvent(AccountingEvent.INSPAY);
 		// Setting FinReference instead of provider ID
 		aeEvent.setFinReference(details.getVasReference());
 		aeEvent.setValueDate(SysParamUtil.getAppDate());
@@ -403,7 +403,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		details.getDeclaredFieldValues(aeEvent.getDataMap());
 
 		long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
-				AccountEventConstants.ACCEVENT_INSPAY, FinanceConstants.MODULEID_FINTYPE);
+				AccountingEvent.INSPAY, FinanceConstants.MODULEID_FINTYPE);
 		aeEvent.getAcSetIDList().add(accountsetId);
 		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 		logger.debug(Literal.LEAVING);
@@ -417,7 +417,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setEntityCode(vASRecording.getEntityCode());
 		aeEvent.setPostingUserBranch(vASRecording.getUserDetails().getBranchCode());
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSPAY);
+		aeEvent.setAccountingEvent(AccountingEvent.INSPAY);
 		aeEvent.setFinReference(vASRecording.getVasReference());
 		aeEvent.setValueDate(SysParamUtil.getAppDate());
 
@@ -458,8 +458,8 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		details.getDeclaredFieldValues(aeEvent.getDataMap());
 
-		long accountsetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_INSPAY,
-				AccountEventConstants.ACCEVENT_INSPAY);
+		long accountsetId = getAccountingSetDAO().getAccountingSetId(AccountingEvent.INSPAY,
+				AccountingEvent.INSPAY);
 		aeEvent.getAcSetIDList().add(accountsetId);
 		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 		logger.debug(Literal.LEAVING);

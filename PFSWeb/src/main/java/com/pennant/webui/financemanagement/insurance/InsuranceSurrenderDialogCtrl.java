@@ -70,7 +70,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -518,8 +518,8 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.tabPostingDetails.setVisible(true);
 			this.tabPanelPostingDetails.setVisible(true);
 			this.tabPanelPostingDetails.setHeight(getListBoxHeight(7));
-			accountsetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_CANINS,
-					AccountEventConstants.ACCEVENT_CANINS);
+			accountsetId = getAccountingSetDAO().getAccountingSetId(AccountingEvent.CANINS,
+					AccountingEvent.CANINS);
 			final Map<String, Object> map = new HashMap<>();
 			map.put("insuranceDetails", vasRecording);
 			map.put("acSetID", accountsetId);

@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
@@ -57,7 +57,7 @@ public class PricingDetailServiceImpl implements PricingDetailService {
 
 		if (financeType != null) {
 			financeType.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(finType,
-					AccountEventConstants.ACCEVENT_ADDDBSP, "_AView", true, FinanceConstants.MODULEID_FINTYPE));
+					AccountingEvent.ADDDBSP, "_AView", true, FinanceConstants.MODULEID_FINTYPE));
 			financeType.setFinTypeVASProductsList(getFinTypeVASProductsDAO().getVASProductsByFinType(finType, "_View"));
 
 		}

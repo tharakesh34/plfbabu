@@ -61,7 +61,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.LatePayMarkingService;
@@ -1144,7 +1144,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setEntityCode(financeMain.getEntityCode());
 		aeEvent.setPostingUserBranch(receiptData.getReceiptHeader().getCashierBranch());
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_RECIP);
+		aeEvent.setAccountingEvent(AccountingEvent.RECIP);
 		aeEvent.setFinReference(receiptData.getFinReference());
 		aeEvent.setValueDate(SysParamUtil.getAppDate());
 
@@ -1191,8 +1191,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		aeEvent.getDataMap().put("rd_amount", amount);
 
-		long accountsetId = accountingSetDAO.getAccountingSetId(AccountEventConstants.ACCEVENT_RECIP,
-				AccountEventConstants.ACCEVENT_RECIP);
+		long accountsetId = accountingSetDAO.getAccountingSetId(AccountingEvent.RECIP,
+				AccountingEvent.RECIP);
 		aeEvent.getAcSetIDList().add(accountsetId);
 		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 		logger.debug(Literal.LEAVING);
@@ -2623,7 +2623,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinReceiptHeader finReceiptHeader = repayData.getReceiptHeader();
 		FinReceiptData receiptData = new FinReceiptData();
 
-		receiptData = getFinReceiptDataById(finReceiptHeader.getReference(), AccountEventConstants.ACCEVENT_EARLYPAY,
+		receiptData = getFinReceiptDataById(finReceiptHeader.getReference(), AccountingEvent.EARLYPAY,
 				FinServiceEvent.RECEIPT, "");
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
@@ -3112,11 +3112,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		int methodCtg = receiptCalculator.setReceiptCategory(method);
 		if (methodCtg == 0) {
-			eventCode = AccountEventConstants.ACCEVENT_REPAY;
+			eventCode = AccountingEvent.REPAY;
 		} else if (methodCtg == 1) {
-			eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
+			eventCode = AccountingEvent.EARLYPAY;
 		} else if (methodCtg == 2) {
-			eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
+			eventCode = AccountingEvent.EARLYSTL;
 		}
 
 		// FIXME: Temporary Fix for API
@@ -4466,18 +4466,18 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		finScheduleData.getFinanceMain().setReceiptPurpose(receiptPurpose);
 		String event = null;
 		if (StringUtils.equals(receiptPurpose, FinServiceEvent.SCHDRPY)) {
-			event = AccountEventConstants.ACCEVENT_REPAY;
+			event = AccountingEvent.REPAY;
 		} else if (StringUtils.equals(receiptPurpose, FinServiceEvent.EARLYRPY)) {
-			event = AccountEventConstants.ACCEVENT_EARLYPAY;
+			event = AccountingEvent.EARLYPAY;
 		} else if (StringUtils.equals(receiptPurpose, FinServiceEvent.EARLYSETTLE)) {
-			event = AccountEventConstants.ACCEVENT_EARLYSTL;
+			event = AccountingEvent.EARLYSTL;
 			/*
 			 * finScheduleData = ScheduleCalculator.recalEarlyPaySchedule(finScheduleData, rcd.getReceivedDate(), null,
 			 * receiptData.getFinanceDetail().getFinScheduleData(). getFinPftDeatil().getTotalPriBal(),
 			 * CalculationConstants.EARLYPAY_ADJMUR);
 			 */
 		} else if (StringUtils.equals(receiptPurpose, FinServiceEvent.EARLYSTLENQ)) {
-			event = AccountEventConstants.ACCEVENT_EARLYSTL;
+			event = AccountingEvent.EARLYSTL;
 		}
 
 		// Finance Type Fee details based on Selected Receipt Purpose Event
@@ -5536,17 +5536,17 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		boolean isForeClosure = receiptData.isForeClosure();
 		int receiptPurposeCtg = receiptCalculator.setReceiptCategory(rch.getReceiptPurpose());
 		if (StringUtils.equals(rch.getReceiptPurpose(), FinServiceEvent.SCHDRPY)) {
-			eventCode = AccountEventConstants.ACCEVENT_REPAY;
+			eventCode = AccountingEvent.REPAY;
 		} else if (StringUtils.equals(rch.getReceiptPurpose(), FinServiceEvent.EARLYRPY)) {
-			eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
+			eventCode = AccountingEvent.EARLYPAY;
 		} else if (StringUtils.equals(rch.getReceiptPurpose(), FinServiceEvent.EARLYSETTLE)) {
-			eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
+			eventCode = AccountingEvent.EARLYSTL;
 		}
 
 		// Set WriteOffAccounting
 		FinanceMain finmain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
 		if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(finmain.getClosingStatus())) {
-			eventCode = AccountEventConstants.ACCEVENT_WRITEBK;
+			eventCode = AccountingEvent.WRITEBK;
 		}
 
 		// FIXME Bharat Only get finschedule details and finprofitdetails
@@ -5710,13 +5710,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		String eventCode = null;
 		if (StringUtils.equals(moduleDefiner, FinServiceEvent.SCHDRPY)) {
-			eventCode = AccountEventConstants.ACCEVENT_REPAY;
+			eventCode = AccountingEvent.REPAY;
 			fsi.setModuleDefiner(FinServiceEvent.SCHDRPY);
 		} else if (StringUtils.equals(moduleDefiner, FinServiceEvent.EARLYRPY)) {
-			eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
+			eventCode = AccountingEvent.EARLYPAY;
 			fsi.setModuleDefiner(FinServiceEvent.EARLYRPY);
 		} else if (StringUtils.equals(moduleDefiner, FinServiceEvent.EARLYSETTLE)) {
-			eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
+			eventCode = AccountingEvent.EARLYSTL;
 			fsi.setModuleDefiner(FinServiceEvent.EARLYSETTLE);
 		}
 
@@ -6116,7 +6116,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Receipt upload process
 		if (fsi.isReceiptdetailExits()) {
 			FinReceiptData oldReceiptData = this.getFinReceiptDataById(fsi.getFinReference(),
-					AccountEventConstants.ACCEVENT_REPAY, FinServiceEvent.RECEIPT, FinanceConstants.REALIZATION_MAKER);
+					AccountingEvent.REPAY, FinServiceEvent.RECEIPT, FinanceConstants.REALIZATION_MAKER);
 			receiptData = oldReceiptData;
 
 			receiptData.getReceiptHeader().setRealizationDate(fsi.getRealizationDate());

@@ -79,7 +79,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zul.Filedownload;
 
 import com.aspose.words.SaveFormat;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.ImplementationConstants;
@@ -2456,7 +2456,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 	private AgreementDetail getLoanServicingFee(AgreementDetail agreement, FinanceDetail detail, int formatter,
 			List<FinTypeFees> finTypeFeesList) {
 		finTypeFeesList.forEach(finTypeFeesDetails -> {
-			if (!StringUtils.equals(AccountEventConstants.ACCEVENT_ADDDBSP, finTypeFeesDetails.getFinEvent())) {
+			if (!StringUtils.equals(AccountingEvent.ADDDBSP, finTypeFeesDetails.getFinEvent())) {
 				com.pennant.backend.model.finance.AgreementDetail.LoanServicingFee FinTypeFee = agreement.new LoanServicingFee();
 				FinTypeFee.setFinEvent(StringUtils.trimToEmpty(finTypeFeesDetails.getFinEvent()));
 				FinTypeFee.setFinEventDesc(StringUtils.trimToEmpty(finTypeFeesDetails.getFinEventDesc()));
@@ -3583,7 +3583,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			com.pennant.backend.model.finance.AgreementDetail.CusCharge charge = agreement.new CusCharge();
 			charge.setFeeChargeDesc(StringUtils.trimToEmpty(fee.getFeeTypeDesc()));
 
-			if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(fee.getFinEvent())) {
+			if (AccountingEvent.VAS_FEE.equals(fee.getFinEvent())) {
 				charge.setFeeChargeDesc(StringUtils.trimToEmpty(fee.getVasReference()));
 			} else {
 				charge.setFeeChargeDesc(StringUtils.trimToEmpty(fee.getFeeTypeDesc()));

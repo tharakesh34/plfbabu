@@ -63,7 +63,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.resource.Labels;
 
 import com.google.common.collect.ComparisonChain;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CalculationUtil;
@@ -1382,7 +1382,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		List<FinFeeDetail> fees = getFinFeedetails(finReference);
 		for (FinFeeDetail ffd : fees) {
-			if (AccountEventConstants.ACCEVENT_EARLYSTL.equals(ffd.getFinEvent())) {
+			if (AccountingEvent.EARLYSTL.equals(ffd.getFinEvent())) {
 				otherReceivableDue = otherReceivableDue.add(ffd.getPaidAmount()).add(ffd.getRemainingFee());
 				otherReceivableReceipt = otherReceivableReceipt.add(ffd.getPaidAmount()).add(ffd.getRemainingFee());
 			}

@@ -25,7 +25,7 @@ import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.HolidayHandlerTypes;
@@ -674,7 +674,7 @@ public class FinanceDataValidation {
 					productCode = extractFeeCode(productCode);
 
 					if (StringUtils.equals(feeTypeCode, productCode)) {
-						feeDetail.setFinEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+						feeDetail.setFinEvent(AccountingEvent.VAS_FEE);
 						vasFeeCount++;
 					}
 				}
@@ -5605,7 +5605,7 @@ public class FinanceDataValidation {
 		int vasFeeCount = 0;
 		if (!StringUtils.equals(PennantConstants.VLD_SRV_LOAN, vldGroup)) {
 			for (FinFeeDetail finFeeDetail : finSchdData.getFinFeeDetailList()) {
-				if (StringUtils.equals(finFeeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)) {
+				if (StringUtils.equals(finFeeDetail.getFinEvent(), AccountingEvent.VAS_FEE)) {
 					vasFeeCount++;
 				}
 				if (StringUtils.isBlank(finFeeDetail.getFeeScheduleMethod())) {
@@ -5665,7 +5665,7 @@ public class FinanceDataValidation {
 		} else {
 			for (FinFeeDetail finFeeDetail : finSchdData.getFinFeeDetailList()) {
 				if (StringUtils.isNotBlank(finFeeDetail.getFeeScheduleMethod())
-						&& !AccountEventConstants.ACCEVENT_ADDDBSN.equals(eventCode)) {
+						&& !AccountingEvent.ADDDBSN.equals(eventCode)) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "Fee Schedule Method";
 					valueParm[1] = finFeeDetail.getFeeTypeCode();
@@ -5694,7 +5694,7 @@ public class FinanceDataValidation {
 						String feeTypeCode2 = finTypeFee.getFeeTypeCode();
 						feeTypeCode2 = extractFeeCode(feeTypeCode2);
 						if (StringUtils.equals(feeTypeCode, feeTypeCode2)
-								|| AccountEventConstants.ACCEVENT_VAS_FEE.equals(feeDetail.getFinEvent())) {
+								|| AccountingEvent.VAS_FEE.equals(feeDetail.getFinEvent())) {
 							isFeeCodeFound = true;
 
 							// validate negative values
@@ -5708,7 +5708,7 @@ public class FinanceDataValidation {
 							}
 
 							// validate fee schedule method
-							if (!AccountEventConstants.ACCEVENT_VAS_FEE.equals(feeDetail.getFinEvent())) {
+							if (!AccountingEvent.VAS_FEE.equals(feeDetail.getFinEvent())) {
 								if (!finTypeFee.isAlwModifyFeeSchdMthd() && !StringUtils
 										.equals(feeDetail.getFeeScheduleMethod(), finTypeFee.getFeeScheduleMethod())) {
 									String[] valueParm = new String[1];

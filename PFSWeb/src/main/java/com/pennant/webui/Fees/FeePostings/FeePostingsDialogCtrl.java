@@ -77,7 +77,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.DateUtility;
@@ -443,7 +443,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		getFeePostings().setPostingAmount(
 				PennantAppUtil.unFormateAmount(this.postingAmount.getActualValue(), aCurrency.getCcyEditField()));
 		AEEvent aeEvent = new AEEvent();
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_MANFEE);
+		aeEvent.setAccountingEvent(AccountingEvent.MANFEE);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		if (amountCodes == null) {
 			amountCodes = new AEAmountCodes();

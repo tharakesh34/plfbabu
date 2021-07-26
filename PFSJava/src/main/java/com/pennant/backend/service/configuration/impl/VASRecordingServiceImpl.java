@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  VASRecordingServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  02-12-2016    														*
- *                                                                  						*
- * Modified Date    :  02-12-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : VASRecordingServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 02-12-2016 * *
+ * Modified Date : 02-12-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 02-12-2016       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 02-12-2016 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.configuration.impl;
@@ -63,7 +45,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.DateUtility;
@@ -152,6 +133,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
@@ -226,16 +208,14 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	}
 
 	/**
-	 * @param extendedFieldDetailsService
-	 *            the extendedFieldDetailsService to set
+	 * @param extendedFieldDetailsService the extendedFieldDetailsService to set
 	 */
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
 	}
 
 	/**
-	 * @param extendedFieldRenderDAO
-	 *            the extendedFieldRenderDAO to set
+	 * @param extendedFieldRenderDAO the extendedFieldRenderDAO to set
 	 */
 	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
 		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
@@ -265,8 +245,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * Configuration. by using VASRecordingDAO's update method 3) Audit the record in to AuditHeader and AdtVASRecording
 	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -297,10 +276,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * Configuration. by using VASRecordingDAO's update method 3) Audit the record in to AuditHeader and AdtVASRecording
 	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -390,8 +367,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * VASRecording by using VASRecordingDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
 	 * and AdtVASRecording by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -424,10 +400,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	/**
 	 * getVASRecordingByRef fetch the details by using VASRecordingDAO's getVASRecordingByRef method.
 	 * 
-	 * @param vasReference
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param vasReference (String)
+	 * @param type         (String) ""/_Temp/_View
 	 * @return VASRecording
 	 */
 	@Override
@@ -466,16 +440,17 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				extFieldMap.remove("LastMntOn");
 				extendedFieldRender.setLastMntBy(Long.valueOf(extFieldMap.get("LastMntBy").toString()));
 				extFieldMap.remove("LastMntBy");
-				extendedFieldRender
-						.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null")
-								? "" : String.valueOf(extFieldMap.get("RecordStatus")));
+				extendedFieldRender.setRecordStatus(
+						StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null") ? ""
+								: String.valueOf(extFieldMap.get("RecordStatus")));
 				extFieldMap.remove("RecordStatus");
-				extendedFieldRender.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null")
-						? "" : String.valueOf(extFieldMap.get("RoleCode")));
-				extFieldMap.remove("RoleCode");
 				extendedFieldRender
-						.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null")
-								? "" : String.valueOf(extFieldMap.get("NextRoleCode")));
+						.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null") ? ""
+								: String.valueOf(extFieldMap.get("RoleCode")));
+				extFieldMap.remove("RoleCode");
+				extendedFieldRender.setNextRoleCode(
+						StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null") ? ""
+								: String.valueOf(extFieldMap.get("NextRoleCode")));
 				extFieldMap.remove("NextRoleCode");
 				extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
 						: String.valueOf(extFieldMap.get("TaskId")));
@@ -509,8 +484,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				if (StringUtils.isNotEmpty(vasRecording.getRecordType())
 						&& !StringUtils.equals(vasRecording.getRecordType(), PennantConstants.RECORD_TYPE_UPD)
 						&& !StringUtils.equals(vasRecording.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
-					vasRecording = getProcessEditorDetails(vasRecording, nextRoleCode,
-							FinServiceEvent.ORG);
+					vasRecording = getProcessEditorDetails(vasRecording, nextRoleCode, FinServiceEvent.ORG);
 				} else if (StringUtils.equals(VASConsatnts.STATUS_CANCEL, vasRecording.getVasStatus())
 						|| StringUtils.isEmpty(vasRecording.getRecordType())) {
 
@@ -519,8 +493,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					// set to Vas recording bean as Return dataset
 
 					List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
-					String[] finEvent = { AccountEventConstants.ACCEVENT_VAS_FEE,
-							AccountEventConstants.ACCEVENT_INSPAY };
+					String[] finEvent = { AccountingEvent.VAS_FEE, AccountingEvent.INSPAY };
 					list = getPostingsDAO().getPostingsByVasref(vasRecording.getVasReference(), finEvent);
 
 					for (ReturnDataSet returnDataSet : list) {
@@ -540,7 +513,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					vasRecording.setReturnDataSetList(list);
 				}
 			} else {
-				String[] finEvent = { AccountEventConstants.ACCEVENT_VAS_FEE, AccountEventConstants.ACCEVENT_INSPAY };
+				String[] finEvent = { AccountingEvent.VAS_FEE, AccountingEvent.INSPAY };
 				vasRecording.setReturnDataSetList(
 						getPostingsDAO().getPostingsByVasref(vasRecording.getVasReference(), finEvent));
 			}
@@ -553,10 +526,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	/**
 	 * getVASRecordingForRebook fetch the details by using VASRecordingDAO's getVASRecordingByRef method.
 	 * 
-	 * @param vasReference
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param vasReference (String)
+	 * @param type         (String) ""/_Temp/_View
 	 * @return VASRecording
 	 */
 	@Override
@@ -597,28 +568,29 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					extFieldMap.remove("LastMntOn");
 					extendedFieldRender.setLastMntBy(Long.valueOf(extFieldMap.get("LastMntBy").toString()));
 					extFieldMap.remove("LastMntBy");
-					extendedFieldRender
-							.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null")
-									? "" : String.valueOf(extFieldMap.get("RecordStatus")));
+					extendedFieldRender.setRecordStatus(
+							StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null") ? ""
+									: String.valueOf(extFieldMap.get("RecordStatus")));
 					extFieldMap.remove("RecordStatus");
 					extendedFieldRender
 							.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null") ? ""
 									: String.valueOf(extFieldMap.get("RoleCode")));
 					extFieldMap.remove("RoleCode");
-					extendedFieldRender
-							.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null")
-									? "" : String.valueOf(extFieldMap.get("NextRoleCode")));
+					extendedFieldRender.setNextRoleCode(
+							StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null") ? ""
+									: String.valueOf(extFieldMap.get("NextRoleCode")));
 					extFieldMap.remove("NextRoleCode");
-					extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null")
-							? "" : String.valueOf(extFieldMap.get("TaskId")));
+					extendedFieldRender
+							.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
+									: String.valueOf(extFieldMap.get("TaskId")));
 					extFieldMap.remove("TaskId");
-					extendedFieldRender
-							.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null")
-									? "" : String.valueOf(extFieldMap.get("NextTaskId")));
+					extendedFieldRender.setNextTaskId(
+							StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? ""
+									: String.valueOf(extFieldMap.get("NextTaskId")));
 					extFieldMap.remove("NextTaskId");
-					extendedFieldRender
-							.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null")
-									? "" : String.valueOf(extFieldMap.get("RecordType")));
+					extendedFieldRender.setRecordType(
+							StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null") ? ""
+									: String.valueOf(extFieldMap.get("RecordType")));
 					extFieldMap.remove("RecordType");
 					extendedFieldRender.setWorkflowId(Long.valueOf(extFieldMap.get("WorkflowId").toString()));
 					extFieldMap.remove("WorkflowId");
@@ -665,8 +637,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * getApprovedVASRecordingByCode fetch the details by using VASRecordingDAO's getApprovedVASRecordingByCode method .
 	 * with parameter productCode . it fetches the approved records from the VASRecording.
 	 * 
-	 * @param productCode
-	 *            (String)
+	 * @param productCode (String)
 	 * @return VASRecording
 	 */
 	@Override
@@ -690,8 +661,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtVASRecording by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws InterfaceException
 	 * @throws InvocationTargetException
@@ -828,8 +798,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * workFlow table by using getVASRecordingDAO().delete with parameters vASRecording,"_Temp" 3) Audit the record in
 	 * to AuditHeader and AdtVASRecording by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -1028,10 +997,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	/**
 	 * Method to get Schedule related data.
 	 * 
-	 * @param finReference
-	 *            (String)
-	 * @param isWIF
-	 *            (boolean)
+	 * @param finReference (String)
+	 * @param isWIF        (boolean)
 	 **/
 	private FinScheduleData getFinSchDataByFinRef(String finReference, boolean isPennding) {
 		logger.debug("Entering");
@@ -1122,10 +1089,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
 	 * assign the to auditHeader 3) identify the next process
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -1191,8 +1156,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 		// Fetch Total Process editor Details
 		List<FinanceReferenceDetail> finRefDetails = getFinanceReferenceDetailDAO().getFinanceProcessEditorDetails(
-				productCode, StringUtils.isEmpty(procEdtEvent) ? FinServiceEvent.ORG : procEdtEvent,
-				"_VASVIEW");
+				productCode, StringUtils.isEmpty(procEdtEvent) ? FinServiceEvent.ORG : procEdtEvent, "_VASVIEW");
 
 		if (finRefDetails != null && !finRefDetails.isEmpty()) {
 			for (FinanceReferenceDetail finrefDetail : finRefDetails) {
@@ -1784,7 +1748,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 			AEEvent aeEvent = new AEEvent();
 			aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
-			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+			aeEvent.setAccountingEvent(AccountingEvent.VAS_FEE);
 			aeEvent.setFinReference(vASRecording.getVasReference());
 			aeEvent.setValueDate(curBDay);
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -1893,7 +1857,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	private void createInsurancePaymentAccounting(AuditHeader auditHeader, VASRecording vASRecording) {
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_CANINS);
+		aeEvent.setAccountingEvent(AccountingEvent.CANINS);
 		aeEvent.setFinReference(vASRecording.getVasReference());
 		aeEvent.setEntityCode(vASRecording.getEntityCode());
 		aeEvent.setValueDate(DateUtility.getAppDate());
@@ -1932,8 +1896,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		vASRecording.getDeclaredFieldValues(aeEvent.getDataMap());
 
-		long accountsetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_CANINS,
-				AccountEventConstants.ACCEVENT_CANINS);
+		long accountsetId = getAccountingSetDAO().getAccountingSetId(AccountingEvent.CANINS, AccountingEvent.CANINS);
 		aeEvent.getAcSetIDList().add(accountsetId);
 		aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 	}
@@ -2760,7 +2723,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	public VASRecording getVASRecordingDetails(VASRecording vasRecording) {
 		logger.debug("Entering");
 
-		//	VASRecording vasRecording = getVASRecordingDAO().getVASRecordingByReference(vasReference, tableType);
+		// VASRecording vasRecording = getVASRecordingDAO().getVASRecordingByReference(vasReference, tableType);
 		if (vasRecording != null) {
 
 			// VasconfigurationDetails
@@ -2789,16 +2752,17 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				extFieldMap.remove("LastMntOn");
 				extendedFieldRender.setLastMntBy(Long.valueOf(extFieldMap.get("LastMntBy").toString()));
 				extFieldMap.remove("LastMntBy");
-				extendedFieldRender
-						.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null")
-								? "" : String.valueOf(extFieldMap.get("RecordStatus")));
+				extendedFieldRender.setRecordStatus(
+						StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null") ? ""
+								: String.valueOf(extFieldMap.get("RecordStatus")));
 				extFieldMap.remove("RecordStatus");
-				extendedFieldRender.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null")
-						? "" : String.valueOf(extFieldMap.get("RoleCode")));
-				extFieldMap.remove("RoleCode");
 				extendedFieldRender
-						.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null")
-								? "" : String.valueOf(extFieldMap.get("NextRoleCode")));
+						.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null") ? ""
+								: String.valueOf(extFieldMap.get("RoleCode")));
+				extFieldMap.remove("RoleCode");
+				extendedFieldRender.setNextRoleCode(
+						StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null") ? ""
+								: String.valueOf(extFieldMap.get("NextRoleCode")));
 				extFieldMap.remove("NextRoleCode");
 				extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
 						: String.valueOf(extFieldMap.get("TaskId")));

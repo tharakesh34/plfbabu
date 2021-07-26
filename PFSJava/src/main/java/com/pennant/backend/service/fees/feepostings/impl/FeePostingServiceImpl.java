@@ -54,7 +54,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -401,7 +401,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			if (feePostings.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 
 				AEEvent aeEvent = new AEEvent();
-				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_MANFEE);
+				aeEvent.setAccountingEvent(AccountingEvent.MANFEE);
 				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 				if (amountCodes == null) {

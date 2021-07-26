@@ -56,7 +56,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
@@ -134,7 +134,7 @@ public class SuspensePostingUtil implements Serializable {
 
 		aeEvent.setFinReference(financeMain.getFinReference());
 		amountCodes.setSuspNow(suspAmount);
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_NORM_PIS);
+		aeEvent.setAccountingEvent(AccountingEvent.NORM_PIS);
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setSchdDate(suspFromDate);
 
@@ -264,7 +264,7 @@ public class SuspensePostingUtil implements Serializable {
 		//Creating DataSet using Finance Details
 		aeEvent.setFinReference(financeMain.getFinReference());
 		amountCodes.setSuspRls(suspAmtToMove);
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_PIS_NORM);
+		aeEvent.setAccountingEvent(AccountingEvent.PIS_NORM);
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setSchdDate(suspFromDate);
 

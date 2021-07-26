@@ -78,7 +78,7 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.AEAmounts;
@@ -1585,10 +1585,10 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		accountingSetEntries.addAll(aeEvent.getReturnDataSet());
 
 		//Disb Instruction Posting
-		if (eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBS)
-				|| eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSF)
-				|| eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSN)
-				|| eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSP)) {
+		if (eventCode.equals(AccountingEvent.ADDDBS)
+				|| eventCode.equals(AccountingEvent.ADDDBSF)
+				|| eventCode.equals(AccountingEvent.ADDDBSN)
+				|| eventCode.equals(AccountingEvent.ADDDBSP)) {
 			prepareDisbInstructionPosting(accountingSetEntries, aeEvent);
 		}
 
@@ -1660,17 +1660,17 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			throws Exception {
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_DISBINS);
+		aeEvent.setAccountingEvent(AccountingEvent.DISBINS);
 		List<FinAdvancePayments> advPayList = getFinanceDetail().getAdvancePaymentsList();
 
 		aeEvent.getAcSetIDList().clear();
 		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
 			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-					AccountEventConstants.ACCEVENT_DISBINS, FinanceConstants.MODULEID_PROMOTION));
+					AccountingEvent.DISBINS, FinanceConstants.MODULEID_PROMOTION));
 		} else {
 			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(),
-					AccountEventConstants.ACCEVENT_DISBINS, FinanceConstants.MODULEID_FINTYPE));
+					AccountingEvent.DISBINS, FinanceConstants.MODULEID_FINTYPE));
 		}
 
 		//loop through the disbursements.

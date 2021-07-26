@@ -18,7 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FeeScheduleCalculator;
@@ -324,7 +324,7 @@ public class FinanceDetailController extends SummaryDetailService {
 		// Set VAS reference as feeCode for VAS related fees
 		for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
 			for (VASRecording vasRecording : finScheduleData.getVasRecordingList()) {
-				if (StringUtils.equals(feeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)
+				if (StringUtils.equals(feeDetail.getFinEvent(), AccountingEvent.VAS_FEE)
 						&& StringUtils.contains(feeDetail.getFeeTypeCode(), vasRecording.getProductCode())) {
 					feeDetail.setFeeTypeCode(vasRecording.getVasReference());
 					feeDetail.setVasReference(vasRecording.getVasReference());

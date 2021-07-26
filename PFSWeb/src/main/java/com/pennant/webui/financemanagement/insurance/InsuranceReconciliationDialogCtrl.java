@@ -72,7 +72,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -536,8 +536,8 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 		this.tabPanelPostingDetails.setVisible(true);
 		this.tabPanelPostingDetails.setHeight(getListBoxHeight(7));
 		if (!onLoadProcess) {
-			accountsetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_INSADJ,
-					AccountEventConstants.ACCEVENT_INSADJ);
+			accountsetId = getAccountingSetDAO().getAccountingSetId(AccountingEvent.INSADJ,
+					AccountingEvent.INSADJ);
 			final Map<String, Object> map = new HashMap<>();
 			map.put("insuranceDetails", insuranceDetails);
 			map.put("acSetID", accountsetId);
@@ -564,7 +564,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setPostingUserBranch(getUserWorkspace().getLoggedInUser().getBranchCode());
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSADJ);
+		aeEvent.setAccountingEvent(AccountingEvent.INSADJ);
 		aeEvent.setFinReference(this.insuranceDetails.getReference());
 		aeEvent.setValueDate(DateUtility.getAppDate());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();

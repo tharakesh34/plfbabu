@@ -58,7 +58,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
@@ -1307,7 +1307,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		amountCodes.setPftChg(totalPftSchdNew.subtract(totalPftSchdOld));
 		amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
 
-		if (eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSP)) {
+		if (eventCode.equals(AccountingEvent.ADDDBSP)) {
 			amountCodes.setQuickDisb(finMain.isQuickDisb());
 			Promotion promotion = financeDetail.getPromotion();
 			if (promotion != null && promotion.isDbd()) {
@@ -1338,7 +1338,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	}
 
 	public List<ReturnDataSet> procesSubVenAccounting(AEEvent aeEvent, FinanceDetail fd, boolean doPostings) {
-		String event = AccountEventConstants.ACCEVENT_MANSUB;
+		String event = AccountingEvent.MANSUB;
 		int moduleId = FinanceConstants.MODULEID_FINTYPE;
 		String finType = fd.getFinScheduleData().getFinanceMain().getFinType();
 
@@ -1402,12 +1402,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 			if (fee.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
 				deductFeeDisb = deductFeeDisb.add(fee.getRemainingFee());
-				if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(fee.getFinEvent())) {
+				if (AccountingEvent.VAS_FEE.equals(fee.getFinEvent())) {
 					deductVasDisb = deductVasDisb.add(fee.getRemainingFee());
 				}
 			} else if (fee.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
 				addFeeToFinance = addFeeToFinance.add(fee.getRemainingFee());
-				if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(fee.getFinEvent())) {
+				if (AccountingEvent.VAS_FEE.equals(fee.getFinEvent())) {
 					addVasToFinance = addVasToFinance.add(fee.getRemainingFee());
 				}
 			}
@@ -1417,7 +1417,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			paidFee = paidFee.add(fee.getPaidAmount());
 			feeWaived = feeWaived.add(fee.getWaivedAmount());
 
-			if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(fee.getFinEvent())) {
+			if (AccountingEvent.VAS_FEE.equals(fee.getFinEvent())) {
 				paidVasFee = paidVasFee.add(fee.getPaidAmount());
 				vasFeeWaived = vasFeeWaived.add(fee.getWaivedAmount());
 			}
@@ -1438,7 +1438,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		for (FinFeeDetail fee : finFeeDetailList) {
 			String vasProductCode = fee.getVasProductCode();
-			if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(fee.getFinEvent())) {
+			if (AccountingEvent.VAS_FEE.equals(fee.getFinEvent())) {
 				if (fee.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
 					dataMap.put("VAS_" + vasProductCode + "_DD", fee.getRemainingFee());
 					dataMap.put("VAS_" + vasProductCode + "_AF", BigDecimal.ZERO);
@@ -1510,7 +1510,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		aeEvent.setEntityCode(financeMain.getLovDescEntityCode());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
-		if (StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_ADDDBSP)) {
+		if (StringUtils.equals(eventCode, AccountingEvent.ADDDBSP)) {
 			amountCodes.setQuickDisb(financeMain.isQuickDisb());
 		}
 
@@ -1755,7 +1755,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		// Disbursement Instruction Posting
-		if (AccountEventConstants.isDisbursementEvent(eventCode) && !ImplementationConstants.HOLD_DISB_INST_POST) {
+		if (AccountingEvent.isDisbursementEvent(eventCode) && !ImplementationConstants.HOLD_DISB_INST_POST) {
 			AccountingEngine.post(AccountingEvent.DISBINS, financeDetail, branchCode);
 		}
 
@@ -1954,7 +1954,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		AEEvent aeEvent = new AEEvent();
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		aeEvent = AEAmounts.procAEAmounts(finMain, financeDetail.getFinScheduleData().getFinanceScheduleDetails(),
-				pftDetail, AccountEventConstants.ACCEVENT_STAGE, valueDate, valueDate);
+				pftDetail, AccountingEvent.STAGE, valueDate, valueDate);
 
 		aeEvent.getAcSetIDList().addAll(acSetIdList);
 		amountCodes = aeEvent.getAeAmountCodes();
@@ -2606,7 +2606,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			aeEvent.setEOD(true);
 		}
 
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_MANFEE);
+		aeEvent.setAccountingEvent(AccountingEvent.MANFEE);
 		aeEvent.getAcSetIDList().addAll(acSetIdList);
 		amountCodes = aeEvent.getAeAmountCodes();
 		amountCodes.setFinType(finMain.getFinType());

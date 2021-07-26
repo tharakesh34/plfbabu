@@ -55,7 +55,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -182,7 +182,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 					getFinanceReferenceDetailDAO().getRefIdListByFinType(finType, procEdtEvent, null, "_ACView"));
 			if (!accSetIdList.isEmpty()) {
 				financeDetail.setFeeCharges(getTransactionEntryDAO().getListFeeChargeRules(accSetIdList,
-						AccountEventConstants.ACCEVENT_WRITEOFF, "_AView", 0));
+						AccountingEvent.WRITEOFF, "_AView", 0));
 			}
 
 			// Finance Stage Accounting Posting Details
@@ -311,7 +311,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			profitDetail = getProfitDetailsDAO().getFinProfitDetailsById(finReference);
 
 			AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, scheduleData.getFinanceScheduleDetails(),
-					profitDetail, AccountEventConstants.ACCEVENT_WRITEOFF, curBDay, financeMain.getMaturityDate());
+					profitDetail, AccountingEvent.WRITEOFF, curBDay, financeMain.getMaturityDate());
 
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 			Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
@@ -736,7 +736,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 				.getModelData();
 		FinanceWriteoff financeWriteoff = financeWriteoffHeader.getFinanceWriteoff();
 		FinanceDetail financeDetail = financeWriteoffHeader.getFinanceDetail();
-		financeDetail.setAccountingEventCode(AccountEventConstants.ACCEVENT_WRITEOFF);
+		financeDetail.setAccountingEventCode(AccountingEvent.WRITEOFF);
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		AEEvent aeEvent = new AEEvent();
 		FinanceProfitDetail pftDetail = new FinanceProfitDetail();

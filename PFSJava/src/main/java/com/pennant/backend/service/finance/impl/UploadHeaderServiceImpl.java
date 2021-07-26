@@ -57,7 +57,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -192,9 +192,9 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 		FinanceMain fm = expense.getFinanceMain();
 
 		long accountingID = AccountingConfigCache.getAccountSetID(fm.getFinType(),
-				AccountEventConstants.ACCEVENT_EXPENSE, FinanceConstants.MODULEID_FINTYPE);
+				AccountingEvent.EXPENSE, FinanceConstants.MODULEID_FINTYPE);
 		AEEvent aeEvent = new AEEvent();
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_EXPENSE);
+		aeEvent.setAccountingEvent(AccountingEvent.EXPENSE);
 
 		aeEvent.setBranch(fm.getFinBranch());
 		aeEvent.setCcy(fm.getFinCcy());
@@ -228,7 +228,7 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 
 			if (CollectionUtils.isEmpty(aeEvent.getReturnDataSet())) {
 				throw new AppException(
-						"Accounting configuration is invalid for the event :" + AccountEventConstants.ACCEVENT_EXPENSE);
+						"Accounting configuration is invalid for the event :" + AccountingEvent.EXPENSE);
 			}
 
 			long linkedTranId = aeEvent.getLinkedTranId();

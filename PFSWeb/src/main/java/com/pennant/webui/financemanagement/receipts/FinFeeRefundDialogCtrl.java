@@ -80,7 +80,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AccountEngineExecution;
@@ -1154,7 +1154,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 
 			// Fetch Accounting Set ID
 			AccountingSet accountingSet = accountingSetService.getAccSetSysDflByEvent(
-					AccountEventConstants.ACCEVENT_FEEREFUND, AccountEventConstants.ACCEVENT_FEEREFUND, "");
+					AccountingEvent.FEEREFUND, AccountingEvent.FEEREFUND, "");
 
 			long acSetID = 0;
 			if (accountingSet != null) {
@@ -1285,7 +1285,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 
 		// Fetch Accounting Set ID
 		long accountingSetID = AccountingConfigCache.getAccountSetID(this.feeRefundHeader.getFinType(),
-				AccountEventConstants.ACCEVENT_FEEREFUND, FinanceConstants.MODULEID_FINTYPE);
+				AccountingEvent.FEEREFUND, FinanceConstants.MODULEID_FINTYPE);
 		if (accountingSetID != 0 && accountingSetID != Long.MIN_VALUE) {
 			aeEvent.getAcSetIDList().add(accountingSetID);
 			aeEvent.setDataMap(dataMap);

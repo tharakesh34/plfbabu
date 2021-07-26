@@ -22,7 +22,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.zkoss.util.media.Media;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -437,7 +437,7 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 
 		AEEvent aeEvent = new AEEvent();
 
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_OEMSBV);
+		aeEvent.setAccountingEvent(AccountingEvent.OEMSBV);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		if (amountCodes == null) {
 			amountCodes = new AEAmountCodes();
@@ -462,7 +462,7 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 		eventMapping.put("ae_oemSbvAmount", mbdAmount);
 		aeEvent.setDataMap(eventMapping);
 		long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
-				AccountEventConstants.ACCEVENT_OEMSBV, FinanceConstants.MODULEID_FINTYPE);
+				AccountingEvent.OEMSBV, FinanceConstants.MODULEID_FINTYPE);
 		aeEvent.getAcSetIDList().add(accountsetId);
 
 		logger.debug(Literal.LEAVING);

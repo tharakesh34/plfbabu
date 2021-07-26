@@ -85,7 +85,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CalculationUtil;
@@ -1073,12 +1073,12 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				if (CollectionUtils.isNotEmpty(finFeeDetails)) {
 					for (FinFeeDetail feeDetail : finFeeDetails) {
 
-						if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(feeDetail.getFinEvent())) {
+						if (AccountingEvent.VAS_FEE.equals(feeDetail.getFinEvent())) {
 							boolean found = false;
 
 							if (CollectionUtils.isNotEmpty(finFeeDetailList)) {
 								for (FinFeeDetail fiinFeeDetail : finFeeDetailList) {
-									if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(fiinFeeDetail.getFinEvent())
+									if (AccountingEvent.VAS_FEE.equals(fiinFeeDetail.getFinEvent())
 											&& StringUtils.equals(fiinFeeDetail.getVasReference(),
 													feeDetail.getVasReference())
 											&& (fiinFeeDetail.getFeeID() == feeDetail.getFeeID())) {
@@ -1364,7 +1364,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		for (FinFeeDetail fee : this.finFeeDetailList) {
 			fee.setDataModified(isDataMaintained(fee, fee.getBefImage()));
 
-			if (!fee.isRcdVisible() || (AccountEventConstants.ACCEVENT_VAS_FEE.equals(fee.getFinEvent())
+			if (!fee.isRcdVisible() || (AccountingEvent.VAS_FEE.equals(fee.getFinEvent())
 					&& PennantConstants.RECORD_TYPE_CAN.equals(fee.getRecordType()))) {
 				if (StringUtils.isBlank(aFinScheduleData.getFinanceMain().getRecordType())) {
 					fee.setNewRecord(true);
@@ -1670,7 +1670,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			for (FinFeeDetail finFeeDetail : finFeeDetails) {
 
 				if (!finFeeDetail.isRcdVisible()
-						|| (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())
+						|| (AccountingEvent.VAS_FEE.equals(finFeeDetail.getFinEvent())
 								&& PennantConstants.RECORD_TYPE_CAN.equals(finFeeDetail.getRecordType()))) {
 					continue;
 				}
@@ -3093,7 +3093,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		}
 
 		for (FinFeeDetail fee : this.finFeeDetailList) {
-			if (!fee.isRcdVisible() || (AccountEventConstants.ACCEVENT_VAS_FEE.equals(fee.getFinEvent())
+			if (!fee.isRcdVisible() || (AccountingEvent.VAS_FEE.equals(fee.getFinEvent())
 					&& PennantConstants.RECORD_TYPE_CAN.equals(fee.getRecordType()))) {
 				continue;
 			}

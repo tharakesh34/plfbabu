@@ -25,7 +25,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.jaxen.JaxenException;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
@@ -273,7 +273,7 @@ public class ExtFinanceUploadService {
 		// Amount Code details calculation
 		AEEvent aeEvent = new AEEvent();
 		aeEvent = AEAmounts.procAEAmounts(data.getFinanceMain(), data.getFinanceScheduleDetails(),
-				new FinanceProfitDetail(), AccountEventConstants.ACCEVENT_ADDDBSP,
+				new FinanceProfitDetail(), AccountingEvent.ADDDBSP,
 				data.getFinanceMain().getFinStartDate(), data.getFinanceMain().getFinStartDate());
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();

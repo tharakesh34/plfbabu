@@ -55,7 +55,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -591,7 +591,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 
 		AEEvent aeEvent = new AEEvent();
 
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_ADVDUE);
+		aeEvent.setAccountingEvent(AccountingEvent.ADVDUE);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		if (amountCodes == null) {
 			amountCodes = new AEAmountCodes();

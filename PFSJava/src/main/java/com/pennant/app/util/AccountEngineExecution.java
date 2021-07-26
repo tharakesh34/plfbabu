@@ -48,7 +48,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -540,8 +540,8 @@ public class AccountEngineExecution implements Serializable {
 			Map<String, Object> dataMap) {
 
 		BigDecimal amount = BigDecimal.ZERO;
-		if (event.startsWith(AccountEventConstants.ACCEVENT_ADDDBS)) {
-			event = AccountEventConstants.ACCEVENT_ADDDBS;
+		if (event.startsWith(AccountingEvent.ADDDBS)) {
+			event = AccountingEvent.ADDDBS;
 		}
 
 		String amountRule = transactionEntry.getAmountRule();

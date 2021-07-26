@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.AccountingEvent;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -61,7 +61,7 @@ public class AutoDisbursementService extends ServiceHelper {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain fm = finEODEvent.getFinanceMain();
-		Long accountingID = getAccountingID(fm, AccountEventConstants.ACCEVENT_ADDDBSN);
+		Long accountingID = getAccountingID(fm, AccountingEvent.ADDDBSN);
 
 		if (accountingID == null || accountingID == Long.MIN_VALUE) {
 			logger.debug(Literal.LEAVING);
@@ -71,7 +71,7 @@ public class AutoDisbursementService extends ServiceHelper {
 		FinanceProfitDetail pfd = finEODEvent.getFinProfitDetail();
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 		Date eodValueDate = custEODEvent.getEodValueDate();
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, pfd, schedules, AccountEventConstants.ACCEVENT_ADDDBSN,
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, pfd, schedules, AccountingEvent.ADDDBSN,
 				eodValueDate, eodValueDate);
 		aeEvent.getAcSetIDList().add(accountingID);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
