@@ -3099,9 +3099,13 @@ public class PennantJavaUtil {
 				new ModuleMapping("Cluster", Cluster.class, new String[] { "Clusters", "Clusters_aview" }, CLUSTERS,
 						new String[] { "Code", "Name", "ClusterType" }, null, 600));
 
+		// FIX ME
+		// It's temporary fix related to workflow once workflow related issue fixed. we required to change the workflow
+		// msterWF TO bUSINESS_VERTICAL
+
 		ModuleUtil.register("BusinessVertical",
 				new ModuleMapping("BusinessVertical", BusinessVertical.class,
-						new String[] { "business_vertical", "business_vertical_AView" }, BUSINESS_VERTICAL,
+						new String[] { "business_vertical", "business_vertical_AView" }, masterWF,
 						new String[] { "code", "Description" }, new Object[][] { { "Active", "0", 1 } }, 600));
 
 		ModuleUtil.register("ReportingManager",
