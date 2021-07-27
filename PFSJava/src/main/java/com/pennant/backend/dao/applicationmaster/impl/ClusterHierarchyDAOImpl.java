@@ -117,7 +117,7 @@ public class ClusterHierarchyDAOImpl extends BasicDao<ClusterHierarchy> implemen
 
 		StringBuilder sql = new StringBuilder("");
 
-		sql.append("select * from cluster_hierarchy");
+		sql.append("select DISTINCT entity from cluster_hierarchy");
 		sql.append(type);
 		sql.append(" Where entity = :entity");
 
