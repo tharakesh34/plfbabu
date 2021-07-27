@@ -113,6 +113,7 @@ import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.partnerbank.PartnerBank;
+import com.pennant.backend.model.partnerbank.PartnerBankModes;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.finance.NonLanReceiptService;
@@ -2199,13 +2200,13 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		Clients.clearWrongValue(this.fundingAccount);
 
 		long partnerBankID = 0;
-		PartnerBank partnerBank = null;
+		PartnerBankModes partnerBankModes = null;
 		Object dataObject = this.fundingAccount.getObject();
 
 		if (dataObject != null) {
-			if (dataObject instanceof PartnerBank) {
-				partnerBank = (PartnerBank) dataObject;
-				partnerBankID = partnerBank.getPartnerBankId();
+			if (dataObject instanceof PartnerBankModes) {
+				partnerBankModes = (PartnerBankModes) dataObject;
+				partnerBankID = partnerBankModes.getPartnerBankId();
 			}
 		}
 		this.fundingAccount.setAttribute("fundingAccID", partnerBankID);
