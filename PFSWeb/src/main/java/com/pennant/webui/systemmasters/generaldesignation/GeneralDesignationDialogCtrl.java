@@ -405,7 +405,7 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 		if (!this.genDesignation.isReadonly()) {
 			this.genDesignation.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_GeneralDesignationDialog_GenDesignation.value"),
-							PennantRegularExpressions.REGEX_UPP_BOX_ALPHA, true));
+							PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 		}
 		if (!this.genDesgDesc.isReadonly()) {
 			this.genDesgDesc.setConstraint(
