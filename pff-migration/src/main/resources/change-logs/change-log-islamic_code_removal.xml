@@ -136,4 +136,31 @@
 		<dropNotNullConstraint tableName="WIFFINDISBURSEMENTDETAILS" columnName="DISBDISBURSED" columnDataType="smallint"/>
 	</changeSet>
 	
+	<changeSet id="PSD#176854" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				DELETE FROM REPORTLIST WHERE CODE = 'Cluster';
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('Cluster', 'Cluster', 'listheader_Entity.label,listheader_ClusterType.label,listheader_Code.label,listheader_Parent.label', 'entity,clusterType,code,parentType', 'String,String,String,String', null, 'ReportList07', 'Cluster', 'Cluster Masters', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#176854.1" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				DELETE FROM REPORTLIST WHERE CODE = 'BusinessVertical';
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('BusinessVertical', 'BusinessVertical', 'listheader_code.label,listheader_description.label,listheader_active.label', 'code,description,active', 'String,String,boolean', null, 'ReportList07', 'Business Vertical', 'Business Vertical Masters', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#176854.2" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				DELETE FROM REPORTLIST WHERE CODE = 'ClusterHierarchy';
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('ClusterHierarchy', 'ClusterHierarchy', 'listheader_Entity.label', 'Entity', 'String', null, 'ReportList07', 'Cluster Hierarchy', 'Cluster Hierarchy Masters', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
