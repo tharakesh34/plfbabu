@@ -83,7 +83,7 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 
 	@Override
 	protected void doSetProperties() {
-		super.pageRightName = "SecurityUserDialog";
+		super.pageRightName = "SecurityUserDialog_RM";
 	}
 
 	@Override
