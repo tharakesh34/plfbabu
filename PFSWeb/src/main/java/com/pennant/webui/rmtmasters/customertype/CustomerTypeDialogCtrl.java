@@ -435,7 +435,7 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 		if (!this.custTypeDesc.isReadonly()) {
 			this.custTypeDesc
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerTypeDialog_CustTypeDesc.value"),
-							PennantRegularExpressions.REGEX_DESCRIPTION, true));
+							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		if (!this.custTypeCtg.isReadonly()) {
 			this.custTypeCtg.setConstraint(
