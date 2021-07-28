@@ -48,7 +48,6 @@ public class PrimaryAccountServiceImpl implements PrimaryAccountService {
 		this.panService = panService;
 	}
 
-	@Autowired
 	@Qualifier("nsdlPANService")
 	public void setNsdlPANService(PANService nsdlPANService) {
 		this.nsdlPANService = nsdlPANService;
