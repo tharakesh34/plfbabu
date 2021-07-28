@@ -10702,11 +10702,6 @@
 		<property name="entityDAO" ref="entityDAO" />
 	</bean>
 
-	<!-- PAN Number Validation -->
-	<bean id="primaryAccountService" class="com.pennanttech.pff.external.pan.service.PrimaryAccountServiceImpl">
-		<property name="primaryAccountDAO" ref="primaryAccountDAO" />
-	</bean>
-
 	<bean id="primaryAccountDAO" class="com.pennanttech.pff.external.pan.dao.impl.PrimaryAccountDAOImpl" parent="basicDao" />
 
 	<!-- InterfaceConfiguration -->
@@ -11945,6 +11940,10 @@
 	<bean id="receiptPaymentService" class="com.pennant.app.core.ReceiptPaymentService" parent="serviceHelper">
 		<property name="repaymentProcessUtil" ref="repayProcessUtil" />
 	</bean>
-
+	
+	<!-- DB-Based Scheduler -->
+	<bean id="jobJmxClient" class="com.pennanttech.pennapps.core.job.monitor.JobJmxClient"/>
+	<bean id="jobDataAccess" class="com.pennanttech.pennapps.core.job.JobDataAccess" parent="basicDao" />
+	
 </beans>
 

@@ -1,44 +1,33 @@
 package com.pennanttech.pff.jobs;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.quartz.DisallowConcurrentExecution;
-import org.quartz.Job;
+import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
 
+import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pff.notifications.service.ProcessSystemNotifications;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
-public class SystemNotificationsProcessJob implements Job {
-	private static final Logger logger = LogManager.getLogger(SystemNotificationsInvokeJob.class);
+public class SystemNotificationsProcessJob extends AbstractJob {
+	ProcessSystemNotifications processSystemNotifications = null;
 
 	@Override
-	public void execute(JobExecutionContext context) throws JobExecutionException {
-		String jobName = context.getJobDetail().getKey().getName();
-		logger.debug(String.format("JOB: %s", jobName));
-
-		ProcessSystemNotifications processSystemNotifications = null;
+	public void executeJob(JobExecutionContext context) throws JobExecutionException {
 
 		try {
-			processSystemNotifications = (ProcessSystemNotifications) SpringBeanUtil
-					.getBean("processSystemNotifications");
+			getProcessSystemNotificationsService(context).processNotifications();
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
 
-		if (processSystemNotifications != null) {
-			try {
-				processSystemNotifications.processNotifications();
-			} catch (Exception e) {
-				logger.debug(Literal.EXCEPTION, e);
-			}
-		}
-
 	}
 
+	private ProcessSystemNotifications getProcessSystemNotificationsService(JobExecutionContext context) {
+		JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
+		return (ProcessSystemNotifications) jobDataMap.get("processSystemNotifications");
+	}
 }

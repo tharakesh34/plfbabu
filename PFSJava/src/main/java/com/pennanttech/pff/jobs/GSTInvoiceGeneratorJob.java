@@ -1,34 +1,34 @@
 package com.pennanttech.pff.jobs;
 
 import org.quartz.DisallowConcurrentExecution;
-import org.quartz.Job;
+import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
 
-import com.pennanttech.pennapps.core.util.SpringBeanUtil;
+import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pff.external.gst.GSTInvoiceGeneratorService;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
-public class GSTInvoiceGeneratorJob implements Job {
+public class GSTInvoiceGeneratorJob extends AbstractJob {
 
 	@Override
-	public void execute(JobExecutionContext context) throws JobExecutionException {
+	public void executeJob(JobExecutionContext context) throws JobExecutionException {
+
+		getGSTInvoiceGeneratorService(context).generateInvoice();
+	}
+
+	private GSTInvoiceGeneratorService getGSTInvoiceGeneratorService(JobExecutionContext context) {
 		GSTInvoiceGeneratorService invoiceGenerator = null;
 
-		try {
-			invoiceGenerator = (GSTInvoiceGeneratorService) SpringBeanUtil.getBean("gstInvoiceGenerator");
-		} catch (Exception e) {
-			//do nothing
-		}
+		JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
+		invoiceGenerator = (GSTInvoiceGeneratorService) jobDataMap.get("gstInvoiceGenerator");
 
 		if (invoiceGenerator == null) {
-			invoiceGenerator = (GSTInvoiceGeneratorService) SpringBeanUtil.getBean("defaultGstInvoiceGenerator");
+			invoiceGenerator = (GSTInvoiceGeneratorService) jobDataMap.get("defaultGstInvoiceGenerator");
 		}
 
-		if (invoiceGenerator != null) {
-			invoiceGenerator.generateInvoice();
-		}
+		return invoiceGenerator;
 	}
 }
