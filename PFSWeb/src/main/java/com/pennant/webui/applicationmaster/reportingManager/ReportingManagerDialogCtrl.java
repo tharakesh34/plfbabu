@@ -504,6 +504,7 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 
 		this.reportingto.setAttribute("UserId", aReportingManager.getReportingTo());
 		this.reportingto.setValue(aReportingManager.getReportingToUserName());
+		this.reportingto.setDescription(aReportingManager.getReportingToUserName());
 
 		if (aReportingManager.getProduct() != null) {
 			this.productcode.setValue(aReportingManager.getProduct());
@@ -602,6 +603,7 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 			Object object = this.reportingto.getAttribute("UserId");
 			if (object != null) {
 				aReportingManager.setReportingTo(Long.parseLong(object.toString()));
+				aReportingManager.setReportingToUserName(this.reportingto.getValue());
 			} else {
 				aReportingManager.setReportingTo(Long.MIN_VALUE);
 			}
