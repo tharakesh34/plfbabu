@@ -457,8 +457,8 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 					new PTStringValidator(Labels.getLabel("label_PinCodeDialog_City.value"), null, true));
 		}
 		if (!this.areaName.isReadonly()) {
-			this.areaName.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_PinCodeDialog_AreaName.value"), null, true, 3, 100));
+			this.areaName.setConstraint(new PTStringValidator(Labels.getLabel("label_PinCodeDialog_AreaName.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM, true, 3, 100));
 		}
 
 		logger.debug(Literal.LEAVING);
