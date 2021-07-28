@@ -5621,4 +5621,13 @@
 		class="com.pennant.webui.reports.RescheduleReportGenerationDialogCtrl" scope="prototype" parent="basisListCtrl">
 		<property name="rescheduleReportGenerationService" ref="rescheduleReportGenerationService" />
 	</bean>
+	
+	<!-- DB-Based Scheduler -->
+	<bean id="jobMonitorCtrl" class="com.pennanttech.pennapps.web.job.JobMonitoringCtrl">
+		<property name="jobDataAccess" ref="jobDataAccess"/>
+		<property name="jobJmxClient" ref="jobJmxClient"/>
+	</bean>
+	<bean id="jobSettingsDialog" class="com.pennanttech.pennapps.web.job.JobSettingsCtrl" scope="prototype"/>
+	<bean id="jobExecutionList" class="com.pennanttech.pennapps.web.job.JobExecutionLoggingCtrl" scope="prototype"/>
+	
 </beans> 
