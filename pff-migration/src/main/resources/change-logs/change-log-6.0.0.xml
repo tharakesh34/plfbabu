@@ -33815,4 +33815,113 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
+	<changeSet id="PSD#176770" author="gopal.p">
+		<update tableName="WORKFLOWDETAILS">
+			<column name="JSONDESIGN" type="NCLOB"><![CDATA[{"resourceId":1085,"properties":{"process_id":"CHANGECUSTOMER","name":"CHANGECUSTOMER","documentation":"CHANGE CUSTOMER","category":"","listenerclass":"","listenerentitytype":""},"stencil":{"id":"BPMNDiagram"},"childShapes":[{"resourceId":"startEvent1","properties":{"overrideid":"","name":"Start"},"stencil":{"id":"StartNoneEvent"},"childShapes":[],"outgoing":[{"resourceId":"sid-6861496F-5A0F-4B4C-A75E-AD4B5A881F78"}],"bounds":{"lowerRight":{"x":150,"y":190},"upperLeft":{"x":120,"y":160}},"dockers":[]},{"resourceId":"sid-E35ADDDC-B7A9-4300-908C-A94BFAE71398","properties":{"overrideid":"","name":"Approved"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":1183,"y":178},"upperLeft":{"x":1155,"y":150}},"dockers":[]},{"resourceId":"sid-05AC47A5-3EC2-4AB2-869E-AF32807FDCF5","properties":{"overrideid":"","name":"Change Customer Maker","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"CHANGECUSTOMER_MAKER","firstName":"CHANGECUSTOMER_MAKER","fullName":"CHANGECUSTOMER_MAKER","id":"CHANGECUSTOMER_MAKER","roledesc":"WF for Change customer Maker","$$hashKey":"object:1672"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false","allowrevert":""},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-B8860F35-7051-4AFE-8BE8-01A7EFCEC38F"},{"resourceId":"sid-BCCEC665-678F-44E9-8B02-9EAB6A03BA1A"}],"bounds":{"lowerRight":{"x":385,"y":215},"upperLeft":{"x":285,"y":135}},"dockers":[]},{"resourceId":"sid-E99D6642-DF22-456A-842A-F06CC628D5CD","properties":{"overrideid":"","name":"Change Customer Approver","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"CHANGECUSTOMER_APPROVER","firstName":"CHANGECUSTOMER_APPROVER","fullName":"CHANGECUSTOMER_APPROVER","id":"CHANGECUSTOMER_APPROVER","roledesc":"WF for Change customer Approver","$$hashKey":"object:3307"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false","allowrevert":""},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-2BF37082-45D0-450F-BA50-0C9F3666BE07"}],"bounds":{"lowerRight":{"x":670,"y":215},"upperLeft":{"x":570,"y":135}},"dockers":[]},{"resourceId":"sid-8C13CB03-D507-4142-87C2-77E8C94DED41","properties":{"overrideid":"","name":"","sequencefloworder":""},"stencil":{"id":"ExclusiveGateway"},"childShapes":[],"outgoing":[{"resourceId":"sid-D21642F9-EC64-4A11-BF0A-71F5327FDFB1"},{"resourceId":"sid-9B85A363-E06F-4F33-9976-9A418248E9D0"},{"resourceId":"sid-64226129-3CA8-4DAD-A157-A2A381696626"}],"bounds":{"lowerRight":{"x":820,"y":195},"upperLeft":{"x":780,"y":155}},"dockers":[]},{"resourceId":"sid-D874E2CE-499D-4DE1-9277-748EFD8EC8C3","properties":{"overrideid":"","name":"Cancel Process","rerunnable":true,"servicetaskexpression":"doReject","isforcompensation":"false","multiinstance_type":"None","parameters":""},"stencil":{"id":"rejectTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-D0EFB4F7-5529-4966-B394-5AD3F51EC6AB"}],"bounds":{"lowerRight":{"x":850,"y":395},"upperLeft":{"x":750,"y":315}},"dockers":[]},{"resourceId":"sid-6861496F-5A0F-4B4C-A75E-AD4B5A881F78","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-05AC47A5-3EC2-4AB2-869E-AF32807FDCF5"}],"bounds":{"lowerRight":{"x":284.78125,"y":175},"upperLeft":{"x":150.0625,"y":175}},"dockers":[{"x":15,"y":15},{"x":50,"y":40}],"target":{"resourceId":"sid-05AC47A5-3EC2-4AB2-869E-AF32807FDCF5"}},{"resourceId":"sid-2BF37082-45D0-450F-BA50-0C9F3666BE07","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-8C13CB03-D507-4142-87C2-77E8C94DED41"}],"bounds":{"lowerRight":{"x":780.015625,"y":175},"upperLeft":{"x":670.21875,"y":175}},"dockers":[{"x":50,"y":40},{"x":20,"y":20}],"target":{"resourceId":"sid-8C13CB03-D507-4142-87C2-77E8C94DED41"}},{"resourceId":"sid-C574127E-95CB-44A1-AB6C-5F79CB175041","properties":{"overrideid":"","name":"Rejected"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":1033,"y":369},"upperLeft":{"x":1005,"y":341}},"dockers":[]},{"resourceId":"sid-FA1A65C8-A47E-4353-91F6-72B50F1AA7CC","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":"","showdiamondmarker":false,"constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-E35ADDDC-B7A9-4300-908C-A94BFAE71398"}],"bounds":{"lowerRight":{"x":1154.5234375,"y":175},"upperLeft":{"x":1040.27978515625,"y":164}},"dockers":[{"x":90,"y":48},{"x":1100,"y":175},{"x":1100,"y":164},{"x":14,"y":14}],"target":{"resourceId":"sid-E35ADDDC-B7A9-4300-908C-A94BFAE71398"}},{"resourceId":"sid-D0EFB4F7-5529-4966-B394-5AD3F51EC6AB","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-C574127E-95CB-44A1-AB6C-5F79CB175041"}],"bounds":{"lowerRight":{"x":1004.3125,"y":355},"upperLeft":{"x":850.6171875,"y":355}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-C574127E-95CB-44A1-AB6C-5F79CB175041"}},{"resourceId":"sid-D21642F9-EC64-4A11-BF0A-71F5327FDFB1","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus=='Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false","capturereasons":"false","typeofreason":"","showdiamondmarker":false,"constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-5B384569-ABCC-4EE9-ACF7-5B68A1646513"}],"bounds":{"lowerRight":{"x":938.585205078125,"y":175.5},"upperLeft":{"x":820.40478515625,"y":175.5}},"dockers":[{"x":20.5,"y":20.5},{"x":34,"y":48.5}],"target":{"resourceId":"sid-5B384569-ABCC-4EE9-ACF7-5B68A1646513"}},{"resourceId":"sid-5B384569-ABCC-4EE9-ACF7-5B68A1646513","properties":{"overrideid":"","name":"Complete Process","rerunnable":true,"servicetaskexpression":"doApprove","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"approveTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-FA1A65C8-A47E-4353-91F6-72B50F1AA7CC"}],"bounds":{"lowerRight":{"x":1039.34375,"y":207},"upperLeft":{"x":939.34375,"y":127}},"dockers":[]},{"resourceId":"sid-64226129-3CA8-4DAD-A157-A2A381696626","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus=='Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true,"capturereasons":"false","typeofreason":"","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-05AC47A5-3EC2-4AB2-869E-AF32807FDCF5"}],"bounds":{"lowerRight":{"x":801.34375,"y":155.00393648558688},"upperLeft":{"x":337.34375,"y":65}},"dockers":[{"x":20.5,"y":20.5},{"x":801.34375,"y":67},{"x":337.34375,"y":65},{"x":52.34375,"y":18.79313243813533}],"target":{"resourceId":"sid-05AC47A5-3EC2-4AB2-869E-AF32807FDCF5"}},{"resourceId":"sid-B8860F35-7051-4AFE-8BE8-01A7EFCEC38F","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus=='Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-E99D6642-DF22-456A-842A-F06CC628D5CD"}],"bounds":{"lowerRight":{"x":569.458984375,"y":175},"upperLeft":{"x":385.541015625,"y":175}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-E99D6642-DF22-456A-842A-F06CC628D5CD"}},{"resourceId":"sid-BCCEC665-678F-44E9-8B02-9EAB6A03BA1A","properties":{"overrideid":"","name":"Cancel","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Cancelled'"}},"defaultflow":"false","action":"Cancel","state":"Cancelled","mandatenotes":true,"capturereasons":"false","typeofreason":"","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-D874E2CE-499D-4DE1-9277-748EFD8EC8C3"}],"bounds":{"lowerRight":{"x":749.0353813171387,"y":358},"upperLeft":{"x":335,"y":215.31640625}},"dockers":[{"x":50,"y":40},{"x":335,"y":358},{"x":27.70440673828125,"y":43}],"target":{"resourceId":"sid-D874E2CE-499D-4DE1-9277-748EFD8EC8C3"}},{"resourceId":"sid-9B85A363-E06F-4F33-9976-9A418248E9D0","properties":{"overrideid":"","name":"Reject","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus=='Rejected'"}},"defaultflow":"false","action":"Reject","state":"Rejected","mandatenotes":true,"capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-D874E2CE-499D-4DE1-9277-748EFD8EC8C3"}],"bounds":{"lowerRight":{"x":800.4444801204861,"y":314.73437887952525},"upperLeft":{"x":800.1121605045139,"y":195.43163674547478}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-D874E2CE-499D-4DE1-9277-748EFD8EC8C3"}}],"bounds":{"lowerRight":{"x":1283,"y":1050},"upperLeft":{"x":0,"y":0}},"stencilset":{"url":"stencilsets/bpmn2.0/bpmn2.0.json","namespace":"http://b3mn.org/stencilset/bpmn2.0#"},"ssextensions":[]}]]></column>
+			<column name="WORKFLOWXML" type="CLOB"><![CDATA[<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/test">
+  <process id="CHANGECUSTOMER" name="CHANGECUSTOMER" isExecutable="true">
+    <documentation>CHANGE CUSTOMER</documentation>
+    <startEvent id="startEvent1" name="Start"/>
+    <endEvent id="sid-E35ADDDC-B7A9-4300-908C-A94BFAE71398" name="Approved"/>
+    <userTask id="sid-05AC47A5-3EC2-4AB2-869E-AF32807FDCF5" name="Change Customer Maker" activiti:actor="CHANGECUSTOMER_MAKER" activiti:assignmentLevel="Role Queue"/>
+    <userTask id="sid-E99D6642-DF22-456A-842A-F06CC628D5CD" name="Change Customer Approver" activiti:actor="CHANGECUSTOMER_APPROVER" activiti:assignmentLevel="Role Queue"/>
+    <exclusiveGateway id="sid-8C13CB03-D507-4142-87C2-77E8C94DED41"/>
+    <serviceTask id="sid-D874E2CE-499D-4DE1-9277-748EFD8EC8C3" name="Cancel Process" activiti:operation="doReject" activiti:rerunnable="true"/>
+    <sequenceFlow id="sid-6861496F-5A0F-4B4C-A75E-AD4B5A881F78" sourceRef="startEvent1" targetRef="sid-05AC47A5-3EC2-4AB2-869E-AF32807FDCF5" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+    <sequenceFlow id="sid-2BF37082-45D0-450F-BA50-0C9F3666BE07" sourceRef="sid-E99D6642-DF22-456A-842A-F06CC628D5CD" targetRef="sid-8C13CB03-D507-4142-87C2-77E8C94DED41" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+    <endEvent id="sid-C574127E-95CB-44A1-AB6C-5F79CB175041" name="Rejected"/>
+    <sequenceFlow id="sid-FA1A65C8-A47E-4353-91F6-72B50F1AA7CC" sourceRef="sid-5B384569-ABCC-4EE9-ACF7-5B68A1646513" targetRef="sid-E35ADDDC-B7A9-4300-908C-A94BFAE71398" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+    <sequenceFlow id="sid-D0EFB4F7-5529-4966-B394-5AD3F51EC6AB" sourceRef="sid-D874E2CE-499D-4DE1-9277-748EFD8EC8C3" targetRef="sid-C574127E-95CB-44A1-AB6C-5F79CB175041" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+    <sequenceFlow id="sid-D21642F9-EC64-4A11-BF0A-71F5327FDFB1" name="Approve" sourceRef="sid-8C13CB03-D507-4142-87C2-77E8C94DED41" targetRef="sid-5B384569-ABCC-4EE9-ACF7-5B68A1646513" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false" captureReasons="false">
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus=='Approved'</conditionExpression>
+    </sequenceFlow>
+    <serviceTask id="sid-5B384569-ABCC-4EE9-ACF7-5B68A1646513" name="Complete Process" activiti:operation="doApprove" activiti:rerunnable="true"/>
+    <sequenceFlow id="sid-64226129-3CA8-4DAD-A157-A2A381696626" name="Resubmit" sourceRef="sid-8C13CB03-D507-4142-87C2-77E8C94DED41" targetRef="sid-05AC47A5-3EC2-4AB2-869E-AF32807FDCF5" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true" captureReasons="false">
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus=='Resubmitted'</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-B8860F35-7051-4AFE-8BE8-01A7EFCEC38F" name="Submit" sourceRef="sid-05AC47A5-3EC2-4AB2-869E-AF32807FDCF5" targetRef="sid-E99D6642-DF22-456A-842A-F06CC628D5CD" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false" captureReasons="false">
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus=='Submitted'</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-BCCEC665-678F-44E9-8B02-9EAB6A03BA1A" name="Cancel" sourceRef="sid-05AC47A5-3EC2-4AB2-869E-AF32807FDCF5" targetRef="sid-D874E2CE-499D-4DE1-9277-748EFD8EC8C3" action="Cancel" state="Cancelled" representsUserAction="true" mandateNotes="true" captureReasons="false">
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Cancelled'</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-9B85A363-E06F-4F33-9976-9A418248E9D0" name="Reject" sourceRef="sid-8C13CB03-D507-4142-87C2-77E8C94DED41" targetRef="sid-D874E2CE-499D-4DE1-9277-748EFD8EC8C3" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="true" captureReasons="false">
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus=='Rejected'</conditionExpression>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_CHANGECUSTOMER">
+    <bpmndi:BPMNPlane bpmnElement="CHANGECUSTOMER" id="BPMNPlane_CHANGECUSTOMER">
+      <bpmndi:BPMNShape bpmnElement="startEvent1" id="BPMNShape_startEvent1">
+        <omgdc:Bounds height="30.0" width="30.0" x="120.0" y="160.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-E35ADDDC-B7A9-4300-908C-A94BFAE71398" id="BPMNShape_sid-E35ADDDC-B7A9-4300-908C-A94BFAE71398">
+        <omgdc:Bounds height="28.0" width="28.0" x="1155.0" y="150.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-05AC47A5-3EC2-4AB2-869E-AF32807FDCF5" id="BPMNShape_sid-05AC47A5-3EC2-4AB2-869E-AF32807FDCF5">
+        <omgdc:Bounds height="80.0" width="100.0" x="285.0" y="135.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-E99D6642-DF22-456A-842A-F06CC628D5CD" id="BPMNShape_sid-E99D6642-DF22-456A-842A-F06CC628D5CD">
+        <omgdc:Bounds height="80.0" width="100.0" x="570.0" y="135.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-8C13CB03-D507-4142-87C2-77E8C94DED41" id="BPMNShape_sid-8C13CB03-D507-4142-87C2-77E8C94DED41">
+        <omgdc:Bounds height="40.0" width="40.0" x="780.0" y="155.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-D874E2CE-499D-4DE1-9277-748EFD8EC8C3" id="BPMNShape_sid-D874E2CE-499D-4DE1-9277-748EFD8EC8C3">
+        <omgdc:Bounds height="80.0" width="100.0" x="750.0" y="315.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-C574127E-95CB-44A1-AB6C-5F79CB175041" id="BPMNShape_sid-C574127E-95CB-44A1-AB6C-5F79CB175041">
+        <omgdc:Bounds height="28.0" width="28.0" x="1005.0" y="341.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-5B384569-ABCC-4EE9-ACF7-5B68A1646513" id="BPMNShape_sid-5B384569-ABCC-4EE9-ACF7-5B68A1646513">
+        <omgdc:Bounds height="80.0" width="100.0" x="939.34375" y="127.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-2BF37082-45D0-450F-BA50-0C9F3666BE07" id="BPMNEdge_sid-2BF37082-45D0-450F-BA50-0C9F3666BE07">
+        <omgdi:waypoint x="670.0" y="175.0"/>
+        <omgdi:waypoint x="780.0" y="175.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-64226129-3CA8-4DAD-A157-A2A381696626" id="BPMNEdge_sid-64226129-3CA8-4DAD-A157-A2A381696626">
+        <omgdi:waypoint x="800.6543298085168" y="155.6543298085167"/>
+        <omgdi:waypoint x="801.34375" y="67.0"/>
+        <omgdi:waypoint x="337.34375" y="65.0"/>
+        <omgdi:waypoint x="337.34375" y="135.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-6861496F-5A0F-4B4C-A75E-AD4B5A881F78" id="BPMNEdge_sid-6861496F-5A0F-4B4C-A75E-AD4B5A881F78">
+        <omgdi:waypoint x="150.0" y="175.0"/>
+        <omgdi:waypoint x="285.0" y="175.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-D0EFB4F7-5529-4966-B394-5AD3F51EC6AB" id="BPMNEdge_sid-D0EFB4F7-5529-4966-B394-5AD3F51EC6AB">
+        <omgdi:waypoint x="850.0" y="355.0"/>
+        <omgdi:waypoint x="1005.0" y="355.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-BCCEC665-678F-44E9-8B02-9EAB6A03BA1A" id="BPMNEdge_sid-BCCEC665-678F-44E9-8B02-9EAB6A03BA1A">
+        <omgdi:waypoint x="335.0" y="215.0"/>
+        <omgdi:waypoint x="335.0" y="358.0"/>
+        <omgdi:waypoint x="750.0" y="358.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-FA1A65C8-A47E-4353-91F6-72B50F1AA7CC" id="BPMNEdge_sid-FA1A65C8-A47E-4353-91F6-72B50F1AA7CC">
+        <omgdi:waypoint x="1039.34375" y="175.0"/>
+        <omgdi:waypoint x="1100.0" y="175.0"/>
+        <omgdi:waypoint x="1100.0" y="164.0"/>
+        <omgdi:waypoint x="1155.0" y="164.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-9B85A363-E06F-4F33-9976-9A418248E9D0" id="BPMNEdge_sid-9B85A363-E06F-4F33-9976-9A418248E9D0">
+        <omgdi:waypoint x="800.4469273743017" y="194.55307262569832"/>
+        <omgdi:waypoint x="800.1114206128134" y="315.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-D21642F9-EC64-4A11-BF0A-71F5327FDFB1" id="BPMNEdge_sid-D21642F9-EC64-4A11-BF0A-71F5327FDFB1">
+        <omgdi:waypoint x="819.5" y="175.5"/>
+        <omgdi:waypoint x="939.34375" y="175.5"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-B8860F35-7051-4AFE-8BE8-01A7EFCEC38F" id="BPMNEdge_sid-B8860F35-7051-4AFE-8BE8-01A7EFCEC38F">
+        <omgdi:waypoint x="385.0" y="175.0"/>
+        <omgdi:waypoint x="570.0" y="175.0"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>]]></column>
+			<where>workflowtype='CHANGECUSTOMER' and workflowactive=1
+			</where>
+		</update>
+	</changeSet>
+	
 </databaseChangeLog>
