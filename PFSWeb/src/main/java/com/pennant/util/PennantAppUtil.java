@@ -875,6 +875,7 @@ public class PennantAppUtil {
 		searchObject.addTabelName("BMTGenders");
 		searchObject.addField("GenderCode");
 		searchObject.addField("GenderDesc");
+		searchObject.addFilter(new Filter("genderisactive", 1, Filter.OP_EQUAL));
 
 		List<Gender> appList = pagedListService.getBySearchObject(searchObject);
 		for (int i = 0; i < appList.size(); i++) {
