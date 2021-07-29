@@ -403,7 +403,7 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 		if (!this.genDepartment.isReadonly()) {
 			this.genDepartment.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_GeneralDepartmentDialog_GenDepartment.value"),
-							PennantRegularExpressions.REGEX_UPP_BOX_ALPHA, true));
+							PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 		}
 		if (!this.genDeptDesc.isReadonly()) {
 			this.genDeptDesc.setConstraint(

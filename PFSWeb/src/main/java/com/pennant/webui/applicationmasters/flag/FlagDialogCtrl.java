@@ -501,7 +501,7 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 		//Code
 		if (!this.flagCode.isReadonly()) {
 			this.flagCode.setConstraint(new PTStringValidator(Labels.getLabel("label_FlagDialog_FlagCode.value"),
-					PennantRegularExpressions.REGEX_UPP_BOX_ALPHA, true));
+					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 		}
 		//Description
 		if (!this.flagDesc.isReadonly()) {
