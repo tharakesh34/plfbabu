@@ -296,7 +296,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			doSetFieldProperties();
 			doCheckRights();
 			doShowDialog(this.promotion);
-			if (this.promotion.isNew() && consumerDurable) {
+			if (this.promotion.isNewRecord() && consumerDurable) {
 				doEnable();
 			}
 
@@ -451,7 +451,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		}
 
 		boolean isMaintenance = true;
-		if (promotion.isNew() || StringUtils.equals(promotion.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+		if (promotion.isNewRecord() || StringUtils.equals(promotion.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			isMaintenance = false;
 		}
 
@@ -846,7 +846,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			map.put("isCompReadonly", !allowChildMaintenance());
 			map.put("excludeAppFeeCodes", true);
 
-			if (promotion.isNew() || StringUtils.equals(promotion.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+			if (promotion.isNewRecord() || StringUtils.equals(promotion.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 				isMaintenance = false;
 			}
 
@@ -1336,7 +1336,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (promotion.isNew()) {
+		if (promotion.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1361,7 +1361,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		// fill the components with the data
 		doWriteBeanToComponents(promotion);
-		if (!promotion.isNew()) {
+		if (!promotion.isNewRecord()) {
 			boolean isFinExists = promotionService.isFinExistsByPromotionSeqID(promotion.getReferenceID());
 			if (isFinExists) {
 				this.btnDelete.setVisible(false);
@@ -1749,7 +1749,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		// Some of the Fields cannot be modified for the Maintenance level
 		if (maintenanceChkReq) {
 			boolean isMaintenance = true;
-			if (promotion.isNew() || StringUtils.equals(promotion.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+			if (promotion.isNewRecord() || StringUtils.equals(promotion.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 				isMaintenance = false;
 			}
 
@@ -1934,7 +1934,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		// Write the additional validations as per below example get the selected branch object from the listbox Do data
 		// level validations here
 
-		isNew = aPromotion.isNew();
+		isNew = aPromotion.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -2210,7 +2210,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	 * 
 	 */
 
-	private boolean doProcess(Promotion aPromotion, String tranType) {
+	protected boolean doProcess(Promotion aPromotion, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		aPromotion.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
@@ -2399,7 +2399,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		promotionListCtrl.search();
 	}
 

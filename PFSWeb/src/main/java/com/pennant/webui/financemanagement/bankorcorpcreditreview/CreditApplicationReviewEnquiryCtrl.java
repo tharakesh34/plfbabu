@@ -734,7 +734,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				 * getAuditYear()+" Record  in "+aCreditReviewDetails. getRecordStatus()
 				 * +" State Please Process It To "+ltstYrRcdStatus+" State"); return; }
 				 */
-				isNew = aCreditReviewDetails.isNew();
+				isNew = aCreditReviewDetails.isNewRecord();
 				if (isWorkFlowEnabled()) {
 					tranType = PennantConstants.TRAN_WF;
 					if (StringUtils.isBlank(aCreditReviewDetails.getRecordType())) {
@@ -751,7 +751,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 								.get(aCreditReviewDetails.getAuditYear());
 						for (FinCreditReviewSummary finCreditReviewSummary : finCreditReviewSummaryList) {
 							finCreditReviewSummary.setRecordType(ltstFinCreditReviewDetails.getRecordType());
-							finCreditReviewSummary.setNewRecord(ltstFinCreditReviewDetails.isNew());
+							finCreditReviewSummary.setNewRecord(ltstFinCreditReviewDetails.isNewRecord());
 							finCreditReviewSummary.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 							finCreditReviewSummary.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 							finCreditReviewSummary.setRecordStatus(ltstFinCreditReviewDetails.getRecordStatus());
@@ -808,7 +808,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				+ totLaiblts.subtract(totNetWrth);
 	}
 
-	private boolean doProcess(FinCreditReviewDetails aCreditReviewDetails, String tranType) {
+	protected boolean doProcess(FinCreditReviewDetails aCreditReviewDetails, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;

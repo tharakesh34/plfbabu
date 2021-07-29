@@ -54,7 +54,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>AgreementDefinition table</b>.<br>
  *
  */
-public class AgreementDefinition extends AbstractWorkflowEntity implements Entity {
+public class AgreementDefinition extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 6547333014929558827L;
 
 	private long aggId = Long.MIN_VALUE;
@@ -72,7 +72,6 @@ public class AgreementDefinition extends AbstractWorkflowEntity implements Entit
 	private boolean aggIsActive;
 	private String aggtype;
 	private String aggImage;
-	private boolean newRecord;
 	private String lovValue;
 	private AgreementDefinition befImage;
 	private LoggedInUser userDetails;
@@ -207,14 +206,6 @@ public class AgreementDefinition extends AbstractWorkflowEntity implements Entit
 
 	public void setAggImage(String aggImage) {
 		this.aggImage = aggImage;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

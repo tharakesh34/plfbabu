@@ -125,7 +125,7 @@ public class FrequencyServiceImpl extends GenericService<Frequency> implements F
 			tableType = "_Temp";
 		}
 
-		if (frequency.isNew()) {
+		if (frequency.isNewRecord()) {
 			frequency.setId(getFrequencyDAO().save(frequency, tableType));
 			auditHeader.getAuditDetail().setModelData(frequency);
 			auditHeader.setAuditReference(frequency.getId());
@@ -331,7 +331,7 @@ public class FrequencyServiceImpl extends GenericService<Frequency> implements F
 		valueParm[0] = frequency.getFrqCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_Frq_Code") + ":" + valueParm[0];
 
-		if (frequency.isNew()) { // for New record or new record into work flow
+		if (frequency.isNewRecord()) { // for New record or new record into work flow
 
 			if (!frequency.isWorkflow()) {// With out Work flow only new records
 				if (befFrequency != null) { // Record Already Exists in the

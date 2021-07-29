@@ -91,7 +91,7 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 		if (returnedCheque.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-		if (returnedCheque.isNew()) {
+		if (returnedCheque.isNewRecord()) {
 			getReturnedChequeDAO().save(returnedCheque, tableType);
 			auditHeader.getAuditDetail().setModelData(returnedCheque);
 			auditHeader.setAuditReference(String.valueOf(returnedCheque.getCustCIF()) + PennantConstants.KEY_SEPERATOR
@@ -261,7 +261,7 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 		ReturnedChequeDetails returnedCheque = (ReturnedChequeDetails) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (returnedCheque.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(returnedCheque.getRecordType())
+		if (returnedCheque.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(returnedCheque.getRecordType())
 				&& returnedChequeDAO.isDuplicateKey(returnedCheque.getChequeNo(), returnedCheque.getCustCIF(),
 						returnedCheque.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];

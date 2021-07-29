@@ -533,7 +533,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	/**
 	 * Method for refreshing the list in ListCtrl
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCreditApplicationReviewListCtrl().search();
 	}
 
@@ -870,7 +870,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 		}
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aCreditReviewDetails.isNew()) {
+		if (aCreditReviewDetails.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			this.custCIF.focus();
 		} else {

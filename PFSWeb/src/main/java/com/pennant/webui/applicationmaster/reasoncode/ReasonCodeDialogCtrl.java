@@ -327,7 +327,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		reasonCodeListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -386,7 +386,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 			}
 		}
 
-		if (aReasonCode.isNew() || (aReasonCode.getRecordType() != null ? aReasonCode.getRecordType() : "")
+		if (aReasonCode.isNewRecord() || (aReasonCode.getRecordType() != null ? aReasonCode.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
@@ -480,7 +480,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 	public void doShowDialog(ReasonCode reasonCode) {
 		logger.debug(Literal.LEAVING);
 
-		if (reasonCode.isNew()) {
+		if (reasonCode.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -716,7 +716,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 		doSetValidation();
 		doWriteComponentsToBean(aReasonCode);
 
-		isNew = aReasonCode.isNew();
+		isNew = aReasonCode.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -764,7 +764,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(ReasonCode aReasonCode, String tranType) {
+	protected boolean doProcess(ReasonCode aReasonCode, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

@@ -134,7 +134,7 @@ public class VASProviderAccDetailServiceImpl extends GenericService<VASProviderA
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (vASProviderAccDetail.isNew()) {
+		if (vASProviderAccDetail.isNewRecord()) {
 			vASProviderAccDetail
 					.setId(Long.parseLong(getVASProviderAccDetailDAO().save(vASProviderAccDetail, tableType)));
 			auditHeader.getAuditDetail().setModelData(vASProviderAccDetail);
@@ -356,7 +356,7 @@ public class VASProviderAccDetailServiceImpl extends GenericService<VASProviderA
 		VASProviderAccDetail vASProviderAccDetail = (VASProviderAccDetail) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (vASProviderAccDetail.isNew() && vASProviderAccDetailDAO.isDuplicateKey(vASProviderAccDetail.getId(),
+		if (vASProviderAccDetail.isNewRecord() && vASProviderAccDetailDAO.isDuplicateKey(vASProviderAccDetail.getId(),
 				vASProviderAccDetail.getProviderId(), vASProviderAccDetail.getEntityCode(),
 				vASProviderAccDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];

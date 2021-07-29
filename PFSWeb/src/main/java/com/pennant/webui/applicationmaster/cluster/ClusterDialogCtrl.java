@@ -293,7 +293,7 @@ public class ClusterDialogCtrl extends GFCBaseCtrl<Cluster> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		clusterListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -547,7 +547,7 @@ public class ClusterDialogCtrl extends GFCBaseCtrl<Cluster> {
 	public void doShowDialog(Cluster cluster) {
 		logger.debug(Literal.ENTERING);
 
-		if (cluster.isNew()) {
+		if (cluster.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -783,7 +783,7 @@ public class ClusterDialogCtrl extends GFCBaseCtrl<Cluster> {
 		doSetValidation();
 		doWriteComponentsToBean(aCluster);
 
-		isNew = aCluster.isNew();
+		isNew = aCluster.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -831,7 +831,7 @@ public class ClusterDialogCtrl extends GFCBaseCtrl<Cluster> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Cluster aCluster, String tranType) {
+	protected boolean doProcess(Cluster aCluster, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

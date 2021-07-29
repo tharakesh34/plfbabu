@@ -141,7 +141,7 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (taxDetail.isNew()) {
+		if (taxDetail.isNewRecord()) {
 			taxDetail.setId(Long.parseLong(getTaxDetailDAO().save(taxDetail, tableType)));
 			auditHeader.getAuditDetail().setModelData(taxDetail);
 			auditHeader.setAuditReference(String.valueOf(taxDetail.getId()));
@@ -370,7 +370,7 @@ public class TaxDetailServiceImpl extends GenericService<TaxDetail> implements T
 		boolean entityFlag = entityDAO.panNumberExist(taxDetail.getTaxCode().substring(2, 12),
 				taxDetail.getEntityCode(), taxDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB);
 
-		if (taxDetail.isNew() && !entityFlag) {
+		if (taxDetail.isNewRecord() && !entityFlag) {
 			String[] parameters = new String[2];
 
 			parameters[0] = PennantJavaUtil.getLabel("label_pANNumber") + ": "

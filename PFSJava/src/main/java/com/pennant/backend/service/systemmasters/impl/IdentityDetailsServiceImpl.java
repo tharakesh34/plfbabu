@@ -126,7 +126,7 @@ public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails> 
 			tableType = "_Temp";
 		}
 
-		if (identityDetails.isNew()) {
+		if (identityDetails.isNewRecord()) {
 			identityDetails.setId(getIdentityDetailsDAO().save(identityDetails, tableType));
 			auditHeader.getAuditDetail().setModelData(identityDetails);
 			auditHeader.setAuditReference(identityDetails.getId());
@@ -338,7 +338,7 @@ public class IdentityDetailsServiceImpl extends GenericService<IdentityDetails> 
 		valueParm[0] = identityDetails.getIdentityType();
 		errParm[0] = PennantJavaUtil.getLabel("label_IdentityType") + ":" + valueParm[0];
 
-		if (identityDetails.isNew()) { // for New record or new record into work
+		if (identityDetails.isNewRecord()) { // for New record or new record into work
 			// flow
 
 			if (!identityDetails.isWorkflow()) {// With out Work flow only new

@@ -63,7 +63,6 @@ public class Product extends AbstractWorkflowEntity {
 	private String productCode;
 	private String productDesc;
 	private String productCategory;
-	private boolean newRecord;
 	private String lovValue;
 	private Product befImage;
 	private LoggedInUser userDetails;
@@ -119,14 +118,6 @@ public class Product extends AbstractWorkflowEntity {
 
 	public void setProductDesc(String productDesc) {
 		this.productDesc = productDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

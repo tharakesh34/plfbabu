@@ -128,7 +128,7 @@ public class GenderServiceImpl extends GenericService<Gender> implements GenderS
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (gender.isNew()) {
+		if (gender.isNewRecord()) {
 			gender.setId(getGenderDAO().save(gender, tableType));
 			auditHeader.getAuditDetail().setModelData(gender);
 			auditHeader.setAuditReference(gender.getId());
@@ -337,7 +337,7 @@ public class GenderServiceImpl extends GenericService<Gender> implements GenderS
 		String code = gender.getGenderCode();
 
 		// Check the unique keys.
-		if (gender.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(gender.getRecordType())
+		if (gender.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(gender.getRecordType())
 				&& genderDAO.isDuplicateKey(code, gender.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_GenderCode") + ": " + code;

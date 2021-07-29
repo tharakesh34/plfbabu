@@ -14,12 +14,12 @@ package com.pennanttech.pennapps.pff.verification.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>verification_lv_details table</b>
@@ -57,7 +57,6 @@ public class LVDocument extends AbstractWorkflowEntity {
 	private String docName;
 	private String collateralRef;
 	private String referenceId;
-	private boolean newRecord = false;
 	private LoggedInUser userDetails;
 	private LVDocument befImage;
 
@@ -93,14 +92,6 @@ public class LVDocument extends AbstractWorkflowEntity {
 
 	public boolean isNew() {
 		return isNewRecord();
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public int getSeqNo() {

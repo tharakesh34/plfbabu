@@ -280,7 +280,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		nPABucketConfigurationListCtrl.search();
 	}
 
@@ -390,7 +390,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 	public void doShowDialog(NPABucketConfiguration nPABucketConfiguration) {
 		logger.debug(Literal.LEAVING);
 
-		if (nPABucketConfiguration.isNew()) {
+		if (nPABucketConfiguration.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -635,7 +635,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 		doSetValidation();
 		doWriteComponentsToBean(aNPABucketConfiguration);
 
-		isNew = aNPABucketConfiguration.isNew();
+		isNew = aNPABucketConfiguration.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -682,7 +682,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(NPABucketConfiguration aNPABucketConfiguration, String tranType) {
+	protected boolean doProcess(NPABucketConfiguration aNPABucketConfiguration, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

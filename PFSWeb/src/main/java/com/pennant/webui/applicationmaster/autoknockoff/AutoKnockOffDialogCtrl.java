@@ -290,7 +290,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 		String recordType = mapping.getRecordType();
 		String recordStatus = mapping.getRecordStatus();
 
-		if (!(mapping.isNew()) || (recordStatus != null || "".equals(recordStatus))) {
+		if (!(mapping.isNewRecord()) || (recordStatus != null || "".equals(recordStatus))) {
 			isReadOnly = true;
 		}
 
@@ -372,7 +372,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		autoKnockOffListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -417,7 +417,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 		this.knockOffCode.setValue(knockOff.getCode());
 		this.description.setValue(knockOff.getDescription());
 
-		if (knockOff.isNew()) {
+		if (knockOff.isNewRecord()) {
 			List<ValueLabel> frequencyDays = PennantStaticListUtil.getFrequencyDays();
 			for (ValueLabel valueLabel : frequencyDays) {
 				sql.append(valueLabel.getValue()).append(",");
@@ -430,7 +430,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 
 		this.active.setChecked(knockOff.isActive());
 		this.recordStatus.setValue(knockOff.getRecordStatus());
-		if (knockOff.isNew() || PennantConstants.RECORD_TYPE_NEW.equals(knockOff.getRecordType())) {
+		if (knockOff.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(knockOff.getRecordType())) {
 			this.active.setChecked(true);
 			//this.active.setDisabled(true);
 		}
@@ -505,7 +505,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 				}
 				boolean isNew = false;
 
-				isNew = mapping.isNew();
+				isNew = mapping.isNewRecord();
 				String tranType = "";
 				if (isWorkFlowEnabled()) {
 					tranType = PennantConstants.TRAN_WF;
@@ -635,7 +635,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 	public void doShowDialog(AutoKnockOff knockOff) {
 		logger.debug(Literal.ENTERING);
 
-		if (knockOff.isNew()) {
+		if (knockOff.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -894,7 +894,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 		if (!saveFeeMappingList(knockOff)) {
 			return;
 		}
-		isNew = knockOff.isNew();
+		isNew = knockOff.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -942,7 +942,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(AutoKnockOff aKnockOff, String tranType) {
+	protected boolean doProcess(AutoKnockOff aKnockOff, String tranType) {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;

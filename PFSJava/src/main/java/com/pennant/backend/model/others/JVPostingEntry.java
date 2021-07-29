@@ -46,7 +46,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlType(propOrder = { "txnAmount", "txnCode", "account" })
 @XmlRootElement(name = "postingEntry")
 @XmlAccessorType(XmlAccessType.NONE)
-public class JVPostingEntry extends AbstractWorkflowEntity implements Entity {
+public class JVPostingEntry extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private String fileName;
@@ -106,8 +106,6 @@ public class JVPostingEntry extends AbstractWorkflowEntity implements Entity {
 	private String debitAcname;
 
 	private long derivedTxnRef;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private JVPostingEntry befImage;
 	private LoggedInUser userDetails;
@@ -295,14 +293,6 @@ public class JVPostingEntry extends AbstractWorkflowEntity implements Entity {
 
 	public void setTxnAmount_Ac(BigDecimal txnAmountAc) {
 		this.txnAmount_Ac = txnAmountAc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

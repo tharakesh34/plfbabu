@@ -109,7 +109,7 @@ public class DueDiligenceDetailsServiceImpl extends GenericService<DueDiligenceD
 			tableType = "_Temp";
 		}
 
-		if (dueDiligenceDetails.isNew()) {
+		if (dueDiligenceDetails.isNewRecord()) {
 			dueDiligenceDetails.setId(getDueDiligenceDetailsDAO().save(dueDiligenceDetails, tableType));
 			auditHeader.getAuditDetail().setModelData(dueDiligenceDetails);
 		} else {
@@ -136,7 +136,7 @@ public class DueDiligenceDetailsServiceImpl extends GenericService<DueDiligenceD
 			dueDiligenceDetails.setRecordStatus(financeMain.getRecordStatus());
 			dueDiligenceDetails.setWorkflowId(financeMain.getWorkflowId());
 			dueDiligenceDetails.setFinReference(financeMain.getFinReference());
-			if (dueDiligenceDetails.isNew()) {
+			if (dueDiligenceDetails.isNewRecord()) {
 				getDueDiligenceDetailsDAO().save(dueDiligenceDetails, tableType);
 				auditDetails.add(getAuditDetails(dueDiligenceDetails, 1, PennantConstants.TRAN_ADD));
 			} else if (StringUtils.trimToEmpty(dueDiligenceDetails.getRecordType())
@@ -318,7 +318,7 @@ public class DueDiligenceDetailsServiceImpl extends GenericService<DueDiligenceD
 					(PennantConstants.RECORD_TYPE_DEL))) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (dueDiligenceDetails.isNew()) {
+				} else if (dueDiligenceDetails.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

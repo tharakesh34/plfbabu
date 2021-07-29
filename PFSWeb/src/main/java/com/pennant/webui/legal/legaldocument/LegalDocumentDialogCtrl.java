@@ -758,7 +758,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	public void doShowDialog(LegalDocument legalDocument) {
 		logger.debug(Literal.LEAVING);
 
-		if (legalDocument.isNew()) {
+		if (legalDocument.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.documentDate.focus();
@@ -1232,7 +1232,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		doSetValidation();
 		doWriteComponentsToBean(aLegalDocument);
 
-		isNew = aLegalDocument.isNew();
+		isNew = aLegalDocument.isNewRecord();
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;

@@ -671,7 +671,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 			this.customerId.setValue(customer.getCustID());
 		}
 
-		isNew = acollateralThirdParty.isNew();
+		isNew = acollateralThirdParty.isNewRecord();
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;

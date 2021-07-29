@@ -61,7 +61,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(propOrder = { "id", "code", "description", "entityCode", "gLCode", "active" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AssignmentPartner extends AbstractWorkflowEntity implements Entity {
+public class AssignmentPartner extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
@@ -82,9 +82,6 @@ public class AssignmentPartner extends AbstractWorkflowEntity implements Entity 
 	}
 
 	private boolean active = true;
-
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -174,14 +171,6 @@ public class AssignmentPartner extends AbstractWorkflowEntity implements Entity 
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

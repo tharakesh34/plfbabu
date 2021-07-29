@@ -59,7 +59,6 @@ public class Gender extends AbstractWorkflowEntity {
 	private String genderCode;
 	private String genderDesc;
 	private boolean genderIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private Gender befImage;
 	private LoggedInUser userDetails;
@@ -112,14 +111,6 @@ public class Gender extends AbstractWorkflowEntity {
 
 	public void setGenderIsActive(boolean genderIsActive) {
 		this.genderIsActive = genderIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

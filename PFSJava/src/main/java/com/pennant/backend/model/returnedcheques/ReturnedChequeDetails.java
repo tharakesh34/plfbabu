@@ -21,7 +21,6 @@ public class ReturnedChequeDetails extends AbstractWorkflowEntity {
 	private String ccyDesc;
 	private String custShrtName;
 	private int ccyEditField;
-	private boolean newRecord = false;
 	private LoggedInUser userDetails;
 	private ReturnedChequeDetails befImage;
 
@@ -105,14 +104,6 @@ public class ReturnedChequeDetails extends AbstractWorkflowEntity {
 
 	public void setCurrency(String currency) {
 		this.currency = currency;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public LoggedInUser getUserDetails() {

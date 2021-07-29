@@ -136,7 +136,7 @@ public class NPABucketServiceImpl extends GenericService<NPABucket> implements N
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (nPABucket.isNew()) {
+		if (nPABucket.isNewRecord()) {
 			nPABucket.setId(Long.valueOf(getNPABucketDAO().save(nPABucket, tableType)));
 			auditHeader.getAuditDetail().setModelData(nPABucket);
 			auditHeader.setAuditReference(String.valueOf(nPABucket.getBucketID()));
@@ -345,7 +345,7 @@ public class NPABucketServiceImpl extends GenericService<NPABucket> implements N
 		NPABucket nPABucket = (NPABucket) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (nPABucket.isNew() && nPABucketDAO.isDuplicateKey(nPABucket.getBucketID(), nPABucket.getBucketCode(),
+		if (nPABucket.isNewRecord() && nPABucketDAO.isDuplicateKey(nPABucket.getBucketID(), nPABucket.getBucketCode(),
 				nPABucket.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 

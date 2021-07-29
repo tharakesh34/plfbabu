@@ -34,7 +34,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -44,12 +49,6 @@ import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-
 /**
  * Model class for the <b>LegalDetail table</b>.<br>
  *
@@ -57,7 +56,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "LegalDetail")
 @XmlAccessorType(XmlAccessType.NONE)
-public class LegalDetail extends AbstractWorkflowEntity implements Entity {
+public class LegalDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long legalId = Long.MIN_VALUE;
@@ -79,7 +78,6 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 	private String module;
 	@XmlElement
 	private boolean active = false;
-	private boolean newRecord = false;
 	private String lovValue;
 	private String finNextRoleCode;
 	private byte[] docImage;
@@ -186,12 +184,10 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 		this.setId(id);
 	}
 
-	@Override
 	public long getId() {
 		return legalId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.legalId = id;
 	}
@@ -298,14 +294,6 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setEcPropertyOwnerName(String ecPropertyOwnerName) {
 		this.ecPropertyOwnerName = ecPropertyOwnerName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

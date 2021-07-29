@@ -511,7 +511,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @return boolean
 	 * @throws CustomerNotFoundException
 	 */
-	private boolean doProcess(CustomerDetails aCustomerDetails, String tranType) throws InterfaceException {
+	protected boolean doProcess(CustomerDetails aCustomerDetails, String tranType) throws InterfaceException {
 		logger.debug("Entering");
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;

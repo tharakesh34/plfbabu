@@ -380,7 +380,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		if (collateralSetup.isWorkflow() && !StringUtils.equals(DMSModule.DMS.name(), collateralSetup.getSourceId())) {
 			tableType = "_Temp";
 		}
-		if (collateralSetup.isNew()) {
+		if (collateralSetup.isNewRecord()) {
 			getCollateralSetupDAO().save(collateralSetup, tableType);
 		} else {
 			getCollateralSetupDAO().update(collateralSetup, tableType);
@@ -1046,7 +1046,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		String[] valueParm = new String[1];
 		valueParm[0] = collateralSetup.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_CollateralRef") + ":" + valueParm[0];
-		if (collateralSetup.isNew()) { // for New record or new record into work flow
+		if (collateralSetup.isNewRecord()) { // for New record or new record into work flow
 
 			if (!collateralSetup.isWorkflow()) {// With out Work flow only new records  
 				if (befCollateralSetup != null) { // Record Already Exists in the table then error  
@@ -1588,7 +1588,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			} else if (coOwnerDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (coOwnerDetail.isNew()) {
+				} else if (coOwnerDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -1679,7 +1679,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			} else if (collateralThirdParty.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (collateralThirdParty.isNew()) {
+				} else if (collateralThirdParty.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -1772,7 +1772,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			} else if (finFlagsDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (finFlagsDetail.isNew()) {
+				} else if (finFlagsDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -1886,7 +1886,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 					if (approveRec) {
 						deleteRecord = true;
-					} else if (documentDetails.isNew()) {
+					} else if (documentDetails.isNewRecord()) {
 						saveRecord = true;
 					} else {
 						updateRecord = true;

@@ -322,7 +322,7 @@ public class BranchCashLimitDialogCtrl extends GFCBaseCtrl<BranchCashLimit> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		branchCashLimitListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -587,7 +587,7 @@ public class BranchCashLimitDialogCtrl extends GFCBaseCtrl<BranchCashLimit> {
 	public void doShowDialog(BranchCashLimit branchCashLimit) {
 		logger.debug(Literal.LEAVING);
 
-		if (branchCashLimit.isNew()) {
+		if (branchCashLimit.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -845,7 +845,7 @@ public class BranchCashLimitDialogCtrl extends GFCBaseCtrl<BranchCashLimit> {
 		doSetValidation();
 		doWriteComponentsToBean(aBranchCashLimit);
 
-		isNew = aBranchCashLimit.isNew();
+		isNew = aBranchCashLimit.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -893,7 +893,7 @@ public class BranchCashLimitDialogCtrl extends GFCBaseCtrl<BranchCashLimit> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(BranchCashLimit aBranchCashLimit, String tranType) {
+	protected boolean doProcess(BranchCashLimit aBranchCashLimit, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

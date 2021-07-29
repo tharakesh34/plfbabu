@@ -63,7 +63,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "custEmpId", "custEmpName", "custEmpType", "custEmpDesg", "custEmpDept", "custEmpFrom",
 		"custEmpTo" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class CustomerEmploymentDetail extends AbstractWorkflowEntity implements Entity {
+public class CustomerEmploymentDetail extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -5317225672461108680L;
 
@@ -87,7 +87,6 @@ public class CustomerEmploymentDetail extends AbstractWorkflowEntity implements 
 	@XmlElement
 	private String custEmpType;
 	private String lovDescCustEmpTypeName;
-	private boolean newRecord;
 	private String lovValue;
 	private String lovDescCustShrtName;
 	private String lovDescCustRecordType;
@@ -204,14 +203,6 @@ public class CustomerEmploymentDetail extends AbstractWorkflowEntity implements 
 
 	public void setLovDescCustEmpTypeName(String lovDescCustEmpTypeName) {
 		this.lovDescCustEmpTypeName = lovDescCustEmpTypeName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -472,7 +472,7 @@ public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
 	public void doShowDialog(FinTypeExpense aFinTypeExpense) throws InterruptedException {
 		logger.debug("Entering");
 		// set Readonly mode accordingly if the object is new or not.
-		if (aFinTypeExpense.isNew()) {
+		if (aFinTypeExpense.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -682,7 +682,7 @@ public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
 		// Write the additional validations as per below example
 		// get the selected FinTypeExpense object from the listbox
 		// Do data level validations here
-		isNew = aFinTypeExpense.isNew();
+		isNew = aFinTypeExpense.isNewRecord();
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
@@ -750,7 +750,7 @@ public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
 				FinTypeExpense finTypeExpense = finTypeExistingList.get(i);
 				if (finTypeExpense.getExpenseTypeID() == aFinTypeExpense.getExpenseTypeID()) {
 					// Both Current and Existing list rating same
-					if (aFinTypeExpense.isNew()) {
+					if (aFinTypeExpense.isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm),
 								getUserWorkspace().getUserLanguage()));

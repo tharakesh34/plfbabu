@@ -59,7 +59,6 @@ public class Flag extends AbstractWorkflowEntity {
 	private String flagCode;
 	private String flagDesc;
 	private boolean active;
-	private boolean newRecord;
 	private String lovValue;
 	private Flag befImage;
 	private LoggedInUser userDetails;
@@ -116,14 +115,6 @@ public class Flag extends AbstractWorkflowEntity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

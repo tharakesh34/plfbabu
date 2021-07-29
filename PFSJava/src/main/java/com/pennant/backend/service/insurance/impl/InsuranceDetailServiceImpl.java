@@ -116,7 +116,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (insuranceDetails.isNew()) {
+		if (insuranceDetails.isNewRecord()) {
 			insuranceDetails
 					.setId(getInsuranceDetailDAO().saveInsuranceDetails(insuranceDetails, tableType.getSuffix()));
 			auditHeader.getAuditDetail().setModelData(insuranceDetails);
@@ -281,7 +281,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		InsuranceDetails detail = (InsuranceDetails) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (detail.isNew() && getInsuranceDetailDAO().isDuplicateKey(detail.getId(), detail.getReference(),
+		if (detail.isNewRecord() && getInsuranceDetailDAO().isDuplicateKey(detail.getId(), detail.getReference(),
 				detail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 			parameters[0] = PennantJavaUtil.getLabel("label_InsuranceReconciliationList_Reference.value") + ": "

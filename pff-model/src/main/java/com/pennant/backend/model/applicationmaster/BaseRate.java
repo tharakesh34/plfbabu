@@ -65,7 +65,6 @@ public class BaseRate extends AbstractWorkflowEntity {
 	private Date lastMdfDate;
 	private BigDecimal bRRate;
 	private boolean delExistingRates;
-	private boolean newRecord;
 	private String lovValue;
 	private BaseRate befImage;
 	private LoggedInUser userDetails;
@@ -147,14 +146,6 @@ public class BaseRate extends AbstractWorkflowEntity {
 
 	public void setDelExistingRates(boolean delExistingRates) {
 		this.delExistingRates = delExistingRates;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

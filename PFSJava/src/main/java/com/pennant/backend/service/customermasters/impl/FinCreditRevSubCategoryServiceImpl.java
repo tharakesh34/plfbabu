@@ -154,7 +154,7 @@ public class FinCreditRevSubCategoryServiceImpl extends GenericService<FinCredit
 			tableType = "_Temp";
 		}
 
-		if (finCreditRevSubCategory.isNew()) {
+		if (finCreditRevSubCategory.isNewRecord()) {
 			getFinCreditRevSubCategoryDAO().save(finCreditRevSubCategory, tableType);
 		} else {
 			getFinCreditRevSubCategoryDAO().update(finCreditRevSubCategory, tableType);
@@ -377,7 +377,7 @@ public class FinCreditRevSubCategoryServiceImpl extends GenericService<FinCredit
 		valueParm[0] = finCreditRevSubCategory.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_SubCategoryCode") + ":" + valueParm[0];
 		finCreditRevSubCategory.setWorkflowId(0);
-		if (finCreditRevSubCategory.isNew()) { // for New record or new record into work flow
+		if (finCreditRevSubCategory.isNewRecord()) { // for New record or new record into work flow
 
 			if (!finCreditRevSubCategory.isWorkflow()) {// With out Work flow only new records  
 				if (befFinCreditRevSubCategory != null) { // Record Already Exists in the table then error  

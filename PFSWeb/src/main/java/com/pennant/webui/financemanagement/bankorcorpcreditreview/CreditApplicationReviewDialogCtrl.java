@@ -777,7 +777,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		}
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aCreditReviewDetails.isNew()) {
+		if (aCreditReviewDetails.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			this.totLibAsstDiff.setValue(BigDecimal.ZERO);
 			doEdit();
@@ -934,7 +934,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	/**
 	 * Method for refreshing the list in ListCtrl
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCreditApplicationReviewListCtrl().search();
 	}
 
@@ -1110,7 +1110,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aCreditReviewDetails.isNew();
+		isNew = aCreditReviewDetails.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1165,7 +1165,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(FinCreditReviewDetails aCreditReviewDetails, String tranType) {
+	protected boolean doProcess(FinCreditReviewDetails aCreditReviewDetails, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -2203,7 +2203,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		}
 
 		String type = "";
-		if (creditReviewDetails.isNew()) {
+		if (creditReviewDetails.isNewRecord()) {
 			creditReviewDetails.setConversionRate(
 					this.conversionRate.getValue() == null ? BigDecimal.ZERO : this.conversionRate.getValue());
 		}
@@ -2357,14 +2357,14 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 							PennantAppUtil.formateAmount(BigDecimal.ZERO, this.currFormatter));
 					engine.put("Y" + (audityear - 1) + this.listOfFinCreditRevSubCategory.get(k).getSubCategoryCode(),
 							PennantAppUtil.formateAmount(BigDecimal.ZERO, this.currFormatter));
-					if (prvYearValuesMap != null && prvYearValuesMap.size() > 0 && !creditReviewDetails.isNew()) {
+					if (prvYearValuesMap != null && prvYearValuesMap.size() > 0 && !creditReviewDetails.isNewRecord()) {
 						setData(prvYearValuesMap);
 					}
 				}
 			}
 		}
 		// If current year data is available and not new than set
-		if (curYearValuesMap != null && !creditReviewDetails.isNew()) {
+		if (curYearValuesMap != null && !creditReviewDetails.isNewRecord()) {
 			setData(curYearValuesMap);
 		}
 		// }
@@ -2969,7 +2969,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 			}
 		}
 
-		if (!isRatio && this.creditReviewDetails.isNew()) {
+		if (!isRatio && this.creditReviewDetails.isNewRecord()) {
 			if (!curYearValuesMap.containsKey(finCreditRevSubCategory.getSubCategoryCode())) {
 				engine.put("Y" + this.auditPeriod.getValue() + finCreditRevSubCategory.getSubCategoryCode(),
 						BigDecimal.ZERO);

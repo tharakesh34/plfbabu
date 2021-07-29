@@ -514,7 +514,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (header.isNew()) {
+		if (header.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -594,7 +594,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getPayOrderIssueListCtrl().search();
 	}
 
@@ -754,7 +754,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 			return;
 		}
 
-		isNew = aPayOrderIssueHeader.isNew();
+		isNew = aPayOrderIssueHeader.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -803,7 +803,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	 * @param tranType
 	 * @return
 	 */
-	private boolean doProcess(PayOrderIssueHeader aPayOrderIssueHeader, String tranType) throws InterfaceException {
+	protected boolean doProcess(PayOrderIssueHeader aPayOrderIssueHeader, String tranType) throws InterfaceException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

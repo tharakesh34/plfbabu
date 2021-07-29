@@ -23,7 +23,6 @@ public class FinTypeReceiptModes extends AbstractWorkflowEntity {
 
 	private String finType;
 	private String receiptMode;
-	private boolean newRecord = false;
 	private FinTypeReceiptModes befImage;
 	private LoggedInUser userDetails;
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
@@ -32,7 +31,7 @@ public class FinTypeReceiptModes extends AbstractWorkflowEntity {
 		FinTypeReceiptModes entity = new FinTypeReceiptModes();
 		entity.setFinType(this.finType);
 		entity.setReceiptMode(this.receiptMode);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
 		this.auditDetailMap.entrySet().stream().forEach(e -> {
@@ -73,14 +72,6 @@ public class FinTypeReceiptModes extends AbstractWorkflowEntity {
 
 	public void setFinType(String finType) {
 		this.finType = finType;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public FinTypeReceiptModes getBefImage() {

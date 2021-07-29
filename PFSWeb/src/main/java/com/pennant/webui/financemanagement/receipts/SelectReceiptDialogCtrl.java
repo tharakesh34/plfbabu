@@ -755,7 +755,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				if (StringUtils.isBlank(receiptHeader.getRecordType())) {
 					receiptHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					receiptHeader.setVersion(1);
-					if (receiptHeader.isNew()) {
+					if (receiptHeader.isNewRecord()) {
 						receiptHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					} else {
 						receiptHeader.setRecordType(PennantConstants.RECORD_TYPE_UPD);
@@ -842,7 +842,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				repayData.getReceiptHeader().getUserDetails(), getOverideMap());
 	}
 
-	private void refreshList() {
+	protected void refreshList() {
 		getReceiptListCtrl().doRefresh();
 	}
 

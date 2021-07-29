@@ -126,7 +126,7 @@ public class InterestRateTypeServiceImpl extends GenericService<InterestRateType
 			tableType = "_Temp";
 		}
 
-		if (interestRateType.isNew()) {
+		if (interestRateType.isNewRecord()) {
 			interestRateType.setId(getInterestRateTypeDAO().save(interestRateType, tableType));
 			auditHeader.getAuditDetail().setModelData(interestRateType);
 			auditHeader.setAuditReference(interestRateType.getId());
@@ -334,7 +334,7 @@ public class InterestRateTypeServiceImpl extends GenericService<InterestRateType
 				PennantStaticListUtil.getInterestRateType(true));
 		errParm[0] = PennantJavaUtil.getLabel("label_IntRateTypeCode") + ":" + valueParm[0];
 
-		if (interestRateType.isNew()) { // for New record or new record into work flow
+		if (interestRateType.isNewRecord()) { // for New record or new record into work flow
 
 			if (!interestRateType.isWorkflow()) {// With out Work flow only new records
 				if (befInterestRateType != null) { // Record Already Exists in the table then error

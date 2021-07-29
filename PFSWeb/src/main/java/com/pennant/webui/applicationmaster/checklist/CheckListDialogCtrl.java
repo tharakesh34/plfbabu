@@ -391,7 +391,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 		} else {
 			fillComboBox(this.moduleName, aCheckList.getModuleName(), PennantStaticListUtil.getWorkFlowModules(), "");
 		}
-		if (aCheckList.isNew()
+		if (aCheckList.isNewRecord()
 				|| StringUtils.trimToEmpty(aCheckList.getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
@@ -510,7 +510,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aCheckList.isNew()) {
+		if (aCheckList.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -792,7 +792,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aCheckList.isNew();
+		isNew = aCheckList.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -842,7 +842,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CheckList aCheckList, String tranType) {
+	protected boolean doProcess(CheckList aCheckList, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -1043,7 +1043,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCheckListListCtrl().search();
 	}
 
@@ -1099,7 +1099,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 				map.put("checkListDetail", checkListDetail);
 				map.put("roleCode", getRole());
 				map.put("isEditable", isEditable);
-				map.put("isNewRecord", getCheckList().isNew());
+				map.put("isNewRecord", getCheckList().isNewRecord());
 
 				try {
 					Executions.createComponents("/WEB-INF/pages/ApplicationMaster/CheckList/CheckListDetailDialog.zul",
@@ -1132,7 +1132,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 		if (this.listbox_ChkListDetails.getVisibleItemCount() != 0) {
 			Clients.clearWrongValue(this.btnNew_CheckListDetail);
 		}
-		if (!getCheckList().isNew()) {
+		if (!getCheckList().isNewRecord()) {
 			if (checkListDetailList != null && checkListDetailList.size() > 0) {
 				for (CheckListDetail checkListDetail : checkListDetailList) {
 					if (checkListDetail.isDocRequired()) {

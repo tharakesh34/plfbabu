@@ -132,7 +132,7 @@ public class OtherBankFinanceTypeServiceImpl extends GenericService<OtherBankFin
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (otherBankFinanceType.isNew()) {
+		if (otherBankFinanceType.isNewRecord()) {
 			getOtherBankFinanceTypeDAO().save(otherBankFinanceType, tableType);
 		} else {
 			getOtherBankFinanceTypeDAO().update(otherBankFinanceType, tableType);
@@ -328,7 +328,7 @@ public class OtherBankFinanceTypeServiceImpl extends GenericService<OtherBankFin
 		// Get the model object.
 		OtherBankFinanceType otherBankFinanceType = (OtherBankFinanceType) auditDetail.getModelData();
 		// Check the unique keys.
-		if (otherBankFinanceType.isNew()
+		if (otherBankFinanceType.isNewRecord()
 				&& PennantConstants.RECORD_TYPE_NEW.equals(otherBankFinanceType.getRecordType())
 				&& otherBankFinanceTypeDAO.isDuplicateKey(otherBankFinanceType.getId(),
 						otherBankFinanceType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {

@@ -1132,7 +1132,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.btnBuildSchedule.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnBuildSchd"));
 		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("ALLOW_LOAN_APP_LOCK"))) {
 			if (StringUtils.isEmpty(moduleDefiner) && btnLockRecord.isVisible()
-					&& !getFinanceDetail().getFinScheduleData().getFinanceMain().isNew()) {
+					&& !getFinanceDetail().getFinScheduleData().getFinanceMain().isNewRecord()) {
 				btnLockRecord.setVisible(true);
 
 				FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -1582,7 +1582,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.gb_repaymentDetails.setVisible(isReadOnly("FinanceMainDialog_gb_repaymentDetails"));
 		this.gb_OverDuePenalty.setVisible(isReadOnly("FinanceMainDialog_gb_OverDuePenalty"));
 
-		if (!financeMain.isNew() && ImplementationConstants.ALLOW_LOAN_SPLIT) {
+		if (!financeMain.isNewRecord() && ImplementationConstants.ALLOW_LOAN_SPLIT) {
 			this.row_AllowLoanTypes.setVisible(true);
 		}
 		this.parentLoanReference.setButtonDisabled(true);
@@ -2436,7 +2436,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		FinScheduleData fsd = getFinanceDetail().getFinScheduleData();
 		FinanceMain fm = fsd.getFinanceMain();
 
-		if (!onLoadProcess || (fm.isStepFinance() && (!fsd.getStepPolicyDetails().isEmpty() || fm.isNew()))) {
+		if (!onLoadProcess || (fm.isStepFinance() && (!fsd.getStepPolicyDetails().isEmpty() || fm.isNewRecord()))) {
 			final Map<String, Object> map = getDefaultArguments();
 			fm.setAllowGrcPeriod(this.allowGrace.isChecked());
 			map.put("financeDetail", getFinanceDetail());
@@ -2472,7 +2472,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			final Map<String, Object> map = getDefaultArguments();
 			ChequeHeader chequeHeader = null;
-			if (getFinanceMain().isNew() || financeDetail.getChequeHeader() == null) {
+			if (getFinanceMain().isNewRecord() || financeDetail.getChequeHeader() == null) {
 				chequeHeader = new ChequeHeader();
 				chequeHeader.setNewRecord(true);
 			} else {
@@ -3496,10 +3496,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.finLimitRef.setValue(aFinanceMain.getFinLimitRef(),
 				StringUtils.trimToEmpty(aFinanceMain.getFinLimitRef()));
 
-		if (!aFinanceMain.isNew() && !StringUtils.isBlank(aFinanceMain.getFinLimitRef())) {
+		if (!aFinanceMain.isNewRecord() && !StringUtils.isBlank(aFinanceMain.getFinLimitRef())) {
 			processLimitData();
 		}
-		if (aFinanceMain.isNew() && financeType.isLimitRequired()) {
+		if (aFinanceMain.isNewRecord() && financeType.isLimitRequired()) {
 			if (!ImplementationConstants.LIMIT_INTERNAL) {
 				checkLimitDetailsForSingleLimit();
 			}
@@ -3582,7 +3582,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.row_odAllowTDS.setVisible(ImplementationConstants.ALLOW_TDS_ON_FEE);
 		if (ImplementationConstants.ALLOW_TDS_ON_FEE) {
-			if (aFinanceMain.isNew() && aFinanceMain.isTDSApplicable()) {
+			if (aFinanceMain.isNewRecord() && aFinanceMain.isTDSApplicable()) {
 				this.odTDSApplicable.setChecked(true);
 			} else {
 				this.odTDSApplicable
@@ -3599,7 +3599,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		doSetTdsDetails();
 
-		if (aFinanceMain.isNew()) {
+		if (aFinanceMain.isNewRecord()) {
 			if (financeType.isTdsApplicable() && ImplementationConstants.ALLOW_TDS_ON_FEE) {
 				this.row_odAllowTDS.setVisible(true);
 			} else {
@@ -4202,7 +4202,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			readOnlyComponent(true, this.nextRepayCpzDate);
 		}
 
-		if (!aFinanceMain.isNew() || StringUtils.isNotBlank(aFinanceMain.getFinReference())) {
+		if (!aFinanceMain.isNewRecord() || StringUtils.isNotBlank(aFinanceMain.getFinReference())) {
 			if (StringUtils.isBlank(moduleDefiner) || moduleDefiner.equals(FinServiceEvent.CHGGRCEND)) {
 				this.nextRepayDate.setValue(aFinanceMain.getNextRepayDate());
 				this.nextRepayRvwDate.setValue(aFinanceMain.getNextRepayRvwDate());
@@ -4995,7 +4995,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			onCheckODPenalty(false);
-			if (afinanceDetail.getFinScheduleData().getFinanceMain().isNew()
+			if (afinanceDetail.getFinScheduleData().getFinanceMain().isNewRecord()
 					&& !afinanceDetail.getFinScheduleData().getFinanceMain().isLovDescIsSchdGenerated()) {
 				// ####_0.2
 				// changeFrequencies();
@@ -8837,7 +8837,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @return
 	 * @throws Exception
 	 */
-	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws Exception, InterfaceException {
+	protected boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws Exception, InterfaceException {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = true;
@@ -9289,7 +9289,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 				if (financeMain != null
 						&& SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE)
-						&& !financeMain.isNew()) {
+						&& !financeMain.isNewRecord()) {
 					String repayRvwFrq2 = financeMain.getRepayRvwFrq();
 					if (repayRvwFrq2 != null) {
 						day = repayRvwFrq2.substring(3);
@@ -12595,7 +12595,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		try {
 			financeDate = this.finStartDate.getValue();
 			aFinanceMain.setFinStartDate(this.finStartDate.getValue());
-			if (aFinanceMain.isNew()
+			if (aFinanceMain.isNewRecord()
 					|| StringUtils.trimToEmpty(aFinanceMain.getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)) {
 				aFinanceMain.setLastRepayDate(this.finStartDate.getValue());
 				aFinanceMain.setLastRepayPftDate(this.finStartDate.getValue());
@@ -12913,7 +12913,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				// Validate grace terms against the grace frequency
 				if (!this.graceTerms.isReadonly()) {
-					if (aFinanceMain.isNew() && this.maturityDate.getValue() != null) {
+					if (aFinanceMain.isNewRecord() && this.maturityDate.getValue() != null) {
 						String errMsg = validateNumOfGrcTermsOnMtrDate();
 						if (errMsg != null) {
 							throw new WrongValueException(this.graceTerms, errMsg);
@@ -13624,7 +13624,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				// Validate number of terms against the repay frequency.
 				if (!this.numberOfTerms.isReadonly()) {
-					if (aFinanceMain.isNew() && this.maturityDate.getValue() != null) {
+					if (aFinanceMain.isNewRecord() && this.maturityDate.getValue() != null) {
 						String errMsg = validateNumOfTrmsOnMatDate();
 						if (errMsg != null) {
 							throw new WrongValueException(this.numberOfTerms, errMsg);

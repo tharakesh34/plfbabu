@@ -98,7 +98,7 @@ public class DocumentDetailValidation {
 		}
 		errParm[1] = PennantJavaUtil.getLabel("label_DocumnetCategory") + ":" + valueParm[1];
 
-		if (documentDetails.isNew()) { // for New record or new record into work flow
+		if (documentDetails.isNewRecord()) { // for New record or new record into work flow
 
 			if (!documentDetails.isWorkflow()) {// With out Work flow only new records  
 				if (befDocument != null) { // Record Already Exists in the table then error  

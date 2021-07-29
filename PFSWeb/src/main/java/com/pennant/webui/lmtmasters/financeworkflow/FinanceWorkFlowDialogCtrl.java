@@ -619,7 +619,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aFinanceWorkFlow.isNew()) {
+		if (aFinanceWorkFlow.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -723,7 +723,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getFinanceWorkFlowListCtrl().search();
 	}
 
@@ -877,7 +877,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aFinanceWorkFlow.isNew();
+		isNew = aFinanceWorkFlow.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -925,7 +925,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(FinanceWorkFlow aFinanceWorkFlow, String tranType) {
+	protected boolean doProcess(FinanceWorkFlow aFinanceWorkFlow, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

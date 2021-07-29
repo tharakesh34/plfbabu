@@ -973,7 +973,7 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 		return ReportsUtil.getExcelData(reportPath, reportName, userName, whereCond, searchCriteria);
 	}
 
-	private boolean doProcess(ReceiptUploadHeader aReceiptUploadHeader, String tranType, String rcdStatus) {
+	protected boolean doProcess(ReceiptUploadHeader aReceiptUploadHeader, String tranType, String rcdStatus) {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;

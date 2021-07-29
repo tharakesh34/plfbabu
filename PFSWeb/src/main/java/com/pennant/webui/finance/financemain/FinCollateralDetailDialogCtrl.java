@@ -820,7 +820,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 		// Validate cheque range
 		doRevalidateChequeRange();
 
-		isNew = aFinCollaterals.isNew();
+		isNew = aFinCollaterals.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {

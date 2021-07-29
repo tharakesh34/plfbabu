@@ -375,7 +375,7 @@ public class SecurityOperationRolesServiceImpl extends GenericService<SecurityOp
 			} else if (securityOperationRoles.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (securityOperationRoles.isNew()) {
+				} else if (securityOperationRoles.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

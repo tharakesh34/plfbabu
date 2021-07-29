@@ -69,7 +69,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(propOrder = { "finReference", "adviseType", "feeTypeCode", "adviseAmount", "valueDate", "remarks" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
+public class ManualAdvise extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long adviseID = Long.MIN_VALUE;
@@ -113,8 +113,6 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private Date valueDate;
 	private Date postDate;
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -192,7 +190,7 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 		entity.setRemarks(this.remarks);
 		entity.setValueDate(this.valueDate);
 		entity.setPostDate(this.postDate);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setLovValue(this.lovValue);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
@@ -338,14 +336,6 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

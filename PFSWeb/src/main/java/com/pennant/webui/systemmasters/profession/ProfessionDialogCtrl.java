@@ -298,7 +298,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 		this.professionSelfEmployee.setChecked(aProfession.isSelfEmployee());
 		this.recordStatus.setValue(aProfession.getRecordStatus());
 
-		if (aProfession.isNew() || (aProfession.getRecordType() != null ? aProfession.getRecordType() : "")
+		if (aProfession.isNewRecord() || (aProfession.getRecordType() != null ? aProfession.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.professionIsActive.setChecked(true);
 			this.professionIsActive.setDisabled(true);
@@ -366,7 +366,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aProfession.isNew()) {
+		if (aProfession.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -591,7 +591,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aProfession.isNew();
+		isNew = aProfession.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -641,7 +641,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Profession aProfession, String tranType) {
+	protected boolean doProcess(Profession aProfession, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -852,7 +852,7 @@ public class ProfessionDialogCtrl extends GFCBaseCtrl<Profession> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getProfessionListCtrl().search();
 	}
 

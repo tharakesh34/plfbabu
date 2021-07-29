@@ -135,7 +135,7 @@ public class ProfitCenterServiceImpl extends GenericService<ProfitCenter> implem
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (profitCenter.isNew()) {
+		if (profitCenter.isNewRecord()) {
 			profitCenter.setId(Long.parseLong(getProfitCenterDAO().save(profitCenter, tableType)));
 			auditHeader.getAuditDetail().setModelData(profitCenter);
 			auditHeader.setAuditReference(String.valueOf(profitCenter.getProfitCenterID()));
@@ -341,7 +341,7 @@ public class ProfitCenterServiceImpl extends GenericService<ProfitCenter> implem
 		ProfitCenter profitCenter = (ProfitCenter) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (profitCenter.isNew()
+		if (profitCenter.isNewRecord()
 				&& profitCenterDAO.isDuplicateKey(profitCenter.getProfitCenterID(), profitCenter.getProfitCenterCode(),
 						profitCenter.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];

@@ -73,7 +73,7 @@ public class CustomerRatingValidation {
 				+ valueParm[0] + " and ";
 		errParm[1] = PennantJavaUtil.getLabel("label_CustRatingType") + "-" + valueParm[1];
 
-		if (customerRating.isNew()) { // for New record or new record into work flow
+		if (customerRating.isNewRecord()) { // for New record or new record into work flow
 
 			if (!customerRating.isWorkflow()) {// With out Work flow only new records  
 				if (befCustomerRating != null) { // Record Already Exists in the table then error  

@@ -152,7 +152,7 @@ public class FlagServiceImpl extends GenericService<Flag> implements FlagService
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (flag.isNew()) {
+		if (flag.isNewRecord()) {
 			getFlagDAO().save(flag, tableType);
 		} else {
 			getFlagDAO().update(flag, tableType);
@@ -356,7 +356,7 @@ public class FlagServiceImpl extends GenericService<Flag> implements FlagService
 		Flag flag = (Flag) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (flag.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(flag.getRecordType()) && flagDAO
+		if (flag.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(flag.getRecordType()) && flagDAO
 				.isDuplicateKey(flag.getFlagCode(), flag.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 

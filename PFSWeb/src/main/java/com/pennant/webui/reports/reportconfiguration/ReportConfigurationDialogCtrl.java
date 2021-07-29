@@ -277,7 +277,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		this.reportJasperName.setMaxlength(100);
 		this.dataSourceName.setMaxlength(50);
 		this.menuItemCode.setMaxlength(100);
-		if (this.getReportConfiguration().isNew()) {
+		if (this.getReportConfiguration().isNewRecord()) {
 			this.btnPreviewReport.setVisible(false);
 		}
 
@@ -435,7 +435,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		logger.debug("Entering ");
 		this.reportName.setValue(aReportConfiguration.getReportName());
 		this.reportHeading.setValue(aReportConfiguration.getReportHeading());
-		if (aReportConfiguration.isNew()) {
+		if (aReportConfiguration.isNewRecord()) {
 			this.promptRequired.setChecked(true);
 		} else {
 			this.promptRequired.setChecked(aReportConfiguration.isPromptRequired());
@@ -456,7 +456,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		this.reportJasperName.setValue(aReportConfiguration.getReportJasperName());
 
 		this.menuItemCode.setValue(aReportConfiguration.getMenuItemCode());
-		if (aReportConfiguration.isNew()) {
+		if (aReportConfiguration.isNewRecord()) {
 			this.whereCondition.setChecked(true);
 		} else {
 			this.whereCondition.setChecked(aReportConfiguration.isWhereCondition());
@@ -567,7 +567,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (enqModule) {
 			doReadOnly(true);
-		} else if (aReportConfiguration.isNew()) {
+		} else if (aReportConfiguration.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -679,7 +679,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getReportConfigurationListCtrl().search();
 	}
 
@@ -870,7 +870,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aReportConfiguration.isNew();
+		isNew = aReportConfiguration.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -919,7 +919,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(ReportConfiguration aReportConfiguration, String tranType) {
+	protected boolean doProcess(ReportConfiguration aReportConfiguration, String tranType) {
 		logger.debug("Entering ");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

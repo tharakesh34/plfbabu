@@ -68,7 +68,7 @@ public class FinCollateralDelinkServiceImpl extends GenericService<FinMaintainIn
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (fmi.isNew()) {
+		if (fmi.isNewRecord()) {
 			fmi.setFinMaintainId(Long.parseLong(finMaintainInstructionDAO.save(fmi, tableType)));
 			auditHeader.getAuditDetail().setModelData(fmi);
 			auditHeader.setAuditReference(String.valueOf(fmi.getFinMaintainId()));
@@ -286,7 +286,7 @@ public class FinCollateralDelinkServiceImpl extends GenericService<FinMaintainIn
 		TableType tableType = fmi.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB;
 		boolean duplicateKey = finMaintainInstructionDAO.isDuplicateKey(event, finReference, tableType);
 
-		if (isUniqueCheckReq && fmi.isNew() && duplicateKey) {
+		if (isUniqueCheckReq && fmi.isNewRecord() && duplicateKey) {
 			String[] parameters = new String[2];
 			parameters[0] = PennantJavaUtil.getLabel("label_FinMaintainInstruction_Event") + ": " + event;
 			parameters[1] = PennantJavaUtil.getLabel("label_FinReference") + " : " + finReference;

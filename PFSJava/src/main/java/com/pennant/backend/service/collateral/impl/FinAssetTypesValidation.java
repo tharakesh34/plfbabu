@@ -57,7 +57,7 @@ public class FinAssetTypesValidation {
 		errParm[0] = PennantJavaUtil.getLabel("label_Reference") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_AssetTypeRef") + ":" + valueParm[1];
 
-		if (finAssetTypes.isNew()) { // for New record or new record into work flow
+		if (finAssetTypes.isNewRecord()) { // for New record or new record into work flow
 
 			if (!finAssetTypes.isWorkflow()) {// With out Work flow only new records  
 				if (befAssignment != null) { // Record Already Exists in the table then error  

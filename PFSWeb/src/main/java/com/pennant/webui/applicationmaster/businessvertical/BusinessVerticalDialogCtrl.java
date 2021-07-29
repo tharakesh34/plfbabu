@@ -282,7 +282,7 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		businessVerticalListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -316,7 +316,7 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical> {
 		this.active.setChecked(aBusinessVertical.isActive());
 		this.recordStatus.setValue(aBusinessVertical.getRecordStatus());
 
-		if (aBusinessVertical.isNew()
+		if (aBusinessVertical.isNewRecord()
 				|| (aBusinessVertical.getRecordType() != null ? aBusinessVertical.getRecordType() : "")
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
@@ -381,7 +381,7 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical> {
 	public void doShowDialog(BusinessVertical businessVertical) {
 		logger.debug(Literal.LEAVING);
 
-		if (businessVertical.isNew()) {
+		if (businessVertical.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -602,7 +602,7 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical> {
 		doSetValidation();
 		doWriteComponentsToBean(aBusinessVertical);
 
-		isNew = aBusinessVertical.isNew();
+		isNew = aBusinessVertical.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -650,7 +650,7 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(BusinessVertical aBusinessVertical, String tranType) {
+	protected boolean doProcess(BusinessVertical aBusinessVertical, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

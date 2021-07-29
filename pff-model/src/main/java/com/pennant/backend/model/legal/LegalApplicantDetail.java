@@ -63,7 +63,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(propOrder = { "title", "propertyOwnersName", "age", "relationshipType", "iDType", "iDNo", "remarks" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class LegalApplicantDetail extends AbstractWorkflowEntity implements Entity {
+public class LegalApplicantDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long legalApplicantId = Long.MIN_VALUE;
@@ -90,8 +90,6 @@ public class LegalApplicantDetail extends AbstractWorkflowEntity implements Enti
 	private Customer customer;
 	private boolean isDefault;
 	private String modtString;
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -210,14 +208,6 @@ public class LegalApplicantDetail extends AbstractWorkflowEntity implements Enti
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -82,7 +82,7 @@ public class CustomerDirectorValidation {
 				+ ":" + valueParm[0] + " and ";
 		errParm[1] = PennantJavaUtil.getLabel("label_DirectorDetailDialog_ShortName.value") + "-" + valueParm[1];
 
-		if (directorDetail.isNew()) { // for New record or new record into work flow
+		if (directorDetail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!directorDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befDirectorDetail != null) { // Record Already Exists in the table then error  

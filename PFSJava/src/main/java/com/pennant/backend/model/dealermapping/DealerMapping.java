@@ -3,12 +3,10 @@ package com.pennant.backend.model.dealermapping;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class DealerMapping extends AbstractWorkflowEntity implements Entity {
-
+public class DealerMapping extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -1103892861574957994L;
 
 	private long dealerMapId = Long.MIN_VALUE;
@@ -20,7 +18,6 @@ public class DealerMapping extends AbstractWorkflowEntity implements Entity {
 	private String storeId;
 	private long dealerCode;
 	private long posId;
-	private boolean newRecord;
 	private String lovValue;
 	private DealerMapping befImage;
 	private LoggedInUser userDetails;
@@ -37,14 +34,6 @@ public class DealerMapping extends AbstractWorkflowEntity implements Entity {
 
 	public DealerMapping() {
 		super();
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {
@@ -143,17 +132,10 @@ public class DealerMapping extends AbstractWorkflowEntity implements Entity {
 		this.merchantName = merchantName;
 	}
 
-	@Override
-	public boolean isNew() {
-		return newRecord;
-	}
-
-	@Override
 	public long getId() {
 		return dealerMapId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.dealerMapId = id;
 	}

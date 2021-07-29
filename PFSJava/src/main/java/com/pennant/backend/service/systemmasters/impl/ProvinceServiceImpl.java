@@ -149,7 +149,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (province.isNew()) {
+		if (province.isNewRecord()) {
 			getProvinceDAO().save(province, tableType);
 			auditHeader.getAuditDetail().setModelData(province);
 			auditHeader.setAuditReference(
@@ -227,7 +227,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 			} else if (taxDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (taxDetail.isNew()) {
+				} else if (taxDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -737,7 +737,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 		// Get the model object.
 		Province province = (Province) auditDetail.getModelData();
 		// Check the unique keys.
-		if (province.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(province.getRecordType())
+		if (province.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(province.getRecordType())
 				&& provinceDAO.isDuplicateKey(province.getCPCountry(), province.getCPProvince(),
 						province.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];

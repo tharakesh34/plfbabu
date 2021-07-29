@@ -309,7 +309,7 @@ public class CustTypePANMappingDialogCtrl extends GFCBaseCtrl<CustTypePANMapping
 		this.panLetter.setValue(custTypePANMapping.getPanLetter());
 
 		//Active
-		if (custTypePANMapping.isNew()) {
+		if (custTypePANMapping.isNewRecord()) {
 			this.active.setChecked(true);
 		} else {
 			this.active.setChecked(custTypePANMapping.isActive());
@@ -380,7 +380,7 @@ public class CustTypePANMappingDialogCtrl extends GFCBaseCtrl<CustTypePANMapping
 		logger.debug(Literal.ENTERING);
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (custTypePANMapping.isNew()) {
+		if (custTypePANMapping.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -615,7 +615,7 @@ public class CustTypePANMappingDialogCtrl extends GFCBaseCtrl<CustTypePANMapping
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aCustTypePANMapping.isNew();
+		isNew = aCustTypePANMapping.isNewRecord();
 		String tranType;
 
 		if (isWorkFlowEnabled()) {
@@ -663,7 +663,7 @@ public class CustTypePANMappingDialogCtrl extends GFCBaseCtrl<CustTypePANMapping
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CustTypePANMapping aCustTypePANMapping, String tranType) {
+	protected boolean doProcess(CustTypePANMapping aCustTypePANMapping, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader;
@@ -847,7 +847,7 @@ public class CustTypePANMappingDialogCtrl extends GFCBaseCtrl<CustTypePANMapping
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		custTypePANMappingListCtrl.search();
 	}
 

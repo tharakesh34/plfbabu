@@ -456,7 +456,7 @@ public class ExtendedFieldDetailsService {
 			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (extendedFieldRender.isNew()) {
+				} else if (extendedFieldRender.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -600,7 +600,7 @@ public class ExtendedFieldDetailsService {
 			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (extendedFieldRender.isNew()) {
+				} else if (extendedFieldRender.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -731,7 +731,7 @@ public class ExtendedFieldDetailsService {
 				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 					if (approveRec) {
 						deleteRecord = true;
-					} else if (extendedFieldRender.isNew()) {
+					} else if (extendedFieldRender.isNewRecord()) {
 						saveRecord = true;
 					} else {
 						updateRecord = true;
@@ -876,7 +876,7 @@ public class ExtendedFieldDetailsService {
 			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (extendedFieldRender.isNew()) {
+				} else if (extendedFieldRender.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -1258,7 +1258,7 @@ public class ExtendedFieldDetailsService {
 		}
 		errParm[1] = PennantJavaUtil.getLabel("label_SeqNo") + ":" + valueParm[1];
 
-		if (render.isNew()) { // for New record or new record into work flow
+		if (render.isNewRecord()) { // for New record or new record into work flow
 
 			if (!render.isWorkflow()) {// With out Work flow only new records
 				if (befExtRender != null) { // Record Already Exists in the

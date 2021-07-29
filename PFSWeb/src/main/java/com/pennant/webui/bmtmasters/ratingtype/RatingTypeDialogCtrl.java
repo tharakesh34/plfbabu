@@ -309,7 +309,7 @@ public class RatingTypeDialogCtrl extends GFCBaseCtrl<RatingType> {
 		this.ratingIsActive.setChecked(aRatingType.isRatingIsActive());
 		this.recordStatus.setValue(aRatingType.getRecordStatus());
 
-		if (aRatingType.isNew() || aRatingType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+		if (aRatingType.isNewRecord() || aRatingType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.ratingIsActive.setChecked(true);
 			this.ratingIsActive.setDisabled(true);
 		}
@@ -380,7 +380,7 @@ public class RatingTypeDialogCtrl extends GFCBaseCtrl<RatingType> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aRatingType.isNew()) {
+		if (aRatingType.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -608,7 +608,7 @@ public class RatingTypeDialogCtrl extends GFCBaseCtrl<RatingType> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aRatingType.isNew();
+		isNew = aRatingType.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -656,7 +656,7 @@ public class RatingTypeDialogCtrl extends GFCBaseCtrl<RatingType> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(RatingType aRatingType, String tranType) {
+	protected boolean doProcess(RatingType aRatingType, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -861,7 +861,7 @@ public class RatingTypeDialogCtrl extends GFCBaseCtrl<RatingType> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getRatingTypeListCtrl().search();
 	}
 

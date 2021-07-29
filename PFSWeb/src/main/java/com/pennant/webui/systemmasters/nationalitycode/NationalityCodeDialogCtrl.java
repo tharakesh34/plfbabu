@@ -300,7 +300,7 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 		this.nationalityIsActive.setChecked(aNationalityCode.isNationalityIsActive());
 		this.recordStatus.setValue(aNationalityCode.getRecordStatus());
 
-		if (aNationalityCode.isNew()
+		if (aNationalityCode.isNewRecord()
 				|| (aNationalityCode.getRecordType() != null ? aNationalityCode.getRecordType() : "")
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.nationalityIsActive.setChecked(true);
@@ -364,7 +364,7 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aNationalityCode.isNew()) {
+		if (aNationalityCode.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -584,7 +584,7 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aNationalityCode.isNew();
+		isNew = aNationalityCode.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -631,7 +631,7 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(NationalityCode aNationalityCode, String tranType) {
+	protected boolean doProcess(NationalityCode aNationalityCode, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -842,7 +842,7 @@ public class NationalityCodeDialogCtrl extends GFCBaseCtrl<NationalityCode> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getNationalityCodeListCtrl().search();
 	}
 

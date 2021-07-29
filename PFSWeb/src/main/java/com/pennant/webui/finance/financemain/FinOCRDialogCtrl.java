@@ -404,7 +404,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		logger.debug(Literal.ENTERING);
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (finOCRHeader.isNew()) {
+		if (finOCRHeader.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -698,7 +698,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		if (!proceed) {
 			return;
 		}
-		isNew = aFinOCRHeader.isNew();
+		isNew = aFinOCRHeader.isNewRecord();
 		String tranType;
 
 		if (isWorkFlowEnabled()) {
@@ -738,7 +738,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		logger.debug("Leaving");
 	}
 
-	private boolean doProcess(FinOCRHeader aFinOCRHeader, String tranType) {
+	protected boolean doProcess(FinOCRHeader aFinOCRHeader, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader;
@@ -895,7 +895,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		return String.valueOf(this.finOCRHeader.getHeaderID());
 	}
 
-	private void refreshList() {
+	protected void refreshList() {
 		ocrMaintenanceListCtrl.search();
 	}
 

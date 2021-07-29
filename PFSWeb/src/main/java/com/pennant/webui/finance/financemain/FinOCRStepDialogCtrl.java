@@ -343,7 +343,7 @@ public class FinOCRStepDialogCtrl extends GFCBaseCtrl<FinOCRDetail> {
 		logger.debug(Literal.ENTERING);
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aFinOCRDetail.isNew()) {
+		if (aFinOCRDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 		} else {
@@ -517,7 +517,7 @@ public class FinOCRStepDialogCtrl extends GFCBaseCtrl<FinOCRDetail> {
 		doSetValidation();
 		doWriteComponentsToBean(aFinOCRDetail);
 
-		isNew = aFinOCRDetail.isNew();
+		isNew = aFinOCRDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {

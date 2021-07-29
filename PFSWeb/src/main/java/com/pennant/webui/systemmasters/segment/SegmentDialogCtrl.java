@@ -295,7 +295,7 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 		this.segmentIsActive.setChecked(aSegment.isSegmentIsActive());
 		this.recordStatus.setValue(aSegment.getRecordStatus());
 
-		if (aSegment.isNew() || StringUtils.equals(aSegment.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+		if (aSegment.isNewRecord() || StringUtils.equals(aSegment.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			this.segmentIsActive.setChecked(true);
 			this.segmentIsActive.setDisabled(true);
 		}
@@ -355,7 +355,7 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aSegment.isNew()) {
+		if (aSegment.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -573,7 +573,7 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aSegment.isNew();
+		isNew = aSegment.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -623,7 +623,7 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Segment aSegment, String tranType) {
+	protected boolean doProcess(Segment aSegment, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -832,7 +832,7 @@ public class SegmentDialogCtrl extends GFCBaseCtrl<Segment> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getSegmentListCtrl().search();
 	}
 

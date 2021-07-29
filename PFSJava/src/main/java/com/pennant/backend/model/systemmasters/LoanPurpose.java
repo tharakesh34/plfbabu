@@ -59,7 +59,6 @@ public class LoanPurpose extends AbstractWorkflowEntity {
 	private String loanPurposeCode;
 	private String loanPurposeDesc;
 	private boolean loanPurposeIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private LoanPurpose befImage;
 	private LoggedInUser userDetails;
@@ -112,14 +111,6 @@ public class LoanPurpose extends AbstractWorkflowEntity {
 
 	public void setLoanPurposeIsActive(boolean loanPurposeIsActive) {
 		this.loanPurposeIsActive = loanPurposeIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

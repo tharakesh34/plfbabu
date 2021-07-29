@@ -27,7 +27,6 @@ public class CommitmentMovement extends AbstractWorkflowEntity {
 	private BigDecimal cmtUtilizedAmount;
 	private BigDecimal cmtAvailable;
 	private long linkedTranId;
-	private boolean newRecord = false;
 	private String lovValue;
 	private CommitmentMovement befImage;
 	private LoggedInUser userDetails;
@@ -156,14 +155,6 @@ public class CommitmentMovement extends AbstractWorkflowEntity {
 
 	public void setLinkedTranId(long linkedTranId) {
 		this.linkedTranId = linkedTranId;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

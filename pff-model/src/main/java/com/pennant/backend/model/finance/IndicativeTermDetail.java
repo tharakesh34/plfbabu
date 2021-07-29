@@ -52,8 +52,6 @@ public class IndicativeTermDetail extends AbstractWorkflowEntity {
 	private String underWritingCCY;
 	private BigDecimal propFinalTake = BigDecimal.ZERO;
 	private String propFinalTakeCCY;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private IndicativeTermDetail befImage;
 	private LoggedInUser userDetails;
@@ -200,14 +198,6 @@ public class IndicativeTermDetail extends AbstractWorkflowEntity {
 
 	public void setPurpose(String purpose) {
 		this.purpose = purpose;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

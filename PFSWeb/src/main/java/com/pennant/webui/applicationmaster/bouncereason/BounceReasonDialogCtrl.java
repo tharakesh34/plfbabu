@@ -305,7 +305,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		bounceReasonListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -346,7 +346,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 		this.returnCode.setValue(aBounceReason.getReturnCode());
 		this.active.setChecked(aBounceReason.isActive());
 
-		if (aBounceReason.isNew() || PennantConstants.RECORD_TYPE_NEW.equals(aBounceReason.getRecordType())) {
+		if (aBounceReason.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(aBounceReason.getRecordType())) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
@@ -470,7 +470,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 	public void doShowDialog(BounceReason bounceReason) {
 		logger.debug(Literal.LEAVING);
 
-		if (bounceReason.isNew()) {
+		if (bounceReason.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -738,7 +738,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 		doSetValidation();
 		doWriteComponentsToBean(aBounceReason);
 
-		isNew = aBounceReason.isNew();
+		isNew = aBounceReason.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -785,7 +785,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(BounceReason aBounceReason, String tranType) {
+	protected boolean doProcess(BounceReason aBounceReason, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

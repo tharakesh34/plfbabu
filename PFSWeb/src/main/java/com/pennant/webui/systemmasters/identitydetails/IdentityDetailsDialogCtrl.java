@@ -344,7 +344,7 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aIdentityDetails.isNew()) {
+		if (aIdentityDetails.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -561,7 +561,7 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aIdentityDetails.isNew();
+		isNew = aIdentityDetails.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -610,7 +610,7 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(IdentityDetails aIdentityDetails, String tranType) {
+	protected boolean doProcess(IdentityDetails aIdentityDetails, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -822,7 +822,7 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getIdentityDetailsListCtrl().search();
 	}
 

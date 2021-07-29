@@ -209,7 +209,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		}
 		financeMain.setRcdMaintainSts(rcdMaintainSts);
 
-		if (financeMain.isNew()) {
+		if (financeMain.isNewRecord()) {
 
 			financeMainDAO.save(financeMain, tableType, false);
 			finServiceInstructionDAO.save(finServInst, tableType.getSuffix());

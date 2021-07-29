@@ -53,7 +53,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>CustomerPRelation table</b>.<br>
  *
  */
-public class CustomerPRelation extends AbstractWorkflowEntity implements Entity {
+public class CustomerPRelation extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -4817133724784086357L;
 
@@ -87,7 +87,6 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 	private String pRAddrZIP;
 	private String pRPhone;
 	private String pRMail;
-	private boolean newRecord;
 	private String lovValue;
 	private String lovDescCustRecordType;
 	private String lovDescCustCIF;
@@ -350,14 +349,6 @@ public class CustomerPRelation extends AbstractWorkflowEntity implements Entity 
 
 	public void setPRMail(String pRMail) {
 		this.pRMail = pRMail;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

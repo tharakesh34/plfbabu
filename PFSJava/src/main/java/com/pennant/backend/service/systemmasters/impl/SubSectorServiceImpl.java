@@ -123,7 +123,7 @@ public class SubSectorServiceImpl extends GenericService<SubSector> implements S
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (subSector.isNew()) {
+		if (subSector.isNewRecord()) {
 			getSubSectorDAO().save(subSector, tableType);
 			auditHeader.getAuditDetail().setModelData(subSector);
 			auditHeader.setAuditReference(
@@ -316,7 +316,7 @@ public class SubSectorServiceImpl extends GenericService<SubSector> implements S
 		SubSector subSector = (SubSector) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (subSector.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(subSector.getRecordType())
+		if (subSector.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(subSector.getRecordType())
 				&& subSectorDAO.isDuplicateKey(subSector.getSectorCode(), subSector.getSubSectorCode(),
 						subSector.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];

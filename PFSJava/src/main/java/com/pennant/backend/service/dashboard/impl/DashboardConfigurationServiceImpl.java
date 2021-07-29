@@ -117,7 +117,7 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 		if (dashboardConfiguration.isWorkflow()) {
 			tableType = "_Temp";
 		}
-		if (dashboardConfiguration.isNew()) {
+		if (dashboardConfiguration.isNewRecord()) {
 			dashboardConfiguration.setId(getDashboardConfigurationDAO().save(dashboardConfiguration, tableType));
 			auditHeader.getAuditDetail().setModelData(dashboardConfiguration);
 			auditHeader.setAuditReference(dashboardConfiguration.getId());
@@ -335,7 +335,7 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 		errParm[0] = PennantJavaUtil.getLabel("label_DashboardConfigurationDialog_DashboardCode.value") + ":"
 				+ valueParm[0];
 
-		if (dashboardConfiguration.isNew()) { // for New record or new record into work flow
+		if (dashboardConfiguration.isNewRecord()) { // for New record or new record into work flow
 
 			if (!dashboardConfiguration.isWorkflow()) {// With out Work flow only new records
 				if (befDashboardConfiguration != null) { // Record Already Exists in the table

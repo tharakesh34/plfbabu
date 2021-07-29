@@ -55,7 +55,6 @@ public class InterestRateType extends AbstractWorkflowEntity {
 	private String intRateTypeCode;
 	private String intRateTypeDesc;
 	private boolean intRateTypeIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private InterestRateType befImage;
 	private LoggedInUser userDetails;
@@ -107,14 +106,6 @@ public class InterestRateType extends AbstractWorkflowEntity {
 
 	public void setIntRateTypeIsActive(boolean intRateTypeIsActive) {
 		this.intRateTypeIsActive = intRateTypeIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

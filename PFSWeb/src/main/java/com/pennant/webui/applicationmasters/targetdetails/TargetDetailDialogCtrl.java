@@ -206,7 +206,7 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aTargetDetail.isNew()) {
+		if (aTargetDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -269,7 +269,7 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 		this.targetIsActive.setChecked(aTargetDetail.isActive());
 		this.recordStatus.setValue(aTargetDetail.getRecordStatus());
 
-		if (aTargetDetail.isNew() || (aTargetDetail.getRecordType() != null ? aTargetDetail.getRecordType() : "")
+		if (aTargetDetail.isNewRecord() || (aTargetDetail.getRecordType() != null ? aTargetDetail.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.targetIsActive.setChecked(true);
 			this.targetIsActive.setDisabled(true);
@@ -438,7 +438,7 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = atargetDetail.isNew();
+		isNew = atargetDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -474,7 +474,7 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 		logger.debug("Leaving");
 	}
 
-	private boolean doProcess(TargetDetail aTargetDetail, String tranType) {
+	protected boolean doProcess(TargetDetail aTargetDetail, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -668,7 +668,7 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getTargetDetailListCtrl().search();
 	}
 

@@ -71,8 +71,6 @@ public class SynopsisDetails extends AbstractWorkflowEntity {
 	private byte[] otherRemarks;
 	private byte[] cmtOnCollateralDtls;
 	private byte[] endUse;
-
-	private boolean newRecord = false;
 	private SynopsisDetails befImage;
 	private LoggedInUser userDetails;
 	private String finReference;
@@ -95,14 +93,6 @@ public class SynopsisDetails extends AbstractWorkflowEntity {
 		Set<String> excludeFields = new HashSet<String>();
 
 		return excludeFields;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public long getId() {

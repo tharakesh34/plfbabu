@@ -385,7 +385,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
-		if (aCustomer.isNew()) {
+		if (aCustomer.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -696,7 +696,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
-	private boolean doProcess(Customer aCustomer, String tranType)
+	protected boolean doProcess(Customer aCustomer, String tranType)
 			throws InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -1004,7 +1004,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCustSuspenseListCtrl().search();
 	}
 

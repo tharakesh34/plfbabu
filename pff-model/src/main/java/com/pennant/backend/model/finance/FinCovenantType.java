@@ -84,8 +84,6 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 	//@XmlElement
 	private int postponeDays;
 	private String module;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private FinCovenantType befImage;
 	private LoggedInUser userDetails;
@@ -210,14 +208,6 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 
 	public void setPostponeDays(int postponeDays) {
 		this.postponeDays = postponeDays;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

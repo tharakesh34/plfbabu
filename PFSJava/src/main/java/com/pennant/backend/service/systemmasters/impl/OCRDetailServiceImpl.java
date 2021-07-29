@@ -44,7 +44,7 @@ public class OCRDetailServiceImpl extends GenericService<OCRDetail> implements O
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (ocrDetail.isNew()) {
+		if (ocrDetail.isNewRecord()) {
 			ocrDetailDAO.save(ocrDetail, tableType);
 			auditHeader.getAuditDetail().setModelData(ocrDetail);
 			auditHeader.setAuditReference(ocrDetail.getDetailID() + PennantConstants.KEY_SEPERATOR
@@ -170,7 +170,7 @@ public class OCRDetailServiceImpl extends GenericService<OCRDetail> implements O
 		OCRDetail ocrDetail = (OCRDetail) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (ocrDetail.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(ocrDetail.getRecordType())
+		if (ocrDetail.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(ocrDetail.getRecordType())
 				&& ocrDetailDAO.isDuplicateKey(ocrDetail.getStepSequence(), ocrDetail.getDetailID(),
 						ocrDetail.getHeaderID(), ocrDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

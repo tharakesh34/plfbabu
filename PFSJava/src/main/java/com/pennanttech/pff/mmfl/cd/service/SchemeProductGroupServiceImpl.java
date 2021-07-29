@@ -79,7 +79,7 @@ public class SchemeProductGroupServiceImpl extends GenericService<SchemeProductG
 			saveSchemeProductGroupList(schemeProductGroupList, schemeProductGroup);
 			auditHeader.getAuditDetail().setModelData(schemeProductGroup);
 			auditHeader.setAuditReference(String.valueOf(schemeProductGroup.getSchemeProductGroupId()));
-		} else if (schemeProductGroup.isNew()) {
+		} else if (schemeProductGroup.isNewRecord()) {
 			schemeProductGroup
 					.setSchemeProductGroupId(Long.parseLong(schemeProductGroupDAO.save(schemeProductGroup, tableType)));
 			auditHeader.getAuditDetail().setModelData(schemeProductGroup);
@@ -231,7 +231,7 @@ public class SchemeProductGroupServiceImpl extends GenericService<SchemeProductG
 		String id = schemeProductGroup.getPromotionId();
 
 		// Check the unique keys.
-		if (schemeProductGroup.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(schemeProductGroup.getRecordType())
+		if (schemeProductGroup.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(schemeProductGroup.getRecordType())
 				&& schemeProductGroupDAO.isDuplicateKey(schemeProductGroup,
 						schemeProductGroup.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 

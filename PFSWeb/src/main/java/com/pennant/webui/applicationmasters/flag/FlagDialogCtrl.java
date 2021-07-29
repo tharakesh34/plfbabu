@@ -289,7 +289,7 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aFlag.isNew()) {
+		if (aFlag.isNewRecord()) {
 			this.flagCode.setVisible(true);
 			this.btnCtrl.setInitNew();
 			doEdit();
@@ -550,7 +550,7 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getFlagListCtrl().search();
 	}
 
@@ -636,7 +636,7 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aFlag.isNew();
+		isNew = aFlag.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -687,7 +687,7 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	 * 
 	 */
 
-	private boolean doProcess(Flag aFlag, String tranType) {
+	protected boolean doProcess(Flag aFlag, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		aFlag.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());

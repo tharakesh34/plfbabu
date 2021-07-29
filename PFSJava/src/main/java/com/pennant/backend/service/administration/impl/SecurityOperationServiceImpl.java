@@ -105,7 +105,7 @@ public class SecurityOperationServiceImpl extends GenericService<SecurityOperati
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		} else {
 
-			if (securityOperation.isNew()) {
+			if (securityOperation.isNewRecord()) {
 				auditHeader.setAuditTranType(PennantConstants.TRAN_ADD);
 			} else {
 				auditHeader.setAuditTranType(PennantConstants.TRAN_UPD);
@@ -121,7 +121,7 @@ public class SecurityOperationServiceImpl extends GenericService<SecurityOperati
 
 		}
 
-		if (securityOperation.isNew()) {
+		if (securityOperation.isNewRecord()) {
 			securityOperation.setId(getSecurityOperationDAO().save(securityOperation, tableType));
 			auditHeader.setModelData(securityOperation);
 			auditHeader.setAuditReference(String.valueOf(securityOperation.getOprID()));
@@ -188,7 +188,7 @@ public class SecurityOperationServiceImpl extends GenericService<SecurityOperati
 		valueParm[0] = securityOperation.getOprCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_OprCode") + ":" + valueParm[0];
 
-		if (securityOperation.isNew()) { // for New record or new record into work flow
+		if (securityOperation.isNewRecord()) { // for New record or new record into work flow
 
 			if (!securityOperation.isWorkflow()) {// With out Work flow only new records
 				if (befSecurityOperation != null) { // Record Already Exists in the table then error

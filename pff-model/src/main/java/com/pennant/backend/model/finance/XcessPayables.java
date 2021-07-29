@@ -2,9 +2,7 @@ package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
 
-import com.pennant.backend.model.Entity;
-
-public class XcessPayables implements Entity {
+public class XcessPayables {
 
 	private long idx = 0;
 	private long payableID = 0;
@@ -116,24 +114,6 @@ public class XcessPayables implements Entity {
 
 	public void setBalanceAmt(BigDecimal balanceAmt) {
 		this.balanceAmt = balanceAmt;
-	}
-
-	@Override
-	public boolean isNew() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public long getId() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void setId(long id) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public BigDecimal getReserved() {

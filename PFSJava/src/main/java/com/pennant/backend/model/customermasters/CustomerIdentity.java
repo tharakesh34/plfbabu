@@ -66,7 +66,6 @@ public class CustomerIdentity extends AbstractWorkflowEntity {
 	private Date idIssuedOn;
 	private Date idExpiresOn;
 	private String idLocation;
-	private boolean newRecord;
 	private String lovValue;
 	private String lovDescCustShrtName;
 	private String lovDescCustRecordType;
@@ -178,14 +177,6 @@ public class CustomerIdentity extends AbstractWorkflowEntity {
 
 	public void setIdLocation(String idLocation) {
 		this.idLocation = idLocation;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

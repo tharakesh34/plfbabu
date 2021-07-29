@@ -88,7 +88,7 @@ public class CustomerExtLiabilityValidation {
 
 		String errorCode = null;
 
-		if (liability.isNew()) {
+		if (liability.isNewRecord()) {
 			if (!liability.isWorkflow()) {
 				if (beforeLiability != null) {
 					errorCode = "41001";

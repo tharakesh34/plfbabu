@@ -103,7 +103,7 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (finTypePartnerBank.isNew()) {
+		if (finTypePartnerBank.isNewRecord()) {
 			finTypePartnerBank.setId(Long.parseLong(getFinTypePartnerBankDAO().save(finTypePartnerBank, tableType)));
 			auditHeader.getAuditDetail().setModelData(finTypePartnerBank);
 			auditHeader.setAuditReference(String.valueOf(finTypePartnerBank.getID()));
@@ -351,7 +351,7 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 		valueParm[0] = String.valueOf(finTypePartnerBank.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_ID") + ":" + valueParm[0];
 
-		if (finTypePartnerBank.isNew()) { // for New record or new record into work flow
+		if (finTypePartnerBank.isNewRecord()) { // for New record or new record into work flow
 			if (!finTypePartnerBank.isWorkflow()) {// With out Work flow only new records
 				if (befFinTypePartnerBank != null) { // Record Already Exists in the table then error
 					auditDetail
@@ -507,7 +507,7 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 			} else if (finTypePartnerBank.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (finTypePartnerBank.isNew()) {
+				} else if (finTypePartnerBank.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

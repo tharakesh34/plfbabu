@@ -632,7 +632,7 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	public void doShowDialog(DepositMovements depositMovements) {
 		logger.debug(Literal.LEAVING);
 
-		if (depositMovements.isNew()) {
+		if (depositMovements.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus

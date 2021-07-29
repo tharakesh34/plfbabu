@@ -55,7 +55,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>DeviationHeader table</b>.<br>
  *
  */
-public class DeviationHeader extends AbstractWorkflowEntity implements Entity {
+public class DeviationHeader extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long deviationID = Long.MIN_VALUE;
@@ -63,7 +63,6 @@ public class DeviationHeader extends AbstractWorkflowEntity implements Entity {
 	private String module;
 	private String moduleCode;
 	private String valueType;
-	private boolean newRecord = false;
 	private String lovValue;
 	private DeviationHeader befImage;
 	private LoggedInUser userDetails;
@@ -139,14 +138,6 @@ public class DeviationHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setValueType(String valueType) {
 		this.valueType = valueType;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

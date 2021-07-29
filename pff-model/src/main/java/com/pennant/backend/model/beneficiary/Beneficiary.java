@@ -64,7 +64,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "custCIF", "beneficiaryId", "bankCode", "branchCode", "iFSC", "accNumber", "accHolderName",
 		"phoneCountryCode", "phoneAreaCode", "phoneNumber", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class Beneficiary extends AbstractWorkflowEntity implements Entity {
+public class Beneficiary extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	@XmlElement(name = "beneficiaryID")
@@ -94,7 +94,6 @@ public class Beneficiary extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private String phoneNumber;
 	private String email;
-	private boolean newRecord;
 	private String lovValue;
 	private Beneficiary befImage;
 	private LoggedInUser userDetails;
@@ -220,14 +219,6 @@ public class Beneficiary extends AbstractWorkflowEntity implements Entity {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

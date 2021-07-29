@@ -151,7 +151,7 @@ public class OverdueChargeRecoveryServiceImpl extends GenericService<OverdueChar
 			tableType = "_Temp";
 		}
 
-		if (overdueChargeRecovery.isNew()) {
+		if (overdueChargeRecovery.isNewRecord()) {
 			getOverdueChargeRecoveryDAO().save(overdueChargeRecovery, tableType);
 		} else {
 			getOverdueChargeRecoveryDAO().update(overdueChargeRecovery, tableType);
@@ -378,7 +378,7 @@ public class OverdueChargeRecoveryServiceImpl extends GenericService<OverdueChar
 		valueParm[0] = overdueChargeRecovery.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (overdueChargeRecovery.isNew()) { // for New record or new record into work flow
+		if (overdueChargeRecovery.isNewRecord()) { // for New record or new record into work flow
 
 			if (!overdueChargeRecovery.isWorkflow()) {// With out Work flow only new records  
 				if (befOverdueChargeRecovery != null) { // Record Already Exists in the table then error  

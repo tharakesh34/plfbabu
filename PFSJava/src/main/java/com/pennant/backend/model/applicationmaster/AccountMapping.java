@@ -64,7 +64,6 @@ public class AccountMapping extends AbstractWorkflowEntity {
 	private String account;
 	private String hostAccount;
 	private String finType;
-	private boolean newRecord = false;
 	private String lovValue;
 	private AccountMapping befImage;
 	private LoggedInUser userDetails;
@@ -130,14 +129,6 @@ public class AccountMapping extends AbstractWorkflowEntity {
 
 	public void setHostAccount(String hostAccount) {
 		this.hostAccount = hostAccount;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

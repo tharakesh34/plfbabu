@@ -1932,7 +1932,7 @@ public class CustomerController extends GenericService<Object> {
 									PennantApplicationUtil.formateAmount(BigDecimal.ZERO,
 											SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT)));
 							if (prvYearValuesMap != null && prvYearValuesMap.size() > 0
-									&& !finCreditReviewDetails.isNew()) {
+									&& !finCreditReviewDetails.isNewRecord()) {
 								setData(prvYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory,
 										engine);
 							}
@@ -1940,7 +1940,7 @@ public class CustomerController extends GenericService<Object> {
 					}
 				}
 				// If current year data is available and not new than set
-				if (curYearValuesMap != null && !finCreditReviewDetails.isNew()) {
+				if (curYearValuesMap != null && !finCreditReviewDetails.isNewRecord()) {
 					setData(curYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory, engine);
 				}
 

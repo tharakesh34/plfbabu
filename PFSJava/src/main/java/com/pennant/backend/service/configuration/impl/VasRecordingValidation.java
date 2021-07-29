@@ -69,7 +69,7 @@ public class VasRecordingValidation {
 		valueParm[0] = vASRecording.getVasReference();
 		errParm[0] = PennantJavaUtil.getLabel("label_VASReference") + ":" + valueParm[0];
 
-		if (vASRecording.isNew()) { // for New record or new record into work flow
+		if (vASRecording.isNewRecord()) { // for New record or new record into work flow
 			if (!vASRecording.isWorkflow()) {// With out Work flow only new records  
 				if (befVASRecording != null) { // Record Already Exists in the table then error  
 					auditDetail

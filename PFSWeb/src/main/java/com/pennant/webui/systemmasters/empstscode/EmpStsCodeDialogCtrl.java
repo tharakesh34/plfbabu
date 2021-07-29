@@ -297,7 +297,7 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 		this.empStsIsActive.setChecked(aEmpStsCode.isEmpStsIsActive());
 		this.recordStatus.setValue(aEmpStsCode.getRecordStatus());
 
-		if (aEmpStsCode.isNew() || (aEmpStsCode.getRecordType() != null ? aEmpStsCode.getRecordType() : "")
+		if (aEmpStsCode.isNewRecord() || (aEmpStsCode.getRecordType() != null ? aEmpStsCode.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.empStsIsActive.setChecked(true);
 			this.empStsIsActive.setDisabled(true);
@@ -360,7 +360,7 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aEmpStsCode.isNew()) {
+		if (aEmpStsCode.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -580,7 +580,7 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aEmpStsCode.isNew();
+		isNew = aEmpStsCode.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -629,7 +629,7 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(EmpStsCode aEmpStsCode, String tranType) {
+	protected boolean doProcess(EmpStsCode aEmpStsCode, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -837,7 +837,7 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getEmpStsCodeListCtrl().search();
 	}
 

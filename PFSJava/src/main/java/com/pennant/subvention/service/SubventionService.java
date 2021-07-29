@@ -89,7 +89,7 @@ public class SubventionService {
 			} else if (subventionDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (subventionDetail.isNew()) {
+				} else if (subventionDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

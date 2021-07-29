@@ -66,7 +66,7 @@ public class OCRHeaderServiceImpl extends GenericService<OCRHeader> implements O
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (ocrHeader.isNew()) {
+		if (ocrHeader.isNewRecord()) {
 			ocrHeader.setOcrID((ocrHeaderDAO.save(ocrHeader, tableType)));
 			auditHeader.getAuditDetail().setModelData(ocrHeader);
 			auditHeader.setAuditReference(String.valueOf(ocrHeader.getHeaderID()));
@@ -141,7 +141,7 @@ public class OCRHeaderServiceImpl extends GenericService<OCRHeader> implements O
 			} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(ocrDetail.getRecordType())) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (ocrDetail.isNew()) {
+				} else if (ocrDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -477,7 +477,7 @@ public class OCRHeaderServiceImpl extends GenericService<OCRHeader> implements O
 		// Get the model object.
 		OCRHeader ocrHeader = (OCRHeader) auditDetail.getModelData();
 		// Check the unique keys.
-		if (ocrHeader.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(ocrHeader.getRecordType())
+		if (ocrHeader.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(ocrHeader.getRecordType())
 				&& ocrHeaderDAO.isDuplicateKey(ocrHeader.getOcrID(),
 						ocrHeader.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

@@ -4,15 +4,14 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 @XmlType(propOrder = { "deviationId", "finReference", "module", "deviationCode", "deviationType", "deviationValue",
 		"userRole", "delegationRole", "approvalStatus", "deviationDate", "deviationUserId", "delegatedUserId",
@@ -20,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
 		"deviationDesc", "severity", "severityCode", "severityName", "markDeleted", "raisedUser" })
 @XmlRootElement(name = "financeDeviations")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FinanceDeviations extends AbstractWorkflowEntity implements java.io.Serializable, Entity {
+public class FinanceDeviations extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 8456523350616062070L;
 
 	@XmlElement
@@ -54,7 +53,6 @@ public class FinanceDeviations extends AbstractWorkflowEntity implements java.io
 	@XmlElement
 	private String remarks;
 	private String mitigants;
-	private boolean newRecord = false;
 	private FinanceDeviations befImage;
 	@XmlElement
 	private boolean approved;
@@ -220,25 +218,10 @@ public class FinanceDeviations extends AbstractWorkflowEntity implements java.io
 		this.deviationId = deviationId;
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
-	@Override
-	public boolean isNew() {
-		return newRecord;
-	}
-
-	@Override
 	public long getId() {
 		return deviationId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.deviationId = id;
 	}

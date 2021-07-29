@@ -577,7 +577,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		System.out.println();
 		doReadOnly(ScreenCTL.initButtons(mode, this.btnCtrl, this.btnNotes, isWorkFlowEnabled(), isFirstTask(),
 				this.userAction, this.limitStructureCode, this.limitStructureCode));
-		if (!getLimitHeader().isNew()) {
+		if (!getLimitHeader().isNewRecord()) {
 			setExtAccess("LimitHeaderDialog_LimitStructureCode", true, this.limiDialogRule, row2);
 			setExtAccess("LimitHeaderDialog_LimitStructureCode", true, this.limitStructureCode, row4);
 		}
@@ -662,7 +662,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		this.limitStructureCode.setDescColumn("StructureName");
 		this.limitStructureCode.setValidateColumns(new String[] { "StructureCode" });
 		Filter[] filters = null;
-		if (getLimitHeader().isNew()) {
+		if (getLimitHeader().isNewRecord()) {
 			filters = new Filter[1];
 			// filters[1] = new Filter("Active", "1");
 		} else {
@@ -748,7 +748,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		this.remarks.setValue(aLimitHeader.getLimitSetupRemarks());
 		this.active.setChecked(aLimitHeader.isActive());
 		this.validateMaturityDate.setChecked(aLimitHeader.isValidateMaturityDate());
-		if (!aLimitHeader.isNew()) {
+		if (!aLimitHeader.isNewRecord()) {
 			this.limitStructureCode.setDescription(aLimitHeader.getStructureName());
 			this.limiDialogRule.setDescription(aLimitHeader.getQueryDesc());
 
@@ -948,7 +948,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 	/**
 	 * Method for Refreshing List after Save/Delete a Record
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		final JdbcSearchObject<LimitHeader> soLimitHeader = getLimitDetailListCtrl().getSearchObj();
 		getLimitDetailListCtrl().pagingLimitDetailsList.setActivePage(0);
 		getLimitDetailListCtrl().getPagedListWrapper().setSearchObject(soLimitHeader);
@@ -1319,7 +1319,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 			doWriteComponentsToBean(aLimitHeader);
 		}
 
-		isNew = aLimitHeader.isNew();
+		isNew = aLimitHeader.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1377,13 +1377,13 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 	 * @throws DatatypeConfigurationException
 	 * 
 	 */
-	private boolean doProcess(LimitHeader aLimitHeader, String tranType) throws DatatypeConfigurationException {
+	protected boolean doProcess(LimitHeader aLimitHeader, String tranType) throws DatatypeConfigurationException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		aLimitHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aLimitHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aLimitHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
-		if (aLimitHeader.isNew()) {
+		if (aLimitHeader.isNewRecord()) {
 			aLimitHeader.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 			aLimitHeader.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 		}

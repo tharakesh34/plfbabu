@@ -51,7 +51,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>Notifications table</b>.<br>
  *
  */
-public class Notifications extends AbstractWorkflowEntity implements Entity {
+public class Notifications extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 522289325946000330L;
 
@@ -67,7 +67,6 @@ public class Notifications extends AbstractWorkflowEntity implements Entity {
 	private String actualBlockReciepent;
 	private String ruleAttachment;
 	private String actualBlockAtachment;
-	private boolean newRecord;
 	private String lovValue;
 	private Notifications befImage;
 	private LoggedInUser userDetails;
@@ -187,14 +186,6 @@ public class Notifications extends AbstractWorkflowEntity implements Entity {
 
 	public void setActualBlockAtachment(String actualBlockAtachment) {
 		this.actualBlockAtachment = actualBlockAtachment;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

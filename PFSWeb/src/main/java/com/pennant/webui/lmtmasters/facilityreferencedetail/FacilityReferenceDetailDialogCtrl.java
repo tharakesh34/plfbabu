@@ -712,7 +712,7 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 			setFacilityReferenceDetail(lsFacilityReferenceDetail);
 			BeanUtils.copyProperties(getFacilityReferenceDetail(), aFacilityReferenceDetail);
 			boolean isNew = false;
-			isNew = aFacilityReferenceDetail.isNew();
+			isNew = aFacilityReferenceDetail.isNewRecord();
 			String tranType = "";
 			aFacilityReferenceDetail.setVersion(aFacilityReferenceDetail.getVersion() + 1);
 			if (isNew) {
@@ -747,7 +747,7 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 		}
 	}
 
-	private boolean doProcess(FacilityReferenceDetail aFacilityReferenceDetail, String tranType) {
+	protected boolean doProcess(FacilityReferenceDetail aFacilityReferenceDetail, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

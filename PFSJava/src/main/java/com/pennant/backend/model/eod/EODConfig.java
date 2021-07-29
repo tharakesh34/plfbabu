@@ -55,14 +55,13 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>EODConfig table</b>.<br>
  *
  */
-public class EODConfig extends AbstractWorkflowEntity implements Entity {
+public class EODConfig extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long eodConfigId = Long.MIN_VALUE;
 	private boolean extMnthRequired;
 	private Date mnthExtTo;
 	private boolean active;
-	private boolean newRecord = false;
 	private String lovValue;
 	private EODConfig befImage;
 	private LoggedInUser userDetails;
@@ -146,14 +145,6 @@ public class EODConfig extends AbstractWorkflowEntity implements Entity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

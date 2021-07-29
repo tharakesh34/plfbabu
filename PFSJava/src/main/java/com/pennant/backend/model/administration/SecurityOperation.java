@@ -57,7 +57,6 @@ public class SecurityOperation extends AbstractWorkflowEntity {
 	private long oprID = Long.MIN_VALUE;
 	private String oprCode;
 	private String oprDesc;
-	private boolean newRecord = false;
 	private String lovValue;
 	private SecurityOperation befImage;
 	private LoggedInUser userDetails;
@@ -111,14 +110,6 @@ public class SecurityOperation extends AbstractWorkflowEntity {
 
 	public void setOprDesc(String oprDesc) {
 		this.oprDesc = oprDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

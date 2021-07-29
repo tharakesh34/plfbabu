@@ -110,7 +110,7 @@ public class DealRecommendationMeritsServiceImpl extends GenericService<DealReco
 			tableType = "_Temp";
 		}
 
-		if (dealRecommendationMerits.isNew()) {
+		if (dealRecommendationMerits.isNewRecord()) {
 			dealRecommendationMerits.setId(getDealRecommendationMeritsDAO().save(dealRecommendationMerits, tableType));
 			auditHeader.getAuditDetail().setModelData(dealRecommendationMerits);
 		} else {
@@ -138,7 +138,7 @@ public class DealRecommendationMeritsServiceImpl extends GenericService<DealReco
 			dealRecommendationMerits.setRecordStatus(financeMain.getRecordStatus());
 			dealRecommendationMerits.setWorkflowId(financeMain.getWorkflowId());
 			dealRecommendationMerits.setFinReference(financeMain.getFinReference());
-			if (dealRecommendationMerits.isNew()) {
+			if (dealRecommendationMerits.isNewRecord()) {
 				getDealRecommendationMeritsDAO().save(dealRecommendationMerits, tableType);
 				auditDetails.add(getAuditDetails(dealRecommendationMerits, 1, PennantConstants.TRAN_ADD));
 			} else if (StringUtils.trimToEmpty(dealRecommendationMerits.getRecordType())
@@ -328,7 +328,7 @@ public class DealRecommendationMeritsServiceImpl extends GenericService<DealReco
 					(PennantConstants.RECORD_TYPE_DEL))) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (dealRecommendationMerits.isNew()) {
+				} else if (dealRecommendationMerits.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

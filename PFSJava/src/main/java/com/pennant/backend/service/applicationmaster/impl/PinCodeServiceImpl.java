@@ -135,7 +135,7 @@ public class PinCodeServiceImpl extends GenericService<PinCode> implements PinCo
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (pinCode.isNew()) {
+		if (pinCode.isNewRecord()) {
 			pinCode.setId(Long.parseLong(getPinCodeDAO().save(pinCode, tableType)));
 			auditHeader.getAuditDetail().setModelData(pinCode);
 			auditHeader.setAuditReference(String.valueOf(pinCode.getPinCodeId()));

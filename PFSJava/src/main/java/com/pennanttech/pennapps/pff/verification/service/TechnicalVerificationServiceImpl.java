@@ -130,7 +130,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		 * if (tv.getVerificationCategory() == VerificationCategory.ONEPAGER.getKey()) { getDocument(tv); }
 		 */
 
-		if (tv.isNew()) {
+		if (tv.isNewRecord()) {
 			tv.setId(Long.parseLong(technicalVerificationDAO.save(tv, tableType)));
 			auditHeader.getAuditDetail().setModelData(tv);
 			auditHeader.setAuditReference(String.valueOf(tv.getId()));
@@ -833,7 +833,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (documentDetails.isNew()) {
+				} else if (documentDetails.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

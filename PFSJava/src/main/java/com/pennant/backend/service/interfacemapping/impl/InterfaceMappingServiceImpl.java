@@ -106,7 +106,7 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 			tableType = "_Temp";
 		}
 
-		if (interfaceMapping.isNew()) {
+		if (interfaceMapping.isNewRecord()) {
 			interfaceMapping.setId(getInterfaceMappingDAO().save(interfaceMapping, tableType));
 			auditHeader.getAuditDetail().setModelData(interfaceMapping);
 			auditHeader.setAuditReference(String.valueOf(interfaceMapping.getInterfaceMappingId()));
@@ -564,7 +564,7 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 			} else if (mastermapping.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (mastermapping.isNew()) {
+				} else if (mastermapping.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -621,7 +621,7 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 		parameters[1] = PennantJavaUtil.getLabel("label_InterfaceField") + ": " + interfaceMapping.getInterfaceField();
 
 		// Check the unique keys.
-		if (interfaceMapping.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(interfaceMapping.getRecordType())
+		if (interfaceMapping.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(interfaceMapping.getRecordType())
 				&& interfaceMappingDAO.isDuplicateKey(interfaceMapping,
 						interfaceMapping.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 

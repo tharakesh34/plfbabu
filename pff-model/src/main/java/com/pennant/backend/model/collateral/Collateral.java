@@ -36,7 +36,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>Collateral table</b>.<br>
  * 
  */
-public class Collateral extends AbstractWorkflowEntity implements Entity {
+public class Collateral extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private String cAFReference = null;
@@ -50,7 +50,6 @@ public class Collateral extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal actualCoverage;
 	private BigDecimal proposedCoverage;
 	private String description;
-	private boolean newRecord = false;
 	private String lovValue;
 	private Collateral befImage;
 	private LoggedInUser userDetails;
@@ -191,14 +190,6 @@ public class Collateral extends AbstractWorkflowEntity implements Entity {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

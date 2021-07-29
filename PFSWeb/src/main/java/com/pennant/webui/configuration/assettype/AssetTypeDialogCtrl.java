@@ -636,7 +636,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 	public void doShowDialog(AssetType aAssetType) throws InterruptedException {
 		logger.debug("Entering");
 
-		if (aAssetType.isNew()) {
+		if (aAssetType.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -922,7 +922,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 		try {
 			ExtendedFieldHeader extendedFieldHeader = assetConfigurationType.getExtendedFieldHeader();
 			extendedFieldHeader.setModuleName(AssetConstants.EXTENDEDFIELDS_MODULE);
-			if (assetConfigurationType.isNew()) {
+			if (assetConfigurationType.isNewRecord()) {
 				extendedFieldHeader.setSubModuleName(assetConfigurationType.getAssetType());
 				extendedFieldHeader.setNumberOfColumns("2");
 			}
@@ -931,8 +931,8 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 			map.put("roleCode", getRole());
 			map.put("dialogCtrl", this);
 			map.put("firstTaskRole", isFirstTask());
-			if (assetConfigurationType.isNew()) {
-				map.put("newRecord", assetConfigurationType.isNew());
+			if (assetConfigurationType.isNewRecord()) {
+				map.put("newRecord", assetConfigurationType.isNewRecord());
 			}
 			map.put("moduleName", AssetConstants.EXTENDEDFIELDS_MODULE);
 
@@ -959,7 +959,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 	 * Method for Refreshing List after Save/Delete a Record
 	 */
 
-	private void refreshList() {
+	protected void refreshList() {
 		final JdbcSearchObject<AssetType> aAssetType = getAssetTypeListCtrl().getSearchObject();
 		getAssetTypeListCtrl().pagingAssetTypeList.setActivePage(0);
 		getAssetTypeListCtrl().getPagedListWrapper().setSearchObject(aAssetType);
@@ -1104,7 +1104,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 		// fill the FinanceType object with the components data
 		doWriteComponentsToBean(aAssetType);
 		// doStoreInitValues();
-		isNew = aAssetType.isNew();
+		isNew = aAssetType.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1152,7 +1152,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 	 * 
 	 */
 
-	private boolean doProcess(AssetType aAssetType, String tranType) {
+	protected boolean doProcess(AssetType aAssetType, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

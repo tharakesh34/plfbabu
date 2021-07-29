@@ -9,7 +9,7 @@ import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class FinContributorDetail extends AbstractWorkflowEntity implements Entity {
+public class FinContributorDetail extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -7356577575758061061L;
 
@@ -24,7 +24,6 @@ public class FinContributorDetail extends AbstractWorkflowEntity implements Enti
 	private Date recordDate;
 	private BigDecimal totalInvestPerc;
 	private BigDecimal mudaribPerc;
-	private boolean newRecord = false;
 	private String lovValue;
 	private FinContributorDetail befImage;
 	private LoggedInUser userDetails;
@@ -138,14 +137,6 @@ public class FinContributorDetail extends AbstractWorkflowEntity implements Enti
 
 	public void setMudaribPerc(BigDecimal mudaribPerc) {
 		this.mudaribPerc = mudaribPerc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

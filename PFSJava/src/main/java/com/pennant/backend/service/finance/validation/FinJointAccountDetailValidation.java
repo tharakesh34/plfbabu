@@ -79,7 +79,7 @@ public class FinJointAccountDetailValidation {
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_JointCustCIf") + ":" + valueParm[1];
 
-		if (jointAccountDetail.isNew()) { // for New record or new record into work flow
+		if (jointAccountDetail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!jointAccountDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befJointAccountDetail != null

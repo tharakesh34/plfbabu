@@ -278,7 +278,7 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 			} else if (StringUtils.equalsIgnoreCase(covenant.getRecordType(), (PennantConstants.RECORD_TYPE_DEL))) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (covenant.isNew()) {
+				} else if (covenant.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -391,7 +391,7 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 			} else if (document.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (document.isNew()) {
+				} else if (document.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -497,7 +497,7 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 			} else if (StringUtils.equalsIgnoreCase(document.getRecordType(), (PennantConstants.RECORD_TYPE_DEL))) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (document.isNew()) {
+				} else if (document.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -704,7 +704,7 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 		valueParm[0] = covenant.getKeyReference();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (covenant.isNew()) {
+		if (covenant.isNewRecord()) {
 			if (!covenant.isWorkflow()) {
 				if (befCovenant != null) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(

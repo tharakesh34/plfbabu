@@ -110,9 +110,6 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 	private String partnerBankAc;
 	private String partnerBankAcType;
 	private long linkedTranId;
-
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -323,14 +320,6 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 
 	public void setPaymentCCy(String paymentCCy) {
 		this.paymentCCy = paymentCCy;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

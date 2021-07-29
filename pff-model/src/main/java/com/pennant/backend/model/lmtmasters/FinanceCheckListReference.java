@@ -61,7 +61,6 @@ public class FinanceCheckListReference extends AbstractWorkflowEntity {
 	private long questionId;
 	private long answer;
 	private String remarks;
-	private boolean newRecord = false;
 	private String lovValue;
 	private FinanceCheckListReference befImage;
 	private LoggedInUser userDetails;
@@ -127,14 +126,6 @@ public class FinanceCheckListReference extends AbstractWorkflowEntity {
 
 	public void setQuestionId(long questionId) {
 		this.questionId = questionId;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

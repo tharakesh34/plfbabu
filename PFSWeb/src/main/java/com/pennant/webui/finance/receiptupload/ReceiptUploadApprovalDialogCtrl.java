@@ -506,7 +506,7 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aReceiptUploadHeader.isNew()) {
+		if (aReceiptUploadHeader.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus

@@ -313,7 +313,7 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 		this.emailTypeIsActive.setChecked(aEMailType.isEmailTypeIsActive());
 		this.recordStatus.setValue(aEMailType.getRecordStatus());
 
-		if (aEMailType.isNew() || (aEMailType.getRecordType() != null ? aEMailType.getRecordType() : "")
+		if (aEMailType.isNewRecord() || (aEMailType.getRecordType() != null ? aEMailType.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.emailTypeIsActive.setChecked(true);
 			this.emailTypeIsActive.setDisabled(true);
@@ -385,7 +385,7 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aEMailType.isNew()) {
+		if (aEMailType.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -614,7 +614,7 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aEMailType.isNew();
+		isNew = aEMailType.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -663,7 +663,7 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(EMailType aEMailType, String tranType) {
+	protected boolean doProcess(EMailType aEMailType, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -874,7 +874,7 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getEMailTypeListCtrl().search();
 	}
 

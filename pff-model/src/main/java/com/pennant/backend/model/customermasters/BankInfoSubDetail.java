@@ -69,8 +69,6 @@ public class BankInfoSubDetail extends AbstractWorkflowEntity {
 	private int day;
 	@XmlElement
 	private BigDecimal balance;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private BankInfoSubDetail befImage;
 	private LoggedInUser userDetails;
@@ -110,14 +108,6 @@ public class BankInfoSubDetail extends AbstractWorkflowEntity {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		return excludeFields;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

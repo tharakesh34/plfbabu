@@ -44,7 +44,6 @@ public class FinOCRHeader extends AbstractWorkflowEntity {
 	private List<FinOCRDetail> ocrDetailList = new ArrayList<FinOCRDetail>();
 	@XmlElement
 	private List<FinOCRCapture> finOCRCapturesList = new ArrayList<FinOCRCapture>();
-	private boolean newRecord = false;
 	private FinOCRHeader befImage;
 	private LoggedInUser userDetails;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
@@ -109,14 +108,6 @@ public class FinOCRHeader extends AbstractWorkflowEntity {
 
 	public void setOcrType(String ocrType) {
 		this.ocrType = ocrType;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public FinOCRHeader getBefImage() {

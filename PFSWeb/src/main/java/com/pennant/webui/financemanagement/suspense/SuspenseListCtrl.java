@@ -333,7 +333,7 @@ public class SuspenseListCtrl extends GFCBaseListCtrl<FinanceSuspHead> {
 			if (enqiryModule) {
 				Executions.createComponents(
 						"/WEB-INF/pages/FinanceManagement/SuspenseDetail/SuspenseDetailEnquiryDialog.zul", null, arg);
-			} else if (aSuspHead.isNew()) {
+			} else if (aSuspHead.isNewRecord()) {
 				Executions.createComponents(
 						"/WEB-INF/pages/FinanceManagement/SelectFinance/SelectFinReferenceDialog.zul", null, arg);
 			} else {

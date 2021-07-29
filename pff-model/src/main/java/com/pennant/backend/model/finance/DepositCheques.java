@@ -5,13 +5,12 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import javax.xml.bind.annotation.XmlTransient;
-
-public class DepositCheques extends AbstractWorkflowEntity implements Entity {
+public class DepositCheques extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -58727889587717168L;
 
@@ -22,8 +21,6 @@ public class DepositCheques extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal amount = BigDecimal.ZERO;
 	private String status = "A";
 	private long linkedTranId = 0;
-
-	private boolean newRecord = false;
 	private DepositCheques befImage;
 
 	private String finReference;
@@ -35,7 +32,7 @@ public class DepositCheques extends AbstractWorkflowEntity implements Entity {
 	private long fundingAc;
 
 	private boolean visible = false; // For Display purpose
-	private String branchCode; // Respective branch cheques we have show the user 
+	private String branchCode; // Respective branch cheques we have show the user
 
 	@XmlTransient
 	private LoggedInUser userDetails;
@@ -69,14 +66,6 @@ public class DepositCheques extends AbstractWorkflowEntity implements Entity {
 		return excludeFields;
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
 	public DepositCheques getBefImage() {
 		return befImage;
 	}
@@ -93,17 +82,10 @@ public class DepositCheques extends AbstractWorkflowEntity implements Entity {
 		this.userDetails = userDetails;
 	}
 
-	@Override
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
-	@Override
 	public long getId() {
 		return this.id;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.id = id;
 	}

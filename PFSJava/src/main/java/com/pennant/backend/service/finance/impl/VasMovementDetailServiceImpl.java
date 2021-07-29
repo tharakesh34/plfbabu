@@ -672,7 +672,7 @@ public class VasMovementDetailServiceImpl implements CheckListDetailService {
 		errParm[1] = PennantJavaUtil.getLabel("label_CheckList") + " : " + valueParm[1];
 		errParm[2] = PennantJavaUtil.getLabel("label_Answer") + " : " + valueParm[2];
 
-		if (financeCheckListReference.isNew()) { // for New record or new record into work flow
+		if (financeCheckListReference.isNewRecord()) { // for New record or new record into work flow
 
 			if (!financeCheckListReference.isWorkflow()) {// With out Work flow only new records  
 				if (befFinanceCheckListReference != null) { // Record Already Exists in the table then error  
@@ -761,7 +761,7 @@ public class VasMovementDetailServiceImpl implements CheckListDetailService {
 		errParm[1] = PennantJavaUtil.getLabel("label_CheckList") + " : " + valueParm[1];
 		errParm[2] = PennantJavaUtil.getLabel("label_Answer") + " : " + valueParm[2];
 
-		if (financeCheckListReference.isNew()) { // for New record or new record into work flow
+		if (financeCheckListReference.isNewRecord()) { // for New record or new record into work flow
 
 			if (!financeCheckListReference.isWorkflow()) {// With out Work flow only new records  
 				if (befFinanceCheckListReference != null) { // Record Already Exists in the table then error  

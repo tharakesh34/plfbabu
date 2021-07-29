@@ -21,8 +21,6 @@ public class IncomeDetails extends AbstractWorkflowEntity {
 	private String categoryName;
 	private BigDecimal margin;
 	private BigDecimal income;
-
-	private boolean newRecord;
 	private String lovValue;
 	private CustomerIncome befImage;
 	private LoggedInUser userDetails;
@@ -116,14 +114,6 @@ public class IncomeDetails extends AbstractWorkflowEntity {
 
 	public void setIncome(BigDecimal income) {
 		this.income = income;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

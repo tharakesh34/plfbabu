@@ -852,7 +852,7 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aCustomerChequeInfo.isNew();
+		isNew = aCustomerChequeInfo.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {

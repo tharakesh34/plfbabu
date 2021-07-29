@@ -447,7 +447,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		this.uploadEntity.setValue(uploadHeader.getEntityCode());
 		this.txtFileName.setValue(uploadHeader.getFileName());
 
-		if (!uploadHeader.isNew() && CollectionUtils.isNotEmpty(uploadHeader.getUploadManualAdvises())) {
+		if (!uploadHeader.isNewRecord() && CollectionUtils.isNotEmpty(uploadHeader.getUploadManualAdvises())) {
 			for (UploadManualAdvise adviseUpload : uploadHeader.getUploadManualAdvises()) {
 				UploadManualAdvise befImage = new UploadManualAdvise();
 				BeanUtils.copyProperties(adviseUpload, befImage);
@@ -989,7 +989,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.ENTERING);
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (uploadHeader.isNew()) {
+		if (uploadHeader.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 		} else {
@@ -1362,7 +1362,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aUploadHeader.isNew();
+		isNew = aUploadHeader.isNewRecord();
 		String tranType;
 
 		if (isWorkFlowEnabled()) {
@@ -1608,7 +1608,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		if (uploadListCtrl != null) {
 			uploadListCtrl.search();
 		}

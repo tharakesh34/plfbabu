@@ -128,7 +128,7 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 			tableType = "_Temp";
 		}
 
-		if (splRate.isNew()) {
+		if (splRate.isNewRecord()) {
 			getSplRateDAO().save(splRate, tableType);
 			auditHeader.getAuditDetail().setModelData(splRate);
 			auditHeader.setAuditReference(splRate.getSRType() + PennantConstants.KEY_SEPERATOR
@@ -354,7 +354,7 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 		errParm[0] = PennantJavaUtil.getLabel("label_SRType") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_SREffDate") + ":" + valueParm[1];
 
-		if (splRate.isNew()) { // for New record or new record into work flow
+		if (splRate.isNewRecord()) { // for New record or new record into work flow
 
 			if (!splRate.isWorkflow()) {// With out Work flow only new records
 				if (befSplRate != null) { // Record Already Exists in the table

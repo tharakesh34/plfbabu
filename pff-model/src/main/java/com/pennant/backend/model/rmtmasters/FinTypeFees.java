@@ -77,8 +77,6 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 
 	private int moduleId;
 	private long referenceId;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private FinTypeFees befImage;
 
@@ -131,7 +129,7 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 		entity.setActive(this.active);
 		entity.setModuleId(this.moduleId);
 		entity.setReferenceId(this.referenceId);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setLovValue(this.lovValue);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
@@ -341,14 +339,6 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

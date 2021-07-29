@@ -77,8 +77,6 @@ public class DocumentType extends AbstractWorkflowEntity {
 	private String docExternalRef;
 	private String categoryCode;
 	private String categoryDesc;
-
-	private boolean newRecord;
 	private String lovValue;
 	private DocumentType befImage;
 	private LoggedInUser userDetails;
@@ -153,14 +151,6 @@ public class DocumentType extends AbstractWorkflowEntity {
 
 	public void setDocExternalRef(String docExternalRef) {
 		this.docExternalRef = docExternalRef;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

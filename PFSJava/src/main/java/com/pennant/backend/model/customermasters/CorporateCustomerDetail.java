@@ -53,7 +53,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>CorporateCustomerDetail table</b>.<br>
  *
  */
-public class CorporateCustomerDetail extends AbstractWorkflowEntity implements Entity {
+public class CorporateCustomerDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -8247646523739076607L;
 
 	private long custId = Long.MIN_VALUE;
@@ -93,8 +93,6 @@ public class CorporateCustomerDetail extends AbstractWorkflowEntity implements E
 	private String lovDescCustRecordType;
 	private String lovDescCustCIF;
 	private String lovDescCustShrtName;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private CorporateCustomerDetail befImage;
 	private LoggedInUser userDetails;
@@ -418,14 +416,6 @@ public class CorporateCustomerDetail extends AbstractWorkflowEntity implements E
 
 	public void setLovDescCustShrtName(String lovDescCustShrtName) {
 		this.lovDescCustShrtName = lovDescCustShrtName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

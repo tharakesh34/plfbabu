@@ -73,7 +73,6 @@ public class FinanceSuspHead extends AbstractWorkflowEntity {
 	private Date finSuspTrfDate;
 	private BigDecimal finSuspAmt = BigDecimal.ZERO;
 	private BigDecimal finCurSuspAmt = BigDecimal.ZERO;
-	private boolean newRecord = false;
 	private String lovValue;
 	private FinanceSuspHead befImage;
 	private LoggedInUser userDetails;
@@ -203,14 +202,6 @@ public class FinanceSuspHead extends AbstractWorkflowEntity {
 
 	public void setFinCurSuspAmt(BigDecimal finCurSuspAmt) {
 		this.finCurSuspAmt = finCurSuspAmt;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

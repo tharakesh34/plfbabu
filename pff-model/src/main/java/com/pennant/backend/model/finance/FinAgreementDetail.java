@@ -17,8 +17,6 @@ public class FinAgreementDetail extends AbstractWorkflowEntity {
 	private String lovDescAgrName;
 	private byte[] agrContent;
 	private boolean lovDescMandInput;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private FinAgreementDetail befImage;
 	private LoggedInUser userDetails;
@@ -106,14 +104,6 @@ public class FinAgreementDetail extends AbstractWorkflowEntity {
 
 	public boolean isLovDescMandInput() {
 		return lovDescMandInput;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

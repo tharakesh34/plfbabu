@@ -67,7 +67,6 @@ public class IncomeType extends AbstractWorkflowEntity {
 	private BigDecimal margin;
 	private boolean incomeTypeIsActive;
 	private String incomeExpenseCode;
-	private boolean newRecord;
 	private String lovValue;
 	private IncomeType befImage;
 	private LoggedInUser userDetails;
@@ -133,14 +132,6 @@ public class IncomeType extends AbstractWorkflowEntity {
 
 	public void setIncomeExpenseCode(String incomeExpenseCode) {
 		this.incomeExpenseCode = incomeExpenseCode;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

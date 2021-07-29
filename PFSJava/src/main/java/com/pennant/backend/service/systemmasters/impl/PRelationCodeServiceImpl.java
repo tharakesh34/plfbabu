@@ -124,7 +124,7 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		}
 
-		if (pRelationCode.isNew()) {
+		if (pRelationCode.isNewRecord()) {
 			pRelationCode.setPRelationCode(getPRelationCodeDAO().save(pRelationCode, tableType));
 			auditHeader.getAuditDetail().setModelData(pRelationCode);
 			auditHeader.setAuditReference(pRelationCode.getPRelationCode());
@@ -321,7 +321,7 @@ public class PRelationCodeServiceImpl extends GenericService<PRelationCode> impl
 		valueParm[0] = pRelationCode.getPRelationCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_PRelationCode") + ":" + valueParm[0];
 
-		if (pRelationCode.isNew()) { // for New record or new record into work flow
+		if (pRelationCode.isNewRecord()) { // for New record or new record into work flow
 
 			if (!pRelationCode.isWorkflow()) {// With out Work flow only new records
 				if (befPRelationCode != null) { // Record Already Exists in the table then error

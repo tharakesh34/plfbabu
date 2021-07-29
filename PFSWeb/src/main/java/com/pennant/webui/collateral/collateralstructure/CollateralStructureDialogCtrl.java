@@ -280,7 +280,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 				collateralStructure.setExtendedFieldHeader(extendedFieldHeader);
 			}
 			extendedFieldHeader.setModuleName(CollateralConstants.MODULE_NAME);
-			if (collateralStructure.isNew()) {
+			if (collateralStructure.isNewRecord()) {
 				extendedFieldHeader.setSubModuleName(collateralStructure.getCollateralType());
 			}
 			Map<String, Object> map = new HashMap<>();
@@ -288,7 +288,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			map.put("roleCode", getRole());
 			map.put("dialogCtrl", this);
 			map.put("firstTaskRole", StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole()));
-			map.put("newRecord", collateralStructure.isNew());
+			map.put("newRecord", collateralStructure.isNewRecord());
 			map.put("moduleName", CollateralConstants.MODULE_NAME);
 			map.put("isMarketableSecurities", this.marketableSecurities.isChecked());
 			if (this.marketableSecurities.isChecked()) {
@@ -315,7 +315,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 				collateralStructure.setExtendedFieldHeader(extendedFieldHeader);
 			}
 			extendedFieldHeader.setModuleName(CollateralConstants.MODULE_NAME);
-			if (collateralStructure.isNew()) {
+			if (collateralStructure.isNewRecord()) {
 				extendedFieldHeader.setSubModuleName(collateralStructure.getCollateralType());
 				extendedFieldHeader.setNumberOfColumns("2");
 			}
@@ -324,7 +324,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			map.put("roleCode", getRole());
 			map.put("dialogCtrl", this);
 			map.put("firstTaskRole", StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole()));
-			map.put("newRecord", collateralStructure.isNew());
+			map.put("newRecord", collateralStructure.isNewRecord());
 			map.put("moduleName", CollateralConstants.MODULE_NAME);
 
 			Executions.createComponents(
@@ -1213,7 +1213,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (collateralStructure.isNew()) {
+		if (collateralStructure.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.collateralType.focus();
@@ -1636,7 +1636,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aCollateralStructure.isNew();
+		isNew = aCollateralStructure.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1682,7 +1682,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CollateralStructure aCollateralStructure, String tranType) {
+	protected boolean doProcess(CollateralStructure aCollateralStructure, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -1918,7 +1918,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		collateralStructureListCtrl.search();
 	}
 
@@ -1995,7 +1995,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 
 	// marketable securities changed only on New
 	public void onCheckmarketableSecurities() {
-		if (!this.collateralStructure.isNew()) {
+		if (!this.collateralStructure.isNewRecord()) {
 			return;
 		} else {
 			if (this.marketableSecurities.isChecked()) {
@@ -2011,7 +2011,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 				this.collateralStructure.setExtendedFieldHeader(extendedFieldHeader);
 			}
 			this.collateralStructure.getExtendedFieldHeader().setModuleName(CollateralConstants.MODULE_NAME);
-			if (collateralStructure.getCollateralType() != null && collateralStructure.isNew()) {
+			if (collateralStructure.getCollateralType() != null && collateralStructure.isNewRecord()) {
 				extendedFieldHeader.setSubModuleName(collateralStructure.getCollateralType());
 			}
 			extendedFieldDialogCtrl.doSetList(this.marketableSecurities.isChecked(),

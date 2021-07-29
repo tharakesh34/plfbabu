@@ -76,7 +76,7 @@ public class CustomerGstServiceImpl extends GenericService<CustomerGST> implemen
 			tableType = "_Temp";
 		}
 
-		if (customerGST.isNew()) {
+		if (customerGST.isNewRecord()) {
 			customerGST.setId(getCustomerGstDetailDAO().save(customerGST, tableType));
 
 			// customerGST.setId(getCustomerGstDetailDAO().save(customerGST,

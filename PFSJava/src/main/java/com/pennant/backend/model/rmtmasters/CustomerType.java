@@ -62,7 +62,6 @@ public class CustomerType extends AbstractWorkflowEntity {
 	private String custTypeDesc;
 	private String custctgdesc;
 	private boolean custTypeIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private CustomerType befImage;
 	private LoggedInUser userDetails;
@@ -136,14 +135,6 @@ public class CustomerType extends AbstractWorkflowEntity {
 
 	public void setCustTypeIsActive(boolean custTypeIsActive) {
 		this.custTypeIsActive = custTypeIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

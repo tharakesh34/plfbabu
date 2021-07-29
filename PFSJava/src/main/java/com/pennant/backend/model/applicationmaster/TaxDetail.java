@@ -62,7 +62,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlType(propOrder = { "id", "country", "stateCode", "entityCode", "taxCode", "addressLine1", "addressLine2",
 		"addressLine3", "addressLine4", "pinCode", "cityCode" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TaxDetail extends AbstractWorkflowEntity implements Entity {
+public class TaxDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
@@ -83,8 +83,6 @@ public class TaxDetail extends AbstractWorkflowEntity implements Entity {
 	private String cityName;
 	private String hsnNumber;
 	private String natureService;
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -231,14 +229,6 @@ public class TaxDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setCityName(String cityName) {
 		this.cityName = cityName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -442,7 +442,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		chequeHeaderListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -477,7 +477,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		doWriteComponentsToBean(aChequeHeader, false);
 
 		aChequeHeader.setRecordStatus(this.recordStatus.getValue());
-		isNew = aChequeHeader.isNew();
+		isNew = aChequeHeader.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -563,7 +563,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(ChequeHeader aChequeHeader, String tranType) {
+	protected boolean doProcess(ChequeHeader aChequeHeader, String tranType) {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;
@@ -1291,7 +1291,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		}
 		showErrorDetails(wve);
 
-		isNew = aChequeHeader.isNew();
+		isNew = aChequeHeader.isNewRecord();
 
 		if (StringUtils.isBlank(aChequeHeader.getRecordType())) {
 			aChequeHeader.setVersion(aChequeHeader.getVersion() + 1);
@@ -2266,7 +2266,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			fillComboBox(chequeStatus, PennantConstants.CHEQUESTATUS_CANCELLED, chequeStatusList, "");
 			chequeDetail.setStatus(PennantConstants.CHEQUESTATUS_CANCELLED);
 
-			if (chequeDetail != null && !chequeDetail.isNew()) {
+			if (chequeDetail != null && !chequeDetail.isNewRecord()) {
 				chequeDetail.setActive(false);
 				chequeDetail.setRecordStatus(PennantConstants.RCD_STATUS_CANCELLED);
 				chequeDetail.setStatus(PennantConstants.CHEQUESTATUS_CANCELLED);
@@ -2281,7 +2281,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				}
 			}
 
-			if (chequeDetail.isNew()
+			if (chequeDetail.isNewRecord()
 					&& !StringUtils.equals(chequeDetail.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
 				removeFromList(chequeDetail);
 				this.listBoxChequeDetail.removeItemAt(listitem.getIndex());

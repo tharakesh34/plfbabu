@@ -277,7 +277,7 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		dPDBucketConfigurationListCtrl.search();
 	}
 
@@ -389,7 +389,7 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 	public void doShowDialog(DPDBucketConfiguration dPDBucketConfiguration) {
 		logger.debug(Literal.LEAVING);
 
-		if (dPDBucketConfiguration.isNew()) {
+		if (dPDBucketConfiguration.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -636,7 +636,7 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 		doSetValidation();
 		doWriteComponentsToBean(aDPDBucketConfiguration);
 
-		isNew = aDPDBucketConfiguration.isNew();
+		isNew = aDPDBucketConfiguration.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -683,7 +683,7 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(DPDBucketConfiguration aDPDBucketConfiguration, String tranType) {
+	protected boolean doProcess(DPDBucketConfiguration aDPDBucketConfiguration, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

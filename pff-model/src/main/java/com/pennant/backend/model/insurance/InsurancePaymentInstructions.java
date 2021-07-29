@@ -9,14 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import javax.xml.bind.annotation.XmlTransient;
-
-public class InsurancePaymentInstructions extends AbstractWorkflowEntity implements Entity {
+public class InsurancePaymentInstructions extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 	private long id = Long.MIN_VALUE;
 	private String entityCode;
@@ -44,23 +43,19 @@ public class InsurancePaymentInstructions extends AbstractWorkflowEntity impleme
 	private String status;
 	private Map<Long, String> adviseRefMap = new LinkedHashMap<>();
 	private List<VASRecording> vasRecordindList = new ArrayList<>();
-	private boolean newRecord;
 	private InsurancePaymentInstructions befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
 	private String finReference;
 	private String vasReference;
 
-	@Override
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public Map<String, Object> getDeclaredFieldValues(Map<String, Object> detailsMap) {
 		detailsMap.put("id_payAmount", getPayableAmount());// Total payable amount
-		detailsMap.put("id_recAmount", getReceivableAmount());// Total  receivable  amount
-		detailsMap.put("id_totPayAmount", getPaymentAmount());// Total payment amount to the  partner after  adjusting the receivables
-		detailsMap.put("id_partnerPremiumAmt", getPartnerPremiumAmt());// Total payment amount to the  partner after  adjusting the receivables
+		detailsMap.put("id_recAmount", getReceivableAmount());// Total receivable amount
+		detailsMap.put("id_totPayAmount", getPaymentAmount());// Total payment amount to the partner after adjusting the
+																// receivables
+		detailsMap.put("id_partnerPremiumAmt", getPartnerPremiumAmt());// Total payment amount to the partner after
+																		// adjusting the receivables
 		return detailsMap;
 	}
 
@@ -141,14 +136,6 @@ public class InsurancePaymentInstructions extends AbstractWorkflowEntity impleme
 
 	public void setStatus(String status) {
 		this.status = status;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public InsurancePaymentInstructions getBefImage() {

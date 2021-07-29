@@ -319,7 +319,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		receiptHeader.setRcdMaintainSts("R");
 		// Receipt Header Details Save And Update
 		// =======================================
-		if (receiptHeader.isNew()) {
+		if (receiptHeader.isNewRecord()) {
 			finReceiptHeaderDAO.save(receiptHeader, tableType);
 		} else {
 			finReceiptHeaderDAO.update(receiptHeader, tableType);
@@ -327,7 +327,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		// Bounce reason Code
 		if (receiptHeader.getManualAdvise() != null) {
-			if (receiptHeader.getManualAdvise().isNew()) {
+			if (receiptHeader.getManualAdvise().isNewRecord()) {
 				manualAdviseDAO.save(receiptHeader.getManualAdvise(), tableType);
 			} else {
 				manualAdviseDAO.update(receiptHeader.getManualAdvise(), tableType);
@@ -737,7 +737,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		valueParm[0] = String.valueOf(receiptHeader.getReceiptID());
 		errParm[0] = PennantJavaUtil.getLabel("label_ReceiptID") + ":" + valueParm[0];
 
-		if (receiptHeader.isNew()) { // for New record or new record into work
+		if (receiptHeader.isNewRecord()) { // for New record or new record into work
 										// flow
 
 			if (!receiptHeader.isWorkflow()) {// With out Work flow only new
@@ -2888,7 +2888,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(documentDetails.getRecordType())) {
 					if (approveRec) {
 						deleteRecord = true;
-					} else if (documentDetails.isNew()) {
+					} else if (documentDetails.isNewRecord()) {
 						saveRecord = true;
 					} else {
 						updateRecord = true;

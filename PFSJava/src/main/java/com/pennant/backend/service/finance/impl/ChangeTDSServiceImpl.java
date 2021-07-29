@@ -97,7 +97,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 				.getModelData();
 
 		FinanceMain financeMain = new FinanceMain();
-		if (finMaintainInstruction.isNew()) {
+		if (finMaintainInstruction.isNewRecord()) {
 			financeMain = getFinanceMainDAO().getFinanceMainById(finMaintainInstruction.getFinReference(), "_View",
 					false);
 		} else {
@@ -157,7 +157,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		getFinServiceInstructionDAO().deleteList(financeMain.getFinReference(), FinServiceEvent.CHANGETDS,
 				tableType.getSuffix());
 
-		if (finMaintainInstruction.isNew()) {
+		if (finMaintainInstruction.isNewRecord()) {
 			getFinanceMainDAO().save(financeMain, tableType, false);
 			finMaintainInstruction.setFinMaintainId(
 					Long.parseLong(getFinMaintainInstructionDAO().save(finMaintainInstruction, tableType)));
@@ -448,7 +448,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		FinMaintainInstruction finMaintainInstruction = (FinMaintainInstruction) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (isUniqueCheckReq && finMaintainInstruction.isNew()
+		if (isUniqueCheckReq && finMaintainInstruction.isNewRecord()
 				&& finMaintainInstructionDAO.isDuplicateKey(finMaintainInstruction.getEvent(),
 						finMaintainInstruction.getFinReference(),
 						finMaintainInstruction.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {

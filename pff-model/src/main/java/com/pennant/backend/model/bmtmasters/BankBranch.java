@@ -54,7 +54,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>BankBranch table</b>.<br>
  *
  */
-public class BankBranch extends AbstractWorkflowEntity implements Entity {
+public class BankBranch extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long bankBranchID = Long.MIN_VALUE;
@@ -73,7 +73,6 @@ public class BankBranch extends AbstractWorkflowEntity implements Entity {
 	private boolean nach;
 	private boolean dda;
 	private boolean active;
-	private boolean newRecord;
 	private String lovValue;
 	private BankBranch befImage;
 	private LoggedInUser userDetails;
@@ -166,14 +165,6 @@ public class BankBranch extends AbstractWorkflowEntity implements Entity {
 
 	public void setIFSC(String iFSC) {
 		this.iFSC = iFSC;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

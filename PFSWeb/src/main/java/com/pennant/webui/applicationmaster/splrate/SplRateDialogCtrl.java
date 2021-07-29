@@ -416,7 +416,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl<SplRate> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aSplRate.isNew()) {
+		if (aSplRate.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -504,7 +504,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl<SplRate> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getSplRateListCtrl().search();
 	}
 
@@ -638,7 +638,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl<SplRate> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aSplRate.isNew();
+		isNew = aSplRate.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -686,7 +686,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl<SplRate> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(SplRate aSplRate, String tranType) {
+	protected boolean doProcess(SplRate aSplRate, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

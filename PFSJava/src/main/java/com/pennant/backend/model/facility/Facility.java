@@ -113,8 +113,6 @@ public class Facility extends AbstractWorkflowEntity {
 	private boolean overriddeCirculation;
 	private boolean dedupFound = false;
 	private boolean skipDedup = false;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private Facility befImage;
 	private LoggedInUser userDetails;
@@ -449,14 +447,6 @@ public class Facility extends AbstractWorkflowEntity {
 
 	public void setNextReviewDate(Date nextReviewDate) {
 		this.nextReviewDate = nextReviewDate;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

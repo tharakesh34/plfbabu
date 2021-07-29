@@ -20,7 +20,6 @@ public class CovenantDocument extends AbstractWorkflowEntity {
 	@XmlElement
 	private Date frequencyDate;
 	private Date documentReceivedDate;
-	private boolean newRecord = false;
 	@XmlElement(name = "isOriginalDocument")
 	private boolean originalDocument;
 	private String lovValue;
@@ -92,14 +91,6 @@ public class CovenantDocument extends AbstractWorkflowEntity {
 
 	public void setDocumentReceivedDate(Date documentReceivedDate) {
 		this.documentReceivedDate = documentReceivedDate;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

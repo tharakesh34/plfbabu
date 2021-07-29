@@ -589,7 +589,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	public void doShowDialog(JVPosting aJVPosting) throws Exception {
 		logger.debug("Entering");
 		// set Read only mode accordingly if the object is new or not.
-		if (aJVPosting.isNew()) {
+		if (aJVPosting.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1278,7 +1278,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	 * Method for Refreshing List after Save/Delete a Record
 	 */
 
-	private void refreshList() {
+	protected void refreshList() {
 		final JdbcSearchObject<JVPosting> jvPostings = getJVPostingListCtrl().getSearchObject();
 		getJVPostingListCtrl().pagingJVPostingList.setActivePage(0);
 		getJVPostingListCtrl().getPagedListWrapper().setSearchObject(jvPostings);
@@ -1382,7 +1382,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aJVPosting.isNew();
+		isNew = aJVPosting.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1457,7 +1457,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	 * 
 	 */
 
-	private boolean doProcess(JVPosting aJVPosting, String tranType) {
+	protected boolean doProcess(JVPosting aJVPosting, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
@@ -1822,7 +1822,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 					lc = new Listcell(PennantApplicationUtil.formatAccountNumber(jvPostingEntry.getAccount()));
 
 				} else {
-					if (jvPostingEntry.isNew()) {
+					if (jvPostingEntry.isNewRecord()) {
 						lc = new Listcell(PennantApplicationUtil.formatAccountNumber(jvPostingEntry.getDebitAccount()));
 					} else {
 						lc = new Listcell(PennantApplicationUtil.formatAccountNumber(jvPostingEntry.getAccount()));

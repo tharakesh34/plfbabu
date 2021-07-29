@@ -68,8 +68,6 @@ public class ProfitCenter extends AbstractWorkflowEntity {
 	private String profitCenterDesc;
 	private boolean active;
 	@XmlTransient
-	private boolean newRecord = false;
-	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private ProfitCenter befImage;
@@ -132,14 +130,6 @@ public class ProfitCenter extends AbstractWorkflowEntity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

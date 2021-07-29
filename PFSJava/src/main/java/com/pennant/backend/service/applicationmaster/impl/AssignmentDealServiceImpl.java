@@ -107,7 +107,7 @@ public class AssignmentDealServiceImpl extends GenericService<AssignmentDeal> im
 			tableType = "_Temp";
 		}
 
-		if (assignmentDeal.isNew()) {
+		if (assignmentDeal.isNewRecord()) {
 			assignmentDeal.setId(Long.valueOf(assignmentDealDAO.save(assignmentDeal, tableType)));
 		} else {
 			assignmentDealDAO.update(assignmentDeal, tableType);
@@ -186,7 +186,7 @@ public class AssignmentDealServiceImpl extends GenericService<AssignmentDeal> im
 			} else if (assignmentDealLoanType.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (assignmentDealLoanType.isNew()) {
+				} else if (assignmentDealLoanType.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -268,7 +268,7 @@ public class AssignmentDealServiceImpl extends GenericService<AssignmentDeal> im
 			} else if (assignmentDealExcFee.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (assignmentDealExcFee.isNew()) {
+				} else if (assignmentDealExcFee.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -781,7 +781,7 @@ public class AssignmentDealServiceImpl extends GenericService<AssignmentDeal> im
 		parameters[0] = PennantJavaUtil.getLabel("label_Code") + ": " + assignmentDeal.getCode();
 
 		// Check the unique keys.
-		if (assignmentDeal.isNew() && assignmentDealDAO.isDuplicateKey(assignmentDeal.getId(), assignmentDeal.getCode(),
+		if (assignmentDeal.isNewRecord() && assignmentDealDAO.isDuplicateKey(assignmentDeal.getId(), assignmentDeal.getCode(),
 				assignmentDeal.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));

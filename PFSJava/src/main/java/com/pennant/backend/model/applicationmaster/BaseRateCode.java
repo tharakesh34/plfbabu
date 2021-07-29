@@ -56,7 +56,6 @@ public class BaseRateCode extends AbstractWorkflowEntity {
 
 	private String bRType;
 	private String bRTypeDesc;
-	private boolean newRecord;
 	private String lovValue;
 	private BaseRateCode befImage;
 	private LoggedInUser userDetails;
@@ -102,14 +101,6 @@ public class BaseRateCode extends AbstractWorkflowEntity {
 
 	public void setBRTypeDesc(String bRTypeDesc) {
 		this.bRTypeDesc = bRTypeDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

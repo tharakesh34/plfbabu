@@ -323,7 +323,7 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		manualDeviationListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -364,7 +364,7 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 					aManualDeviation.getCategorizationName());
 		}
 		this.recordStatus.setValue(aManualDeviation.getRecordStatus());
-		if (aManualDeviation.isNew()
+		if (aManualDeviation.isNewRecord()
 				|| (aManualDeviation.getRecordType() != null ? aManualDeviation.getRecordType() : "")
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
@@ -469,7 +469,7 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 	public void doShowDialog(ManualDeviation manualDeviation) {
 		logger.debug(Literal.LEAVING);
 
-		if (manualDeviation.isNew()) {
+		if (manualDeviation.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -711,7 +711,7 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 		doSetValidation();
 		doWriteComponentsToBean(aManualDeviation);
 
-		isNew = aManualDeviation.isNew();
+		isNew = aManualDeviation.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -759,7 +759,7 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(ManualDeviation aManualDeviation, String tranType) {
+	protected boolean doProcess(ManualDeviation aManualDeviation, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

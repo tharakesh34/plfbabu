@@ -303,7 +303,7 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 		this.deptIsActive.setChecked(aDepartment.isDeptIsActive());
 		this.recordStatus.setValue(aDepartment.getRecordStatus());
 
-		if (aDepartment.isNew() || (aDepartment.getRecordType() != null ? aDepartment.getRecordType() : "")
+		if (aDepartment.isNewRecord() || (aDepartment.getRecordType() != null ? aDepartment.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.deptIsActive.setChecked(true);
 			this.deptIsActive.setDisabled(true);
@@ -365,7 +365,7 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aDepartment.isNew()) {
+		if (aDepartment.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -577,7 +577,7 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aDepartment.isNew();
+		isNew = aDepartment.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -625,7 +625,7 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Department aDepartment, String tranType) {
+	protected boolean doProcess(Department aDepartment, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -830,7 +830,7 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getDepartmentListCtrl().search();
 	}
 

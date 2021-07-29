@@ -166,7 +166,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	private void doEdit() {
 		logger.debug(Literal.ENTERING);
 
-		if (this.ruh.isNew()) {
+		if (this.ruh.isNewRecord()) {
 			this.btnBrowse.setVisible(true);
 			this.btnBrowse.setDisabled(false);
 		}

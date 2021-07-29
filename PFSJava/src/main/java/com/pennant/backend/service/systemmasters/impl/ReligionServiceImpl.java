@@ -135,7 +135,7 @@ public class ReligionServiceImpl extends GenericService<Religion> implements Rel
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (religion.isNew()) {
+		if (religion.isNewRecord()) {
 			religion.setId(Long.parseLong(getReligionDAO().save(religion, tableType)));
 			auditHeader.getAuditDetail().setModelData(religion);
 			auditHeader.setAuditReference(String.valueOf(religion.getReligionId()));
@@ -342,7 +342,7 @@ public class ReligionServiceImpl extends GenericService<Religion> implements Rel
 		parameters[0] = PennantJavaUtil.getLabel("label_ReligionCode") + ": " + religion.getReligionCode();
 
 		// Check the unique keys.
-		if (religion.isNew() && religionDAO.isDuplicateKey(religion.getReligionId(), religion.getReligionCode(),
+		if (religion.isNewRecord() && religionDAO.isDuplicateKey(religion.getReligionId(), religion.getReligionCode(),
 				religion.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));

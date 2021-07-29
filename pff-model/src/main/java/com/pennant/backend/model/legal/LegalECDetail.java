@@ -55,7 +55,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>LegalECDetail table</b>.<br>
  *
  */
-public class LegalECDetail extends AbstractWorkflowEntity implements Entity {
+public class LegalECDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long legalId = Long.MIN_VALUE;;
@@ -64,7 +64,6 @@ public class LegalECDetail extends AbstractWorkflowEntity implements Entity {
 	private Date ecDate;
 	private String strECDate;
 	private String document;
-	private boolean newRecord = false;
 	private String lovValue;
 	private LegalECDetail befImage;
 	private LoggedInUser userDetails;
@@ -132,14 +131,6 @@ public class LegalECDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setEcDate(Date ecDate) {
 		this.ecDate = ecDate;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

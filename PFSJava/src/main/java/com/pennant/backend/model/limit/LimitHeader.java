@@ -126,7 +126,6 @@ public class LimitHeader extends AbstractWorkflowEntity {
 	private Timestamp createdOn;
 	@SuppressWarnings("unused")
 	private XMLGregorianCalendar createdDate;
-	private boolean newRecord = false;
 	private String lovValue;
 	private LimitHeader befImage;
 	private LoggedInUser userDetails;
@@ -326,14 +325,6 @@ public class LimitHeader extends AbstractWorkflowEntity {
 			return null;
 		}
 		return DateUtility.getXMLDate(createdOn);
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

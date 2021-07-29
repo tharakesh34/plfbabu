@@ -153,7 +153,7 @@ public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> im
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (employerDetail.isNew()) {
+		if (employerDetail.isNewRecord()) {
 			employerDetail.setId(Long.parseLong(getEmployerDetailDAO().save(employerDetail, tableType)));
 			auditHeader.getAuditDetail().setModelData(employerDetail);
 			auditHeader.setAuditReference(String.valueOf(employerDetail.getEmployerId()));
@@ -358,7 +358,7 @@ public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> im
 	 * 
 	 * // Get the model object. EmployerDetail employerDetail = (EmployerDetail) auditDetail.getModelData();
 	 * 
-	 * // Check the unique keys. if (employerDetail.isNew() && employerDetailDAO.isDuplicateKey(employerDetail.getId(),
+	 * // Check the unique keys. if (employerDetail.isNewRecord() && employerDetailDAO.isDuplicateKey(employerDetail.getId(),
 	 * employerDetail.getEmpIndustry(), employerDetail.getEmpName(), employerDetail.isWorkflow() ? TableType.BOTH_TAB :
 	 * TableType.MAIN_TAB)) { String[] parameters = new String[2];
 	 * 
@@ -391,7 +391,7 @@ public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> im
 		valueParm[0] = String.valueOf(employerDetail.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_EmployerId") + ":" + valueParm[0];
 
-		if (employerDetail.isNew()) { // for New record or new record into work flow
+		if (employerDetail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!employerDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befEmployerDetail != null) { // Record Already Exists in the table then error  

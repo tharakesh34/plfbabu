@@ -73,7 +73,7 @@ public class CustomerBankInfoValidation {
 				+ ":" + valueParm[0] + " and ";
 		errParm[1] = PennantJavaUtil.getLabel("label_CustBank") + "-" + valueParm[1];
 
-		if (customerBankInfo.isNew()) { // for New record or new record into work flow
+		if (customerBankInfo.isNewRecord()) { // for New record or new record into work flow
 
 			if (!customerBankInfo.isWorkflow()) {// With out Work flow only new records  
 				if (befCustomerBankInfo != null) { // Record Already Exists in the table then error  

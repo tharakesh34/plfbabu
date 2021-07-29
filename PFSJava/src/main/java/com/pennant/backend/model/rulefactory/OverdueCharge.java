@@ -74,7 +74,6 @@ public class OverdueCharge extends AbstractWorkflowEntity {
 	private BigDecimal oDCPLShare;
 	private boolean oDCSweepCharges;
 	private String oDCRuleDescription;
-	private boolean newRecord = false;
 	private String lovValue;
 	private OverdueCharge befImage;
 	private LoggedInUser userDetails;
@@ -177,14 +176,6 @@ public class OverdueCharge extends AbstractWorkflowEntity {
 
 	public void setODCSweepCharges(boolean oDCSweepCharges) {
 		this.oDCSweepCharges = oDCSweepCharges;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

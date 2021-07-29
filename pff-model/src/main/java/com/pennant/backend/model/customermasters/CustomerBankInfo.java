@@ -68,7 +68,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(propOrder = { "bankId", "bankName", "accountNumber", "accountType", "salaryAccount" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
+public class CustomerBankInfo extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -3217987429162088120L;
 
 	private long custID = Long.MIN_VALUE;
@@ -85,7 +85,6 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private String accountType;
 	private String lovDescAccountType;
-	private boolean newRecord = false;
 	private String lovValue;
 	private CustomerBankInfo befImage;
 	private LoggedInUser userDetails;
@@ -249,14 +248,6 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 
 	public void setLovDescAccountType(String lovDescAccountType) {
 		this.lovDescAccountType = lovDescAccountType;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

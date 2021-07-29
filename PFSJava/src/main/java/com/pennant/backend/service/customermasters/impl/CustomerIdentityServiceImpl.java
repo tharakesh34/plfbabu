@@ -127,7 +127,7 @@ public class CustomerIdentityServiceImpl extends GenericService<CustomerIdentity
 			tableType = "_Temp";
 		}
 
-		if (customerIdentity.isNew()) {
+		if (customerIdentity.isNewRecord()) {
 			customerIdentity.setId(getCustomerIdentityDAO().save(customerIdentity, tableType));
 			auditHeader.getAuditDetail().setModelData(customerIdentity);
 		} else {
@@ -337,7 +337,7 @@ public class CustomerIdentityServiceImpl extends GenericService<CustomerIdentity
 		errParm[0] = PennantJavaUtil.getLabel("label_IdCustID") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_IdType") + ":" + valueParm[1];
 
-		if (customerIdentity.isNew()) { // for New record or new record into
+		if (customerIdentity.isNewRecord()) { // for New record or new record into
 											// work flow
 
 			if (!customerIdentity.isWorkflow()) {// With out Work flow only new

@@ -94,7 +94,7 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (lv.isNew()) {
+		if (lv.isNewRecord()) {
 			legalVerificationDAO.save(lv, tableType);
 			auditHeader.getAuditDetail().setModelData(lv);
 			auditHeader.setAuditReference(String.valueOf(lv.getVerificationId()));
@@ -650,7 +650,7 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (documentDetails.isNew()) {
+				} else if (documentDetails.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -745,7 +745,7 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 			} else if (lvDocument.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (lvDocument.isNew()) {
+				} else if (lvDocument.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

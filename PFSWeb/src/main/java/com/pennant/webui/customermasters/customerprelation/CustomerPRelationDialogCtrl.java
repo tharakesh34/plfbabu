@@ -939,7 +939,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCustomerPRelationListCtrl().search();
 	}
 
@@ -1183,7 +1183,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aCustomerPRelation.isNew();
+		isNew = aCustomerPRelation.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1266,7 +1266,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CustomerPRelation aCustomerPRelation, String tranType) {
+	protected boolean doProcess(CustomerPRelation aCustomerPRelation, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

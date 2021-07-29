@@ -61,7 +61,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(propOrder = { "purpose", "paymentMode", "partnerBankID" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class FinTypePartnerBank extends AbstractWorkflowEntity implements Entity {
+public class FinTypePartnerBank extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long iD = Long.MIN_VALUE;
@@ -74,7 +74,6 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity implements Entity
 	private long partnerBankID;
 	private String partnerBankCode;
 	private String partnerBankName;
-	private boolean newRecord = false;
 	private String lovValue;
 	private String accountNo;
 	private String accountType;
@@ -109,7 +108,7 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity implements Entity
 		entity.setPartnerBankID(this.partnerBankID);
 		entity.setPartnerBankCode(this.partnerBankCode);
 		entity.setPartnerBankName(this.partnerBankName);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setLovValue(this.lovValue);
 		entity.setAccountNo(this.accountNo);
 		entity.setAccountType(this.accountType);
@@ -193,14 +192,6 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity implements Entity
 
 	public void setPartnerBankID(long partnerBankID) {
 		this.partnerBankID = partnerBankID;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

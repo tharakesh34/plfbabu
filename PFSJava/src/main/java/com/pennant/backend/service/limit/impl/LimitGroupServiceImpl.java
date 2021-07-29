@@ -169,7 +169,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 			tableType = "_Temp";
 		}
 
-		if (limitGroup.isNew()) {
+		if (limitGroup.isNewRecord()) {
 			getLimitGroupDAO().save(limitGroup, tableType);
 		} else {
 			getLimitGroupDAO().update(limitGroup, tableType);
@@ -431,7 +431,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 		valueParm[0] = limitGroup.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_GroupCode") + ":" + valueParm[0];
 
-		if (limitGroup.isNew()) { // for New record or new record into work flow
+		if (limitGroup.isNewRecord()) { // for New record or new record into work flow
 
 			if (!limitGroup.isWorkflow()) {// With out Work flow only new records  
 				if (befLimitGroup != null) { // Record Already Exists in the table then error  
@@ -644,7 +644,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 			} else if (limitGroupItems.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (limitGroupItems.isNew()) {
+				} else if (limitGroupItems.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

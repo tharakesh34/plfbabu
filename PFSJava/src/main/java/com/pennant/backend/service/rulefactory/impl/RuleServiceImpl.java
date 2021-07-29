@@ -137,7 +137,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 		if (rule.isWorkflow()) {
 			tableType = "_Temp";
 		}
-		if (rule.isNew()) {
+		if (rule.isNewRecord()) {
 			getRuleDAO().save(rule, tableType);
 			auditHeader.getAuditDetail().setModelData(rule);
 			auditHeader.setAuditReference(rule.getRuleCode());
@@ -469,7 +469,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 		errParm[1] = PennantJavaUtil.getLabel("label_RuleModule") + ": " + valueParm[1];
 		errParm[2] = PennantJavaUtil.getLabel("label_RuleEvent") + ": " + valueParm[2];
 
-		if (rule.isNew()) { // for New record or new record into work flow
+		if (rule.isNewRecord()) { // for New record or new record into work flow
 
 			if (!rule.isWorkflow()) {// With out Work flow only new records
 				if (befRule != null) { // Record Already Exists in the table

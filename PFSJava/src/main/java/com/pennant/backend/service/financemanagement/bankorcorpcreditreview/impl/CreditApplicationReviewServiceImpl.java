@@ -95,7 +95,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 			tableType = "_Temp";
 		}
 
-		if (creditReviewDetails.isNew()) {
+		if (creditReviewDetails.isNewRecord()) {
 			creditReviewDetails.setDetailId(getCreditApplicationReviewDAO().save(creditReviewDetails, tableType));
 			auditHeader.getAuditDetail().setModelData(creditReviewDetails);
 			auditHeader.setAuditReference(String.valueOf(creditReviewDetails.getDetailId()));
@@ -293,7 +293,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 				auditDetails.addAll(details);
 			}
 		}
-		if (!creditReviewDetails.isNew()) {
+		if (!creditReviewDetails.isNewRecord()) {
 			getCreditApplicationReviewDAO().delete(creditReviewDetails, "_Temp");
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 			auditHeader.setAuditDetails(
@@ -441,7 +441,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_CustDocType") + ":" + valueParm[1];
 
-		if (customerDocument.isNew()) { // for New record or new record into
+		if (customerDocument.isNewRecord()) { // for New record or new record into
 			// work flow
 
 			if (!customerDocument.isWorkflow()) {// With out Work flow only new
@@ -527,7 +527,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 		valueParm[0] = String.valueOf(creditReviewDetails.getDetailId());
 		errParm[0] = PennantJavaUtil.getLabel("label_DetailId") + ":" + valueParm[0];
 
-		if (creditReviewDetails.isNew()) {
+		if (creditReviewDetails.isNewRecord()) {
 			// for New record or new record into work flow
 			if (!creditReviewDetails.isWorkflow()) {
 				// With out Work flow only new records
@@ -687,7 +687,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 					creditReviewSummaryEntry.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					isRcdType = true;
 				} else if (creditReviewSummaryEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)
-						&& !creditReviewDetails.isNew()) {
+						&& !creditReviewDetails.isNewRecord()) {
 					creditReviewSummaryEntry.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					creditReviewSummaryEntry.setNewRecord(false);
 					isRcdType = false;
@@ -1008,7 +1008,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 			} else if (creditReviewSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (creditReviewSubCategory.isNew()) {
+				} else if (creditReviewSubCategory.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -1084,7 +1084,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 			}
 			if (summary.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
-			} else if (summary.isNewRecord() && creditReviewDetails.isNew()) {
+			} else if (summary.isNewRecord() && creditReviewDetails.isNewRecord()) {
 				if (approveRec) {
 					if (summary.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 						saveRecord = true;
@@ -1115,7 +1115,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 			} else if (summary.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (summary.isNew()) {
+				} else if (summary.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -1218,7 +1218,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 			} else if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (customerDocument.isNew()) {
+				} else if (customerDocument.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

@@ -820,7 +820,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		for (Verification item : verifications) {
 			if ((deleteSet.contains(item.getReferenceFor())
-					&& (item.isNew() || !verificationService.isVerificationInRecording(item, VerificationType.PD)))) {
+					&& (item.isNewRecord() || !verificationService.isVerificationInRecording(item, VerificationType.PD)))) {
 				item.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 		}
@@ -833,7 +833,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			for (CustomerAddres addr : addresses) {
 				for (Verification ver : verifications) {
 					if (StringUtils.equals(addr.getCustAddrType(), ver.getReferenceFor())) {
-						if (ver.isNew() || ver.getRequestType() == 0) {
+						if (ver.isNewRecord() || ver.getRequestType() == 0) {
 							if (requiredCodes.contains(addr.getCustAddrType())) {
 								ver.setRequestType(RequestType.INITIATE.getKey());
 							} else {

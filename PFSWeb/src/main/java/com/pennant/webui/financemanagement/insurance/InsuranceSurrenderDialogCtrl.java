@@ -321,7 +321,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		insuranceRebookingListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -484,7 +484,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 */
 	public void doShowDialog(VASRecording vasRecording) {
 		logger.debug(Literal.ENTERING);
-		if (vasRecording.isNew()) {
+		if (vasRecording.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 		} else {
@@ -726,7 +726,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			}
 		}
 
-		isNew = aVASRecording.isNew();
+		isNew = aVASRecording.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -781,7 +781,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @throws Exception
 	 * 
 	 */
-	private boolean doProcess(VASRecording detail, String tranType) throws Exception {
+	protected boolean doProcess(VASRecording detail, String tranType) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;

@@ -769,7 +769,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		doWriteBeanToComponents(aFinanceReferenceDetail);
 
 		/* set Read only mode accordingly if the object is new or not. */
-		if (aFinanceReferenceDetail.isNew()) {
+		if (aFinanceReferenceDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus

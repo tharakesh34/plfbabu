@@ -62,7 +62,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(propOrder = { "reference", "usrLogin", "inDate", "remarkType", "alignType", "remarks" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class Notes extends AbstractEntity implements Entity {
+public class Notes extends AbstractEntity {
 	private static final long serialVersionUID = -8921214349365225047L;
 
 	private long noteId = Long.MIN_VALUE;

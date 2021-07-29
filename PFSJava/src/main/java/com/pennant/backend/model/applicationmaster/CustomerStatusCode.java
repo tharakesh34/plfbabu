@@ -57,7 +57,6 @@ public class CustomerStatusCode extends AbstractWorkflowEntity {
 	private boolean custStsIsActive;
 	private int dueDays;
 	private boolean suspendProfit;
-	private boolean newRecord;
 	private String lovValue;
 	private CustomerStatusCode befImage;
 	private LoggedInUser userDetails;
@@ -125,14 +124,6 @@ public class CustomerStatusCode extends AbstractWorkflowEntity {
 
 	public void setSuspendProfit(boolean suspendProfit) {
 		this.suspendProfit = suspendProfit;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

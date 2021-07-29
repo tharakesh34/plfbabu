@@ -605,7 +605,7 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (finReceiptHeader.isNew()) {
+		if (finReceiptHeader.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 		} else {
@@ -1237,7 +1237,7 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 				aReceiptData.getReceiptHeader().setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				aReceiptData.getReceiptHeader().setVersion(1);
-				if (aReceiptData.getReceiptHeader().isNew()) {
+				if (aReceiptData.getReceiptHeader().isNewRecord()) {
 					aReceiptData.getReceiptHeader().setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
 					aReceiptData.getReceiptHeader().setRecordType(PennantConstants.RECORD_TYPE_UPD);
@@ -1992,7 +1992,7 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @return
 	 * @throws Exception
 	 */
-	private boolean doProcess(FinReceiptData aReceiptData, String tranType) throws Exception {
+	protected boolean doProcess(FinReceiptData aReceiptData, String tranType) throws Exception {
 		logger.debug("Entering");
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
@@ -2099,7 +2099,7 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 
-						if (rch.isNew()) {
+						if (rch.isNewRecord()) {
 							((FinReceiptData) auditHeader.getAuditDetail().getModelData()).getFinanceDetail()
 									.setDirectFinalApprove(true);
 						}

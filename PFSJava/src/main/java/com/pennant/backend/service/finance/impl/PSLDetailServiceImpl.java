@@ -135,7 +135,7 @@ public class PSLDetailServiceImpl extends GenericService<PSLDetail> implements P
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (pSLDetail.isNew()) {
+		if (pSLDetail.isNewRecord()) {
 			getPSLDetailDAO().save(pSLDetail, tableType);
 		} else {
 			getPSLDetailDAO().update(pSLDetail, tableType);
@@ -421,7 +421,7 @@ public class PSLDetailServiceImpl extends GenericService<PSLDetail> implements P
 		valueParm[0] = String.valueOf(pslDetail.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (pslDetail.isNew()) { // for New record or new record into work flow
+		if (pslDetail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!pslDetail.isWorkflow()) {// With out Work flow only new
 												// records

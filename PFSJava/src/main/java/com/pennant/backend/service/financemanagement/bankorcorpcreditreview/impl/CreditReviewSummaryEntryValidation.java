@@ -64,7 +64,7 @@ public class CreditReviewSummaryEntryValidation {
 
 		errParm[0] = PennantJavaUtil.getLabel("label_SubCategoryCode") + ":" + valueParm[0];
 
-		if (creditReviewSummary.isNew()) { // for New record or new record into work flow
+		if (creditReviewSummary.isNewRecord()) { // for New record or new record into work flow
 
 			if (!creditReviewSummary.isWorkflow()) {// With out Work flow only new records  
 				if (befcreditReviewSummary != null) { // Record Already Exists in the table then error  

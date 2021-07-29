@@ -176,7 +176,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 	public void doShowDialog(IncomeExpenseHeader incomeExpenseHeader) {
 		logger.debug(Literal.ENTERING);
 
-		if (incomeExpenseHeader.isNew()) {
+		if (incomeExpenseHeader.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -253,7 +253,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			return;
 		}
 
-		isNew = incomeExpenseHeader.isNew();
+		isNew = incomeExpenseHeader.isNewRecord();
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
@@ -288,7 +288,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 		logger.debug(Literal.LEAVING);
 	}
 
-	private boolean doProcess(IncomeExpenseHeader incomeExpenseHeader, String tranType) {
+	protected boolean doProcess(IncomeExpenseHeader incomeExpenseHeader, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -485,7 +485,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			aSchoolCoreIncome.setCreatedOn(DateUtility.getAppDate());
 
 			boolean isNew = false;
-			isNew = aSchoolCoreIncome.isNew();
+			isNew = aSchoolCoreIncome.isNewRecord();
 			String tranType = "";
 
 			if (aSchoolCoreIncome.isNewRecord()) {
@@ -570,7 +570,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			aSchoolNonCoreIncome.setCreatedOn(DateUtility.getAppDate());
 
 			boolean isNew = false;
-			isNew = aSchoolNonCoreIncome.isNew();
+			isNew = aSchoolNonCoreIncome.isNewRecord();
 			String tranType = "";
 
 			if (aSchoolNonCoreIncome.isNewRecord()) {
@@ -642,7 +642,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 			aSchoolExpense.setCreatedOn(DateUtility.getAppDate());
 
 			boolean isNew = false;
-			isNew = aSchoolExpense.isNew();
+			isNew = aSchoolExpense.isNewRecord();
 			String tranType = "";
 
 			if (aSchoolExpense.isNewRecord()) {
@@ -1793,7 +1793,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		incomeExpenseDetailListCtrl.search();
 		logger.debug(Literal.LEAVING);

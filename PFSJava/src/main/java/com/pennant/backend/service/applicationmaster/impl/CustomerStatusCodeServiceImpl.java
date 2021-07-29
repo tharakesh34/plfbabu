@@ -127,7 +127,7 @@ public class CustomerStatusCodeServiceImpl extends GenericService<CustomerStatus
 			tableType = "_Temp";
 		}
 
-		if (customerStatusCode.isNew()) {
+		if (customerStatusCode.isNewRecord()) {
 			customerStatusCode.setId(getCustomerStatusCodeDAO().save(customerStatusCode, tableType));
 			auditHeader.getAuditDetail().setModelData(customerStatusCode);
 			auditHeader.setAuditReference(customerStatusCode.getId());
@@ -338,7 +338,7 @@ public class CustomerStatusCodeServiceImpl extends GenericService<CustomerStatus
 		valueParm[0] = customerStatusCode.getCustStsCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_CustStsCode") + ":" + valueParm[0];
 
-		if (customerStatusCode.isNew()) { // for New record or new record into work
+		if (customerStatusCode.isNewRecord()) { // for New record or new record into work
 												// flow
 
 			if (!customerStatusCode.isWorkflow()) {// With out Work flow only new

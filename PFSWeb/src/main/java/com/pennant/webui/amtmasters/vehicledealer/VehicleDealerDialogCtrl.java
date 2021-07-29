@@ -868,13 +868,13 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.commisionCalRule.setValue(aVehicleDealer.getCalculationRule());
 		// fillComboBox(sellerType, aVehicleDealer.getSellerType(), sellerTypes, "");
 		this.recordStatus.setValue(aVehicleDealer.getRecordStatus());
-		if (aVehicleDealer.isNew() || (aVehicleDealer.getRecordType() != null ? aVehicleDealer.getRecordType() : "")
+		if (aVehicleDealer.isNewRecord() || (aVehicleDealer.getRecordType() != null ? aVehicleDealer.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
 
-		if (!aVehicleDealer.isNew()) {
+		if (!aVehicleDealer.isNewRecord()) {
 			ArrayList<Filter> filters = new ArrayList<Filter>();
 
 			if (this.dealerCountry.getValue() != null && !this.dealerCountry.getValue().isEmpty()) {
@@ -1223,7 +1223,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		logger.debug(Literal.ENTERING);
 
 		// set Readonly mode accordingly if the object is new or not.
-		if (aVehicleDealer.isNew()) {
+		if (aVehicleDealer.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1693,14 +1693,14 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		doSetValidation();
 		// fill the VehicleDealer object with the components data
 		doWriteComponentsToBean(aVehicleDealer);
-		if (aVehicleDealer.isNew()) {
+		if (aVehicleDealer.isNewRecord()) {
 			doSearchValid(aVehicleDealer);
 		}
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aVehicleDealer.isNew();
+		isNew = aVehicleDealer.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1770,7 +1770,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 
 	}
 
-	private boolean doProcess(VehicleDealer aVehicleDealer, String tranType) {
+	protected boolean doProcess(VehicleDealer aVehicleDealer, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -2220,7 +2220,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getVehicleDealerListCtrl().search();
 	}
 

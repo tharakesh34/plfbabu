@@ -66,9 +66,7 @@ public class ScoringMetrics extends AbstractWorkflowEntity {
 	private String lovDescMetricTotPerc;
 	private int lovDescScoreMetricSeq; // Scoring Metric Group Seq / Rule Seq order
 	private String lovDescSQLRule;
-	private BigDecimal lovDescExecutedScore; // Scoring Metric Group Seq / Rule Seq order
-
-	private boolean newRecord = false;
+	private BigDecimal lovDescExecutedScore; // Scoring Metric Group Seq / Rule Seq ord
 	private String lovValue;
 	private ScoringMetrics befImage;
 	private LoggedInUser userDetails;
@@ -188,14 +186,6 @@ public class ScoringMetrics extends AbstractWorkflowEntity {
 
 	public void setLovDescMetricTotPerc(String lovDescMetricTotPerc) {
 		this.lovDescMetricTotPerc = lovDescMetricTotPerc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

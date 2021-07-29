@@ -59,7 +59,6 @@ public class EmpStsCode extends AbstractWorkflowEntity {
 	private String empStsCode;
 	private String empStsDesc;
 	private boolean empStsIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private EmpStsCode befImage;
 	private LoggedInUser userDetails;
@@ -111,14 +110,6 @@ public class EmpStsCode extends AbstractWorkflowEntity {
 
 	public void setEmpStsIsActive(boolean empStsIsActive) {
 		this.empStsIsActive = empStsIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

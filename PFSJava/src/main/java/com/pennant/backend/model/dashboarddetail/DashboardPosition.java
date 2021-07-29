@@ -58,8 +58,6 @@ public class DashboardPosition extends AbstractWorkflowEntity {
 	private int dashboardRow;
 	private int dashboardColIndex;
 	private String DashboardDesc;
-
-	private boolean newRecord = false;
 	private DashboardPosition befImage;
 	private LoggedInUser userDetails;
 
@@ -167,14 +165,6 @@ public class DashboardPosition extends AbstractWorkflowEntity {
 	 */
 	public void setDashboardDesc(String dashboardDesc) {
 		DashboardDesc = dashboardDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public DashboardPosition getBefImage() {

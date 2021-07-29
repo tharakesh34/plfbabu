@@ -432,7 +432,7 @@ public class RisksAndMitigantsDialogCtrl extends GFCBaseCtrl<RisksAndMitigants> 
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
 	/*
-	 * private void refreshList() { getFinancialSummaryDialogCtrl().search(); }
+	 * protected void refreshList() { getFinancialSummaryDialogCtrl().search(); }
 	 */
 
 	// CRUD operations
@@ -594,7 +594,7 @@ public class RisksAndMitigantsDialogCtrl extends GFCBaseCtrl<RisksAndMitigants> 
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = risksAndMitigants.isNew();
+		isNew = risksAndMitigants.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -745,7 +745,7 @@ public class RisksAndMitigantsDialogCtrl extends GFCBaseCtrl<RisksAndMitigants> 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(RisksAndMitigants risksAndMitigants, String tranType) {
+	protected boolean doProcess(RisksAndMitigants risksAndMitigants, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

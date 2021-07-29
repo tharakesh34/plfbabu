@@ -132,7 +132,7 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 			tableType = "_Temp";
 		}
 
-		if (scoringType.isNew()) {
+		if (scoringType.isNewRecord()) {
 			getScoringTypeDAO().save(scoringType, tableType);
 		} else {
 			getScoringTypeDAO().update(scoringType, tableType);
@@ -338,7 +338,7 @@ public class ScoringTypeServiceImpl extends GenericService<ScoringType> implemen
 		valueParm[0] = scoringType.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_ScoType") + ":" + valueParm[0];
 
-		if (scoringType.isNew()) { // for New record or new record into work flow
+		if (scoringType.isNewRecord()) { // for New record or new record into work flow
 
 			if (!scoringType.isWorkflow()) {// With out Work flow only new records  
 				if (befScoringType != null) { // Record Already Exists in the table then error  

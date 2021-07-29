@@ -383,7 +383,7 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		personalDiscussionListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -729,7 +729,7 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 	public void doShowDialog(PersonalDiscussion personalDiscussion) {
 		logger.debug(Literal.ENTERING);
 
-		if (personalDiscussion.isNew()) {
+		if (personalDiscussion.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1019,7 +1019,7 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 		doSetValidation();
 		doWriteComponentsToBean(pd);
 
-		isNew = pd.isNew();
+		isNew = pd.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1087,7 +1087,7 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(PersonalDiscussion personalDiscussion, String tranType) {
+	protected boolean doProcess(PersonalDiscussion personalDiscussion, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

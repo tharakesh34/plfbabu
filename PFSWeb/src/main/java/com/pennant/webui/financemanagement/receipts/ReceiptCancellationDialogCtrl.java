@@ -574,7 +574,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		this.receiptCancellationListCtrl.search();
 	}
 
@@ -1557,7 +1557,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	 * @return
 	 * @throws Exception
 	 */
-	private boolean doProcess(FinReceiptHeader aReceiptHeader, String tranType) throws Exception {
+	protected boolean doProcess(FinReceiptHeader aReceiptHeader, String tranType) throws Exception {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader;

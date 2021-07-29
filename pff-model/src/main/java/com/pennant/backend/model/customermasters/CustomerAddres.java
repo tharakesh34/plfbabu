@@ -63,7 +63,7 @@ import javax.xml.bind.annotation.XmlType;
 		"custAddrLine2", "custPOBox", "custAddrCity", "custAddrProvince", "custAddrCountry", "custAddrZIP",
 		"custAddrFrom", "typeOfResidence", "custAddrPriority" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
+public class CustomerAddres extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -3309604710675073740L;
 
 	private long custAddressId = Long.MIN_VALUE;
@@ -100,7 +100,6 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	@XmlElement(name = "pinCode")
 	private String custAddrZIP;
 	private String custAddrPhone;
-	private boolean newRecord = false;
 	private String lovValue;
 	private CustomerAddres befImage;
 	private LoggedInUser userDetails;
@@ -308,14 +307,6 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 
 	public void setCustAddrFrom(Timestamp custAddrFrom) {
 		this.custAddrFrom = custAddrFrom;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -25,9 +25,6 @@ public class FinTypeKnockOff extends AbstractWorkflowEntity {
 	private int knockOffOrder = 0;
 	private String knockOffCode;
 	private int keyvalue = 0;
-
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private List<FinTypeKnockOff> loanTypeKonckOffMapping = new ArrayList<FinTypeKnockOff>();
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
@@ -64,14 +61,6 @@ public class FinTypeKnockOff extends AbstractWorkflowEntity {
 
 	public void setBefImage(FinTypeKnockOff befImage) {
 		this.befImage = befImage;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	private static final long serialVersionUID = 1L;

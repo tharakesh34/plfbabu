@@ -87,8 +87,6 @@ public class BankInfoDetail extends AbstractWorkflowEntity {
 	private BigDecimal oDCCLimit = BigDecimal.ZERO;
 
 	private int keyValue = 0;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private BankInfoDetail befImage;
 	private LoggedInUser userDetails;
@@ -219,14 +217,6 @@ public class BankInfoDetail extends AbstractWorkflowEntity {
 
 	public void setoDCCLimit(BigDecimal oDCCLimit) {
 		this.oDCCLimit = oDCCLimit;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

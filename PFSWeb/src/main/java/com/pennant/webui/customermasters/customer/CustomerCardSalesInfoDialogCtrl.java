@@ -690,7 +690,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 			CustCardSalesDetails custCardMonthSalesData = (CustCardSalesDetails) listitem.getAttribute("data");
 
 			boolean isNew = false;
-			isNew = custCardMonthSalesData.isNew();
+			isNew = custCardMonthSalesData.isNewRecord();
 			String tranType = "";
 
 			if (custCardMonthSalesData.isNewRecord()) {
@@ -1309,7 +1309,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aCustCardSales.isNew();
+		isNew = aCustCardSales.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {

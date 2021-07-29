@@ -125,7 +125,7 @@ public class ScheduleMethodServiceImpl extends GenericService<ScheduleMethod> im
 			tableType = "_Temp";
 		}
 
-		if (scheduleMethod.isNew()) {
+		if (scheduleMethod.isNewRecord()) {
 			getScheduleMethodDAO().save(scheduleMethod, tableType);
 		} else {
 			getScheduleMethodDAO().update(scheduleMethod, tableType);
@@ -337,7 +337,7 @@ public class ScheduleMethodServiceImpl extends GenericService<ScheduleMethod> im
 		valueParm[0] = scheduleMethod.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_SchdMethod") + ":" + valueParm[0];
 
-		if (scheduleMethod.isNew()) { // for New record or new record into work flow
+		if (scheduleMethod.isNewRecord()) { // for New record or new record into work flow
 
 			if (!scheduleMethod.isWorkflow()) {// With out Work flow only new records
 				if (befScheduleMethod != null) { // Record Already Exists in the table then error

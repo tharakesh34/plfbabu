@@ -11,31 +11,14 @@
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  GSTInvoiceTxn.java	                                                * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  18-04-2018    														*
- *                                                                  						*
- * Modified Date    :  18-04-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : GSTInvoiceTxn.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 18-04-2018 * * Modified Date :
+ * 18-04-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 18-04-2018       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 18-04-2018 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.model.finance;
@@ -45,9 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.pennant.backend.model.Entity;
-
-public class GSTInvoiceTxn implements Entity {
+public class GSTInvoiceTxn {
 
 	private long invoiceId = Long.MIN_VALUE;
 	private long transactionID = 0;
@@ -285,11 +266,6 @@ public class GSTInvoiceTxn implements Entity {
 
 	public void setId(long invoiceId) {
 		this.invoiceId = invoiceId;
-	}
-
-	@Override
-	public boolean isNew() {
-		return false;
 	}
 
 	public String getCustomerStateName() {

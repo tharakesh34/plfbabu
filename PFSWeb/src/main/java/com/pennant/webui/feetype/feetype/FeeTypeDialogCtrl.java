@@ -381,7 +381,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (feeType.isNew()) {
+		if (feeType.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -565,7 +565,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.taxApplicable.setChecked(aFeeType.isTaxApplicable());
 		fillComboBox(this.taxComponent, String.valueOf(aFeeType.getTaxComponent()), listTaxComponent, "");
 
-		if (aFeeType.isNew() || (aFeeType.getRecordType() != null ? aFeeType.getRecordType() : "")
+		if (aFeeType.isNewRecord() || (aFeeType.getRecordType() != null ? aFeeType.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
@@ -857,7 +857,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
 
-	private void refreshList() {
+	protected void refreshList() {
 		feeTypeListCtrl.search();
 	}
 
@@ -1092,7 +1092,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aFeeType.isNew();
+		isNew = aFeeType.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1141,7 +1141,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	 * 
 	 */
 
-	private boolean doProcess(FeeType aFeeType, String tranType) {
+	protected boolean doProcess(FeeType aFeeType, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		aFeeType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());

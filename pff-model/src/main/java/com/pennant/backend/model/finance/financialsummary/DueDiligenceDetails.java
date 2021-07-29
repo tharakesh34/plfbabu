@@ -67,7 +67,6 @@ public class DueDiligenceDetails extends AbstractWorkflowEntity {
 
 	private String Status;
 	private String Remarks;
-	private boolean newRecord = false;
 	private DueDiligenceDetails befImage;
 	private LoggedInUser userDetails;
 	private String finReference;
@@ -90,14 +89,6 @@ public class DueDiligenceDetails extends AbstractWorkflowEntity {
 		Set<String> excludeFields = new HashSet<String>();
 
 		return excludeFields;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public long getId() {

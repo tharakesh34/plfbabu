@@ -69,7 +69,6 @@ public class NPAProvisionDetail extends AbstractWorkflowEntity {
 	private BigDecimal regUnSecPerc = BigDecimal.ZERO;
 	private String entity;
 	private String finType;
-	private boolean newRecord = false;
 	private String lovValue;
 	private NPAProvisionDetail befImage;
 	private LoggedInUser userDetails;
@@ -108,7 +107,7 @@ public class NPAProvisionDetail extends AbstractWorkflowEntity {
 		entity.setRegUnSecPerc(this.regUnSecPerc);
 		entity.setEntity(this.entity);
 		entity.setFinType(this.finType);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setLovValue(this.lovValue);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
@@ -221,14 +220,6 @@ public class NPAProvisionDetail extends AbstractWorkflowEntity {
 
 	public void setRegUnSecPerc(BigDecimal regUnSecPerc) {
 		this.regUnSecPerc = regUnSecPerc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

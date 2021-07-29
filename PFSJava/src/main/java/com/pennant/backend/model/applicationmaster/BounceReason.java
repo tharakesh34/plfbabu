@@ -65,7 +65,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlType(propOrder = { "bounceID", "bounceCode", "reasonType", "category", "reason", "action", "feeID", "returnID",
 		"active" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BounceReason extends AbstractWorkflowEntity implements Entity {
+public class BounceReason extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long bounceID = 0;
@@ -81,8 +81,6 @@ public class BounceReason extends AbstractWorkflowEntity implements Entity {
 	private String returnCode;
 	private String lovdesccategory;
 	private boolean active;
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -175,14 +173,6 @@ public class BounceReason extends AbstractWorkflowEntity implements Entity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

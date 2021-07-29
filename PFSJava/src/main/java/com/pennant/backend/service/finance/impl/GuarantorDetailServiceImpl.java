@@ -133,7 +133,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 			tableType = "_Temp";
 		}
 
-		if (guarantorDetail.isNew()) {
+		if (guarantorDetail.isNewRecord()) {
 			guarantorDetail.setId(getGuarantorDetailDAO().save(guarantorDetail, tableType));
 			auditHeader.getAuditDetail().setModelData(guarantorDetail);
 			auditHeader.setAuditReference(String.valueOf(guarantorDetail.getGuarantorId()));
@@ -441,7 +441,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 		valueParm[0] = String.valueOf(guarantorDetail.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_GuarantorId") + ":" + valueParm[0];
 
-		if (guarantorDetail.isNew()) { // for New record or new record into work flow
+		if (guarantorDetail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!guarantorDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befGuarantorDetail != null) { // Record Already Exists in the table then error  
@@ -652,7 +652,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_GuarantorCIF") + ":" + valueParm[1];
 
-		if (guarantorDetail.isNew()) { // for New record or new record into work flow
+		if (guarantorDetail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!guarantorDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befGuarantorDetail != null) { // Record Already Exists in the table then error  
@@ -919,7 +919,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 			} else if (guarantorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (guarantorDetail.isNew()) {
+				} else if (guarantorDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

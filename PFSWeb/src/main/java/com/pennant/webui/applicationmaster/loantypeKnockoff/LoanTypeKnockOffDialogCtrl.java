@@ -473,7 +473,7 @@ public class LoanTypeKnockOffDialogCtrl extends GFCBaseCtrl<FinTypeKnockOff> {
 		}
 	}
 
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		loanTypeKnockOffListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -941,7 +941,7 @@ public class LoanTypeKnockOffDialogCtrl extends GFCBaseCtrl<FinTypeKnockOff> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(FinTypeKnockOff aKnockOff, String tranType) {
+	protected boolean doProcess(FinTypeKnockOff aKnockOff, String tranType) {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;

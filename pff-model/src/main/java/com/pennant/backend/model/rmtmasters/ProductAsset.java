@@ -51,7 +51,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>ProductAsset table</b>.<br>
  *
  */
-public class ProductAsset extends AbstractWorkflowEntity implements Entity {
+public class ProductAsset extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -2377149322561552420L;
 	private long assetID = Long.MIN_VALUE;
@@ -59,7 +59,6 @@ public class ProductAsset extends AbstractWorkflowEntity implements Entity {
 	private String assetCode;
 	private String assetDesc;
 	private boolean assetIsActive;
-	private boolean newRecord = false;
 	private String lovValue;
 	private ProductAsset befImage;
 	private LoggedInUser userDetails;
@@ -127,14 +126,6 @@ public class ProductAsset extends AbstractWorkflowEntity implements Entity {
 
 	public void setAssetIsActive(boolean assetIsActive) {
 		this.assetIsActive = assetIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

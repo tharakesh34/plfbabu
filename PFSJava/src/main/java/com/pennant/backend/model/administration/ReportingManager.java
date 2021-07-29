@@ -24,7 +24,6 @@ public class ReportingManager extends AbstractWorkflowEntity {
 	private String branchDesc;
 	private Long reportingTo;
 	private String reportingToUserName;
-	private boolean newRecord = false;
 	private String lovValue;
 	private ReportingManager befImage;
 	private LoggedInUser userDetails;
@@ -155,14 +154,6 @@ public class ReportingManager extends AbstractWorkflowEntity {
 
 	public void setReportingToUserName(String reportingToUserName) {
 		this.reportingToUserName = reportingToUserName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

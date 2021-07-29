@@ -149,7 +149,7 @@ public class LegalExpensesServiceImpl extends GenericService<LegalExpenses> impl
 			tableType = "_Temp";
 		}
 
-		if (legalExpenses.isNew()) {
+		if (legalExpenses.isNewRecord()) {
 			getLegalExpensesDAO().save(legalExpenses, tableType);
 		} else {
 			getLegalExpensesDAO().update(legalExpenses, tableType);
@@ -363,7 +363,7 @@ public class LegalExpensesServiceImpl extends GenericService<LegalExpenses> impl
 		valueParm[0] = legalExpenses.getFinReference();
 		errParm[0] = PennantJavaUtil.getLabel("label_ExpReference") + ":" + valueParm[0];
 
-		if (legalExpenses.isNew()) { // for New record or new record into work flow
+		if (legalExpenses.isNewRecord()) { // for New record or new record into work flow
 
 			if (!legalExpenses.isWorkflow()) {// With out Work flow only new records  
 				if (befLegalExpenses != null) { // Record Already Exists in the table then error  

@@ -135,7 +135,7 @@ public class AccountEngineEventServiceImpl extends GenericService<AccountEngineE
 			tableType = "_Temp";
 		}
 
-		if (accountEngineEvent.isNew()) {
+		if (accountEngineEvent.isNewRecord()) {
 			accountEngineEvent.setId(getAccountEngineEventDAO().save(accountEngineEvent, tableType));
 			auditHeader.getAuditDetail().setModelData(accountEngineEvent);
 			auditHeader.setAuditReference(accountEngineEvent.getAEEventCode());
@@ -345,7 +345,7 @@ public class AccountEngineEventServiceImpl extends GenericService<AccountEngineE
 		valueParm[0] = accountEngineEvent.getAEEventCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_AEEventCode") + ":" + valueParm[0];
 
-		if (accountEngineEvent.isNew()) { // for New record or new record into
+		if (accountEngineEvent.isNewRecord()) { // for New record or new record into
 												// work flow
 
 			if (!accountEngineEvent.isWorkflow()) {// With out Work flow only

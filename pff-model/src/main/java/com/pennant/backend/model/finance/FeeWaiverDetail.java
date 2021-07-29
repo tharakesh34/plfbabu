@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FeeWaiverDetail.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-11-2017   														*
- *                                                                  						*
- * Modified Date    :      														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FeeWaiverDetail.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-11-2017 * * Modified Date
+ * : * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-11-2017        Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-11-2017 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.model.finance;
 
@@ -48,13 +30,12 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>FeeWaiverDetails table</b>.<br>
@@ -62,7 +43,7 @@ import javax.xml.bind.annotation.XmlElement;
  */
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class FeeWaiverDetail extends AbstractWorkflowEntity implements Entity {
+public class FeeWaiverDetail extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -6234931333270161797L;
 
@@ -79,7 +60,6 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal balanceAmount = BigDecimal.ZERO;
 	@XmlElement(name = "waiverAmount")
 	private BigDecimal currWaiverAmount = BigDecimal.ZERO;
-	private boolean newRecord = false;
 	private String lovValue;
 	private FeeWaiverDetail befImage;
 	private LoggedInUser userDetails;
@@ -250,14 +230,6 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity implements Entity {
 		this.currWaiverAmount = currWaiverAmount;
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -282,17 +254,10 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity implements Entity {
 		this.userDetails = userDetails;
 	}
 
-	@Override
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
-	@Override
 	public long getId() {
 		return this.waiverDetailId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.waiverDetailId = id;
 	}

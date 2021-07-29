@@ -2154,7 +2154,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @return
 	 * @throws InterruptedException
 	 */
-	private boolean doProcess(FinReceiptHeader aReceiptHeader, String tranType) throws InterruptedException {
+	protected boolean doProcess(FinReceiptHeader aReceiptHeader, String tranType) throws InterruptedException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader;

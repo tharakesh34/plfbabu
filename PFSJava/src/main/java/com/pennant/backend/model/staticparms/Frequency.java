@@ -57,7 +57,6 @@ public class Frequency extends AbstractWorkflowEntity {
 	private String frqCode;
 	private String frqDesc;
 	private boolean frqIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private Frequency befImage;
 	private LoggedInUser userDetails;
@@ -109,14 +108,6 @@ public class Frequency extends AbstractWorkflowEntity {
 
 	public void setFrqIsActive(boolean frqIsActive) {
 		this.frqIsActive = frqIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

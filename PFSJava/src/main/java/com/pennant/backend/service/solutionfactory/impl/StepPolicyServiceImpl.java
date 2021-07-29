@@ -154,7 +154,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 			tableType = "_Temp";
 		}
 
-		if (stepPolicyHeader.isNew()) {
+		if (stepPolicyHeader.isNewRecord()) {
 			stepPolicyHeader.setId(getStepPolicyHeaderDAO().save(stepPolicyHeader, tableType));
 			auditHeader.getAuditDetail().setModelData(stepPolicyHeader);
 			auditHeader.setAuditReference(stepPolicyHeader.getId());
@@ -412,7 +412,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 
 		errParm[0] = PennantJavaUtil.getLabel("label_PolicyCode") + ":" + valueParm[0];
 
-		if (stepPolicyHeader.isNew()) { // for New record or new record into work
+		if (stepPolicyHeader.isNewRecord()) { // for New record or new record into work
 			// flow
 
 			if (!stepPolicyHeader.isWorkflow()) {// With out Work flow only new
@@ -730,7 +730,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 			} else if (stepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (stepPolicyDetail.isNew()) {
+				} else if (stepPolicyDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -797,7 +797,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		errParm[0] = PennantJavaUtil.getLabel("label_PolicyCode") + ":" + valueParm[0] + ","
 				+ PennantJavaUtil.getLabel("label_StepNumber") + ":" + valueParm[1];
 
-		if (stepPolicyDetail.isNew()) { // for New record or new record into work flow
+		if (stepPolicyDetail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!stepPolicyDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befStepPolicyDetail != null) { // Record Already Exists in the table then error  

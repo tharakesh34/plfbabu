@@ -812,7 +812,7 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 			} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(finOCRDetail.getRecordType())) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (finOCRDetail.isNew()) {
+				} else if (finOCRDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -1001,7 +1001,7 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 			} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(finOCRCapture.getRecordType())) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (finOCRCapture.isNew()) {
+				} else if (finOCRCapture.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

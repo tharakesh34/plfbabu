@@ -123,7 +123,7 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (empStsCode.isNew()) {
+		if (empStsCode.isNewRecord()) {
 			empStsCode.setId(getEmpStsCodeDAO().save(empStsCode, tableType));
 			auditHeader.getAuditDetail().setModelData(empStsCode);
 			auditHeader.setAuditReference(empStsCode.getId());
@@ -320,7 +320,7 @@ public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements
 		EmpStsCode empStsCode = (EmpStsCode) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (empStsCode.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(empStsCode.getRecordType())
+		if (empStsCode.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(empStsCode.getRecordType())
 				&& empStsCodeDAO.isDuplicateKey(empStsCode.getEmpStsCode(),
 						empStsCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

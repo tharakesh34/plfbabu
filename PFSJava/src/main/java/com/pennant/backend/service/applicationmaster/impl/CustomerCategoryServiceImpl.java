@@ -127,7 +127,7 @@ public class CustomerCategoryServiceImpl extends GenericService<CustomerCategory
 			tableType = "_Temp";
 		}
 
-		if (customerCategory.isNew()) {
+		if (customerCategory.isNewRecord()) {
 			customerCategory.setId(getCustomerCategoryDAO().save(customerCategory, tableType));
 			auditHeader.getAuditDetail().setModelData(customerCategory);
 			auditHeader.setAuditReference(customerCategory.getCustCtgCode());
@@ -337,7 +337,7 @@ public class CustomerCategoryServiceImpl extends GenericService<CustomerCategory
 		valueParm[0] = customerCategory.getCustCtgCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_CustCtg_Code") + ":" + valueParm[0];
 
-		if (customerCategory.isNew()) { // for New record or new record into
+		if (customerCategory.isNewRecord()) { // for New record or new record into
 											// work flow
 
 			if (!customerCategory.isWorkflow()) {// With out Work flow only new

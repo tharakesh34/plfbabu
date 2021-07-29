@@ -91,7 +91,7 @@ public class ExtendedFieldDetailsValidation {
 		}
 		errParm[1] = PennantJavaUtil.getLabel("label_SeqNo") + ":" + valueParm[1];
 
-		if (extendedFieldRender.isNew()) { // for New record or new record into work flow
+		if (extendedFieldRender.isNewRecord()) { // for New record or new record into work flow
 
 			if (!extendedFieldRender.isWorkflow()) {// With out Work flow only new records  
 				if (befExtendedFieldRender != null) { // Record Already Exists in the table then error  

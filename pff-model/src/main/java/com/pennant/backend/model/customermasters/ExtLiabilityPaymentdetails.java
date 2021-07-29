@@ -18,7 +18,6 @@ public class ExtLiabilityPaymentdetails extends AbstractWorkflowEntity {
 	private int emiClearedDay;
 	private ExtLiabilityPaymentdetails befImage;
 	private LoggedInUser userDetails;
-	private boolean newRecord = false;
 	private String lovValue;
 	private int keyValue = 0;
 	@XmlElement
@@ -34,14 +33,6 @@ public class ExtLiabilityPaymentdetails extends AbstractWorkflowEntity {
 
 	public boolean isNew() {
 		return isNewRecord();
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public long getId() {

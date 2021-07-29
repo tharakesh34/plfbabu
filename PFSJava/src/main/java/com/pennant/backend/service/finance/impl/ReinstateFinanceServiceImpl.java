@@ -167,7 +167,7 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 			tableType = "_Temp";
 		}
 
-		if (reinstateFinance.isNew()) {
+		if (reinstateFinance.isNewRecord()) {
 			reinstateFinance.setFinReference(getReinstateFinanceDAO().save(reinstateFinance, tableType));
 			auditHeader.getAuditDetail().setModelData(reinstateFinance);
 			auditHeader.setAuditReference(reinstateFinance.getFinReference());
@@ -397,7 +397,7 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 
 		errParm[0] = PennantJavaUtil.getLabel("label_ReinstateFinance_FinReference") + ":" + valueParm[0];
 
-		if (reinstateFinance.isNew()) { // for New record or new record into work flow
+		if (reinstateFinance.isNewRecord()) { // for New record or new record into work flow
 
 			if (!reinstateFinance.isWorkflow()) {// With out Work flow only new records
 				/*

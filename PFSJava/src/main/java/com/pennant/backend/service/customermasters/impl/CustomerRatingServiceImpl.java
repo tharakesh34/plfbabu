@@ -129,7 +129,7 @@ public class CustomerRatingServiceImpl extends GenericService<CustomerRating> im
 			tableType = "_Temp";
 		}
 
-		if (customerRating.isNew()) {
+		if (customerRating.isNewRecord()) {
 			customerRating.setId(getCustomerRatingDAO().save(customerRating, tableType));
 			auditHeader.getAuditDetail().setModelData(customerRating);
 		} else {

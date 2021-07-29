@@ -459,7 +459,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aProduct.isNew()) {
+		if (aProduct.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -557,7 +557,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getProductListCtrl().search();
 	}
 
@@ -707,7 +707,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aProduct.isNew();
+		isNew = aProduct.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -754,7 +754,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	 * @param tranType
 	 * @return
 	 */
-	private boolean doProcess(Product aProduct, String tranType) {
+	protected boolean doProcess(Product aProduct, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

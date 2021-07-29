@@ -125,7 +125,7 @@ public class ExpenseTypeServiceImpl extends GenericService<ExpenseType> implemen
 			tableType = "_Temp";
 		}
 
-		if (expenseType.isNew()) {
+		if (expenseType.isNewRecord()) {
 			expenseType.setId(getExpenseTypeDAO().save(expenseType, tableType));
 			auditHeader.getAuditDetail().setModelData(expenseType);
 			auditHeader.setAuditReference(String.valueOf(expenseType.getExpenseTypeId()));
@@ -326,7 +326,7 @@ public class ExpenseTypeServiceImpl extends GenericService<ExpenseType> implemen
 		String[] parameters = new String[1];
 		parameters[0] = PennantJavaUtil.getLabel("label_ExpenceTypeCode") + ": " + expenseType.getExpenseTypeCode();
 		// Check the unique keys.
-		if (expenseType.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(expenseType.getRecordType())
+		if (expenseType.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(expenseType.getRecordType())
 				&& expenseTypeDAO.isDuplicateKey(expenseType.getExpenseTypeId(), expenseType.getExpenseTypeCode(),
 						expenseType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 

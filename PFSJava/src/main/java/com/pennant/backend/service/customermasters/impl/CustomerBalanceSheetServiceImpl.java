@@ -127,7 +127,7 @@ public class CustomerBalanceSheetServiceImpl extends GenericService<CustomerBala
 			tableType = "_Temp";
 		}
 
-		if (customerBalanceSheet.isNew()) {
+		if (customerBalanceSheet.isNewRecord()) {
 			customerBalanceSheet.setId(getCustomerBalanceSheetDAO().save(customerBalanceSheet, tableType));
 			auditHeader.getAuditDetail().setModelData(customerBalanceSheet);
 		} else {

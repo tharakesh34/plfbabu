@@ -120,7 +120,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 	public void doShowDialog(DealerGroup dealerGroup) {
 		logger.debug(Literal.LEAVING);
 
-		if (dealerGroup.isNew()) {
+		if (dealerGroup.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -263,7 +263,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 		this.dealerCode.setValue(aDealerGroup.getDealerCode());
 		this.txtchannel.setValue(aDealerGroup.getChannel());
 		this.active.setChecked(aDealerGroup.isActive());
-		if (dealerGroup.isNew() || (dealerGroup.getRecordType() != null ? dealerGroup.getRecordType() : "")
+		if (dealerGroup.isNewRecord() || (dealerGroup.getRecordType() != null ? dealerGroup.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
@@ -474,7 +474,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		dealerGroupListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -561,7 +561,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 		doSetValidation();
 		doWriteComponentsToBean(aDealerGroup);
 
-		isNew = aDealerGroup.isNew();
+		isNew = aDealerGroup.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -608,7 +608,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(DealerGroup aDealerGroup, String tranType) {
+	protected boolean doProcess(DealerGroup aDealerGroup, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

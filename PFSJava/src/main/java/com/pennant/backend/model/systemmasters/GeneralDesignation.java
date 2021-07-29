@@ -58,7 +58,6 @@ public class GeneralDesignation extends AbstractWorkflowEntity {
 
 	private String genDesignation;
 	private String genDesgDesc;
-	private boolean newRecord;
 	private String lovValue;
 	private GeneralDesignation befImage;
 	private LoggedInUser userDetails;
@@ -103,14 +102,6 @@ public class GeneralDesignation extends AbstractWorkflowEntity {
 
 	public void setGenDesgDesc(String genDesgDesc) {
 		this.genDesgDesc = genDesgDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

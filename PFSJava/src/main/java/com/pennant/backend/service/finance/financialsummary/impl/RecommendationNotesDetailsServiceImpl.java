@@ -110,7 +110,7 @@ public class RecommendationNotesDetailsServiceImpl extends GenericService<Recomm
 			tableType = "_Temp";
 		}
 
-		if (recommendationNotesDetails.isNew()) {
+		if (recommendationNotesDetails.isNewRecord()) {
 			recommendationNotesDetails
 					.setId(getRecommendationNotesDetailsDAO().save(recommendationNotesDetails, tableType));
 			auditHeader.getAuditDetail().setModelData(recommendationNotesDetails);
@@ -138,7 +138,7 @@ public class RecommendationNotesDetailsServiceImpl extends GenericService<Recomm
 			recommendationNotes.setRecordStatus(financeMain.getRecordStatus());
 			recommendationNotes.setWorkflowId(financeMain.getWorkflowId());
 			recommendationNotes.setFinReference(financeMain.getFinReference());
-			if (recommendationNotes.isNew()) {
+			if (recommendationNotes.isNewRecord()) {
 				getRecommendationNotesDetailsDAO().save(recommendationNotes, tableType);
 				auditDetails.add(getAuditDetails(recommendationNotes, 1, PennantConstants.TRAN_ADD));
 			} else if (StringUtils.trimToEmpty(recommendationNotes.getRecordType())
@@ -324,7 +324,7 @@ public class RecommendationNotesDetailsServiceImpl extends GenericService<Recomm
 					(PennantConstants.RECORD_TYPE_DEL))) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (recommendationNotesDetails.isNew()) {
+				} else if (recommendationNotesDetails.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

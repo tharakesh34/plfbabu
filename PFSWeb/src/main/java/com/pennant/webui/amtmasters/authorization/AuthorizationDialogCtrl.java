@@ -626,7 +626,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getAuthorizationListCtrl().search();
 	}
 
@@ -711,7 +711,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
 		// Do data level validations here
-		isNew = aAuthorization.isNew();
+		isNew = aAuthorization.isNewRecord();
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
@@ -756,7 +756,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Authorization aAuthorization, String tranType) {
+	protected boolean doProcess(Authorization aAuthorization, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		aAuthorization.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());

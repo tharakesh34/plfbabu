@@ -603,7 +603,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 		}
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (afinOCRCapture.isNew()) {
+		if (afinOCRCapture.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			afinOCRCapture.setReceiptDate(appDate);
 			doEdit();
@@ -785,7 +785,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 		doSetValidation();
 		doWriteComponentsToBean(afinOCRCapture);
 
-		isNew = afinOCRCapture.isNew();
+		isNew = afinOCRCapture.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {

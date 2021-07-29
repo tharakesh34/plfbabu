@@ -7,20 +7,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.audit.AuditDetail;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 @XmlType(propOrder = { "custId", "gstNumber", "frequencytype", "customerGSTDetailslist" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class CustomerGST extends AbstractWorkflowEntity implements Entity {
+public class CustomerGST extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 2527200144895549992L;
 	@XmlElementWrapper(name = "id")
 	@XmlElement
@@ -38,8 +37,6 @@ public class CustomerGST extends AbstractWorkflowEntity implements Entity {
 	@XmlElementWrapper(name = "customerGSTDetailslist")
 	@XmlElement
 	private List<CustomerGSTDetails> customerGSTDetailslist = new ArrayList<CustomerGSTDetails>();
-
-	private boolean newRecord;
 	private String lovValue;
 	private CustomerGST befImage;
 	private LoggedInUser userDetails;
@@ -87,14 +84,6 @@ public class CustomerGST extends AbstractWorkflowEntity implements Entity {
 		this.customerGSTDetailslist = customerGSTDetailslist;
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -117,11 +106,6 @@ public class CustomerGST extends AbstractWorkflowEntity implements Entity {
 
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
-	}
-
-	@Override
-	public boolean isNew() {
-		return isNewRecord();
 	}
 
 	public Set<String> getExcludeFields() {

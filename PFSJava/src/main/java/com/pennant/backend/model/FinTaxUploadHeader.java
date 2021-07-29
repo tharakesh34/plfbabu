@@ -15,7 +15,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * @author durgaprasad.g
  * 
  */
-public class FinTaxUploadHeader extends AbstractWorkflowEntity implements Entity {
+public class FinTaxUploadHeader extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long batchReference;
@@ -23,7 +23,6 @@ public class FinTaxUploadHeader extends AbstractWorkflowEntity implements Entity
 	private long numberofRecords;
 	private Date batchCreatedDate;
 	private Date batchApprovedDate;
-	private boolean newRecord = false;
 	private String status;
 	private FinTaxUploadHeader befImage;
 	private LoggedInUser userDetails;
@@ -43,7 +42,6 @@ public class FinTaxUploadHeader extends AbstractWorkflowEntity implements Entity
 		return batchReference;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.batchReference = id;
 	}
@@ -70,14 +68,6 @@ public class FinTaxUploadHeader extends AbstractWorkflowEntity implements Entity
 
 	public void setBatchApprovedDate(Date batchApprovedDate) {
 		this.batchApprovedDate = batchApprovedDate;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public boolean isNew() {

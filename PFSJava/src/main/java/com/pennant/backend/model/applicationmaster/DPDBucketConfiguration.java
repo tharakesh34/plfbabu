@@ -54,7 +54,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>DPDBucketConfiguration table</b>.<br>
  *
  */
-public class DPDBucketConfiguration extends AbstractWorkflowEntity implements Entity {
+public class DPDBucketConfiguration extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long configID = Long.MIN_VALUE;
@@ -65,7 +65,6 @@ public class DPDBucketConfiguration extends AbstractWorkflowEntity implements En
 	private String bucketCode;
 	private int dueDays;
 	private boolean suspendProfit;
-	private boolean newRecord = false;
 	private String lovValue;
 	private DPDBucketConfiguration befImage;
 	private LoggedInUser userDetails;
@@ -153,14 +152,6 @@ public class DPDBucketConfiguration extends AbstractWorkflowEntity implements En
 
 	public void setSuspendProfit(boolean suspendProfit) {
 		this.suspendProfit = suspendProfit;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

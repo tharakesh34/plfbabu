@@ -159,7 +159,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 	public void doShowDialog(Organization organization) {
 		logger.debug(Literal.ENTERING);
 
-		if (organization.isNew()) {
+		if (organization.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -522,7 +522,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		organizationListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -565,7 +565,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 		doSetValidation();
 		doWriteComponentsToBean(org);
 
-		isNew = org.isNew();
+		isNew = org.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -601,7 +601,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private boolean doProcess(Organization organization, String tranType) {
+	protected boolean doProcess(Organization organization, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

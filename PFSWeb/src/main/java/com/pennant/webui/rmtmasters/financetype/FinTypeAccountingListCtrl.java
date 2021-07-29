@@ -388,7 +388,7 @@ public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
 		finTypeAccNew.setNewRecord(true);
 		finTypeAccNew.setFinType(this.finType);
 		finTypeAccNew.setModuleId(moduleId);
-		boolean isNew = finTypeAccNew.isNew();
+		boolean isNew = finTypeAccNew.isNewRecord();
 		if (isWorkFlowEnabled()) {
 			if (StringUtils.isBlank(finTypeAccNew.getRecordType())) {
 				finTypeAccNew.setVersion(finTypeAccNew.getVersion() + 1);

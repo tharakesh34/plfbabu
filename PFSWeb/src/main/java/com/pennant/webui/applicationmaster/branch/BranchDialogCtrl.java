@@ -540,7 +540,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			this.cluster.setDescription(aBranch.getClusterName());
 		}
 		this.recordStatus.setValue(aBranch.getRecordStatus());
-		if (aBranch.isNew() || (aBranch.getRecordType() != null ? aBranch.getRecordType() : "")
+		if (aBranch.isNewRecord() || (aBranch.getRecordType() != null ? aBranch.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.branchIsActive.setChecked(true);
 			this.branchIsActive.setDisabled(true);
@@ -550,7 +550,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		sBranchCity = this.branchCity.getValue();
 		sPinCode = this.pinCode.getValue();
 
-		if (!aBranch.isNew()) {
+		if (!aBranch.isNewRecord()) {
 			Filter[] filterProvince = new Filter[1];
 			filterProvince[0] = new Filter("CPCountry", sBranchCountry, Filter.OP_EQUAL);
 			this.branchProvince.setFilters(filterProvince);
@@ -817,7 +817,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aBranch.isNew()) {
+		if (aBranch.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1103,7 +1103,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getBranchListCtrl().search();
 	}
 
@@ -1349,7 +1349,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aBranch.isNew();
+		isNew = aBranch.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1412,7 +1412,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Branch aBranch, String tranType) {
+	protected boolean doProcess(Branch aBranch, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

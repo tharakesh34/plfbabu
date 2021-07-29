@@ -203,7 +203,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 			receiptHeader.setLinkedTranId(linkedTranId);
 		}
 		receiptHeader.setRcdMaintainSts("R");
-		if (receiptHeader.isNew()) {
+		if (receiptHeader.isNewRecord()) {
 			// Save Receipt Header
 			receiptID = finReceiptHeaderDAO.save(receiptHeader, tableType);
 
@@ -682,7 +682,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		valueParm[0] = String.valueOf(finReceiptHeader.getReceiptID());
 		errParm[0] = PennantJavaUtil.getLabel("label_ReceiptId") + ":" + valueParm[0];
 
-		if (finReceiptHeader.isNew()) { // for New record or new record into work flow
+		if (finReceiptHeader.isNewRecord()) { // for New record or new record into work flow
 
 			if (!finReceiptHeader.isWorkflow()) {// With out Work flow only new
 				// records

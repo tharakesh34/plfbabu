@@ -44,7 +44,6 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 	private String watchListRule;
 	private boolean override;
 	private String overrideUser;
-	private boolean newRecord;
 	private String lovValue;
 	private BlackListCustomers befImage;
 	private LoggedInUser userDetails;
@@ -464,14 +463,6 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 
 	public void setNewBlacklistRecord(boolean newBlacklistRecord) {
 		this.newBlacklistRecord = newBlacklistRecord;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

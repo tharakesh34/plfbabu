@@ -109,7 +109,7 @@ public class RisksAndMitigantsServiceImpl extends GenericService<RisksAndMitigan
 			tableType = "_Temp";
 		}
 
-		if (risksAndMitigants.isNew()) {
+		if (risksAndMitigants.isNewRecord()) {
 			risksAndMitigants.setId(getRisksAndMitigantsDAO().save(risksAndMitigants, tableType));
 			auditHeader.getAuditDetail().setModelData(risksAndMitigants);
 		} else {
@@ -136,7 +136,7 @@ public class RisksAndMitigantsServiceImpl extends GenericService<RisksAndMitigan
 			risksAndMitigants.setRecordStatus(financeMain.getRecordStatus());
 			risksAndMitigants.setWorkflowId(financeMain.getWorkflowId());
 			risksAndMitigants.setFinReference(financeMain.getFinReference());
-			if (risksAndMitigants.isNew()) {
+			if (risksAndMitigants.isNewRecord()) {
 				getRisksAndMitigantsDAO().save(risksAndMitigants, tableType);
 				auditDetails.add(getAuditDetails(risksAndMitigants, 1, PennantConstants.TRAN_ADD));
 			} else if (StringUtils.trimToEmpty(risksAndMitigants.getRecordType())
@@ -320,7 +320,7 @@ public class RisksAndMitigantsServiceImpl extends GenericService<RisksAndMitigan
 					(PennantConstants.RECORD_TYPE_DEL))) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (risksAndMitigants.isNew()) {
+				} else if (risksAndMitigants.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

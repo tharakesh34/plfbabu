@@ -140,7 +140,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			tableType = "_Temp";
 		}
 
-		if (feePostings.isNew()) {
+		if (feePostings.isNewRecord()) {
 			getFeePostingsDAO().save(feePostings, tableType);
 		} else {
 			getFeePostingsDAO().update(feePostings, tableType);
@@ -197,7 +197,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		valueParm[0] = String.valueOf(feePostings.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_ID") + ":" + valueParm[0];
 
-		if (feePostings.isNew()) { // for New record or new record into work flow
+		if (feePostings.isNewRecord()) { // for New record or new record into work flow
 			if (!feePostings.isWorkflow()) {// With out Work flow only new records
 				if (befFeePostings != null) { // Record Already Exists in the table then error
 					auditDetail

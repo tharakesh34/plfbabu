@@ -310,7 +310,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 		}
 		this.recordStatus.setValue(aIndustry.getRecordStatus());
 
-		if (aIndustry.isNew() || (aIndustry.getRecordType() != null ? aIndustry.getRecordType() : "")
+		if (aIndustry.isNewRecord() || (aIndustry.getRecordType() != null ? aIndustry.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.industryIsActive.setChecked(true);
 			this.industryIsActive.setDisabled(true);
@@ -377,7 +377,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aIndustry.isNew()) {
+		if (aIndustry.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -604,7 +604,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aIndustry.isNew();
+		isNew = aIndustry.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -654,7 +654,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Industry aIndustry, String tranType) {
+	protected boolean doProcess(Industry aIndustry, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -867,7 +867,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getIndustryListCtrl().search();
 	}
 

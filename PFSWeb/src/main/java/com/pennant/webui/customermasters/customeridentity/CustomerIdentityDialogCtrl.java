@@ -459,7 +459,7 @@ public class CustomerIdentityDialogCtrl extends GFCBaseCtrl<CustomerIdentity> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aCustomerIdentity.isNew()) {
+		if (aCustomerIdentity.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -583,7 +583,7 @@ public class CustomerIdentityDialogCtrl extends GFCBaseCtrl<CustomerIdentity> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCustomerIdentityListCtrl().search();
 
 	}
@@ -739,7 +739,7 @@ public class CustomerIdentityDialogCtrl extends GFCBaseCtrl<CustomerIdentity> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aCustomerIdentity.isNew();
+		isNew = aCustomerIdentity.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -789,7 +789,7 @@ public class CustomerIdentityDialogCtrl extends GFCBaseCtrl<CustomerIdentity> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CustomerIdentity aCustomerIdentity, String tranType) {
+	protected boolean doProcess(CustomerIdentity aCustomerIdentity, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

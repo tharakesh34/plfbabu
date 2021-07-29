@@ -32,7 +32,6 @@ public class FinOCRCapture extends AbstractWorkflowEntity implements Comparable<
 	private String remarks;
 	@XmlElement
 	private Date receiptDate;
-	private boolean newRecord = false;
 	private FinOCRCapture befImage;
 	private LoggedInUser userDetails;
 	private Long documentRef = Long.MIN_VALUE;
@@ -94,14 +93,6 @@ public class FinOCRCapture extends AbstractWorkflowEntity implements Comparable<
 
 	public boolean isNew() {
 		return isNewRecord();
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public FinOCRCapture getBefImage() {

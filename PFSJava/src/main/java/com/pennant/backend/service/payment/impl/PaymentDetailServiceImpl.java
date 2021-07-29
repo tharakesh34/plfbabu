@@ -190,7 +190,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (paymentDetail.isNew()) {
+		if (paymentDetail.isNewRecord()) {
 			paymentDetail.setId(Long.parseLong(getPaymentDetailDAO().save(paymentDetail, tableType)));
 			auditHeader.getAuditDetail().setModelData(paymentDetail);
 			auditHeader.setAuditReference(String.valueOf(paymentDetail.getPaymentDetailId()));
@@ -495,7 +495,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			} else if (paymentDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (paymentDetail.isNew()) {
+				} else if (paymentDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

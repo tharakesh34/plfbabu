@@ -272,7 +272,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.downSizingAmt.focus();
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aFinanceMain.isNew()) {
+		if (aFinanceMain.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 		} else {
@@ -650,7 +650,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		String tranType = "";
-		isNew = aFinanceMain.isNew();
+		isNew = aFinanceMain.isNewRecord();
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
 			if (StringUtils.isBlank(aFinanceMain.getRecordType())) {
@@ -698,7 +698,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getFinanceSelectCtrl().doSearch(true);
 	}
 
@@ -716,7 +716,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * @throws InterfaceException
 	 * 
 	 */
-	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws Exception {
+	protected boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;

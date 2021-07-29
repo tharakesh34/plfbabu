@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  Assignment.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-09-2018    														*
- *                                                                  						*
- * Modified Date    :  12-09-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : Assignment.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-09-2018 * * Modified Date :
+ * 12-09-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-09-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-09-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.model.applicationmaster;
 
 import java.math.BigDecimal;
@@ -51,14 +33,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import javax.xml.bind.annotation.XmlTransient;
-
-public class Assignment extends AbstractWorkflowEntity implements Entity {
+public class Assignment extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
@@ -74,8 +55,6 @@ public class Assignment extends AbstractWorkflowEntity implements Entity {
 	private String opexFeeType;
 	private boolean active;
 	@XmlTransient
-	private boolean newRecord = false;
-	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private Assignment befImage;
@@ -85,10 +64,6 @@ public class Assignment extends AbstractWorkflowEntity implements Entity {
 	private AssignmentRate assignmentRate;
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private String entityCode;
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public Assignment() {
 		super();
@@ -219,14 +194,6 @@ public class Assignment extends AbstractWorkflowEntity implements Entity {
 
 	public void setAssignmentRate(AssignmentRate assignmentRate) {
 		this.assignmentRate = assignmentRate;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public Map<String, List<AuditDetail>> getAuditDetailMap() {

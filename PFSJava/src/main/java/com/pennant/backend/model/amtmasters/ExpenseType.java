@@ -57,7 +57,6 @@ public class ExpenseType extends AbstractWorkflowEntity {
 	private boolean amortReq;
 	private boolean taxApplicable;
 	private boolean active;
-	private boolean newRecord;
 	private String lovValue;
 	private ExpenseType befImage;
 	private LoggedInUser userDetails;
@@ -131,14 +130,6 @@ public class ExpenseType extends AbstractWorkflowEntity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -524,7 +524,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (finReceiptHeader.isNew()) {
+		if (finReceiptHeader.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 		} else {

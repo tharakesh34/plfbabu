@@ -611,7 +611,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 
 		getCustomerEMailListCtrl().search();
 	}
@@ -804,7 +804,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aCustomerEMail.isNew();
+		isNew = aCustomerEMail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -976,7 +976,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CustomerEMail aCustomerEMail, String tranType) {
+	protected boolean doProcess(CustomerEMail aCustomerEMail, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;

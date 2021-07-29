@@ -134,7 +134,7 @@ public class RelationshipOfficerServiceImpl extends GenericService<RelationshipO
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (relationshipOfficer.isNew()) {
+		if (relationshipOfficer.isNewRecord()) {
 			getRelationshipOfficerDAO().save(relationshipOfficer, tableType);
 		} else {
 			getRelationshipOfficerDAO().update(relationshipOfficer, tableType);
@@ -339,7 +339,7 @@ public class RelationshipOfficerServiceImpl extends GenericService<RelationshipO
 		RelationshipOfficer relationshipOfficer = (RelationshipOfficer) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (relationshipOfficer.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(relationshipOfficer.getRecordType())
+		if (relationshipOfficer.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(relationshipOfficer.getRecordType())
 				&& relationshipOfficerDAO.isDuplicateKey(relationshipOfficer.getROfficerCode(),
 						relationshipOfficer.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

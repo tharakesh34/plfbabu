@@ -301,7 +301,7 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 		this.sRIsActive.setChecked(aSplRateCode.isSRIsActive());
 		this.recordStatus.setValue(aSplRateCode.getRecordStatus());
 
-		if (aSplRateCode.isNew() || (aSplRateCode.getRecordType() != null ? aSplRateCode.getRecordType() : "")
+		if (aSplRateCode.isNewRecord() || (aSplRateCode.getRecordType() != null ? aSplRateCode.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.sRIsActive.setChecked(true);
 			this.sRIsActive.setDisabled(true);
@@ -363,7 +363,7 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aSplRateCode.isNew()) {
+		if (aSplRateCode.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -452,7 +452,7 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getSplRateCodeListCtrl().search();
 	}
 
@@ -584,7 +584,7 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aSplRateCode.isNew();
+		isNew = aSplRateCode.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -632,7 +632,7 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(SplRateCode aSplRateCode, String tranType) {
+	protected boolean doProcess(SplRateCode aSplRateCode, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

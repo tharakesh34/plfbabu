@@ -481,7 +481,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 	public void doShowDialog(LimitStructure aLimitStructure) throws InterruptedException {
 		logger.debug("Entering");
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aLimitStructure.isNew()) {
+		if (aLimitStructure.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -621,7 +621,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 			btnRemove.setLabel(LimitConstants.LIMIT_STRUCTURE_DIALOG_BTN_REMOVE_LABEL);
 			btnRemove.addForward("onClick", self, "onClickRemove");
 			btnRemove.setParent(lc);
-			if (!limitStructureDetail.isNew())
+			if (!limitStructureDetail.isNewRecord())
 				readOnlyComponent(
 						isReadOnly("LimitStructureDetailDialog_Delete") || active.isDisabled() || !(StringUtils
 								.equals(PennantConstants.RECORD_TYPE_NEW, limitStructureDetail.getRecordType())),
@@ -849,10 +849,10 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 				.getAttribute("Data");
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record");
 		int count = getLimitStructureService().limitStructureCheck(getLimitStructure().getStructureCode());
-		if (count == 0 || limitStructureDetails.isNew()) {
+		if (count == 0 || limitStructureDetails.isNewRecord()) {
 			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 				logger.debug("doDelete: Yes");
-				if (!limitStructureDetails.isNew()) {
+				if (!limitStructureDetails.isNewRecord()) {
 					if (limitStructureDetails.getRecordType() != null
 							&& StringUtils.trimToEmpty(limitStructureDetails.getRecordType()).isEmpty()) {
 						limitStructureDetails.setNewRecord(true);
@@ -893,7 +893,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		if (limitStructureDetails.getRecordType() != null
 				&& StringUtils.trimToEmpty(limitStructureDetails.getRecordType()).equals("")) {
 			limitStructureDetails.setVersion(limitStructureDetails.getVersion() + 1);
-			if (limitStructureDetails.isNew()) {
+			if (limitStructureDetails.isNewRecord()) {
 				limitStructureDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			} else {
 				limitStructureDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
@@ -1074,7 +1074,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		setLimitStructureDetailItemsList(structureCodeList);
 		limitGroupslist = getValueLabelsFromGroupMap();
 		doFillListBox();
-		if (getLimitStructure().isNew()) {
+		if (getLimitStructure().isNewRecord()) {
 			this.active.setChecked(true);
 		} else
 			this.active.setChecked(aLimitStructure.isActive());
@@ -1481,7 +1481,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aLimitStructure.isNew();
+		isNew = aLimitStructure.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1519,7 +1519,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 	private void setWorkFlowDetails(LimitStructureDetail aLimitStructureDetail, boolean isDelete) {
 		logger.debug("Entering");
 		boolean isNew = false;
-		isNew = aLimitStructureDetail.isNew();
+		isNew = aLimitStructureDetail.isNewRecord();
 		if (!isDelete) {
 			if (isWorkFlowEnabled()) {
 				if (StringUtils.trimToEmpty(aLimitStructureDetail.getRecordType()).equals("")) {
@@ -1559,13 +1559,13 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 	 * 
 	 */
 
-	private boolean doProcess(LimitStructure aLimitStructure, String tranType) {
+	protected boolean doProcess(LimitStructure aLimitStructure, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		aLimitStructure.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aLimitStructure.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aLimitStructure.setUserDetails(getUserWorkspace().getLoggedInUser());
-		if (aLimitStructure.isNew()) {
+		if (aLimitStructure.isNewRecord()) {
 			aLimitStructure.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 			aLimitStructure.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 		}
@@ -1692,7 +1692,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 	/**
 	 * Method for Refreshing List after Save/Delete a Record
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getLimitStructureListCtrl().search();
 
 	}

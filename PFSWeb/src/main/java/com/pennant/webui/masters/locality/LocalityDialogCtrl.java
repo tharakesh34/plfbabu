@@ -279,7 +279,7 @@ public class LocalityDialogCtrl extends GFCBaseCtrl<Locality> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		localityListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -381,7 +381,7 @@ public class LocalityDialogCtrl extends GFCBaseCtrl<Locality> {
 	public void doShowDialog(Locality locality) {
 		logger.debug(Literal.LEAVING);
 
-		if (locality.isNew()) {
+		if (locality.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -600,7 +600,7 @@ public class LocalityDialogCtrl extends GFCBaseCtrl<Locality> {
 		doSetValidation();
 		doWriteComponentsToBean(aLocality);
 
-		isNew = aLocality.isNew();
+		isNew = aLocality.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -647,7 +647,7 @@ public class LocalityDialogCtrl extends GFCBaseCtrl<Locality> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Locality aLocality, String tranType) {
+	protected boolean doProcess(Locality aLocality, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

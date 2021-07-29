@@ -54,7 +54,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>Mandate table</b>.<br>
  *
  */
-public class MandateStatusUpdate implements Entity {
+public class MandateStatusUpdate {
 	private long fileID = Long.MIN_VALUE;
 	private String fileName;
 	private long userId;

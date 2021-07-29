@@ -10,15 +10,13 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-public class NegativeReasoncodes extends AbstractWorkflowEntity implements Entity {
+public class NegativeReasoncodes extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
 	private String blackListCIF;
 	private Long reasonId;
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -62,14 +60,6 @@ public class NegativeReasoncodes extends AbstractWorkflowEntity implements Entit
 
 	public void setReasonId(Long reasonId) {
 		this.reasonId = reasonId;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

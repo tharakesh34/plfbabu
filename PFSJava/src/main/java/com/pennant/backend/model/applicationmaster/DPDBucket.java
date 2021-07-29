@@ -60,15 +60,13 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 @XmlType(propOrder = { "bucketID", "bucketCode", "bucketDesc", "active" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DPDBucket extends AbstractWorkflowEntity implements Entity {
+public class DPDBucket extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long bucketID = Long.MIN_VALUE;
 	private String bucketCode;
 	private String bucketDesc;
 	private boolean active;
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -132,14 +130,6 @@ public class DPDBucket extends AbstractWorkflowEntity implements Entity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

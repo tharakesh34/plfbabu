@@ -134,7 +134,7 @@ public class MandateCheckDigitServiceImpl extends GenericService<MandateCheckDig
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (mandateCheckDigit.isNew()) {
+		if (mandateCheckDigit.isNewRecord()) {
 			getMandateCheckDigitDAO().save(mandateCheckDigit, tableType);
 		} else {
 			getMandateCheckDigitDAO().update(mandateCheckDigit, tableType);
@@ -339,7 +339,7 @@ public class MandateCheckDigitServiceImpl extends GenericService<MandateCheckDig
 		MandateCheckDigit checkDigit = (MandateCheckDigit) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (checkDigit.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(checkDigit.getRecordType())
+		if (checkDigit.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(checkDigit.getRecordType())
 				&& mandateCheckDigitDAO.isDuplicateKey(checkDigit.getCheckDigitValue(),
 						checkDigit.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

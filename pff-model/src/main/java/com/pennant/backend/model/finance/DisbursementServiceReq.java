@@ -4,20 +4,19 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+
 @XmlType(propOrder = { "finReference", "linkedTranId", "finStartDate", "maturityDate", "finCurrAssetValue",
 		"finAdvancePayments", "postingList", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class DisbursementServiceReq extends AbstractWorkflowEntity implements Entity {
+public class DisbursementServiceReq extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -8968957488386061313L;
 
@@ -104,17 +103,10 @@ public class DisbursementServiceReq extends AbstractWorkflowEntity implements En
 		this.returnStatus = returnStatus;
 	}
 
-	@Override
-	public boolean isNew() {
-		return false;
-	}
-
-	@Override
 	public long getId() {
 		return 0;
 	}
 
-	@Override
 	public void setId(long id) {
 
 	}

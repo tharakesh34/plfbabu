@@ -105,7 +105,7 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 			tableType = "_TEMP";
 		}
 
-		if (finTypeAccounting.isNew()) {
+		if (finTypeAccounting.isNewRecord()) {
 			finTypeAccounting.setId(getFinTypeAccountingDAO().save(finTypeAccounting, tableType));
 			auditHeader.getAuditDetail().setModelData(finTypeAccounting);
 			auditHeader.setAuditReference(String.valueOf(finTypeAccounting.getFinType()));
@@ -302,7 +302,7 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 		errParm[0] = PennantJavaUtil.getLabel("label_FinTypeAccountingDialog_Event.value") + ":" + valueParm[0] + ","
 				+ PennantJavaUtil.getLabel("label_FinTypeAccountingDialog_AccountSetCode.value") + ":" + valueParm[1];
 
-		if (finTypeAccounting.isNew()) { // for New record or new record into work flow
+		if (finTypeAccounting.isNewRecord()) { // for New record or new record into work flow
 
 			if (!finTypeAccounting.isWorkflow()) {// With out Work flow only new records  
 				if (befFinTypeAccounting != null) { // Record Already Exists in the table then error  
@@ -465,7 +465,7 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 			} else if (finTypeAccounting.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (finTypeAccounting.isNew()) {
+				} else if (finTypeAccounting.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -578,7 +578,7 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 		valueParm[1] = finTypeAccounting.getLovDescEventAccountingName();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinTypeAccountingDialog_Event.value") + ":" + valueParm[0] + ","
 				+ PennantJavaUtil.getLabel("label_FinTypeAccountingDialog_AccountSetCode.value") + ":" + valueParm[1];
-		if (finTypeAccounting.isNew()) { // for New record or new record into work flow
+		if (finTypeAccounting.isNewRecord()) { // for New record or new record into work flow
 			if (!finTypeAccounting.isWorkflow()) {// With out Work flow only new records  
 				if (befFinTypeAccounting != null) { // Record Already Exists in the table then error  
 					auditDetail

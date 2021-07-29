@@ -77,7 +77,7 @@ public class CustomerEmploymentDetailValidation {
 				+ ":" + valueParm[0] + " and ";
 		errParm[1] = PennantJavaUtil.getLabel("label_CustEmpName") + "-" + valueParm[1];
 
-		if (customerEmploymentDetail.isNew()) { // for New record or new record into work flow
+		if (customerEmploymentDetail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!customerEmploymentDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befCustomerEmploymentDetail != null) { // Record Already Exists in the table then error  

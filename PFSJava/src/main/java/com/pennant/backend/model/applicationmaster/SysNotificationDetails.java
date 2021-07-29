@@ -52,7 +52,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>ChequePurpose table</b>.<br>
  *
  */
-public class SysNotificationDetails extends AbstractWorkflowEntity implements Entity {
+public class SysNotificationDetails extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long sysNotificationId = Long.MIN_VALUE;
@@ -67,8 +67,7 @@ public class SysNotificationDetails extends AbstractWorkflowEntity implements En
 	private String finCurODAmtInStr;
 	private String finPurpose;
 
-	//Common Fields
-	private boolean newRecord = false;
+	//Common Field
 	private SysNotificationDetails befImage;
 	private LoggedInUser userDetails;
 
@@ -91,14 +90,6 @@ public class SysNotificationDetails extends AbstractWorkflowEntity implements En
 
 	public void setId(long id) {
 		this.sysNotificationId = id;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public SysNotificationDetails getBefImage() {

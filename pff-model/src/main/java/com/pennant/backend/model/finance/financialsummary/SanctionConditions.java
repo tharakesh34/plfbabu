@@ -66,7 +66,6 @@ public class SanctionConditions extends AbstractWorkflowEntity {
 	private long seqNo;
 	private String sanctionCondition;
 	private String Status;
-	private boolean newRecord = false;
 	private SanctionConditions befImage;
 	private LoggedInUser userDetails;
 	private String finReference;
@@ -88,14 +87,6 @@ public class SanctionConditions extends AbstractWorkflowEntity {
 		Set<String> excludeFields = new HashSet<String>();
 
 		return excludeFields;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public long getId() {

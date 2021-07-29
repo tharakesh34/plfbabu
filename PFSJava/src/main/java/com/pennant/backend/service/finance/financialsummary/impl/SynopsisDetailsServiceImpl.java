@@ -120,7 +120,7 @@ public class SynopsisDetailsServiceImpl extends GenericService<SynopsisDetails> 
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (synopsisDetails.isNew()) {
+		if (synopsisDetails.isNewRecord()) {
 			getSynopsisDetailsDAO().save(synopsisDetails, tableType);
 		} else {
 			getSynopsisDetailsDAO().update(synopsisDetails, tableType);
@@ -397,7 +397,7 @@ public class SynopsisDetailsServiceImpl extends GenericService<SynopsisDetails> 
 		valueParm[0] = String.valueOf(synopsisDetails.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (synopsisDetails.isNew()) { // for New record or new record into work flow
+		if (synopsisDetails.isNewRecord()) { // for New record or new record into work flow
 
 			if (!synopsisDetails.isWorkflow()) {// With out Work flow only new
 													// records

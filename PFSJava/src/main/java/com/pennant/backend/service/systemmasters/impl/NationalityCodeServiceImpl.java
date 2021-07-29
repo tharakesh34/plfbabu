@@ -123,7 +123,7 @@ public class NationalityCodeServiceImpl extends GenericService<NationalityCode> 
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (nationalityCode.isNew()) {
+		if (nationalityCode.isNewRecord()) {
 			nationalityCode.setId(getNationalityCodeDAO().save(nationalityCode, tableType));
 			auditHeader.getAuditDetail().setModelData(nationalityCode);
 			auditHeader.setAuditReference(nationalityCode.getId());
@@ -321,7 +321,7 @@ public class NationalityCodeServiceImpl extends GenericService<NationalityCode> 
 		String code = nationalityCode.getNationalityCode();
 
 		// Check the unique keys.
-		if (nationalityCode.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(nationalityCode.getRecordType())
+		if (nationalityCode.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(nationalityCode.getRecordType())
 				&& nationalityCodeDAO.isDuplicateKey(code,
 						nationalityCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

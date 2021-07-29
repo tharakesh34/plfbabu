@@ -35,7 +35,6 @@ public class FinOption extends AbstractWorkflowEntity {
 	private String customerTemplateName;
 	private String userTemplateCode;
 	private String customerTemplateCode;
-	private boolean newRecord = false;
 	private String lovValue;
 	private FinOption befImage;
 	private LoggedInUser userDetails;
@@ -112,14 +111,6 @@ public class FinOption extends AbstractWorkflowEntity {
 
 	public void setNextOptionDate(Date nextOptionDate) {
 		this.nextOptionDate = nextOptionDate;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

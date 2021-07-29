@@ -296,7 +296,7 @@ public class AssignmentPartnerDialogCtrl extends GFCBaseCtrl<AssignmentPartner> 
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		assignmentPartnerListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -340,7 +340,7 @@ public class AssignmentPartnerDialogCtrl extends GFCBaseCtrl<AssignmentPartner> 
 					StringUtils.trimToEmpty(aAssignmentPartner.getGLCodeName()));
 		}
 
-		if (aAssignmentPartner.isNew()
+		if (aAssignmentPartner.isNewRecord()
 				|| StringUtils.equals(aAssignmentPartner.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
@@ -431,7 +431,7 @@ public class AssignmentPartnerDialogCtrl extends GFCBaseCtrl<AssignmentPartner> 
 	public void doShowDialog(AssignmentPartner assignmentPartner) {
 		logger.debug(Literal.LEAVING);
 
-		if (assignmentPartner.isNew()) {
+		if (assignmentPartner.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -676,7 +676,7 @@ public class AssignmentPartnerDialogCtrl extends GFCBaseCtrl<AssignmentPartner> 
 		doSetValidation();
 		doWriteComponentsToBean(aAssignmentPartner);
 
-		isNew = aAssignmentPartner.isNew();
+		isNew = aAssignmentPartner.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -724,7 +724,7 @@ public class AssignmentPartnerDialogCtrl extends GFCBaseCtrl<AssignmentPartner> 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(AssignmentPartner aAssignmentPartner, String tranType) {
+	protected boolean doProcess(AssignmentPartner aAssignmentPartner, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

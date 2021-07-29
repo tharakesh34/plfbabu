@@ -113,7 +113,7 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 			tableType = "_Temp";
 		}
 
-		if (reportConfiguration.isNew()) {
+		if (reportConfiguration.isNewRecord()) {
 			reportConfiguration.setId(getReportConfigurationDAO().save(reportConfiguration, tableType));
 			auditHeader.getAuditDetail().setModelData(reportConfiguration);
 			auditHeader.setAuditReference(String.valueOf(reportConfiguration.getReportID()));
@@ -355,7 +355,7 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 		valueParm[0] = String.valueOf(reportConfiguration.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_ReportId") + ":" + valueParm[0];
 
-		if (reportConfiguration.isNew()) { // for New record or new record into work flow
+		if (reportConfiguration.isNewRecord()) { // for New record or new record into work flow
 
 			if (!reportConfiguration.isWorkflow()) {// With out Work flow only new records
 				if (befReportConfiguration != null) { // Record Already Exists in the table then error
@@ -565,7 +565,7 @@ public class ReportConfigurationServiceImpl extends GenericService<ReportConfigu
 			} else if (reportFilterFields.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (reportFilterFields.isNew()) {
+				} else if (reportFilterFields.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

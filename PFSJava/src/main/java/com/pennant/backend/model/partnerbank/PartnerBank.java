@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PartnerBank.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  09-03-2017    														*
- *                                                                  						*
- * Modified Date    :  09-03-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PartnerBank.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 09-03-2017 * * Modified Date :
+ * 09-03-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 09-03-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 09-03-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -51,7 +33,6 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -59,7 +40,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>PartnerBank table</b>.<br>
  *
  */
-public class PartnerBank extends AbstractWorkflowEntity implements Entity {
+public class PartnerBank extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long partnerBankId = Long.MIN_VALUE;
@@ -83,8 +64,6 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity {
 	private boolean alwDisb;
 	private boolean alwPayment;
 	private boolean alwReceipt;
-
-	private boolean newRecord;
 	private String lovValue;
 	private PartnerBank befImage;
 	private LoggedInUser userDetails;
@@ -212,14 +191,6 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity {
 		this.accountNo = accountNo;
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
 	@XmlTransient
 	public String getLovValue() {
 		return lovValue;
@@ -286,13 +257,10 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity {
 		this.acTypeName = acTypeName;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.partnerBankId = id;
-
 	}
 
-	@Override
 	public long getId() {
 		return partnerBankId;
 	}

@@ -404,7 +404,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		AccountMapping accountMapping = new AccountMapping();
 
 		for (AccountMapping accMapping : accountMappingList) {
-			isNew = accMapping.isNew();
+			isNew = accMapping.isNewRecord();
 
 			if (isWorkFlowEnabled()) {
 				tranType = PennantConstants.TRAN_WF;
@@ -529,7 +529,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		accountMappingListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -611,7 +611,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	public void doShowDialog(AccountMapping accountMapping) {
 		logger.debug(Literal.LEAVING);
 
-		if (accountMapping.isNew()) {
+		if (accountMapping.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			this.finType.focus();
 		} else {
@@ -914,7 +914,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(AccountMapping aAccountMapping, String tranType) {
+	protected boolean doProcess(AccountMapping aAccountMapping, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

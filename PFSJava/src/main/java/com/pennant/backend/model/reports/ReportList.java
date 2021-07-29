@@ -66,7 +66,6 @@ public class ReportList extends AbstractWorkflowEntity {
 	private String reportFileName;
 	private String reportHeading;
 	private String moduleType;
-	private boolean newRecord;
 	private String lovValue;
 	private ReportList befImage;
 	private LoggedInUser userDetails;
@@ -202,14 +201,6 @@ public class ReportList extends AbstractWorkflowEntity {
 
 	public void setFormatReq(boolean formatReq) {
 		this.formatReq = formatReq;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -451,7 +451,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		listcell.setParent(listitem);
 
 		listcell = new Cell();
-		if (option.isNew()) {
+		if (option.isNewRecord()) {
 			Button deleteButton = new Button();
 
 			deleteButton.setLabel(Labels.getLabel("label_Finoption_Delete.value"));
@@ -836,7 +836,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 				wve.add(we);
 			}
 
-			boolean isNew = option.isNew();
+			boolean isNew = option.isNewRecord();
 			if (isWorkFlowEnabled()) {
 				if (StringUtils.isBlank(option.getRecordType())) {
 					option.setVersion(option.getVersion() + 1);
@@ -1191,7 +1191,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		setFinInsturctionDetails(aFinMaintainInstruction);
 
 		boolean isNew;
-		isNew = aFinMaintainInstruction.isNew();
+		isNew = aFinMaintainInstruction.isNewRecord();
 		String tranType = null;
 
 		if (isWorkFlowEnabled()) {
@@ -1258,7 +1258,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		logger.debug("Leaving");
 	}
 
-	private boolean doProcess(FinMaintainInstruction aFinMaintainInstruction, String tranType) {
+	protected boolean doProcess(FinMaintainInstruction aFinMaintainInstruction, String tranType) {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;
@@ -1337,7 +1337,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		return processCompleted;
 	}
 
-	private void refreshList() {
+	protected void refreshList() {
 		final JdbcSearchObject<FinanceMain> soFinanceMain = financeSelectCtrl.getSearchObj(true);
 		financeSelectCtrl.getPagingFinanceList().setActivePage(0);
 		financeSelectCtrl.getPagedListWrapper().setSearchObject(soFinanceMain);

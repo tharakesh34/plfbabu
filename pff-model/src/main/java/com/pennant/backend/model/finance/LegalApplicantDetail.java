@@ -46,7 +46,7 @@ import javax.xml.bind.annotation.XmlType;
 		"guarantorIDType", "guarantorIDNumber", "addrHNbr", "flatNbr", "addrStreet", "addrLine1", "addrLine2", "POBox",
 		"addrCountry", "addrProvince", "addrCity", "addrZIP", "guarantorProofName" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class LegalApplicantDetail extends AbstractWorkflowEntity implements Entity {
+public class LegalApplicantDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long guarantorId = Long.MIN_VALUE;
@@ -112,8 +112,6 @@ public class LegalApplicantDetail extends AbstractWorkflowEntity implements Enti
 	private FinanceExposure sumPrimaryDetails = null;
 	private FinanceExposure sumSecondaryDetails = null;
 	private FinanceExposure sumGurantorDetails = null;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private LegalApplicantDetail befImage;
 	private LoggedInUser userDetails;
@@ -269,14 +267,6 @@ public class LegalApplicantDetail extends AbstractWorkflowEntity implements Enti
 
 	public void setGuarantorProofName(String guarantorProofName) {
 		this.guarantorProofName = guarantorProofName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

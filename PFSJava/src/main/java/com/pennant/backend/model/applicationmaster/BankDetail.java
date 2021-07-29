@@ -73,7 +73,6 @@ public class BankDetail extends AbstractWorkflowEntity implements java.io.Serial
 	private boolean active;
 	private int accNoLength;
 	private int minAccNoLength;
-	private boolean newRecord;
 	private String lovValue;
 	private BankDetail befImage;
 	private LoggedInUser userDetails;
@@ -135,14 +134,6 @@ public class BankDetail extends AbstractWorkflowEntity implements java.io.Serial
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

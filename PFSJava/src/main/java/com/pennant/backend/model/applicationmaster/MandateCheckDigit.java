@@ -59,7 +59,6 @@ public class MandateCheckDigit extends AbstractWorkflowEntity {
 	private int checkDigitValue;
 	private String lookUpValue;
 	private boolean active;
-	private boolean newRecord = false;
 	private String lovValue;
 	private MandateCheckDigit befImage;
 	private LoggedInUser userDetails;
@@ -112,14 +111,6 @@ public class MandateCheckDigit extends AbstractWorkflowEntity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -126,7 +126,7 @@ public class CustomerNotesTypeServiceImpl extends GenericService<CustomerNotesTy
 			tableType = "_Temp";
 		}
 
-		if (customerNotesType.isNew()) {
+		if (customerNotesType.isNewRecord()) {
 			customerNotesType.setId(getCustomerNotesTypeDAO().save(customerNotesType, tableType));
 			auditHeader.getAuditDetail().setModelData(customerNotesType);
 			auditHeader.setAuditReference(customerNotesType.getId());
@@ -331,7 +331,7 @@ public class CustomerNotesTypeServiceImpl extends GenericService<CustomerNotesTy
 		valueParm[0] = customerNotesType.getCustNotesTypeCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_CustNotesTypeCode") + ":" + valueParm[0];
 
-		if (customerNotesType.isNew()) { // for New record or new record into
+		if (customerNotesType.isNewRecord()) { // for New record or new record into
 												// work flow
 
 			if (!customerNotesType.isWorkflow()) {// With out Work flow only new

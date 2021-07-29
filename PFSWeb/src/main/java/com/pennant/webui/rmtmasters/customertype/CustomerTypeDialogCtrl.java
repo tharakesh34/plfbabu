@@ -313,7 +313,7 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 		this.custTypeIsActive.setChecked(aCustomerType.isCustTypeIsActive());
 		this.recordStatus.setValue(aCustomerType.getRecordStatus());
 
-		if (aCustomerType.isNew()
+		if (aCustomerType.isNewRecord()
 				|| StringUtils.equals(aCustomerType.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			this.custTypeIsActive.setChecked(true);
 			this.custTypeIsActive.setDisabled(true);
@@ -390,7 +390,7 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aCustomerType.isNew()) {
+		if (aCustomerType.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -483,7 +483,7 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCustomerTypeListCtrl().search();
 	}
 
@@ -621,7 +621,7 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aCustomerType.isNew();
+		isNew = aCustomerType.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -670,7 +670,7 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CustomerType aCustomerType, String tranType) {
+	protected boolean doProcess(CustomerType aCustomerType, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

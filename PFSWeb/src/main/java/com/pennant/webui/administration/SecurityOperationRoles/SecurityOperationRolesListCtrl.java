@@ -212,7 +212,7 @@ public class SecurityOperationRolesListCtrl extends GFCBaseListCtrl<SecurityOper
 		Map<String, Object> aruments = getDefaultArguments();
 		aruments.put("securityOperation", aSecurityOperation);
 		aruments.put("SecurityOperationRoles", this);
-		aruments.put("newRecord", aSecurityOperation.isNew());
+		aruments.put("newRecord", aSecurityOperation.isNewRecord());
 
 		try {
 			Executions.createComponents(

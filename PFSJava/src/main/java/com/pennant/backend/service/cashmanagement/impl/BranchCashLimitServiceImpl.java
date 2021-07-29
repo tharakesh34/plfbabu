@@ -102,7 +102,7 @@ public class BranchCashLimitServiceImpl extends GenericService<BranchCashLimit> 
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (branchCashLimit.isNew()) {
+		if (branchCashLimit.isNewRecord()) {
 			branchCashLimitDAO.save(branchCashLimit, tableType);
 			if (TableType.MAIN_TAB.equals(tableType)) {
 				addBranchCashDetail(branchCashLimit.getBranchCode());
@@ -353,7 +353,7 @@ public class BranchCashLimitServiceImpl extends GenericService<BranchCashLimit> 
 		BranchCashLimit branchCashLimit = (BranchCashLimit) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (branchCashLimit.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(branchCashLimit.getRecordType())
+		if (branchCashLimit.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(branchCashLimit.getRecordType())
 				&& branchCashLimitDAO.isDuplicateKey(branchCashLimit.getBranchCode(),
 						branchCashLimit.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[3];

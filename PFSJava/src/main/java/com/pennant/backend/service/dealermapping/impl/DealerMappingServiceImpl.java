@@ -38,7 +38,7 @@ public class DealerMappingServiceImpl extends GenericService<DealerMapping> impl
 		if (dealerMapping.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-		if (dealerMapping.isNew()) {
+		if (dealerMapping.isNewRecord()) {
 			dealerMapping.setId(Long.parseLong(dealerMappingDAO.save(dealerMapping, tableType)));
 			auditHeader.getAuditDetail().setModelData(dealerMapping);
 			auditHeader.setAuditReference(String.valueOf(dealerMapping.getId()));
@@ -162,7 +162,7 @@ public class DealerMappingServiceImpl extends GenericService<DealerMapping> impl
 		String code = String.valueOf(dealerMapping.getMerchantName());
 
 		// Check the unique keys.
-		if (dealerMapping.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(dealerMapping.getRecordType())
+		if (dealerMapping.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(dealerMapping.getRecordType())
 				&& dealerMappingDAO.isDuplicateKey(dealerMapping,
 						dealerMapping.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

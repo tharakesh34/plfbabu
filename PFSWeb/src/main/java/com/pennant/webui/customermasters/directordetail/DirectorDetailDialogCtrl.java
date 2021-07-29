@@ -856,7 +856,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aDirectorDetail.isNew()) {
+		if (aDirectorDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1111,7 +1111,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getDirectorDetailListCtrl().search();
 	}
 
@@ -1384,7 +1384,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aDirectorDetail.isNew();
+		isNew = aDirectorDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1538,7 +1538,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(DirectorDetail aDirectorDetail, String tranType) {
+	protected boolean doProcess(DirectorDetail aDirectorDetail, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

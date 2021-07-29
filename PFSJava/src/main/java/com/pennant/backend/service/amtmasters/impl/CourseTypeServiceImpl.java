@@ -122,7 +122,7 @@ public class CourseTypeServiceImpl extends GenericService<CourseType> implements
 			tableType = "_Temp";
 		}
 
-		if (courseType.isNew()) {
+		if (courseType.isNewRecord()) {
 			getCourseTypeDAO().save(courseType, tableType);
 		} else {
 			getCourseTypeDAO().update(courseType, tableType);
@@ -330,7 +330,7 @@ public class CourseTypeServiceImpl extends GenericService<CourseType> implements
 		valueParm[0] = courseType.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_CourseTypeCode") + ":" + valueParm[0];
 
-		if (courseType.isNew()) { // for New record or new record into work flow
+		if (courseType.isNewRecord()) { // for New record or new record into work flow
 
 			if (!courseType.isWorkflow()) {// With out Work flow only new records  
 				if (befCourseType != null) { // Record Already Exists in the table then error  

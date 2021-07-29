@@ -328,7 +328,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 		this.systemDefault.setChecked(aCountry.isSystemDefault());
 		this.recordStatus.setValue(aCountry.getRecordStatus());
 
-		if (aCountry.isNew() || (aCountry.getRecordType() != null ? aCountry.getRecordType() : "")
+		if (aCountry.isNewRecord() || (aCountry.getRecordType() != null ? aCountry.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.countryIsActive.setChecked(true);
 			this.countryIsActive.setDisabled(true);
@@ -410,7 +410,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aCountry.isNew()) {
+		if (aCountry.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -658,7 +658,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aCountry.isNew();
+		isNew = aCountry.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -707,7 +707,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Country aCountry, String tranType) {
+	protected boolean doProcess(Country aCountry, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -918,7 +918,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCountryListCtrl().search();
 	}
 

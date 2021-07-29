@@ -318,7 +318,7 @@ public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> {
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			if (aAccounts.isNew()) {
+			if (aAccounts.isNewRecord()) {
 				Executions.createComponents("/WEB-INF/pages/Account/Accounts/SelectAccountDetailsDialog.zul", null,
 						aruments);
 			} else {

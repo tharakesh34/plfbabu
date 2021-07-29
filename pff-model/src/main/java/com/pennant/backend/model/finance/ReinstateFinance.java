@@ -95,8 +95,6 @@ public class ReinstateFinance extends AbstractWorkflowEntity {
 	private BigDecimal feeChargeAmt = BigDecimal.ZERO;
 	private BigDecimal finRepaymentAmount = BigDecimal.ZERO;
 	private boolean scheduleChange;
-
-	private boolean newRecord;
 	private String lovValue;
 	private ReinstateFinance befImage;
 	private LoggedInUser userDetails;
@@ -337,14 +335,6 @@ public class ReinstateFinance extends AbstractWorkflowEntity {
 
 	public void setLovDescNextTaskId(String lovDescNextTaskId) {
 		this.lovDescNextTaskId = lovDescNextTaskId;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

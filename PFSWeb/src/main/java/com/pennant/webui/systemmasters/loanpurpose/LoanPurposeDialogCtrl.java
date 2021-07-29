@@ -300,7 +300,7 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 				PennantApplicationUtil.formateAmount(aLoanPurpose.getEligibleAmount(), CurrencyUtil.getFormat("")));
 		this.recordStatus.setValue(aLoanPurpose.getRecordStatus());
 
-		if (aLoanPurpose.isNew() || (aLoanPurpose.getRecordType() != null ? aLoanPurpose.getRecordType() : "")
+		if (aLoanPurpose.isNewRecord() || (aLoanPurpose.getRecordType() != null ? aLoanPurpose.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.loanPurposeIsActive.setChecked(true);
 			this.loanPurposeIsActive.setDisabled(true);
@@ -371,7 +371,7 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aLoanPurpose.isNew()) {
+		if (aLoanPurpose.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -597,7 +597,7 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aLoanPurpose.isNew();
+		isNew = aLoanPurpose.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -645,7 +645,7 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(LoanPurpose aLoanPurpose, String tranType) {
+	protected boolean doProcess(LoanPurpose aLoanPurpose, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -853,7 +853,7 @@ public class LoanPurposeDialogCtrl extends GFCBaseCtrl<LoanPurpose> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getLoanPurposeListCtrl().search();
 	}
 

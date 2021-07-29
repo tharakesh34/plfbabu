@@ -333,7 +333,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		instrumentwiseLimitListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -519,7 +519,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	public void doShowDialog(InstrumentwiseLimit instrumentwiseLimit) {
 		logger.debug(Literal.ENTERING);
 
-		if (instrumentwiseLimit.isNew()) {
+		if (instrumentwiseLimit.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -812,7 +812,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 		doSetValidation();
 		doWriteComponentsToBean(aInstrumentwiseLimit);
 
-		isNew = aInstrumentwiseLimit.isNew();
+		isNew = aInstrumentwiseLimit.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -860,7 +860,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(InstrumentwiseLimit aInstrumentwiseLimit, String tranType) {
+	protected boolean doProcess(InstrumentwiseLimit aInstrumentwiseLimit, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

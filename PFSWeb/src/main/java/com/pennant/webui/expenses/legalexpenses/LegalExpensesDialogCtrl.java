@@ -553,7 +553,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 				PennantApplicationUtil.formateAmount(aLegalExpenses.getAmountdue(), PennantConstants.defaultCCYDecPos));
 		this.recoveredAmount.setValue(PennantApplicationUtil.formateAmount(aLegalExpenses.getRecoveredAmount(),
 				PennantConstants.defaultCCYDecPos));
-		if (!aLegalExpenses.isNew()) {
+		if (!aLegalExpenses.isNewRecord()) {
 			recAmount = getrecoveredAmt(aLegalExpenses.getExpReference());
 			if (recAmount.compareTo(BigDecimal.ZERO) > 0) {
 				this.recoveredAmount
@@ -569,7 +569,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 	}
 
 	private void setExpreferenceVisibile(LegalExpenses aLegalExpenses) {
-		if (aLegalExpenses.isNew()) {
+		if (aLegalExpenses.isNewRecord()) {
 			this.bookingDate.setValue(DateUtility.getSysDate());
 			this.hbox_expReference.setVisible(false);
 			this.label_ExpReference.setVisible(false);
@@ -860,7 +860,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getLegalExpensesListCtrl().search();
 	}
 
@@ -956,7 +956,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aLegalExpenses.isNew();
+		isNew = aLegalExpenses.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1007,7 +1007,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 	 * 
 	 */
 
-	private boolean doProcess(LegalExpenses aLegalExpenses, String tranType) {
+	protected boolean doProcess(LegalExpenses aLegalExpenses, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		aLegalExpenses.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());

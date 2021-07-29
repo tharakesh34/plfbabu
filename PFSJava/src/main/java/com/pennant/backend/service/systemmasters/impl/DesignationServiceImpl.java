@@ -122,7 +122,7 @@ public class DesignationServiceImpl extends GenericService<Designation> implemen
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (designation.isNew()) {
+		if (designation.isNewRecord()) {
 			designation.setId(getDesignationDAO().save(designation, tableType));
 			auditHeader.getAuditDetail().setModelData(designation);
 			auditHeader.setAuditReference(designation.getId());
@@ -323,7 +323,7 @@ public class DesignationServiceImpl extends GenericService<Designation> implemen
 		Designation designation = (Designation) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (designation.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(designation.getRecordType())
+		if (designation.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(designation.getRecordType())
 				&& designationDAO.isDuplicateKey(designation.getDesgCode(),
 						designation.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

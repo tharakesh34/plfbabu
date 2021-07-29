@@ -107,7 +107,7 @@ public class CommitmentRateValidation {
 		errParm[0] = PennantJavaUtil.getLabel("label_CmtReference") + " : " + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_CmtRvwFrq") + " : " + valueParm[1];
 
-		if (commitmentRate.isNew()) { // for New record or new record into work flow
+		if (commitmentRate.isNewRecord()) { // for New record or new record into work flow
 
 			if (!commitmentRate.isWorkflow()) {// With out Work flow only new records  
 				if (befCommitmentRate != null) { // Record Already Exists in the table then error  

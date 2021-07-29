@@ -745,7 +745,7 @@ public class QueryDialogCtrl extends GFCBaseCtrl<Query> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getQueryListCtrl().search();
 	}
 
@@ -836,7 +836,7 @@ public class QueryDialogCtrl extends GFCBaseCtrl<Query> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aQuery.isNew();
+		isNew = aQuery.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -887,7 +887,7 @@ public class QueryDialogCtrl extends GFCBaseCtrl<Query> {
 	 * 
 	 */
 
-	private boolean doProcess(Query aQuery, String tranType) {
+	protected boolean doProcess(Query aQuery, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		aQuery.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());

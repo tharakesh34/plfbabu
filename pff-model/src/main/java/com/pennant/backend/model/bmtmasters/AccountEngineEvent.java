@@ -58,7 +58,6 @@ public class AccountEngineEvent extends AbstractWorkflowEntity {
 	private String aEEventCode = null;
 	private String aEEventCodeDesc;
 	private boolean active = false;
-	private boolean newRecord = false;
 	private boolean mandatory = false;
 	private boolean oDApplicable = false;
 	private String lovValue;
@@ -126,14 +125,6 @@ public class AccountEngineEvent extends AbstractWorkflowEntity {
 
 	public void setMandatory(boolean mandatory) {
 		this.mandatory = mandatory;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

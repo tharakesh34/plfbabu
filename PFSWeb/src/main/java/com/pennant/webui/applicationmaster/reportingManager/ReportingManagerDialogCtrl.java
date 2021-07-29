@@ -460,7 +460,7 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 
 		logger.debug(Literal.LEAVING);
@@ -893,7 +893,7 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 		doSetValidation();
 		doWriteComponentsToBean(aReportingManager);
 
-		isNew = aReportingManager.isNew();
+		isNew = aReportingManager.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1054,7 +1054,7 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(ReportingManager aReportingManager, String tranType) {
+	protected boolean doProcess(ReportingManager aReportingManager, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

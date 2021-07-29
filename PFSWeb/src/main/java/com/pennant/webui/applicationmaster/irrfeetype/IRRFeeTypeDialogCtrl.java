@@ -560,7 +560,7 @@ public class IRRFeeTypeDialogCtrl extends GFCBaseCtrl<IRRFeeType> {
 				}
 			}
 			try {
-				if (aIRRFeeType.isNew()) {
+				if (aIRRFeeType.isNewRecord()) {
 					tranType = PennantConstants.TRAN_DEL;
 					AuditHeader auditHeader = newIRRFeeTypeDetailProcess(aIRRFeeType, tranType);
 					auditHeader = ErrorControl.showErrorDetails(this.window_IRRFeeTypeDialog, auditHeader);
@@ -664,7 +664,7 @@ public class IRRFeeTypeDialogCtrl extends GFCBaseCtrl<IRRFeeType> {
 		doSetValidation();
 		doWriteComponentsToBean(aIRRFeeType);
 
-		isNew = aIRRFeeType.isNew();
+		isNew = aIRRFeeType.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -700,7 +700,7 @@ public class IRRFeeTypeDialogCtrl extends GFCBaseCtrl<IRRFeeType> {
 
 		// save it to database
 		try {
-			if (aIRRFeeType.isNew()) {
+			if (aIRRFeeType.isNewRecord()) {
 				AuditHeader auditHeader = newIRRFeeTypeDetailProcess(aIRRFeeType, tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_IRRFeeTypeDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();

@@ -121,8 +121,6 @@ public class ProductOffer extends AbstractWorkflowEntity implements Entity, Seri
 	/* Sec Users */
 	private String ownername;
 
-	private boolean newRecord;
-
 	public ProductOffer() {
 		super();
 	}
@@ -140,14 +138,6 @@ public class ProductOffer extends AbstractWorkflowEntity implements Entity, Seri
 	@Override
 	public void setId(long id) {
 		this.offerId = id;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public long getLeadId() {

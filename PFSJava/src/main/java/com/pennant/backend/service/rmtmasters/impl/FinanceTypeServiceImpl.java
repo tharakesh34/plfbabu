@@ -197,7 +197,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			tableType1 = TableType.TEMP_TAB;
 		}
 
-		if (financeType.isNew()) {
+		if (financeType.isNewRecord()) {
 			financeType.setId(getFinanceTypeDAO().save(financeType, tableType));
 			auditHeader.getAuditDetail().setModelData(financeType);
 			auditHeader.setAuditReference(financeType.getId());
@@ -984,7 +984,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 		errParm[0] = PennantJavaUtil.getLabel("label_FinType") + ":" + valueParm[0];
 
-		if (financeType.isNew()) { // for New record or new record into work
+		if (financeType.isNewRecord()) { // for New record or new record into work
 									// flow
 			if (!financeType.isWorkflow()) {// With out Work flow only new
 											// records
@@ -1463,7 +1463,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			} else if (finTypeVASProducts.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (finTypeVASProducts.isNew()) {
+				} else if (finTypeVASProducts.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -1559,7 +1559,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			} else if (finTypeReceiptModes.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (finTypeReceiptModes.isNew()) {
+				} else if (finTypeReceiptModes.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -2000,7 +2000,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			} else if (irrFinanceType.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (irrFinanceType.isNew()) {
+				} else if (irrFinanceType.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

@@ -126,7 +126,7 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		}
 
-		if (profession.isNew()) {
+		if (profession.isNewRecord()) {
 			profession.setProfessionCode(getProfessionDAO().save(profession, tableType));
 			auditHeader.getAuditDetail().setModelData(profession);
 			auditHeader.setAuditReference(profession.getProfessionCode());
@@ -320,7 +320,7 @@ public class ProfessionServiceImpl extends GenericService<Profession> implements
 		String code = profession.getProfessionCode();
 
 		// Check the unique keys.
-		if (profession.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(profession.getRecordType()) && professionDAO
+		if (profession.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(profession.getRecordType()) && professionDAO
 				.isDuplicateKey(code, profession.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_ProfessionCode") + ": " + code;

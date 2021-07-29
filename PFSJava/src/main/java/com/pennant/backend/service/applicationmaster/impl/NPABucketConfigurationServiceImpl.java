@@ -136,7 +136,7 @@ public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketC
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (nPABucketConfiguration.isNew()) {
+		if (nPABucketConfiguration.isNewRecord()) {
 			nPABucketConfiguration
 					.setId(Long.parseLong(getNPABucketConfigurationDAO().save(nPABucketConfiguration, tableType)));
 			auditHeader.getAuditDetail().setModelData(nPABucketConfiguration);
@@ -354,7 +354,7 @@ public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketC
 		NPABucketConfiguration nPABucketConfiguration = (NPABucketConfiguration) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (nPABucketConfiguration.isNew()
+		if (nPABucketConfiguration.isNewRecord()
 				&& nPABucketConfigurationDAO.isDuplicateKey(nPABucketConfiguration.getConfigID(),
 						nPABucketConfiguration.getProductCode(), nPABucketConfiguration.getBucketID(),
 						nPABucketConfiguration.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {

@@ -1655,7 +1655,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aExtendedFieldDetail.isNew();
+		isNew = aExtendedFieldDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1726,7 +1726,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		logger.debug("Leaving");
 	}
 
-	private boolean doProcess(ExtendedFieldDetail aExtendedFieldDetail, String tranType) {
+	protected boolean doProcess(ExtendedFieldDetail aExtendedFieldDetail, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -1964,7 +1964,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		logger.debug("Leaving");
 	}
 
-	private void refreshList() {
+	protected void refreshList() {
 		getExtendedFieldDetailListCtrl().search();
 	}
 
@@ -2071,7 +2071,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			this.rowMandatory.setVisible(true);
 			this.rowUnique.setVisible(false);
 			this.rowValFromScript.setVisible(false);
-			if (getExtendedFieldDetail().isNew() || (StringUtils.equals(getExtendedFieldDetail().getRecordType(),
+			if (getExtendedFieldDetail().isNewRecord() || (StringUtils.equals(getExtendedFieldDetail().getRecordType(),
 					PennantConstants.RECORD_TYPE_NEW))) {
 				this.fieldLength.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldLength"));
 			} else {

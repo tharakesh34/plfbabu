@@ -63,7 +63,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlType(propOrder = { "id", "fromState", "toState", "taxType", "calcType", "amount", "percentage", "calcOn",
 		"active" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GSTRate extends AbstractWorkflowEntity implements Entity {
+public class GSTRate extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
@@ -77,8 +77,6 @@ public class GSTRate extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal percentage;
 	private String calcOn;
 	private boolean active;
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -176,14 +174,6 @@ public class GSTRate extends AbstractWorkflowEntity implements Entity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

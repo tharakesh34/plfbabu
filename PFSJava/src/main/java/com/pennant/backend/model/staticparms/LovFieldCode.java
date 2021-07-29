@@ -57,7 +57,6 @@ public class LovFieldCode extends AbstractWorkflowEntity {
 	private String fieldCodeType;
 	private boolean fieldEdit;
 	private boolean isActive;
-	private boolean newRecord;
 	private String lovValue;
 	private LovFieldCode befImage;
 	private LoggedInUser userDetails;
@@ -131,14 +130,6 @@ public class LovFieldCode extends AbstractWorkflowEntity {
 
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

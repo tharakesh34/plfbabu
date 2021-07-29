@@ -317,7 +317,7 @@ public class CustomerNotesTypeDialogCtrl extends GFCBaseCtrl<CustomerNotesType> 
 		}
 		this.recordStatus.setValue(aCustomerNotesType.getRecordStatus());
 
-		if (aCustomerNotesType.isNew()
+		if (aCustomerNotesType.isNewRecord()
 				|| (aCustomerNotesType.getRecordType() != null ? aCustomerNotesType.getRecordType() : "")
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.custNotesTypeIsActive.setChecked(true);
@@ -392,7 +392,7 @@ public class CustomerNotesTypeDialogCtrl extends GFCBaseCtrl<CustomerNotesType> 
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aCustomerNotesType.isNew()) {
+		if (aCustomerNotesType.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -627,7 +627,7 @@ public class CustomerNotesTypeDialogCtrl extends GFCBaseCtrl<CustomerNotesType> 
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aCustomerNotesType.isNew();
+		isNew = aCustomerNotesType.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -676,7 +676,7 @@ public class CustomerNotesTypeDialogCtrl extends GFCBaseCtrl<CustomerNotesType> 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CustomerNotesType aCustomerNotesType, String tranType) {
+	protected boolean doProcess(CustomerNotesType aCustomerNotesType, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -901,7 +901,7 @@ public class CustomerNotesTypeDialogCtrl extends GFCBaseCtrl<CustomerNotesType> 
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCustomerNotesTypeListCtrl().search();
 	}
 

@@ -153,7 +153,7 @@ public class AccountsServiceImpl extends GenericService<Accounts> implements Acc
 			tableType = "_Temp";
 		}
 
-		if (accounts.isNew()) {
+		if (accounts.isNewRecord()) {
 			getAccountsDAO().save(accounts, tableType);
 		} else {
 			getAccountsDAO().update(accounts, tableType);
@@ -377,7 +377,7 @@ public class AccountsServiceImpl extends GenericService<Accounts> implements Acc
 		valueParm[0] = accounts.getAccountId();
 		errParm[0] = PennantJavaUtil.getLabel("label_AccountId") + ":" + valueParm[0];
 
-		if (accounts.isNew()) { // for New record or new record into work flow
+		if (accounts.isNewRecord()) { // for New record or new record into work flow
 
 			if (!accounts.isWorkflow()) {// With out Work flow only new records  
 				if (befAcounts != null) { // Record Already Exists in the table then error  

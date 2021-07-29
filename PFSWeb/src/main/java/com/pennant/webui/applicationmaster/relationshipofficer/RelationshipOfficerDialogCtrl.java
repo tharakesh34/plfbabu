@@ -343,7 +343,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 		}
 		this.recordStatus.setValue(aRelationshipOfficer.getRecordStatus());
 
-		if (aRelationshipOfficer.isNew()
+		if (aRelationshipOfficer.isNewRecord()
 				|| (aRelationshipOfficer.getRecordType() != null ? aRelationshipOfficer.getRecordType() : "")
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.rOfficerIsActive.setChecked(true);
@@ -429,7 +429,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aRelationshipOfficer.isNew()) {
+		if (aRelationshipOfficer.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -680,7 +680,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aRelationshipOfficer.isNew();
+		isNew = aRelationshipOfficer.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -731,7 +731,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(RelationshipOfficer aRelationshipOfficer, String tranType) {
+	protected boolean doProcess(RelationshipOfficer aRelationshipOfficer, String tranType) {
 		logger.debug("Enterring");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -939,7 +939,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getRelationshipOfficerListCtrl().search();
 	}
 

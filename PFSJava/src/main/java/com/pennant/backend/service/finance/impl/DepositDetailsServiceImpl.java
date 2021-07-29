@@ -180,7 +180,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (depositDetails.isNew()) {
+		if (depositDetails.isNewRecord()) {
 			depositDetails.setDepositId(getDepositDetailsDAO().save(depositDetails, tableType));
 			auditHeader.getAuditDetail().setModelData(depositDetails);
 			auditHeader.setAuditReference(String.valueOf(depositDetails.getDepositId()));
@@ -270,7 +270,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 			} else if (depositMovement.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (depositMovement.isNew()) {
+				} else if (depositMovement.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -350,7 +350,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 			} else if (cashDenomination.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (cashDenomination.isNew()) {
+				} else if (cashDenomination.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -431,7 +431,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 			} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(depositCheques.getRecordType())) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (depositCheques.isNew()) {
+				} else if (depositCheques.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -948,7 +948,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 				+ depositMovements.getDepositSlipNumber();
 
 		// Check the unique keys.
-		if (depositMovements.isNew()
+		if (depositMovements.isNewRecord()
 				&& (PennantConstants.RECORD_TYPE_NEW.equals(depositMovements.getRecordType())
 						|| PennantConstants.RCD_ADD.equals(depositMovements.getRecordType()))
 				&& this.depositDetailsDAO.isDuplicateKey(depositSlipNo, TableType.BOTH_TAB)) {
@@ -983,7 +983,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		parameters[0] = PennantJavaUtil.getLabel("label_Id") + ": " + depositCheques.getId();
 
 		// Check the unique keys.
-		if (depositCheques.isNew()
+		if (depositCheques.isNewRecord()
 				&& (PennantConstants.RECORD_TYPE_NEW.equals(depositCheques.getRecordType())
 						|| PennantConstants.RCD_ADD.equals(depositCheques.getRecordType()))
 				&& this.depositChequesDAO.isDuplicateKey(depositCheques.getId(), TableType.BOTH_TAB)) {
@@ -1282,7 +1282,7 @@ public class DepositDetailsServiceImpl extends GenericService<DepositDetails> im
 		parameters[0] = PennantJavaUtil.getLabel("label_DepositId") + ": " + depositId;
 
 		// Check the unique keys.
-		if (depositDetails.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(depositDetails.getRecordType())
+		if (depositDetails.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(depositDetails.getRecordType())
 				&& depositDetailsDAO.isDuplicateKey(depositId,
 						depositDetails.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 

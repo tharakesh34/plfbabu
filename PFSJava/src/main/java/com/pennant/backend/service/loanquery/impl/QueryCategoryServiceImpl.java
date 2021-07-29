@@ -132,7 +132,7 @@ public class QueryCategoryServiceImpl extends GenericService<QueryCategory> impl
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (queryCategory.isNew()) {
+		if (queryCategory.isNewRecord()) {
 			queryCategory.setId(Long.parseLong(getQueryCategoryDAO().save(queryCategory, tableType)));
 			auditHeader.getAuditDetail().setModelData(queryCategory);
 			auditHeader.setAuditReference(String.valueOf(queryCategory.getId()));
@@ -337,7 +337,7 @@ public class QueryCategoryServiceImpl extends GenericService<QueryCategory> impl
 		QueryCategory queryCategory = (QueryCategory) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (queryCategory.isNew() && queryCategoryDAO.isDuplicateKey(queryCategory.getId(), queryCategory.getCode(),
+		if (queryCategory.isNewRecord() && queryCategoryDAO.isDuplicateKey(queryCategory.getId(), queryCategory.getCode(),
 				queryCategory.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 

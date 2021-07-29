@@ -244,7 +244,7 @@ public class QualificationDialogCtrl extends GFCBaseCtrl<Qualification> {
 		this.qualificationIsActive.setChecked(aQualification.isActive());
 		this.recordStatus.setValue(aQualification.getRecordStatus());
 
-		if (qualification.isNew() || (aQualification.getRecordType() != null ? aQualification.getRecordType() : "")
+		if (qualification.isNewRecord() || (aQualification.getRecordType() != null ? aQualification.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.qualificationIsActive.setChecked(true);
 			this.qualificationIsActive.setDisabled(true);
@@ -307,7 +307,7 @@ public class QualificationDialogCtrl extends GFCBaseCtrl<Qualification> {
 		logger.debug(Literal.ENTERING);
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aQualification.isNew()) {
+		if (aQualification.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -530,7 +530,7 @@ public class QualificationDialogCtrl extends GFCBaseCtrl<Qualification> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aqualification.isNew();
+		isNew = aqualification.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -580,7 +580,7 @@ public class QualificationDialogCtrl extends GFCBaseCtrl<Qualification> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Qualification aQualification, String tranType) {
+	protected boolean doProcess(Qualification aQualification, String tranType) {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;
@@ -791,7 +791,7 @@ public class QualificationDialogCtrl extends GFCBaseCtrl<Qualification> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		qualificationListCtrl.search();
 	}
 

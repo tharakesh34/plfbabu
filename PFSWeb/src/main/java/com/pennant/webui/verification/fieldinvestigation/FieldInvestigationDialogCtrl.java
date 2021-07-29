@@ -381,7 +381,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		fieldInvestigationListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -732,7 +732,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	public void doShowDialog(FieldInvestigation fieldInvestigation) {
 		logger.debug(Literal.ENTERING);
 
-		if (fieldInvestigation.isNew()) {
+		if (fieldInvestigation.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1024,7 +1024,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		doSetValidation();
 		doWriteComponentsToBean(fi);
 
-		isNew = fi.isNew();
+		isNew = fi.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1092,7 +1092,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(FieldInvestigation fieldInvestigation, String tranType) {
+	protected boolean doProcess(FieldInvestigation fieldInvestigation, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

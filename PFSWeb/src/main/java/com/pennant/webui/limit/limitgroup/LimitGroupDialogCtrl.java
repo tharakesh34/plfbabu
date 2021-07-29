@@ -639,7 +639,7 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 		doFillListBox();
 		this.active.setChecked(aLimitGroup.isActive());
 
-		if (getLimitGroup().isNew()) {
+		if (getLimitGroup().isNewRecord()) {
 			this.active.setChecked(true);
 		} else {
 			groupCategory.setValue(Labels.getLabel(aLimitGroup.getLimitCategory()));
@@ -898,7 +898,7 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 	 * Method for Refreshing List after Save/Delete a Record
 	 */
 
-	private void refreshList() {
+	protected void refreshList() {
 		getLimitGroupListCtrl().search();
 	}
 
@@ -1005,7 +1005,7 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 			delete.addForward("onClick", self, "onClickRemove");
 			delete.setParent(lc);
 
-			if (!limitGroupItems.isNew()) {
+			if (!limitGroupItems.isNewRecord()) {
 				limitLineCode.setDisabled(true);
 				limitGroupCode.setDisabled(true);
 
@@ -1251,7 +1251,7 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 					.setVisible(getUserWorkspace().isAllowed("button_LimitGroupDialog_NewLimitGroupItem") && true);
 			this.btnAddGroup
 					.setVisible(getUserWorkspace().isAllowed("button_LimitGroupDialog_NewLimitGroupItem") && false);
-		} else if (!getLimitGroup().isNew()) {
+		} else if (!getLimitGroup().isNewRecord()) {
 			this.btnAddLimitLine
 					.setVisible(getUserWorkspace().isAllowed("button_LimitGroupDialog_NewLimitGroupItem") && false);
 			this.btnAddGroup
@@ -1289,7 +1289,7 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 				&& StringUtils.trimToEmpty(limitGroupItems.getRecordType()).equals("")) {
 
 			limitGroupItems.setVersion(limitGroupItems.getVersion() + 1);
-			if (limitGroupItems.isNew()) {
+			if (limitGroupItems.isNewRecord()) {
 				limitGroupItems.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			} else {
 				limitGroupItems.setRecordType(PennantConstants.RECORD_TYPE_UPD);
@@ -1400,7 +1400,7 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aLimitGroup.isNew();
+		isNew = aLimitGroup.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1447,13 +1447,13 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(LimitGroup aLimitGroup, String tranType) {
+	protected boolean doProcess(LimitGroup aLimitGroup, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		aLimitGroup.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aLimitGroup.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aLimitGroup.setUserDetails(getUserWorkspace().getLoggedInUser());
-		if (aLimitGroup.isNew()) {
+		if (aLimitGroup.isNewRecord()) {
 			aLimitGroup.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 			aLimitGroup.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 		}

@@ -136,7 +136,7 @@ public class ExtInterfaceConfigurationServiceImpl extends GenericService<Interfa
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (configuration.isNew()) {
+		if (configuration.isNewRecord()) {
 			configuration.setId(Long.parseLong(getExtInterfaceConfigurationDAO().save(configuration, tableType)));
 			auditHeader.getAuditDetail().setModelData(configuration);
 			auditHeader.setAuditReference(String.valueOf(configuration.getId()));
@@ -350,7 +350,7 @@ public class ExtInterfaceConfigurationServiceImpl extends GenericService<Interfa
 		InterfaceConfiguration InterfaceConfiguration = (InterfaceConfiguration) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (InterfaceConfiguration.isNew() && ExtInterfaceConfigurationDAO.isDuplicateKey(
+		if (InterfaceConfiguration.isNewRecord() && ExtInterfaceConfigurationDAO.isDuplicateKey(
 				InterfaceConfiguration.getId(), InterfaceConfiguration.getCode(),
 				InterfaceConfiguration.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];

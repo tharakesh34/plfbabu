@@ -14,7 +14,6 @@ public class CommodityType extends AbstractWorkflowEntity {
 	private String Description;
 	private int UnitType;
 	private boolean Active;
-	private boolean newRecord = false;
 	private CommodityType befImage;
 	private LoggedInUser userDetails;
 	private long id = Long.MIN_VALUE;
@@ -27,14 +26,6 @@ public class CommodityType extends AbstractWorkflowEntity {
 
 	public boolean isNew() {
 		return isNewRecord();
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public CommodityType getBefImage() {

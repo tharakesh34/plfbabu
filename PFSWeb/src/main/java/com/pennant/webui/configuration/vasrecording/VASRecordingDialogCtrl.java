@@ -660,7 +660,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * Method for Refreshing List after Save/Delete a Record
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		final JdbcSearchObject<VASRecording> soVASConfiguration = getVASRecordingListCtrl().getSearchObject();
 		getVASRecordingListCtrl().pagingVASRecordingList.setActivePage(0);
 		getVASRecordingListCtrl().getPagedListWrapper().setSearchObject(soVASConfiguration);
@@ -736,7 +736,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 
 		// doStoreInitValues();
-		isNew = aVASRecording.isNew();
+		isNew = aVASRecording.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -792,7 +792,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 					getFinVasRecordingDialogCtrl().doFillVasRecordings(this.vasRecordings);
 
 					boolean allowTomodify = false;
-					if (aVASRecording.isNew()) {
+					if (aVASRecording.isNewRecord()) {
 						if (aVASRecording.getFee().compareTo(BigDecimal.ZERO) > 0) {
 							allowTomodify = true;
 						}
@@ -950,7 +950,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * 
 	 */
 
-	private boolean doProcess(VASRecording aVASRecording, String tranType) throws InterfaceException {
+	protected boolean doProcess(VASRecording aVASRecording, String tranType) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -1288,7 +1288,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public void doShowDialog(VASRecording aVASRecording) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
-		if (aVASRecording.isNew()) {
+		if (aVASRecording.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -2303,7 +2303,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				}
 			}
 
-			if (aVASRecording.isNew()) {
+			if (aVASRecording.isNewRecord()) {
 				aExetendedFieldRender.setSeqNo(1);
 			}
 			aVASRecording.setExtendedFieldRender(aExetendedFieldRender);

@@ -138,7 +138,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			tableType = "_Temp";
 		}
 
-		if (dedupParm.isNew()) {
+		if (dedupParm.isNewRecord()) {
 			dedupParmDAO.save(dedupParm, tableType);
 		} else {
 			dedupParmDAO.update(dedupParm, tableType);
@@ -679,7 +679,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		valueParm[0] = dedupParm.getQueryCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_QueryCode") + ":" + valueParm[0];
 
-		if (dedupParm.isNew()) { // for New record or new record into work flow
+		if (dedupParm.isNewRecord()) { // for New record or new record into work flow
 
 			if (!dedupParm.isWorkflow()) {// With out Work flow only new records
 				if (befDedupParm != null) { // Record Already Exists in the

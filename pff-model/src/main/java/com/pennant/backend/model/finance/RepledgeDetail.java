@@ -68,7 +68,6 @@ public class RepledgeDetail extends AbstractWorkflowEntity {
 	private String finPurpose;
 	private String finPurposeDesc;
 	private String dmaCodeDesc;
-	private boolean newRecord;
 	private String lovValue;
 	private String transactionType;
 	private String repledgeRef;
@@ -111,7 +110,7 @@ public class RepledgeDetail extends AbstractWorkflowEntity {
 		entity.setFinPurpose(this.finPurpose);
 		entity.setFinPurposeDesc(this.finPurposeDesc);
 		entity.setDmaCodeDesc(this.dmaCodeDesc);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setLovValue(this.lovValue);
 		entity.setTransactionType(this.transactionType);
 		entity.setRepledgeRef(this.repledgeRef);
@@ -246,14 +245,6 @@ public class RepledgeDetail extends AbstractWorkflowEntity {
 
 	public void setDmaCodeDesc(String dmaCodeDesc) {
 		this.dmaCodeDesc = dmaCodeDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

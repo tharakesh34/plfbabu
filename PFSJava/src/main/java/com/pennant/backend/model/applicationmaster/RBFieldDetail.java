@@ -65,8 +65,6 @@ public class RBFieldDetail extends AbstractWorkflowEntity {
 	private String rbFldTableName;
 	private String rbStFlds;
 	private String moduleCode;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private LoggedInUser userDetails;
 
@@ -165,14 +163,6 @@ public class RBFieldDetail extends AbstractWorkflowEntity {
 
 	public void setEntityCode(String entityCode) {
 		this.entityCode = entityCode;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

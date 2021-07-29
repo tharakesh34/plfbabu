@@ -21,8 +21,6 @@ public class PricingDetail extends AbstractWorkflowEntity {
 	private List<CollateralAssignment> collateralAssignments = new ArrayList<CollateralAssignment>();
 	private boolean split;
 
-	private boolean newRecord;
-
 	public List<FinanceMain> getFinanceMains() {
 		return financeMains;
 	}
@@ -37,14 +35,6 @@ public class PricingDetail extends AbstractWorkflowEntity {
 
 	public void setFinanceMain(FinanceMain financeMain) {
 		this.financeMain = financeMain;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public List<FinFeeDetail> getTopUpFinFeeDetails() {

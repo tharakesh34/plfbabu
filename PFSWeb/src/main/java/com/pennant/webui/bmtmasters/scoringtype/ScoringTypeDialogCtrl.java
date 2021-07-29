@@ -345,7 +345,7 @@ public class ScoringTypeDialogCtrl extends GFCBaseCtrl<ScoringType> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aScoringType.isNew()) {
+		if (aScoringType.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -555,7 +555,7 @@ public class ScoringTypeDialogCtrl extends GFCBaseCtrl<ScoringType> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aScoringType.isNew();
+		isNew = aScoringType.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -605,7 +605,7 @@ public class ScoringTypeDialogCtrl extends GFCBaseCtrl<ScoringType> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(ScoringType aScoringType, String tranType) {
+	protected boolean doProcess(ScoringType aScoringType, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -814,7 +814,7 @@ public class ScoringTypeDialogCtrl extends GFCBaseCtrl<ScoringType> {
 	}
 
 	// Method for refreshing the list after successful updation
-	private void refreshList() {
+	protected void refreshList() {
 		final JdbcSearchObject<ScoringType> soScoringType = getScoringTypeListCtrl().getSearchObj();
 		getScoringTypeListCtrl().pagingScoringTypeList.setActivePage(0);
 		getScoringTypeListCtrl().getPagedListWrapper().setSearchObject(soScoringType);

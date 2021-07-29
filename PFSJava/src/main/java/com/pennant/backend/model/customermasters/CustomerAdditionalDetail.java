@@ -60,7 +60,6 @@ public class CustomerAdditionalDetail extends AbstractWorkflowEntity {
 	private String lovDescAcademicDeciplineName;
 	private long custRefCustID;
 	private String custRefStaffID;
-	private boolean newRecord = false;
 	private String lovValue;
 	private CustomerAdditionalDetail befImage;
 	private LoggedInUser userDetails;
@@ -154,14 +153,6 @@ public class CustomerAdditionalDetail extends AbstractWorkflowEntity {
 
 	public void setCustRefStaffID(String custRefStaffID) {
 		this.custRefStaffID = custRefStaffID;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -171,7 +171,7 @@ public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> imple
 			tableType = "_Temp";
 		}
 
-		if (wIFFinanceMain.isNew()) {
+		if (wIFFinanceMain.isNewRecord()) {
 			getWIFFinanceMainDAO().save(wIFFinanceMain, tableType);
 
 		} else {
@@ -379,7 +379,7 @@ public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> imple
 		valueParm[0] = wIFFinanceMain.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (wIFFinanceMain.isNew()) { // for New record or new record into work flow
+		if (wIFFinanceMain.isNewRecord()) { // for New record or new record into work flow
 
 			if (!wIFFinanceMain.isWorkflow()) {// With out Work flow only new records  
 				if (befWIFFinanceMain != null) { // Record Already Exists in the table then error  

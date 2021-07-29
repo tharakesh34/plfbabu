@@ -54,7 +54,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>PinCode table</b>.<br>
  *
  */
-public class PinCode extends AbstractWorkflowEntity implements Entity {
+public class PinCode extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long pinCodeId = Long.MIN_VALUE;
@@ -70,7 +70,6 @@ public class PinCode extends AbstractWorkflowEntity implements Entity {
 	private boolean active;
 	private Long groupId;
 	private boolean serviceable;
-	private boolean newRecord = false;
 	private String lovValue;
 	private PinCode befImage;
 	private LoggedInUser userDetails;
@@ -152,14 +151,6 @@ public class PinCode extends AbstractWorkflowEntity implements Entity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

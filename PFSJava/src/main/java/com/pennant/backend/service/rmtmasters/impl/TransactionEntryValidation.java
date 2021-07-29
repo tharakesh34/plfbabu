@@ -77,7 +77,7 @@ public class TransactionEntryValidation {
 		errParm[1] = PennantJavaUtil.getLabel("label_AccountSetCode") + ":" + valueParm[1];
 		errParm[2] = PennantJavaUtil.getLabel("label_TransOrder") + ":" + valueParm[2];
 
-		if (transactionEntry.isNew()) { // for New record or new record into work flow
+		if (transactionEntry.isNewRecord()) { // for New record or new record into work flow
 
 			if (!transactionEntry.isWorkflow()) {// With out Work flow only new records  
 				if (beftransactionEntry != null) { // Record Already Exists in the table then error  

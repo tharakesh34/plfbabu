@@ -312,7 +312,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		this.bankShortCode.setValue(aBankDetail.getBankShortCode());
 		this.recordStatus.setValue(aBankDetail.getRecordStatus());
 
-		if (aBankDetail.isNew() || (aBankDetail.getRecordType() != null ? aBankDetail.getRecordType() : "")
+		if (aBankDetail.isNewRecord() || (aBankDetail.getRecordType() != null ? aBankDetail.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
@@ -405,7 +405,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aBankDetail.isNew()) {
+		if (aBankDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -652,7 +652,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aBankDetail.isNew();
+		isNew = aBankDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -702,7 +702,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(BankDetail aBankDetail, String tranType) {
+	protected boolean doProcess(BankDetail aBankDetail, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -908,7 +908,7 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getBankDetailListCtrl().search();
 	}
 

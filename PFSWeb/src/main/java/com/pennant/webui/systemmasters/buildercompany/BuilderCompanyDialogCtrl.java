@@ -441,7 +441,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		buildercompanyListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -611,7 +611,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		fillComboBox(this.recommendation, aBuilderCompany.getRecommendation(), this.recommendationList, "");
 		fillComboBox(this.entityType, aBuilderCompany.getEntityType(), this.builderEntityTypeList, "");
 		this.active.setChecked(aBuilderCompany.isActive());
-		if (aBuilderCompany.isNew()
+		if (aBuilderCompany.isNewRecord()
 				|| StringUtils.equals(aBuilderCompany.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
@@ -619,7 +619,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		this.recordStatus.setValue(aBuilderCompany.getRecordStatus());
 		doEnableRequiredFields(aBuilderCompany.getApfType());
 
-		if (!aBuilderCompany.isNew()) {
+		if (!aBuilderCompany.isNewRecord()) {
 			Filter[] filterPin = new Filter[1];
 
 			if (aBuilderCompany.getCity() != null && !aBuilderCompany.getCity().isEmpty()) {
@@ -912,7 +912,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 	public void doShowDialog(BuilderCompany builderCompany) {
 		logger.debug(Literal.LEAVING);
 
-		if (builderCompany.isNew()) {
+		if (builderCompany.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1462,7 +1462,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		doSetValidation();
 		doWriteComponentsToBean(aBuilderCompany);
 
-		isNew = aBuilderCompany.isNew();
+		isNew = aBuilderCompany.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1509,7 +1509,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(BuilderCompany aBuilderCompany, String tranType) {
+	protected boolean doProcess(BuilderCompany aBuilderCompany, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

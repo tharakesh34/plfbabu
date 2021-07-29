@@ -428,7 +428,7 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 				Listcell listcell = (Listcell) listitem.getFirstChild();
 				String reference = listcell.getLabel();
 				LinkedFinances linkFin = (LinkedFinances) listitem.getAttribute("data");
-				if (PennantConstants.RCD_ADD.equals(linkFin.getStatus()) && linkFin.isNew()) {
+				if (PennantConstants.RCD_ADD.equals(linkFin.getStatus()) && linkFin.isNewRecord()) {
 					linkedFinMap.remove(reference);
 					linkedFinList.remove(linkFin);
 					// linkFin.setStatus(PennantConstants.RCD_REM);
@@ -459,7 +459,7 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 			LinkedFinances linkFin = (LinkedFinances) listitem.getAttribute("data");
 			if (PennantConstants.RCD_DEL.equals(linkFin.getStatus())) {
 				linkFin.setStatus(PennantConstants.RCD_EDT);
-			} else if (linkFin.isNew()) {
+			} else if (linkFin.isNewRecord()) {
 				linkFin.setStatus(PennantConstants.RCD_ADD);
 			}
 			linkedFinMap.put(reference, linkFin);
@@ -594,7 +594,7 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 		FinMaintainInstruction finMaintainInst = finScheduleData.getFinMaintainInstruction();
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (finMaintainInst.isNew() || aFinanceDetail.isNewRecord()) {
+		if (finMaintainInst.isNewRecord() || aFinanceDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -659,7 +659,7 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		final JdbcSearchObject<FinanceMain> soFinanceMain = financeSelectCtrl.getSearchObj(true);
 		financeSelectCtrl.getPagingFinanceList().setActivePage(0);
 		financeSelectCtrl.getPagedListWrapper().setSearchObject(soFinanceMain);
@@ -767,7 +767,7 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 			return;
 		}
 
-		isNew = finMainInst.isNew();
+		isNew = finMainInst.isNewRecord();
 		String tranType;
 
 		if (isWorkFlowEnabled()) {
@@ -822,7 +822,7 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(FinMaintainInstruction finMainInst, String tranType) {
+	protected boolean doProcess(FinMaintainInstruction finMainInst, String tranType) {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;

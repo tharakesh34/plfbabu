@@ -138,7 +138,7 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 			tableType = "_Temp";
 		}
 
-		if (checkList.isNew()) {
+		if (checkList.isNewRecord()) {
 			checkList.setCheckListId(getCheckListDAO().save(checkList, tableType));
 			auditHeader.getAuditDetail().setModelData(checkList);
 			auditHeader.setAuditReference(String.valueOf(checkList.getCheckListId()));
@@ -367,7 +367,7 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 		valueParm[0] = String.valueOf(checkList.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_CheckListId") + ":" + valueParm[0];
 
-		if (checkList.isNew()) { // for New record or new record into work flow
+		if (checkList.isNewRecord()) { // for New record or new record into work flow
 
 			if (!checkList.isWorkflow()) {// With out Work flow only new records  
 				if (befCheckList != null) { // Record Already Exists in the table then error  
@@ -593,7 +593,7 @@ public class CheckListServiceImpl extends GenericService<CheckList> implements C
 			} else if (checkListDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (checkListDetail.isNew()) {
+				} else if (checkListDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

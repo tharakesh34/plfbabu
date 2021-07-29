@@ -53,14 +53,13 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>DeviationDetail table</b>.<br>
  *
  */
-public class DeviationDetail extends AbstractWorkflowEntity implements Entity {
+public class DeviationDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long deviationID = Long.MIN_VALUE;
 	private String userRole;
 	private String deviatedValue;
 	private long delegatorGrade;
-	private boolean newRecord = false;
 	private String lovValue;
 	private DeviationDetail befImage;
 	private LoggedInUser userDetails;
@@ -125,14 +124,6 @@ public class DeviationDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setDelegatorGrade(long delegatorGrade) {
 		this.delegatorGrade = delegatorGrade;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -494,7 +494,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 		}
 
 		this.active.setChecked(aMailTemplate.isActive());
-		if (aMailTemplate.isNew() || PennantConstants.RECORD_TYPE_NEW.equals(aMailTemplate.getRecordType())) {
+		if (aMailTemplate.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(aMailTemplate.getRecordType())) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
@@ -748,7 +748,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 
 		if (enqModule) {
 			doReadOnly(true);
-		} else if (aMailTemplate.isNew()) {
+		} else if (aMailTemplate.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -864,7 +864,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getMailTemplateListCtrl().search();
 	}
 
@@ -1032,7 +1032,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aMailTemplate.isNew();
+		isNew = aMailTemplate.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1080,7 +1080,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(MailTemplate aMailTemplate, String tranType) {
+	protected boolean doProcess(MailTemplate aMailTemplate, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		String nextRoleCode = "";

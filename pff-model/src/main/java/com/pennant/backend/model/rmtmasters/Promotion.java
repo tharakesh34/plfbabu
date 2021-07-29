@@ -61,7 +61,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>Promotion table</b>.<br>
  * 
  */
-public class Promotion extends AbstractWorkflowEntity implements Entity {
+public class Promotion extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long promotionId = Long.MIN_VALUE;
@@ -87,7 +87,6 @@ public class Promotion extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal finMinRate = BigDecimal.ZERO;
 	private BigDecimal finMaxRate = BigDecimal.ZERO;
 	private boolean active = true;
-	private boolean newRecord = false;
 	private Promotion befImage;
 	private LoggedInUser userDetails;
 	private String productCategory;
@@ -189,7 +188,7 @@ public class Promotion extends AbstractWorkflowEntity implements Entity {
 		entity.setFinMinRate(this.finMinRate);
 		entity.setFinMaxRate(this.finMaxRate);
 		entity.setActive(this.active);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
 		entity.setProductCategory(this.productCategory);
@@ -439,14 +438,6 @@ public class Promotion extends AbstractWorkflowEntity implements Entity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public Promotion getBefImage() {

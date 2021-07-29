@@ -277,7 +277,7 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		profitCenterListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -309,7 +309,7 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter> {
 		this.profitCenterCode.setValue(aProfitCenter.getProfitCenterCode());
 		this.profitCenterDesc.setValue(aProfitCenter.getProfitCenterDesc());
 		this.active.setChecked(aProfitCenter.isActive());
-		if (aProfitCenter.isNew() || PennantConstants.RECORD_TYPE_NEW.equals(aProfitCenter.getRecordType())) {
+		if (aProfitCenter.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(aProfitCenter.getRecordType())) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
@@ -372,7 +372,7 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter> {
 	public void doShowDialog(ProfitCenter profitCenter) {
 		logger.debug(Literal.LEAVING);
 
-		if (profitCenter.isNew()) {
+		if (profitCenter.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -599,7 +599,7 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter> {
 		doSetValidation();
 		doWriteComponentsToBean(aProfitCenter);
 
-		isNew = aProfitCenter.isNew();
+		isNew = aProfitCenter.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -646,7 +646,7 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(ProfitCenter aProfitCenter, String tranType) {
+	protected boolean doProcess(ProfitCenter aProfitCenter, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

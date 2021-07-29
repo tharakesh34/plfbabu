@@ -66,8 +66,6 @@ public class LiabilityRequest extends AbstractWorkflowEntity {
 	private String insPaidStatus;
 	private BigDecimal insClaimAmount;
 	private String insClaimReason;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private LiabilityRequest befImage;
 	private LoggedInUser userDetails;
@@ -170,14 +168,6 @@ public class LiabilityRequest extends AbstractWorkflowEntity {
 
 	public void setInitiatedBy(long initiatedBy) {
 		this.initiatedBy = initiatedBy;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

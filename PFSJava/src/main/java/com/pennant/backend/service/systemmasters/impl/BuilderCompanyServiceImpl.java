@@ -141,7 +141,7 @@ public class BuilderCompanyServiceImpl extends GenericService<BuilderCompany> im
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (builderCompany.isNew()) {
+		if (builderCompany.isNewRecord()) {
 			builderCompany.setId(Long.parseLong(getBuilderCompanyDAO().save(builderCompany, tableType)));
 			auditHeader.getAuditDetail().setModelData(builderCompany);
 			auditHeader.setAuditReference(String.valueOf(builderCompany.getId()));
@@ -351,7 +351,7 @@ public class BuilderCompanyServiceImpl extends GenericService<BuilderCompany> im
 		parameters[1] = PennantJavaUtil.getLabel("label_name") + ": " + builderCompany.getName();
 
 		// Check the unique keys.
-		if (builderCompany.isNew() && builderCompanyDAO.isDuplicateKey(builderCompany.getId(), builderCompany.getName(),
+		if (builderCompany.isNewRecord() && builderCompanyDAO.isDuplicateKey(builderCompany.getId(), builderCompany.getName(),
 				builderCompany.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));

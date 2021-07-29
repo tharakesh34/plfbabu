@@ -24,8 +24,6 @@ public class FinContributorHeader extends AbstractWorkflowEntity {
 	private BigDecimal avgMudaribRate;
 	private boolean alwContributorsToLeave;
 	private boolean alwContributorsToJoin;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private FinContributorHeader befImage;
 	private LoggedInUser userDetails;
@@ -150,14 +148,6 @@ public class FinContributorHeader extends AbstractWorkflowEntity {
 
 	public void setAlwContributorsToJoin(boolean alwContributorsToJoin) {
 		this.alwContributorsToJoin = alwContributorsToJoin;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

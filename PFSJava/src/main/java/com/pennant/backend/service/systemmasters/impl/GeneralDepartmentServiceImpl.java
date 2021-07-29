@@ -125,7 +125,7 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 		if (generalDepartment.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-		if (generalDepartment.isNew()) {
+		if (generalDepartment.isNewRecord()) {
 			generalDepartment.setGenDepartment(getGeneralDepartmentDAO().save(generalDepartment, tableType));
 			auditHeader.getAuditDetail().setModelData(generalDepartment);
 			auditHeader.setAuditReference(generalDepartment.getGenDepartment());
@@ -324,7 +324,7 @@ public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartme
 		// Get the model object.
 		GeneralDepartment generalDepartment = (GeneralDepartment) auditDetail.getModelData();
 		// Check the unique keys.
-		if (generalDepartment.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(generalDepartment.getRecordType())
+		if (generalDepartment.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(generalDepartment.getRecordType())
 				&& generalDepartmentDAO.isDuplicateKey(generalDepartment.getGenDepartment(),
 						generalDepartment.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

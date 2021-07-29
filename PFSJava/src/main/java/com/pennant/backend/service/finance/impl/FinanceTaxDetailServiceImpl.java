@@ -138,7 +138,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (financeTaxDetail.isNew()) {
+		if (financeTaxDetail.isNewRecord()) {
 			getFinanceTaxDetailDAO().save(financeTaxDetail, tableType);
 		} else {
 			getFinanceTaxDetailDAO().update(financeTaxDetail, tableType);
@@ -361,7 +361,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 		valueParm[0] = String.valueOf(financeTaxDetail.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (financeTaxDetail.isNew()) { // for New record or new record into work flow
+		if (financeTaxDetail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!financeTaxDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befMandate != null) { // Record Already Exists in the table then error  

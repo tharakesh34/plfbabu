@@ -2,18 +2,17 @@ package com.pennant.backend.model.financemanagement.bankorcorpcreditreview;
 
 import java.math.BigDecimal;
 
-import com.pennant.backend.model.Entity;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(propOrder = { "subCategoryCode", "itemValue" })
-public class FinCreditReviewSummary extends AbstractWorkflowEntity implements Entity {
+public class FinCreditReviewSummary extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 3557119742009775415L;
 	private long summaryId = Long.MIN_VALUE;
@@ -26,7 +25,6 @@ public class FinCreditReviewSummary extends AbstractWorkflowEntity implements En
 	private String lovDescCreditRevCode;
 	@XmlElement
 	private BigDecimal itemValue;
-	private boolean newRecord = false;
 	private String lovValue;
 	private FinCreditReviewSummary befImage;
 	private LoggedInUser userDetails;
@@ -103,14 +101,6 @@ public class FinCreditReviewSummary extends AbstractWorkflowEntity implements En
 		this.itemValue = itemValue;
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -135,13 +125,10 @@ public class FinCreditReviewSummary extends AbstractWorkflowEntity implements En
 		this.userDetails = userDetails;
 	}
 
-	@Override
 	public long getId() {
-
 		return this.summaryId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.summaryId = id;
 	}

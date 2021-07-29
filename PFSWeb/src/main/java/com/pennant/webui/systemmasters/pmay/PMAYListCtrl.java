@@ -233,7 +233,7 @@ public class PMAYListCtrl extends GFCBaseListCtrl<PMAY> {
 		arg.put("enqiryModule", enqiryModule);
 
 		try {
-			if (pmay.isNew()) {
+			if (pmay.isNewRecord()) {
 				Executions.createComponents(
 						"/WEB-INF/pages/FinanceManagement/SelectFinance/SelectFinReferenceDialog.zul", null, arg);
 			} else {

@@ -57,7 +57,6 @@ public class DispatchMode extends AbstractWorkflowEntity {
 	private String dispatchModeCode;
 	private String dispatchModeDesc;
 	private boolean dispatchModeIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private DispatchMode befImage;
 	private LoggedInUser userDetails;
@@ -109,14 +108,6 @@ public class DispatchMode extends AbstractWorkflowEntity {
 
 	public void setDispatchModeIsActive(boolean dispatchModeIsActive) {
 		this.dispatchModeIsActive = dispatchModeIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

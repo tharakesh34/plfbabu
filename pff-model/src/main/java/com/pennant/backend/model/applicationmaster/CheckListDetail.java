@@ -54,7 +54,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>CheckListDetail table</b>.<br>
  *
  */
-public class CheckListDetail extends AbstractWorkflowEntity implements Entity {
+public class CheckListDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -3176600783924484359L;
 
 	private long checkListId = 0;
@@ -66,7 +66,6 @@ public class CheckListDetail extends AbstractWorkflowEntity implements Entity {
 	private boolean docRequired;
 	private String docType;
 	private String categoryCode;
-	private boolean newRecord = false;
 	private String lovValue;
 	private CheckListDetail befImage;
 	private LoggedInUser userDetails;
@@ -133,14 +132,6 @@ public class CheckListDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setAnsDesc(String ansDesc) {
 		this.ansDesc = ansDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

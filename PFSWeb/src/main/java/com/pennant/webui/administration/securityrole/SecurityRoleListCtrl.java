@@ -252,7 +252,7 @@ public class SecurityRoleListCtrl extends GFCBaseListCtrl<SecurityRole> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("securityRole", aSecurityRole);
 		arg.put("securityRoleListCtrl", this);
-		arg.put("newRecord", aSecurityRole.isNew());
+		arg.put("newRecord", aSecurityRole.isNewRecord());
 
 		try {
 			if (this.moduleType != null && this.moduleType.equals("ROLEGROUPS")) {

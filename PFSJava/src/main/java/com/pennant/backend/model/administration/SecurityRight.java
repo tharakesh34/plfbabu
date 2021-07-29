@@ -61,7 +61,6 @@ public class SecurityRight extends AbstractWorkflowEntity {
 	private long loginUsrId;
 	private String loginGrpCode;
 	private String loginRoleCd;
-	private boolean newRecord = false;
 	private String lovValue;
 	private SecurityRight befImage;
 	private LoggedInUser userDetails;
@@ -202,14 +201,6 @@ public class SecurityRight extends AbstractWorkflowEntity {
 
 	public void setRoleCd(String roleCd) {
 		this.loginRoleCd = roleCd;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

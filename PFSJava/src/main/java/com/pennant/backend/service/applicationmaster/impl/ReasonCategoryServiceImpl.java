@@ -135,7 +135,7 @@ public class ReasonCategoryServiceImpl extends GenericService<ReasonCategory> im
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (reasonCategory.isNew()) {
+		if (reasonCategory.isNewRecord()) {
 			reasonCategory.setId(Long.parseLong(getReasonCategoryDAO().save(reasonCategory, tableType)));
 			auditHeader.getAuditDetail().setModelData(reasonCategory);
 			auditHeader.setAuditReference(String.valueOf(reasonCategory.getId()));
@@ -340,7 +340,7 @@ public class ReasonCategoryServiceImpl extends GenericService<ReasonCategory> im
 		ReasonCategory reasonCategory = (ReasonCategory) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (reasonCategory.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(reasonCategory.getRecordType())
+		if (reasonCategory.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(reasonCategory.getRecordType())
 				&& reasonCategoryDAO.isDuplicateKey(reasonCategory.getCode().trim(),
 						reasonCategory.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];

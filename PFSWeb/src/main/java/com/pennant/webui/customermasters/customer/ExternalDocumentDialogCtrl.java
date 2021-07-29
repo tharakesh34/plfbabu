@@ -141,7 +141,7 @@ public class ExternalDocumentDialogCtrl extends GFCBaseCtrl<ExternalDocument> {
 	}
 
 	private void doShowDialog() {
-		if (externalDocument.isNew()) {
+		if (externalDocument.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -218,7 +218,7 @@ public class ExternalDocumentDialogCtrl extends GFCBaseCtrl<ExternalDocument> {
 		 * return; }
 		 */
 
-		isNew = aExternalDocument.isNew();
+		isNew = aExternalDocument.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {

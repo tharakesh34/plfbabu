@@ -245,7 +245,7 @@ public class CustomerBalanceSheetListCtrl extends GFCBaseListCtrl<CustomerBalanc
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("customerBalanceSheet", customerBalanceSheet);
 		arg.put("customerBalanceSheetListCtrl", this);
-		arg.put("newRecord", customerBalanceSheet.isNew());
+		arg.put("newRecord", customerBalanceSheet.isNewRecord());
 
 		try {
 			Executions.createComponents(

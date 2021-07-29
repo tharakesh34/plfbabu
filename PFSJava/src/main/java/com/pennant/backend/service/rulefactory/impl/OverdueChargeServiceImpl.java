@@ -153,7 +153,7 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 			tableType = "_Temp";
 		}
 
-		if (overdueCharge.isNew()) {
+		if (overdueCharge.isNewRecord()) {
 			overdueCharge.setId(getOverdueChargeDAO().save(overdueCharge, tableType));
 			auditHeader.getAuditDetail().setModelData(overdueCharge);
 			auditHeader.setAuditReference(overdueCharge.getODCRuleCode());
@@ -415,7 +415,7 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 		valueParm[0] = overdueCharge.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_ODCRuleCode") + ":" + valueParm[0];
 
-		if (overdueCharge.isNew()) { // for New record or new record into work flow
+		if (overdueCharge.isNewRecord()) { // for New record or new record into work flow
 
 			if (!overdueCharge.isWorkflow()) {// With out Work flow only new records  
 				if (befOverdueCharge != null) { // Record Already Exists in the table then error  
@@ -531,7 +531,7 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 			} else if (overdueChargeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (overdueChargeDetail.isNew()) {
+				} else if (overdueChargeDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

@@ -54,7 +54,7 @@ public class BlacklistCustomerServiceImpl extends GenericService<BlackListCustom
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (blackListCustomers.isNew()) {
+		if (blackListCustomers.isNewRecord()) {
 			blackListCustomers.setCustCIF(getBlacklistCustomerDAO().save(blackListCustomers, tableType));
 			auditHeader.getAuditDetail().setModelData(blackListCustomers);
 			auditHeader.setAuditReference(String.valueOf(blackListCustomers.getCustCIF()));
@@ -120,7 +120,7 @@ public class BlacklistCustomerServiceImpl extends GenericService<BlackListCustom
 			} else if (negativeReasoncodes.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (negativeReasoncodes.isNew()) {
+				} else if (negativeReasoncodes.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -299,7 +299,7 @@ public class BlacklistCustomerServiceImpl extends GenericService<BlackListCustom
 		// Get the model object.
 		BlackListCustomers blackListCustomers = (BlackListCustomers) auditDetail.getModelData();
 		// Check the unique keys.
-		if (blackListCustomers.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(blackListCustomers.getRecordType())
+		if (blackListCustomers.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(blackListCustomers.getRecordType())
 				&& blacklistCustomerDAO.isDuplicateKey(blackListCustomers.getId(),
 						blackListCustomers.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

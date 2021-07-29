@@ -529,7 +529,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aDedupParm.isNew()) {
+		if (aDedupParm.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -807,7 +807,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getDedupParmListCtrl().search();
 	}
 
@@ -1140,7 +1140,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 			// textBox = getCondition();
 			combo = getCondition();
 
-			if (queryValues.size() > 0 && !aDedupParm.isNew()) {
+			if (queryValues.size() > 0 && !aDedupParm.isNewRecord()) {
 				if ("AND".equalsIgnoreCase(queryValues.get(0)) || "OR".equalsIgnoreCase(queryValues.get(0))) {
 					for (int i = 0; i < combo.getItemCount(); i++) {
 						condition = (String) combo.getItemAtIndex(i).getValue();
@@ -1172,7 +1172,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		combo.setReadonly(true);
 
 		// Set field to ComboBox depend on fieldList and getting query
-		if (queryValues.size() > 0 && !aDedupParm.isNew()) {
+		if (queryValues.size() > 0 && !aDedupParm.isNewRecord()) {
 			this.selectedField = true;
 			this.fldComboSelAtmpts++;
 			queryValues.remove(0);
@@ -1201,7 +1201,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		hbox.appendChild(space);
 
 		// Set Logical operators for query
-		if (queryValues.size() > 0 && !aDedupParm.isNew()) {
+		if (queryValues.size() > 0 && !aDedupParm.isNewRecord()) {
 			// Set the field type of selected field
 			if (!"nvarchar".equalsIgnoreCase(getFieldType())) {
 				this.operatorVal = true;
@@ -1221,7 +1221,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 			hbox.appendChild(combo);
 		}
 
-		if (queryValues.size() > 0 && !aDedupParm.isNew()) {
+		if (queryValues.size() > 0 && !aDedupParm.isNewRecord()) {
 
 			if ("AND".equals(condition)) {
 				space = new Space();
@@ -1279,7 +1279,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 
 		itemCount++;
 		// Continue the process of building if size is not zero
-		if (queryValues.size() > 0 && !aDedupParm.isNew()) {
+		if (queryValues.size() > 0 && !aDedupParm.isNewRecord()) {
 
 			System.out.println("THE QUERY VALUES " + queryValues.get(0));
 
@@ -1713,7 +1713,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aDedupParm.isNew();
+		isNew = aDedupParm.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1761,7 +1761,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(DedupParm aDedupParm, String tranType) {
+	protected boolean doProcess(DedupParm aDedupParm, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

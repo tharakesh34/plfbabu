@@ -2629,7 +2629,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * Method for Refreshing List after Save/Delete a Record
 	 */
 
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug("Entering");
 
 		getCommitmentListCtrl().search();
@@ -2816,7 +2816,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			}
 		}
 
-		isNew = aCommitment.isNew();
+		isNew = aCommitment.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -2952,7 +2952,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * 
 	 */
 
-	private boolean doProcess(Commitment aCommitment, String tranType) {
+	protected boolean doProcess(Commitment aCommitment, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;

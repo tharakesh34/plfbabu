@@ -60,7 +60,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>VehicleDealer table</b>.<br>
  *
  */
-public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
+public class VehicleDealer extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 	@XmlElement
 	private long dealerId = Long.MIN_VALUE;
@@ -103,7 +103,6 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 	private String accountingSetDesc;
 	private String calRuleDesc;
 	private String emiratesDescription;
-	private boolean newRecord;
 	private String lovValue;
 	private VehicleDealer befImage;
 	private LoggedInUser userDetails;
@@ -316,14 +315,6 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 
 	public void setLovDescProvince(String lovDescProvince) {
 		this.lovDescProvince = lovDescProvince;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

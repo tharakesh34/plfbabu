@@ -26,7 +26,6 @@ public class FinOCRDetail extends AbstractWorkflowEntity implements Comparable<F
 	private BigDecimal customerContribution;
 	@XmlElement
 	private BigDecimal financerContribution;
-	private boolean newRecord = false;
 	private FinOCRDetail befImage;
 	private LoggedInUser userDetails;
 	@XmlElement
@@ -52,14 +51,6 @@ public class FinOCRDetail extends AbstractWorkflowEntity implements Comparable<F
 
 	public void setStepSequence(int stepSequence) {
 		this.stepSequence = stepSequence;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public FinOCRDetail getBefImage() {

@@ -127,7 +127,7 @@ public class GSTRateServiceImpl extends GenericService<GSTRate> implements GSTRa
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (gSTRate.isNew()) {
+		if (gSTRate.isNewRecord()) {
 			gSTRate.setId(Long.parseLong(getGstRateDAO().save(gSTRate, tableType)));
 			auditHeader.getAuditDetail().setModelData(gSTRate);
 			auditHeader.setAuditReference(String.valueOf(gSTRate.getId()));
@@ -332,7 +332,7 @@ public class GSTRateServiceImpl extends GenericService<GSTRate> implements GSTRa
 		GSTRate gSTRate = (GSTRate) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (gSTRate.isNew() && gstRateDAO.isDuplicateKey(gSTRate.getId(), gSTRate.getFromState(), gSTRate.getToState(),
+		if (gSTRate.isNewRecord() && gstRateDAO.isDuplicateKey(gSTRate.getId(), gSTRate.getFromState(), gSTRate.getToState(),
 				gSTRate.getTaxType(), gSTRate.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[3];
 

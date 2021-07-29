@@ -370,7 +370,7 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		doWriteComponentsToBean(aFinMaintainInstruction);
 
 		boolean isNew;
-		isNew = aFinMaintainInstruction.isNew();
+		isNew = aFinMaintainInstruction.isNewRecord();
 		String tranType;
 
 		if (isWorkFlowEnabled()) {
@@ -430,7 +430,7 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void refreshList() {
+	protected void refreshList() {
 		final JdbcSearchObject<FinanceMain> soFinanceMain = financeSelectCtrl.getSearchObj(true);
 		financeSelectCtrl.getPagingFinanceList().setActivePage(0);
 		financeSelectCtrl.getPagedListWrapper().setSearchObject(soFinanceMain);
@@ -439,7 +439,7 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		}
 	}
 
-	private boolean doProcess(FinMaintainInstruction aFinMaintainInstruction, String tranType) {
+	protected boolean doProcess(FinMaintainInstruction aFinMaintainInstruction, String tranType) {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;

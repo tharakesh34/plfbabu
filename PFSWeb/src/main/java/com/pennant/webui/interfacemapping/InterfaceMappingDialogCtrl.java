@@ -336,7 +336,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	public void doWriteBeanToComponents(InterfaceMapping ainterfaceMapping) {
 		logger.debug("Entering");
 
-		if (!ainterfaceMapping.isNew()) {
+		if (!ainterfaceMapping.isNewRecord()) {
 
 			this.interfaceName.setValue(ainterfaceMapping.getInterfaceName());
 			this.interfaceField.setValue(ainterfaceMapping.getInterfaceField());
@@ -464,7 +464,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (ainterfaceMapping.isNew()) {
+		if (ainterfaceMapping.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -748,7 +748,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = ainterfaceMapping.isNew();
+		isNew = ainterfaceMapping.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -799,7 +799,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(InterfaceMapping ainterfaceMapping, String tranType) {
+	protected boolean doProcess(InterfaceMapping ainterfaceMapping, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -1414,7 +1414,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getInterfaceMappingListCtrl().search();
 	}
 

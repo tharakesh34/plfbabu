@@ -47,7 +47,7 @@ import javax.xml.bind.annotation.XmlType;
 		"scheduleType", "documentHolderProperty", "documentPropertyAddress", "documentBriefTracking",
 		"documentMortgage" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class LegalDocument extends AbstractWorkflowEntity implements Entity {
+public class LegalDocument extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long legalDocumentId = Long.MIN_VALUE;
@@ -75,8 +75,6 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 	private String documentRemarks;
 	private String documentTypeApprove;
 	private String documentAccepted;
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -231,14 +229,6 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 
 	public void setDocumentAccepted(String documentAccepted) {
 		this.documentAccepted = documentAccepted;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

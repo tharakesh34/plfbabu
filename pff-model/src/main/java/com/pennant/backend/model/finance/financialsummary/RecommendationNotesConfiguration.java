@@ -62,7 +62,6 @@ public class RecommendationNotesConfiguration extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 6420966711989511378L;
 
 	private long id = Long.MIN_VALUE;
-	private boolean newRecord = false;
 	private RecommendationNotesConfiguration befImage;
 	private LoggedInUser userDetails;
 	private String particulars;
@@ -84,14 +83,6 @@ public class RecommendationNotesConfiguration extends AbstractWorkflowEntity {
 		Set<String> excludeFields = new HashSet<String>();
 
 		return excludeFields;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public long getId() {

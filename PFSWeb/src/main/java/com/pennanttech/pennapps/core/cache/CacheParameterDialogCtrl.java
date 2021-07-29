@@ -170,7 +170,7 @@ public class CacheParameterDialogCtrl extends GFCBaseCtrl<CacheStats> {
 		logger.debug("Leaving ");
 	}
 
-	private void refreshList() {
+	protected void refreshList() {
 		getCacheProcessListCtrl().dofillCacheNodes();
 	}
 

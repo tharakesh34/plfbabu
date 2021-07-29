@@ -216,7 +216,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (chequeHeader.isNew()) {
+		if (chequeHeader.isNewRecord()) {
 			processDocument(chequeHeader);
 			chequeHeader.setId(Long.parseLong(getChequeHeaderDAO().save(chequeHeader, tableType)));
 			auditHeader.getAuditDetail().setModelData(chequeHeader);
@@ -790,7 +790,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		ChequeHeader chequeHeader = (ChequeHeader) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (chequeHeader.isNew() && chequeHeaderDAO.isDuplicateKey(chequeHeader.getHeaderID(),
+		if (chequeHeader.isNewRecord() && chequeHeaderDAO.isDuplicateKey(chequeHeader.getHeaderID(),
 				chequeHeader.getFinReference(), chequeHeader.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 
@@ -803,7 +803,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		List<ChequeDetail> chequeDetailList = chequeHeader.getChequeDetailList();
 		if (chequeDetailList != null && !chequeDetailList.isEmpty()) {
 			for (ChequeDetail chequeDetail : chequeDetailList) {
-				if (chequeDetail.isNew() && chequeDetailDAO.isDuplicateKey(chequeDetail.getChequeDetailsID(),
+				if (chequeDetail.isNewRecord() && chequeDetailDAO.isDuplicateKey(chequeDetail.getChequeDetailsID(),
 						chequeDetail.getBankBranchID(), chequeDetail.getAccountNo(), chequeDetail.getChequeSerialNo(),
 						TableType.BOTH_TAB)) {
 

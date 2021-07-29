@@ -14,7 +14,6 @@ public class PmayEligibilityLog extends AbstractWorkflowEntity {
 	private String applicantId;
 	private String remarks;
 	private boolean active;
-	private boolean newRecord = false;
 	private PmayEligibilityLog befImage;
 	private String reqJson;
 	private String respJson;
@@ -82,14 +81,6 @@ public class PmayEligibilityLog extends AbstractWorkflowEntity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public PmayEligibilityLog getBefImage() {

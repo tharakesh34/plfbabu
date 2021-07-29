@@ -379,7 +379,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aFinCovenantType.isNew()) {
+		if (aFinCovenantType.isNewRecord()) {
 			this.label_FinCovenantTypeDialog_RecvbleDate.setVisible(false);
 			this.receivableDate.setVisible(false);
 			this.space_receivableDate.setSclass("");
@@ -929,7 +929,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aFinCovenantType.isNew();
+		isNew = aFinCovenantType.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {

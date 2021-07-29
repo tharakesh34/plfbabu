@@ -306,7 +306,7 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 
 		this.recordStatus.setValue(aRejectDetail.getRecordStatus());
 
-		if (aRejectDetail.isNew() || (aRejectDetail.getRecordType() != null ? aRejectDetail.getRecordType() : "")
+		if (aRejectDetail.isNewRecord() || (aRejectDetail.getRecordType() != null ? aRejectDetail.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.rejectIsActive.setChecked(true);
 			this.rejectIsActive.setDisabled(true);
@@ -372,7 +372,7 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aRejectDetail.isNew()) {
+		if (aRejectDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -598,7 +598,7 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aRejectDetail.isNew();
+		isNew = aRejectDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -646,7 +646,7 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(RejectDetail aRejectDetail, String tranType) {
+	protected boolean doProcess(RejectDetail aRejectDetail, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -847,7 +847,7 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getRejectDetailListCtrl().search();
 	}
 

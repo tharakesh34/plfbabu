@@ -74,7 +74,6 @@ public class ProvisionMovement extends AbstractWorkflowEntity {
 	private Date dueFromDate;
 	private Date lastFullyPaidDate;
 	private long linkedTranId;
-	private boolean newRecord = false;
 	private String lovValue;
 	private ProvisionMovement befImage;
 	private LoggedInUser userDetails;
@@ -239,14 +238,6 @@ public class ProvisionMovement extends AbstractWorkflowEntity {
 
 	public void setLinkedTranId(long linkedTranId) {
 		this.linkedTranId = linkedTranId;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

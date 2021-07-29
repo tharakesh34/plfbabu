@@ -210,7 +210,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements Cus
 			tableType = "_Temp";
 		}
 
-		if (customer.isNew()) {
+		if (customer.isNewRecord()) {
 			customer.setId(getCustomerDAO().save(customer, tableType));
 			auditHeader.getAuditDetail().setModelData(customer);
 			auditHeader.setAuditReference(String.valueOf(customer.getCustID()));
@@ -442,7 +442,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements Cus
 		errParm[0] = PennantJavaUtil.getLabel("label_CustCIF") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_CustCtgCode") + ":" + valueParm[1];
 
-		if (customer.isNew()) { // for New record or new record into work flow
+		if (customer.isNewRecord()) { // for New record or new record into work flow
 
 			if (!customer.isWorkflow()) {// With out Work flow only new records
 				if (befCustomer != null) { // Record Already Exists in the table

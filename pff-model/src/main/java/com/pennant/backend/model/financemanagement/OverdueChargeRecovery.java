@@ -84,8 +84,7 @@ public class OverdueChargeRecovery extends AbstractWorkflowEntity {
 
 	private boolean rcdCanDel = false;
 
-	//Screen Level Maintenance
-	private boolean newRecord = false;
+	//Screen Level Maintenanc
 	private String lovValue;
 	private OverdueChargeRecovery befImage;
 
@@ -144,7 +143,7 @@ public class OverdueChargeRecovery extends AbstractWorkflowEntity {
 		entity.setPenaltyPaid(this.penaltyPaid);
 		entity.setPenaltyBal(this.penaltyBal);
 		entity.setRcdCanDel(this.rcdCanDel);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setLovValue(this.lovValue);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
@@ -331,14 +330,6 @@ public class OverdueChargeRecovery extends AbstractWorkflowEntity {
 
 	public void setRcdCanDel(boolean rcdCanDel) {
 		this.rcdCanDel = rcdCanDel;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

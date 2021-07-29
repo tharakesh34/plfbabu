@@ -281,7 +281,7 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		insPaymentUploadListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -290,7 +290,7 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 	public void doShowDialog(InsurancePaymentInstructions paymentInstructions) {
 		logger.debug(Literal.LEAVING);
 
-		if (paymentInstructions.isNew()) {
+		if (paymentInstructions.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			this.entityCode.focus();
 		}

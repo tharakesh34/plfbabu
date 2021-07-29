@@ -61,7 +61,6 @@ public class MasterMapping extends AbstractWorkflowEntity {
 	private String plfValue;
 	private String interfaceValue;
 	private String interfaceSequence;
-	private boolean newRecord;
 	private String lovValue;
 	private MasterMapping befImage;
 	private LoggedInUser userDetails;
@@ -83,14 +82,6 @@ public class MasterMapping extends AbstractWorkflowEntity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
 
 	public long getMasterMappingId() {
 		return masterMappingId;

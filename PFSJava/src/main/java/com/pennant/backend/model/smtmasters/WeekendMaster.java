@@ -57,7 +57,6 @@ public class WeekendMaster extends AbstractWorkflowEntity {
 	private String weekendCode;
 	private String weekendDesc;
 	private String weekend;
-	private boolean newRecord;
 	private WeekendMaster befImage;
 	private LoggedInUser userDetails;
 
@@ -108,14 +107,6 @@ public class WeekendMaster extends AbstractWorkflowEntity {
 
 	public void setWeekend(String weekend) {
 		this.weekend = weekend;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public WeekendMaster getBefImage() {

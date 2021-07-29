@@ -369,7 +369,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	/*
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		eODConfigListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -824,7 +824,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	public void doShowDialog(EODConfig eODConfig) {
 		logger.debug(Literal.ENTERING);
 
-		if (eODConfig.isNew()) {
+		if (eODConfig.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1142,7 +1142,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		doSetValidation();
 		doWriteComponentsToBean(aEODConfig);
 
-		isNew = aEODConfig.isNew();
+		isNew = aEODConfig.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1189,7 +1189,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(EODConfig aEODConfig, String tranType) {
+	protected boolean doProcess(EODConfig aEODConfig, String tranType) {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;

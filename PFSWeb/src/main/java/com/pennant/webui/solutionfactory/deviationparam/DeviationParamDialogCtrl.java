@@ -576,7 +576,7 @@ public class DeviationParamDialogCtrl extends GFCBaseCtrl<DeviationParam> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getDeviationParamListCtrl().search();
 	}
 
@@ -666,7 +666,7 @@ public class DeviationParamDialogCtrl extends GFCBaseCtrl<DeviationParam> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aDeviationParam.isNew();
+		isNew = aDeviationParam.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -717,7 +717,7 @@ public class DeviationParamDialogCtrl extends GFCBaseCtrl<DeviationParam> {
 	 * 
 	 */
 
-	private boolean doProcess(DeviationParam aDeviationParam, String tranType) {
+	protected boolean doProcess(DeviationParam aDeviationParam, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		aDeviationParam.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());

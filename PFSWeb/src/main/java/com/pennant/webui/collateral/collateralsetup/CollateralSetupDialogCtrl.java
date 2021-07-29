@@ -548,7 +548,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (collateralSetup.isNew()) {
+		if (collateralSetup.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.collateralRef.focus();
@@ -1205,7 +1205,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			wve.add(we);
 		}
 
-		if (aCollateralSetup.isNew()) {
+		if (aCollateralSetup.isNewRecord()) {
 			aCollateralSetup.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 			aCollateralSetup.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 		}
@@ -2060,7 +2060,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			}
 		}
 
-		boolean isNew = aCollateralSetup.isNew();
+		boolean isNew = aCollateralSetup.isNewRecord();
 		String tranType = "";
 		if (this.newRecord) {
 			if (isNew) {
@@ -2220,7 +2220,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aCollateralSetup.isNew();
+		isNew = aCollateralSetup.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -2297,7 +2297,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CollateralSetup aCollateralSetup, String tranType) {
+	protected boolean doProcess(CollateralSetup aCollateralSetup, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -2887,7 +2887,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		collateralSetupListCtrl.search();
 	}
 

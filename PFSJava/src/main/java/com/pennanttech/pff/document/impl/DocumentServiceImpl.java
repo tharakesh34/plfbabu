@@ -61,7 +61,7 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 			tableType = TableType.TEMP_TAB.getSuffix();
 		}
 
-		if (documentDetail.isNew()) {
+		if (documentDetail.isNewRecord()) {
 			/**
 			 * Save the document (documentDetails object) into DocumentManagerTable using documentManagerDAO.save(?) get
 			 * the long Id<br>
@@ -147,7 +147,7 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 				+ ":" + valueParm[0] + " and ";
 		errParm[1] = PennantJavaUtil.getLabel("CustDocType_label") + "-" + valueParm[1];
 
-		if (documentDetail.isNew()) { // for New record or new record into work flow
+		if (documentDetail.isNewRecord()) { // for New record or new record into work flow
 			if (!documentDetail.isWorkflow()) {// With out Work flow only new
 				if (befCustomerDocument != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));

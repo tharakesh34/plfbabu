@@ -79,8 +79,6 @@ public class StepPolicyHeader extends AbstractWorkflowEntity {
 	private String tenorSplitPerc;
 	private String rateMargin;
 	private String emiSplitPerc;
-
-	private boolean newRecord;
 	private String lovValue;
 	private StepPolicyHeader befImage;
 	private LoggedInUser userDetails;
@@ -145,14 +143,6 @@ public class StepPolicyHeader extends AbstractWorkflowEntity {
 
 	public void setPolicyDesc(String policyDesc) {
 		this.policyDesc = policyDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

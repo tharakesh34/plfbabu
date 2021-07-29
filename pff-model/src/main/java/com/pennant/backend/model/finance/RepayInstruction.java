@@ -73,7 +73,6 @@ public class RepayInstruction extends AbstractWorkflowEntity {
 	private String repaySchdMethod;
 
 	private long logKey;
-	private boolean newRecord = false;
 	private String lovValue;
 	private RepayInstruction befImage;
 
@@ -95,7 +94,7 @@ public class RepayInstruction extends AbstractWorkflowEntity {
 		entity.setRepayAmount(this.repayAmount);
 		entity.setRepaySchdMethod(this.repaySchdMethod);
 		entity.setLogKey(this.logKey);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setLovValue(this.lovValue);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
@@ -158,14 +157,6 @@ public class RepayInstruction extends AbstractWorkflowEntity {
 
 	public void setRepaySchdMethod(String repaySchdMethod) {
 		this.repaySchdMethod = repaySchdMethod;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

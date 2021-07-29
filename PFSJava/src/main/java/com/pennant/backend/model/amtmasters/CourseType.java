@@ -53,7 +53,6 @@ public class CourseType extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 	private String courseTypeCode = null;
 	private String courseTypeDesc;
-	private boolean newRecord;
 	private String lovValue;
 	private CourseType befImage;
 	private LoggedInUser userDetails;
@@ -95,14 +94,6 @@ public class CourseType extends AbstractWorkflowEntity {
 
 	public void setCourseTypeDesc(String courseTypeDesc) {
 		this.courseTypeDesc = courseTypeDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

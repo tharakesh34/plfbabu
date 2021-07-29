@@ -152,7 +152,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 			this.listheader_Select.setVisible(true);
 		}
 
-		if (!finTaxUploadHeader.isNew()) {
+		if (!finTaxUploadHeader.isNewRecord()) {
 			grid_UploadedDetails.setVisible(false);
 			doFillHeaderData(finTaxUploadHeader.getFileName(), finTaxUploadHeader.getBatchCreatedDate(),
 					finTaxUploadHeader.getNumberofRecords(), finTaxUploadHeader.getStatus());
@@ -437,7 +437,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		if (this.listBoxFileData.getItems().isEmpty()) {
 			throw new WrongValueException(this.btnUpload, "Please Upload a Valid File to save");
 		}
-		if (afinTaxUploadHeader.isNew()) {
+		if (afinTaxUploadHeader.isNewRecord()) {
 			if (MediaUtil.isXls(media)) {
 				copyInputStreamToFile(media.getByteData(),
 						new File(SysParamUtil.getValueAsString("GST_FILEUPLOAD_PATH")));
@@ -450,7 +450,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		doSetValidation(userAction);
 		doWriteComponentsToBean(finTaxUploadDetailList, userAction, afinTaxUploadHeader);
 
-		isNew = afinTaxUploadHeader.isNew();
+		isNew = afinTaxUploadHeader.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -547,7 +547,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 				finTaxUploadDetail.setRecordType(PennantConstants.RCD_ADD);
 				if (((Checkbox) listitem.getFirstChild().getFirstChild()).isChecked()) {
 
-					if (this.finTaxUploadHeader.isNew()) {
+					if (this.finTaxUploadHeader.isNewRecord()) {
 						finTaxUploadDetail.setSeqNo(seqno++);
 					}
 					finTaxUploadDetailList.add(finTaxUploadDetail);
@@ -561,7 +561,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 			for (Listitem listitem : Listitems) {
 				finTaxUploadDetail = (FinTaxUploadDetail) listitem.getAttribute("data");
 				finTaxUploadDetail.setRecordType(PennantConstants.RCD_ADD);
-				if (this.finTaxUploadHeader.isNew()) {
+				if (this.finTaxUploadHeader.isNewRecord()) {
 					seqno = seqno + 1;
 					finTaxUploadDetail.setSeqNo(seqno);
 				}
@@ -586,7 +586,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		afinTaxUploadHeader.setTotalSelected(totalSelected);
 	}
 
-	private boolean doProcess(FinTaxUploadHeader aFinTaxUploadHeader, String tranType) throws InterfaceException {
+	protected boolean doProcess(FinTaxUploadHeader aFinTaxUploadHeader, String tranType) throws InterfaceException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -740,7 +740,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 	/**
 	 * Method for Refreshing List after Save/Delete a Record
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		final JdbcSearchObject<FinTaxUploadHeader> soFinTaxUploadHeader = getFinTaxUploadDetailListCtrl()
 				.getSearchObject();
 		getFinTaxUploadDetailListCtrl().pagingFinTaxDetailUploadList.setActivePage(0);

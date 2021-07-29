@@ -60,7 +60,6 @@ public class EMailType extends AbstractWorkflowEntity {
 	private String emailTypeDesc;
 	private int emailTypePriority;
 	private boolean emailTypeIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private EMailType befImage;
 	private LoggedInUser userDetails;
@@ -120,14 +119,6 @@ public class EMailType extends AbstractWorkflowEntity {
 
 	public void setEmailTypeIsActive(boolean emailTypeIsActive) {
 		this.emailTypeIsActive = emailTypeIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

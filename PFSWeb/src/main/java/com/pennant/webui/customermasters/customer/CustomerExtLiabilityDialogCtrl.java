@@ -1581,7 +1581,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			return;
 		}
 
-		isNew = aCustomerExtLiability.isNew();
+		isNew = aCustomerExtLiability.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -2071,7 +2071,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			}
 			installmentDetails.setEmiClearedDay(emiClearedDay.intValue());
 			boolean isNew = false;
-			isNew = installmentDetails.isNew();
+			isNew = installmentDetails.isNewRecord();
 			String tranType = "";
 
 			if (installmentDetails.isNewRecord()) {

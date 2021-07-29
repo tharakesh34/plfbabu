@@ -372,7 +372,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 
 		this.depositDetailsListCtrl.search();
@@ -869,7 +869,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 				boolean active = false;
 				for (DepositCheques depositCheques : depositMovements.getDepositChequesList()) {
 					if (depositCheques.isVisible()) {
-						if (depositCheques.isNew()) {
+						if (depositCheques.isNewRecord()) {
 							depositCheques.setRecordType(PennantConstants.RCD_ADD);
 						} else {
 							depositCheques.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -998,7 +998,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	public void doShowDialog(DepositDetails depositDetails) {
 		logger.debug(Literal.LEAVING);
 
-		if (depositDetails.isNew()) {
+		if (depositDetails.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1307,7 +1307,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
 		doWriteComponentsToBean(aDepositDetails);
 
-		isNew = aDepositDetails.isNew();
+		isNew = aDepositDetails.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1359,7 +1359,7 @@ public class DepositDetailsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(DepositDetails depositDetails, String tranType) {
+	protected boolean doProcess(DepositDetails depositDetails, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;

@@ -16,7 +16,6 @@ public class Manufacturer extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private long manufacturerId = Long.MIN_VALUE;
 	private String lovValue;
-	private boolean newRecord = false;
 
 	public String getDescription() {
 		return description;
@@ -64,14 +63,6 @@ public class Manufacturer extends AbstractWorkflowEntity {
 
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public boolean isNew() {

@@ -190,7 +190,7 @@ public class DirectorDetailServiceImpl extends GenericService<DirectorDetail> im
 			tableType = "_Temp";
 		}
 
-		if (directorDetail.isNew()) {
+		if (directorDetail.isNewRecord()) {
 			directorDetail.setId(getDirectorDetailDAO().save(directorDetail, tableType));
 			auditHeader.getAuditDetail().setModelData(directorDetail);
 			auditHeader.setAuditReference(String.valueOf(directorDetail.getDirectorId()));

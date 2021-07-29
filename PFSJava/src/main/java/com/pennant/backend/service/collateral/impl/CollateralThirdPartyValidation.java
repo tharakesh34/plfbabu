@@ -59,7 +59,7 @@ public class CollateralThirdPartyValidation {
 		errParm[0] = PennantJavaUtil.getLabel("label_CollateralReference") + ":" + valueParm[1];
 		errParm[1] = PennantJavaUtil.getLabel("label_CoOwnerCIF") + ":" + valueParm[0];
 
-		if (collateralThirdParty.isNew()) { // for New record or new record into work flow
+		if (collateralThirdParty.isNewRecord()) { // for New record or new record into work flow
 
 			if (!collateralThirdParty.isWorkflow()) {// With out Work flow only new records  
 				if (befCollateralThirdParty != null) { // Record Already Exists in the table then error  

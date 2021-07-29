@@ -228,7 +228,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 			tableType = "_Temp";
 		}
 
-		if (jointAccountDetail.isNew()) {
+		if (jointAccountDetail.isNewRecord()) {
 			jointAccountDetail.setId(getJointAccountDetailDAO().save(jointAccountDetail, tableType));
 			auditHeader.getAuditDetail().setModelData(jointAccountDetail);
 			auditHeader.setAuditReference(String.valueOf(jointAccountDetail.getJointAccountId()));
@@ -454,7 +454,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		valueParm[0] = String.valueOf(jointAccountDetail.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_JointAccountId") + ":" + valueParm[0];
 
-		if (jointAccountDetail.isNew()) { // for New record or new record into work flow
+		if (jointAccountDetail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!jointAccountDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befJointAccountDetail != null) { // Record Already Exists in the table then error  
@@ -608,7 +608,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 			} else if (jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (jointAccountDetail.isNew()) {
+				} else if (jointAccountDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -964,7 +964,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_JointCustCIf") + ":" + valueParm[1];
 
-		if (jointAccountDetail.isNew()) { // for New record or new record into work flow
+		if (jointAccountDetail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!jointAccountDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befJointAccountDetail != null) { // Record Already Exists in the table then error  

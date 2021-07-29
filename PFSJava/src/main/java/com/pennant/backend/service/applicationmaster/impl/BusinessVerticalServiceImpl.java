@@ -132,7 +132,7 @@ public class BusinessVerticalServiceImpl extends GenericService<BusinessVertical
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (businessVertical.isNew()) {
+		if (businessVertical.isNewRecord()) {
 			businessVertical.setId(Long.parseLong(getBusinessVerticalDAO().save(businessVertical, tableType)));
 			auditHeader.getAuditDetail().setModelData(businessVertical);
 			auditHeader.setAuditReference(String.valueOf(businessVertical.getId()));
@@ -338,7 +338,7 @@ public class BusinessVerticalServiceImpl extends GenericService<BusinessVertical
 		BusinessVertical businessVertical = (BusinessVertical) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (businessVertical.isNew() && businessVerticalDAO.isDuplicateKey(businessVertical.getId(),
+		if (businessVertical.isNewRecord() && businessVerticalDAO.isDuplicateKey(businessVertical.getId(),
 				businessVertical.getCode(), businessVertical.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 

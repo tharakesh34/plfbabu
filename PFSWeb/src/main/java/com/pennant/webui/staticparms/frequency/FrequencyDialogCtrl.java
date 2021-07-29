@@ -354,7 +354,7 @@ public class FrequencyDialogCtrl extends GFCBaseCtrl<Frequency> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aFrequency.isNew()) {
+		if (aFrequency.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -566,7 +566,7 @@ public class FrequencyDialogCtrl extends GFCBaseCtrl<Frequency> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aFrequency.isNew();
+		isNew = aFrequency.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -616,7 +616,7 @@ public class FrequencyDialogCtrl extends GFCBaseCtrl<Frequency> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Frequency aFrequency, String tranType) {
+	protected boolean doProcess(Frequency aFrequency, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -824,7 +824,7 @@ public class FrequencyDialogCtrl extends GFCBaseCtrl<Frequency> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getFrequencyListCtrl().search();
 	}
 

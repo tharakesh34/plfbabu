@@ -298,7 +298,7 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (academic.isNew()) {
+		if (academic.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -530,7 +530,7 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aAcademic.isNew();
+		isNew = aAcademic.isNewRecord();
 		String tranType;
 
 		if (isWorkFlowEnabled()) {
@@ -578,7 +578,7 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Academic aAcademic, String tranType) {
+	protected boolean doProcess(Academic aAcademic, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader;
@@ -762,7 +762,7 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		academicListCtrl.search();
 	}
 

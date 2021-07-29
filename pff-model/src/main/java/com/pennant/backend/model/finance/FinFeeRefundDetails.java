@@ -5,31 +5,28 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class FinFeeRefundDetails extends AbstractWorkflowEntity implements Entity {
+public class FinFeeRefundDetails extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
 	private long headerId;
 	private long feeId;
-	//With GST
+	// With GST
 	private BigDecimal refundAmount = BigDecimal.ZERO;
-	//GST
+	// GST
 	private BigDecimal refundAmtGST = BigDecimal.ZERO;
-	//TDS
+	// TDS
 	private BigDecimal refundAmtTDS = BigDecimal.ZERO;
-	//Without GST
+	// Without GST
 	private BigDecimal refundAmtOriginal = BigDecimal.ZERO;
 
 	private String feeTypeCode;
 	private boolean taxApplicable;
 	private String taxComponent;
 	private String finEvent;
-
-	private boolean newRecord = false;
 	private FinFeeRefundDetails befImage;
 	private LoggedInUser userDetails;
 
@@ -50,12 +47,10 @@ public class FinFeeRefundDetails extends AbstractWorkflowEntity implements Entit
 		return excludeFields;
 	}
 
-	@Override
 	public long getId() {
 		return this.id;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.id = id;
 	}
@@ -106,14 +101,6 @@ public class FinFeeRefundDetails extends AbstractWorkflowEntity implements Entit
 
 	public void setRefundAmtOriginal(BigDecimal refundAmtOriginal) {
 		this.refundAmtOriginal = refundAmtOriginal;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public FinFeeRefundDetails getBefImage() {

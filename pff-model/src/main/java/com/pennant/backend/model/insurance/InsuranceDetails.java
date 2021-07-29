@@ -6,13 +6,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import javax.xml.bind.annotation.XmlTransient;
-
-public class InsuranceDetails extends AbstractWorkflowEntity implements Entity {
+public class InsuranceDetails extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
@@ -53,7 +52,6 @@ public class InsuranceDetails extends AbstractWorkflowEntity implements Entity {
 	private String nomineeRelation;
 	private String reconStatus;
 	private int updateCount = 0;
-	private boolean newRecord;
 	private String lovValue;
 	private InsuranceDetails befImage;
 	private BigDecimal tolaranceAmount = BigDecimal.ZERO;
@@ -87,7 +85,7 @@ public class InsuranceDetails extends AbstractWorkflowEntity implements Entity {
 	private String companyName;
 	private BigDecimal payableAmount = BigDecimal.ZERO;
 
-	//Accounting
+	// Accounting
 	private BigDecimal adjAmount = BigDecimal.ZERO;
 	private String entityCode;
 
@@ -124,14 +122,6 @@ public class InsuranceDetails extends AbstractWorkflowEntity implements Entity {
 		return detailsMap;
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -154,11 +144,6 @@ public class InsuranceDetails extends AbstractWorkflowEntity implements Entity {
 
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
-	}
-
-	@Override
-	public boolean isNew() {
-		return isNewRecord();
 	}
 
 	public long getId() {

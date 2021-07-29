@@ -127,7 +127,7 @@ public class ExtendedFieldHeaderServiceImpl extends GenericService<ExtendedField
 			tableType = "_Temp";
 		}
 
-		if (extendedFieldHeader.isNew()) {
+		if (extendedFieldHeader.isNewRecord()) {
 			extendedFieldHeader.setId(getExtendedFieldHeaderDAO().save(extendedFieldHeader, tableType));
 			auditHeader.getAuditDetail().setModelData(extendedFieldHeader);
 			auditHeader.setAuditReference(String.valueOf(extendedFieldHeader.getModuleId()));
@@ -344,7 +344,7 @@ public class ExtendedFieldHeaderServiceImpl extends GenericService<ExtendedField
 		errParm[0] = PennantJavaUtil.getLabel("label_ModuleName") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_SubModuleName") + ":" + valueParm[1];
 
-		if (extendedFieldHeader.isNew()) { // for New record or new record into work flow
+		if (extendedFieldHeader.isNewRecord()) { // for New record or new record into work flow
 
 			if (!extendedFieldHeader.isWorkflow()) {// With out Work flow only new records  
 				if (befExtendedFieldHeader != null) { // Record Already Exists in the table then error  

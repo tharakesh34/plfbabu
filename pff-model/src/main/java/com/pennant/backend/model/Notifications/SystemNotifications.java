@@ -1,9 +1,8 @@
 package com.pennant.backend.model.Notifications;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
-public class SystemNotifications extends AbstractWorkflowEntity implements Entity {
+public class SystemNotifications extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -1472467289111692722L;
 
 	private long id;
@@ -21,11 +20,6 @@ public class SystemNotifications extends AbstractWorkflowEntity implements Entit
 	private String criteriaQuery;
 	private String templateName;
 	private boolean active;
-
-	@Override
-	public boolean isNew() {
-		return false;
-	}
 
 	public long getId() {
 		return id;

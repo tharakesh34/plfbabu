@@ -2190,7 +2190,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// will be updated in the finance main.
 		getFinMandateService().saveOrUpdate(fd, auditHeader, table);
 
-		if (financeMain.isNew()) {
+		if (financeMain.isNewRecord()) {
 			// Lock Functionality not required while Creating loan From API
 			if (StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)
 					&& auditHeader.getApiHeader() != null) {
@@ -2958,7 +2958,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			} else if (lowerTaxDeduction.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (lowerTaxDeduction.isNew()) {
+				} else if (lowerTaxDeduction.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -3308,7 +3308,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			} else if (finFlagsDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (finFlagsDetail.isNew()) {
+				} else if (finFlagsDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -3404,7 +3404,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			} else if (recording.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (recording.isNew()) {
+				} else if (recording.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -8610,7 +8610,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			} else if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (contributorDetail.isNew()) {
+				} else if (contributorDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -11111,7 +11111,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (taxHeader != null && (finFeeDetail.isNewRecord() || (!finFeeDetail.isNewRecord()
 					&& (finFeeDetail.getTaxHeaderId() != null && finFeeDetail.getTaxHeaderId() > 0)))) {
 				taxHeader.setRecordType(finFeeDetail.getRecordType());
-				taxHeader.setNewRecord(finFeeDetail.isNew());
+				taxHeader.setNewRecord(finFeeDetail.isNewRecord());
 				taxHeader.setLastMntBy(finFeeDetail.getLastMntBy());
 				taxHeader.setLastMntOn(finFeeDetail.getLastMntOn());
 				taxHeader.setRecordStatus(finFeeDetail.getRecordStatus());

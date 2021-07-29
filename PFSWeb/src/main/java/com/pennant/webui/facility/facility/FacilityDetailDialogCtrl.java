@@ -783,7 +783,7 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 	public void doShowDialog(FacilityDetail aFacilityDetail) throws InterruptedException {
 		logger.debug("Entering");
 		// set Readonly mode accordingly if the object is new or not.
-		if (aFacilityDetail.isNew()) {
+		if (aFacilityDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1197,7 +1197,7 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
 		// Do data level validations here
-		isNew = aFacilityDetail.isNew();
+		isNew = aFacilityDetail.isNewRecord();
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
@@ -1271,7 +1271,7 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 				FacilityDetail facilityDetail = list.get(i);
 				if (facilityDetail.getFacilityRef().equals(aFacilityDetail.getFacilityRef())) {
 					// Both Current and Existing list rating same
-					if (aFacilityDetail.isNew()) {
+					if (aFacilityDetail.isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm),
 								getUserWorkspace().getUserLanguage()));

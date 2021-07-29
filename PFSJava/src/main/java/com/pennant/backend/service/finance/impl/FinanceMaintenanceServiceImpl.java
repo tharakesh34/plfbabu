@@ -376,7 +376,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		// Finance Main Details Save And Update
 		// =======================================
-		if (financeMain.isNew()) {
+		if (financeMain.isNewRecord()) {
 			getFinanceMainDAO().save(financeMain, tableType, false);
 
 			// Finance Penalty OD Rate Details
@@ -1252,7 +1252,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		valueParm[0] = financeMain.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (financeMain.isNew()) { // for New record or new record into work flow
+		if (financeMain.isNewRecord()) { // for New record or new record into work flow
 
 			if (!financeMain.isWorkflow()) {// With out Work flow only new
 				// records
@@ -1574,7 +1574,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			} else if (guarantorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (guarantorDetail.isNew()) {
+				} else if (guarantorDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -1678,7 +1678,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			} else if (jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (jointAccountDetail.isNew()) {
+				} else if (jointAccountDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -1777,7 +1777,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			} else if (finCollaterals.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (finCollaterals.isNew()) {
+				} else if (finCollaterals.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -1871,7 +1871,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			} else if (finFlagsDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (finFlagsDetail.isNew()) {
+				} else if (finFlagsDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

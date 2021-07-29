@@ -350,7 +350,7 @@ public class LegalNoteDialogCtrl extends GFCBaseCtrl<LegalNote> {
 	public void doShowDialog(LegalNote legalNote) {
 		logger.debug(Literal.LEAVING);
 
-		if (legalNote.isNew()) {
+		if (legalNote.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.description.focus();
@@ -557,7 +557,7 @@ public class LegalNoteDialogCtrl extends GFCBaseCtrl<LegalNote> {
 		doSetValidation();
 		doWriteComponentsToBean(aLegalNote);
 
-		isNew = aLegalNote.isNew();
+		isNew = aLegalNote.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {

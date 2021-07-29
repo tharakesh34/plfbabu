@@ -78,7 +78,7 @@ public class CustomerGstInfoValidation {
 				+ ":" + valueParm[0] + " and ";
 		errParm[1] = PennantJavaUtil.getLabel("label_CustomerDialog_GSTNumber.value") + "-" + valueParm[1];
 
-		if (customerGST.isNew()) { // for New record or new record into work
+		if (customerGST.isNewRecord()) { // for New record or new record into work
 										// flow
 
 			if (customerGST.isWorkflow()) {// With out Work flow only new

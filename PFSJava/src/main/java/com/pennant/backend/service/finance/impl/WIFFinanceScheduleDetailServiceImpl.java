@@ -137,7 +137,7 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 			tableType = "_Temp";
 		}
 
-		if (wIFFinanceScheduleDetail.isNew()) {
+		if (wIFFinanceScheduleDetail.isNewRecord()) {
 			getWIFFinanceScheduleDetailDAO().save(wIFFinanceScheduleDetail, tableType);
 		} else {
 			getWIFFinanceScheduleDetailDAO().update(wIFFinanceScheduleDetail, tableType);
@@ -347,7 +347,7 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 		valueParm[0] = wIFFinanceScheduleDetail.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (wIFFinanceScheduleDetail.isNew()) { // for New record or new record into work flow
+		if (wIFFinanceScheduleDetail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!wIFFinanceScheduleDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befWIFFinanceScheduleDetail != null) { // Record Already Exists in the table then error  

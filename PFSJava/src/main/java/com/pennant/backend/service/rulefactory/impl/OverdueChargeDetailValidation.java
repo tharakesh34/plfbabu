@@ -73,7 +73,7 @@ public class OverdueChargeDetailValidation {
 
 		errParm[0] = PennantJavaUtil.getLabel("label_ODCRuleCode") + ":" + valueParm[0];
 
-		if (overdueChargeDetail.isNew()) { // for New record or new record into work flow
+		if (overdueChargeDetail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!overdueChargeDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befChargeDetail != null) { // Record Already Exists in the table then error  

@@ -695,7 +695,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		doWriteComponentsToBean(aFinMaintainInstruction);
 
 		boolean isNew;
-		isNew = aFinMaintainInstruction.isNew();
+		isNew = aFinMaintainInstruction.isNewRecord();
 		String tranType;
 
 		if (isWorkFlowEnabled()) {
@@ -744,7 +744,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		final JdbcSearchObject<FinanceMain> soFinanceMain = financeSelectCtrl.getSearchObj(true);
 		financeSelectCtrl.getPagingFinanceList().setActivePage(0);
 		financeSelectCtrl.getPagedListWrapper().setSearchObject(soFinanceMain);
@@ -765,7 +765,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(FinMaintainInstruction aFinMaintainInstruction, String tranType) {
+	protected boolean doProcess(FinMaintainInstruction aFinMaintainInstruction, String tranType) {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;

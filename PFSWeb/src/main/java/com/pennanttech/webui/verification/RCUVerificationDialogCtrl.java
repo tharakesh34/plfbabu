@@ -1959,7 +1959,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void refreshList() {
+	protected void refreshList() {
 		rcuInitiationListCtrl.search();
 	}
 

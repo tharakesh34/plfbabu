@@ -55,7 +55,6 @@ public class FinanceApplicationCode extends AbstractWorkflowEntity {
 	private String finAppType;
 	private String finAppDesc;
 	private boolean finAppIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private FinanceApplicationCode befImage;
 	private LoggedInUser userDetails;
@@ -107,14 +106,6 @@ public class FinanceApplicationCode extends AbstractWorkflowEntity {
 
 	public void setFinAppIsActive(boolean finAppIsActive) {
 		this.finAppIsActive = finAppIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

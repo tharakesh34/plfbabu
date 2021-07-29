@@ -69,7 +69,7 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement(name = "QueryDetail")
 @XmlAccessorType(XmlAccessType.NONE)
-public class QueryDetail extends AbstractWorkflowEntity implements Entity {
+public class QueryDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 	@XmlElement
 	private long id = Long.MIN_VALUE;
@@ -102,8 +102,6 @@ public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 	private long closerBy = 0;
 	// @XmlJavaTypeAdapter(TimestampFormatterAdapter.class)
 	private Timestamp closerOn;
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -275,14 +273,6 @@ public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setCloserOn(Timestamp closerOn) {
 		this.closerOn = closerOn;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

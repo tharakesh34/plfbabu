@@ -27,7 +27,6 @@ public class FinTaxUploadDetail extends AbstractWorkflowEntity {
 	private String province;
 	private String city;
 	private String pinCode;
-	private boolean newRecord = false;
 	private LoggedInUser userDetails;
 	private FinTaxUploadDetail befImage;
 	private int seqNo;
@@ -148,14 +147,6 @@ public class FinTaxUploadDetail extends AbstractWorkflowEntity {
 
 	public void setPinCode(String pinCode) {
 		this.pinCode = pinCode;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public LoggedInUser getUserDetails() {

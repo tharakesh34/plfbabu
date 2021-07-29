@@ -130,7 +130,7 @@ public class CostOfFundServiceImpl extends GenericService<CostOfFund> implements
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (costOfFund.isNew()) {
+		if (costOfFund.isNewRecord()) {
 			getCostOfFundDAO().save(costOfFund, tableType);
 			auditHeader.getAuditDetail().setModelData(costOfFund);
 			auditHeader.setAuditReference(costOfFund.getCofCode() + PennantConstants.KEY_SEPERATOR
@@ -348,7 +348,7 @@ public class CostOfFundServiceImpl extends GenericService<CostOfFund> implements
 		CostOfFund costOfFund = (CostOfFund) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (costOfFund != null && costOfFund.isNew()
+		if (costOfFund != null && costOfFund.isNewRecord()
 				&& PennantConstants.RECORD_TYPE_NEW.equals(costOfFund.getRecordType())
 				&& costOfFundDAO.isDuplicateKey(costOfFund.getCofCode(), costOfFund.getCofEffDate(),
 						costOfFund.getCurrency(), costOfFund.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {

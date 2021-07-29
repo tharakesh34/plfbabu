@@ -67,8 +67,6 @@ public class ReasonTypes extends AbstractWorkflowEntity {
 	private String code;
 	private String description;
 	@XmlTransient
-	private boolean newRecord = false;
-	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private ReasonTypes befImage;
@@ -115,14 +113,6 @@ public class ReasonTypes extends AbstractWorkflowEntity {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

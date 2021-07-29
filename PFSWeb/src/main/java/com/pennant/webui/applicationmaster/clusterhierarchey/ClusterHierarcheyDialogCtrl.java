@@ -377,7 +377,7 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		clusterHierarcheyListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -487,7 +487,7 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 		logger.debug(Literal.ENTERING);
 		Listcell listOfCell;
 
-		if (clusterHierarchey.isNew()) {
+		if (clusterHierarchey.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -713,7 +713,7 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 			return;
 		}
 
-		isNew = aClusterHierarchey.isNew();
+		isNew = aClusterHierarchey.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -762,7 +762,7 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(ClusterHierarchy aClusterHierarchey, String tranType) {
+	protected boolean doProcess(ClusterHierarchy aClusterHierarchey, String tranType) {
 		logger.debug(Literal.LEAVING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

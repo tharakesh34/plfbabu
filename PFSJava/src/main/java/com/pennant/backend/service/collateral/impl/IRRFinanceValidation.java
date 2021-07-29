@@ -58,7 +58,7 @@ public class IRRFinanceValidation {
 		errParm[0] = PennantJavaUtil.getLabel("label_IRRID") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_FeeTypeCode") + ":" + valueParm[1];
 
-		if (irrFinanceType.isNew()) { // for New record or new record into work flow
+		if (irrFinanceType.isNewRecord()) { // for New record or new record into work flow
 
 			if (!irrFinanceType.isWorkflow()) {// With out Work flow only new records  
 				if (befirrFinanceTypeDetail != null) { // Record Already Exists in the table then error  

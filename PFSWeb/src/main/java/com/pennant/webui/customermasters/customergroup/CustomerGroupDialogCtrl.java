@@ -313,7 +313,7 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 		this.custGrpIsActive.setChecked(aCustomerGroup.isCustGrpIsActive());
 		this.recordStatus.setValue(aCustomerGroup.getRecordStatus());
 
-		if (aCustomerGroup.isNew()
+		if (aCustomerGroup.isNewRecord()
 				|| StringUtils.equals(aCustomerGroup.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			this.custGrpIsActive.setChecked(true);
 			this.custGrpIsActive.setDisabled(true);
@@ -391,7 +391,7 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aCustomerGroup.isNew()) {
+		if (aCustomerGroup.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -642,7 +642,7 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aCustomerGroup.isNew();
+		isNew = aCustomerGroup.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -692,7 +692,7 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CustomerGroup aCustomerGroup, String tranType) {
+	protected boolean doProcess(CustomerGroup aCustomerGroup, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -904,7 +904,7 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCustomerGroupListCtrl().search();
 	}
 

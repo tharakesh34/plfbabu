@@ -492,7 +492,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getOperationRolesListCtrl().search();
 	}
 
@@ -523,7 +523,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aSecurityOperation.isNew();
+		isNew = aSecurityOperation.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -573,7 +573,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * 
 	 */
 
-	private boolean doProcess(SecurityOperation aSecurityOperation, String tranType) {
+	protected boolean doProcess(SecurityOperation aSecurityOperation, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

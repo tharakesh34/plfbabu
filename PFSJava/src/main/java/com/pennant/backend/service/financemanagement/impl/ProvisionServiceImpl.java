@@ -177,7 +177,7 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (provision.isNew()) {
+		if (provision.isNewRecord()) {
 			provisionDAO.save(provision, tableType);
 			provisionDAO.saveAmounts(provision.getProvisionAmounts(), tableType, false);
 		} else {
@@ -434,7 +434,7 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		valueParm[0] = provision.getFinReference();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (provision.isNew()) { // for New record or new record into work flow
+		if (provision.isNewRecord()) { // for New record or new record into work flow
 
 			if (!provision.isWorkflow()) {// With out Work flow only new records
 				if (befProvision != null) { // Record Already Exists in the table then error

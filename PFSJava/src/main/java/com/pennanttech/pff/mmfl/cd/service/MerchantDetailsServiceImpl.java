@@ -38,7 +38,7 @@ public class MerchantDetailsServiceImpl extends GenericService<MerchantDetails> 
 		if (merchantDetails.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-		if (merchantDetails.isNew()) {
+		if (merchantDetails.isNewRecord()) {
 			merchantDetails.setMerchantId(Long.parseLong(merchantDetailsDAO.save(merchantDetails, tableType)));
 			auditHeader.getAuditDetail().setModelData(merchantDetails);
 			auditHeader.setAuditReference(String.valueOf(merchantDetails.getMerchantId()));
@@ -173,7 +173,7 @@ public class MerchantDetailsServiceImpl extends GenericService<MerchantDetails> 
 		int posId = merchantDetails.getPOSId();
 
 		// Check the unique keys.
-		if (merchantDetails.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(merchantDetails.getRecordType())
+		if (merchantDetails.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(merchantDetails.getRecordType())
 				&& merchantDetailsDAO.isDuplicateKey(merchantDetails,
 						merchantDetails.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
@@ -182,7 +182,7 @@ public class MerchantDetailsServiceImpl extends GenericService<MerchantDetails> 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
 
-		if (merchantDetails.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(merchantDetails.getRecordType())
+		if (merchantDetails.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(merchantDetails.getRecordType())
 				&& merchantDetailsDAO.isDuplicatePOSIdKey(merchantDetails,
 						merchantDetails.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

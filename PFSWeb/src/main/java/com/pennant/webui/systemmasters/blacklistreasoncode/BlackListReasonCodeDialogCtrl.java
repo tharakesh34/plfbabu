@@ -304,7 +304,7 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 		this.bLIsActive.setChecked(aBlackListReasonCode.isBLIsActive());
 		this.recordStatus.setValue(aBlackListReasonCode.getRecordStatus());
 
-		if (aBlackListReasonCode.isNew()
+		if (aBlackListReasonCode.isNewRecord()
 				|| (aBlackListReasonCode.getRecordType() != null ? aBlackListReasonCode.getRecordType() : "")
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.bLIsActive.setChecked(true);
@@ -367,7 +367,7 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aBlackListReasonCode.isNew()) {
+		if (aBlackListReasonCode.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -590,7 +590,7 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aBlackListReasonCode.isNew();
+		isNew = aBlackListReasonCode.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -639,7 +639,7 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(BlackListReasonCode aBlackListReasonCode, String tranType) {
+	protected boolean doProcess(BlackListReasonCode aBlackListReasonCode, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -852,7 +852,7 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getBlackListReasonCodeListCtrl().search();
 	}
 

@@ -28,7 +28,6 @@ public class QueueAssignmentHeader extends AbstractWorkflowEntity {
 	private boolean singleUser = false;
 	private boolean lovDescNewRecord = false;
 	private QueueAssignmentHeader befImage;
-	private boolean newRecord = false;
 	private LoggedInUser userDetails;
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private List<QueueAssignment> queueAssignmentsList;
@@ -112,14 +111,6 @@ public class QueueAssignmentHeader extends AbstractWorkflowEntity {
 
 	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getModule() {

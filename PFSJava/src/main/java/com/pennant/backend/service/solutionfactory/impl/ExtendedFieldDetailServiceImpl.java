@@ -161,7 +161,7 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 			tableType = "_Temp";
 		}
 
-		if (extendedFieldHeader.isNew()) {
+		if (extendedFieldHeader.isNewRecord()) {
 			getExtendedFieldHeaderDAO().save(extendedFieldHeader, tableType);
 		} else {
 			getExtendedFieldHeaderDAO().update(extendedFieldHeader, tableType);
@@ -334,7 +334,7 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 			} else if (extendedFieldDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (extendedFieldDetail.isNew()) {
+				} else if (extendedFieldDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -656,7 +656,7 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 		valueParm[0] = String.valueOf(details.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_ModuleId") + ":" + valueParm[0];
 
-		if (details.isNew()) { // for New record or new record into work flow
+		if (details.isNewRecord()) { // for New record or new record into work flow
 
 			if (!details.isWorkflow()) {// With out Work flow only new records  
 				if (befExtendedFieldDetail != null) { // Record Already Exists in the table then error  

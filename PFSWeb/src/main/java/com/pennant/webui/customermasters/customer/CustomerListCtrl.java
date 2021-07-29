@@ -273,7 +273,7 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("customerDetails", customerDetails);
 		arg.put("customerListCtrl", this);
-		arg.put("newRecord", customerDetails.getCustomer().isNew());
+		arg.put("newRecord", customerDetails.getCustomer().isNewRecord());
 		arg.put("module", module);
 		arg.put("isFromCustomer", true);
 

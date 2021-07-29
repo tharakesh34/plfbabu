@@ -538,7 +538,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		if (StringUtils.equals(loanType, FinanceConstants.FIN_DIVISION_FACILITY)) {
 			FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-			if (finMain != null && !finMain.isNew()
+			if (finMain != null && !finMain.isNewRecord()
 					&& !StringUtils.equals(finMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 				isEnquiry = true;
 				financeMain.setWorkflowId(0);
@@ -1152,7 +1152,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.nextGrcPftDate_two.setValue(aFinanceMain.getNextGrcPftDate());
 			this.nextGrcPftRvwDate_two.setValue(aFinanceMain.getNextGrcPftRvwDate());
 			this.nextGrcCpzDate_two.setValue(aFinanceMain.getNextGrcCpzDate());
-			if (!aFinanceMain.isNew() || StringUtils.isNotBlank(aFinanceMain.getFinReference())) {
+			if (!aFinanceMain.isNewRecord() || StringUtils.isNotBlank(aFinanceMain.getFinReference())) {
 				/*
 				 * this.nextGrcPftDate.setValue(aFinanceMain.getNextGrcPftDate());
 				 * this.nextGrcPftRvwDate.setValue(aFinanceMain.getNextGrcPftRvwDate());
@@ -2512,7 +2512,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// fill the components with the data
 		doWriteBeanToComponents(afinanceDetail, true);
-		if (afinanceDetail.getFinScheduleData().getFinanceMain().isNew()) {
+		if (afinanceDetail.getFinScheduleData().getFinanceMain().isNewRecord()) {
 			//As per mail below code is commented
 			//changeFrequencies();
 		}
@@ -2657,7 +2657,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (!onLoadProcess || (getFinanceDetail().getFinScheduleData().getFinanceMain().isStepFinance()
 				&& (!getFinanceDetail().getFinScheduleData().getStepPolicyDetails().isEmpty()
-						|| getFinanceDetail().getFinScheduleData().getFinanceMain().isNew()))) {
+						|| getFinanceDetail().getFinScheduleData().getFinanceMain().isNewRecord()))) {
 
 			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("roleCode", getRole());
@@ -4071,7 +4071,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType)
+	protected boolean doProcess(FinanceDetail aFinanceDetail, String tranType)
 			throws JaxenException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -4261,7 +4261,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		return processCompleted;
 	}
 
-	private void refreshList() {
+	protected void refreshList() {
 		final JdbcSearchObject<FinanceMain> soFinanceMain = getWIFFinanceMainListCtrl().getSearchObj();
 		getWIFFinanceMainListCtrl().pagingWIFFinanceMainList.setActivePage(0);
 		getWIFFinanceMainListCtrl().getPagedListWrapper().setSearchObject(soFinanceMain);

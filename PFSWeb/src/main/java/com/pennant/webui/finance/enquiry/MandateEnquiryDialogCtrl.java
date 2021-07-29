@@ -384,7 +384,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aMandate.isNew()) {
+		if (aMandate.isNewRecord()) {
 			this.inputDate.setValue(DateUtility.getAppDate());
 			// setFocus
 			this.custID.focus();

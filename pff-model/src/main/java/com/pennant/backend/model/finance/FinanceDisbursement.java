@@ -88,7 +88,6 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 	private boolean quickDisb;
 
 	private long linkedTranId;
-	private boolean newRecord = false;
 	private String lovValue;
 	private FinanceDisbursement befImage;
 	private LoggedInUser userDetails;
@@ -141,7 +140,7 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 		entity.setDisbRemarks(this.disbRemarks);
 		entity.setQuickDisb(this.quickDisb);
 		entity.setLinkedTranId(this.linkedTranId);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setLovValue(this.lovValue);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
@@ -284,14 +283,6 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 
 	public void setLinkedTranId(long linkedTranId) {
 		this.linkedTranId = linkedTranId;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

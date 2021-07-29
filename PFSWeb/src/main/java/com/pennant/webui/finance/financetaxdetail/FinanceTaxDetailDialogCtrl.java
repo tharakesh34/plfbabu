@@ -593,7 +593,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 
 		this.financeTaxDetailListCtrl.search();
@@ -1202,7 +1202,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		custID = aFinanceTaxDetail.getTaxCustId();
 		filterCustomerDetails();
 
-		if (!aFinanceTaxDetail.isNew()) {
+		if (!aFinanceTaxDetail.isNewRecord()) {
 			List<Filter> filters = new ArrayList<>();
 
 			if (this.country.getValue() != null && !this.country.getValue().isEmpty()) {
@@ -1403,7 +1403,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 	public void doShowDialog(FinanceTaxDetail financeTaxDetail) {
 		logger.debug(Literal.LEAVING);
 
-		if (financeTaxDetail.isNew()) {
+		if (financeTaxDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 		} else {
@@ -1772,7 +1772,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 				}
 			}
 		}
-		isNew = aFinanceTaxDetail.isNew();
+		isNew = aFinanceTaxDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1874,7 +1874,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(FinanceTaxDetail aFinanceTaxDetail, String tranType) {
+	protected boolean doProcess(FinanceTaxDetail aFinanceTaxDetail, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;

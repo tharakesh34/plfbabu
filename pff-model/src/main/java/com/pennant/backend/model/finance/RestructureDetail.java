@@ -6,11 +6,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class RestructureDetail extends AbstractWorkflowEntity implements Entity {
+public class RestructureDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -3793133053909214411L;
 
 	private long id;
@@ -53,7 +52,6 @@ public class RestructureDetail extends AbstractWorkflowEntity implements Entity 
 	private int newAvailedUnplanEmi = 0;
 	private BigDecimal oldFinalEmi = BigDecimal.ZERO;
 	private BigDecimal newFinalEmi = BigDecimal.ZERO;
-	private boolean newRecord;
 	private String lovValue;
 	private RestructureDetail befImage;
 	private LoggedInUser userDetails;
@@ -111,19 +109,6 @@ public class RestructureDetail extends AbstractWorkflowEntity implements Entity 
 
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
-	}
-
-	@Override
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

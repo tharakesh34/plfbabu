@@ -72,7 +72,6 @@ public class CustomerEMail extends AbstractWorkflowEntity {
 	private int custEMailPriority;
 	@XmlElement
 	private String custEMail;
-	private boolean newRecord;
 	private String lovValue;
 	private CustomerEMail befImage;
 	private LoggedInUser userDetails;
@@ -153,14 +152,6 @@ public class CustomerEMail extends AbstractWorkflowEntity {
 
 	public void setCustEMail(String custEMail) {
 		this.custEMail = custEMail;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

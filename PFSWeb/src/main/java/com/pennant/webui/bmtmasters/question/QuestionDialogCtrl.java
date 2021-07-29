@@ -413,7 +413,7 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aQuestion.isNew()) {
+		if (aQuestion.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -664,7 +664,7 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aQuestion.isNew();
+		isNew = aQuestion.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -715,7 +715,7 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Question aQuestion, String tranType) {
+	protected boolean doProcess(Question aQuestion, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -949,7 +949,7 @@ public class QuestionDialogCtrl extends GFCBaseCtrl<Question> {
 	}
 
 	// Method for refreshing the list after successful update
-	private void refreshList() {
+	protected void refreshList() {
 		final JdbcSearchObject<Question> soQuestion = getQuestionListCtrl().getSearchObj();
 		getQuestionListCtrl().pagingQuestionList.setActivePage(0);
 		getQuestionListCtrl().getPagedListWrapper().setSearchObject(soQuestion);

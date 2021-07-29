@@ -612,7 +612,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.custDocIssuedOn.setValue(aCustomerDocument.getCustDocIssuedOn());
 		this.custDocIssuedCountry.setValue(aCustomerDocument.getCustDocIssuedCountry());
 
-		if (aCustomerDocument.isNew() && StringUtils.isBlank(this.custDocIssuedCountry.getValue())) {
+		if (aCustomerDocument.isNewRecord() && StringUtils.isBlank(this.custDocIssuedCountry.getValue())) {
 			Filter[] countrysystemDefault = new Filter[1];
 
 			countrysystemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
@@ -647,7 +647,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			this.custDocType.setReadonly(true);
 		}
 
-		if (aCustomerDocument.isNew() || (aCustomerDocument.getRecordType() != null
+		if (aCustomerDocument.isNewRecord() || (aCustomerDocument.getRecordType() != null
 				&& aCustomerDocument.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW))) {
 			this.custDocIsAcrive.setChecked(true);
 			this.custDocIsAcrive.setDisabled(true);
@@ -1079,7 +1079,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	}
 
 	// Method for refreshing the list after successful update
-	private void refreshList() {
+	protected void refreshList() {
 		getCustomerDocumentListCtrl().search();
 	}
 
@@ -1464,7 +1464,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aCustomerDocument.isNew();
+		isNew = aCustomerDocument.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1880,7 +1880,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CustomerDocument aCustomerDocument, String tranType) {
+	protected boolean doProcess(CustomerDocument aCustomerDocument, String tranType) {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;

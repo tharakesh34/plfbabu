@@ -482,13 +482,13 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		this.isAdtDataSource.setChecked(aDashboardConfiguration.isAdtDataSource());
 		this.remarks.setValue(aDashboardConfiguration.getRemarks());
 		this.isMultiSeries.setChecked(aDashboardConfiguration.isMultiSeries());
-		if (aDashboardConfiguration.isNew()) {
+		if (aDashboardConfiguration.isNewRecord()) {
 			this.dashboardType.setValue(PennantAppUtil.getlabelDesc("", PennantAppUtil.getDashBoardType()));
 		} else {
 			this.dashboardType.setValue(PennantAppUtil.getlabelDesc(
 					String.valueOf(aDashboardConfiguration.getDashboardType()), PennantAppUtil.getDashBoardType()));
 		}
-		if (aDashboardConfiguration.isNew()) {
+		if (aDashboardConfiguration.isNewRecord()) {
 			this.cbDimension.setValue(PennantAppUtil.getlabelDesc(String.valueOf(Labels.getLabel("label_Select_2D")),
 					PennantAppUtil.getChartDimensions()));
 
@@ -665,7 +665,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aDashboardConfiguration.isNew()) {
+		if (aDashboardConfiguration.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 
@@ -780,7 +780,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getDashboardConfigurationListCtrl().search();
 	}
 
@@ -941,7 +941,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aDashboardConfiguration.isNew();
+		isNew = aDashboardConfiguration.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -978,7 +978,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		logger.debug("Leaving");
 	}
 
-	private boolean doProcess(DashboardConfiguration aDashboardConfiguration, String tranType) {
+	protected boolean doProcess(DashboardConfiguration aDashboardConfiguration, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

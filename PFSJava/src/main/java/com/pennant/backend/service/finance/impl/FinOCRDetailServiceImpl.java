@@ -53,7 +53,7 @@ public class FinOCRDetailServiceImpl extends GenericService<FinOCRDetail> implem
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (finOCRDetail.isNew()) {
+		if (finOCRDetail.isNewRecord()) {
 			finOCRDetail.setDetailID(finOCRDetailDAO.save(finOCRDetail, tableType.getSuffix()));
 			auditHeader.getAuditDetail().setModelData(finOCRDetail);
 			auditHeader.setAuditReference(String.valueOf(finOCRDetail.getDetailID()));

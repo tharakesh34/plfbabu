@@ -75,7 +75,7 @@ public class CustomerPhoneNumberValidation {
 				+ valueParm[0] + " and ";
 		errParm[1] = PennantJavaUtil.getLabel("label_PhoneTypeCode") + "-" + valueParm[1];
 
-		if (customerPhoneNumber.isNew()) { // for New record or new record into work flow
+		if (customerPhoneNumber.isNewRecord()) { // for New record or new record into work flow
 
 			if (!customerPhoneNumber.isWorkflow()) {// With out Work flow only new records  
 				if (befCustomerPhoneNumber != null) { // Record Already Exists in the table then error  

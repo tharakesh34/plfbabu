@@ -1737,7 +1737,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @return
 	 * @throws InterruptedException
 	 */
-	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws InterruptedException {
+	protected boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws InterruptedException {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;

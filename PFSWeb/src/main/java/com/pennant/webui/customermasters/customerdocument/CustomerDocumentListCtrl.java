@@ -248,7 +248,7 @@ public class CustomerDocumentListCtrl extends GFCBaseListCtrl<CustomerDocument> 
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("customerDocument", customerDocument);
 		arg.put("customerDocumentListCtrl", this);
-		arg.put("newRecord", customerDocument.isNew());
+		arg.put("newRecord", customerDocument.isNewRecord());
 		arg.put("verificationDocuments", verificationDocuments);
 
 		try {

@@ -43,8 +43,6 @@ public class PMAY extends AbstractWorkflowEntity {
 	private boolean electricity;
 	private String pmayCategory;
 	@XmlTransient
-	private boolean newRecord = false;
-	@XmlTransient
 	private PMAY befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
@@ -101,14 +99,6 @@ public class PMAY extends AbstractWorkflowEntity {
 
 	public void setCarpetArea(BigDecimal carpetArea) {
 		this.carpetArea = carpetArea;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public PMAY getBefImage() {

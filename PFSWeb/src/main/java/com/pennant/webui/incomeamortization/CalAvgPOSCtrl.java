@@ -78,8 +78,7 @@ public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_CalAvgPOS(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -197,10 +196,12 @@ public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 	 * @param event
 	 */
 	public void onClick$btnClose(Event event) {
-		if (doClose(false)) {
-			if (this.tabbox != null) {
-				this.tabbox.getSelectedTab().close();
-			}
+		doClose(false);
+	}
+
+	protected void doPostClose() {
+		if (this.tabbox != null) {
+			this.tabbox.getSelectedTab().close();
 		}
 	}
 
@@ -254,7 +255,7 @@ public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 			// configured thread count
 			int threadCount = SysParamUtil.getValueAsInt("AMZ_THREAD_COUNT");
 
-			//  Log the activity details
+			// Log the activity details
 			ProjectedAmortization projectedAmortization = new ProjectedAmortization();
 			AtomicLong finCount = new AtomicLong();
 			finListSize = financeList.size();

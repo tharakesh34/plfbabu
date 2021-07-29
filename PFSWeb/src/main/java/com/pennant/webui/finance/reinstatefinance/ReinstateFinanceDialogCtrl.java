@@ -533,7 +533,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	public void doShowDialog(ReinstateFinance aReinstateFinance) throws Exception {
 		logger.debug("Entering");
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aReinstateFinance.isNew()) {
+		if (aReinstateFinance.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -778,7 +778,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aReinstateFinance.isNew();
+		isNew = aReinstateFinance.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -855,7 +855,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	 * @throws UnsupportedEncodingException
 	 * 
 	 */
-	private boolean doProcess(ReinstateFinance aReinstateFinance, String tranType)
+	protected boolean doProcess(ReinstateFinance aReinstateFinance, String tranType)
 			throws FileNotFoundException, XMLStreamException, UnsupportedEncodingException, FactoryConfigurationError {
 		logger.debug("Entering");
 		boolean processCompleted = true;
@@ -1184,7 +1184,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getReinstateFinanceListCtrl().search();
 	}
 

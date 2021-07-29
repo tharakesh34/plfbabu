@@ -264,7 +264,7 @@ public class CustomerAdditionalDetailListCtrl extends GFCBaseListCtrl<CustomerAd
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("customerAdditionalDetail", customerAdditionalDetail);
 		arg.put("customerAdditionalDetailListCtrl", this);
-		arg.put("newRecord", customerAdditionalDetail.isNew());
+		arg.put("newRecord", customerAdditionalDetail.isNewRecord());
 
 		try {
 			Executions.createComponents(

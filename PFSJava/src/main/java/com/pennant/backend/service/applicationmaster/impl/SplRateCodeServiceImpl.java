@@ -125,7 +125,7 @@ public class SplRateCodeServiceImpl extends GenericService<SplRateCode> implemen
 			tableType = "_Temp";
 		}
 
-		if (splRateCode.isNew()) {
+		if (splRateCode.isNewRecord()) {
 			splRateCode.setSRType(getSplRateCodeDAO().save(splRateCode, tableType));
 			auditHeader.getAuditDetail().setModelData(splRateCode);
 			auditHeader.setAuditReference(splRateCode.getSRType());
@@ -329,7 +329,7 @@ public class SplRateCodeServiceImpl extends GenericService<SplRateCode> implemen
 		valueParm[0] = splRateCode.getSRType();
 		errParm[0] = PennantJavaUtil.getLabel("label_SRType") + ":" + valueParm[0];
 
-		if (splRateCode.isNew()) { // for New record or new record into work flow
+		if (splRateCode.isNewRecord()) { // for New record or new record into work flow
 
 			if (!splRateCode.isWorkflow()) {// With out Work flow only new
 												// records

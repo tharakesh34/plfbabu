@@ -895,7 +895,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCustomerEmploymentDetailListCtrl().search();
 	}
 
@@ -1099,7 +1099,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aCustomerEmploymentDetail.isNew();
+		isNew = aCustomerEmploymentDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1255,7 +1255,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CustomerEmploymentDetail aCustomerEmploymentDetail, String tranType) {
+	protected boolean doProcess(CustomerEmploymentDetail aCustomerEmploymentDetail, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;

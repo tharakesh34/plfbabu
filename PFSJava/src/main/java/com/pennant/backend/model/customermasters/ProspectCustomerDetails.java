@@ -8,14 +8,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 @XmlType(propOrder = { "customer", "customerDedupList", "addressList", "customerPhoneNumList", "customerEMailList",
 		"returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class ProspectCustomerDetails extends AbstractWorkflowEntity implements Entity {
+public class ProspectCustomerDetails extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 624772459953148441L;
 
@@ -63,20 +62,4 @@ public class ProspectCustomerDetails extends AbstractWorkflowEntity implements E
 	public void setReturnStatus(WSReturnStatus returnStatus) {
 		this.returnStatus = returnStatus;
 	}
-
-	@Override
-	public boolean isNew() {
-		return false;
-	}
-
-	@Override
-	public long getId() {
-		return 0;
-	}
-
-	@Override
-	public void setId(long id) {
-
-	}
-
 }

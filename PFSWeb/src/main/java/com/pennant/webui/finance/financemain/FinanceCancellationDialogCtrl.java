@@ -719,7 +719,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			// fill the components with the data
 			doWriteBeanToComponents(afinanceDetail, true);
 			onCheckODPenalty(false);
-			if (afinanceDetail.getFinScheduleData().getFinanceMain().isNew()
+			if (afinanceDetail.getFinScheduleData().getFinanceMain().isNewRecord()
 					&& !afinanceDetail.getFinScheduleData().getFinanceMain().isLovDescIsSchdGenerated()) {
 				changeFrequencies();
 				this.finReference.focus();
@@ -1066,7 +1066,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType)
+	protected boolean doProcess(FinanceDetail aFinanceDetail, String tranType)
 			throws InterruptedException, JaxenException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 

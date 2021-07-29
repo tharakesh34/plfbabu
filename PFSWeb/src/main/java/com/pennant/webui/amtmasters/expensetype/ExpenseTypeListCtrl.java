@@ -234,7 +234,7 @@ public class ExpenseTypeListCtrl extends GFCBaseListCtrl<ExpenseType> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("expenseType", expenseType);
 		arg.put("expenseTypeListCtrl", this);
-		arg.put("newRecord", expenseType.isNew());
+		arg.put("newRecord", expenseType.isNewRecord());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/AMTMasters/ExpenseType/ExpenseTypeDialog.zul", null, arg);

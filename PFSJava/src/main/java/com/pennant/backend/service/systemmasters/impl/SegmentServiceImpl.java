@@ -123,7 +123,7 @@ public class SegmentServiceImpl extends GenericService<Segment> implements Segme
 			tableType = "_Temp";
 		}
 
-		if (segment.isNew()) {
+		if (segment.isNewRecord()) {
 			segment.setSegmentCode(getSegmentDAO().save(segment, tableType));
 			auditHeader.getAuditDetail().setModelData(segment);
 			auditHeader.setAuditReference(segment.getSegmentCode());
@@ -323,7 +323,7 @@ public class SegmentServiceImpl extends GenericService<Segment> implements Segme
 		valueParm[0] = segment.getSegmentCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_Segment_Code") + ":" + valueParm[0];
 
-		if (segment.isNew()) { // for New record or new record into work flow
+		if (segment.isNewRecord()) { // for New record or new record into work flow
 
 			if (!segment.isWorkflow()) {// With out Work flow only new records
 				if (befSegment != null) { // Record Already Exists in the table  then error

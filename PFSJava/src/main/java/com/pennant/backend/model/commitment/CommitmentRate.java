@@ -67,8 +67,6 @@ public class CommitmentRate extends AbstractWorkflowEntity {
 	private BigDecimal cmtMargin = BigDecimal.ZERO;
 	private BigDecimal cmtActualRate = BigDecimal.ZERO;
 	private BigDecimal cmtCalculatedRate = BigDecimal.ZERO;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private CommitmentRate befImage;
 	private LoggedInUser userDetails;
@@ -140,14 +138,6 @@ public class CommitmentRate extends AbstractWorkflowEntity {
 
 	public void setCmtBaseRateName(String cmtBaseRateName) {
 		this.cmtBaseRateName = cmtBaseRateName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

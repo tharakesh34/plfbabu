@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  UploadHeader.java                                                    * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  17-12-2017    														*
- *                                                                  						*
- * Modified Date    :  17-12-2017     														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : UploadHeader.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 17-12-2017 * * Modified Date :
+ * 17-12-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.model.receiptupload;
@@ -49,11 +31,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class ReceiptUploadHeader extends AbstractWorkflowEntity implements Entity {
+public class ReceiptUploadHeader extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -4601315178356280082L;
 
@@ -65,7 +46,6 @@ public class ReceiptUploadHeader extends AbstractWorkflowEntity implements Entit
 	private int procRecords = 0;
 	private int successCount = 0;
 	private int failedCount = 0;
-	private boolean newRecord;
 	private String entityCode;
 	private String entityCodeDesc;
 	private int uploadProgress;
@@ -147,17 +127,10 @@ public class ReceiptUploadHeader extends AbstractWorkflowEntity implements Entit
 		this.fileName = fileName;
 	}
 
-	@Override
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
-	@Override
 	public long getId() {
 		return this.uploadHeaderId;
 	}
 
-	@Override
 	public void setId(long uploadHeaderId) {
 		this.uploadHeaderId = uploadHeaderId;
 	}
@@ -184,14 +157,6 @@ public class ReceiptUploadHeader extends AbstractWorkflowEntity implements Entit
 
 	public void setReceiptUploadList(List<ReceiptUploadDetail> receiptUploadList) {
 		this.receiptUploadList = receiptUploadList;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public LoggedInUser getUserDetails() {

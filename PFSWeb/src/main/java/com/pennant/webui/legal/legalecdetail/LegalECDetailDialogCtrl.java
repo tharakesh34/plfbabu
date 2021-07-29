@@ -402,7 +402,7 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 	public void doShowDialog(LegalECDetail legalECDetail) {
 		logger.debug(Literal.LEAVING);
 
-		if (legalECDetail.isNew()) {
+		if (legalECDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.ecDate.focus();
@@ -651,7 +651,7 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 		doSetValidation();
 		doWriteComponentsToBean(aLegalECDetail);
 
-		isNew = aLegalECDetail.isNew();
+		isNew = aLegalECDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {

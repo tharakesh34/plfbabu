@@ -125,7 +125,7 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode> implem
 			tableType = "_Temp";
 		}
 
-		if (dispatchMode.isNew()) {
+		if (dispatchMode.isNewRecord()) {
 			getDispatchModeDAO().save(dispatchMode, tableType);
 		} else {
 			getDispatchModeDAO().update(dispatchMode, tableType);
@@ -334,7 +334,7 @@ public class DispatchModeServiceImpl extends GenericService<DispatchMode> implem
 		valueParm[0] = dispatchMode.getDispatchModeCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_DispatchModeCode") + ":" + valueParm[0];
 
-		if (dispatchMode.isNew()) { // for New record or new record into work
+		if (dispatchMode.isNewRecord()) { // for New record or new record into work
 			// flow
 
 			if (!dispatchMode.isWorkflow()) {// With out Work flow only new

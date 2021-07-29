@@ -158,7 +158,7 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (nPAProvisionHeader.isNew()) {
+		if (nPAProvisionHeader.isNewRecord()) {
 			nPAProvisionHeader.setId(Long.parseLong(getNPAProvisionHeaderDAO().save(nPAProvisionHeader, tableType)));
 			auditHeader.getAuditDetail().setModelData(nPAProvisionHeader);
 			auditHeader.setAuditReference(String.valueOf(nPAProvisionHeader.getId()));
@@ -371,7 +371,7 @@ public class NPAProvisionHeaderServiceImpl extends GenericService<NPAProvisionHe
 		NPAProvisionHeader nPAProvisionHeader = (NPAProvisionHeader) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (nPAProvisionHeader.isNew() && nPAProvisionHeaderDAO.isDuplicateKey(nPAProvisionHeader.getId(),
+		if (nPAProvisionHeader.isNewRecord() && nPAProvisionHeaderDAO.isDuplicateKey(nPAProvisionHeader.getId(),
 				nPAProvisionHeader.getEntity(), nPAProvisionHeader.getFinType(), nPAProvisionHeader.getNpaTemplateId(),
 				nPAProvisionHeader.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];

@@ -88,7 +88,6 @@ public class SecurityUser extends AbstractWorkflowEntity {
 	private String lovDescUsrBranchCodeName;
 	private String lovDescUsrDeptCodeName;
 	private String lovDescUsrLanguage;
-	private boolean newRecord;
 	private String lovValue;
 	private SecurityUser befImage;
 	private Date usrAcExpDt;
@@ -381,14 +380,6 @@ public class SecurityUser extends AbstractWorkflowEntity {
 
 	public void setLovDescUsrDeptCodeName(String lovDescUsrDeptCodeName) {
 		this.lovDescUsrDeptCodeName = lovDescUsrDeptCodeName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

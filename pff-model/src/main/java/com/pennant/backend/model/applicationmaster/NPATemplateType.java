@@ -16,7 +16,6 @@ public class NPATemplateType extends AbstractWorkflowEntity {
 	private boolean active;
 	@XmlTransient
 	private LoggedInUser userDetails;
-	private boolean newRecord;
 	private String lovValue;
 	private NPATemplateType befImage;
 
@@ -54,14 +53,6 @@ public class NPATemplateType extends AbstractWorkflowEntity {
 
 	public void setId(long id) {
 		this.id = id;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

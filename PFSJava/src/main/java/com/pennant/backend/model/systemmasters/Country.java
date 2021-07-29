@@ -63,7 +63,6 @@ public class Country extends AbstractWorkflowEntity {
 	private BigDecimal countryResidenceLimit;
 	private BigDecimal countryRiskLimit;
 	private boolean countryIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private Country befImage;
 	private LoggedInUser userDetails;
@@ -140,14 +139,6 @@ public class Country extends AbstractWorkflowEntity {
 
 	public void setCountryIsActive(boolean countryIsActive) {
 		this.countryIsActive = countryIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

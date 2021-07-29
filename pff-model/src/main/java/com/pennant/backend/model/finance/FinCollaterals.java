@@ -30,15 +30,13 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlElement;
-
-import com.pennant.backend.model.Entity;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>FinCollaterals table</b>.<br>
@@ -46,7 +44,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(propOrder = { "collateralType" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class FinCollaterals extends AbstractWorkflowEntity implements Entity {
+public class FinCollaterals extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 1L;
 
@@ -70,8 +68,6 @@ public class FinCollaterals extends AbstractWorkflowEntity implements Entity {
 	private String lastChequeNo;
 	private String status;
 	private String remarks;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private FinCollaterals befImage;
 	private LoggedInUser userDetails;
@@ -96,16 +92,12 @@ public class FinCollaterals extends AbstractWorkflowEntity implements Entity {
 		this.setId(id);
 	}
 
-	// Getter and Setter methods
-
 	public long getId() {
 		return collateralSeq;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.collateralSeq = id;
-
 	}
 
 	public long getCollateralSeq() {
@@ -122,14 +114,6 @@ public class FinCollaterals extends AbstractWorkflowEntity implements Entity {
 
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

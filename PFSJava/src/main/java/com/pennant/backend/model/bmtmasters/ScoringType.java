@@ -54,7 +54,6 @@ public class ScoringType extends AbstractWorkflowEntity {
 
 	private String scoType = null;
 	private String scoDesc;
-	private boolean newRecord = false;
 	private String lovValue;
 	private ScoringType befImage;
 	private LoggedInUser userDetails;
@@ -98,14 +97,6 @@ public class ScoringType extends AbstractWorkflowEntity {
 
 	public void setScoDesc(String scoDesc) {
 		this.scoDesc = scoDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

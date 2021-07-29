@@ -331,7 +331,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 		}
 		this.recordStatus.setValue(aSalesOfficer.getRecordStatus());
 
-		if (aSalesOfficer.isNew() || (aSalesOfficer.getRecordType() != null ? aSalesOfficer.getRecordType() : "")
+		if (aSalesOfficer.isNewRecord() || (aSalesOfficer.getRecordType() != null ? aSalesOfficer.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.salesOffIsActive.setChecked(true);
 			this.salesOffIsActive.setDisabled(true);
@@ -412,7 +412,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aSalesOfficer.isNew()) {
+		if (aSalesOfficer.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -666,7 +666,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aSalesOfficer.isNew();
+		isNew = aSalesOfficer.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -716,7 +716,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(SalesOfficer aSalesOfficer, String tranType) {
+	protected boolean doProcess(SalesOfficer aSalesOfficer, String tranType) {
 		logger.debug("Enterring");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -928,7 +928,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getSalesOfficerListCtrl().search();
 	}
 

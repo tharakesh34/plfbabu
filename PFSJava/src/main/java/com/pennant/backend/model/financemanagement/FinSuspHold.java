@@ -54,7 +54,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>FinSuspHold table</b>.<br>
  * 
  */
-public class FinSuspHold extends AbstractWorkflowEntity implements Entity {
+public class FinSuspHold extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -6305409759684865400L;
 
@@ -68,7 +68,6 @@ public class FinSuspHold extends AbstractWorkflowEntity implements Entity {
 	private String custCIF;
 	private String CustShrtName;
 	private boolean active;
-	private boolean newRecord = false;
 	private String lovValue;
 	private FinSuspHold befImage;
 	private LoggedInUser userDetails;
@@ -185,14 +184,6 @@ public class FinSuspHold extends AbstractWorkflowEntity implements Entity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

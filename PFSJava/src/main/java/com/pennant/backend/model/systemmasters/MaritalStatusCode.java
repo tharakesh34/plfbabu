@@ -59,7 +59,6 @@ public class MaritalStatusCode extends AbstractWorkflowEntity {
 	private String maritalStsCode;
 	private String maritalStsDesc;
 	private boolean maritalStsIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private MaritalStatusCode befImage;
 	private LoggedInUser userDetails;
@@ -112,14 +111,6 @@ public class MaritalStatusCode extends AbstractWorkflowEntity {
 
 	public void setMaritalStsIsActive(boolean maritalStsIsActive) {
 		this.maritalStsIsActive = maritalStsIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

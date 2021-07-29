@@ -155,7 +155,7 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (divisionDetail.isNew()) {
+		if (divisionDetail.isNewRecord()) {
 			getDivisionDetailDAO().save(divisionDetail, tableType);
 		} else {
 			getDivisionDetailDAO().update(divisionDetail, tableType);
@@ -363,7 +363,7 @@ public class DivisionDetailServiceImpl extends GenericService<DivisionDetail> im
 		parameters[0] = PennantJavaUtil.getLabel("label_DivisionCode") + ": " + code;
 
 		// Check the unique keys.
-		if (divisionDetail.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(divisionDetail.getRecordType())
+		if (divisionDetail.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(divisionDetail.getRecordType())
 				&& divisionDetailDAO.isDuplicateKey(code,
 						divisionDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 

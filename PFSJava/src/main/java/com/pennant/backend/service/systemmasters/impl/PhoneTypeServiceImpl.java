@@ -123,7 +123,7 @@ public class PhoneTypeServiceImpl extends GenericService<PhoneType> implements P
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		}
 
-		if (phoneType.isNew()) {
+		if (phoneType.isNewRecord()) {
 			phoneType.setPhoneTypeCode(getPhoneTypeDAO().save(phoneType, tableType));
 			auditHeader.getAuditDetail().setModelData(phoneType);
 			auditHeader.setAuditReference(phoneType.getPhoneTypeCode());
@@ -310,7 +310,7 @@ public class PhoneTypeServiceImpl extends GenericService<PhoneType> implements P
 		// Get the model object.
 		PhoneType phoneType = (PhoneType) auditDetail.getModelData();
 		// Check the unique keys.
-		if (phoneType.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(phoneType.getRecordType())
+		if (phoneType.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(phoneType.getRecordType())
 				&& phoneTypeDAO.isDuplicateKey(phoneType.getPhoneTypeCode(),
 						phoneType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

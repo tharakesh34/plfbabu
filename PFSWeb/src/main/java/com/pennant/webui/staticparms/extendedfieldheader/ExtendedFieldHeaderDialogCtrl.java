@@ -418,7 +418,7 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
-		if (aExtendedFieldHeader.isNew()) {
+		if (aExtendedFieldHeader.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -616,7 +616,7 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aExtendedFieldHeader.isNew();
+		isNew = aExtendedFieldHeader.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -651,7 +651,7 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		logger.debug("Leaving");
 	}
 
-	private boolean doProcess(ExtendedFieldHeader aExtendedFieldHeader, String tranType) {
+	protected boolean doProcess(ExtendedFieldHeader aExtendedFieldHeader, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -923,7 +923,7 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getExtendedFieldHeaderListCtrl().search();
 	}
 

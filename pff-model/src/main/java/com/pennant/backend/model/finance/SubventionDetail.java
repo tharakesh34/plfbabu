@@ -83,7 +83,6 @@ public class SubventionDetail extends AbstractWorkflowEntity {
 	private int tenure;
 	private Date startDate;
 	private Date endDate;
-	private boolean newRecord = false;
 	private String lovValue;
 	private SubventionDetail befImage;
 	private LoggedInUser userDetails;
@@ -101,7 +100,7 @@ public class SubventionDetail extends AbstractWorkflowEntity {
 		entity.setTenure(this.tenure);
 		entity.setStartDate(this.startDate);
 		entity.setEndDate(this.endDate);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setLovValue(this.lovValue);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
@@ -192,14 +191,6 @@ public class SubventionDetail extends AbstractWorkflowEntity {
 
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

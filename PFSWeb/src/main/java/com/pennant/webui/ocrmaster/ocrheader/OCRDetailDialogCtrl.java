@@ -108,7 +108,7 @@ public class OCRDetailDialogCtrl extends GFCBaseCtrl<OCRDetail> {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
 			this.ocrDetail.setWorkflowId(0);
-			setNewRecord(this.ocrDetail.isNew());
+			setNewRecord(this.ocrDetail.isNewRecord());
 			if (arguments.containsKey("roleCode")) {
 				userRole = arguments.get("roleCode").toString();
 				getUserWorkspace().allocateRoleAuthorities(userRole, "OCRDetailDialog");
@@ -343,7 +343,7 @@ public class OCRDetailDialogCtrl extends GFCBaseCtrl<OCRDetail> {
 		logger.debug(Literal.ENTERING);
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aOCRDetail.isNew()) {
+		if (aOCRDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 		} else {
@@ -535,7 +535,7 @@ public class OCRDetailDialogCtrl extends GFCBaseCtrl<OCRDetail> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aOCRDetail.isNew();
+		isNew = aOCRDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {

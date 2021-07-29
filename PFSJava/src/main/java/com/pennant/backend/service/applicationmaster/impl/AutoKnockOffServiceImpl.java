@@ -52,7 +52,7 @@ public class AutoKnockOffServiceImpl extends GenericService<AutoKnockOff> implem
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (knockOff.isNew()) {
+		if (knockOff.isNewRecord()) {
 			knockOff.setId(Long.valueOf(autoKnockOffDAO.save(knockOff, tableType)));
 			auditHeader.getAuditDetail().setModelData(knockOff);
 			auditHeader.setAuditReference(String.valueOf(knockOff.getId()));
@@ -254,7 +254,7 @@ public class AutoKnockOffServiceImpl extends GenericService<AutoKnockOff> implem
 			} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(feeMapping.getRecordType())) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (feeMapping.isNew()) {
+				} else if (feeMapping.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -297,7 +297,7 @@ public class AutoKnockOffServiceImpl extends GenericService<AutoKnockOff> implem
 		logger.debug(Literal.ENTERING);
 
 		AutoKnockOff knockOff = (AutoKnockOff) auditDetail.getModelData();
-		if (knockOff.isNew() && autoKnockOffDAO.isDuplicateKey(knockOff.getId(), knockOff.getCode(),
+		if (knockOff.isNewRecord() && autoKnockOffDAO.isDuplicateKey(knockOff.getId(), knockOff.getCode(),
 				knockOff.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_knocofCode") + ": " + knockOff.getCode();

@@ -541,8 +541,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String lovDescCustLName;
 	private String lovDescSalutationName;
 	private String lovDescCustCtgCode;
-
-	private boolean newRecord = false;
 	private FinanceMain befImage;
 
 	@XmlTransient
@@ -1307,7 +1305,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setLovDescCustLName(this.lovDescCustLName);
 		entity.setLovDescSalutationName(this.lovDescSalutationName);
 		entity.setLovDescCustCtgCode(this.lovDescCustCtgCode);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
 		entity.setNextUserId(this.nextUserId);
@@ -1976,14 +1974,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setFinIsActive(boolean finIsActive) {
 		this.finIsActive = finIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public FinanceMain getBefImage() {

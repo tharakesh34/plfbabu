@@ -514,7 +514,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 					delete = new Button();
 					delete.setLabel("Delete");
 					delete.addForward("onClick", this.window_QueryDetailDialog, "onClickDeleteButton", documentDetail);
-					if (!documentDetail.isNew()) {
+					if (!documentDetail.isNewRecord()) {
 						delete.setVisible(false);
 					}
 					view.setParent(hbox);
@@ -534,7 +534,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 
 		Listitem listitem = (Listitem) event.getOrigin().getTarget().getParent().getParent().getParent();
 		DocumentDetails detail = (DocumentDetails) listitem.getAttribute("data");
-		if (detail != null && !detail.isNew()) {
+		if (detail != null && !detail.isNewRecord()) {
 			detail.setRecordStatus(PennantConstants.RCD_STATUS_CANCELLED);
 			detail.setRecordType(PennantConstants.RCD_DEL);
 		}
@@ -692,7 +692,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		if (queryDetailListCtrl != null) {
 			queryDetailListCtrl.search();
@@ -973,7 +973,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		try {
 			if (StringUtils.equals("Resubmit", this.status.getValue())) {
 				aQueryDetail.setQryNotes(this.qryNotes.getValue() + '\n' + this.closerNotes.getValue());
-			} else if (StringUtils.equals("Open", this.status.getValue()) && queryDetail.isNew()) {
+			} else if (StringUtils.equals("Open", this.status.getValue()) && queryDetail.isNewRecord()) {
 				aQueryDetail.setQryNotes(this.qryNotes.getValue());
 			} else {
 				aQueryDetail.setQryNotes(this.qryNotes.getValue());
@@ -1125,7 +1125,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		setRoles();
 		doWriteBeanToComponents(queryDetail);
 
-		if (queryDetail != null && queryDetail.isNew()) {
+		if (queryDetail != null && queryDetail.isNewRecord()) {
 			this.qryNotes.setMaxlength(2000);
 			this.responsNotes.setMaxlength(2000);
 			this.closerNotes.setMaxlength(2000);
@@ -1141,7 +1141,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			}
 		}
 
-		if (queryDetail.isNew()) {
+		if (queryDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1291,7 +1291,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			doReadOnly();
 		}
 
-		if (queryDetail.isNew()) {
+		if (queryDetail.isNewRecord()) {
 			this.btnSave.setLabel("Send Query");
 		}
 
@@ -1620,7 +1620,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(QueryDetail aQueryDetail, String tranType) {
+	protected boolean doProcess(QueryDetail aQueryDetail, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

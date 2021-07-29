@@ -140,7 +140,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (sampling.isNew()) {
+		if (sampling.isNewRecord()) {
 			sampling.setId(samplingDAO.save(sampling, tableType));
 			auditHeader.getAuditDetail().setModelData(sampling);
 			auditHeader.setAuditReference(String.valueOf(sampling.getId()));
@@ -458,7 +458,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (documentDetails.isNew()) {
+				} else if (documentDetails.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -936,7 +936,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			} else if (custIncome.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (custIncome.isNew()) {
+				} else if (custIncome.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -1026,7 +1026,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			} else if (liability.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (liability.isNew()) {
+				} else if (liability.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

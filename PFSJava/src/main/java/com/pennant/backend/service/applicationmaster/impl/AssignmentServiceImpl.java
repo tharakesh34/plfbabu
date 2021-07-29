@@ -93,7 +93,7 @@ public class AssignmentServiceImpl extends GenericService<Assignment> implements
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (assignment.isNew()) {
+		if (assignment.isNewRecord()) {
 			assignment.setId(Long.parseLong(assignmentDAO.save(assignment, tableType)));
 			auditHeader.getAuditDetail().setModelData(assignment);
 			auditHeader.setAuditReference(String.valueOf(assignment.getId()));
@@ -402,7 +402,7 @@ public class AssignmentServiceImpl extends GenericService<Assignment> implements
 			} else if (assignmentRate.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (assignmentRate.isNew()) {
+				} else if (assignmentRate.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

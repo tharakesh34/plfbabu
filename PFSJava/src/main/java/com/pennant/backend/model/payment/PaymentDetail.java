@@ -64,7 +64,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 @XmlType(propOrder = { "paymentDetailId", "paymentId", "amountType", "amount", "referenceId", "finType" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PaymentDetail extends AbstractWorkflowEntity implements Entity {
+public class PaymentDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long paymentDetailId = Long.MIN_VALUE;
@@ -75,8 +75,6 @@ public class PaymentDetail extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal availableAmount = BigDecimal.ZERO;
 	private long referenceId;
 	private String referenceIdName;
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -200,14 +198,6 @@ public class PaymentDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setReferenceIdName(String referenceIdName) {
 		this.referenceIdName = referenceIdName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

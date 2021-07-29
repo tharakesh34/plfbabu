@@ -383,7 +383,7 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aSecurityRole.isNew()) {
+		if (aSecurityRole.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -626,7 +626,7 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aSecurityRole.isNew();
+		isNew = aSecurityRole.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -670,7 +670,7 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 	 * @param tranType
 	 * @return
 	 */
-	private boolean doProcess(SecurityRole aSecurityRole, String tranType) {
+	protected boolean doProcess(SecurityRole aSecurityRole, String tranType) {
 		logger.debug("Entering ");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -850,7 +850,7 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getSecurityRoleListCtrl().search();
 	}
 

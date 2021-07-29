@@ -147,7 +147,7 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (entity.isNew()) {
+		if (entity.isNewRecord()) {
 			getEntityDAO().save(entity, tableType);
 		} else {
 			getEntityDAO().update(entity, tableType);
@@ -353,13 +353,13 @@ public class EntityServiceImpl extends GenericService<Entity> implements EntityS
 		parameters[0] = PennantJavaUtil.getLabel("label_EntityCode") + ": " + entity.getEntityCode();
 
 		// Check the unique keys.
-		if (entity.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(entity.getRecordType()) && entityDAO
+		if (entity.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(entity.getRecordType()) && entityDAO
 				.count(entity.getEntityCode(), null, entity.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
 
 		// Check the unique keys.
-		if (entity.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(entity.getRecordType()) && entityDAO.count(null,
+		if (entity.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(entity.getRecordType()) && entityDAO.count(null,
 				entity.getPANNumber(), entity.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 
 			String[] param = new String[2];

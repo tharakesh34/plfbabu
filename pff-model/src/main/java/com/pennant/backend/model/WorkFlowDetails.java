@@ -84,8 +84,6 @@ public class WorkFlowDetails extends AbstractWorkflowEntity {
 
 	@XmlElement
 	private boolean workFlowActive;
-
-	private boolean newRecord;
 	private String lovValue;
 	private WorkFlowDetails befImage;
 	private LoggedInUser userDetails;
@@ -108,17 +106,9 @@ public class WorkFlowDetails extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
 
 	public long getWorkFlowDesignId() {
 		return workFlowDesignId;

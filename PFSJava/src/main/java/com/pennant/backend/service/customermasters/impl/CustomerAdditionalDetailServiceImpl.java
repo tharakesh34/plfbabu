@@ -123,7 +123,7 @@ public class CustomerAdditionalDetailServiceImpl extends GenericService<Customer
 		if (customerAdditionalDetail.isWorkflow()) {
 			tableType = "_Temp";
 		}
-		if (customerAdditionalDetail.isNew()) {
+		if (customerAdditionalDetail.isNewRecord()) {
 			customerAdditionalDetail.setId(getCustomerAdditionalDetailDAO().save(customerAdditionalDetail, tableType));
 			auditHeader.getAuditDetail().setModelData(customerAdditionalDetail);
 			auditHeader.setAuditReference(String.valueOf(customerAdditionalDetail.getId()));
@@ -339,7 +339,7 @@ public class CustomerAdditionalDetailServiceImpl extends GenericService<Customer
 		valueParm[0] = String.valueOf(customerAdditionalDetail.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_CustID") + ":" + valueParm[0];
 
-		if (customerAdditionalDetail.isNew()) { // for New record or new record
+		if (customerAdditionalDetail.isNewRecord()) { // for New record or new record
 													// into work flow
 
 			if (!customerAdditionalDetail.isWorkflow()) {// With out Work flow

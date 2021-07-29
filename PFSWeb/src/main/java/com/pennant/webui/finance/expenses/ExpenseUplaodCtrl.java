@@ -174,7 +174,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.ENTERING);
 
 		this.sampleFileDownload.setDisabled(true);
-		if (uploadHeader.isNew()) {
+		if (uploadHeader.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.moduleType.focus();
@@ -225,7 +225,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	private void doEdit() {
 		logger.debug("Entering");
 
-		if (this.uploadHeader.isNew()) {
+		if (this.uploadHeader.isNewRecord()) {
 			readOnlyComponent(false, this.moduleType);
 			this.btnBrowse.setVisible(true);
 			this.btnBrowse.setDisabled(false);
@@ -238,7 +238,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
-			if (this.uploadHeader.isNew()) {
+			if (this.uploadHeader.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
 			} else {

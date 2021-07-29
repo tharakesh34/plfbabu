@@ -58,8 +58,6 @@ public class RejectDetail extends AbstractWorkflowEntity {
 	private String rejectDesc;
 	private boolean rejectIsActive;
 	private String rejectType;
-
-	private boolean newRecord;
 	private String lovValue;
 	private RejectDetail befImage;
 	private LoggedInUser userDetails;
@@ -111,14 +109,6 @@ public class RejectDetail extends AbstractWorkflowEntity {
 
 	public void setRejectIsActive(boolean rejectIsActive) {
 		this.rejectIsActive = rejectIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

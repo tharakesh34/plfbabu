@@ -617,7 +617,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
-		if (aPFSParameter.isNew()) {
+		if (aPFSParameter.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -868,7 +868,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aPFSParameter.isNew();
+		isNew = aPFSParameter.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -921,7 +921,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(PFSParameter aPFSParameter, String tranType) {
+	protected boolean doProcess(PFSParameter aPFSParameter, String tranType) {
 		logger.debug("Entering ");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -1186,7 +1186,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getPFSParameterListCtrl().search();
 
 	}

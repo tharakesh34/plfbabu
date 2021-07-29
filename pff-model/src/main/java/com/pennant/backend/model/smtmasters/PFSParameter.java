@@ -44,7 +44,6 @@ public class PFSParameter extends AbstractWorkflowEntity {
 	private String sysParmList;
 	private String sysParmValdMod;
 	private String sysParmDescription;
-	private boolean newRecord;
 	private String lovValue;
 	private PFSParameter befImage;
 	private LoggedInUser userDetails;
@@ -152,14 +151,6 @@ public class PFSParameter extends AbstractWorkflowEntity {
 
 	public String getSysParmDescription() {
 		return sysParmDescription;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public boolean isNew() {

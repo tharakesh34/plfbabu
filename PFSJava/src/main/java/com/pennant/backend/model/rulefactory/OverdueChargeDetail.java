@@ -19,7 +19,6 @@ public class OverdueChargeDetail extends AbstractWorkflowEntity {
 	private int oDCGraceDays;
 	private boolean oDCAllowWaiver;
 	private BigDecimal oDCMaxWaiver;
-	private boolean newRecord = false;
 	private String lovValue;
 	private OverdueChargeDetail befImage;
 	private LoggedInUser userDetails;
@@ -114,14 +113,6 @@ public class OverdueChargeDetail extends AbstractWorkflowEntity {
 
 	public void setoDCMaxWaiver(BigDecimal oDCMaxWaiver) {
 		this.oDCMaxWaiver = oDCMaxWaiver;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -228,7 +228,7 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		manufacturerListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -260,7 +260,7 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 		this.name.setText(manufacturer.getName());
 		this.description.setText(manufacturer.getDescription());
 		this.active.setChecked(manufacturer.isActive());
-		if (manufacturer.isNew() || (manufacturer.getRecordType() != null ? manufacturer.getRecordType() : "")
+		if (manufacturer.isNewRecord() || (manufacturer.getRecordType() != null ? manufacturer.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
@@ -328,7 +328,7 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 	public void doShowDialog(Manufacturer manufacturer) {
 		logger.debug(Literal.ENTERING);
 
-		if (manufacturer.isNew()) {
+		if (manufacturer.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.name.setFocus(true);
@@ -547,7 +547,7 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 			tranType = PennantConstants.TRAN_WF;
 			if (StringUtils.isBlank(manufacturer.getRecordType())) {
 				manufacturer.setVersion(manufacturer.getVersion() + 1);
-				if (manufacturer.isNew()) {
+				if (manufacturer.isNewRecord()) {
 					manufacturer.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
 					manufacturer.setRecordType(PennantConstants.RECORD_TYPE_UPD);
@@ -556,7 +556,7 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 			}
 		} else {
 			manufacturer.setVersion(manufacturer.getVersion() + 1);
-			if (manufacturer.isNew()) {
+			if (manufacturer.isNewRecord()) {
 				tranType = PennantConstants.TRAN_ADD;
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
@@ -588,7 +588,7 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Manufacturer manufacturer, String tranType) {
+	protected boolean doProcess(Manufacturer manufacturer, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

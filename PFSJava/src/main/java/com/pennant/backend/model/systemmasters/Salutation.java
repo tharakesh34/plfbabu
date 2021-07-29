@@ -60,7 +60,6 @@ public class Salutation extends AbstractWorkflowEntity {
 	private String saluationDesc;
 	private boolean salutationIsActive;
 	private String salutationGenderCode;
-	private boolean newRecord;
 	private String lovValue;
 	private Salutation befImage;
 	private LoggedInUser userDetails;
@@ -121,14 +120,6 @@ public class Salutation extends AbstractWorkflowEntity {
 
 	public void setSalutationGenderCode(String salutationGenderCode) {
 		this.salutationGenderCode = salutationGenderCode;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

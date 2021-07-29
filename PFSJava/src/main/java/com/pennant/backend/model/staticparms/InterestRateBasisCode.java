@@ -57,7 +57,6 @@ public class InterestRateBasisCode extends AbstractWorkflowEntity {
 	private String intRateBasisCode;
 	private String intRateBasisDesc;
 	private boolean intRateBasisIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private InterestRateBasisCode befImage;
 	private LoggedInUser userDetails;
@@ -109,14 +108,6 @@ public class InterestRateBasisCode extends AbstractWorkflowEntity {
 
 	public void setIntRateBasisIsActive(boolean intRateBasisIsActive) {
 		this.intRateBasisIsActive = intRateBasisIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

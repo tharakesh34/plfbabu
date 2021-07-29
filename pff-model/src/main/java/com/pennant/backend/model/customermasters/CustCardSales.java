@@ -20,14 +20,13 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "custId", "merchantId", "custCardMonthSales" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class CustCardSales extends AbstractWorkflowEntity implements Entity {
+public class CustCardSales extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -3217987429162088120L;
 	@XmlElement
 	private long id = Long.MIN_VALUE;
 	private long custID = Long.MIN_VALUE;
 	@XmlElement(name = "merchantId")
 	private String merchantId;
-	private boolean newRecord = false;
 	private CustCardSales befImage;
 	private LoggedInUser userDetails;
 	private String lovValue;
@@ -59,14 +58,6 @@ public class CustCardSales extends AbstractWorkflowEntity implements Entity {
 
 	public boolean isNew() {
 		return isNewRecord();
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public CustCardSales getBefImage() {

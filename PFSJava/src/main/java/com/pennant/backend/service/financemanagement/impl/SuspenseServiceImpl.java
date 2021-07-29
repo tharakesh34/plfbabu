@@ -327,7 +327,7 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 			financeSuspHead.setFinSuspTrfDate(financeSuspHead.getFinSuspDate());
 		}
 
-		if (financeSuspHead.isNew()) {
+		if (financeSuspHead.isNewRecord()) {
 			getFinanceSuspHeadDAO().save(financeSuspHead, tableType);
 			auditHeader.getAuditDetail().setModelData(financeSuspHead);
 			auditHeader.setAuditReference(financeSuspHead.getFinReference());
@@ -700,7 +700,7 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 		valueParm[0] = financeSuspHead.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (financeSuspHead.isNew()) { // for New record or new record into work flow
+		if (financeSuspHead.isNewRecord()) { // for New record or new record into work flow
 
 			if (!financeSuspHead.isWorkflow()) {// With out Work flow only new records  
 				if (befFinanceSuspHead != null) { // Record Already Exists in the table then error  

@@ -55,7 +55,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>MandateStatus table</b>.<br>
  *
  */
-public class MandateStatus extends AbstractWorkflowEntity implements Entity {
+public class MandateStatus extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long mandateID = Long.MIN_VALUE;
@@ -63,7 +63,6 @@ public class MandateStatus extends AbstractWorkflowEntity implements Entity {
 	private String reason;
 	private Date changeDate;
 	private long fileID;
-	private boolean newRecord = false;
 	private String lovValue;
 	private MandateStatus befImage;
 	private LoggedInUser userDetails;
@@ -124,14 +123,6 @@ public class MandateStatus extends AbstractWorkflowEntity implements Entity {
 
 	public void setChangeDate(Date changeDate) {
 		this.changeDate = changeDate;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

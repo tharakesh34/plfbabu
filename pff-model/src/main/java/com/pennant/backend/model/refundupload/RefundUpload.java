@@ -121,7 +121,6 @@ public class RefundUpload extends AbstractWorkflowEntity {
 	private WSReturnStatus returnStatus;
 
 	private RefundUpload befImage;
-	private boolean newRecord;
 	@XmlTransient
 	private LoggedInUser userDetails;
 
@@ -308,14 +307,6 @@ public class RefundUpload extends AbstractWorkflowEntity {
 
 	public void setBefImage(RefundUpload befImage) {
 		this.befImage = befImage;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public LoggedInUser getUserDetails() {

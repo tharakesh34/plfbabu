@@ -134,7 +134,7 @@ public class FinSuspHoldServiceImpl extends GenericService<FinSuspHold> implemen
 			tableType = "_Temp";
 		}
 
-		if (finSuspHold.isNew()) {
+		if (finSuspHold.isNewRecord()) {
 			finSuspHold.setId(getFinSuspHoldDAO().save(finSuspHold, tableType));
 			auditHeader.getAuditDetail().setModelData(finSuspHold);
 			auditHeader.setAuditReference(Long.toString(finSuspHold.getId()));
@@ -339,7 +339,7 @@ public class FinSuspHoldServiceImpl extends GenericService<FinSuspHold> implemen
 
 		String[] errParm = { getValidationMsg(finSuspHold) };
 
-		if (finSuspHold.isNew()) { // for New record or new record
+		if (finSuspHold.isNewRecord()) { // for New record or new record
 			// into work flow
 
 			if (!finSuspHold.isWorkflow()) {// With out Work flow

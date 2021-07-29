@@ -48,7 +48,7 @@ import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class ReportConfiguration extends AbstractWorkflowEntity implements Entity {
+public class ReportConfiguration extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -619353564397203914L;
 
@@ -61,7 +61,6 @@ public class ReportConfiguration extends AbstractWorkflowEntity implements Entit
 	private String dataSourceName;
 	private String menuItemCode;
 	private boolean alwMultiFormat = false;
-	private boolean newRecord = false;
 	private String lovValue;
 	private ReportConfiguration befImage;
 	private LoggedInUser userDetails;
@@ -157,14 +156,6 @@ public class ReportConfiguration extends AbstractWorkflowEntity implements Entit
 
 	public void setMenuItemCode(String menuItemCode) {
 		this.menuItemCode = menuItemCode;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

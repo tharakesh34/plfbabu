@@ -584,7 +584,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 			setBankBranch(aBankBranch);
 		}
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aBankBranch.isNew()) {
+		if (aBankBranch.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -895,7 +895,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aBankBranch.isNew();
+		isNew = aBankBranch.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -946,7 +946,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	 * 
 	 */
 
-	private boolean doProcess(BankBranch aBankBranch, String tranType) {
+	protected boolean doProcess(BankBranch aBankBranch, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -1171,7 +1171,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getBankBranchListCtrl().search();
 	}
 

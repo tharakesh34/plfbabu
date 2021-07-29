@@ -300,7 +300,7 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 		this.systemDefault.setChecked(aMaritalStatusCode.isSystemDefault());
 		this.recordStatus.setValue(aMaritalStatusCode.getRecordStatus());
 
-		if (aMaritalStatusCode.isNew()
+		if (aMaritalStatusCode.isNewRecord()
 				|| (aMaritalStatusCode.getRecordType() != null ? aMaritalStatusCode.getRecordType() : "")
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.maritalStsIsActive.setChecked(true);
@@ -368,7 +368,7 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aMaritalStatusCode.isNew()) {
+		if (aMaritalStatusCode.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -591,7 +591,7 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aMaritalStatusCode.isNew();
+		isNew = aMaritalStatusCode.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -641,7 +641,7 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(MaritalStatusCode aMaritalStatusCode, String tranType) {
+	protected boolean doProcess(MaritalStatusCode aMaritalStatusCode, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -852,7 +852,7 @@ public class MaritalStatusCodeDialogCtrl extends GFCBaseCtrl<MaritalStatusCode> 
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getMaritalStatusCodeListCtrl().search();
 	}
 

@@ -59,7 +59,6 @@ public class CustRiskType extends AbstractWorkflowEntity {
 
 	private String riskCode = null;
 	private String riskDesc;
-	private boolean newRecord = false;
 	private String lovValue;
 	private CustRiskType befImage;
 	private LoggedInUser userDetails;
@@ -105,14 +104,6 @@ public class CustRiskType extends AbstractWorkflowEntity {
 
 	public void setRiskDesc(String riskDesc) {
 		this.riskDesc = riskDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

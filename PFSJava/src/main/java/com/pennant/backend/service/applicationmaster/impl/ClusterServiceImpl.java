@@ -135,7 +135,7 @@ public class ClusterServiceImpl extends GenericService<Cluster> implements Clust
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (cluster.isNew()) {
+		if (cluster.isNewRecord()) {
 			cluster.setId(Long.parseLong(getClusterDAO().save(cluster, tableType)));
 			auditHeader.getAuditDetail().setModelData(cluster);
 			auditHeader.setAuditReference(String.valueOf(cluster.getId()));
@@ -345,7 +345,7 @@ public class ClusterServiceImpl extends GenericService<Cluster> implements Clust
 		Cluster cluster = (Cluster) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (cluster.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(cluster.getRecordType())
+		if (cluster.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(cluster.getRecordType())
 				&& clusterDAO.isDuplicateKey(cluster.getId(), cluster.getEntity(), cluster.getCode(),
 						cluster.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];

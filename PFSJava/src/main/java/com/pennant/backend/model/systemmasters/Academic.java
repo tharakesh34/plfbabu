@@ -57,14 +57,13 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Academic extends AbstractWorkflowEntity implements Entity {
+public class Academic extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -1472467289111692722L;
 
 	private long academicID = Long.MIN_VALUE;
 	private String academicLevel;
 	private String academicDecipline;
 	private String academicDesc;
-	private boolean newRecord;
 	private String lovValue;
 	private Academic befImage;
 	@XmlTransient
@@ -121,14 +120,6 @@ public class Academic extends AbstractWorkflowEntity implements Entity {
 
 	public void setAcademicDesc(String academicDesc) {
 		this.academicDesc = academicDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

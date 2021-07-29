@@ -142,7 +142,7 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 			tableType = "_Temp";
 		}
 
-		if (mailTemplate.isNew()) {
+		if (mailTemplate.isNewRecord()) {
 			getMailTemplateDAO().save(mailTemplate, tableType);
 		} else {
 			getMailTemplateDAO().update(mailTemplate, tableType);
@@ -370,7 +370,7 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 		valueParm[0] = mailTemplate.getTemplateCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_TemplateCode") + ":" + valueParm[0];
 
-		if (mailTemplate.isNew()) { // for New record or new record into work flow
+		if (mailTemplate.isNewRecord()) { // for New record or new record into work flow
 
 			if (!mailTemplate.isWorkflow()) {// With out Work flow only new records  
 				if (befMailTemplate != null) { // Record Already Exists in the table then error  

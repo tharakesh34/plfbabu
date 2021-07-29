@@ -145,7 +145,6 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private boolean recalLock = false;
 
 	private long presentmentId;
-	private boolean newRecord = false;
 	private String lovValue;
 	private FinanceScheduleDetail befImage;
 
@@ -254,7 +253,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 		entity.setPartialPaidAmt(this.partialPaidAmt);
 		entity.setRecalLock(this.recalLock);
 		entity.setPresentmentId(this.presentmentId);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setLovValue(this.lovValue);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
@@ -637,14 +636,6 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 
 	public void setWriteoffProfit(BigDecimal writeoffProfit) {
 		this.writeoffProfit = writeoffProfit;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

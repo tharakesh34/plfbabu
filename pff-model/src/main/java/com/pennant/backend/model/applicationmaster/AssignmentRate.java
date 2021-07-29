@@ -6,13 +6,12 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import javax.xml.bind.annotation.XmlTransient;
-
-public class AssignmentRate extends AbstractWorkflowEntity implements Entity {
+public class AssignmentRate extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
@@ -22,7 +21,6 @@ public class AssignmentRate extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal bankSpreadRate = BigDecimal.ZERO;
 	private BigDecimal opexRate = BigDecimal.ZERO;
 	private String resetFrequency;
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -37,11 +35,6 @@ public class AssignmentRate extends AbstractWorkflowEntity implements Entity {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		return excludeFields;
-	}
-
-	@Override
-	public boolean isNew() {
-		return isNewRecord();
 	}
 
 	public long getId() {
@@ -98,14 +91,6 @@ public class AssignmentRate extends AbstractWorkflowEntity implements Entity {
 
 	public void setResetFrequency(String resetFrequency) {
 		this.resetFrequency = resetFrequency;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

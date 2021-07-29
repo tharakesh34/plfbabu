@@ -185,7 +185,7 @@ public class IRRCodeServiceImpl extends GenericService<IRRCode> implements IRRCo
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (iRRCode.isNew()) {
+		if (iRRCode.isNewRecord()) {
 			iRRCode.setId(Long.parseLong(getIRRCodeDAO().save(iRRCode, tableType)));
 			auditHeader.getAuditDetail().setModelData(iRRCode);
 			auditHeader.setAuditReference(String.valueOf(iRRCode.getIRRID()));
@@ -529,7 +529,7 @@ public class IRRCodeServiceImpl extends GenericService<IRRCode> implements IRRCo
 		IRRCode iRRCode = (IRRCode) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (iRRCode.isNew() && iRRCodeDAO.isDuplicateKey(iRRCode.getIRRID(), iRRCode.getIRRCode(),
+		if (iRRCode.isNewRecord() && iRRCodeDAO.isDuplicateKey(iRRCode.getIRRID(), iRRCode.getIRRCode(),
 				iRRCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 
@@ -601,7 +601,7 @@ public class IRRCodeServiceImpl extends GenericService<IRRCode> implements IRRCo
 			} else if (irrFeeType.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (irrFeeType.isNew()) {
+				} else if (irrFeeType.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

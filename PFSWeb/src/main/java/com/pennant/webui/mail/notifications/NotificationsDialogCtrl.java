@@ -672,7 +672,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aNotifications.isNew()) {
+		if (aNotifications.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -976,7 +976,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 		// Write the additional validations as per below example get the selected branch object from the list box Do
 		// data level validations here
 
-		isNew = aNotifications.isNew();
+		isNew = aNotifications.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1024,7 +1024,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Notifications aNotifications, String tranType) {
+	protected boolean doProcess(Notifications aNotifications, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -1223,7 +1223,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		this.notificationsListCtrl.search();
 	}
 

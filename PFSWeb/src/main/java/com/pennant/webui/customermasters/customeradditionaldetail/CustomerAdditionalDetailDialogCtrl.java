@@ -200,7 +200,7 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 		doShowDialog(getCustomerAdditionalDetail());
 
 		//Calling SelectCtrl For proper selection of Customer
-		if (getCustomerAdditionalDetail().isNew()) {
+		if (getCustomerAdditionalDetail().isNewRecord()) {
 			onLoad();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -675,7 +675,7 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aCustomerAdditionalDetail.isNew();
+		isNew = aCustomerAdditionalDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -726,7 +726,7 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CustomerAdditionalDetail aCustomerAdditionalDetail, String tranType) {
+	protected boolean doProcess(CustomerAdditionalDetail aCustomerAdditionalDetail, String tranType) {
 		logger.debug("Entering ");
 
 		boolean processCompleted = false;
@@ -1040,7 +1040,7 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCustomerAdditionalDetailListCtrl().search();
 	}
 

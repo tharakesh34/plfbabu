@@ -303,7 +303,7 @@ public class CasteDialogCtrl extends GFCBaseCtrl<Caste> {
 
 		this.recordStatus.setValue(aCaste.getRecordStatus());
 
-		if (aCaste.isNew() || (aCaste.getRecordType() != null ? aCaste.getRecordType() : "")
+		if (aCaste.isNewRecord() || (aCaste.getRecordType() != null ? aCaste.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.casteIsActive.setChecked(true);
 			this.casteIsActive.setDisabled(true);
@@ -369,7 +369,7 @@ public class CasteDialogCtrl extends GFCBaseCtrl<Caste> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aCaste.isNew()) {
+		if (aCaste.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -601,7 +601,7 @@ public class CasteDialogCtrl extends GFCBaseCtrl<Caste> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aCaste.isNew();
+		isNew = aCaste.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -650,7 +650,7 @@ public class CasteDialogCtrl extends GFCBaseCtrl<Caste> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Caste aCaste, String tranType) {
+	protected boolean doProcess(Caste aCaste, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -864,7 +864,7 @@ public class CasteDialogCtrl extends GFCBaseCtrl<Caste> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCasteListCtrl().search();
 	}
 

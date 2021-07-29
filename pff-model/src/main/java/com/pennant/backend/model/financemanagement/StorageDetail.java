@@ -54,7 +54,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>StorageDetail table</b>.<br>
  *
  */
-public class StorageDetail extends AbstractWorkflowEntity implements Entity {
+public class StorageDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long storageId = Long.MIN_VALUE;
@@ -66,7 +66,6 @@ public class StorageDetail extends AbstractWorkflowEntity implements Entity {
 	private String howAquiredName;
 	private long whenAquired = 0;
 	private String whenAquiredName;
-	private boolean newRecord = false;
 	private String lovValue;
 	private StorageDetail befImage;
 	private LoggedInUser userDetails;
@@ -184,14 +183,6 @@ public class StorageDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setWhenAquiredName(String whenAquiredName) {
 		this.whenAquiredName = whenAquiredName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

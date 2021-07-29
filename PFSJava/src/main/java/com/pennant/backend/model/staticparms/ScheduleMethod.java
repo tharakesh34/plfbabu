@@ -56,7 +56,6 @@ public class ScheduleMethod extends AbstractWorkflowEntity {
 
 	private String schdMethod;
 	private String schdMethodDesc;
-	private boolean newRecord;
 	private String lovValue;
 	private ScheduleMethod befImage;
 	private LoggedInUser userDetails;
@@ -100,14 +99,6 @@ public class ScheduleMethod extends AbstractWorkflowEntity {
 
 	public void setSchdMethodDesc(String schdMethodDesc) {
 		this.schdMethodDesc = schdMethodDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

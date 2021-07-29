@@ -278,7 +278,7 @@ public class ReasonCategoryDialogCtrl extends GFCBaseCtrl<ReasonCategory> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		reasonCategoryListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -362,7 +362,7 @@ public class ReasonCategoryDialogCtrl extends GFCBaseCtrl<ReasonCategory> {
 	public void doShowDialog(ReasonCategory reasonCategory) {
 		logger.debug(Literal.LEAVING);
 
-		if (reasonCategory.isNew()) {
+		if (reasonCategory.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -577,7 +577,7 @@ public class ReasonCategoryDialogCtrl extends GFCBaseCtrl<ReasonCategory> {
 		doSetValidation();
 		doWriteComponentsToBean(aReasonCategory);
 
-		isNew = aReasonCategory.isNew();
+		isNew = aReasonCategory.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -625,7 +625,7 @@ public class ReasonCategoryDialogCtrl extends GFCBaseCtrl<ReasonCategory> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(ReasonCategory aReasonCategory, String tranType) {
+	protected boolean doProcess(ReasonCategory aReasonCategory, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

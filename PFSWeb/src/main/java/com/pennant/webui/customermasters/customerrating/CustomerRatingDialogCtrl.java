@@ -593,7 +593,7 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCustomerRatingListCtrl().search();
 	}
 
@@ -778,7 +778,7 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aCustomerRating.isNew();
+		isNew = aCustomerRating.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -927,7 +927,7 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CustomerRating aCustomerRating, String tranType) {
+	protected boolean doProcess(CustomerRating aCustomerRating, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

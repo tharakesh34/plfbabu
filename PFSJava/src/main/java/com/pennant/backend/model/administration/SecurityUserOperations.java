@@ -59,7 +59,6 @@ public class SecurityUserOperations extends AbstractWorkflowEntity {
 
 	private LoggedInUser userDetails;
 	private SecurityUserOperations befImage;
-	private boolean newRecord;
 
 	private String lovDescUsrFName;
 	private String lovDescUsrMName;
@@ -150,14 +149,6 @@ public class SecurityUserOperations extends AbstractWorkflowEntity {
 
 	public void setLovDescLastName(String lovDescLastName) {
 		this.lovDescLastName = lovDescLastName;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
 	}
 
 	public String getLovDescUsrFName() {

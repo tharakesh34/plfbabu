@@ -57,7 +57,6 @@ public class PRelationCode extends AbstractWorkflowEntity {
 	private String pRelationCode;
 	private String pRelationDesc;
 	private boolean relationCodeIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private PRelationCode befImage;
 	private LoggedInUser userDetails;
@@ -109,14 +108,6 @@ public class PRelationCode extends AbstractWorkflowEntity {
 
 	public void setRelationCodeIsActive(boolean relationCodeIsActive) {
 		this.relationCodeIsActive = relationCodeIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -51,7 +51,7 @@ public class AutoKnkOfFeeMappingServiceImpl extends GenericService<AutoKnockOffF
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (feeMapping.isNew()) {
+		if (feeMapping.isNewRecord()) {
 			feeMapping.setId(autoKnkOfFeeMappingDAO.save(feeMapping, tableType));
 			auditHeader.getAuditDetail().setModelData(feeMapping);
 			auditHeader.setAuditReference(String.valueOf(feeMapping.getId()));
@@ -245,7 +245,7 @@ public class AutoKnkOfFeeMappingServiceImpl extends GenericService<AutoKnockOffF
 			} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(feeMapping.getRecordType())) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (feeMapping.isNew()) {
+				} else if (feeMapping.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -291,14 +291,14 @@ public class AutoKnkOfFeeMappingServiceImpl extends GenericService<AutoKnockOffF
 		AutoKnockOffFeeMapping feeMapping = (AutoKnockOffFeeMapping) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (feeMapping.isNew() && autoKnkOfFeeMappingDAO.isDuplicatefeeTypeId(feeMapping.getId(),
+		if (feeMapping.isNewRecord() && autoKnkOfFeeMappingDAO.isDuplicatefeeTypeId(feeMapping.getId(),
 				feeMapping.getFeeTypeId(), feeMapping.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_FeeTypeId") + ": " + feeMapping.getFeeTypeId();
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
-		if (feeMapping.isNew() && autoKnkOfFeeMappingDAO.isDuplicatefeeTypeOrder(feeMapping.getId(),
+		if (feeMapping.isNewRecord() && autoKnkOfFeeMappingDAO.isDuplicatefeeTypeOrder(feeMapping.getId(),
 				feeMapping.getFeeOrder(), feeMapping.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_FeeTypeOrder") + ": " + feeMapping.getFeeOrder();

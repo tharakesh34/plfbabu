@@ -8,23 +8,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.Repayments.FinanceRepayments;
-import com.pennant.backend.model.audit.AuditDetail;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+
+import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>FeeWaiverHeader table</b>.<br>
  *
  */
 @XmlAccessorType(XmlAccessType.NONE)
-public class FeeWaiverHeader extends AbstractWorkflowEntity implements Entity {
+public class FeeWaiverHeader extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long waiverId = Long.MIN_VALUE;
@@ -36,7 +35,6 @@ public class FeeWaiverHeader extends AbstractWorkflowEntity implements Entity {
 	private Date postingDate;
 	@XmlElement
 	private Date valueDate;
-	private boolean newRecord;
 	private FeeWaiverHeader befImage;
 	private String lovValue;
 	private LoggedInUser userDetails;
@@ -63,17 +61,10 @@ public class FeeWaiverHeader extends AbstractWorkflowEntity implements Entity {
 		super();
 	}
 
-	@Override
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
-	@Override
 	public long getId() {
 		return this.waiverId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.waiverId = id;
 	}
@@ -124,14 +115,6 @@ public class FeeWaiverHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setValueDate(Date valueDate) {
 		this.valueDate = valueDate;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -143,7 +143,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			tableType = "_Temp";
 		}
 
-		if (mandate.isNew()) {
+		if (mandate.isNewRecord()) {
 			getDocument(mandate);
 			mandate.setId(getMandateDAO().save(mandate, tableType));
 			auditHeader.getAuditDetail().setModelData(mandate);
@@ -504,7 +504,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		valueParm[0] = String.valueOf(mandate.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_MandateID") + ":" + valueParm[0];
 
-		if (mandate.isNew()) { // for New record or new record into work flow
+		if (mandate.isNewRecord()) { // for New record or new record into work flow
 
 			if (!mandate.isWorkflow()) {// With out Work flow only new records
 				if (befMandate != null) { // Record Already Exists in the table

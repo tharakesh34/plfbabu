@@ -340,7 +340,7 @@ public class LegalPropertyTitleDialogCtrl extends GFCBaseCtrl<LegalPropertyTitle
 	public void doShowDialog(LegalPropertyTitle legalPropertyTitle) {
 		logger.debug(Literal.LEAVING);
 
-		if (legalPropertyTitle.isNew()) {
+		if (legalPropertyTitle.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.title.focus();
@@ -552,7 +552,7 @@ public class LegalPropertyTitleDialogCtrl extends GFCBaseCtrl<LegalPropertyTitle
 		doSetValidation();
 		doWriteComponentsToBean(aLegalPropertyTitle);
 
-		isNew = aLegalPropertyTitle.isNew();
+		isNew = aLegalPropertyTitle.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {

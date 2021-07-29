@@ -114,7 +114,7 @@ public class ExtendedFieldsValidation {
 			errParm[2] = PennantJavaUtil.getLabel("label_FinEvent") + ":" + valueParm[2];
 		}
 
-		if (extendedFieldHeader.isNew()) { // for New record or new record into work flow
+		if (extendedFieldHeader.isNewRecord()) { // for New record or new record into work flow
 
 			if (!extendedFieldHeader.isWorkflow()) {// With out Work flow only new records  
 				if (befExtendedFieldHeader != null) { // Record Already Exists in the table then error  
@@ -209,7 +209,7 @@ public class ExtendedFieldsValidation {
 		valueParm[0] = String.valueOf(details.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_ModuleId") + ":" + valueParm[0];
 
-		if (details.isNew()) { // for New record or new record into work flow
+		if (details.isNewRecord()) { // for New record or new record into work flow
 
 			if (!details.isWorkflow()) {// With out Work flow only new records  
 				if (befExtendedFieldDetail != null) { // Record Already Exists in the table then error  
@@ -417,7 +417,7 @@ public class ExtendedFieldsValidation {
 			} else if (extendedFieldDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (extendedFieldDetail.isNew()) {
+				} else if (extendedFieldDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -538,7 +538,7 @@ public class ExtendedFieldsValidation {
 			} else if (techValuationFieldDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (techValuationFieldDetail.isNew()) {
+				} else if (techValuationFieldDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

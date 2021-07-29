@@ -354,7 +354,7 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aScoringSlab.isNew()) {
+		if (aScoringSlab.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -559,7 +559,7 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aScoringSlab.isNew();
+		isNew = aScoringSlab.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -640,7 +640,7 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 
 				if (aScoringSlab.getScoringSlab() == scoringSlab.getScoringSlab()) { // Both Current and Existing list slab same
 					/* if same ScoringSlab added twice set error detail */
-					if (getScoringSlab().isNew()) {
+					if (getScoringSlab().isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
 								getUserWorkspace().getUserLanguage()));

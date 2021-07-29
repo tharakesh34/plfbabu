@@ -264,7 +264,7 @@ public class NPABucketDialogCtrl extends GFCBaseCtrl<NPABucket> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		nPABucketListCtrl.search();
 	}
 
@@ -295,7 +295,7 @@ public class NPABucketDialogCtrl extends GFCBaseCtrl<NPABucket> {
 		this.bucketDesc.setValue(aNPABucket.getBucketDesc());
 		this.active.setChecked(aNPABucket.isActive());
 
-		if (aNPABucket.isNew() || PennantConstants.RECORD_TYPE_NEW.equals(aNPABucket.getRecordType())) {
+		if (aNPABucket.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(aNPABucket.getRecordType())) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
@@ -358,7 +358,7 @@ public class NPABucketDialogCtrl extends GFCBaseCtrl<NPABucket> {
 	public void doShowDialog(NPABucket nPABucket) {
 		logger.debug(Literal.LEAVING);
 
-		if (nPABucket.isNew()) {
+		if (nPABucket.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -582,7 +582,7 @@ public class NPABucketDialogCtrl extends GFCBaseCtrl<NPABucket> {
 		doSetValidation();
 		doWriteComponentsToBean(aNPABucket);
 
-		isNew = aNPABucket.isNew();
+		isNew = aNPABucket.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -629,7 +629,7 @@ public class NPABucketDialogCtrl extends GFCBaseCtrl<NPABucket> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(NPABucket aNPABucket, String tranType) {
+	protected boolean doProcess(NPABucket aNPABucket, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

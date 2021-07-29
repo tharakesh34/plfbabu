@@ -298,7 +298,7 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 		this.genDesgIsActive.setChecked(aGeneralDesignation.isGenDesgIsActive());
 		this.recordStatus.setValue(aGeneralDesignation.getRecordStatus());
 
-		if (aGeneralDesignation.isNew()
+		if (aGeneralDesignation.isNewRecord()
 				|| (aGeneralDesignation.getRecordType() != null ? aGeneralDesignation.getRecordType() : "")
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.genDesgIsActive.setChecked(true);
@@ -362,7 +362,7 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aGeneralDesignation.isNew()) {
+		if (aGeneralDesignation.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -452,7 +452,7 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getGeneralDesignationListCtrl().search();
 	}
 
@@ -588,7 +588,7 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aGeneralDesignation.isNew();
+		isNew = aGeneralDesignation.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -637,7 +637,7 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(GeneralDesignation aGeneralDesignation, String tranType) {
+	protected boolean doProcess(GeneralDesignation aGeneralDesignation, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

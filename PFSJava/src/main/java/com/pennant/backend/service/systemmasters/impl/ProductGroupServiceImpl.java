@@ -43,7 +43,7 @@ public class ProductGroupServiceImpl extends GenericService<ProductGroup> implem
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (productGroup.isNew()) {
+		if (productGroup.isNewRecord()) {
 			productGroup.setId(Long.parseLong(getProductGroupDAO().save(productGroup, tableType)));
 			auditHeader.getAuditDetail().setModelData(productGroup);
 			auditHeader.setAuditReference(String.valueOf(productGroup.getId()));
@@ -207,7 +207,7 @@ public class ProductGroupServiceImpl extends GenericService<ProductGroup> implem
 		parameters[1] = PennantJavaUtil.getLabel("label_groupId") + ": " + productGroup.getProductCategoryId();
 
 		// Check the unique keys.
-		if (productGroup.isNew() && getProductGroupDAO().isDuplicateKey(productGroup.getId(), productGroup.getModelId(),
+		if (productGroup.isNewRecord() && getProductGroupDAO().isDuplicateKey(productGroup.getId(), productGroup.getModelId(),
 				productGroup.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));

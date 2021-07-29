@@ -3,15 +3,14 @@ package com.pennant.backend.model.finance;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import com.pennant.backend.model.Entity;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+
 @XmlAccessorType(XmlAccessType.NONE)
-public class OverDraftMaintenance extends AbstractWorkflowEntity implements Entity {
+public class OverDraftMaintenance extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 2803331023129230226L;
 
 	public OverDraftMaintenance() {
@@ -20,10 +19,6 @@ public class OverDraftMaintenance extends AbstractWorkflowEntity implements Enti
 
 	public boolean isNew() {
 		return isNewRecord();
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
 	}
 
 	private long serviceSeqId = Long.MIN_VALUE;
@@ -50,18 +45,10 @@ public class OverDraftMaintenance extends AbstractWorkflowEntity implements Enti
 	@XmlElement
 	private String remarks;
 
-	private boolean newRecord;
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
-	@Override
 	public long getId() {
 		return serviceSeqId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.serviceSeqId = id;
 	}

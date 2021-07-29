@@ -9,7 +9,6 @@ public class CAFFacilityType extends AbstractWorkflowEntity {
 
 	private String facilityType;
 	private String facilityDesc;
-	private boolean newRecord = false;
 	private String lovValue;
 	private CAFFacilityType befImage;
 	private LoggedInUser userDetails;
@@ -53,14 +52,6 @@ public class CAFFacilityType extends AbstractWorkflowEntity {
 
 	public void setFacilityDesc(String facilityDesc) {
 		this.facilityDesc = facilityDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -308,7 +308,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 								if (legal.getApplicantDetailList() != null
 										&& !CollectionUtils.isEmpty(legal.getApplicantDetailList())) {
 									for (LegalApplicantDetail applicantDetail : legal.getApplicantDetailList()) {
-										if (applicantDetail.isNew()) {
+										if (applicantDetail.isNewRecord()) {
 											applicantDetail.setLegalId(legalId);
 											legalApplicantDetailDAO.save(applicantDetail, TableType.TEMP_TAB);
 										}
@@ -319,7 +319,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 								if (legal.getPropertyDetailList() != null
 										&& !CollectionUtils.isEmpty(legal.getPropertyDetailList())) {
 									for (LegalPropertyDetail propertyDetail : legal.getPropertyDetailList()) {
-										if (propertyDetail.isNew()) {
+										if (propertyDetail.isNewRecord()) {
 											propertyDetail.setLegalId(legalId);
 											legalPropertyDetailDAO.save(propertyDetail, TableType.TEMP_TAB);
 										}
@@ -330,7 +330,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 								if (legal.getDocumentList() != null
 										&& !CollectionUtils.isEmpty(legal.getDocumentList())) {
 									for (LegalDocument document : legal.getDocumentList()) {
-										if (document.isNew()) {
+										if (document.isNewRecord()) {
 											document.setLegalId(legalId);
 											legalDocumentDAO.save(document, TableType.TEMP_TAB);
 										}
@@ -340,7 +340,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 								// Legal Query Details
 								if (legal.getQueryDetail() != null) {
 									QueryDetail queryDetail = null;
-									if (legal.isNew()) {
+									if (legal.isNewRecord()) {
 										queryDetail = legal.getQueryDetail();
 										queryDetail.setFinReference(assignment.getReference());
 										queryDetail.setReference(legal.getLegalReference());
@@ -351,7 +351,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 									if (queryDetail != null && queryDetail.getDocumentDetailsList() != null
 											&& !CollectionUtils.isEmpty(queryDetail.getDocumentDetailsList())) {
 										for (DocumentDetails documentDetails : queryDetail.getDocumentDetailsList()) {
-											if (documentDetails.isNew()) {
+											if (documentDetails.isNewRecord()) {
 												documentDetails.setReferenceId(String.valueOf(queryDetail.getId()));
 												documentDetails.setFinReference(queryDetail.getFinReference());
 
@@ -415,7 +415,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (legalDetail.isNew()) {
+		if (legalDetail.isNewRecord()) {
 			legalDetail.setId(Long.parseLong(getLegalDetailDAO().save(legalDetail, tableType)));
 		} else {
 			getLegalDetailDAO().update(legalDetail, tableType);
@@ -913,7 +913,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		LegalDetail legalDetail = (LegalDetail) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (legalDetail.isNew() && legalDetailDAO.isDuplicateKey(legalDetail.getLegalId(),
+		if (legalDetail.isNewRecord() && legalDetailDAO.isDuplicateKey(legalDetail.getLegalId(),
 				legalDetail.getLoanReference(), legalDetail.getCollateralReference(),
 				legalDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];

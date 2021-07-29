@@ -65,7 +65,6 @@ public class DealRecommendationMerits extends AbstractWorkflowEntity {
 	private long id = Long.MIN_VALUE;
 	private long seqNo;
 	private String dealMerits;
-	private boolean newRecord = false;
 	private DealRecommendationMerits befImage;
 	private LoggedInUser userDetails;
 	private String finReference;
@@ -87,14 +86,6 @@ public class DealRecommendationMerits extends AbstractWorkflowEntity {
 		Set<String> excludeFields = new HashSet<String>();
 
 		return excludeFields;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public long getId() {

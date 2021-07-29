@@ -109,7 +109,7 @@ public class SecurityGroupServiceImpl extends GenericService<SecurityGroup> impl
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		} else {
 
-			if (securityGroup.isNew()) {
+			if (securityGroup.isNewRecord()) {
 				auditHeader.setAuditTranType(PennantConstants.TRAN_ADD);
 			} else {
 				auditHeader.setAuditTranType(PennantConstants.TRAN_UPD);
@@ -125,7 +125,7 @@ public class SecurityGroupServiceImpl extends GenericService<SecurityGroup> impl
 
 		}
 
-		if (securityGroup.isNew()) {
+		if (securityGroup.isNewRecord()) {
 			securityGroup.setId(getSecurityGroupDAO().save(securityGroup, tableType));
 			auditHeader.setModelData(securityGroup);
 			auditHeader.setAuditReference(String.valueOf(securityGroup.getGrpID()));
@@ -328,7 +328,7 @@ public class SecurityGroupServiceImpl extends GenericService<SecurityGroup> impl
 		logger.debug(Literal.ENTERING);
 		SecurityGroup securityGroup = (SecurityGroup) auditDetail.getModelData();
 		// Check the unique keys.
-		if (securityGroup.isNew() && StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, securityGroup.getRecordType())
+		if (securityGroup.isNewRecord() && StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, securityGroup.getRecordType())
 				&& securityGroupDAO.isDuplicateKey(securityGroup.getGrpCode(),
 						securityGroup.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

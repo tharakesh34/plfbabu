@@ -51,7 +51,7 @@ public class ProjectUnitsServiceImpl extends GenericService<ProjectUnits> implem
 			tableType = TableType.TEMP_TAB.getSuffix();
 		}
 
-		if (projectUnit.isNew()) {
+		if (projectUnit.isNewRecord()) {
 			projectUnit.setId(projectUnitsDAO.save(projectUnit, tableType));
 			auditHeader.getAuditDetail().setModelData(projectUnit);
 			auditHeader.setAuditReference(String.valueOf(projectUnit.getId()));

@@ -130,7 +130,7 @@ public class CustomerPRelationServiceImpl extends GenericService<CustomerPRelati
 			tableType = "_Temp";
 		}
 
-		if (customerPRelation.isNew()) {
+		if (customerPRelation.isNewRecord()) {
 			getCustomerPRelationDAO().save(customerPRelation, tableType);
 			auditHeader.getAuditDetail().setModelData(customerPRelation);
 			auditHeader.setAuditReference(String.valueOf(customerPRelation.getPRCustID())

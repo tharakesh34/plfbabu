@@ -136,7 +136,7 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 			tableType = "_Temp";
 		}
 
-		if (customerEMail.isNew()) {
+		if (customerEMail.isNewRecord()) {
 			getCustomerEMailDAO().save(customerEMail, tableType);
 			auditHeader.getAuditDetail().setModelData(customerEMail);
 		} else {

@@ -310,7 +310,7 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl<InterestRateType> {
 		this.intRateTypeIsActive.setChecked(aInterestRateType.isIntRateTypeIsActive());
 		this.recordStatus.setValue(aInterestRateType.getRecordStatus());
 
-		if (aInterestRateType.isNew()
+		if (aInterestRateType.isNewRecord()
 				|| (aInterestRateType.getRecordType() != null ? aInterestRateType.getRecordType() : "")
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.intRateTypeIsActive.setChecked(true);
@@ -382,7 +382,7 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl<InterestRateType> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aInterestRateType.isNew()) {
+		if (aInterestRateType.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -606,7 +606,7 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl<InterestRateType> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aInterestRateType.isNew();
+		isNew = aInterestRateType.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -654,7 +654,7 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl<InterestRateType> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(InterestRateType aInterestRateType, String tranType) {
+	protected boolean doProcess(InterestRateType aInterestRateType, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -862,7 +862,7 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl<InterestRateType> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getInterestRateTypeListCtrl().search();
 	}
 

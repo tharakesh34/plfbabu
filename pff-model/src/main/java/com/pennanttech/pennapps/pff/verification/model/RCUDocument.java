@@ -4,14 +4,14 @@ package com.pennanttech.pennapps.pff.verification.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class RCUDocument extends AbstractWorkflowEntity {
@@ -54,7 +54,6 @@ public class RCUDocument extends AbstractWorkflowEntity {
 	private String docName;
 	private String collateralRef;
 	private String referenceId;
-	private boolean newRecord = false;
 	private LoggedInUser userDetails;
 	private RCUDocument befImage;
 	private ExtendedFieldRender extendedFieldRender;
@@ -100,14 +99,6 @@ public class RCUDocument extends AbstractWorkflowEntity {
 
 	public boolean isNew() {
 		return isNewRecord();
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public long getVerificationId() {

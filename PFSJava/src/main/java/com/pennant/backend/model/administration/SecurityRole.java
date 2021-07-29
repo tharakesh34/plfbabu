@@ -72,7 +72,6 @@ public class SecurityRole extends AbstractWorkflowEntity {
 	private String roleDesc;
 	private String roleCategory;
 	private long loginUsrId;
-	private boolean newRecord;
 	private String lovValue;
 	private SecurityRole befImage;
 	private LoggedInUser userDetails;
@@ -112,14 +111,6 @@ public class SecurityRole extends AbstractWorkflowEntity {
 
 	public void setLovDescRoleAppName(String lovDescRoleAppName) {
 		this.lovDescRoleAppName = lovDescRoleAppName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

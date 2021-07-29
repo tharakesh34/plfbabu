@@ -54,7 +54,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>LegalNote table</b>.<br>
  *
  */
-public class LegalNote extends AbstractWorkflowEntity implements Entity {
+public class LegalNote extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long legalNoteId = Long.MIN_VALUE;
@@ -62,7 +62,6 @@ public class LegalNote extends AbstractWorkflowEntity implements Entity {
 	private int seqNum = 0;
 	private String code;
 	private String description;
-	private boolean newRecord = false;
 	private String lovValue;
 	private LegalNote befImage;
 	private LoggedInUser userDetails;
@@ -116,14 +115,6 @@ public class LegalNote extends AbstractWorkflowEntity implements Entity {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

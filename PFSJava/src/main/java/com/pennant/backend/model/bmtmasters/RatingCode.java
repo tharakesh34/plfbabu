@@ -56,7 +56,6 @@ public class RatingCode extends AbstractWorkflowEntity {
 	private String ratingCode;
 	private String ratingCodeDesc;
 	private boolean ratingIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private RatingCode befImage;
 	private LoggedInUser userDetails;
@@ -125,14 +124,6 @@ public class RatingCode extends AbstractWorkflowEntity {
 
 	public void setRatingIsActive(boolean ratingIsActive) {
 		this.ratingIsActive = ratingIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

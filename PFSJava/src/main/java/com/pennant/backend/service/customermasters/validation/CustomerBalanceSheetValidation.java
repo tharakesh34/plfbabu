@@ -75,7 +75,7 @@ public class CustomerBalanceSheetValidation {
 		errParm[0] = PennantJavaUtil.getLabel("label_FinancialYear") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_CustId") + ":" + valueParm[1];
 
-		if (customerBalanceSheet.isNew()) { // for New record or new record into work flow
+		if (customerBalanceSheet.isNewRecord()) { // for New record or new record into work flow
 
 			if (!customerBalanceSheet.isWorkflow()) {// With out Work flow only new records  
 				if (befCustomerBalanceSheet != null) { // Record Already Exists in the table then error  

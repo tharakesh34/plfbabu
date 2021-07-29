@@ -160,7 +160,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (manualAdvise.isNew()) {
+		if (manualAdvise.isNewRecord()) {
 			manualAdvise.setId(Long.parseLong(getManualAdviseDAO().save(manualAdvise, tableType)));
 			auditHeader.getAuditDetail().setModelData(manualAdvise);
 			auditHeader.setAuditReference(String.valueOf(manualAdvise.getAdviseID()));
@@ -935,7 +935,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 				} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(documentDetails.getRecordType())) {
 					if (approveRec) {
 						deleteRecord = true;
-					} else if (documentDetails.isNew()) {
+					} else if (documentDetails.isNewRecord()) {
 						saveRecord = true;
 					} else {
 						updateRecord = true;

@@ -66,7 +66,7 @@ public class FlagDetailValidation {
 		}
 		errParm[1] = PennantJavaUtil.getLabel("label_FinanceFlagCode") + ":" + valueParm[1];
 
-		if (finFlagsDetail.isNew()) { // for New record or new record into work flow
+		if (finFlagsDetail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!finFlagsDetail.isWorkflow()) {// With out Work flow only new records  
 				if (beffinFlagsDetail != null) { // Record Already Exists in the table then error  

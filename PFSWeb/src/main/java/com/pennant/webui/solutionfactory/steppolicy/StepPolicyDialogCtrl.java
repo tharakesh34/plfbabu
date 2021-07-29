@@ -464,7 +464,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	public void doShowDialog(StepPolicyHeader aStepPolicyHeader) throws Exception {
 		logger.debug("Entering");
 
-		if (aStepPolicyHeader.isNew()) {
+		if (aStepPolicyHeader.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.policyDesc.focus();
@@ -602,7 +602,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getStepPolicyListCtrl().search();
 	}
 
@@ -756,7 +756,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aStepPolicyHeader.isNew();
+		isNew = aStepPolicyHeader.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -804,7 +804,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(StepPolicyHeader aStepPolicyHeader, String tranType) {
+	protected boolean doProcess(StepPolicyHeader aStepPolicyHeader, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;

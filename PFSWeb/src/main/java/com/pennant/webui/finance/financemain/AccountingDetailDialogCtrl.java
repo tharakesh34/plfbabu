@@ -296,7 +296,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 				List<TransactionEntry> transactionEntries = AccountingConfigCache.getTransactionEntry(acSetID);
 				if (transactionEntries != null && !transactionEntries.isEmpty()) {
 					boolean executed = false;
-					if (!main.isNew() && (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() > 0
+					if (!main.isNewRecord() && (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() > 0
 							|| getFinanceDetail().getFinScheduleData().getOverdraftScheduleDetails().size() > 0)) {
 
 						if (!(main.getCustID() == 0 || main.getCustID() == Long.MIN_VALUE)) {

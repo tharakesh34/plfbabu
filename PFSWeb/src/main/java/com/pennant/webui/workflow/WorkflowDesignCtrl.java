@@ -131,7 +131,7 @@ public class WorkflowDesignCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 	public void doWriteBeanToComponents(WorkFlowDetails aWorkFlowDetails) {
 		logger.debug("Entering ");
 
-		if (aWorkFlowDetails.isNew()) {
+		if (aWorkFlowDetails.isNewRecord()) {
 			this.iframe.setSrc(designerUrl + "editor/#/processes");
 		} else {
 			this.iframe.setSrc(designerUrl + "editor/#/editor/" + aWorkFlowDetails.getId());

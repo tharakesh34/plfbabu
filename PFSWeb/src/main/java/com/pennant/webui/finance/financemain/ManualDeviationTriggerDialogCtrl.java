@@ -340,7 +340,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 		logger.debug(Literal.ENTERING);
 
 		// Set ReadOnly mode accordingly if the object is new or not.
-		if (aFinanceDeviations.isNew()) {
+		if (aFinanceDeviations.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			deviationCode.setFocus(true);
@@ -799,7 +799,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 			getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aFinanceDeviations.getNextTaskId(),
 					aFinanceDeviations);
 		}
-		if (aFinanceDeviations.isNew()) {
+		if (aFinanceDeviations.isNewRecord()) {
 			aFinanceDeviations.setRaisedUser(getUserWorkspace().getLoggedInUser().getUserName().concat("-")
 					.concat(getUserWorkspace().getLoggedInUser().getFirstName()));
 		}
@@ -816,7 +816,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aFinanceDeviations.isNew();
+		isNew = aFinanceDeviations.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {

@@ -64,7 +64,7 @@ public class CollateralAssignmentValidation {
 		errParm[0] = PennantJavaUtil.getLabel("label_Reference") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_CollateralRef") + ":" + valueParm[1];
 
-		if (collateralAssignment.isNew()) { // for New record or new record into work flow
+		if (collateralAssignment.isNewRecord()) { // for New record or new record into work flow
 
 			if (!collateralAssignment.isWorkflow()) {// With out Work flow only new records
 				if (befAssignment != null) { // Record Already Exists in the table then error

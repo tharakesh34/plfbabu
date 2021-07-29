@@ -163,7 +163,7 @@ public class AuditReportCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 				// call the ZUL-file with the parameters packed in a map
 				Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, auditMap);
 
-				//Setting to Default Values
+				// Setting to Default Values
 				this.comboModuleList.setValue("");
 				this.fromDate.setConstraint("");
 				this.toDate.setConstraint("");
@@ -188,14 +188,15 @@ public class AuditReportCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClose$window_AuditReport(Event event) throws Exception {
-		if (doClose(false)) {
-			if (tabbox != null) {
-				tabbox.getSelectedTab().close();
-			}
+		doClose(false);
+	}
+
+	protected void doPostClose() {
+		if (tabbox != null) {
+			tabbox.getSelectedTab().close();
 		}
 	}
 }

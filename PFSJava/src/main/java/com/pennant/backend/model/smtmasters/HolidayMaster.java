@@ -73,8 +73,6 @@ public class HolidayMaster extends AbstractWorkflowEntity {
 	private String holidayDesc3;
 	private String holidaysDesc;
 	private String holidayCategory;
-
-	private boolean newRecord;
 	private String lovValue;
 	private HolidayMaster befImage;
 	private LoggedInUser userDetails;
@@ -191,14 +189,6 @@ public class HolidayMaster extends AbstractWorkflowEntity {
 
 	public void setHolidayCategory(String holidayCategory) {
 		this.holidayCategory = holidayCategory;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

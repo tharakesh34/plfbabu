@@ -375,7 +375,7 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aReceiptUploadHeader.isNew()) {
+		if (aReceiptUploadHeader.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -595,7 +595,7 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(ReceiptUploadHeader aReceiptUploadHeader, String tranType) {
+	protected boolean doProcess(ReceiptUploadHeader aReceiptUploadHeader, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -811,7 +811,7 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getReceiptUploadListCtrl().search();
 	}
 

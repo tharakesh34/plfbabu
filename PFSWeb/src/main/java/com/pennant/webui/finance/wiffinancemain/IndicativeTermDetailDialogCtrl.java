@@ -966,7 +966,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (indicativeTermDetail.isNew()) {
+		if (indicativeTermDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 		} else {
@@ -1161,7 +1161,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	}
 
 	// Method for refreshing the list after successful update
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 	}
@@ -1377,7 +1377,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		// Write the additional validations as per below example
 		// get the selected branch object from the listBox
 		// Do data level validations here
-		isNew = aIndicativeTermDetail.isNew();
+		isNew = aIndicativeTermDetail.isNewRecord();
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
@@ -1423,7 +1423,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(IndicativeTermDetail aIndicativeTermDetail, String tranType) {
+	protected boolean doProcess(IndicativeTermDetail aIndicativeTermDetail, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

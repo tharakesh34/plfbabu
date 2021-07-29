@@ -307,7 +307,7 @@ public class HoldDisbursementDialogCtrl extends GFCBaseCtrl<HoldDisbursement> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		holdDisbursementListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -425,7 +425,7 @@ public class HoldDisbursementDialogCtrl extends GFCBaseCtrl<HoldDisbursement> {
 	public void doShowDialog(HoldDisbursement holdDisbursement) {
 		logger.debug(Literal.LEAVING);
 
-		if (holdDisbursement.isNew()) {
+		if (holdDisbursement.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -676,7 +676,7 @@ public class HoldDisbursementDialogCtrl extends GFCBaseCtrl<HoldDisbursement> {
 		doSetValidation();
 		doWriteComponentsToBean(aHoldDisbursement);
 
-		isNew = aHoldDisbursement.isNew();
+		isNew = aHoldDisbursement.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -724,7 +724,7 @@ public class HoldDisbursementDialogCtrl extends GFCBaseCtrl<HoldDisbursement> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(HoldDisbursement aHoldDisbursement, String tranType) {
+	protected boolean doProcess(HoldDisbursement aHoldDisbursement, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

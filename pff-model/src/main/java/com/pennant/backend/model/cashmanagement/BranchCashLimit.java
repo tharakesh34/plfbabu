@@ -67,7 +67,6 @@ public class BranchCashLimit extends AbstractWorkflowEntity {
 	private String remarks;
 	private Date previousDate;
 	private BigDecimal previousAmount = BigDecimal.ZERO;
-	private boolean newRecord = false;
 	private String lovValue;
 	private BranchCashLimit befImage;
 	private LoggedInUser userDetails;
@@ -189,14 +188,6 @@ public class BranchCashLimit extends AbstractWorkflowEntity {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

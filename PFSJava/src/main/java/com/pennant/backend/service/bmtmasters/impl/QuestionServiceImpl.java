@@ -150,7 +150,7 @@ public class QuestionServiceImpl extends GenericService<Question> implements Que
 			tableType = "_Temp";
 		}
 
-		if (question.isNew()) {
+		if (question.isNewRecord()) {
 			question.setId(getQuestionDAO().save(question, tableType));
 			auditHeader.getAuditDetail().setModelData(question);
 			auditHeader.setAuditReference(String.valueOf(question.getQuestionId()));
@@ -352,7 +352,7 @@ public class QuestionServiceImpl extends GenericService<Question> implements Que
 		valueParm[0] = String.valueOf(question.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_QuestionId") + ":" + valueParm[0];
 
-		if (question.isNew()) { // for New record or new record into work flow
+		if (question.isNewRecord()) { // for New record or new record into work flow
 
 			if (!question.isWorkflow()) {// With out Work flow only new records  
 				if (befQuestion != null) { // Record Already Exists in the table then error  

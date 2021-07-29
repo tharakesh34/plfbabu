@@ -26,7 +26,6 @@ public class FinFlagsDetail extends AbstractWorkflowEntity {
 	@XmlElement
 	private String flagDesc;
 	private String moduleName;
-	private boolean newRecord = false;
 	private FinFlagsDetail befImage;
 	private LoggedInUser userDetails;
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
@@ -64,14 +63,6 @@ public class FinFlagsDetail extends AbstractWorkflowEntity {
 
 	public void setFlagCode(String flagCode) {
 		this.flagCode = flagCode;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public LoggedInUser getUserDetails() {

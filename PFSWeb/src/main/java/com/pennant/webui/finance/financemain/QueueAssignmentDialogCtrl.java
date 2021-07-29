@@ -531,7 +531,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aQueueAssignmentHeader.isNew();
+		isNew = aQueueAssignmentHeader.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -571,7 +571,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 	}
 
 	// Method for refreshing the list after successful updation
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug("Entering");
 		getAssignmentListCtrl().findSearchObject();
 		if (getAssignmentListCtrl().listBoxQueueAssignment != null) {
@@ -593,7 +593,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 	 * 
 	 */
 
-	private boolean doProcess(QueueAssignmentHeader aQueueAssignmentHeader, String tranType) {
+	protected boolean doProcess(QueueAssignmentHeader aQueueAssignmentHeader, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

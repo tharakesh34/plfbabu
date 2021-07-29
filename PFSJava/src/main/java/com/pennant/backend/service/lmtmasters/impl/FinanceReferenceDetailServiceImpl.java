@@ -250,7 +250,7 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 			tableType = "_Temp";
 		}
 
-		if (financeReferenceDetail.isNew()) {
+		if (financeReferenceDetail.isNewRecord()) {
 			financeReferenceDetail.setId(getFinanceReferenceDetailDAO().save(financeReferenceDetail, tableType));
 			auditHeader.getAuditDetail().setModelData(financeReferenceDetail);
 			auditHeader.setAuditReference(String.valueOf(financeReferenceDetail.getFinRefDetailId()));
@@ -463,7 +463,7 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 		valueParm[0] = String.valueOf(financeReferenceDetail.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_FinRefDetailId") + ":" + valueParm[0];
 
-		if (financeReferenceDetail.isNew()) { // for New record or new record
+		if (financeReferenceDetail.isNewRecord()) { // for New record or new record
 													// into work flow
 
 			if (!financeReferenceDetail.isWorkflow()) {// With out Work flow

@@ -103,7 +103,6 @@ public class Verification extends AbstractWorkflowEntity {
 	private List<Verification> verifications = new ArrayList<>();
 	private FieldInvestigation fieldInvestigation;
 	private List<CustomerDetails> customerDetailsList = new ArrayList<>();
-	private boolean newRecord = false;
 	private Long reInitAgency;
 	private List<CollateralSetup> collateralSetupList = new ArrayList<>();
 	private TechnicalVerification technicalVerification;
@@ -453,14 +452,6 @@ public class Verification extends AbstractWorkflowEntity {
 
 	public void setCustId(Long custId) {
 		this.custId = custId;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public Long getReInitAgency() {

@@ -167,7 +167,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 		String finReference = fwh.getFinReference();
 
-		if (!fwh.isNew()) {
+		if (!fwh.isNewRecord()) {
 			fwh = getFeeWaiverHeaderByFinRef(finReference, "_TView");
 		} else {
 			FeeWaiverDetail fwd;
@@ -564,7 +564,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (feeWaiverHeader.isNew()) {
+		if (feeWaiverHeader.isNewRecord()) {
 			feeWaiverHeader.setWaiverId(Long.parseLong(getFeeWaiverHeaderDAO().save(feeWaiverHeader, tableType)));
 			auditHeader.getAuditDetail().setModelData(feeWaiverHeader);
 			auditHeader.setAuditReference(String.valueOf(feeWaiverHeader.getWaiverId()));
@@ -655,7 +655,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			} else if (feeWaiverDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (feeWaiverDetail.isNew()) {
+				} else if (feeWaiverDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

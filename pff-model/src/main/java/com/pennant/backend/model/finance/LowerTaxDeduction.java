@@ -20,7 +20,6 @@ public class LowerTaxDeduction extends AbstractWorkflowEntity {
 	private Date endDate;
 	private BigDecimal limitAmt = BigDecimal.ZERO;
 	private long finMaintainId;
-	private boolean newRecord = false;
 
 	public LowerTaxDeduction() {
 		super();
@@ -91,14 +90,6 @@ public class LowerTaxDeduction extends AbstractWorkflowEntity {
 
 	public void setLimitAmt(BigDecimal limitAmt) {
 		this.limitAmt = limitAmt;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public long getId() {

@@ -138,7 +138,7 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 		if (paymentInstruction.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-		if (paymentInstruction.isNew()) {
+		if (paymentInstruction.isNewRecord()) {
 			paymentInstruction.setPaymentInstructionId(Long.parseLong(getPaymentInstructionDAO().save(paymentInstruction, tableType)));
 			auditHeader.getAuditDetail().setModelData(paymentInstruction);
 			auditHeader.setAuditReference(String.valueOf(paymentInstruction.getPaymentInstructionId()));
@@ -345,7 +345,7 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 			} else if (paymentInstruction.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (paymentInstruction.isNew()) {
+				} else if (paymentInstruction.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

@@ -123,7 +123,7 @@ public class DocumentTypeServiceImpl extends GenericService<DocumentType> implem
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (documentType.isNew()) {
+		if (documentType.isNewRecord()) {
 			documentType.setId(getDocumentTypeDAO().save(documentType, tableType));
 			auditHeader.getAuditDetail().setModelData(documentType);
 			auditHeader.setAuditReference(documentType.getId());
@@ -342,7 +342,7 @@ public class DocumentTypeServiceImpl extends GenericService<DocumentType> implem
 		String code = documentType.getDocTypeCode();
 
 		// Check the unique keys.
-		if (documentType.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(documentType.getRecordType())
+		if (documentType.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(documentType.getRecordType())
 				&& documentTypeDAO.isDuplicateKey(code,
 						documentType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

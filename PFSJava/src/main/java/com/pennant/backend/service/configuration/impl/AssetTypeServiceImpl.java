@@ -179,7 +179,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 			tableType = "_Temp";
 		}
 
-		if (aAssetType.isNew()) {
+		if (aAssetType.isNewRecord()) {
 			getAssetTypeDAO().save(aAssetType, tableType);
 		} else {
 			getAssetTypeDAO().update(aAssetType, tableType);
@@ -191,7 +191,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 		ExtendedFieldHeader extFieldHeader = (ExtendedFieldHeader) headerDetail.get(0).getModelData();
 
 		long moduleId;
-		if (extFieldHeader.isNew()) {
+		if (extFieldHeader.isNewRecord()) {
 			moduleId = getExtendedFieldHeaderDAO().save(extFieldHeader, tableType);
 
 			//Setting Module ID to List
@@ -583,7 +583,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 		valueParm[0] = aAssetType.getAssetType();
 		errParm[0] = PennantJavaUtil.getLabel("label_AssetType") + ": " + valueParm[0];
 
-		if (aAssetType.isNew()) { // for New record or new record into work flow
+		if (aAssetType.isNewRecord()) { // for New record or new record into work flow
 
 			if (!aAssetType.isWorkflow()) {// With out Work flow only new records  
 				if (befAssetType != null) { // Record Already Exists in the table then error  

@@ -1,15 +1,14 @@
 package com.pennant.backend.model.finance;
 
-import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+
 @XmlAccessorType(XmlAccessType.NONE)
-public class ZIPCodeDetails extends AbstractWorkflowEntity implements Entity {
+public class ZIPCodeDetails extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -9134566802522550432L;
 
@@ -55,12 +54,10 @@ public class ZIPCodeDetails extends AbstractWorkflowEntity implements Entity {
 		this.state = state;
 	}
 
-	@Override
 	public long getId() {
 		return pinCodeId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.pinCodeId = id;
 	}
@@ -71,11 +68,6 @@ public class ZIPCodeDetails extends AbstractWorkflowEntity implements Entity {
 
 	public void setReturnStatus(WSReturnStatus returnStatus) {
 		this.returnStatus = returnStatus;
-	}
-
-	@Override
-	public boolean isNew() {
-		return false;
 	}
 
 }

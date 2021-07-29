@@ -422,7 +422,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		manualAdviseListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -953,7 +953,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	public void doShowDialog(ManualAdvise manualAdvise) {
 		logger.debug(Literal.LEAVING);
 
-		if (manualAdvise.isNew()) {
+		if (manualAdvise.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1263,7 +1263,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			}
 		}
 
-		isNew = aManualAdvise.isNew();
+		isNew = aManualAdvise.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1323,7 +1323,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(ManualAdvise aManualAdvise, String tranType) {
+	protected boolean doProcess(ManualAdvise aManualAdvise, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

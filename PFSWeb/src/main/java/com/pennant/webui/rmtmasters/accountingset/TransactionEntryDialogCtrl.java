@@ -656,7 +656,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aTransactionEntry.isNew()) {
+		if (aTransactionEntry.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1035,7 +1035,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		// get the selected branch object from the lisBox
 		// Do data level validations here
 
-		isNew = aTransactionEntry.isNew();
+		isNew = aTransactionEntry.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1140,7 +1140,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 					}
 
 					// Both Current and Existing list Transaction Order is same
-					if (aTransactionEntry.isNew()
+					if (aTransactionEntry.isNewRecord()
 							&& transactionEntry.getTransOrder() == (aTransactionEntry.getTransOrder())) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm),

@@ -247,7 +247,7 @@ public class CustomerIdentityListCtrl extends GFCBaseListCtrl<CustomerIdentity> 
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("customerIdentity", customerIdentity);
 		arg.put("customerIdentityListCtrl", this);
-		arg.put("newRecord", customerIdentity.isNew());
+		arg.put("newRecord", customerIdentity.isNewRecord());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerIdentity/CustomerIdentityDialog.zul",

@@ -1,42 +1,24 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FacilityDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  25-11-2013    														*
- *                                                                  						*
- * Modified Date    :  25-11-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FacilityDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 25-11-2013 * * Modified
+ * Date : 25-11-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 25-11-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 25-11-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.facility.facility;
@@ -184,8 +166,8 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	protected Space space_NatureOfBusiness;
 	protected ExtendedCombobox natureOfBusiness;
 	protected Label label_SICCode;
-	//protected Hlayout hlayout_SICCode;
-	//protected Space space_SICCode;
+	// protected Hlayout hlayout_SICCode;
+	// protected Space space_SICCode;
 	protected ExtendedCombobox sICCode;
 	protected Row row5;
 	protected Label label_CountryManager;
@@ -193,8 +175,8 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	protected Space space_CountryManager;
 	protected ExtendedCombobox countryManager;
 	protected Label label_CustomerRiskType;
-	//protected Hlayout hlayout_CustomerRiskType;
-	//protected Space space_CustomerRiskType;
+	// protected Hlayout hlayout_CustomerRiskType;
+	// protected Space space_CustomerRiskType;
 	protected ExtendedCombobox customerRiskType;
 	protected Row row6;
 	protected Label label_RelationshipManager;
@@ -448,20 +430,20 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
-		if (doClose(this.btnSave.isVisible())) {
-			deAllocateChildWindowRights();
-		}
+		doClose(this.btnSave.isVisible());
+	}
+
+	protected void doPostClose() {
+		deAllocateChildWindowRights();
 	}
 
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -567,7 +549,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		readOnlyComponent(isReadOnly("FacilityDialog_CountryLimitAdeq"), this.countryLimitAdeq);
 		readOnlyComponent(isReadOnly("FacilityDialog_CountryLimit"), this.countryLimit);
 		readOnlyComponent(isReadOnly("FacilityDialog_CountryExposure"), this.countryExposure);
-		//Seperate Rights to be created for the Customer Group Limits 
+		// Seperate Rights to be created for the Customer Group Limits
 		readOnlyComponent(isReadOnly("FacilityDialog_CountryLimit"), this.custGroupLimit);
 		readOnlyComponent(isReadOnly("FacilityDialog_CountryExposure"), this.custGroupExposure);
 
@@ -579,7 +561,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 			this.countryOfRisk.setReadonly(isReadOnly("FacilityDialog_CountryOfRisk"));
 			this.natureOfBusiness.setReadonly(isReadOnly("FacilityDialog_NatureOfBusiness"));
 			this.countryManager.setReadonly(isReadOnly("FacilityDialog_CountryManager"));
-			this.customerGroup.setReadonly(true);//isReadOnly("FacilityDialog_CustomerGroup")
+			this.customerGroup.setReadonly(true);// isReadOnly("FacilityDialog_CustomerGroup")
 			this.sICCode.setReadonly(isReadOnly("FacilityDialog_SICCode"));
 			this.customerRiskType.setReadonly(isReadOnly("FacilityDialog_CustomerRiskType"));
 			this.customerBackGround.setReadonly(isReadOnly("FacilityDialog_CustomerBackGround"));
@@ -720,7 +702,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		this.customerGroup.setValueColumn("CustGrpCode");
 		this.customerGroup.setDescColumn("CustGrpDesc");
 		this.customerGroup.setValidateColumns(new String[] { "CustGrpCode" });
-		//this.customerGroup.setMandatoryStyle(true);
+		// this.customerGroup.setMandatoryStyle(true);
 
 		this.nextReviewDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.countryExposure.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormat));
@@ -759,8 +741,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFacility
-	 *            Facility
+	 * @param aFacility Facility
 	 */
 	public void doWriteBeanToComponents(Facility aFacility) {
 		logger.debug("Entering");
@@ -1157,9 +1138,11 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	private void doSetValidation() {
 		logger.debug("Entering");
 		// CAF Reference
-		//		if (!this.cAFReference.isReadonly()) {
-		//			this.cAFReference.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CAFReference.value"), PennantRegularExpressions.REGEX_NAME, true));
-		//		}
+		// if (!this.cAFReference.isReadonly()) {
+		// this.cAFReference.setConstraint(new
+		// PTStringValidator(Labels.getLabel("label_FacilityDialog_CAFReference.value"),
+		// PennantRegularExpressions.REGEX_NAME, true));
+		// }
 		// Customer
 		if (!this.custID.isReadonly()) {
 			this.custID.setConstraint(new PTStringValidator(Labels.getLabel("label_FacilityDialog_CustID.value"),
@@ -1323,7 +1306,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	/**
 	 * Method for Refreshing List after Save/Delete a Record
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getFacilityListCtrl().search();
 	}
 
@@ -1448,7 +1431,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 			validate = true;
 		}
 
-		//Validation For Mandatory Recommendation
+		// Validation For Mandatory Recommendation
 
 		if (validate && !isRecommeandEntered()) {
 			MessageUtil.showError(Labels.getLabel("label_FacilityDialog_RecommendMand"));
@@ -1463,7 +1446,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
 		// Do data level validations here
-		isNew = aFacility.isNew();
+		isNew = aFacility.isNewRecord();
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
@@ -1489,7 +1472,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		try {
 			// save it to database
 
-			//Check Dedup
+			// Check Dedup
 			List<FacilityDetail> dedupList = getDedupList(getFacility().getCAFReference(), getFacility().getCustID());
 			if (dedupList != null && !dedupList.isEmpty() && !getFacility().isSkipDedup()) {
 				Object dataObject = ShowDedupListBox.show(this.window_FacilityDialog, dedupList,
@@ -1510,7 +1493,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				}
 			}
 
-			//Facility Details Tab
+			// Facility Details Tab
 			if (getFacilityDetailListCtrl() != null) {
 				List<FacilityDetail> list = getFacilityDetailListCtrl().getFacilityDetailList();
 				if (list != null && !list.isEmpty()) {
@@ -1536,7 +1519,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				}
 			}
 
-			//Scoring Details tab
+			// Scoring Details tab
 			if (getFacilityScoringDetailDialogCtrl() != null) {
 				getFacilityScoringDetailDialogCtrl().doSave_ScoreDetail(aFacility);
 				if (!aFacility.isSufficientScore() && validate) {
@@ -1544,7 +1527,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 					return;
 				}
 			}
-			//Check List Details Tab
+			// Check List Details Tab
 			try {
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("control", this);
@@ -1576,7 +1559,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				}
 				return;
 			}
-			//Document Details Tab
+			// Document Details Tab
 			if (getFacilityDocumentDetailDialogCtrl() != null) {
 				aFacility.setDocumentDetailsList(getFacilityDocumentDetailDialogCtrl().getDocumentDetailsList());
 			}
@@ -1584,7 +1567,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 			getFacilityService().getTotalAmountsInUSDAndBHD(aFacility);
 			if (doProcess(aFacility, tranType)) {
 				refreshList();
-				//Customer Notification for Role Identification
+				// Customer Notification for Role Identification
 				if (StringUtils.isNotBlank(aFacility.getNextTaskId())) {
 					String msg = PennantApplicationUtil.getSavingStatus(aFacility.getRoleCode(),
 							aFacility.getNextRoleCode(), aFacility.getCAFReference(), " Facility ",
@@ -1592,7 +1575,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 					Clients.showNotification(msg, "info", null, null, -1);
 				}
 
-				//Mail Alert Notification for User
+				// Mail Alert Notification for User
 				if (StringUtils.isNotBlank(aFacility.getNextTaskId())
 						&& !StringUtils.trimToEmpty(aFacility.getNextRoleCode()).equals(aFacility.getRoleCode())) {
 					notificationService.sendNotifications(NotificationConstants.MAIL_MODULE_CAF, aFacility);
@@ -1675,17 +1658,15 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * @throws InterruptedException
 	 * 
 	 */
-	private boolean doProcess(Facility aFacility, String tranType) throws InterruptedException {
+	protected boolean doProcess(Facility aFacility, String tranType) throws InterruptedException {
 		logger.debug("Entering");
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
@@ -1722,7 +1703,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 					}
 					auditHeader.getAuditDetail().setModelData(tFacility);
 				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckProspectCustomer)) {
-					//Prospect Customer Checking
+					// Prospect Customer Checking
 					Facility tFacility = (Facility) auditHeader.getAuditDetail().getModelData();
 					if (StringUtils.isBlank(tFacility.getCustCoreBank())) {
 						MessageUtil.showError(Labels.getLabel("label_FinanceMainDialog_Mandatory_Prospect.value"));
@@ -1786,10 +1767,8 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */
@@ -2161,7 +2140,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		return collateralsList;
 	}
 
-	//Customer Rating
+	// Customer Rating
 	private List<CustomerRating> ratingsList = new ArrayList<CustomerRating>();
 
 	public void setRatingsList(List<CustomerRating> ratingsList) {
@@ -2239,9 +2218,9 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 
 	private void appendTabs(Facility aFacility) {
 		logger.debug("Entering");
-		//1
+		// 1
 		createTabAndTabpanel(MODULE_FACILITYDETAILS, "/WEB-INF/pages/Facility/Facility/FacilityDetailList.zul", false);
-		//2
+		// 2
 		if (StringUtils.isNotBlank(getFacility().getCustCIF())) {
 			String custCtg = StringUtils.trimToEmpty(getFacility().getCustCtgCode());
 			if (custCtg.equals(PennantConstants.PFF_CUSTCTG_SME) || custCtg.equals(PennantConstants.PFF_CUSTCTG_CORP)) {
@@ -2250,27 +2229,27 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 						true);
 			}
 		}
-		//3
+		// 3
 		if (aFacility.getScoringGroupList() != null && !aFacility.getScoringGroupList().isEmpty()) {
 			createTabAndTabpanel(MODULE_SCORING, "/WEB-INF/pages/Facility/Facility/FacilityScoringDetailDialog.zul",
 					false);
 		}
-		//4
+		// 4
 		if (!enqModule && getFacility().getAggrementList() != null && !getFacility().getAggrementList().isEmpty()
 				&& isAtleastOneToShow(aFacility.getAggrementList())) {
 			createTabAndTabpanel(MODULE_AGREEMENTS,
 					"/WEB-INF/pages/Facility/Facility/FacilityAgreementDetailDialog.zul", false);
 		}
-		//5
+		// 5
 		createTabAndTabpanel(MODULE_DOCUMENTS, "/WEB-INF/pages/Facility/Facility/FacilityDocumentDetailDialog.zul",
 				false);
-		//6
+		// 6
 		if (!enqModule && aFacility.getCheckList() != null && !aFacility.getCheckList().isEmpty()
 				&& isAtleastOneToShow(aFacility.getCheckList())) {
 			createTabAndTabpanel(MODULE_CHECKLIST,
 					"/WEB-INF/pages/Facility/Facility/FacilityCheckListReferenceDialog.zul", false);
 		}
-		//7
+		// 7
 		if (!enqModule) {
 			createTabAndTabpanel(MODULE_RECOMMENDATIONS, "/WEB-INF/pages/notes/notes.zul", false);
 		}

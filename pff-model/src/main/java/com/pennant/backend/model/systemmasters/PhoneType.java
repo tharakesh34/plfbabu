@@ -61,7 +61,6 @@ public class PhoneType extends AbstractWorkflowEntity {
 	private String phoneTypeRegex;
 	private int phoneTypePriority;
 	private boolean phoneTypeIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private PhoneType befImage;
 	private LoggedInUser userDetails;
@@ -121,14 +120,6 @@ public class PhoneType extends AbstractWorkflowEntity {
 
 	public void setPhoneTypeIsActive(boolean phoneTypeIsActive) {
 		this.phoneTypeIsActive = phoneTypeIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

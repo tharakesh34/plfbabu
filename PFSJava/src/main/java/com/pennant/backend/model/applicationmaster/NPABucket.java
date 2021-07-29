@@ -53,14 +53,13 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>NPABucket table</b>.<br>
  *
  */
-public class NPABucket extends AbstractWorkflowEntity implements Entity {
+public class NPABucket extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long bucketID = Long.MIN_VALUE;
 	private String bucketCode;
 	private String bucketDesc;
 	private boolean active;
-	private boolean newRecord = false;
 	private String lovValue;
 	private NPABucket befImage;
 	private LoggedInUser userDetails;
@@ -121,14 +120,6 @@ public class NPABucket extends AbstractWorkflowEntity implements Entity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

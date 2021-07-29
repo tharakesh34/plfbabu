@@ -139,7 +139,7 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (feeType.isNew()) {
+		if (feeType.isNewRecord()) {
 			feeType.setFeeTypeID(Long.parseLong(getFeeTypeDAO().save(feeType, tableType)));
 			auditHeader.getAuditDetail().setModelData(feeType);
 			auditHeader.setAuditReference(String.valueOf(feeType.getFeeTypeID()));
@@ -342,7 +342,7 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 		FeeType feeType = (FeeType) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (feeType.isNew() && feeTypeDAO.isDuplicateKey(feeType.getFeeTypeID(), feeType.getFeeTypeCode(),
+		if (feeType.isNewRecord() && feeTypeDAO.isDuplicateKey(feeType.getFeeTypeID(), feeType.getFeeTypeCode(),
 				feeType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 			parameters[0] = PennantJavaUtil.getLabel("label_FeeTypeCode") + ": " + feeType.getFeeTypeCode();

@@ -129,7 +129,7 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 			tableType = "_Temp";
 		}
 
-		if (beneficiary.isNew()) {
+		if (beneficiary.isNewRecord()) {
 			beneficiary.setId(getBeneficiaryDAO().save(beneficiary, tableType));
 			auditHeader.getAuditDetail().setModelData(beneficiary);
 			auditHeader.setAuditReference(String.valueOf(beneficiary.getBeneficiaryId()));
@@ -357,7 +357,7 @@ public class BeneficiaryServiceImpl extends GenericService<Beneficiary> implemen
 		errParm[0] = PennantJavaUtil.getLabel("label_AccNumber") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_BankBranchID") + ":" + valueParm[1];
 
-		if (beneficiary.isNew()) { // for New record or new record into work flow
+		if (beneficiary.isNewRecord()) { // for New record or new record into work flow
 
 			if (!beneficiary.isWorkflow()) {// With out Work flow only new records
 				if (befBeneficiary != null) { // Record Already Exists in the table then error

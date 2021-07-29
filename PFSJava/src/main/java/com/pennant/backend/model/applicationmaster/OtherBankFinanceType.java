@@ -57,7 +57,6 @@ public class OtherBankFinanceType extends AbstractWorkflowEntity {
 	private String finType;
 	private String finTypeDesc;
 	private boolean active;
-	private boolean newRecord;
 	private String lovValue;
 	private OtherBankFinanceType befImage;
 	private LoggedInUser userDetails;
@@ -109,14 +108,6 @@ public class OtherBankFinanceType extends AbstractWorkflowEntity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

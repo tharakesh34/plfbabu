@@ -13,7 +13,6 @@ public class FinAssetTypes extends AbstractWorkflowEntity {
 	private String assetType;
 	private String reference;
 	private int seqNo = 0;
-	private boolean newRecord = false;
 	private LoggedInUser userDetails;
 	private FinAssetTypes befImage;
 
@@ -49,14 +48,6 @@ public class FinAssetTypes extends AbstractWorkflowEntity {
 
 	public void setSeqNo(int seqNo) {
 		this.seqNo = seqNo;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public LoggedInUser getUserDetails() {

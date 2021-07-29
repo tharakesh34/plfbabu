@@ -731,7 +731,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 					if (approveRec) {
 						deleteRecord = true;
-					} else if (documentDetails.isNew()) {
+					} else if (documentDetails.isNewRecord()) {
 						saveRecord = true;
 					} else {
 						updateRecord = true;
@@ -884,7 +884,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			} else if (collateralAssignment.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (collateralAssignment.isNew()) {
+				} else if (collateralAssignment.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -995,7 +995,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			} else if (finAssetTypes.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (finAssetTypes.isNew()) {
+				} else if (finAssetTypes.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

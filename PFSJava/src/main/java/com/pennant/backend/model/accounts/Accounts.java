@@ -80,7 +80,6 @@ public class Accounts extends AbstractWorkflowEntity {
 	private boolean acClosed;
 
 	private String hostAcNumber = "";
-	private boolean newRecord = false;
 	private String lovValue;
 	private Accounts befImage;
 	private LoggedInUser userDetails;
@@ -214,14 +213,6 @@ public class Accounts extends AbstractWorkflowEntity {
 
 	public void setHostAcNumber(String hostAcNumber) {
 		this.hostAcNumber = hostAcNumber;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

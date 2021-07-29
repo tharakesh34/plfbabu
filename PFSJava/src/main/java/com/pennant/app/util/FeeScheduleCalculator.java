@@ -82,7 +82,7 @@ public class FeeScheduleCalculator {
 		Date evtFromDate = null;
 		boolean isNewLoan = false;
 
-		if (financeMain.isNew() || StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+		if (financeMain.isNewRecord() || StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			isNewLoan = true;
 		}
 

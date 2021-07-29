@@ -64,7 +64,6 @@ public class FinTypeAccounting extends AbstractWorkflowEntity {
 	private String lovDescAccountingName;
 	private String lovDescEventAccountingName;
 	private boolean mandatory = false;
-	private boolean newRecord = false;
 	private String lovValue;
 	private FinTypeAccounting befImage;
 
@@ -95,7 +94,7 @@ public class FinTypeAccounting extends AbstractWorkflowEntity {
 		entity.setLovDescAccountingName(this.lovDescAccountingName);
 		entity.setLovDescEventAccountingName(this.lovDescEventAccountingName);
 		entity.setMandatory(this.mandatory);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setLovValue(this.lovValue);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setModuleId(this.moduleId);
@@ -186,14 +185,6 @@ public class FinTypeAccounting extends AbstractWorkflowEntity {
 
 	public void setMandatory(boolean mandatory) {
 		this.mandatory = mandatory;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -154,8 +154,6 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 	private Date inputDate;
 	private String disbCCy;
 	private boolean pOIssued;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private FinAdvancePayments befImage;
 	private LoggedInUser userDetails;
@@ -284,7 +282,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 		entity.setInputDate(this.inputDate);
 		entity.setDisbCCy(this.disbCCy);
 		entity.setpOIssued(this.pOIssued);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setLovValue(this.lovValue);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
@@ -523,14 +521,6 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

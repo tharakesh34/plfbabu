@@ -48,7 +48,6 @@ public class Query extends AbstractWorkflowEntity {
 	private String resultColumns;
 	private String displayColumns;
 	private QueryModule queryModuleObj;
-	private boolean newRecord;
 	private String lovValue;
 	private Query befImage;
 	private LoggedInUser userDetails;
@@ -188,14 +187,6 @@ public class Query extends AbstractWorkflowEntity {
 
 	public void setQueryModuleObj(QueryModule queryModule) {
 		this.queryModuleObj = queryModule;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

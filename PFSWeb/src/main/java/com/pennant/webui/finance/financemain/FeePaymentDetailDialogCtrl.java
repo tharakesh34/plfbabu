@@ -326,7 +326,7 @@ public class FeePaymentDetailDialogCtrl extends GFCBaseCtrl<FeePaymentDetail> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aFeePaymentDetail.isNew()) {
+		if (aFeePaymentDetail.isNewRecord()) {
 
 			this.btnCtrl.setInitNew();
 			doEdit();
@@ -699,7 +699,7 @@ public class FeePaymentDetailDialogCtrl extends GFCBaseCtrl<FeePaymentDetail> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aFeePaymentDetail.isNew();
+		isNew = aFeePaymentDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {

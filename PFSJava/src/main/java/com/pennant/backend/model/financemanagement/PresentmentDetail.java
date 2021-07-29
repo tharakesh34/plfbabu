@@ -85,7 +85,6 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	private Long manualAdviseId;
 	@XmlElement(name = "presentmentStatus")
 	private String status;
-	private boolean newRecord = false;
 	private String customerName;
 	@XmlElement(name = "cif")
 	private String custCif;
@@ -171,7 +170,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 		entity.setBounceRemarks(this.bounceRemarks);
 		entity.setManualAdviseId(this.manualAdviseId);
 		entity.setStatus(this.status);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setCustomerName(this.customerName);
 		entity.setFinType(this.finType);
 		entity.setFinTypeDesc(this.finTypeDesc);
@@ -443,14 +442,6 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 
 	public void setStatus(String status) {
 		this.status = status;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public PresentmentDetail getBefImage() {

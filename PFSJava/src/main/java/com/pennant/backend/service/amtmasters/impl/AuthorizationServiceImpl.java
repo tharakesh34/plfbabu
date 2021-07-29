@@ -152,7 +152,7 @@ public class AuthorizationServiceImpl extends GenericService<Authorization> impl
 			tableType = "_Temp";
 		}
 
-		if (authorization.isNew()) {
+		if (authorization.isNewRecord()) {
 			authorization.setId(getAuthorizationDAO().save(authorization, tableType));
 			auditHeader.getAuditDetail().setModelData(authorization);
 			auditHeader.setAuditReference(String.valueOf(authorization.getAuthUserId()));
@@ -371,7 +371,7 @@ public class AuthorizationServiceImpl extends GenericService<Authorization> impl
 		valueParm[1] = authorization.getAuthType();
 		errParm[0] = PennantJavaUtil.getLabel("label_AuthUserId") + ":" + valueParm[0];
 
-		if (authorization.isNew()) { // for New record or new record into work flow
+		if (authorization.isNewRecord()) { // for New record or new record into work flow
 
 			if (!authorization.isWorkflow()) {// With out Work flow only new records  
 				if (befAuthorization != null) { // Record Already Exists in the table then error  

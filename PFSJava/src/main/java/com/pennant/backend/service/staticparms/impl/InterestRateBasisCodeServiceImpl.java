@@ -128,7 +128,7 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 			tableType = "_Temp";
 		}
 
-		if (interestRateBasisCode.isNew()) {
+		if (interestRateBasisCode.isNewRecord()) {
 			interestRateBasisCode.setId(getInterestRateBasisCodeDAO().save(interestRateBasisCode, tableType));
 			auditHeader.getAuditDetail().setModelData(interestRateBasisCode);
 			auditHeader.setAuditReference(interestRateBasisCode.getId());
@@ -343,7 +343,7 @@ public class InterestRateBasisCodeServiceImpl extends GenericService<InterestRat
 		valueParm[0] = interestRateBasisCode.getIntRateBasisCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_IntRateBasisCode") + ":" + valueParm[0];
 
-		if (interestRateBasisCode.isNew()) { // for New record or new record
+		if (interestRateBasisCode.isNewRecord()) { // for New record or new record
 			// into work flow
 
 			if (!interestRateBasisCode.isWorkflow()) {// With out Work flow only new records

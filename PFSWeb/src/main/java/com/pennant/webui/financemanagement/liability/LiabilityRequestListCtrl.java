@@ -380,7 +380,7 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		arg.put("eventCode", eventCodeRef);
 
 		try {
-			if (aLiabilityRequest.isNew()) {
+			if (aLiabilityRequest.isNewRecord()) {
 				Executions.createComponents(
 						"/WEB-INF/pages/FinanceManagement/SelectFinance/SelectFinReferenceDialog.zul", null, arg);
 			} else {

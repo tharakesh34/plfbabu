@@ -71,7 +71,6 @@ public class LimitGroup extends AbstractWorkflowEntity {
 
 	private long createdBy;
 	private Timestamp createdOn;
-	private boolean newRecord = false;
 	private String lovValue;
 	private LimitGroup befImage;
 	private LoggedInUser userDetails;
@@ -149,14 +148,6 @@ public class LimitGroup extends AbstractWorkflowEntity {
 			return null;
 		}
 		return DateUtility.getXMLDate(createdOn);
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

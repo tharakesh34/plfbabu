@@ -372,7 +372,7 @@ public class ClusterHierarchyServiceImpl extends GenericService<ClusterHierarchy
 		ClusterHierarchy clusterhierarchy = (ClusterHierarchy) auditDetail.getModelData();
 		for (ClusterHierarchy ch : clusterhierarchy.getClusterTypes()) {
 			// Check the unique keys.
-			if (!ch.isNew()) {
+			if (!ch.isNewRecord()) {
 				continue;
 			}
 

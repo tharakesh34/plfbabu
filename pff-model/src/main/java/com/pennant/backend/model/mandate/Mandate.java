@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  Mandate.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  18-10-2016    														*
- *                                                                  						*
- * Modified Date    :  18-10-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : Mandate.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 18-10-2016 * * Modified Date :
+ * 18-10-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 18-10-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 18-10-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -48,17 +30,16 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>Mandate table</b>.<br>
@@ -71,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
 		"partnerBankId", "partnerBankName", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "mandate")
-public class Mandate extends AbstractWorkflowEntity implements Entity {
+public class Mandate extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	@XmlElement
@@ -146,7 +127,6 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private boolean defaultMandate;
 	private String approvalID;
-	private boolean newRecord;
 	private String lovValue;
 	private Mandate befImage;
 	private LoggedInUser userDetails;
@@ -212,11 +192,6 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	private String partnerBankName;
 	@XmlElement
 	private Boolean pennyDropStatus;
-
-	@Override
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public Mandate() {
 		super();
@@ -284,12 +259,10 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	// ****************** getter / setter ******************//
 	// ******************************************************//
 
-	@Override
 	public long getId() {
 		return mandateID;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.mandateID = id;
 	}
@@ -460,14 +433,6 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 
 	public void setApprovalID(String approvalID) {
 		this.approvalID = approvalID;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	@XmlTransient

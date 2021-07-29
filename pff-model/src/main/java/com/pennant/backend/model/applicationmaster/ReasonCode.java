@@ -63,7 +63,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "reasonTypeID", "reasonTypeCode", "reasonTypeDesc", "reasonCategoryID", "reasonCategoryCode",
 		"reasonCategoryDesc", "code", "description", "active", "version", })
 @XmlAccessorType(XmlAccessType.NONE)
-public class ReasonCode extends AbstractWorkflowEntity implements Entity {
+public class ReasonCode extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
@@ -85,8 +85,6 @@ public class ReasonCode extends AbstractWorkflowEntity implements Entity {
 	private String description;
 	@XmlElement
 	private boolean active;
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -180,14 +178,6 @@ public class ReasonCode extends AbstractWorkflowEntity implements Entity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -110,7 +110,7 @@ public class SecurityRoleServiceImpl extends GenericService<SecurityRole> implem
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		} else {
 
-			if (securityRole.isNew()) {
+			if (securityRole.isNewRecord()) {
 				auditHeader.setAuditTranType(PennantConstants.TRAN_ADD);
 			} else {
 				auditHeader.setAuditTranType(PennantConstants.TRAN_UPD);
@@ -126,7 +126,7 @@ public class SecurityRoleServiceImpl extends GenericService<SecurityRole> implem
 
 		}
 
-		if (securityRole.isNew()) {
+		if (securityRole.isNewRecord()) {
 			securityRole.setId(getSecurityRoleDAO().save(securityRole, tableType));
 			auditHeader.setModelData(securityRole);
 			auditHeader.setAuditReference(String.valueOf(securityRole.getRoleID()));
@@ -327,7 +327,7 @@ public class SecurityRoleServiceImpl extends GenericService<SecurityRole> implem
 		// Get the model object.
 		SecurityRole securityRole = (SecurityRole) auditDetail.getModelData();
 		// Check the unique keys.
-		if (securityRole.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(securityRole.getRecordType())
+		if (securityRole.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(securityRole.getRecordType())
 				&& securityRoleDAO.isDuplicateKey(securityRole.getRoleApp(), securityRole.getRoleCd(),
 						securityRole.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

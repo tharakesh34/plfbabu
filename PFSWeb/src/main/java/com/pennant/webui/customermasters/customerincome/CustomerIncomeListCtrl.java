@@ -241,7 +241,7 @@ public class CustomerIncomeListCtrl extends GFCBaseListCtrl<CustomerIncome> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("customerIncome", customerIncome);
 		arg.put("customerIncomeListCtrl", this);
-		arg.put("newRecord", customerIncome.isNew());
+		arg.put("newRecord", customerIncome.isNewRecord());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerIncome/CustomerIncomeDialog.zul", null,

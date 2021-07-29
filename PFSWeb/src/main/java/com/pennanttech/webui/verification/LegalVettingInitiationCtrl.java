@@ -1377,7 +1377,7 @@ public class LegalVettingInitiationCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void refreshList() {
+	protected void refreshList() {
 		legalVettingInitiationListCtrl.search();
 	}
 

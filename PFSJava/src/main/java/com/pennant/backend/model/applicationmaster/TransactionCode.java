@@ -58,7 +58,6 @@ public class TransactionCode extends AbstractWorkflowEntity {
 	private String tranDesc;
 	private String tranType;
 	private boolean tranIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private TransactionCode befImage;
 	private LoggedInUser userDetails;
@@ -118,14 +117,6 @@ public class TransactionCode extends AbstractWorkflowEntity {
 
 	public void setTranIsActive(boolean tranIsActive) {
 		this.tranIsActive = tranIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

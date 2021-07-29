@@ -81,7 +81,7 @@ public class CustomerDocumentValidation {
 				+ ":" + valueParm[0] + " and ";
 		errParm[1] = PennantJavaUtil.getLabel("CustDocType_label") + "-" + valueParm[1];
 
-		if (customerDocument.isNew()) { // for New record or new record into
+		if (customerDocument.isNewRecord()) { // for New record or new record into
 											// work flow
 
 			if (!customerDocument.isWorkflow()) {// With out Work flow only new

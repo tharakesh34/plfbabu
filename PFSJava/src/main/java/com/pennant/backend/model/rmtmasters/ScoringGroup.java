@@ -56,7 +56,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>ScoringGroup table</b>.<br>
  *
  */
-public class ScoringGroup extends AbstractWorkflowEntity implements Entity {
+public class ScoringGroup extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 3708216428751667675L;
 
@@ -67,7 +67,6 @@ public class ScoringGroup extends AbstractWorkflowEntity implements Entity {
 	private int minScore;
 	private boolean isOverride;
 	private int overrideScore;
-	private boolean newRecord;
 	private String lovValue;
 	private ScoringGroup befImage;
 	private LoggedInUser userDetails;
@@ -161,14 +160,6 @@ public class ScoringGroup extends AbstractWorkflowEntity implements Entity {
 
 	public void setOverrideScore(int overrideScore) {
 		this.overrideScore = overrideScore;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

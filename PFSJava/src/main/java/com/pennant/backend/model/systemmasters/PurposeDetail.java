@@ -56,7 +56,6 @@ public class PurposeDetail extends AbstractWorkflowEntity {
 
 	private String purposeCode;
 	private String purposeDesc = null;
-	private boolean newRecord = false;
 	private String lovValue;
 	private PurposeDetail befImage;
 	private LoggedInUser userDetails;
@@ -100,14 +99,6 @@ public class PurposeDetail extends AbstractWorkflowEntity {
 
 	public void setPurposeDesc(String purposeDesc) {
 		this.purposeDesc = purposeDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

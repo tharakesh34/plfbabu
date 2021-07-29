@@ -122,7 +122,7 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 			tableType = "_Temp";
 		}
 
-		if (financeFlag.isNew()) {
+		if (financeFlag.isNewRecord()) {
 			if (StringUtils.isEmpty(tableType)) {
 				financeFlag.setRecordType("");
 				financeFlag.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -181,7 +181,7 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 				finFlagsDetail.setNextTaskId("");
 			}
 			finFlagsDetail.setReference(financeFlag.getFinReference());
-			if (financeFlag.isNew()) {
+			if (financeFlag.isNewRecord()) {
 				finFlagsDetail.setNewRecord(true);
 			}
 			if (finFlagsDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
@@ -207,7 +207,7 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 			} else if (finFlagsDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (finFlagsDetail.isNew()) {
+				} else if (finFlagsDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					saveRecord = true;
@@ -417,7 +417,7 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 			errParm[0] = PennantJavaUtil.getLabel("FinFlagsDetail") + " , "
 					+ PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0] + " and ";
 
-			if (finFlagsDetail.isNew()) { // for New record or new record into work flow
+			if (finFlagsDetail.isNewRecord()) { // for New record or new record into work flow
 
 				if (!finFlagsDetail.isWorkflow()) {// With out Work flow only new records  
 					if (befFinFlagsDetail != null) { // Record Already Exists in the table then error  
@@ -577,7 +577,7 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 		valueParm[0] = financeFlag.getFinReference();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (financeFlag.isNew()) { // for New record or new record into work flow
+		if (financeFlag.isNewRecord()) { // for New record or new record into work flow
 
 			if (!financeFlag.isWorkflow()) {// With out Work flow only new records  
 				if (befFinanceFlag != null) { // Record Already Exists in the table then error  

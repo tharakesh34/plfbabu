@@ -519,7 +519,7 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getSecurityUserListCtrl().search();
 	}
 
@@ -550,7 +550,7 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aSecurityUser.isNew();
+		isNew = aSecurityUser.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -602,7 +602,7 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * 
 	 */
 
-	private boolean doProcess(SecurityUser aSecurityUser, String tranType) {
+	protected boolean doProcess(SecurityUser aSecurityUser, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

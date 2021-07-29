@@ -55,7 +55,6 @@ public class CorpRelationCode extends AbstractWorkflowEntity {
 	private String corpRelationCode;
 	private String corpRelationDesc;
 	private boolean corpRelationIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private CorpRelationCode befImage;
 	private LoggedInUser userDetails;
@@ -107,14 +106,6 @@ public class CorpRelationCode extends AbstractWorkflowEntity {
 
 	public void setCorpRelationIsActive(boolean corpRelationIsActive) {
 		this.corpRelationIsActive = corpRelationIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

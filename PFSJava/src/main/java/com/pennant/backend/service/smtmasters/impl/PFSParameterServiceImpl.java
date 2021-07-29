@@ -123,7 +123,7 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 		if (pFSParameter.isWorkflow()) {
 			tableType = "_Temp";
 		}
-		if (pFSParameter.isNew()) {
+		if (pFSParameter.isNewRecord()) {
 			pFSParameter.setSysParmCode(getPFSParameterDAO().save(pFSParameter, tableType));
 			auditHeader.getAuditDetail().setModelData(pFSParameter);
 			auditHeader.setAuditReference(pFSParameter.getSysParmCode());
@@ -337,7 +337,7 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 		valueParm[0] = pFSParameter.getSysParmCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_PFSParameterDialog_SysParmCode.value") + ":" + valueParm[0];
 
-		if (pFSParameter.isNew()) { // for New record or new record into work
+		if (pFSParameter.isNewRecord()) { // for New record or new record into work
 										// flow
 
 			if (!pFSParameter.isWorkflow()) {// With out Work flow only new

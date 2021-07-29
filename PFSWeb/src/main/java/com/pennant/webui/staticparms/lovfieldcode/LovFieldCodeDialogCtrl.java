@@ -326,7 +326,7 @@ public class LovFieldCodeDialogCtrl extends GFCBaseCtrl<LovFieldCode> {
 		this.fieldEdit.setChecked(aLovFieldCode.isFieldEdit());
 		this.recordStatus.setValue(aLovFieldCode.getRecordStatus());
 
-		if (aLovFieldCode.isNew()
+		if (aLovFieldCode.isNewRecord()
 				|| StringUtils.equals(aLovFieldCode.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			this.isActive.setChecked(true);
 			this.isActive.setDisabled(true);
@@ -397,7 +397,7 @@ public class LovFieldCodeDialogCtrl extends GFCBaseCtrl<LovFieldCode> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aLovFieldCode.isNew()) {
+		if (aLovFieldCode.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -624,7 +624,7 @@ public class LovFieldCodeDialogCtrl extends GFCBaseCtrl<LovFieldCode> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aLovFieldCode.isNew();
+		isNew = aLovFieldCode.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -672,7 +672,7 @@ public class LovFieldCodeDialogCtrl extends GFCBaseCtrl<LovFieldCode> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(LovFieldCode aLovFieldCode, String tranType) {
+	protected boolean doProcess(LovFieldCode aLovFieldCode, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -891,7 +891,7 @@ public class LovFieldCodeDialogCtrl extends GFCBaseCtrl<LovFieldCode> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getLovFieldCodeListCtrl().search();
 	}
 

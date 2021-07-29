@@ -882,7 +882,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		fillListBox();
 	}
 
@@ -995,7 +995,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = verification.isNew();
+		isNew = verification.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1067,7 +1067,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Verification aVerification, String tranType) {
+	protected boolean doProcess(Verification aVerification, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

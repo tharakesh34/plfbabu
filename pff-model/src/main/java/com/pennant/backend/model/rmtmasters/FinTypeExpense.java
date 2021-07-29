@@ -74,8 +74,6 @@ public class FinTypeExpense extends AbstractWorkflowEntity {
 	private boolean taxApplicable;
 	private boolean active;
 	private String finEvent = "ADDDBSP"; //AccountEventConstants.ACCEVENT_ADDDBSP;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private FinTypeExpense befImage;
 
@@ -108,7 +106,7 @@ public class FinTypeExpense extends AbstractWorkflowEntity {
 		entity.setTaxApplicable(this.taxApplicable);
 		entity.setActive(this.active);
 		entity.setFinEvent(this.finEvent);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setLovValue(this.lovValue);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
@@ -228,14 +226,6 @@ public class FinTypeExpense extends AbstractWorkflowEntity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

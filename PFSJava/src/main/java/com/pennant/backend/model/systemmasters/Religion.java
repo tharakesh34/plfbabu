@@ -60,7 +60,6 @@ public class Religion extends AbstractWorkflowEntity {
 	private String religionCode;
 	private String religionDesc;
 	private boolean active;
-	private boolean newRecord = false;
 	private String lovValue;
 	private Religion befImage;
 	private LoggedInUser userDetails;
@@ -121,14 +120,6 @@ public class Religion extends AbstractWorkflowEntity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

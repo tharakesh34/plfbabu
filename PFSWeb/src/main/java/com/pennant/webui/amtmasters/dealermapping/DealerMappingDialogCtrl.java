@@ -311,7 +311,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		dealerMappingListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -363,7 +363,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 		this.posId.setText(String.valueOf(dealerMapping.getPosId()));
 		this.active.setChecked(dealerMapping.isActive());
 
-		if (dealerMapping.isNew() || (dealerMapping.getRecordType() != null ? dealerMapping.getRecordType() : "")
+		if (dealerMapping.isNewRecord() || (dealerMapping.getRecordType() != null ? dealerMapping.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
@@ -450,7 +450,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	public void doShowDialog(DealerMapping dealerMapping) {
 		logger.debug(Literal.ENTERING);
 
-		if (dealerMapping.isNew()) {
+		if (dealerMapping.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.merchantName.setFocus(true);
@@ -662,7 +662,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 			tranType = PennantConstants.TRAN_WF;
 			if (StringUtils.isBlank(dealerMapping.getRecordType())) {
 				dealerMapping.setVersion(dealerMapping.getVersion() + 1);
-				if (dealerMapping.isNew()) {
+				if (dealerMapping.isNewRecord()) {
 					dealerMapping.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
 					dealerMapping.setRecordType(PennantConstants.RECORD_TYPE_UPD);
@@ -671,7 +671,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 			}
 		} else {
 			dealerMapping.setVersion(dealerMapping.getVersion() + 1);
-			if (dealerMapping.isNew()) {
+			if (dealerMapping.isNewRecord()) {
 				tranType = PennantConstants.TRAN_ADD;
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
@@ -703,7 +703,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(DealerMapping dealerMapping, String tranType) {
+	protected boolean doProcess(DealerMapping dealerMapping, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

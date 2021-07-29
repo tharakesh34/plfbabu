@@ -172,7 +172,7 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 			tableType = "_Temp";
 		}
 
-		if (finTaxUploadHeader.isNew()) {
+		if (finTaxUploadHeader.isNewRecord()) {
 			getFinTaxUploadDetailDAO().save(finTaxUploadHeader, tableType);
 		} else {
 			getFinTaxUploadDetailDAO().update(finTaxUploadHeader, tableType);
@@ -183,7 +183,7 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 
 			for (FinTaxUploadDetail finTaxDetail : finTaxUploadHeader.getFinTaxUploadDetailList()) {
 				finTaxDetail.setBatchReference(String.valueOf(finTaxUploadHeader.getBatchReference()));
-				finTaxDetail.setNewRecord(finTaxUploadHeader.isNew());
+				finTaxDetail.setNewRecord(finTaxUploadHeader.isNewRecord());
 
 			}
 			List<AuditDetail> details = finTaxUploadHeader.getAuditDetailMap().get("TaxDetail");
@@ -253,7 +253,7 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 			} else if (finTaxUploadDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (finTaxUploadDetail.isNew()) {
+				} else if (finTaxUploadDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

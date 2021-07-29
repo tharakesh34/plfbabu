@@ -132,7 +132,7 @@ public class BounceReasonServiceImpl extends GenericService<BounceReason> implem
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (bounceReason.isNew()) {
+		if (bounceReason.isNewRecord()) {
 			bounceReason.setId(Long.parseLong(getBounceReasonDAO().save(bounceReason, tableType)));
 			auditHeader.getAuditDetail().setModelData(bounceReason);
 			auditHeader.setAuditReference(String.valueOf(bounceReason.getBounceID()));
@@ -336,7 +336,7 @@ public class BounceReasonServiceImpl extends GenericService<BounceReason> implem
 		BounceReason bounceReason = (BounceReason) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (bounceReason.isNew() && bounceReasonDAO.isDuplicateKey(bounceReason.getBounceID(),
+		if (bounceReason.isNewRecord() && bounceReasonDAO.isDuplicateKey(bounceReason.getBounceID(),
 				bounceReason.getBounceCode(), bounceReason.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 
@@ -345,7 +345,7 @@ public class BounceReasonServiceImpl extends GenericService<BounceReason> implem
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
-		if (bounceReason.isNew() && bounceReasonDAO.isDuplicateReturnCode(bounceReason.getBounceID(),
+		if (bounceReason.isNewRecord() && bounceReasonDAO.isDuplicateReturnCode(bounceReason.getBounceID(),
 				bounceReason.getReturnCode(), bounceReason.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 

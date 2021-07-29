@@ -110,8 +110,6 @@ public class Commitment extends AbstractWorkflowEntity {
 	private long limitLineId;
 	private String limitLineCode;
 	private String limitLineCodeDesc;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private Commitment befImage;
 	private LoggedInUser userDetails;
@@ -423,14 +421,6 @@ public class Commitment extends AbstractWorkflowEntity {
 
 	public void setMultiBranch(boolean multiBranch) {
 		this.multiBranch = multiBranch;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

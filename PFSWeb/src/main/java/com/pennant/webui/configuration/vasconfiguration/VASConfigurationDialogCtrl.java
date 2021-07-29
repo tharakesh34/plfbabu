@@ -563,7 +563,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	public void doShowDialog(VASConfiguration aVASConfiguration) throws InterruptedException {
 		logger.debug("Entering");
 
-		if (aVASConfiguration.isNew()) {
+		if (aVASConfiguration.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -831,7 +831,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 				vASConfiguration.setExtendedFieldHeader(extendedFieldHeader);
 			}
 			extendedFieldHeader.setModuleName(VASConsatnts.MODULE_NAME);
-			if (vASConfiguration.isNew()) {
+			if (vASConfiguration.isNewRecord()) {
 				extendedFieldHeader.setSubModuleName(vASConfiguration.getProductType());
 				extendedFieldHeader.setNumberOfColumns("2");
 			}
@@ -840,7 +840,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			map.put("roleCode", getRole());
 			map.put("dialogCtrl", this);
 			map.put("firstTaskRole", isFirstTask());
-			map.put("newRecord", vASConfiguration.isNew());
+			map.put("newRecord", vASConfiguration.isNewRecord());
 			map.put("moduleName", VASConsatnts.MODULE_NAME);
 
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/ExtendedFieldDialog.zul",
@@ -1667,7 +1667,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	 * Method for Refreshing List after Save/Delete a Record
 	 */
 
-	private void refreshList() {
+	protected void refreshList() {
 		final JdbcSearchObject<VASConfiguration> soVASConfiguration = getVASConfigurationListCtrl().getSearchObject();
 		getVASConfigurationListCtrl().pagingVASConfigurationList.setActivePage(0);
 		getVASConfigurationListCtrl().getPagedListWrapper().setSearchObject(soVASConfiguration);
@@ -1857,7 +1857,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		// Write the additional validations as per below example
 		// get the selected branch object from the list box
 		// Do data level validations here
-		isNew = aVASConfiguration.isNew();
+		isNew = aVASConfiguration.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1913,7 +1913,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	 * 
 	 */
 
-	private boolean doProcess(VASConfiguration aVASConfiguration, String tranType) {
+	protected boolean doProcess(VASConfiguration aVASConfiguration, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

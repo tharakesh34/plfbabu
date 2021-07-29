@@ -109,7 +109,7 @@ public class SanctionConditionsServiceImpl extends GenericService<SanctionCondit
 			tableType = "_Temp";
 		}
 
-		if (sanctionConditions.isNew()) {
+		if (sanctionConditions.isNewRecord()) {
 			sanctionConditions.setId(getSanctionConditionsDAO().save(sanctionConditions, tableType));
 			auditHeader.getAuditDetail().setModelData(sanctionConditions);
 		} else {
@@ -136,7 +136,7 @@ public class SanctionConditionsServiceImpl extends GenericService<SanctionCondit
 			sanctionConditions.setRecordStatus(financeMain.getRecordStatus());
 			sanctionConditions.setWorkflowId(financeMain.getWorkflowId());
 			sanctionConditions.setFinReference(financeMain.getFinReference());
-			if (sanctionConditions.isNew()) {
+			if (sanctionConditions.isNewRecord()) {
 				getSanctionConditionsDAO().save(sanctionConditions, tableType);
 				auditDetails.add(getAuditDetails(sanctionConditions, 1, PennantConstants.TRAN_ADD));
 			} else if (StringUtils.trimToEmpty(sanctionConditions.getRecordType())
@@ -320,7 +320,7 @@ public class SanctionConditionsServiceImpl extends GenericService<SanctionCondit
 					(PennantConstants.RECORD_TYPE_DEL))) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (sanctionConditions.isNew()) {
+				} else if (sanctionConditions.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

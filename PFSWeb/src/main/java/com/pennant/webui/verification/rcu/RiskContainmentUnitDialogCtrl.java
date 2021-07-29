@@ -365,7 +365,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		riskContainmentUnitListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -948,7 +948,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	public void doShowDialog(RiskContainmentUnit rcu) {
 		logger.debug(Literal.LEAVING);
 
-		if (rcu.isNew()) {
+		if (rcu.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1228,7 +1228,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		doSetValidation();
 		doWriteComponentsToBean(rcu);
 
-		isNew = rcu.isNew();
+		isNew = rcu.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1297,7 +1297,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(RiskContainmentUnit riskContainmentUnit, String tranType) {
+	protected boolean doProcess(RiskContainmentUnit riskContainmentUnit, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

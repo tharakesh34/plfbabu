@@ -38,7 +38,6 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -49,7 +48,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 @XmlRootElement(name = "posting")
 @XmlType(propOrder = { "branch", "batch", "currency", "reference", "JVPostingEntrysList" })
-public class JVPosting extends AbstractWorkflowEntity implements Entity {
+public class JVPosting extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	@XmlElement
@@ -81,8 +80,6 @@ public class JVPosting extends AbstractWorkflowEntity implements Entity {
 	private List<JVPostingEntry> deletedJVPostingEntryList = new ArrayList<JVPostingEntry>();
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private String expReference;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private JVPosting befImage;
 	private LoggedInUser userDetails;
@@ -126,7 +123,6 @@ public class JVPosting extends AbstractWorkflowEntity implements Entity {
 		return batchReference;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.batchReference = id;
 	}
@@ -185,14 +181,6 @@ public class JVPosting extends AbstractWorkflowEntity implements Entity {
 
 	public void setBatchPurpose(String batchPurpose) {
 		this.batchPurpose = batchPurpose;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

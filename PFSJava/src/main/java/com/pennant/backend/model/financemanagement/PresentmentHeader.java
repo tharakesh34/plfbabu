@@ -41,7 +41,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.pennant.app.util.DateFormatterAdapter;
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -52,7 +51,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlType(propOrder = { "id", "reference", "presentmentDate", "partnerBankId", "fromDate", "toDate", "status",
 		"mandateType", "loanType", "finBranch", "schdate" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class PresentmentHeader extends AbstractWorkflowEntity implements Entity {
+public class PresentmentHeader extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 	@XmlElement(name = "presentmentHeaderId")
 	private long id = Long.MIN_VALUE;
@@ -95,8 +94,6 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 
 	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
 	private Date schdate;
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -272,14 +269,6 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 		this.schdate = schdate;
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -308,12 +297,10 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
 
-	@Override
 	public long getId() {
 		return id;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.id = id;
 	}

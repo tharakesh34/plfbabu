@@ -81,8 +81,6 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 	private String lovDescOtherIncome;
 	private BigDecimal additionalIncome = BigDecimal.ZERO;
 	private String empAlocType;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private String lovDescCustShrtName;
 	private String lovDescCustRecordType;
@@ -272,14 +270,6 @@ public class CustEmployeeDetail extends AbstractWorkflowEntity {
 
 	public void setAdditionalIncome(BigDecimal additionalIncome) {
 		this.additionalIncome = additionalIncome;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

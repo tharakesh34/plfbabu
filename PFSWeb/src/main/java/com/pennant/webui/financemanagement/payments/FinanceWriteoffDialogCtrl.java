@@ -1237,7 +1237,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @return
 	 * @throws InterruptedException
 	 */
-	private boolean doProcess(FinanceWriteoffHeader aFinanceWriteoffHeader, String tranType)
+	protected boolean doProcess(FinanceWriteoffHeader aFinanceWriteoffHeader, String tranType)
 			throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 

@@ -113,7 +113,7 @@ public class LegalECDetailService extends GenericService<LegalECDetail> {
 		errParm[0] = PennantJavaUtil.getLabel("label_LegalReference") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_EcDate") + ":" + valueParm[1];
 
-		if (legalECDetail.isNew()) {
+		if (legalECDetail.isNewRecord()) {
 			if (!legalECDetail.isWorkflow()) {
 				if (befLegalECDetail != null) {
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
@@ -260,7 +260,7 @@ public class LegalECDetailService extends GenericService<LegalECDetail> {
 			} else if (legalECDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (legalECDetail.isNew()) {
+				} else if (legalECDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

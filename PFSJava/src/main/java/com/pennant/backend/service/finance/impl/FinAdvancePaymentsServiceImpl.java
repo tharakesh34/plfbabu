@@ -263,7 +263,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			} else if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (finPayment.isNew()) {
+				} else if (finPayment.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -564,7 +564,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		valueParm[0] = finAdvancePay.getFinReference();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + valueParm[0];
 
-		if (finAdvancePay.isNew()) { // for New record or new record into work flow
+		if (finAdvancePay.isNewRecord()) { // for New record or new record into work flow
 
 			if (!finAdvancePay.isWorkflow()) {// With out Work flow only new records
 				if (befFinAdvancePay != null) { // Record Already Exists in the table then error

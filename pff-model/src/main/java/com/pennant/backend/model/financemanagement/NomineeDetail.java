@@ -56,7 +56,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>NomineeDetail table</b>.<br>
  *
  */
-public class NomineeDetail extends AbstractWorkflowEntity implements Entity {
+public class NomineeDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long nomineeId = Long.MIN_VALUE;
@@ -79,7 +79,6 @@ public class NomineeDetail extends AbstractWorkflowEntity implements Entity {
 	private String country;
 	private String city;
 	private long district = 0;
-	private boolean newRecord = false;
 	private boolean newNominee = false;
 	private String lovValue;
 	private NomineeDetail befImage;
@@ -320,14 +319,6 @@ public class NomineeDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setCity(String city) {
 		this.city = city;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

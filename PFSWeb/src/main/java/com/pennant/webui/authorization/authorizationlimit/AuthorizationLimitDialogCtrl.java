@@ -364,7 +364,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(AuthorizationLimit aAuthorizationLimit, String tranType) {
+	protected boolean doProcess(AuthorizationLimit aAuthorizationLimit, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -513,7 +513,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 		doSetValidation();
 		doWriteComponentsToBean(aAuthorizationLimit);
 
-		isNew = aAuthorizationLimit.isNew();
+		isNew = aAuthorizationLimit.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -756,7 +756,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 	public void doShowDialog(AuthorizationLimit authorizationLimit) {
 		logger.debug(Literal.LEAVING);
 
-		if (authorizationLimit.isNew()) {
+		if (authorizationLimit.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 		} else {
@@ -1188,7 +1188,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		authorizationLimitListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -1225,7 +1225,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 		Listcell lc = new Listcell();
 		ExtendedCombobox combobox = new ExtendedCombobox();
 		combobox.setId("code" + listCount);
-		if (detail.isNew()) {
+		if (detail.isNewRecord()) {
 			combobox.setMandatoryStyle(true);
 			combobox.setReadonly(false);
 		} else {
@@ -1410,7 +1410,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 			detail.setNewRecord(true);
 		} else {
 
-			if (detail.isNew()) {
+			if (detail.isNewRecord()) {
 				if (StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, detail.getRecordType())) {
 					listBoxCodeLimit.removeChild(listitem);
 					logger.debug(Literal.LEAVING);

@@ -68,7 +68,6 @@ public class FeeType extends AbstractWorkflowEntity {
 	private String accountSetCode;
 	private String accountSetCodeName;
 	private boolean active;
-	private boolean newRecord;
 	private String lovValue;
 	private FeeType befImage;
 	private LoggedInUser userDetails;
@@ -110,7 +109,7 @@ public class FeeType extends AbstractWorkflowEntity {
 		entity.setAccountSetCode(this.accountSetCode);
 		entity.setAccountSetCodeName(this.accountSetCodeName);
 		entity.setActive(this.active);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setLovValue(this.lovValue);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
@@ -177,14 +176,6 @@ public class FeeType extends AbstractWorkflowEntity {
 
 	public void setFeeTypeDesc(String feeTypeDesc) {
 		this.feeTypeDesc = feeTypeDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

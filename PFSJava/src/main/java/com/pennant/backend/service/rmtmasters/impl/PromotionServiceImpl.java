@@ -119,7 +119,7 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 			tableType = "_Temp";
 		}
 
-		if (promotion.isNew()) {
+		if (promotion.isNewRecord()) {
 			getPromotionDAO().save(promotion, tableType);
 			auditHeader.getAuditDetail().setModelData(promotion);
 			auditHeader.setAuditReference(promotion.getPromotionCode());
@@ -752,7 +752,7 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 		valueParm[0] = promotion.getPromotionCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_PromotionCode") + ":" + valueParm[0];
 
-		if (promotion.isNew()) { // for New record or new record into work flow
+		if (promotion.isNewRecord()) { // for New record or new record into work flow
 			if (!promotion.isWorkflow()) {// With out Work flow only new records
 				if (befPromotion != null) { // Record Already Exists in the table then error
 					auditDetail

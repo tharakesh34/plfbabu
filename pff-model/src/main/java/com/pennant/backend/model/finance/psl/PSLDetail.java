@@ -89,7 +89,6 @@ public class PSLDetail extends AbstractWorkflowEntity {
 	@XmlElement
 	private String endUse;
 	private String endUseName;
-	private boolean newRecord = false;
 	private String lovValue;
 	private PSLDetail befImage;
 	private LoggedInUser userDetails;
@@ -276,14 +275,6 @@ public class PSLDetail extends AbstractWorkflowEntity {
 
 	public void setEndUseName(String endUseName) {
 		this.endUseName = endUseName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -125,7 +125,7 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode> 
 			tableType = "_Temp";
 		}
 
-		if (groupStatusCode.isNew()) {
+		if (groupStatusCode.isNewRecord()) {
 			groupStatusCode.setId(getGroupStatusCodeDAO().save(groupStatusCode, tableType));
 			auditHeader.getAuditDetail().setModelData(groupStatusCode);
 			auditHeader.setAuditReference(groupStatusCode.getId());
@@ -332,7 +332,7 @@ public class GroupStatusCodeServiceImpl extends GenericService<GroupStatusCode> 
 		valueParm[0] = groupStatusCode.getGrpStsCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_GrpStsCode") + ":" + valueParm[0];
 
-		if (groupStatusCode.isNew()) { // for New record or new record into work
+		if (groupStatusCode.isNewRecord()) { // for New record or new record into work
 			// flow
 			if (!groupStatusCode.isWorkflow()) {// With out Work flow only new
 				// records

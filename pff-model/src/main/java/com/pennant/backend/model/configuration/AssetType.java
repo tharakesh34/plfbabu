@@ -63,7 +63,6 @@ public class AssetType extends AbstractWorkflowEntity {
 	private String preValidation;
 	private String postValidation;
 	private boolean active;
-	private boolean newRecord = false;
 	private String lovValue;
 	private AssetType befImage;
 	private LoggedInUser userDetails;
@@ -126,14 +125,6 @@ public class AssetType extends AbstractWorkflowEntity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

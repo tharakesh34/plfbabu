@@ -993,7 +993,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCustomerAddresListCtrl().search();
 	}
 
@@ -1232,7 +1232,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		// Write the additional validations as per below example
 		// get the selected branch object from the list box
 		// Do data level validations here
-		isNew = aCustomerAddres.isNew();
+		isNew = aCustomerAddres.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1401,7 +1401,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CustomerAddres aCustomerAddres, String tranType) {
+	protected boolean doProcess(CustomerAddres aCustomerAddres, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;

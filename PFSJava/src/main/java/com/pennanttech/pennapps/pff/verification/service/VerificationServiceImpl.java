@@ -247,7 +247,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				if (item.getRequestType() != RequestType.INITIATE.getKey()) {
 					item.setReinitid(null);
 				}
-				if (item.isNew()) {
+				if (item.isNewRecord()) {
 					setVerificationData(financeDetail, item, verificationType);
 					verificationDAO.save(item, TableType.MAIN_TAB);
 				} else {

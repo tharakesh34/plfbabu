@@ -59,7 +59,6 @@ public class EntityCodes extends AbstractWorkflowEntity {
 	private String amountFormat;
 	private String rateFormat;
 	private String weekend;
-	private boolean newRecord = false;
 	private String lovValue;
 	private EntityCodes befImage;
 	private LoggedInUser userDetails;
@@ -143,14 +142,6 @@ public class EntityCodes extends AbstractWorkflowEntity {
 
 	public void setWeekend(String weekend) {
 		this.weekend = weekend;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

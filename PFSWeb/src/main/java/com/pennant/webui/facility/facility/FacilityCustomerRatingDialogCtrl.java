@@ -410,7 +410,7 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 	public void doShowDialog(CustomerRating aCustomerRating) throws InterruptedException {
 		logger.debug("Entering");
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aCustomerRating.isNew()) {
+		if (aCustomerRating.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -637,7 +637,7 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 		// Write the additional validations as per below example
 		// get the selected branch object from the listBox
 		// Do data level validations here
-		isNew = aCustomerRating.isNew();
+		isNew = aCustomerRating.isNewRecord();
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
@@ -697,7 +697,7 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 			for (int i = 0; i < getCustomerDialogCtrl().getRatingsList().size(); i++) {
 				CustomerRating customerRating = getCustomerDialogCtrl().getRatingsList().get(i);
 				if (customerRating.getCustRatingType().equals(aCustomerRating.getCustRatingType())) {
-					if (aCustomerRating.isNew()) {
+					if (aCustomerRating.isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
 								getUserWorkspace().getUserLanguage()));
@@ -754,7 +754,7 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CustomerRating aCustomerRating, String tranType) {
+	protected boolean doProcess(CustomerRating aCustomerRating, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

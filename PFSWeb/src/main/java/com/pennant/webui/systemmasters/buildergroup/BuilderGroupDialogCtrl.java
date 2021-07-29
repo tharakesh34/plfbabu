@@ -347,7 +347,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		builderGroupListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -589,7 +589,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 
 		this.recordStatus.setValue(aBuilderGroup.getRecordStatus());
 
-		if (!aBuilderGroup.isNew()) {
+		if (!aBuilderGroup.isNewRecord()) {
 			ArrayList<Filter> filters = new ArrayList<Filter>();
 
 			if (aBuilderGroup.getProvince() != null && !aBuilderGroup.getProvince().isEmpty()) {
@@ -719,7 +719,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 	public void doShowDialog(BuilderGroup builderGroup) {
 		logger.debug(Literal.LEAVING);
 
-		if (builderGroup.isNew()) {
+		if (builderGroup.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -987,7 +987,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		doSetValidation();
 		doWriteComponentsToBean(aBuilderGroup);
 
-		isNew = aBuilderGroup.isNew();
+		isNew = aBuilderGroup.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1034,7 +1034,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(BuilderGroup aBuilderGroup, String tranType) {
+	protected boolean doProcess(BuilderGroup aBuilderGroup, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

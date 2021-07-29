@@ -59,7 +59,6 @@ public class Designation extends AbstractWorkflowEntity {
 	private String desgCode;
 	private String desgDesc;
 	private boolean desgIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private Designation befImage;
 	private LoggedInUser userDetails;
@@ -111,14 +110,6 @@ public class Designation extends AbstractWorkflowEntity {
 
 	public void setDesgIsActive(boolean desgIsActive) {
 		this.desgIsActive = desgIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

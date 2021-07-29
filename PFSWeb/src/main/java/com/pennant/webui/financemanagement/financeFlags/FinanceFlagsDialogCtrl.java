@@ -399,7 +399,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
 		// Do data level validations here
-		isNew = aFinanceFlags.isNew();
+		isNew = aFinanceFlags.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -531,7 +531,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(FinanceFlag aFinanceFlags, String tranType) {
+	protected boolean doProcess(FinanceFlag aFinanceFlags, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
@@ -1186,7 +1186,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getFinanceFlagsListCtrl().search();
 	}
 

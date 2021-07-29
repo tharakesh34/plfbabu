@@ -74,7 +74,6 @@ public class FinanceWorkFlow extends AbstractWorkflowEntity {
 	private String lovDescWorkFlowTypeName;
 	private String lovDescWorkFlowRolesName;
 	private String lovDescFirstTaskOwner;
-	private boolean newRecord;
 	private String lovValue;
 	private FinanceWorkFlow befImage;
 	private LoggedInUser userDetails;
@@ -217,14 +216,6 @@ public class FinanceWorkFlow extends AbstractWorkflowEntity {
 
 	public void setLovDescFirstTaskOwner(String lovDescFirstTaskOwner) {
 		this.lovDescFirstTaskOwner = lovDescFirstTaskOwner;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

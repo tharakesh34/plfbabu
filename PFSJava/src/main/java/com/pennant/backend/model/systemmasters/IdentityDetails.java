@@ -56,7 +56,6 @@ public class IdentityDetails extends AbstractWorkflowEntity {
 
 	private String identityType;
 	private String identityDesc;
-	private boolean newRecord;
 	private String lovValue;
 	private IdentityDetails befImage;
 	private LoggedInUser userDetails;
@@ -100,14 +99,6 @@ public class IdentityDetails extends AbstractWorkflowEntity {
 
 	public void setIdentityDesc(String identityDesc) {
 		this.identityDesc = identityDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

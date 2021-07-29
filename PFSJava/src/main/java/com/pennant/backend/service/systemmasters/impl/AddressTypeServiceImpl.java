@@ -132,7 +132,7 @@ public class AddressTypeServiceImpl extends GenericService<AddressType> implemen
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (addressType.isNew()) {
+		if (addressType.isNewRecord()) {
 			addressType.setId(getAddressTypeDAO().save(addressType, tableType));
 			auditHeader.getAuditDetail().setModelData(addressType);
 			auditHeader.setAuditReference(addressType.getAddrTypeCode());
@@ -327,7 +327,7 @@ public class AddressTypeServiceImpl extends GenericService<AddressType> implemen
 		parameters[0] = PennantJavaUtil.getLabel("label_AddrTypeCode") + ": " + code;
 
 		// Check the unique keys.
-		if (addressType.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(addressType.getRecordType())
+		if (addressType.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(addressType.getRecordType())
 				&& addressTypeDAO.isDuplicateKey(code,
 						addressType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 

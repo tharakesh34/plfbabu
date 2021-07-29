@@ -70,7 +70,6 @@ public class AccountType extends AbstractWorkflowEntity {
 	private boolean onBalanceSheet;
 	private boolean allowOverDraw;
 	private boolean acTypeIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private AccountType befImage;
 	private LoggedInUser userDetails;
@@ -177,14 +176,6 @@ public class AccountType extends AbstractWorkflowEntity {
 
 	public void setAcTypeIsActive(boolean acTypeIsActive) {
 		this.acTypeIsActive = acTypeIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

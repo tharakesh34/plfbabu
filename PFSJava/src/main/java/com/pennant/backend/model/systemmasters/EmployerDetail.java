@@ -65,7 +65,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlType(propOrder = { "empName", "empCategory", "empIndustry", "returnStatus" })
 @XmlRootElement(name = "employerDetail")
 @XmlAccessorType(XmlAccessType.NONE)
-public class EmployerDetail extends AbstractWorkflowEntity implements Entity {
+public class EmployerDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long employerId = Long.MIN_VALUE;
@@ -99,8 +99,6 @@ public class EmployerDetail extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private String empCategory;
 	private boolean empIsActive;
-
-	private boolean newRecord;
 	private String lovValue;
 	private EmployerDetail befImage;
 	private LoggedInUser userDetails;
@@ -359,14 +357,6 @@ public class EmployerDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setEmpAlocationTypeName(String empAlocationTypeName) {
 		this.empAlocationTypeName = empAlocationTypeName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

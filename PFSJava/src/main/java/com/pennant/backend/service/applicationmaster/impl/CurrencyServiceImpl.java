@@ -119,7 +119,7 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (currency.isNew()) {
+		if (currency.isNewRecord()) {
 			currency.setCcyCode(getCurrencyDAO().save(currency, tableType));
 			auditHeader.getAuditDetail().setModelData(currency);
 			auditHeader.setAuditReference(currency.getCcyCode());
@@ -325,7 +325,7 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 		Currency currency = (Currency) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (currency.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(currency.getRecordType())
+		if (currency.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(currency.getRecordType())
 				&& currencyDAO.isDuplicateKey(currency.getCcyCode(),
 						currency.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[3];
@@ -338,9 +338,9 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 
 		boolean isEnableWorkFlow;
 		if (!currency.isWorkflow()) {
-			isEnableWorkFlow = currency.isNew();
+			isEnableWorkFlow = currency.isNewRecord();
 		} else {
-			isEnableWorkFlow = currency.isNew() && currency.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW);
+			isEnableWorkFlow = currency.isNewRecord() && currency.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW);
 		}
 		if (isEnableWorkFlow) {
 			String[] parm = new String[1];

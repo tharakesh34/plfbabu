@@ -1097,7 +1097,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug(Literal.ENTERING);
 
 		// set Read only mode accordingly if the object is new or not.
-		if (finReceiptHeader.isNew()) {
+		if (finReceiptHeader.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 		} else {
@@ -2726,7 +2726,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 
 			/*
-			 * FinReceiptHeader rch = receiptData.getReceiptHeader(); boolean isNew = rch.isNew(); String tranType = "";
+			 * FinReceiptHeader rch = receiptData.getReceiptHeader(); boolean isNew = rch.isNewRecord(); String tranType = "";
 			 * 
 			 * if (isWorkFlowEnabled()) { tranType = PennantConstants.TRAN_WF; if
 			 * (StringUtils.isBlank(rch.getRecordType())) { rch.setVersion(rch.getVersion() + 1); if (isNew) {
@@ -2848,7 +2848,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 				aReceiptData.getReceiptHeader().setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				aReceiptData.getReceiptHeader().setVersion(1);
-				if (aReceiptData.getReceiptHeader().isNew()) {
+				if (aReceiptData.getReceiptHeader().isNewRecord()) {
 					aReceiptData.getReceiptHeader().setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
 					aReceiptData.getReceiptHeader().setRecordType(PennantConstants.RECORD_TYPE_UPD);
@@ -5941,7 +5941,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @return
 	 * @throws Exception
 	 */
-	private boolean doProcess(FinReceiptData aReceiptData, String tranType) throws Exception {
+	protected boolean doProcess(FinReceiptData aReceiptData, String tranType) throws Exception {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		boolean processCompleted = true;
@@ -6110,7 +6110,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 
-						if (frh.isNew()) {
+						if (frh.isNewRecord()) {
 							((FinReceiptData) auditHeader.getAuditDetail().getModelData()).getFinanceDetail()
 									.setDirectFinalApprove(true);
 						}

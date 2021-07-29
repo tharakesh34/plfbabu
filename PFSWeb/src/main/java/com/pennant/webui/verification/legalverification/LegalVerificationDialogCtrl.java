@@ -412,7 +412,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		legalVerificationListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -896,7 +896,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	public void doShowDialog(LegalVerification legalVerification) {
 		logger.debug(Literal.LEAVING);
 
-		if (legalVerification.isNew()) {
+		if (legalVerification.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1163,7 +1163,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		doSetValidation();
 		doWriteComponentsToBean(lv);
 
-		isNew = lv.isNew();
+		isNew = lv.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1233,7 +1233,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(LegalVerification legalVerification, String tranType) {
+	protected boolean doProcess(LegalVerification legalVerification, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

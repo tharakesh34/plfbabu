@@ -57,7 +57,6 @@ public class Language extends AbstractWorkflowEntity {
 	private String lngCode;
 	private String lngDesc;
 	private int lngNumber;
-	private boolean newRecord;
 	private String lovValue;
 	private Language befImage;
 	private LoggedInUser userDetails;
@@ -109,14 +108,6 @@ public class Language extends AbstractWorkflowEntity {
 
 	public void setLngNumber(int lngNumber) {
 		this.lngNumber = lngNumber;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

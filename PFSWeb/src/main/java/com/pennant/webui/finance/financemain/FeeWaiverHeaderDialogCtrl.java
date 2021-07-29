@@ -506,7 +506,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aFeeWaiverHeader.isNew()) {
+		if (aFeeWaiverHeader.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -601,7 +601,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 		doWriteComponentsToBean(aFeeWaiverHeader);
 
 		boolean isNew;
-		isNew = aFeeWaiverHeader.isNew();
+		isNew = aFeeWaiverHeader.isNewRecord();
 		String tranType;
 
 		if (isWorkFlowEnabled()) {
@@ -657,7 +657,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	 * @return boolean
 	 * @throws Exception
 	 */
-	private boolean doProcess(FeeWaiverHeader aFeeWaiverHeader, String tranType) throws Exception {
+	protected boolean doProcess(FeeWaiverHeader aFeeWaiverHeader, String tranType) throws Exception {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -1384,7 +1384,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		final JdbcSearchObject<FinanceMain> soFinanceMain = getFinanceSelectCtrl().getSearchObj(true);
 		getFinanceSelectCtrl().getPagingFinanceList().setActivePage(0);
 		getFinanceSelectCtrl().getPagedListWrapper().setSearchObject(soFinanceMain);

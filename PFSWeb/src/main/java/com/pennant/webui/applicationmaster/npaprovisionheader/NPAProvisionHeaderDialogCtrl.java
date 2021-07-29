@@ -306,7 +306,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		nPAProvisionHeaderListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -368,7 +368,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 	public void doShowDialog(NPAProvisionHeader nPAProvisionHeader) {
 		logger.debug(Literal.ENTERING);
 
-		if (nPAProvisionHeader.isNew()) {
+		if (nPAProvisionHeader.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -540,7 +540,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		}
 		aNPAProvisionHeader.setProvisionDetailsList(listNPAProvisionDetail);
 
-		isNew = aNPAProvisionHeader.isNew();
+		isNew = aNPAProvisionHeader.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -610,7 +610,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(NPAProvisionHeader aNPAProvisionHeader, String tranType) {
+	protected boolean doProcess(NPAProvisionHeader aNPAProvisionHeader, String tranType) {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;
@@ -678,7 +678,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 					details.setNextTaskId(nextTaskId);
 					details.setRoleCode(getRole());
 					details.setNextRoleCode(nextRoleCode);
-					details.setNewRecord(aNPAProvisionHeader.isNew());
+					details.setNewRecord(aNPAProvisionHeader.isNewRecord());
 					if (PennantConstants.RECORD_TYPE_DEL.equals(aNPAProvisionHeader.getRecordType())) {
 						if (StringUtils.trimToNull(details.getRecordType()) == null) {
 							details.setRecordType(aNPAProvisionHeader.getRecordType());

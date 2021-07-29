@@ -4,14 +4,13 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class ProjectUnits extends AbstractWorkflowEntity implements Entity {
+public class ProjectUnits extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 1L;
-	//Project Units
+	// Project Units
 	private long unitId = Long.MIN_VALUE;
 	private long projectId;
 	private String unitType;
@@ -42,7 +41,6 @@ public class ProjectUnits extends AbstractWorkflowEntity implements Entity {
 	private String remarks;
 
 	private LoggedInUser userDetails;
-	private boolean newRecord = false;
 	private ProjectUnits befImage;
 
 	public ProjectUnits() {
@@ -54,25 +52,10 @@ public class ProjectUnits extends AbstractWorkflowEntity implements Entity {
 		this.setId(id);
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
-	@Override
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
-	@Override
 	public long getId() {
 		return unitId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.unitId = id;
 	}

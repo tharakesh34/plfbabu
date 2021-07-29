@@ -516,7 +516,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aCustomerBalanceSheet.isNew()) {
+		if (aCustomerBalanceSheet.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -662,7 +662,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	}
 
 	// Method for refreshing the list after successful updating
-	private void refreshList() {
+	protected void refreshList() {
 		getCustomerBalanceSheetListCtrl().search();
 	}
 
@@ -849,7 +849,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aCustomerBalanceSheet.isNew();
+		isNew = aCustomerBalanceSheet.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -935,7 +935,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CustomerBalanceSheet aCustomerBalanceSheet, String tranType) {
+	protected boolean doProcess(CustomerBalanceSheet aCustomerBalanceSheet, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

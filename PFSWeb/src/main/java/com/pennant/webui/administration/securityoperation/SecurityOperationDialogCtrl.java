@@ -357,7 +357,7 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aSecurityOperation.isNew()) {
+		if (aSecurityOperation.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.oprCode.focus();
@@ -553,7 +553,7 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aSecurityOperation.isNew();
+		isNew = aSecurityOperation.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -594,7 +594,7 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 	 * @param tranType
 	 * @return
 	 */
-	private boolean doProcess(SecurityOperation aSecurityOperation, String tranType) {
+	protected boolean doProcess(SecurityOperation aSecurityOperation, String tranType) {
 		logger.debug("Entering ");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -789,7 +789,7 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getSecurityOperationListCtrl().search();
 	}
 

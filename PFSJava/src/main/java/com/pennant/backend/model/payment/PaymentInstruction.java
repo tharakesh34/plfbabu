@@ -68,7 +68,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"favourName", "favourNumber", "payableLoc", "printingLoc", "valueDate", "postDate", "bankBranchId",
 		"acctHolderName", "accountNo", "phoneCountryCode", "phoneNumber", "clearingdate", "active", "paymentCCy" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PaymentInstruction extends AbstractWorkflowEntity implements Entity {
+public class PaymentInstruction extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long paymentInstructionId = Long.MIN_VALUE;
@@ -107,9 +107,6 @@ public class PaymentInstruction extends AbstractWorkflowEntity implements Entity
 	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
 	private Date clearingdate;
 	private String active;
-
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -338,14 +335,6 @@ public class PaymentInstruction extends AbstractWorkflowEntity implements Entity
 
 	public void setPaymentCCy(String paymentCCy) {
 		this.paymentCCy = paymentCCy;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

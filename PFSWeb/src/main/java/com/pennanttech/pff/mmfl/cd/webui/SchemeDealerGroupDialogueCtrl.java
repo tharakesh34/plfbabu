@@ -228,7 +228,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		schemeDealerGroupListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -260,7 +260,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 		this.schemeId.setText(schemeDealerGroup.getPromotionId());
 		this.dealerGroupCode.setValue(schemeDealerGroup.getDealerGroupCode());
 		this.active.setChecked(schemeDealerGroup.isActive());
-		if (schemeDealerGroup.isNew()
+		if (schemeDealerGroup.isNewRecord()
 				|| (schemeDealerGroup.getRecordType() != null ? schemeDealerGroup.getRecordType() : "")
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
@@ -322,7 +322,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	public void doShowDialog(SchemeDealerGroup schemeDealerGroup) {
 		logger.debug(Literal.ENTERING);
 
-		if (schemeDealerGroup.isNew()) {
+		if (schemeDealerGroup.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.schemeId.setFocus(true);
@@ -534,7 +534,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 			tranType = PennantConstants.TRAN_WF;
 			if (StringUtils.isBlank(schemeDealerGroup.getRecordType())) {
 				schemeDealerGroup.setVersion(schemeDealerGroup.getVersion() + 1);
-				if (schemeDealerGroup.isNew()) {
+				if (schemeDealerGroup.isNewRecord()) {
 					schemeDealerGroup.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
 					schemeDealerGroup.setRecordType(PennantConstants.RECORD_TYPE_UPD);
@@ -543,7 +543,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 			}
 		} else {
 			schemeDealerGroup.setVersion(schemeDealerGroup.getVersion() + 1);
-			if (schemeDealerGroup.isNew()) {
+			if (schemeDealerGroup.isNewRecord()) {
 				tranType = PennantConstants.TRAN_ADD;
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
@@ -575,7 +575,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(SchemeDealerGroup schemeDealerGroup, String tranType) {
+	protected boolean doProcess(SchemeDealerGroup schemeDealerGroup, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

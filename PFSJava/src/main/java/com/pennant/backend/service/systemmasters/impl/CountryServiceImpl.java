@@ -125,7 +125,7 @@ public class CountryServiceImpl extends GenericService<Country> implements Count
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (country.isNew()) {
+		if (country.isNewRecord()) {
 			country.setId(getCountryDAO().save(country, tableType));
 			auditHeader.getAuditDetail().setModelData(country);
 			auditHeader.setAuditReference(country.getId());
@@ -325,7 +325,7 @@ public class CountryServiceImpl extends GenericService<Country> implements Count
 		String code = country.getCountryCode();
 
 		// Check the unique keys.
-		if (country.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(country.getRecordType())
+		if (country.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(country.getRecordType())
 				&& countryDAO.isDuplicateKey(code, country.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_CountryCode") + ": " + code;

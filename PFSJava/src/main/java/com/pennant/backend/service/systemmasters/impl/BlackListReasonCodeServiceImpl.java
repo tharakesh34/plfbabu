@@ -125,7 +125,7 @@ public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReas
 			tableType = "_Temp";
 		}
 
-		if (blackListReasonCode.isNew()) {
+		if (blackListReasonCode.isNewRecord()) {
 			blackListReasonCode.setId(getBlackListReasonCodeDAO().save(blackListReasonCode, tableType));
 			auditHeader.getAuditDetail().setModelData(blackListReasonCode);
 			auditHeader.setAuditReference(blackListReasonCode.getBLRsnCode());
@@ -335,7 +335,7 @@ public class BlackListReasonCodeServiceImpl extends GenericService<BlackListReas
 		valueParm[0] = blackListReasonCode.getBLRsnCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_BLRsnCode") + ":" + valueParm[0];
 
-		if (blackListReasonCode.isNew()) { // for New record or new record into
+		if (blackListReasonCode.isNewRecord()) { // for New record or new record into
 			// work flow
 
 			if (!blackListReasonCode.isWorkflow()) {// With out Work flow only

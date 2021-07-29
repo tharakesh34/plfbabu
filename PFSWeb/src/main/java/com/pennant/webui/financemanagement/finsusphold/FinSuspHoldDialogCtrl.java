@@ -555,7 +555,7 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 
 		doSetFinTypeProperties(this.product.getValue());
 		doSetFinanceProperties(this.finType.getValue());
-		if (aFinSuspHold.isNew()
+		if (aFinSuspHold.isNewRecord()
 				|| StringUtils.equals(aFinSuspHold.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
@@ -632,7 +632,7 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aFinSuspHold.isNew()) {
+		if (aFinSuspHold.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -886,7 +886,7 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aFinSuspHold.isNew();
+		isNew = aFinSuspHold.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -961,7 +961,7 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(FinSuspHold aFinSuspHold, String tranType) {
+	protected boolean doProcess(FinSuspHold aFinSuspHold, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;
@@ -1246,7 +1246,7 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getFinSuspHoldListCtrl().search();
 	}
 

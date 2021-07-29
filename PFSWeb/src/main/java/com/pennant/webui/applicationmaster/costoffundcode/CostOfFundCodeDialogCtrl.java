@@ -305,7 +305,7 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 		this.cofDesc.setValue(aCostOfFundCode.getCofDesc());
 		this.recordStatus.setValue(aCostOfFundCode.getRecordStatus());
 		this.active.setChecked(aCostOfFundCode.isActive());
-		if (aCostOfFundCode.isNew() || (aCostOfFundCode.getRecordType() != null ? aCostOfFundCode.getRecordType() : "")
+		if (aCostOfFundCode.isNewRecord() || (aCostOfFundCode.getRecordType() != null ? aCostOfFundCode.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
@@ -366,7 +366,7 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aCostOfFundCode.isNew()) {
+		if (aCostOfFundCode.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -456,7 +456,7 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCostOfFundCodeListCtrl().search();
 	}
 
@@ -589,7 +589,7 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aCostOfFundCode.isNew();
+		isNew = aCostOfFundCode.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -640,7 +640,7 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CostOfFundCode aCostOfFundCode, String tranType) {
+	protected boolean doProcess(CostOfFundCode aCostOfFundCode, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

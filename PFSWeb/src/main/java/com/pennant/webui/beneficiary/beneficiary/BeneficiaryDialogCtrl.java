@@ -320,7 +320,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		beneficiaryListCtrl.search();
 	}
 
@@ -526,7 +526,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 	public void doShowDialog(Beneficiary beneficiary) {
 		logger.debug("Entering");
 
-		if (beneficiary.isNew()) {
+		if (beneficiary.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.custID.focus();
@@ -556,7 +556,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 			readOnlyComponent(true, this.txnDetails);
 		}
 
-		if (beneficiary != null && !beneficiary.isNew()) {
+		if (beneficiary != null && !beneficiary.isNewRecord()) {
 			bankAccountValidations = getPennyDropService().getPennyDropStatusDataByAcc(beneficiary.getAccNumber(),
 					beneficiary.getiFSC());
 		}
@@ -793,7 +793,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		doSetValidation();
 		doWriteComponentsToBean(aBeneficiary);
 
-		isNew = aBeneficiary.isNew();
+		isNew = aBeneficiary.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -840,7 +840,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Beneficiary aBeneficiary, String tranType) {
+	protected boolean doProcess(Beneficiary aBeneficiary, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

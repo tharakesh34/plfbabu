@@ -33,8 +33,6 @@ public class FinanceStepPolicyDetail extends AbstractWorkflowEntity {
 	private BigDecimal emiSplitPerc = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal steppedEMI = BigDecimal.ZERO;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private FinanceStepPolicyDetail befImage;
 	private LoggedInUser userDetails;
@@ -128,14 +126,6 @@ public class FinanceStepPolicyDetail extends AbstractWorkflowEntity {
 
 	public void setEmiSplitPerc(BigDecimal emiSplitPerc) {
 		this.emiSplitPerc = emiSplitPerc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

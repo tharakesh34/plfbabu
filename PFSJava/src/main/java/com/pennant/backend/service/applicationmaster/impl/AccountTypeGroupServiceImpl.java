@@ -75,7 +75,7 @@ public class AccountTypeGroupServiceImpl extends GenericService<AccountTypeGroup
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (accountTypeGroup.isNew()) {
+		if (accountTypeGroup.isNewRecord()) {
 			getAccountTypeGroupDAO().save(accountTypeGroup, tableType);
 		} else {
 			getAccountTypeGroupDAO().update(accountTypeGroup, tableType);
@@ -273,7 +273,7 @@ public class AccountTypeGroupServiceImpl extends GenericService<AccountTypeGroup
 		// Get the model object.
 		AccountTypeGroup accountTypeGroup = (AccountTypeGroup) auditDetail.getModelData();
 		// Check the unique keys.
-		if (accountTypeGroup.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(accountTypeGroup.getRecordType())
+		if (accountTypeGroup.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(accountTypeGroup.getRecordType())
 				&& accountTypeGroupDAO.isDuplicateKey(accountTypeGroup.getGroupCode(),
 						accountTypeGroup.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

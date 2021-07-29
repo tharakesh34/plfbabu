@@ -301,7 +301,7 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 		this.desgIsActive.setChecked(aDesignation.isDesgIsActive());
 		this.recordStatus.setValue(aDesignation.getRecordStatus());
 
-		if (aDesignation.isNew() || (aDesignation.getRecordType() != null ? aDesignation.getRecordType() : "")
+		if (aDesignation.isNewRecord() || (aDesignation.getRecordType() != null ? aDesignation.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.desgIsActive.setChecked(true);
 			this.desgIsActive.setDisabled(true);
@@ -364,7 +364,7 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aDesignation.isNew()) {
+		if (aDesignation.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -584,7 +584,7 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aDesignation.isNew();
+		isNew = aDesignation.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -635,7 +635,7 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Designation aDesignation, String tranType) {
+	protected boolean doProcess(Designation aDesignation, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -845,7 +845,7 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getDesignationListCtrl().search();
 	}
 

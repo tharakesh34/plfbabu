@@ -207,7 +207,7 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aPresentmentReasonCode.isNew()) {
+		if (aPresentmentReasonCode.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -270,7 +270,7 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 		this.active.setChecked(aPresentmentReasonCode.isActive());
 		this.recordStatus.setValue(aPresentmentReasonCode.getRecordStatus());
 
-		if (aPresentmentReasonCode.isNew()
+		if (aPresentmentReasonCode.isNewRecord()
 				|| (aPresentmentReasonCode.getRecordType() != null ? aPresentmentReasonCode.getRecordType() : "")
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
@@ -441,7 +441,7 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = presentmentReasonCode.isNew();
+		isNew = presentmentReasonCode.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -477,7 +477,7 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 		logger.debug("Leaving");
 	}
 
-	private boolean doProcess(PresentmentReasonCode aPresentmentReasonCode, String tranType) {
+	protected boolean doProcess(PresentmentReasonCode aPresentmentReasonCode, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -672,7 +672,7 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getPresentmentReasonCodeListCtrl().search();
 	}
 

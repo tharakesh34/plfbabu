@@ -57,7 +57,6 @@ public class TaxHeader extends AbstractWorkflowEntity {
 	private long headerId = Long.MIN_VALUE;
 	private Long invoiceID;
 	private List<Taxes> taxDetails = new ArrayList<>();
-	private boolean newRecord;
 	private TaxHeader befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
@@ -71,7 +70,7 @@ public class TaxHeader extends AbstractWorkflowEntity {
 		entity.setHeaderId(this.headerId);
 		entity.setInvoiceID(this.invoiceID);
 		this.taxDetails.stream().forEach(e -> entity.getTaxDetails().add(e.copyEntity()));
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
 		entity.setRecordStatus(super.getRecordStatus());
@@ -117,20 +116,12 @@ public class TaxHeader extends AbstractWorkflowEntity {
 		this.taxDetails = taxDetails;
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
 	public TaxHeader getBefImage() {
 		return befImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public void setBefImage(TaxHeader befImage) {

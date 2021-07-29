@@ -72,8 +72,6 @@ public class DueDiligenceCheckList extends AbstractWorkflowEntity {
 
 	private String particulars;
 	private String status;
-
-	private boolean newRecord;
 	private DueDiligenceCheckList befImage;
 
 	public boolean isNew() {
@@ -82,10 +80,6 @@ public class DueDiligenceCheckList extends AbstractWorkflowEntity {
 
 	public DueDiligenceCheckList() {
 		super();
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
 	}
 
 	public String getParticulars() {
@@ -110,10 +104,6 @@ public class DueDiligenceCheckList extends AbstractWorkflowEntity {
 
 	public void setBefImage(DueDiligenceCheckList befImage) {
 		this.befImage = befImage;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public Timestamp getPrevMntOn() {

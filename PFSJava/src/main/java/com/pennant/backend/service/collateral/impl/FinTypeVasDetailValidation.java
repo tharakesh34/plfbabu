@@ -58,7 +58,7 @@ public class FinTypeVasDetailValidation {
 		errParm[0] = PennantJavaUtil.getLabel("label_FinType") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_FinanceTypeVASProducts") + ":" + valueParm[1];
 
-		if (finTypeVASProducts.isNew()) { // for New record or new record into work flow
+		if (finTypeVASProducts.isNewRecord()) { // for New record or new record into work flow
 
 			if (!finTypeVASProducts.isWorkflow()) {// With out Work flow only new records  
 				if (beffinTypeVASProductsDetail != null) { // Record Already Exists in the table then error  

@@ -71,7 +71,7 @@ public class CorporateCustomerValidation {
 		valueParm[0] = String.valueOf(corporateCustomerDetail.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_CustId") + ":" + valueParm[0];
 
-		if (corporateCustomerDetail.isNew()) { // for New record or new record into work flow
+		if (corporateCustomerDetail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!corporateCustomerDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befCorporateCustomerDetail != null) { // Record Already Exists in the table then error  

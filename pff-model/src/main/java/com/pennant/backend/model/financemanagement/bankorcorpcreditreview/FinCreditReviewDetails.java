@@ -7,23 +7,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.Notes;
-import com.pennant.backend.model.audit.AuditDetail;
-import com.pennant.backend.model.customermasters.CustomerDocument;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
+import com.pennant.backend.model.Notes;
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(propOrder = { "auditYear", "bankName", "auditors", "consolidated", "location", "conversionRate", "auditedDate",
 		"noOfShares", "marketPrice", "qualified", "lovDescCreditReviewSummaryEntries" })
-public class FinCreditReviewDetails extends AbstractWorkflowEntity implements Entity {
+public class FinCreditReviewDetails extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 3557119742009775415L;
 	private long detailId = Long.MIN_VALUE;
@@ -45,7 +44,6 @@ public class FinCreditReviewDetails extends AbstractWorkflowEntity implements En
 	private BigDecimal conversionRate = BigDecimal.ZERO;
 	@XmlElement
 	private Date auditedDate;
-	private boolean newRecord = false;
 	private String lovValue;
 	private FinCreditReviewDetails befImage;
 	private LoggedInUser userDetails;
@@ -206,14 +204,6 @@ public class FinCreditReviewDetails extends AbstractWorkflowEntity implements En
 		this.auditedDate = auditedDate;
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -278,16 +268,12 @@ public class FinCreditReviewDetails extends AbstractWorkflowEntity implements En
 		return auditDetailMap;
 	}
 
-	@Override
 	public long getId() {
-
 		return this.detailId;
 	}
 
-	@Override
 	public void setId(long id) {
 		setDetailId(id);
-
 	}
 
 	public void setNoOfShares(long noOfShares) {

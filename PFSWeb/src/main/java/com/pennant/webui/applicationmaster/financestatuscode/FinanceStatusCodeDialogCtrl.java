@@ -260,7 +260,7 @@ public class FinanceStatusCodeDialogCtrl extends GFCBaseCtrl<FinanceStatusCode> 
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		financeStatusCodeListCtrl.search();
 	}
 
@@ -342,7 +342,7 @@ public class FinanceStatusCodeDialogCtrl extends GFCBaseCtrl<FinanceStatusCode> 
 	public void doShowDialog(FinanceStatusCode financeStatusCode) {
 		logger.debug(Literal.LEAVING);
 
-		if (financeStatusCode.isNew()) {
+		if (financeStatusCode.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.statusCode.focus();
@@ -561,7 +561,7 @@ public class FinanceStatusCodeDialogCtrl extends GFCBaseCtrl<FinanceStatusCode> 
 		doSetValidation();
 		doWriteComponentsToBean(aFinanceStatusCode);
 
-		isNew = aFinanceStatusCode.isNew();
+		isNew = aFinanceStatusCode.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -608,7 +608,7 @@ public class FinanceStatusCodeDialogCtrl extends GFCBaseCtrl<FinanceStatusCode> 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(FinanceStatusCode aFinanceStatusCode, String tranType) {
+	protected boolean doProcess(FinanceStatusCode aFinanceStatusCode, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

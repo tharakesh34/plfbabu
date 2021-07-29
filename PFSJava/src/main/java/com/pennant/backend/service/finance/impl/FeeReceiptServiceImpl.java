@@ -237,7 +237,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		// Receipt Header Details Save And Update
 		// =======================================
 		long receiptID = receiptHeader.getReceiptID();
-		if (receiptHeader.isNew()) {
+		if (receiptHeader.isNewRecord()) {
 			receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_FEES);
 
 			// Save Receipt Header
@@ -658,7 +658,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		}
 		valueParm[0] = reference;
 		errParm[0] = PennantJavaUtil.getLabel("label_Reference") + ":" + valueParm[0];
-		if (receiptHeader.isNew()) { // for New record or new record into work flow
+		if (receiptHeader.isNewRecord()) { // for New record or new record into work flow
 
 			if (!receiptHeader.isWorkflow()) {// With out Work flow only new
 				// records
@@ -1182,7 +1182,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			feeReceipt.setRecordStatus(receiptHeader.getRecordStatus());
 			feeReceipt.setWorkflowId(receiptHeader.getWorkflowId());
 
-			if (feeReceipt.isNew() || StringUtils.isEmpty(feeReceipt.getRecordType())) {
+			if (feeReceipt.isNewRecord() || StringUtils.isEmpty(feeReceipt.getRecordType())) {
 				finFeeReceiptDAO.save(feeReceipt, type);
 			} else if (PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(feeReceipt.getRecordType())) {
 				finFeeReceiptDAO.delete(feeReceipt, type);

@@ -53,7 +53,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>Authorization table</b>.<br>
  *
  */
-public class Authorization extends AbstractWorkflowEntity implements Entity {
+public class Authorization extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long authUserId = Long.MIN_VALUE;
@@ -66,7 +66,6 @@ public class Authorization extends AbstractWorkflowEntity implements Entity {
 	private String authDesig;
 	private String authDesigName;
 	private String authSignature;
-	private boolean newRecord;
 	private String lovValue;
 	private Authorization befImage;
 	private LoggedInUser userDetails;
@@ -183,14 +182,6 @@ public class Authorization extends AbstractWorkflowEntity implements Entity {
 
 	public void setAuthSignature(String authSignature) {
 		this.authSignature = authSignature;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

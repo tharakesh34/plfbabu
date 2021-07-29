@@ -248,7 +248,7 @@ public class CustomerPRelationListCtrl extends GFCBaseListCtrl<CustomerPRelation
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("customerPRelation", customerPRelation);
 		arg.put("customerPRelationListCtrl", this);
-		arg.put("newRecord", customerPRelation.isNew());
+		arg.put("newRecord", customerPRelation.isNewRecord());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerPRelation/CustomerPRelationDialog.zul",

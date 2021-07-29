@@ -373,7 +373,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			this.tab_gstdetails.setVisible(true);
 			this.listBoxTaxDetails.setHeight(this.borderLayoutHeight - 125 + "px");
 		}
-		if (aProvince.isNew() || (aProvince.getRecordType() != null ? aProvince.getRecordType() : "")
+		if (aProvince.isNewRecord() || (aProvince.getRecordType() != null ? aProvince.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.cPIsActive.setChecked(true);
 			this.cPIsActive.setDisabled(true);
@@ -621,7 +621,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aProvince.isNew()) {
+		if (aProvince.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -644,7 +644,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			// fill the components with the data
 			doWriteBeanToComponents(aProvince);
 
-			if (aProvince.isNew() || isWorkFlowEnabled()) {
+			if (aProvince.isNewRecord() || isWorkFlowEnabled()) {
 				doCheckSystemDefault();
 			}
 
@@ -734,7 +734,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getProvinceListCtrl().search();
 	}
 
@@ -941,7 +941,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		// selected branch object from the listbox Do data
 		// level validations here
 
-		isNew = aProvince.isNew();
+		isNew = aProvince.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -989,7 +989,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Province aProvince, String tranType) {
+	protected boolean doProcess(Province aProvince, String tranType) {
 		logger.debug("Leaving");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

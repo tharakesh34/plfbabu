@@ -134,7 +134,7 @@ public class RepayInstructionServiceImpl extends GenericService<RepayInstruction
 			tableType = "_Temp";
 		}
 
-		if (repayInstruction.isNew()) {
+		if (repayInstruction.isNewRecord()) {
 			getRepayInstructionDAO().save(repayInstruction, tableType, isWIF);
 		} else {
 			getRepayInstructionDAO().update(repayInstruction, tableType, isWIF);
@@ -337,7 +337,7 @@ public class RepayInstructionServiceImpl extends GenericService<RepayInstruction
 		valueParm[0] = repayInstruction.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (repayInstruction.isNew()) { // for New record or new record into work flow
+		if (repayInstruction.isNewRecord()) { // for New record or new record into work flow
 
 			if (!repayInstruction.isWorkflow()) {// With out Work flow only new records  
 				if (befRepayInstruction != null) { // Record Already Exists in the table then error  

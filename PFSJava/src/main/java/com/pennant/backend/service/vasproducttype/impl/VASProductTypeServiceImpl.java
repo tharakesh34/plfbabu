@@ -133,7 +133,7 @@ public class VASProductTypeServiceImpl extends GenericService<VASProductType> im
 			tableType = "_Temp";
 		}
 
-		if (vASProductType.isNew()) {
+		if (vASProductType.isNewRecord()) {
 			getVASProductTypeDAO().save(vASProductType, tableType);
 		} else {
 			getVASProductTypeDAO().update(vASProductType, tableType);
@@ -334,7 +334,7 @@ public class VASProductTypeServiceImpl extends GenericService<VASProductType> im
 		valueParm[0] = vASProductType.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_ProductType") + ":" + valueParm[0];
 
-		if (vASProductType.isNew()) { // for New record or new record into work flow
+		if (vASProductType.isNewRecord()) { // for New record or new record into work flow
 
 			if (!vASProductType.isWorkflow()) {// With out Work flow only new records  
 				if (befVASProductType != null) { // Record Already Exists in the table then error  

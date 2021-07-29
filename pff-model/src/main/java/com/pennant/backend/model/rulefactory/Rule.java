@@ -1,45 +1,36 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  *********************************************************************************************
- *                                 FILE HEADER                                               *
+ * FILE HEADER *
  *********************************************************************************************
  *
- * FileName    		:  Rule.java                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES              			
- *                                                                  
- * Creation Date    :  03-06-2011    
- *                                                                  
- * Modified Date    :  03-06-2011    
- *                                                                  
- * Description 		:                                             
- *                                                                                          
+ * FileName : Rule.java
+ * 
+ * Author : PENNANT TECHONOLOGIES
+ * 
+ * Creation Date : 03-06-2011
+ * 
+ * Modified Date : 03-06-2011
+ * 
+ * Description :
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-06-2011       Pennant	                 0.1                                         * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-06-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.model.rulefactory;
 
@@ -47,7 +38,6 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -55,7 +45,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>Rule table</b>.<br>
  *
  */
-public class Rule extends AbstractWorkflowEntity implements Entity {
+public class Rule extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 522289325946000330L;
 
@@ -73,7 +63,7 @@ public class Rule extends AbstractWorkflowEntity implements Entity {
 	private String deviationType;
 	private String returnType;
 	private String feeToFinance;
-	private String fixedOrVariableLimit = "F";//FIXME: How to use constant-LimitConstants.LIMIT_RULE_FIXED;
+	private String fixedOrVariableLimit = "F";// FIXME: How to use constant-LimitConstants.LIMIT_RULE_FIXED;
 	private String fields;
 	private String lovValue;
 	private Long feeTypeID;
@@ -86,7 +76,6 @@ public class Rule extends AbstractWorkflowEntity implements Entity {
 	private boolean calFeeModify;
 	private boolean revolving = true;
 	private boolean active;
-	private boolean newRecord;
 
 	private BigDecimal waiverPerc;
 
@@ -107,11 +96,6 @@ public class Rule extends AbstractWorkflowEntity implements Entity {
 		this.setRuleId(id);
 	}
 
-	@Override
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 
@@ -126,12 +110,10 @@ public class Rule extends AbstractWorkflowEntity implements Entity {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	@Override
 	public long getId() {
 		return ruleId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.ruleId = id;
 	}
@@ -254,14 +236,6 @@ public class Rule extends AbstractWorkflowEntity implements Entity {
 
 	public String getReturnType() {
 		return returnType;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

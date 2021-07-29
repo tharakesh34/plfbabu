@@ -440,7 +440,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 		if (aLimitRule.getQueryModule() == null) {
 			aLimitRule.setQueryModule(this.queryModule.getValue());
 		}
-		if (aLimitRule.isNew())
+		if (aLimitRule.isNewRecord())
 			this.active.setChecked(true);
 		logger.debug("Leaving");
 	}
@@ -531,7 +531,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 		}
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aLimitRule.isNew()) {
+		if (aLimitRule.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -679,7 +679,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	/**
 	 * Method for Refreshing List after Save/Delete a Record
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug("Entering");
 
 		getLimitRuleListCtrl().search();
@@ -1185,7 +1185,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 			hbox.appendChild(space);
 			combo = getCondition();
 
-			if (queryValues.size() > 0 && !aLimitRule.isNew()) {
+			if (queryValues.size() > 0 && !aLimitRule.isNewRecord()) {
 				if ("AND".equalsIgnoreCase(queryValues.get(0)) || "OR".equalsIgnoreCase(queryValues.get(0))) {
 					for (int i = 0; i < combo.getItemCount(); i++) {
 						condition = (String) combo.getItemAtIndex(i).getValue();
@@ -1222,7 +1222,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 		String field = "";
 
 		// Set field to ComboBox depend on fieldList and getting query
-		if (queryValues.size() > 0 && !aLimitRule.isNew()) {
+		if (queryValues.size() > 0 && !aLimitRule.isNewRecord()) {
 			this.fldComboSelAtmpts++;
 			queryValues.remove(0);
 			for (int i = 0; i < combo.getItemCount(); i++) {
@@ -1257,7 +1257,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 		comboType = getSelectionTypeItem(field, new Combobox());// selection type comboBox
 		comboType.setReadonly(true);
 
-		if (queryValues.size() > 0 && !aLimitRule.isNew()) {
+		if (queryValues.size() > 0 && !aLimitRule.isNewRecord()) {
 
 			for (int i = 0; i < comboType.getItemCount(); i++) {
 				if (comboType.getItemAtIndex(i).getValue().equals(queryValues.get(0))) {
@@ -1367,7 +1367,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 			}
 		}
 
-		if (queryValues.size() > 0 && !aLimitRule.isNew()) {
+		if (queryValues.size() > 0 && !aLimitRule.isNewRecord()) {
 			space = new Space();
 			space.setSpacing("10px");
 			hbox.appendChild(space);
@@ -1431,7 +1431,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 
 		itemCount++;
 		// Continue the process of building if size is not zero
-		if (queryValues.size() > 0 && !aLimitRule.isNew()) {
+		if (queryValues.size() > 0 && !aLimitRule.isNewRecord()) {
 
 			System.out.println("THE QUERY VALUES " + queryValues.get(0));
 
@@ -1958,7 +1958,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aLimitRule.isNew();
+		isNew = aLimitRule.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -2006,7 +2006,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(LimitFilterQuery aLimitRule, String tranType) {
+	protected boolean doProcess(LimitFilterQuery aLimitRule, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

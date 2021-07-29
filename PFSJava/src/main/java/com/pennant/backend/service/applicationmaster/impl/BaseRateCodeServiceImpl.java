@@ -126,7 +126,7 @@ public class BaseRateCodeServiceImpl extends GenericService<BaseRateCode> implem
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (baseRateCode.isNew()) {
+		if (baseRateCode.isNewRecord()) {
 			baseRateCode.setBRType(getBaseRateCodeDAO().save(baseRateCode, tableType));
 			auditHeader.getAuditDetail().setModelData(baseRateCode);
 			auditHeader.setAuditReference(baseRateCode.getBRType());
@@ -328,7 +328,7 @@ public class BaseRateCodeServiceImpl extends GenericService<BaseRateCode> implem
 		BaseRateCode baseRateCode = (BaseRateCode) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (baseRateCode.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(baseRateCode.getRecordType())
+		if (baseRateCode.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(baseRateCode.getRecordType())
 				&& baseRateCodeDAO.isDuplicateKey(baseRateCode.getBRType(),
 						baseRateCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

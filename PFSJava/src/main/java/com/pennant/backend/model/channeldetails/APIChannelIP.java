@@ -15,7 +15,6 @@ public class APIChannelIP extends AbstractWorkflowEntity {
 	private String description;
 	private String code;
 	private boolean active = true;
-	private boolean newRecord = false;
 	private LoggedInUser userDetails;
 	private APIChannelIP befImage;
 
@@ -96,14 +95,6 @@ public class APIChannelIP extends AbstractWorkflowEntity {
 
 	public void setBefImage(APIChannelIP befImage2) {
 		this.befImage = befImage2;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
 	}
 
 	public String getCode() {

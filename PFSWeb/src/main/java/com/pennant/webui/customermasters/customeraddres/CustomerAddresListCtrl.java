@@ -251,7 +251,7 @@ public class CustomerAddresListCtrl extends GFCBaseListCtrl<CustomerAddres> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("customerAddres", customerAddres);
 		arg.put("customerAddresListCtrl", this);
-		arg.put("newRecord", customerAddres.isNew());
+		arg.put("newRecord", customerAddres.isNewRecord());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerAddres/CustomerAddresDialog.zul", null,

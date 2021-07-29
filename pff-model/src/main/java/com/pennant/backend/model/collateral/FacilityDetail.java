@@ -82,8 +82,6 @@ public class FacilityDetail extends AbstractWorkflowEntity {
 	private long custID;
 	private Date startDate;
 	private Date maturityDate;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private FacilityDetail befImage;
 	private LoggedInUser userDetails;
@@ -345,14 +343,6 @@ public class FacilityDetail extends AbstractWorkflowEntity {
 
 	public void setMaturityDate(Date maturityDate) {
 		this.maturityDate = maturityDate;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -61,7 +61,6 @@ public class ClusterHierarchy extends AbstractWorkflowEntity {
 	private String entity;
 	private String clusterType;
 	private int seqOrder;
-	private boolean newRecord = false;
 	private String lovValue;
 	private ClusterHierarchy befImage;
 	private LoggedInUser userDetails;
@@ -125,14 +124,6 @@ public class ClusterHierarchy extends AbstractWorkflowEntity {
 
 	public void setSeqOrder(int seqOrder) {
 		this.seqOrder = seqOrder;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

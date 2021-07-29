@@ -45,7 +45,7 @@ public class TargetDetailServiceImpl extends GenericService<TargetDetail> implem
 			tableType = "_Temp";
 		}
 
-		if (targetDetail.isNew()) {
+		if (targetDetail.isNewRecord()) {
 			targetDetail.setTargetCode(getTargetDetailDAO().save(targetDetail, tableType));
 			auditHeader.getAuditDetail().setModelData(targetDetail);
 			auditHeader.setAuditReference(targetDetail.getTargetCode());
@@ -171,7 +171,7 @@ public class TargetDetailServiceImpl extends GenericService<TargetDetail> implem
 		valueParm[0] = targetDetail.getTargetCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_TargetCode") + ":" + valueParm[0];
 
-		if (targetDetail.isNew()) { // for New record or new record into work flow
+		if (targetDetail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!targetDetail.isWorkflow()) {// With out Work flow only new records
 				if (beftargetDetail != null) { // Record Already Exists in the table then error

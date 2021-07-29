@@ -366,7 +366,7 @@ public class VASProviderAccDetailDialogCtrl extends GFCBaseCtrl<VASProviderAccDe
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		vASProviderAccDetailListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -596,7 +596,7 @@ public class VASProviderAccDetailDialogCtrl extends GFCBaseCtrl<VASProviderAccDe
 	public void doShowDialog(VASProviderAccDetail vASProviderAccDetail) {
 		logger.debug(Literal.LEAVING);
 
-		if (vASProviderAccDetail.isNew()) {
+		if (vASProviderAccDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -875,7 +875,7 @@ public class VASProviderAccDetailDialogCtrl extends GFCBaseCtrl<VASProviderAccDe
 		doSetValidation();
 		doWriteComponentsToBean(aVASProviderAccDetail);
 
-		isNew = aVASProviderAccDetail.isNew();
+		isNew = aVASProviderAccDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -923,7 +923,7 @@ public class VASProviderAccDetailDialogCtrl extends GFCBaseCtrl<VASProviderAccDe
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(VASProviderAccDetail aVASProviderAccDetail, String tranType) {
+	protected boolean doProcess(VASProviderAccDetail aVASProviderAccDetail, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

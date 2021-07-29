@@ -99,8 +99,6 @@ public class Provision extends AbstractWorkflowEntity {
 	private FinanceDetail financeDetail;
 	private NPAProvisionHeader npaHeader;
 	private String finCcy;
-
-	private boolean newRecord = false;
 	private Provision befImage;
 	private Provision oldProvision;
 	private LoggedInUser userDetails;
@@ -200,7 +198,7 @@ public class Provision extends AbstractWorkflowEntity {
 		entity.setFinanceDetail(this.financeDetail);
 		entity.setNpaHeader(this.npaHeader == null ? null : this.npaHeader.copyEntity());
 		entity.setFinCcy(this.finCcy);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setOldProvision(this.oldProvision == null ? null : this.oldProvision.copyEntity());
 		entity.setUserDetails(this.userDetails);
@@ -476,14 +474,6 @@ public class Provision extends AbstractWorkflowEntity {
 
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public Provision getBefImage() {

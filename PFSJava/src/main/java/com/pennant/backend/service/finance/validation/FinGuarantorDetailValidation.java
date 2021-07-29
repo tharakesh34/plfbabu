@@ -72,7 +72,7 @@ public class FinGuarantorDetailValidation {
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_GuarantorCIF") + ":" + valueParm[1];
 
-		if (guarantorDetail.isNew()) { // for New record or new record into work flow
+		if (guarantorDetail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!guarantorDetail.isWorkflow()
 					&& StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, guarantorDetail.getRecordType())) {// With out Work flow only new records  

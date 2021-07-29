@@ -650,7 +650,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
-		if (aFinCreditRevSubCategory.isNew()) {
+		if (aFinCreditRevSubCategory.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1085,7 +1085,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 
 	}
 
-	private boolean doProcess(FinCreditRevSubCategory aFinCreditRevSubCategory, String tranType) {
+	protected boolean doProcess(FinCreditRevSubCategory aFinCreditRevSubCategory, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -1478,7 +1478,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 		logger.debug("Leaving" + event.toString());
 	}
 
-	private void refreshList() {
+	protected void refreshList() {
 		/*
 		 * final JdbcSearchObject<FinCreditRevSubCategory> soFinCreditRevSubCategory =
 		 * getFinCreditRevSubCategoryListCtrl().getSearchObj();

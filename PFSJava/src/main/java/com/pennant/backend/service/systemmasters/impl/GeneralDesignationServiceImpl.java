@@ -125,7 +125,7 @@ public class GeneralDesignationServiceImpl extends GenericService<GeneralDesigna
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (generalDesignation.isNew()) {
+		if (generalDesignation.isNewRecord()) {
 			generalDesignation.setGenDesignation(getGeneralDesignationDAO().save(generalDesignation, tableType));
 			auditHeader.getAuditDetail().setModelData(generalDesignation);
 			auditHeader.setAuditReference(generalDesignation.getGenDesignation());
@@ -326,7 +326,7 @@ public class GeneralDesignationServiceImpl extends GenericService<GeneralDesigna
 		String code = generalDesignation.getGenDesignation();
 
 		// Check the unique keys.
-		if (generalDesignation.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(generalDesignation.getRecordType())
+		if (generalDesignation.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(generalDesignation.getRecordType())
 				&& generalDesignationDAO.isDuplicateKey(code,
 						generalDesignation.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

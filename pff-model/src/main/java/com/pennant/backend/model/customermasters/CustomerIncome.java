@@ -84,8 +84,6 @@ public class CustomerIncome extends AbstractWorkflowEntity {
 	private BigDecimal income;
 	@XmlElement
 	private BigDecimal margin;
-
-	private boolean newRecord;
 	private String lovValue;
 	private CustomerIncome befImage;
 	private LoggedInUser userDetails;
@@ -235,14 +233,6 @@ public class CustomerIncome extends AbstractWorkflowEntity {
 
 	public void setMargin(BigDecimal margin) {
 		this.margin = margin;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

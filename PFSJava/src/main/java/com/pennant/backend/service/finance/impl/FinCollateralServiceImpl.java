@@ -324,7 +324,7 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 		valueParm[0] = finCollaterals.getFinReference();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (finCollaterals.isNew()) { // for New record or new record into work flow
+		if (finCollaterals.isNewRecord()) { // for New record or new record into work flow
 
 			if (!finCollaterals.isWorkflow()) {// With out Work flow only new records  
 				if (befFinCollaterals != null) { // Record Already Exists in the table then error  

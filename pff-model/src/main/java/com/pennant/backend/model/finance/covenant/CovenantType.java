@@ -95,7 +95,6 @@ public class CovenantType extends AbstractWorkflowEntity {
 	private Long customerTemplate;
 	private String customerTemplateCode;
 	private String customerTemplateName;
-	private boolean newRecord = false;
 	private String lovValue;
 	private CovenantType befImage;
 	private LoggedInUser userDetails;
@@ -320,14 +319,6 @@ public class CovenantType extends AbstractWorkflowEntity {
 
 	public void setCustomerTemplateName(String customerTemplateName) {
 		this.customerTemplateName = customerTemplateName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

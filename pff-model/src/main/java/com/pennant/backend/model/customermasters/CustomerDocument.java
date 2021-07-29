@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerDocument.java                                                * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerDocument.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * * Modified
+ * Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.model.customermasters;
@@ -47,13 +29,13 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>CustomerDocument table</b>.<br>
@@ -99,7 +81,6 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	@XmlElement(name = "docContent")
 	private byte[] custDocImage;
 	private Long docRefId = Long.MIN_VALUE;
-	private boolean newRecord = false;
 	private String lovValue;
 	private CustomerDocument befImage;
 	private LoggedInUser userDetails;
@@ -124,7 +105,7 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private String applicationNo;
 	private String finReference;
 	private boolean lovDescNewImage = false;
-	//Specific to Verification API LV
+	// Specific to Verification API LV
 	@XmlElement
 	private int docTypeId;
 
@@ -147,7 +128,7 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 		this.custDocType = doctype;
 		this.custDocTitle = docName;
 		this.custDocImage = docImage;
-		this.newRecord = true;
+		setNewRecord(true);
 	}
 
 	public Set<String> getExcludeFields() {
@@ -341,14 +322,6 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 
 	public void setDocRefId(Long docRefId) {
 		this.docRefId = docRefId;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

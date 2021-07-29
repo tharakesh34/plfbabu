@@ -132,7 +132,7 @@ public class LovFieldDetailServiceImpl extends GenericService<LovFieldDetail> im
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (lovFieldDetail.isNew()) {
+		if (lovFieldDetail.isNewRecord()) {
 			lovFieldDetail.setId(Long.valueOf(getLovFieldDetailDAO().save(lovFieldDetail, tableType)));
 			auditHeader.getAuditDetail().setModelData(lovFieldDetail);
 			auditHeader.setAuditReference(String.valueOf(lovFieldDetail.getFieldCodeId()));
@@ -334,7 +334,7 @@ public class LovFieldDetailServiceImpl extends GenericService<LovFieldDetail> im
 		// Get the model object.
 		LovFieldDetail lovFieldDetail = (LovFieldDetail) auditDetail.getModelData();
 		// Check the unique keys.
-		if (lovFieldDetail.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(lovFieldDetail.getRecordType())
+		if (lovFieldDetail.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(lovFieldDetail.getRecordType())
 				&& lovFieldDetailDAO.isDuplicateKey(lovFieldDetail.getFieldCode(), lovFieldDetail.getFieldCodeValue(),
 						lovFieldDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];

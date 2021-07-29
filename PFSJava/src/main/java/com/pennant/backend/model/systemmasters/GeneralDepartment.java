@@ -58,7 +58,6 @@ public class GeneralDepartment extends AbstractWorkflowEntity {
 
 	private String genDepartment;
 	private String genDeptDesc;
-	private boolean newRecord;
 	private String lovValue;
 	private GeneralDepartment befImage;
 	private LoggedInUser userDetails;
@@ -103,14 +102,6 @@ public class GeneralDepartment extends AbstractWorkflowEntity {
 
 	public void setGenDeptDesc(String genDeptDesc) {
 		this.genDeptDesc = genDeptDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

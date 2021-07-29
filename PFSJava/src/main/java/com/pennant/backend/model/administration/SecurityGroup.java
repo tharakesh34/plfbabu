@@ -58,7 +58,6 @@ public class SecurityGroup extends AbstractWorkflowEntity {
 	private long grpID = Long.MIN_VALUE;
 	private String grpCode;
 	private String grpDesc;
-	private boolean newRecord;
 	private String lovValue;
 	private SecurityGroup befImage;
 	private LoggedInUser userDetails;
@@ -107,14 +106,6 @@ public class SecurityGroup extends AbstractWorkflowEntity {
 
 	public void setGrpDesc(String grpDesc) {
 		this.grpDesc = grpDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

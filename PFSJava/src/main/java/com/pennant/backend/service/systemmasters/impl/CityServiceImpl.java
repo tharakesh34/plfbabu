@@ -124,7 +124,7 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (city.isNew()) {
+		if (city.isNewRecord()) {
 			getCityDAO().save(city, tableType);
 			auditHeader.getAuditDetail().setModelData(city);
 			auditHeader.setAuditReference(city.getPCCountry() + PennantConstants.KEY_SEPERATOR + city.getPCProvince()
@@ -323,7 +323,7 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 		City city = (City) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (city.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(city.getRecordType())
+		if (city.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(city.getRecordType())
 				&& cityDAO.isDuplicateKey(city.getPCCountry(), city.getPCProvince(), city.getPCCity(),
 						city.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[3];

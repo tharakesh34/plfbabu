@@ -79,7 +79,7 @@ public class ProductAssetValidation {
 		errParm[1] = PennantJavaUtil.getLabel("label_ProductCode") + ":" + valueParm[1];
 		errParm[2] = PennantJavaUtil.getLabel("label_AssetCode") + ":" + valueParm[2];
 
-		if (productAsset.isNew()) { // for New record or new record into work flow
+		if (productAsset.isNewRecord()) { // for New record or new record into work flow
 
 			if (!productAsset.isWorkflow()) {// With out Work flow only new records  
 				if (befProductAsset != null) { // Record Already Exists in the table then error  

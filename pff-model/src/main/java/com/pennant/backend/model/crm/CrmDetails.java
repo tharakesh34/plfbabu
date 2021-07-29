@@ -1,9 +1,8 @@
 package com.pennant.backend.model.crm;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
-public class CrmDetails extends AbstractWorkflowEntity implements Entity {
+public class CrmDetails extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -1472467289111692722L;
 
 	private long custId = Long.MIN_VALUE;
@@ -22,18 +21,10 @@ public class CrmDetails extends AbstractWorkflowEntity implements Entity {
 		super();
 	}
 
-	@Override
-	public boolean isNew() {
-		return false;
-	}
-
-	@Override
 	public long getId() {
-		// TODO Auto-generated method stub
 		return custId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.custId = id;
 	}

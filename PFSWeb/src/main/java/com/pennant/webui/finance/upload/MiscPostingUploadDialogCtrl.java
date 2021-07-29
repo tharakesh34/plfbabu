@@ -498,7 +498,7 @@ public class MiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.ENTERING);
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (uploadHeader.isNew()) {
+		if (uploadHeader.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 		} else {
@@ -722,7 +722,7 @@ public class MiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aUploadHeader.isNew();
+		isNew = aUploadHeader.isNewRecord();
 		String tranType;
 
 		if (isWorkFlowEnabled()) {
@@ -850,7 +850,7 @@ public class MiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(UploadHeader aUploadHeader, String tranType) {
+	protected boolean doProcess(UploadHeader aUploadHeader, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader;
@@ -1035,7 +1035,7 @@ public class MiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		uploadListCtrl.search();
 	}
 

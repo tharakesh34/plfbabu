@@ -14,7 +14,6 @@ public class CreditReviewData extends AbstractWorkflowEntity {
 	private String templateData;
 	private String templateName;
 	private int templateVersion;
-	private boolean newRecord = false;
 	private CreditReviewData befImage;
 
 	public String getFinReference() {
@@ -47,14 +46,6 @@ public class CreditReviewData extends AbstractWorkflowEntity {
 
 	public void setTemplateData(String templateData) {
 		this.templateData = templateData;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public boolean isNew() {

@@ -147,7 +147,7 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 			tableType = "_Temp";
 		}
 
-		if (customerIncome.isNew()) {
+		if (customerIncome.isNewRecord()) {
 			customerIncomeDAO.setLinkId(customerIncome);
 			incomeDetailDAO.save(customerIncome, tableType);
 			auditHeader.getAuditDetail().setModelData(customerIncome);

@@ -195,7 +195,7 @@ public class SelectMiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader>
 	private void doEdit() {
 		logger.debug(Literal.ENTERING);
 
-		if (this.uploadHeader.isNew()) {
+		if (this.uploadHeader.isNewRecord()) {
 			this.btnBrowse.setVisible(true);
 			this.btnBrowse.setDisabled(false);
 		}
@@ -205,7 +205,7 @@ public class SelectMiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader>
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
-			if (this.uploadHeader.isNew()) {
+			if (this.uploadHeader.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
 			}

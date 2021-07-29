@@ -59,7 +59,6 @@ public class SICCodes extends AbstractWorkflowEntity {
 
 	private String sicCode = null;
 	private String sicDesc;
-	private boolean newRecord = false;
 	private String lovValue;
 	private SICCodes befImage;
 	private LoggedInUser userDetails;
@@ -105,14 +104,6 @@ public class SICCodes extends AbstractWorkflowEntity {
 
 	public void setSicDesc(String sicDesc) {
 		this.sicDesc = sicDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

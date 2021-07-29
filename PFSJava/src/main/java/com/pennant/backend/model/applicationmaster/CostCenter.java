@@ -61,15 +61,13 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 @XmlType(propOrder = { "costCenterID", "costCenterCode", "costCenterDesc", "active" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CostCenter extends AbstractWorkflowEntity implements Entity {
+public class CostCenter extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long costCenterID = Long.MIN_VALUE;
 	private String costCenterCode;
 	private String costCenterDesc;
 	private boolean active;
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -133,14 +131,6 @@ public class CostCenter extends AbstractWorkflowEntity implements Entity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

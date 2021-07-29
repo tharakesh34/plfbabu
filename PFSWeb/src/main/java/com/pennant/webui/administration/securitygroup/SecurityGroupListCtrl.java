@@ -239,7 +239,7 @@ public class SecurityGroupListCtrl extends GFCBaseListCtrl<SecurityGroup> {
 		Map<String, Object> aruments = getDefaultArguments();
 		aruments.put("securityGroup", aSecurityGroup);
 		aruments.put("securityGroupListCtrl", this);
-		aruments.put("newRecord", aSecurityGroup.isNew());
+		aruments.put("newRecord", aSecurityGroup.isNewRecord());
 
 		try {
 

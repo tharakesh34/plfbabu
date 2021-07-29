@@ -258,7 +258,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		transactionMappingListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -321,7 +321,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 
 		this.active.setChecked(mapping.isActive());
 
-		if (mapping.isNew() || (mapping.getRecordType() != null ? mapping.getRecordType() : "")
+		if (mapping.isNewRecord() || (mapping.getRecordType() != null ? mapping.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
@@ -422,7 +422,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 	public void doShowDialog(TransactionMapping mapping) {
 		logger.debug(Literal.ENTERING);
 
-		if (mapping.isNew()) {
+		if (mapping.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.posId.setFocus(true);
@@ -669,7 +669,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 			tranType = PennantConstants.TRAN_WF;
 			if (StringUtils.isBlank(mapping.getRecordType())) {
 				mapping.setVersion(mapping.getVersion() + 1);
-				if (mapping.isNew()) {
+				if (mapping.isNewRecord()) {
 					mapping.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
 					mapping.setRecordType(PennantConstants.RECORD_TYPE_UPD);
@@ -678,7 +678,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 			}
 		} else {
 			mapping.setVersion(mapping.getVersion() + 1);
-			if (mapping.isNew()) {
+			if (mapping.isNewRecord()) {
 				tranType = PennantConstants.TRAN_ADD;
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
@@ -710,7 +710,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(TransactionMapping mapping, String tranType) {
+	protected boolean doProcess(TransactionMapping mapping, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

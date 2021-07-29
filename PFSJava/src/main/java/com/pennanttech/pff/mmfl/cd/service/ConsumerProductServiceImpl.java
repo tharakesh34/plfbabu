@@ -36,7 +36,7 @@ public class ConsumerProductServiceImpl extends GenericService<ConsumerProduct> 
 		if (consumerProduct.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-		if (consumerProduct.isNew()) {
+		if (consumerProduct.isNewRecord()) {
 			consumerProduct.setProductId(Long.parseLong(consumerProductDAO.save(consumerProduct, tableType)));
 			auditHeader.getAuditDetail().setModelData(consumerProduct);
 			auditHeader.setAuditReference(String.valueOf(consumerProduct.getProductId()));
@@ -170,7 +170,7 @@ public class ConsumerProductServiceImpl extends GenericService<ConsumerProduct> 
 		String code = ConsumerProduct.getModelId();
 
 		// Check the unique keys.
-		if (ConsumerProduct.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(ConsumerProduct.getRecordType())
+		if (ConsumerProduct.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(ConsumerProduct.getRecordType())
 				&& consumerProductDAO.isDuplicateKey(ConsumerProduct,
 						ConsumerProduct.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

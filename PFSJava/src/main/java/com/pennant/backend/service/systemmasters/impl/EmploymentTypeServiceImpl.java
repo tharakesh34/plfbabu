@@ -124,7 +124,7 @@ public class EmploymentTypeServiceImpl extends GenericService<EmploymentType> im
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (employmentType.isNew()) {
+		if (employmentType.isNewRecord()) {
 			employmentType.setEmpType(getEmploymentTypeDAO().save(employmentType, tableType));
 			auditHeader.getAuditDetail().setModelData(employmentType);
 			auditHeader.setAuditReference(employmentType.getEmpType());
@@ -323,7 +323,7 @@ public class EmploymentTypeServiceImpl extends GenericService<EmploymentType> im
 		String code = employmentType.getEmpType();
 
 		// Check the unique keys.
-		if (employmentType.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(employmentType.getRecordType())
+		if (employmentType.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(employmentType.getRecordType())
 				&& employmentTypeDAO.isDuplicateKey(code,
 						employmentType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

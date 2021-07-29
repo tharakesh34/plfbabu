@@ -352,7 +352,7 @@ public class AssignmentDialogCtrl extends GFCBaseCtrl<Assignment> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		assignmentListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -444,7 +444,7 @@ public class AssignmentDialogCtrl extends GFCBaseCtrl<Assignment> {
 		fillComboBox(this.opexFeeType, aAssignment.getOpexFeeType(), listOpexFeeType, "");
 		this.active.setChecked(aAssignment.isActive());
 
-		if (aAssignment.isNew() || StringUtils.equals(aAssignment.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+		if (aAssignment.isNewRecord() || StringUtils.equals(aAssignment.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
@@ -584,7 +584,7 @@ public class AssignmentDialogCtrl extends GFCBaseCtrl<Assignment> {
 	public void doShowDialog(Assignment assignment) {
 		logger.debug(Literal.ENTERING);
 
-		if (assignment.isNew()) {
+		if (assignment.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -965,7 +965,7 @@ public class AssignmentDialogCtrl extends GFCBaseCtrl<Assignment> {
 		}
 		doWriteComponentsToBean(aAssignment);
 
-		isNew = aAssignment.isNew();
+		isNew = aAssignment.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1013,7 +1013,7 @@ public class AssignmentDialogCtrl extends GFCBaseCtrl<Assignment> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Assignment aAssignment, String tranType) {
+	protected boolean doProcess(Assignment aAssignment, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

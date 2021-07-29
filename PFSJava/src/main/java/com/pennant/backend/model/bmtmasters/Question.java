@@ -50,7 +50,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>Question table</b>.<br>
  *
  */
-public class Question extends AbstractWorkflowEntity implements Entity {
+public class Question extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long questionId = Long.MIN_VALUE;
@@ -61,7 +61,6 @@ public class Question extends AbstractWorkflowEntity implements Entity {
 	private String answerD;
 	private String correctAnswer;
 	private boolean questionIsActive;
-	private boolean newRecord = false;
 	private String lovValue;
 	private Question befImage;
 	private LoggedInUser userDetails;
@@ -151,14 +150,6 @@ public class Question extends AbstractWorkflowEntity implements Entity {
 
 	public void setQuestionIsActive(boolean questionIsActive) {
 		this.questionIsActive = questionIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

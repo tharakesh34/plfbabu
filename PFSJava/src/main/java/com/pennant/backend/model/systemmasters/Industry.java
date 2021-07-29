@@ -62,7 +62,6 @@ public class Industry extends AbstractWorkflowEntity {
 	private String industryDesc;
 	//private BigDecimal industryLimit;
 	private boolean industryIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private Industry befImage;
 	private LoggedInUser userDetails;
@@ -119,14 +118,6 @@ public class Industry extends AbstractWorkflowEntity {
 
 	public void setIndustryIsActive(boolean industryIsActive) {
 		this.industryIsActive = industryIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

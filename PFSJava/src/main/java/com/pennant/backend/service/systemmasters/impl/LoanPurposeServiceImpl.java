@@ -120,7 +120,7 @@ public class LoanPurposeServiceImpl extends GenericService<LoanPurpose> implemen
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (loanPurpose.isNew()) {
+		if (loanPurpose.isNewRecord()) {
 			loanPurpose.setId(getLoanPurposeDAO().save(loanPurpose, tableType));
 			auditHeader.getAuditDetail().setModelData(loanPurpose);
 			auditHeader.setAuditReference(loanPurpose.getLoanPurposeCode());
@@ -315,7 +315,7 @@ public class LoanPurposeServiceImpl extends GenericService<LoanPurpose> implemen
 		parameters[0] = PennantJavaUtil.getLabel("label_LoanPurposeCode") + ": " + code;
 
 		// Check the unique keys.
-		if (loanPurpose.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(loanPurpose.getRecordType())
+		if (loanPurpose.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(loanPurpose.getRecordType())
 				&& getLoanPurposeDAO().isDuplicateKey(code,
 						loanPurpose.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 

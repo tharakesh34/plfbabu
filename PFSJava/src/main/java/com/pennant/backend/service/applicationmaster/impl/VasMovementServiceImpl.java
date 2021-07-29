@@ -121,7 +121,7 @@ public class VasMovementServiceImpl extends GenericService<VasMovement> implemen
 			tableType = "_Temp";
 		}
 
-		if (vasMovement.isNew()) {
+		if (vasMovement.isNewRecord()) {
 			vasMovement.setVasMovementId(getVasMovementDAO().save(vasMovement, tableType));
 			auditHeader.getAuditDetail().setModelData(vasMovement);
 			auditHeader.setAuditReference(String.valueOf(vasMovement.getVasMovementId()));
@@ -350,7 +350,7 @@ public class VasMovementServiceImpl extends GenericService<VasMovement> implemen
 		valueParm[0] = String.valueOf(vasMovement.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_VasMovementId") + ":" + valueParm[0];
 
-		if (vasMovement.isNew()) { // for New record or new record into work flow
+		if (vasMovement.isNewRecord()) { // for New record or new record into work flow
 
 			if (!vasMovement.isWorkflow()) {// With out Work flow only new records  
 				if (befVasMovement != null) { // Record Already Exists in the table then error  
@@ -577,7 +577,7 @@ public class VasMovementServiceImpl extends GenericService<VasMovement> implemen
 			} else if (vasMovementDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (vasMovementDetail.isNew()) {
+				} else if (vasMovementDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

@@ -19,7 +19,6 @@ public class FinCreditRevSubCategory extends AbstractWorkflowEntity {
 	private boolean percentCategory;
 	private boolean grand;
 	private String mainSubCategoryCode;
-	private boolean newRecord = false;
 	private String lovValue;
 	private FinCreditRevSubCategory befImage;
 	private LoggedInUser userDetails;
@@ -28,14 +27,6 @@ public class FinCreditRevSubCategory extends AbstractWorkflowEntity {
 
 	public FinCreditRevSubCategory() {
 		super();
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

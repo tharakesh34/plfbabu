@@ -10,7 +10,7 @@ import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class AccountTypeGroup extends AbstractWorkflowEntity implements Entity {
+public class AccountTypeGroup extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -1472467289111692722L;
 
 	private long groupId = Long.MIN_VALUE;
@@ -20,7 +20,6 @@ public class AccountTypeGroup extends AbstractWorkflowEntity implements Entity {
 	private String parentGroup;
 	private String parentGroupDesc;
 	private long parentGroupId;
-	private boolean newRecord;
 	private String lovValue;
 	private AccountTypeGroup befImage;
 	@XmlTransient
@@ -70,14 +69,6 @@ public class AccountTypeGroup extends AbstractWorkflowEntity implements Entity {
 
 	public void setParentGroup(String parentGroup) {
 		this.parentGroup = parentGroup;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

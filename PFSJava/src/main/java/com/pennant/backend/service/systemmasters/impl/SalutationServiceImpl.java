@@ -123,7 +123,7 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (salutation.isNew()) {
+		if (salutation.isNewRecord()) {
 			salutation.setSalutationCode(getSalutationDAO().save(salutation, tableType));
 			auditHeader.getAuditDetail().setModelData(salutation);
 			auditHeader.setAuditReference(salutation.getSalutationCode());
@@ -314,7 +314,7 @@ public class SalutationServiceImpl extends GenericService<Salutation> implements
 		String gender = salutation.getSalutationGenderCode();
 
 		// Check the unique keys.
-		if (salutation.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(salutation.getRecordType()) && salutationDAO
+		if (salutation.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(salutation.getRecordType()) && salutationDAO
 				.isDuplicateKey(code, gender, salutation.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_SalutationCode") + ": " + code;

@@ -125,7 +125,7 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (incomeType.isNew()) {
+		if (incomeType.isNewRecord()) {
 			incomeType.setId(getIncomeTypeDAO().save(incomeType, tableType));
 			auditHeader.getAuditDetail().setModelData(incomeType);
 			auditHeader.setAuditReference(incomeType.getId());
@@ -324,7 +324,7 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 		IncomeType incomeType = (IncomeType) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (incomeType.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(incomeType.getRecordType())
+		if (incomeType.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(incomeType.getRecordType())
 				&& incomeTypeDAO.isDuplicateKey(incomeType.getIncomeTypeCode(), incomeType.getIncomeExpense(),
 						incomeType.getCategory(), incomeType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];

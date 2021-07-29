@@ -68,7 +68,6 @@ public class CustomerBalanceSheet extends AbstractWorkflowEntity {
 	private String lovDescCustRecordType;
 	private String lovDescCustCIF;
 	private String lovDescCustShrtName;
-	private boolean newRecord = false;
 	private String lovValue;
 	private CustomerBalanceSheet befImage;
 	private LoggedInUser userDetails;
@@ -208,14 +207,6 @@ public class CustomerBalanceSheet extends AbstractWorkflowEntity {
 
 	public void setLovDescCustShrtName(String lovDescCustShrtName) {
 		this.lovDescCustShrtName = lovDescCustShrtName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

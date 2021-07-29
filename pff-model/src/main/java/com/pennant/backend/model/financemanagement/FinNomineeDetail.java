@@ -53,22 +53,17 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>FinNomineeDetail table</b>.<br>
  *
  */
-public class FinNomineeDetail extends AbstractWorkflowEntity implements Entity {
+public class FinNomineeDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long nomineeId = Long.MIN_VALUE;
 	private String finReference;
-	private boolean newRecord = false;
 	private FinNomineeDetail befImage;
 	private LoggedInUser userDetails;
 	private NomineeDetail nomineeDetail;
 
 	public boolean isNew() {
 		return isNewRecord();
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
 	}
 
 	public FinNomineeDetail() {
@@ -124,10 +119,6 @@ public class FinNomineeDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public NomineeDetail getNomineeDetail() {

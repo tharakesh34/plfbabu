@@ -17,7 +17,6 @@ public class SchemeDealerGroup extends AbstractWorkflowEntity {
 	private SchemeDealerGroup befImage;
 	private LoggedInUser userDetails;
 	private String lovValue;
-	private boolean newRecord = false;
 	private boolean isSave = false;
 
 	public Set<String> getExcludeFields() {
@@ -64,14 +63,6 @@ public class SchemeDealerGroup extends AbstractWorkflowEntity {
 
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public Timestamp getPrevMntOn() {

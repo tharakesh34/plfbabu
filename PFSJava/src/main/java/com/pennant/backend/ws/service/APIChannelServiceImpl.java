@@ -81,7 +81,7 @@ public class APIChannelServiceImpl extends GenericService<APIChannel> implements
 			tableType = "_Temp";
 		}
 
-		if (apiChannel.isNew()) {
+		if (apiChannel.isNewRecord()) {
 			apiChannel.setId(apiChannelDAO.save(apiChannel, tableType));
 			auditHeader.getAuditDetail().setModelData(apiChannel);
 			auditHeader.setAuditReference(String.valueOf(apiChannel.getId()));
@@ -297,7 +297,7 @@ public class APIChannelServiceImpl extends GenericService<APIChannel> implements
 		errParm[0] = PennantJavaUtil.getLabel("label_ChannelDetailsDialog_ChannelDetailsCode.value") + ":"
 				+ valueParm[0];
 
-		if (apiChannel.isNew()) { // for New record or new record into work flow
+		if (apiChannel.isNewRecord()) { // for New record or new record into work flow
 
 			if (!apiChannel.isWorkflow()) {// With out Work flow only new records
 				if (befChannelDetails != null) { // Record Already Exists in the table then error
@@ -514,7 +514,7 @@ public class APIChannelServiceImpl extends GenericService<APIChannel> implements
 			} else if (aPIChannelIP.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (aPIChannelIP.isNew()) {
+				} else if (aPIChannelIP.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

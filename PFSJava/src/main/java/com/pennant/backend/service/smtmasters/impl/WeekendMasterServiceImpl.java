@@ -120,7 +120,7 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 			tableType = "_Temp";
 		}
 
-		if (weekendMaster.isNew()) {
+		if (weekendMaster.isNewRecord()) {
 			weekendMaster.setWeekendCode(getWeekendMasterDAO().save(weekendMaster, tableType));
 			auditHeader.getAuditDetail().setModelData(weekendMaster);
 			auditHeader.setAuditReference(weekendMaster.getWeekendCode());
@@ -324,7 +324,7 @@ public class WeekendMasterServiceImpl extends GenericService<WeekendMaster> impl
 
 		errParm[0] = PennantJavaUtil.getLabel("label_WeekendCode") + ":" + valueParm[0];
 
-		if (weekendMaster.isNew()) { // for New record or new record into work
+		if (weekendMaster.isNewRecord()) { // for New record or new record into work
 			// flow
 
 			if (!weekendMaster.isWorkflow()) {// With out Work flow only new

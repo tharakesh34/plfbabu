@@ -57,7 +57,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>AuthorizationLimit table</b>.<br>
  *
  */
-public class AuthorizationLimit extends AbstractWorkflowEntity implements Entity {
+public class AuthorizationLimit extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
@@ -71,7 +71,6 @@ public class AuthorizationLimit extends AbstractWorkflowEntity implements Entity
 	private Date holdStartDate;
 	private Date holdExpiryDate;
 	private boolean active = false;
-	private boolean newRecord = false;
 	private String lovValue;
 	private AuthorizationLimit befImage;
 	private LoggedInUser userDetails;
@@ -194,14 +193,6 @@ public class AuthorizationLimit extends AbstractWorkflowEntity implements Entity
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

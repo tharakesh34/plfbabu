@@ -90,8 +90,6 @@ public class DashboardConfiguration extends AbstractWorkflowEntity {
 	private String seriesValues;
 	private String fieldQuery;
 	private String colorRangeXML;
-
-	private boolean newRecord;
 	private String lovValue;
 	private DashboardConfiguration befImage;
 	private LoggedInUser userDetails;
@@ -171,14 +169,6 @@ public class DashboardConfiguration extends AbstractWorkflowEntity {
 
 	public void setQuery(String query) {
 		this.query = query;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

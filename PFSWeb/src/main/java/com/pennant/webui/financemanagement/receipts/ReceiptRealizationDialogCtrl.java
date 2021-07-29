@@ -330,7 +330,7 @@ public class ReceiptRealizationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> 
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		this.receiptRealizationListCtrl.search();
 	}
 
@@ -540,7 +540,7 @@ public class ReceiptRealizationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> 
 	 * @return
 	 * @throws InterruptedException
 	 */
-	private boolean doProcess(FinReceiptHeader aReceiptHeader, String tranType) throws InterruptedException {
+	protected boolean doProcess(FinReceiptHeader aReceiptHeader, String tranType) throws InterruptedException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader;

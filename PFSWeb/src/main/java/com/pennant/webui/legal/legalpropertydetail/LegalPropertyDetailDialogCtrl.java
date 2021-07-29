@@ -686,7 +686,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	public void doShowDialog(LegalPropertyDetail legalPropertyDetail) {
 		logger.debug(Literal.LEAVING);
 
-		if (legalPropertyDetail.isNew()) {
+		if (legalPropertyDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.scheduleType.focus();
@@ -1210,7 +1210,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		doSetValidation();
 		doWriteComponentsToBean(aLegalPropertyDetail);
 
-		isNew = aLegalPropertyDetail.isNew();
+		isNew = aLegalPropertyDetail.isNewRecord();
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;

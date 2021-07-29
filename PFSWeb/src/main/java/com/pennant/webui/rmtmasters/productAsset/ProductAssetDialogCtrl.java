@@ -350,7 +350,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		this.assetDesc.setValue(aProductAsset.getAssetDesc());
 		this.assetIsActive.setChecked(aProductAsset.isAssetIsActive());
 
-		if (aProductAsset.isNew() || aProductAsset.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+		if (aProductAsset.isNewRecord() || aProductAsset.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.assetIsActive.setChecked(true);
 			this.assetIsActive.setDisabled(true);
 		}
@@ -417,7 +417,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aProductAsset.isNew()) {
+		if (aProductAsset.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -587,7 +587,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
 
-			if (getProductAsset().isNew()
+			if (getProductAsset().isNewRecord()
 					|| getProductAsset().getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				this.assetIsActive.setDisabled(true);
 			}
@@ -600,7 +600,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 				this.btnCtrl.setBtnStatus_Edit();
 			}
 
-			if (getProductAsset().isNew() || getProductAsset().getRecordType().equals(PennantConstants.RCD_ADD)) {
+			if (getProductAsset().isNewRecord() || getProductAsset().getRecordType().equals(PennantConstants.RCD_ADD)) {
 				this.assetIsActive.setDisabled(true);
 			}
 		}
@@ -672,7 +672,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aProductAsset.isNew();
+		isNew = aProductAsset.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -754,7 +754,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 				if (aProductAsset.getAssetCode().equals(productAsset.getAssetCode())
 						&& aProductAsset.getProductCode().equals(productAsset.getProductCode())) { // Both Current and Existing list addresses same
 
-					if (aProductAsset.isNew()) {
+					if (aProductAsset.isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
 								getUserWorkspace().getUserLanguage()));

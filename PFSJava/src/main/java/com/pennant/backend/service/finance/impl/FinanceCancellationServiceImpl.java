@@ -305,7 +305,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 		// Finance Main Details Save And Update
 		// =======================================
-		if (financeMain.isNew()) {
+		if (financeMain.isNewRecord()) {
 			getFinanceMainDAO().save(financeMain, tableType, false);
 		} else {
 			getFinanceMainDAO().update(financeMain, tableType, false);
@@ -887,7 +887,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		valueParm[0] = financeMain.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (financeMain.isNew()) { // for New record or new record into work flow
+		if (financeMain.isNewRecord()) { // for New record or new record into work flow
 
 			if (!financeMain.isWorkflow()) {// With out Work flow only new
 				// records

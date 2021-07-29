@@ -55,7 +55,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>CheckListDetail table</b>.<br>
  *
  */
-public class VasMovementDetail extends AbstractWorkflowEntity implements Entity {
+public class VasMovementDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -3176600783924484359L;
 
 	private long vasMovementId = 0;
@@ -67,8 +67,6 @@ public class VasMovementDetail extends AbstractWorkflowEntity implements Entity 
 	private String vasProvider;
 	private String vasProduct;
 	private BigDecimal vasAmount;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private VasMovementDetail befImage;
 	private LoggedInUser userDetails;
@@ -100,14 +98,6 @@ public class VasMovementDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setId(long id) {
 		this.vasMovementDetailId = id;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -364,7 +364,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		} else {
 			this.mappingRef.setMandatoryStyle(false);
 		}
-		if (aDocumentType.isNew() || (aDocumentType.getRecordType() != null ? aDocumentType.getRecordType() : "")
+		if (aDocumentType.isNewRecord() || (aDocumentType.getRecordType() != null ? aDocumentType.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.docTypeIsActive.setChecked(true);
 			this.docTypeIsActive.setDisabled(true);
@@ -540,7 +540,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aDocumentType.isNew()) {
+		if (aDocumentType.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -808,7 +808,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aDocumentType.isNew();
+		isNew = aDocumentType.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -857,7 +857,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(DocumentType aDocumentType, String tranType) {
+	protected boolean doProcess(DocumentType aDocumentType, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -1107,7 +1107,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getDocumentTypeListCtrl().search();
 	}
 

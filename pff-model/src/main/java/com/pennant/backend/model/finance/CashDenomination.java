@@ -70,8 +70,6 @@ public class CashDenomination extends AbstractWorkflowEntity {
 	private int count = 0;
 	private BigDecimal amount = BigDecimal.ZERO;
 	@XmlTransient
-	private boolean newRecord = false;
-	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private CashDenomination befImage;
@@ -123,14 +121,6 @@ public class CashDenomination extends AbstractWorkflowEntity {
 
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

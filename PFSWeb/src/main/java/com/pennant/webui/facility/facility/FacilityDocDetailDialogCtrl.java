@@ -763,7 +763,7 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aDocumentDetails.isNew();
+		isNew = aDocumentDetails.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {

@@ -3,55 +3,36 @@ package com.pennant.backend.model.finance;
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinFeeReceipt.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  1-06-2017    														*
- *                                                                  						*
- * Modified Date    :  1-06-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinFeeReceipt.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 1-06-2017 * * Modified Date :
+ * 1-06-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 1-06-2017       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 1-06-2017 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class FinFeeReceipt extends AbstractWorkflowEntity implements Entity {
+public class FinFeeReceipt extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
@@ -69,8 +50,6 @@ public class FinFeeReceipt extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal paidAmount = BigDecimal.ZERO;
 	private BigDecimal remainingFee = BigDecimal.ZERO;
 	private BigDecimal paidTds = BigDecimal.ZERO;
-
-	private boolean newRecord = false;
 	private boolean exist = true;
 	private FinFeeReceipt befImage;
 	private LoggedInUser userDetails;
@@ -121,7 +100,7 @@ public class FinFeeReceipt extends AbstractWorkflowEntity implements Entity {
 		entity.setPaidAmount(this.paidAmount);
 		entity.setRemainingFee(this.remainingFee);
 		entity.setPaidTds(this.paidTds);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setExist(this.exist);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
@@ -160,14 +139,6 @@ public class FinFeeReceipt extends AbstractWorkflowEntity implements Entity {
 		this.remainingFee = remainingFee;
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
 	public FinFeeReceipt getBefImage() {
 		return this.befImage;
 	}
@@ -192,12 +163,10 @@ public class FinFeeReceipt extends AbstractWorkflowEntity implements Entity {
 		this.feeID = feeID;
 	}
 
-	@Override
 	public long getId() {
 		return this.id;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.id = id;
 	}

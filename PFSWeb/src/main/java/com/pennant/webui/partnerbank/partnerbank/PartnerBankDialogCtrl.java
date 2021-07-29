@@ -494,7 +494,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			this.entity.setDescription(aPartnerBank.getEntityDesc());
 		}
 
-		if (aPartnerBank.isNew() || (aPartnerBank.getRecordType() != null ? aPartnerBank.getRecordType() : "")
+		if (aPartnerBank.isNewRecord() || (aPartnerBank.getRecordType() != null ? aPartnerBank.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
@@ -784,7 +784,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (partnerBank.isNew()) {
+		if (partnerBank.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1341,7 +1341,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aPartnerBank.isNew();
+		isNew = aPartnerBank.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1412,7 +1412,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	 * 
 	 */
 
-	private boolean doProcess(PartnerBank aPartnerBank, String tranType) {
+	protected boolean doProcess(PartnerBank aPartnerBank, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader;
@@ -1597,7 +1597,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		partnerBankListCtrl.search();
 	}
 

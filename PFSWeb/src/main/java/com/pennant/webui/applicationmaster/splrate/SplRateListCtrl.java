@@ -234,7 +234,7 @@ public class SplRateListCtrl extends GFCBaseListCtrl<SplRate> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("splRate", splRate);
 		arg.put("splRateListCtrl", this);
-		arg.put("newRecord", splRate.isNew());
+		arg.put("newRecord", splRate.isNewRecord());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/SplRate/SplRateDialog.zul", null, arg);

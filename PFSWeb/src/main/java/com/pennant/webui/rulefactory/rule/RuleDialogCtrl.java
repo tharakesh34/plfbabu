@@ -620,7 +620,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aRule.isNew()) {
+		if (aRule.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1285,7 +1285,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aRule.isNew();
+		isNew = aRule.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1333,7 +1333,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	 * @return boolean
 	 * @throws Exception
 	 */
-	private boolean doProcess(Rule aRule, String tranType) throws Exception {
+	protected boolean doProcess(Rule aRule, String tranType) throws Exception {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -1541,7 +1541,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		this.ruleListCtrl.search();
 	}
 

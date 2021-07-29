@@ -63,7 +63,6 @@ public class IRRFeeType extends AbstractWorkflowEntity {
 	private String feeTypeDesc;
 	private String iRRIDName;
 	private BigDecimal feePercentage = BigDecimal.ZERO;
-	private boolean newRecord = false;
 	private String lovValue;
 	private IRRFeeType befImage;
 	private LoggedInUser userDetails;
@@ -113,14 +112,6 @@ public class IRRFeeType extends AbstractWorkflowEntity {
 
 	public void setFeeTypeID(long feeTypeID) {
 		this.feeTypeID = feeTypeID;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

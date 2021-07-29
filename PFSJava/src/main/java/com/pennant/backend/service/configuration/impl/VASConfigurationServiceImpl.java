@@ -211,7 +211,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 			tableType = "_Temp";
 		}
 
-		if (vASConfiguration.isNew()) {
+		if (vASConfiguration.isNewRecord()) {
 			getVASConfigurationDAO().save(vASConfiguration, tableType);
 			processVASPremiumCalcDetsils(vASConfiguration, tableType);
 		} else {
@@ -224,7 +224,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 		ExtendedFieldHeader extFieldHeader = (ExtendedFieldHeader) headerDetail.get(0).getModelData();
 
 		long moduleId;
-		if (extFieldHeader.isNew()) {
+		if (extFieldHeader.isNewRecord()) {
 			moduleId = getExtendedFieldHeaderDAO().save(extFieldHeader, tableType);
 
 			//Setting Module ID to List
@@ -604,7 +604,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 		valueParm[0] = vASConfiguration.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_ProductCode") + ":" + valueParm[0];
 
-		if (vASConfiguration.isNew()) { // for New record or new record into work flow
+		if (vASConfiguration.isNewRecord()) { // for New record or new record into work flow
 
 			if (!vASConfiguration.isWorkflow()) {// With out Work flow only new records  
 				if (befVASConfiguration != null) { // Record Already Exists in the table then error  

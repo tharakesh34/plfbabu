@@ -296,7 +296,7 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 		this.recordStatus.setValue(aEmploymentType.getRecordStatus());
 		this.empTypeIsActive.setChecked(aEmploymentType.isEmpTypeIsActive());
 
-		if (aEmploymentType.isNew() || (aEmploymentType.getRecordType() != null ? aEmploymentType.getRecordType() : "")
+		if (aEmploymentType.isNewRecord() || (aEmploymentType.getRecordType() != null ? aEmploymentType.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.empTypeIsActive.setChecked(true);
 			this.empTypeIsActive.setDisabled(true);
@@ -357,7 +357,7 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aEmploymentType.isNew()) {
+		if (aEmploymentType.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -449,7 +449,7 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getEmploymentTypeListCtrl().search();
 	}
 
@@ -583,7 +583,7 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aEmploymentType.isNew();
+		isNew = aEmploymentType.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -633,7 +633,7 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(EmploymentType aEmploymentType, String tranType) {
+	protected boolean doProcess(EmploymentType aEmploymentType, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;

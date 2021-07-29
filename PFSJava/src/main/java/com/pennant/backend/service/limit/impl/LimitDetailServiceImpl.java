@@ -220,7 +220,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			tableType = "_Temp";
 		}
 
-		if (limitHeader.isNew()) {
+		if (limitHeader.isNewRecord()) {
 			limitHeader.setId(getLimitHeaderDAO().save(limitHeader, tableType));
 			auditHeader.getAuditDetail().setModelData(limitHeader);
 			auditHeader.setAuditReference(String.valueOf(limitHeader.getHeaderId()));
@@ -986,7 +986,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				} else if (limitDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 					if (approveRec) {
 						deleteRecord = true;
-					} else if (limitDetails.isNew()) {
+					} else if (limitDetails.isNewRecord()) {
 						saveRecord = true;
 					} else {
 						updateRecord = true;
@@ -1337,7 +1337,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		valueParm[0] = String.valueOf(limitDetail.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_DetailId") + ":" + valueParm[0];
 
-		if (limitDetail.isNew()) { // for New record or new record into work flow
+		if (limitDetail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!limitDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befLimitDetail != null) { // Record Already Exists in the table then error  
@@ -1546,7 +1546,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		LimitHeader limitHeader = (LimitHeader) auditDetail.getModelData();
 
 		// validate limit header id for update
-		if (!limitHeader.isNew()) {
+		if (!limitHeader.isNewRecord()) {
 			int count = getLimitHeaderCountById(limitHeader.getHeaderId());
 			if (count <= 0) {
 				String[] valueParm = new String[1];
@@ -1602,7 +1602,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				valueParm[0] = custCIF;
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90101", "", valueParm)));
 			} else {
-				if (!limitHeader.isNew()) {
+				if (!limitHeader.isNewRecord()) {
 					int count = getLimitHeaderDAO().getLimitHeaderAndCustCountById(limitHeader.getHeaderId(),
 							customer.getCustID());
 					if (count <= 0) {
@@ -1612,7 +1612,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 					}
 				}
 
-				if (limitHeader.isNew()) {
+				if (limitHeader.isNewRecord()) {
 					LimitHeader headerDetail = getLimitHeaderDAO().getLimitHeaderByCustomerId(customer.getCustID(),
 							"_AView");
 					if (headerDetail != null) {
@@ -1634,7 +1634,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90107", "", valueParm)));
 				return auditDetail;
 			} else {
-				if (!limitHeader.isNew()) {
+				if (!limitHeader.isNewRecord()) {
 					int count = getLimitHeaderDAO().getLimitHeaderAndCustGrpCountById(limitHeader.getHeaderId(),
 							customerGroup.getCustGrpID());
 					if (count <= 0) {
@@ -1643,7 +1643,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90266", "", valueParm)));
 					}
 				}
-				if (limitHeader.isNew()) {
+				if (limitHeader.isNewRecord()) {
 					LimitHeader headerDetail = getLimitHeaderDAO()
 							.getLimitHeaderByCustomerGroupCode(customerGroup.getCustGrpID(), "_AView");
 					if (headerDetail != null) {

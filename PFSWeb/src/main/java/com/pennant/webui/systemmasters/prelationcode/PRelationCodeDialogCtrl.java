@@ -296,7 +296,7 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 		this.relationCodeIsActive.setChecked(aPRelationCode.isRelationCodeIsActive());
 		this.recordStatus.setValue(aPRelationCode.getRecordStatus());
 
-		if (aPRelationCode.isNew() || (aPRelationCode.getRecordType() != null ? aPRelationCode.getRecordType() : "")
+		if (aPRelationCode.isNewRecord() || (aPRelationCode.getRecordType() != null ? aPRelationCode.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.relationCodeIsActive.setChecked(true);
 			this.relationCodeIsActive.setDisabled(true);
@@ -358,7 +358,7 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aPRelationCode.isNew()) {
+		if (aPRelationCode.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -576,7 +576,7 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aPRelationCode.isNew();
+		isNew = aPRelationCode.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -625,7 +625,7 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(PRelationCode aPRelationCode, String tranType) {
+	protected boolean doProcess(PRelationCode aPRelationCode, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -832,7 +832,7 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getPRelationCodeListCtrl().search();
 	}
 

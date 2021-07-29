@@ -9,7 +9,6 @@ public class TargetDetail extends AbstractWorkflowEntity {
 	private String targetCode;
 	private String targetDesc;
 	private boolean active;
-	private boolean newRecord;
 	private String lovValue;
 	private TargetDetail befImage;
 	private LoggedInUser userDetails;
@@ -53,14 +52,6 @@ public class TargetDetail extends AbstractWorkflowEntity {
 
 	public void setTargetDesc(String targetDesc) {
 		this.targetDesc = targetDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

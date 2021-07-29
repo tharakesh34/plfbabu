@@ -125,7 +125,7 @@ public class SalesOfficerServiceImpl extends GenericService<SalesOfficer> implem
 			tableType = "_Temp";
 		}
 
-		if (salesOfficer.isNew()) {
+		if (salesOfficer.isNewRecord()) {
 			getSalesOfficerDAO().save(salesOfficer, tableType);
 		} else {
 			getSalesOfficerDAO().update(salesOfficer, tableType);
@@ -338,7 +338,7 @@ public class SalesOfficerServiceImpl extends GenericService<SalesOfficer> implem
 		valueParm[0] = salesOfficer.getSalesOffCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_SalesOffCode") + ":" + valueParm[0];
 
-		if (salesOfficer.isNew()) { // for New record or new record into work
+		if (salesOfficer.isNewRecord()) { // for New record or new record into work
 										// flow
 
 			if (!salesOfficer.isWorkflow()) {// With out Work flow only new

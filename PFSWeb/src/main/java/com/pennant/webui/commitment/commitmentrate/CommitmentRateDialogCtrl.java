@@ -930,7 +930,7 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 			doWriteComponentsToBean(aCommitmentRate);
 		}
 
-		isNew = aCommitmentRate.isNew();
+		isNew = aCommitmentRate.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {

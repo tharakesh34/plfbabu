@@ -541,7 +541,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.additionalField13.setValue(aBlackListCustomers.getAdditionalField13());
 		this.additionalField14.setValue(aBlackListCustomers.getAdditionalField14());
 		this.address.setValue(aBlackListCustomers.getAddress());
-		if (!aBlackListCustomers.isNew()) {
+		if (!aBlackListCustomers.isNewRecord()) {
 			this.employer.setValue(StringUtils.trimToEmpty(aBlackListCustomers.getEmpIndustry()),
 					StringUtils.trimToEmpty(aBlackListCustomers.getLovDescEmpName()));
 			this.employer.setAttribute("EmpId", aBlackListCustomers.getEmployer());
@@ -552,7 +552,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.reasonCode.setValue(aBlackListCustomers.getReasonCode());
 		this.source.setValue(aBlackListCustomers.getSource());
 
-		if (aBlackListCustomers.isNew()
+		if (aBlackListCustomers.isNewRecord()
 				|| (aBlackListCustomers.getRecordType() != null ? aBlackListCustomers.getRecordType() : "")
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.custIsActive.setChecked(true);
@@ -873,7 +873,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aFinBlacklistCust.isNew()) {
+		if (aFinBlacklistCust.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1152,7 +1152,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getBlacklistCustomerListCtrl().search();
 	}
 
@@ -1409,7 +1409,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 			aFinBlklistCust.setNegativeReasoncodeList(null);
 		}
 
-		isNew = aFinBlklistCust.isNew();
+		isNew = aFinBlklistCust.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1458,7 +1458,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(BlackListCustomers aFinBlacklistCust, String tranType) {
+	protected boolean doProcess(BlackListCustomers aFinBlacklistCust, String tranType) {
 		logger.debug("Entering ");
 
 		boolean processCompleted = false;

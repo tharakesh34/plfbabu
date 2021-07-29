@@ -18,7 +18,6 @@ public class ConsumerProduct extends AbstractWorkflowEntity {
 	private BigDecimal MaxAmount;
 	private String modelStatus;
 	private String channel;
-	private boolean newRecord = false;
 	private ConsumerProduct befImage;
 	private LoggedInUser userDetails;
 	private boolean active;
@@ -87,14 +86,6 @@ public class ConsumerProduct extends AbstractWorkflowEntity {
 		this.channel = channel;
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
 	public ConsumerProduct getBefImage() {
 		return befImage;
 	}
@@ -121,10 +112,6 @@ public class ConsumerProduct extends AbstractWorkflowEntity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNew() {
-		return newRecord;
 	}
 
 	public String getModelStatus() {

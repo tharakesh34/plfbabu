@@ -253,7 +253,7 @@ public class DirectorDetailListCtrl extends GFCBaseListCtrl<DirectorDetail> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("directorDetail", directorDetail);
 		arg.put("directorDetailListCtrl", this);
-		arg.put("newRecord", directorDetail.isNew());
+		arg.put("newRecord", directorDetail.isNewRecord());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/DirectorDetail/DirectorDetailDialog.zul", null,

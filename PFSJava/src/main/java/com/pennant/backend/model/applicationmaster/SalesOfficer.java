@@ -60,7 +60,6 @@ public class SalesOfficer extends AbstractWorkflowEntity {
 	private String salesOffDept;
 	private String lovDescSalesOffDeptName;
 	private boolean salesOffIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private SalesOfficer befImage;
 	private LoggedInUser userDetails;
@@ -152,14 +151,6 @@ public class SalesOfficer extends AbstractWorkflowEntity {
 
 	public void setSalesOffIsActive(boolean salesOffIsActive) {
 		this.salesOffIsActive = salesOffIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -136,7 +136,7 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 			tableType = "_TEMP";
 		}
 
-		if (finTypeFees.isNew()) {
+		if (finTypeFees.isNewRecord()) {
 			finTypeFees.setId(getFinTypeFeesDAO().save(finTypeFees, tableType));
 			auditHeader.getAuditDetail().setModelData(finTypeFees);
 			auditHeader.setAuditReference(String.valueOf(finTypeFees.getFinType()));
@@ -333,7 +333,7 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 		errParm[0] = PennantJavaUtil.getLabel("label_FinTypeFeesDialog_FeeType.value") + ":" + valueParm[0] + ","
 				+ PennantJavaUtil.getLabel("label_FinTypeFeesDialog_FinEvent.value") + ":" + valueParm[1];
 
-		if (finTypeFees.isNew()) { // for New record or new record into work flow
+		if (finTypeFees.isNewRecord()) { // for New record or new record into work flow
 			if (!finTypeFees.isWorkflow()) {// With out Work flow only new records
 				if (befFinTypeFees != null) { // Record Already Exists in the table then error
 					auditDetail
@@ -505,7 +505,7 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 			} else if (finTypeFees.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (finTypeFees.isNew()) {
+				} else if (finTypeFees.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -587,7 +587,7 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 		valueParm[1] = finTypeFees.getFinEvent();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinTypeFeesDialog_FeeType.value") + ":" + valueParm[0] + ","
 				+ PennantJavaUtil.getLabel("label_FinTypeFeesDialog_FinEvent.value") + ":" + valueParm[1];
-		if (finTypeFees.isNew()) { // for New record or new record into work flow
+		if (finTypeFees.isNewRecord()) { // for New record or new record into work flow
 			if (!finTypeFees.isWorkflow()) {// With out Work flow only new records
 				if (befFinTypeFees != null) { // Record Already Exists in the table then error
 					auditDetail

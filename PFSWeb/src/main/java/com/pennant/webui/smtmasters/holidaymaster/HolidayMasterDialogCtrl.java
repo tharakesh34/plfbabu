@@ -488,7 +488,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
-		if (aHolidayMaster.isNew()) {
+		if (aHolidayMaster.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 		} else {
 			if (isWorkFlowEnabled()) {
@@ -641,7 +641,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aHolidayMaster.isNew();
+		isNew = aHolidayMaster.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -686,7 +686,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(HolidayMaster aHolidayMaster, String tranType) {
+	protected boolean doProcess(HolidayMaster aHolidayMaster, String tranType) {
 		logger.debug("Entering ");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -911,7 +911,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getHolidayMasterListCtrl().search();
 	}
 

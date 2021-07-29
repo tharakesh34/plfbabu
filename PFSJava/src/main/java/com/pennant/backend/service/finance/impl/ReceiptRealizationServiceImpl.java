@@ -122,7 +122,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 
 		// Receipt Header Details Save And Update
 		// =======================================
-		if (receiptHeader.isNew()) {
+		if (receiptHeader.isNewRecord()) {
 			receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
 			getFinReceiptHeaderDAO().save(receiptHeader, tableType);
 		} else {
@@ -430,7 +430,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		valueParm[0] = String.valueOf(receiptHeader.getReceiptID());
 		errParm[0] = PennantJavaUtil.getLabel("label_ReceiptID") + ":" + valueParm[0];
 
-		if (receiptHeader.isNew()) { // for New record or new record into work
+		if (receiptHeader.isNewRecord()) { // for New record or new record into work
 											// flow
 
 			if (!receiptHeader.isWorkflow()) {// With out Work flow only new

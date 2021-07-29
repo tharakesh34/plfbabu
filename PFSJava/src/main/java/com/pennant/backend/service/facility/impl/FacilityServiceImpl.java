@@ -307,7 +307,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			tableType = "_Temp";
 		}
 
-		if (facility.isNew()) {
+		if (facility.isNewRecord()) {
 			getFacilityDAO().save(facility, tableType);
 		} else {
 			getFacilityDAO().update(facility, tableType);
@@ -658,7 +658,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		valueParm[0] = facility.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_CAFReference") + ":" + valueParm[0];
 
-		if (facility.isNew()) { // for New record or new record into work flow
+		if (facility.isNewRecord()) { // for New record or new record into work flow
 
 			if (!facility.isWorkflow()) {// With out Work flow only new records  
 				if (befFacility != null) { // Record Already Exists in the table then error  
@@ -1360,7 +1360,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 				} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 					if (approveRec) {
 						deleteRecord = true;
-					} else if (documentDetails.isNew()) {
+					} else if (documentDetails.isNewRecord()) {
 						saveRecord = true;
 					} else {
 						updateRecord = true;
@@ -1389,7 +1389,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 				auditDetails.get(i).setModelData(documentDetails);
 			} else {
 				CustomerDocument custdoc = getCustomerDocument(documentDetails, facility);
-				if (custdoc.isNew()) {
+				if (custdoc.isNewRecord()) {
 					getCustomerDocumentDAO().save(custdoc, "");
 				} else {
 					getCustomerDocumentDAO().update(custdoc, "");
@@ -1520,7 +1520,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			valueParm[0] = documentDetails.getCustDocTitle();
 			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-			if (documentDetails.isNew()) { // for New record or new record into work flow
+			if (documentDetails.isNewRecord()) { // for New record or new record into work flow
 
 				if (!documentDetails.isWorkflow()) {// With out Work flow only new records  
 					if (befDocumentDetails != null) { // Record Already Exists in the table then error  
@@ -1633,7 +1633,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			} else if (checkListReference.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (checkListReference.isNew()) {
+				} else if (checkListReference.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -1744,7 +1744,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		valueParm[0] = finCheckRef.getFinReference();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (finCheckRef.isNew()) { // for New record or new record into work flow
+		if (finCheckRef.isNewRecord()) { // for New record or new record into work flow
 
 			if (!finCheckRef.isWorkflow()) {// With out Work flow only new records  
 				if (befFinanceCheckListReference != null) { // Record Already Exists in the table then error  
@@ -1880,7 +1880,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			} else if (collateral.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (collateral.isNew()) {
+				} else if (collateral.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -1989,7 +1989,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		valueParm[0] = collateral.getCAFReference();
 		errParm[0] = PennantJavaUtil.getLabel("label_CAFReference") + ":" + valueParm[0];
 
-		if (collateral.isNew()) { // for New record or new record into work flow
+		if (collateral.isNewRecord()) { // for New record or new record into work flow
 
 			if (!collateral.isWorkflow()) {// With out Work flow only new records  
 				if (befCollateral != null) { // Record Already Exists in the table then error  
@@ -2101,7 +2101,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			} else if (collateral.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (collateral.isNew()) {
+				} else if (collateral.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -2208,7 +2208,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		valueParm[0] = facilityDetail.getFacilityRef();
 		errParm[0] = PennantJavaUtil.getLabel("label_FacilityRef") + ":" + valueParm[0];
 
-		if (facilityDetail.isNew()) { // for New record or new record into work flow
+		if (facilityDetail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!facilityDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befFacilityDetail != null) { // Record Already Exists in the table then error  
@@ -2320,7 +2320,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			} else if (customerRating.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (customerRating.isNew()) {
+				} else if (customerRating.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -2430,7 +2430,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		valueParm[0] = customerRating.getLovDescCustCIF();
 		errParm[0] = PennantJavaUtil.getLabel("label_CustCIF") + ":" + valueParm[0];
 
-		if (customerRating.isNew()) { // for New record or new record into work flow
+		if (customerRating.isNewRecord()) { // for New record or new record into work flow
 
 			if (!customerRating.isWorkflow()) {// With out Work flow only new records  
 				if (befCustomerRating != null) { // Record Already Exists in the table then error  

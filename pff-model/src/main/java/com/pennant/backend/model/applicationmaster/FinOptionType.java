@@ -72,7 +72,6 @@ public class FinOptionType extends AbstractWorkflowEntity {
 	private String userTemplateName;
 	private Long customerTemplate;
 	private String customerTemplateName;
-	private boolean newRecord = false;
 	private String lovValue;
 	private FinOptionType befImage;
 	private LoggedInUser userDetails;
@@ -247,14 +246,6 @@ public class FinOptionType extends AbstractWorkflowEntity {
 
 	public void setCustomerTemplateCode(String customerTemplateCode) {
 		this.customerTemplateCode = customerTemplateCode;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

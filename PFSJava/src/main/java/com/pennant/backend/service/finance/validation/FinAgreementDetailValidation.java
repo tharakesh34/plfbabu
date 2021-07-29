@@ -74,7 +74,7 @@ public class FinAgreementDetailValidation {
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_AgrId") + ":" + valueParm[1];
 
-		if (agreementDetail.isNew()) { // for New record or new record into work flow
+		if (agreementDetail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!agreementDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befFinAgreementDetail != null) { // Record Already Exists in the table then error  

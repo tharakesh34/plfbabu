@@ -408,7 +408,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 			showErrorDetails(postValidationErrors);
 		}
 
-		isNew = aExetendedFieldRender.isNew();
+		isNew = aExetendedFieldRender.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {

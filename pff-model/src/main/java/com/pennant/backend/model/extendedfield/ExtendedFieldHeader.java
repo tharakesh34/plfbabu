@@ -71,7 +71,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "moduleName", "subModuleName", "extendedFieldDetailList", "returnStatus" })
 @XmlRootElement(name = "extendedDetail")
 @XmlAccessorType(XmlAccessType.NONE)
-public class ExtendedFieldHeader extends AbstractWorkflowEntity implements Entity {
+public class ExtendedFieldHeader extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 5219478530421796781L;
 
@@ -83,7 +83,6 @@ public class ExtendedFieldHeader extends AbstractWorkflowEntity implements Entit
 	private String event;
 	private String tabHeading;
 	private String numberOfColumns;
-	private boolean newRecord;
 	private String lovValue;
 	private boolean preValidationReq;
 	private boolean postValidationReq;
@@ -168,14 +167,6 @@ public class ExtendedFieldHeader extends AbstractWorkflowEntity implements Entit
 
 	public void setNumberOfColumns(String numberOfColumns) {
 		this.numberOfColumns = numberOfColumns;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

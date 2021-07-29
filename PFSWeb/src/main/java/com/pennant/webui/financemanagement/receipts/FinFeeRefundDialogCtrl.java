@@ -294,7 +294,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 		logger.debug(Literal.ENTERING);
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (finFeeRefund.isNew()) {
+		if (finFeeRefund.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -417,7 +417,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 		boolean isNew;
 		doSetValidation();
 		doWriteComponentsToBean(afinFeeRefundHeader);
-		isNew = afinFeeRefundHeader.isNew();
+		isNew = afinFeeRefundHeader.isNewRecord();
 		String tranType;
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
@@ -472,7 +472,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(FinFeeRefundHeader afinFeeRefundHeader, String tranType) {
+	protected boolean doProcess(FinFeeRefundHeader afinFeeRefundHeader, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader;
@@ -719,7 +719,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	 * @throws InterruptedException
 	 */
 	private void doWriteBeanToComponents(FinFeeRefundHeader feeRefund) {
-		if (!feeRefund.isNew()) {
+		if (!feeRefund.isNewRecord()) {
 			setFinanceDetail(finFeeRefundService.getFinanceDetailById(feeRefund.getFinReference()));
 			this.finReference.setValue(feeRefund.getFinReference(), "");
 			this.finType.setValue(feeRefund.getFinType(), feeRefund.getFintypedesc());
@@ -1443,7 +1443,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		finFeeRefundListCtrl.search();
 	}
 

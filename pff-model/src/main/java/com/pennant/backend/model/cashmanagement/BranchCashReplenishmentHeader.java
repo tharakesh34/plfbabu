@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.pennant.backend.model.Entity;
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import javax.xml.bind.annotation.XmlTransient;
-
-public class BranchCashReplenishmentHeader extends AbstractWorkflowEntity implements Entity {
+public class BranchCashReplenishmentHeader extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 2067917529733168733L;
 	private long processId;
@@ -170,18 +169,10 @@ public class BranchCashReplenishmentHeader extends AbstractWorkflowEntity implem
 		this.cashReplenishmentDetails.add(cashReplenishmentDetail);
 	}
 
-	@Override
-	public boolean isNew() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public long getId() {
 		return processId;
 	}
 
-	@Override
 	public void setId(long id) {
 		processId = id;
 

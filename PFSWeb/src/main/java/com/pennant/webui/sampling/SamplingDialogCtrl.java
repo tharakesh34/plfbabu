@@ -282,7 +282,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	public void doShowDialog(Sampling sampling) {
 		logger.debug(Literal.LEAVING);
 
-		if (sampling.isNew()) {
+		if (sampling.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1466,7 +1466,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		samplingListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -1498,7 +1498,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		doSetValidation();
 		doWriteComponentsToBean(sampling);
 
-		isNew = sampling.isNew();
+		isNew = sampling.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1554,7 +1554,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Sampling sampling, String tranType) {
+	protected boolean doProcess(Sampling sampling, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

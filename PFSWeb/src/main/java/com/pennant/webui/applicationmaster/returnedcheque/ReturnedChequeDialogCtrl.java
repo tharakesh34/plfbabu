@@ -408,7 +408,7 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aReturnedCheque.isNew()) {
+		if (aReturnedCheque.isNewRecord()) {
 			this.custCIF.setVisible(true);
 			this.chequeNo.setVisible(true);
 			this.btnCtrl.setInitNew();
@@ -520,7 +520,7 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getReturnedChequeListCtrl().search();
 	}
 
@@ -670,7 +670,7 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aReturnedCheque.isNew();
+		isNew = aReturnedCheque.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -720,7 +720,7 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(ReturnedChequeDetails aReturnedCheque, String tranType) {
+	protected boolean doProcess(ReturnedChequeDetails aReturnedCheque, String tranType) {
 		logger.debug("Entering ");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

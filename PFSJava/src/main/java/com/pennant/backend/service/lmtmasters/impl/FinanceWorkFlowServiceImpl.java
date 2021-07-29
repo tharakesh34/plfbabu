@@ -144,7 +144,7 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 			tableType = "_Temp";
 		}
 
-		if (financeWorkFlow.isNew()) {
+		if (financeWorkFlow.isNewRecord()) {
 			getFinanceWorkFlowDAO().save(financeWorkFlow, tableType);
 		} else {
 			getFinanceWorkFlowDAO().update(financeWorkFlow, tableType);
@@ -377,7 +377,7 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 		valueParm[1] = financeWorkFlow.getFinEvent();
 		errParm[1] = PennantJavaUtil.getLabel("label_FinanceWorkFlowDialog_FinEvent.value") + ":" + valueParm[1];
 
-		if (financeWorkFlow.isNew()) { // for New record or new record into work flow
+		if (financeWorkFlow.isNewRecord()) { // for New record or new record into work flow
 
 			if (!financeWorkFlow.isWorkflow()) {// With out Work flow only new records  
 				if (befFinanceWorkFlow != null) { // Record Already Exists in the table then error  

@@ -328,7 +328,7 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 		this.custCtgIsActive.setChecked(aCustomerCategory.isCustCtgIsActive());
 		this.recordStatus.setValue(aCustomerCategory.getRecordStatus());
 
-		if (aCustomerCategory.isNew()
+		if (aCustomerCategory.isNewRecord()
 				|| (aCustomerCategory.getRecordType() != null ? aCustomerCategory.getRecordType() : "")
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.custCtgIsActive.setChecked(true);
@@ -402,7 +402,7 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aCustomerCategory.isNew()) {
+		if (aCustomerCategory.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -634,7 +634,7 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aCustomerCategory.isNew();
+		isNew = aCustomerCategory.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -682,7 +682,7 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 	 * 
 	 * @return boolean
 	 */
-	private boolean doProcess(CustomerCategory aCustomerCategory, String tranType) {
+	protected boolean doProcess(CustomerCategory aCustomerCategory, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -909,7 +909,7 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCustomerCategoryListCtrl().search();
 	}
 

@@ -232,7 +232,7 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 			tableType = "_Temp";
 		}
 
-		if (liabilityRequest.isNew()) {
+		if (liabilityRequest.isNewRecord()) {
 			getLiabilityRequestDAO().save(liabilityRequest, tableType);
 		} else {
 			getLiabilityRequestDAO().update(liabilityRequest, tableType);
@@ -595,7 +595,7 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 		valueParm[0] = liabilityRequest.getFinReference();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (liabilityRequest.isNew()) { // for New record or new record into work flow
+		if (liabilityRequest.isNewRecord()) { // for New record or new record into work flow
 
 			if (!liabilityRequest.isWorkflow()) {// With out Work flow only new records  
 				if (befLiabilityRequest != null) { // Record Already Exists in the table then error  

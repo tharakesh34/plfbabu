@@ -152,7 +152,7 @@ public class DeviationParamServiceImpl extends GenericService<DeviationParam> im
 			tableType = "_Temp";
 		}
 
-		if (deviationParam.isNew()) {
+		if (deviationParam.isNewRecord()) {
 			getDeviationParamDAO().save(deviationParam, tableType);
 		} else {
 			getDeviationParamDAO().update(deviationParam, tableType);
@@ -365,7 +365,7 @@ public class DeviationParamServiceImpl extends GenericService<DeviationParam> im
 		valueParm[0] = deviationParam.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_Code") + ":" + valueParm[0];
 
-		if (deviationParam.isNew()) { // for New record or new record into work flow
+		if (deviationParam.isNewRecord()) { // for New record or new record into work flow
 
 			if (!deviationParam.isWorkflow()) {// With out Work flow only new records  
 				if (befDeviationParam != null) { // Record Already Exists in the table then error  

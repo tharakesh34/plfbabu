@@ -152,7 +152,7 @@ public class QueryServiceImpl extends GenericService<Query> implements QueryServ
 			tableType = "_Temp";
 		}
 
-		if (query.isNew()) {
+		if (query.isNewRecord()) {
 			getQueryDAO().save(query, tableType);
 		} else {
 			getQueryDAO().update(query, tableType);
@@ -364,7 +364,7 @@ public class QueryServiceImpl extends GenericService<Query> implements QueryServ
 		valueParm[0] = query.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_QueryCode") + ":" + valueParm[0];
 
-		if (query.isNew()) { // for New record or new record into work flow
+		if (query.isNewRecord()) { // for New record or new record into work flow
 
 			if (!query.isWorkflow()) {// With out Work flow only new records  
 				if (befQuery != null) { // Record Already Exists in the table then error  

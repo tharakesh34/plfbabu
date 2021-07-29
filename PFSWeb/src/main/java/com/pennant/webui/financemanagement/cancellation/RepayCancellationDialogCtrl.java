@@ -565,7 +565,7 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType)
+	protected boolean doProcess(FinanceDetail aFinanceDetail, String tranType)
 			throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 

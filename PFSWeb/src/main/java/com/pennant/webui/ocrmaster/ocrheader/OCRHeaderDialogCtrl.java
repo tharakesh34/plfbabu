@@ -287,7 +287,7 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 			this.ocrType.setDisabled(true);
 		}
 		doFillOCRDetails(aOCRHeader.getOcrDetailList());
-		if (aOCRHeader.isNew()) {
+		if (aOCRHeader.isNewRecord()) {
 			this.active.setChecked(true);
 		}
 
@@ -375,7 +375,7 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 		logger.debug(Literal.ENTERING);
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aOCRHeader.isNew()) {
+		if (aOCRHeader.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -465,7 +465,7 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getOCRHeaderListCtrl().search();
 	}
 
@@ -608,7 +608,7 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 		// get the selected step object from the listBox
 		// Do data level validations here
 		aOCRHeader.setOcrDetailList(getOcrDetailList());
-		isNew = aOCRHeader.isNew();
+		isNew = aOCRHeader.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -658,7 +658,7 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(OCRHeader aOCRHeader, String tranType) {
+	protected boolean doProcess(OCRHeader aOCRHeader, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -730,7 +730,7 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 						}
 					}
 					if (PennantConstants.RECORD_TYPE_UPD.equals(details.getRecordType())) {
-						details.setNewRecord(aOCRHeader.isNew());
+						details.setNewRecord(aOCRHeader.isNewRecord());
 					}
 				}
 			}

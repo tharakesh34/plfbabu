@@ -57,7 +57,7 @@ public class OrganizationServiceImpl extends GenericService<Organization> implem
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (org.isNew()) {
+		if (org.isNewRecord()) {
 			org.setId(organizationDAO.save(org, tableType));
 			auditHeader.getAuditDetail().setModelData(org);
 			auditHeader.setAuditReference(String.valueOf(org.getId()));
@@ -306,7 +306,7 @@ public class OrganizationServiceImpl extends GenericService<Organization> implem
 				+ organizationId;
 
 		// Check the unique keys.
-		if (organization.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(organization.getRecordType())
+		if (organization.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(organization.getRecordType())
 				&& organizationDAO.isDuplicateKey(organization.getCustId(), organization.getCode(),
 						organization.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			parameters[0] = PennantJavaUtil.getLabel("label_OrganizationDialog_CIF.value") + ": "

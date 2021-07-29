@@ -5,23 +5,22 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.WSReturnStatus;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.pennant.backend.model.WSReturnStatus;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 @XmlType(propOrder = { "referenceId", "docCategory", "custDocTitle", "custDocIssuedCountry", "custDocSysName",
 		"custDocIssuedOn", "custDocExpDate", "docPurpose", "docName", "doctype", "docImage", "docUri",
 		"docReceivedDate", "docOriginal", "docReceived", "remarks" })
 @XmlRootElement(name = "DocumentDetail")
 @XmlAccessorType(XmlAccessType.NONE)
-public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
+public class DocumentDetails extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -5569765259024813213L;
 
 	private long docId = Long.MIN_VALUE;
@@ -64,7 +63,6 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private String lovDescDocCategoryName;
 	private DocumentDetails befImage;
 	private LoggedInUser userDetails;
-	private boolean newRecord = false;
 	@XmlElement
 	private Date docReceivedDate;
 	@XmlElement
@@ -122,7 +120,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 		this.doctype = doctype;
 		this.docName = docName;
 		this.docImage = docImage;
-		this.newRecord = true;
+		setNewRecord(true);
 	}
 
 	public DocumentDetails copyEntity() {
@@ -152,7 +150,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 		entity.setLovDescDocCategoryName(this.lovDescDocCategoryName);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setDocReceivedDate(this.docReceivedDate);
 		entity.setDocReceived(this.docReceived);
 		entity.setDocOriginal(this.docOriginal);
@@ -228,17 +226,10 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 		return excludeFields;
 	}
 
-	@Override
-	public boolean isNew() {
-		return newRecord;
-	}
-
-	@Override
 	public long getId() {
 		return docId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.docId = id;
 
@@ -314,14 +305,6 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 
 	public String getReferenceId() {
 		return referenceId;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public void setLovDescDocCategoryName(String lovDescDocCategoryName) {

@@ -112,7 +112,7 @@ public class LegalApplicantDetailService extends GenericService<LegalApplicantDe
 		errParm[0] = PennantJavaUtil.getLabel("label_LegalReference") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_PropertyOwnersName") + ":" + valueParm[1];
 
-		if (applicantDetail.isNew()) {
+		if (applicantDetail.isNewRecord()) {
 			if (!applicantDetail.isWorkflow()) {
 				if (befApplicantDetail != null) {
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
@@ -262,7 +262,7 @@ public class LegalApplicantDetailService extends GenericService<LegalApplicantDe
 			} else if (legalApplicantDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (legalApplicantDetail.isNew()) {
+				} else if (legalApplicantDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

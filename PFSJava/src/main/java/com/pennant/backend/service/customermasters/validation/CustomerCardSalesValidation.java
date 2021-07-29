@@ -69,7 +69,7 @@ public class CustomerCardSalesValidation {
 		errParm[1] = PennantJavaUtil.getLabel("label_CustomerCardSalesInfoDialog_MerchantId.label") + "-"
 				+ valueParm[1];
 
-		if (customerCardSalesInfo.isNew()) { // for New record or new record into work flow
+		if (customerCardSalesInfo.isNewRecord()) { // for New record or new record into work flow
 
 			if (!customerCardSalesInfo.isWorkflow()) {// With out Work flow only new records  
 				if (befCustomerBankInfo != null) { // Record Already Exists in the table then error  

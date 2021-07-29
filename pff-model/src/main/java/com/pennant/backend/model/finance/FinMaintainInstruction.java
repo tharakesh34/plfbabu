@@ -30,7 +30,6 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity {
 	private long finMaintainId = Long.MIN_VALUE;
 	private String finReference;
 	private String event;
-	private boolean newRecord;
 	private String lovValue;
 	private FinMaintainInstruction befImage;
 	@XmlTransient
@@ -92,14 +91,6 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity {
 
 	public void setFinMaintainId(long finMaintainId) {
 		this.finMaintainId = finMaintainId;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

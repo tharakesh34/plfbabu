@@ -63,7 +63,6 @@ public class Province extends AbstractWorkflowEntity {
 	private String cPCountry;
 	private String cPProvince;
 	private String cPProvinceName;
-	private boolean newRecord;
 	private String lovValue;
 	private Province befImage;
 	private LoggedInUser userDetails;
@@ -135,14 +134,6 @@ public class Province extends AbstractWorkflowEntity {
 
 	public void setCPProvinceName(String cPProvinceName) {
 		this.cPProvinceName = cPProvinceName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

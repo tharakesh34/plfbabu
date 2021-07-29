@@ -306,7 +306,7 @@ public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 		this.addrTypeIsActive.setChecked(aAddressType.isAddrTypeIsActive());
 		this.recordStatus.setValue(aAddressType.getRecordStatus());
 
-		if (aAddressType.isNew() || (aAddressType.getRecordType() != null ? aAddressType.getRecordType() : "")
+		if (aAddressType.isNewRecord() || (aAddressType.getRecordType() != null ? aAddressType.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.addrTypeIsActive.setChecked(true);
 			this.addrTypeIsActive.setDisabled(true);
@@ -382,7 +382,7 @@ public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aAddressType.isNew()) {
+		if (aAddressType.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -619,7 +619,7 @@ public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aAddressType.isNew();
+		isNew = aAddressType.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -667,7 +667,7 @@ public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(AddressType aAddressType, String tranType) {
+	protected boolean doProcess(AddressType aAddressType, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -875,7 +875,7 @@ public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getAddressTypeListCtrl().search();
 	}
 

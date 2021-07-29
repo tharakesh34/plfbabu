@@ -127,7 +127,7 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (baseRate.isNew()) {
+		if (baseRate.isNewRecord()) {
 			getBaseRateDAO().save(baseRate, tableType);
 			auditHeader.getAuditDetail().setModelData(baseRate);
 			auditHeader.setAuditReference(baseRate.getBRType() + PennantConstants.KEY_SEPERATOR
@@ -345,7 +345,7 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 		BaseRate baseRate = (BaseRate) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (baseRate.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(baseRate.getRecordType())
+		if (baseRate.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(baseRate.getRecordType())
 				&& baseRateDAO.isDuplicateKey(baseRate.getBRType(), baseRate.getBREffDate(), baseRate.getCurrency(),
 						baseRate.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];

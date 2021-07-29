@@ -133,7 +133,7 @@ public class BuilderGroupServiceImpl extends GenericService<BuilderGroup> implem
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (builderGroup.isNew()) {
+		if (builderGroup.isNewRecord()) {
 			builderGroup.setId(Long.parseLong(getBuilderGroupDAO().save(builderGroup, tableType)));
 			auditHeader.getAuditDetail().setModelData(builderGroup);
 			auditHeader.setAuditReference(String.valueOf(builderGroup.getId()));
@@ -340,7 +340,7 @@ public class BuilderGroupServiceImpl extends GenericService<BuilderGroup> implem
 		String[] parameters = new String[2];
 		parameters[0] = PennantJavaUtil.getLabel("label_name") + ": " + builderGroup.getName();
 		// Check the unique keys.
-		if (builderGroup.isNew() && builderGroupDAO.isDuplicateKey(builderGroup.getId(), builderGroup.getName(),
+		if (builderGroup.isNewRecord() && builderGroupDAO.isDuplicateKey(builderGroup.getId(), builderGroup.getName(),
 				builderGroup.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));

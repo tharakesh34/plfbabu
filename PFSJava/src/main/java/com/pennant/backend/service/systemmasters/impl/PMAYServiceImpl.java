@@ -69,7 +69,7 @@ public class PMAYServiceImpl extends GenericService<PMAY> implements PMAYService
 			financeMainDAO.updatePmay(pmay.getFinReference(), flag, TableType.MAIN_TAB.getSuffix());
 		}
 
-		if (pmay.isNew()) {
+		if (pmay.isNewRecord()) {
 			pmay.setFinReference(pmayDAO.save(pmay, tableType));
 			auditHeader.getAuditDetail().setModelData(pmay);
 			auditHeader.setAuditReference(pmay.getFinReference());
@@ -379,7 +379,7 @@ public class PMAYServiceImpl extends GenericService<PMAY> implements PMAYService
 		String[] parameters = new String[2];
 		parameters[0] = PennantJavaUtil.getLabel("label_PmayDialog_FinReference.value") + ": " + pmay.getFinReference();
 		// Check the unique keys.
-		if (pmay.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(pmay.getRecordType()) && pmayDAO
+		if (pmay.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(pmay.getRecordType()) && pmayDAO
 				.isDuplicateKey(pmay.getFinReference(), pmay.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));

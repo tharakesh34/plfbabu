@@ -217,7 +217,7 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 				if (fm.isWorkflow()) {
 					if (StringUtils.isEmpty(fm.getRecordType())) {
 						fm.setVersion(fm.getVersion() + 1);
-						if (fm.isNew()) {
+						if (fm.isNewRecord()) {
 							fm.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 						} else {
 							fm.setRecordType(PennantConstants.RECORD_TYPE_UPD);
@@ -280,7 +280,7 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 		if (fm.isWorkflow()) {
 			if (StringUtils.isEmpty(fm.getRecordType())) {
 				fm.setVersion(fm.getVersion() + 1);
-				if (fm.isNew()) {
+				if (fm.isNewRecord()) {
 					fm.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
 					fm.setRecordType(PennantConstants.RECORD_TYPE_UPD);

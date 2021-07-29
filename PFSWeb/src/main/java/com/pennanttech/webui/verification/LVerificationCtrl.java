@@ -1408,7 +1408,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void refreshList() {
+	protected void refreshList() {
 		lvInitiationListCtrl.search();
 	}
 

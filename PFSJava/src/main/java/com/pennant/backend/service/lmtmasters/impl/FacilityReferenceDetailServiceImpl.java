@@ -212,7 +212,7 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 			tableType = "_Temp";
 		}
 
-		if (facilityReferenceDetail.isNew()) {
+		if (facilityReferenceDetail.isNewRecord()) {
 			facilityReferenceDetail.setId(getFacilityReferenceDetailDAO().save(facilityReferenceDetail, tableType));
 			auditHeader.getAuditDetail().setModelData(facilityReferenceDetail);
 			auditHeader.setAuditReference(String.valueOf(facilityReferenceDetail.getFinRefDetailId()));
@@ -423,7 +423,7 @@ public class FacilityReferenceDetailServiceImpl extends GenericService<FacilityR
 		valueParm[0] = String.valueOf(facilityReferenceDetail.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_FinRefDetailId") + ":" + valueParm[0];
 
-		if (facilityReferenceDetail.isNew()) { // for New record or new record
+		if (facilityReferenceDetail.isNewRecord()) { // for New record or new record
 			// into work flow
 
 			if (!facilityReferenceDetail.isWorkflow()) {// With out Work flow

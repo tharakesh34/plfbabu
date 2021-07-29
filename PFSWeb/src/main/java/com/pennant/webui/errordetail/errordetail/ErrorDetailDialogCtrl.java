@@ -353,7 +353,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (errorDetail.isNew()) {
+		if (errorDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -616,7 +616,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	/**
 	 * Method for Refreshing List after Save/Delete a Record
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getErrorDetailListCtrl().search();
 	}
 
@@ -707,7 +707,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aErrorDetail.isNew();
+		isNew = aErrorDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -758,7 +758,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	 * 
 	 */
 
-	private boolean doProcess(ErrorDetail aErrorDetail, String tranType) throws Exception {
+	protected boolean doProcess(ErrorDetail aErrorDetail, String tranType) throws Exception {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		aErrorDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());

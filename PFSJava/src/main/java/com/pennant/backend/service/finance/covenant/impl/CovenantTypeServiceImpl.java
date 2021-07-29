@@ -100,7 +100,7 @@ public class CovenantTypeServiceImpl extends GenericService<CovenantType> implem
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (covenantType.isNew()) {
+		if (covenantType.isNewRecord()) {
 			covenantType.setId(Long.parseLong(covenantTypeDAO.save(covenantType, tableType)));
 			auditHeader.getAuditDetail().setModelData(covenantType);
 			auditHeader.setAuditReference(String.valueOf(covenantType.getId()));
@@ -307,7 +307,7 @@ public class CovenantTypeServiceImpl extends GenericService<CovenantType> implem
 		String category = covenantType.getCategory();
 
 		// Check the unique keys.
-		if (covenantType.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(covenantType.getRecordType())
+		if (covenantType.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(covenantType.getRecordType())
 				&& covenantTypeDAO.isDuplicateKey(covenantType,
 						covenantType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];

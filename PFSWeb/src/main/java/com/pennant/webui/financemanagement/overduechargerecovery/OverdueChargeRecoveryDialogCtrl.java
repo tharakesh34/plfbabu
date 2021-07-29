@@ -702,7 +702,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
-		if (aOverdueChargeRecovery.isNew()) {
+		if (aOverdueChargeRecovery.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1026,7 +1026,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aOverdueChargeRecovery.isNew();
+		isNew = aOverdueChargeRecovery.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1064,7 +1064,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		logger.debug("Leaving");
 	}
 
-	private boolean doProcess(OverdueChargeRecovery aOverdueChargeRecovery, String tranType) {
+	protected boolean doProcess(OverdueChargeRecovery aOverdueChargeRecovery, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -1296,7 +1296,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		logger.debug("Leaving");
 	}
 
-	private void refreshList() {
+	protected void refreshList() {
 		final JdbcSearchObject<OverdueChargeRecovery> soOverdueChargeRecoveryEvent = getOverdueChargeRecoveryListCtrl()
 				.getSearchObj();
 		getOverdueChargeRecoveryListCtrl().pagingOverdueChargeRecoveryList.setActivePage(0);

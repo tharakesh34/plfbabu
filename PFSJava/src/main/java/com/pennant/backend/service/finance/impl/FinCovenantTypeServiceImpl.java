@@ -211,7 +211,7 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 						(PennantConstants.RECORD_TYPE_DEL))) {
 					if (approveRec) {
 						deleteRecord = true;
-					} else if (finPayment.isNew()) {
+					} else if (finPayment.isNewRecord()) {
 						saveRecord = true;
 					} else {
 						updateRecord = true;
@@ -382,7 +382,7 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 		valueParm[0] = covenantType.getFinReference();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (covenantType.isNew()) { // for New record or new record into work flow
+		if (covenantType.isNewRecord()) { // for New record or new record into work flow
 
 			if (!covenantType.isWorkflow()) {// With out Work flow only new records  
 				if (befFinAdvancePay != null) { // Record Already Exists in the table then error  

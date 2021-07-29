@@ -61,14 +61,12 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(propOrder = { "id", "executionOrder", "condition" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SnapShotCondition extends AbstractWorkflowEntity implements Entity {
+public class SnapShotCondition extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
 	private int executionOrder;
 	private String condition;
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -116,14 +114,6 @@ public class SnapShotCondition extends AbstractWorkflowEntity implements Entity 
 
 	public void setCondition(String condition) {
 		this.condition = condition;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

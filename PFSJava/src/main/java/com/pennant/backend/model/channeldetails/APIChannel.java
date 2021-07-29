@@ -9,14 +9,13 @@ import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class APIChannel extends AbstractWorkflowEntity implements Entity {
+public class APIChannel extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long Id = Long.MIN_VALUE;
 	private String Code;
 	private String Description;
 	private boolean active;
-	private boolean newRecord = false;
 	private APIChannel befImage;
 	private LoggedInUser userDetails;
 	private List<APIChannelIP> ipList = new ArrayList<APIChannelIP>();
@@ -89,14 +88,6 @@ public class APIChannel extends AbstractWorkflowEntity implements Entity {
 
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public List<APIChannelIP> getIpList() {

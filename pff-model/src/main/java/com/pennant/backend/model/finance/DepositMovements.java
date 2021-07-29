@@ -6,13 +6,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import javax.xml.bind.annotation.XmlTransient;
-
-public class DepositMovements extends AbstractWorkflowEntity implements Entity {
+public class DepositMovements extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -58727889587717168L;
 
@@ -27,7 +26,6 @@ public class DepositMovements extends AbstractWorkflowEntity implements Entity {
 	private String partnerBankName;
 	private long receiptId = 0;
 	private long linkedTranId = 0;
-	private boolean newRecord = false;
 	private DepositMovements befImage;
 
 	private String branchCode;
@@ -73,14 +71,6 @@ public class DepositMovements extends AbstractWorkflowEntity implements Entity {
 		this.depositId = depositId;
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
 	public DepositMovements getBefImage() {
 		return befImage;
 	}
@@ -97,17 +87,10 @@ public class DepositMovements extends AbstractWorkflowEntity implements Entity {
 		this.userDetails = userDetails;
 	}
 
-	@Override
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
-	@Override
 	public long getId() {
 		return this.movementId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.movementId = id;
 	}

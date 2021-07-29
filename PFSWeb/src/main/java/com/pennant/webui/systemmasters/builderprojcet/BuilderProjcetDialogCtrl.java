@@ -448,7 +448,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		builderprojcetListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -842,7 +842,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 	public void doShowDialog(BuilderProjcet builderProjcet) {
 		logger.debug(Literal.LEAVING);
 
-		if (builderProjcet.isNew()) {
+		if (builderProjcet.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1317,7 +1317,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 		generateApfNo();
 		doWriteComponentsToBean(aBuilderProjcet);
 
-		isNew = aBuilderProjcet.isNew();
+		isNew = aBuilderProjcet.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1364,7 +1364,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(BuilderProjcet aBuilderProjcet, String tranType) {
+	protected boolean doProcess(BuilderProjcet aBuilderProjcet, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

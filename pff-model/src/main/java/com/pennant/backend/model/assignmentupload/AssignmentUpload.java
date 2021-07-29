@@ -70,7 +70,6 @@ public class AssignmentUpload extends AbstractWorkflowEntity {
 	private String rejectReason = null;
 
 	private AssignmentUpload befImage;
-	private boolean newRecord;
 	@XmlTransient
 	private LoggedInUser userDetails;
 
@@ -159,14 +158,6 @@ public class AssignmentUpload extends AbstractWorkflowEntity {
 
 	public void setBefImage(AssignmentUpload befImage) {
 		this.befImage = befImage;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public LoggedInUser getUserDetails() {

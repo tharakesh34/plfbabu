@@ -792,7 +792,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
 			receiptHeader.setBounceDate(SysParamUtil.getAppDate());
 		}
-		if (receiptHeader.isNew()) {
+		if (receiptHeader.isNewRecord()) {
 
 			// Save Receipt Header
 			receiptID = finReceiptHeaderDAO.save(receiptHeader, tableType);
@@ -1204,7 +1204,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		List<FinFeeDetail> feeDetailsList = receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
 		String finReference = receiptData.getFinanceDetail().getFinScheduleData().getFinReference();
-		boolean newRecord = receiptData.getReceiptHeader().isNew();
+		boolean newRecord = receiptData.getReceiptHeader().isNewRecord();
 
 		List<FinFeeDetail> oldFeedetails = receiptData.getFinFeeDetails();
 		if (CollectionUtils.isNotEmpty(oldFeedetails)) {
@@ -2643,7 +2643,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		valueParm[0] = String.valueOf(finReceiptHeader.getReceiptID());
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (finReceiptHeader.isNew()) { // for New record or new record into
+		if (finReceiptHeader.isNewRecord()) { // for New record or new record into
 										// work
 										// flow
 

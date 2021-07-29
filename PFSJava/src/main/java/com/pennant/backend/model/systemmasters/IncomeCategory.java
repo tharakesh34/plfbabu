@@ -38,7 +38,6 @@ public class IncomeCategory extends AbstractWorkflowEntity {
 
 	private String incomeCategory;
 	private String categoryDesc;
-	private boolean newRecord = false;
 	private String lovValue;
 	private IncomeCategory befImage;
 	private LoggedInUser userDetails;
@@ -74,14 +73,6 @@ public class IncomeCategory extends AbstractWorkflowEntity {
 
 	public void setCategoryDesc(String categoryDesc) {
 		this.categoryDesc = categoryDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

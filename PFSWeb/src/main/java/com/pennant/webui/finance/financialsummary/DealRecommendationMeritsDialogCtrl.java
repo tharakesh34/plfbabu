@@ -419,7 +419,7 @@ public class DealRecommendationMeritsDialogCtrl extends GFCBaseCtrl<DealRecommen
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
 	/*
-	 * private void refreshList() { getFinancialSummaryDialogCtrl().search(); }
+	 * protected void refreshList() { getFinancialSummaryDialogCtrl().search(); }
 	 */
 
 	// CRUD operations
@@ -581,7 +581,7 @@ public class DealRecommendationMeritsDialogCtrl extends GFCBaseCtrl<DealRecommen
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = dealRecommendationMerits.isNew();
+		isNew = dealRecommendationMerits.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -737,7 +737,7 @@ public class DealRecommendationMeritsDialogCtrl extends GFCBaseCtrl<DealRecommen
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(DealRecommendationMerits dealRecommendationMerits, String tranType) {
+	protected boolean doProcess(DealRecommendationMerits dealRecommendationMerits, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

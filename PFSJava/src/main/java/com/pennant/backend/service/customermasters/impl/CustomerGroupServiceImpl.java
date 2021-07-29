@@ -144,7 +144,7 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 			tableType = "_Temp";
 		}
 
-		if (customerGroup.isNew()) {
+		if (customerGroup.isNewRecord()) {
 			customerGroup.setId(getCustomerGroupDAO().save(customerGroup, tableType));
 			auditHeader.getAuditDetail().setModelData(customerGroup);
 			auditHeader.setAuditReference(String.valueOf(customerGroup.getId()));
@@ -351,7 +351,7 @@ public class CustomerGroupServiceImpl extends GenericService<CustomerGroup> impl
 		valueParm[0] = String.valueOf(customerGroup.getCustGrpCode());
 		errParm[0] = PennantJavaUtil.getLabel("label_CustGrpID") + " : " + valueParm[0];
 
-		if (customerGroup.isNew()) { // for New record or new record into work
+		if (customerGroup.isNewRecord()) { // for New record or new record into work
 			// flow
 
 			if (!customerGroup.isWorkflow()) {// With out Work flow only new

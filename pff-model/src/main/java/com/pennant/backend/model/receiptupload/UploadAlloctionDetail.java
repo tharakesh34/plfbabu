@@ -4,19 +4,18 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.pennant.backend.model.Entity;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+
 @XmlType(propOrder = { "allocationType", "referenceCode", "paidAmount", "waivedAmount" })
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class UploadAlloctionDetail extends AbstractWorkflowEntity implements Entity {
+public class UploadAlloctionDetail extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -4601315178356280082L;
 
@@ -114,24 +113,6 @@ public class UploadAlloctionDetail extends AbstractWorkflowEntity implements Ent
 
 	public void setRootId(String rootId) {
 		this.rootId = rootId;
-	}
-
-	@Override
-	public boolean isNew() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public long getId() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void setId(long id) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public List<ErrorDetail> getErrorDetails() {

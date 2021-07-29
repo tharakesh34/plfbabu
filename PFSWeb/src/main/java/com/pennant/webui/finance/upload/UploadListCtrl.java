@@ -596,7 +596,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 
 			uh.setUploadManualAdvises(maUpload);
 
-			isNew = uh.isNew();
+			isNew = uh.isNewRecord();
 			String tranType;
 
 			if (isWorkFlowEnabled()) {

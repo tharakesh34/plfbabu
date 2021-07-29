@@ -159,7 +159,7 @@ public class AuthorizationLimitServiceImpl extends GenericService<AuthorizationL
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (authorizationLimit.isNew()) {
+		if (authorizationLimit.isNewRecord()) {
 			if (hold) {
 				getAuthorizationLimitDAO().saveHold(authorizationLimit);
 			} else {
@@ -456,7 +456,7 @@ public class AuthorizationLimitServiceImpl extends GenericService<AuthorizationL
 		AuthorizationLimit authorizationLimit = (AuthorizationLimit) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (authorizationLimit.isNew()
+		if (authorizationLimit.isNewRecord()
 				&& authorizationLimitDAO.isDuplicateKey(authorizationLimit.getId(), authorizationLimit.getLimitType(),
 						authorizationLimit.getUserID(), authorizationLimit.getRoleId(), authorizationLimit.getModule(),
 						authorizationLimit.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {

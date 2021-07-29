@@ -20,8 +20,6 @@ public class AutoKnockOffFeeMapping extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private AutoKnockOffFeeMapping befImage;
 	@XmlTransient
-	private boolean newRecord = false;
-	@XmlTransient
 	private String lovValue;
 	private int keyValue = 0;
 
@@ -99,14 +97,6 @@ public class AutoKnockOffFeeMapping extends AbstractWorkflowEntity {
 
 	public void setBefImage(AutoKnockOffFeeMapping befImage) {
 		this.befImage = befImage;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public int getKeyValue() {

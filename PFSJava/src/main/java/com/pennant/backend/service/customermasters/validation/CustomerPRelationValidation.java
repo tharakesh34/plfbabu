@@ -73,7 +73,7 @@ public class CustomerPRelationValidation {
 		errParm[0] = PennantJavaUtil.getLabel("label_PRCustID") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_PRCustPRSNo") + ":" + valueParm[1];
 
-		if (customerPRelation.isNew()) { // for New record or new record into work flow
+		if (customerPRelation.isNewRecord()) { // for New record or new record into work flow
 
 			if (!customerPRelation.isWorkflow()) {// With out Work flow only new records  
 				if (befCustomerPRelation != null) { // Record Already Exists in the table then error  

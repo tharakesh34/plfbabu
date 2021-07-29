@@ -493,7 +493,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 		// call the zul-file with the parameters packed in a map
 		try {
 			if ("Provision".equals(this.module)) {
-				if (aProvision.isNew()) {
+				if (aProvision.isNewRecord()) {
 					Executions.createComponents(
 							"/WEB-INF/pages/FinanceManagement/SelectFinance/SelectFinReferenceDialog.zul", null, map);
 				} else {

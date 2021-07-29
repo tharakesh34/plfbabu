@@ -4,20 +4,19 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 @XmlType(propOrder = { "bankCustomer", "coOwnerIDType", "coOwnerId", "coOwnerPercentage", "coOwnerCIF",
 		"coOwnerCIFName", "mobileNo", "emailId", "coOwnerIDNumber", "addrHNbr", "flatNbr", "addrStreet", "addrLine1",
 		"addrLine2", "POBox", "addrCountry", "addrProvince", "addrCity", "addrZIP", "remarks" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class legalapplicantdetail extends AbstractWorkflowEntity implements Entity {
+public class legalapplicantdetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long customerId;
@@ -84,7 +83,6 @@ public class legalapplicantdetail extends AbstractWorkflowEntity implements Enti
 
 	@XmlElement(name = "zip")
 	private String addrZIP;
-	private boolean newRecord = false;
 	private legalapplicantdetail befImage;
 	private LoggedInUser userDetails;
 
@@ -112,11 +110,6 @@ public class legalapplicantdetail extends AbstractWorkflowEntity implements Enti
 		excludeFields.add("coOwnerCIF");
 		excludeFields.add("validateCoOwner");
 		return excludeFields;
-	}
-
-	@Override
-	public boolean isNew() {
-		return isNewRecord();
 	}
 
 	public String getCollateralRef() {
@@ -287,14 +280,6 @@ public class legalapplicantdetail extends AbstractWorkflowEntity implements Enti
 		this.addrZIP = addrZIP;
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
 	public legalapplicantdetail getBefImage() {
 		return befImage;
 	}
@@ -349,16 +334,6 @@ public class legalapplicantdetail extends AbstractWorkflowEntity implements Enti
 
 	public void setLovDescAddrCityName(String lovDescAddrCityName) {
 		this.lovDescAddrCityName = lovDescAddrCityName;
-	}
-
-	@Override
-	public long getId() {
-		return coOwnerId;
-	}
-
-	@Override
-	public void setId(long id) {
-		// TODO Auto-generated method stub
 	}
 
 	public long getCustomerId() {

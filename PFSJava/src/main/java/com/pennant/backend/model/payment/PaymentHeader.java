@@ -85,8 +85,6 @@ public class PaymentHeader extends AbstractWorkflowEntity {
 	private String paymentInstrType;
 	private long linkedTranId;
 	@XmlTransient
-	private boolean newRecord = false;
-	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private PaymentHeader befImage;
@@ -200,14 +198,6 @@ public class PaymentHeader extends AbstractWorkflowEntity {
 
 	public void setLinkedTranId(long linkedTranId) {
 		this.linkedTranId = linkedTranId;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -316,7 +316,7 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 	 */
 	public void doShowDialog(VASProductType aVASProductType) throws InterruptedException {
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (vASProductType.isNew()) {
+		if (vASProductType.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			this.active.setDisabled(true);
 			doEdit();
@@ -558,7 +558,7 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 	/**
 	 * Method for Refreshing List after Save/Delete a Record
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		vASProductTypeListCtrl.search();
 	}
 
@@ -591,7 +591,7 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 
 		if (count > 0) {
 			this.active.setDisabled(true);
-		} else if (vASProductType.isNew()) {
+		} else if (vASProductType.isNewRecord()) {
 			this.active.setDisabled(true);
 		} else {
 			this.active.setDisabled(isReadOnly("VASProductTypeDialog_Active"));
@@ -754,7 +754,7 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aVASProductType.isNew();
+		isNew = aVASProductType.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -804,7 +804,7 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 	 * 
 	 */
 
-	private boolean doProcess(VASProductType aVASProductType, String tranType) {
+	protected boolean doProcess(VASProductType aVASProductType, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		aVASProductType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());

@@ -152,7 +152,7 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (partnerBank.isNew()) {
+		if (partnerBank.isNewRecord()) {
 			getPartnerBankDAO().save(partnerBank, tableType);
 			if (partnerBank.getPartnerBankModesList() != null && partnerBank.getPartnerBankModesList().size() > 0) {
 				getPartnerBankDAO().deletePartner(partnerBank);
@@ -389,7 +389,7 @@ public class PartnerBankServiceImpl extends GenericService<PartnerBank> implemen
 		errParm[0] = PennantJavaUtil.getLabel("label_PartnerBankCode") + ":" + valueParm[0];
 
 		// Check the unique keys.
-		if (partnerBank.isNew() && partnerBankDAO.isDuplicateKey(partnerBank.getPartnerBankId(),
+		if (partnerBank.isNewRecord() && partnerBankDAO.isDuplicateKey(partnerBank.getPartnerBankId(),
 				partnerBank.getPartnerBankCode(), partnerBank.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 		}

@@ -458,7 +458,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 			showErrorDetails(postValidationErrors);
 		}
 
-		isNew = aExetendedFieldRender.isNew();
+		isNew = aExetendedFieldRender.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {

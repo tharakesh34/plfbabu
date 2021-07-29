@@ -2,17 +2,16 @@ package com.pennant.backend.model.customermasters;
 
 import java.sql.Timestamp;
 
-import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
+import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 @XmlAccessorType(XmlAccessType.NONE)
-public class ExternalDocument extends AbstractWorkflowEntity implements Entity {
+public class ExternalDocument extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -5945200122646428518L;
 
@@ -36,10 +35,9 @@ public class ExternalDocument extends AbstractWorkflowEntity implements Entity {
 	private byte[] docImage;
 	@XmlElement
 	private String docType;
-	private boolean newRecord;
 	private DocumentDetails befImage;
 	private LoggedInUser userDetails;
-	//As per ExternalDocuments below fields are added
+	// As per ExternalDocuments below fields are added
 	@XmlElement
 	private boolean bankReport = false;
 	private boolean lovDescNewImage = false;
@@ -53,7 +51,7 @@ public class ExternalDocument extends AbstractWorkflowEntity implements Entity {
 		this.docType = docType;
 		this.docName = docName;
 		this.docImage = docImage;
-		this.newRecord = true;
+		setNewRecord(true);
 	}
 
 	public long getId() {
@@ -62,14 +60,6 @@ public class ExternalDocument extends AbstractWorkflowEntity implements Entity {
 
 	public void setId(long id) {
 		this.id = id;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public long getCustId() {
@@ -182,11 +172,6 @@ public class ExternalDocument extends AbstractWorkflowEntity implements Entity {
 
 	public void setDocType(String docType) {
 		this.docType = docType;
-	}
-
-	@Override
-	public boolean isNew() {
-		return isNewRecord();
 	}
 
 	public boolean isBankReport() {

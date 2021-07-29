@@ -277,7 +277,7 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		costCenterListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -309,7 +309,7 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter> {
 		this.costCenterCode.setValue(aCostCenter.getCostCenterCode());
 		this.costCenterDesc.setValue(aCostCenter.getCostCenterDesc());
 		this.active.setChecked(aCostCenter.isActive());
-		if (aCostCenter.isNew() || PennantConstants.RECORD_TYPE_NEW.equals(aCostCenter.getRecordType())) {
+		if (aCostCenter.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(aCostCenter.getRecordType())) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
@@ -372,7 +372,7 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter> {
 	public void doShowDialog(CostCenter costCenter) {
 		logger.debug(Literal.LEAVING);
 
-		if (costCenter.isNew()) {
+		if (costCenter.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -599,7 +599,7 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter> {
 		doSetValidation();
 		doWriteComponentsToBean(aCostCenter);
 
-		isNew = aCostCenter.isNew();
+		isNew = aCostCenter.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -646,7 +646,7 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CostCenter aCostCenter, String tranType) {
+	protected boolean doProcess(CostCenter aCostCenter, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

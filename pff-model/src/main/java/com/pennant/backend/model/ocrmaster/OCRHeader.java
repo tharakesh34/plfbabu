@@ -20,7 +20,6 @@ public class OCRHeader extends AbstractWorkflowEntity {
 	private String ocrType;
 	private boolean active;
 	private List<OCRDetail> ocrDetailList = new ArrayList<>();
-	private boolean newRecord = false;
 	private String lovValue;
 	private OCRHeader befImage;
 	private LoggedInUser userDetails;
@@ -93,14 +92,6 @@ public class OCRHeader extends AbstractWorkflowEntity {
 
 	public void setOcrDetailList(List<OCRDetail> ocrDetailList) {
 		this.ocrDetailList = ocrDetailList;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

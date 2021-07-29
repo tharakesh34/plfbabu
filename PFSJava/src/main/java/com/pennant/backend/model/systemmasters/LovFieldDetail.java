@@ -53,7 +53,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>LovFieldDetail table</b>.<br>
  *
  */
-public class LovFieldDetail extends AbstractWorkflowEntity implements Entity {
+public class LovFieldDetail extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 8249116628404142373L;
 
@@ -63,7 +63,6 @@ public class LovFieldDetail extends AbstractWorkflowEntity implements Entity {
 	private String fieldCodeValue;
 	private String valueDesc;
 	private boolean isActive;
-	private boolean newRecord;
 	private String lovValue;
 	private LovFieldDetail befImage;
 	private LoggedInUser userDetails;
@@ -140,14 +139,6 @@ public class LovFieldDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setIsActive(boolean isActive) {
 		this.isActive = isActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

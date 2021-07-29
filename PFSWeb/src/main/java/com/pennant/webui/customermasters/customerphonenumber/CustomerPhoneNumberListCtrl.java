@@ -247,7 +247,7 @@ public class CustomerPhoneNumberListCtrl extends GFCBaseListCtrl<CustomerPhoneNu
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("customerPhoneNumber", customerPhoneNumber);
 		arg.put("customerPhoneNumberListCtrl", this);
-		arg.put("newRecord", customerPhoneNumber.isNew());
+		arg.put("newRecord", customerPhoneNumber.isNewRecord());
 
 		try {
 			Executions.createComponents(

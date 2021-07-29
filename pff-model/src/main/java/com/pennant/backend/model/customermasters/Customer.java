@@ -74,7 +74,7 @@ import javax.xml.bind.annotation.XmlType;
 		"custEmpSts", "custDSA", "custDSADept", "custAddlDec1", "subCategory", "casteId", "religionId",
 		"custShrtNameLclLng", "returnStatus", "custCRCPR", "custResidentialSts" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class Customer extends AbstractWorkflowEntity implements Entity {
+public class Customer extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 2198471029043076055L;
 
 	private long custID;
@@ -290,7 +290,6 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private int custAddlInt4;
 	private int custAddlInt5;
 	private boolean salariedCustomer;
-	private boolean newRecord = false;
 	private String lovValue;
 	private Customer befImage;
 	private LoggedInUser userDetails;
@@ -1473,14 +1472,6 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 
 	public void setCustAddlInt5(int custAddlInt5) {
 		this.custAddlInt5 = custAddlInt5;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

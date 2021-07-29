@@ -323,7 +323,7 @@ public class FinanceFlagsListCtrl extends GFCBaseListCtrl<FinanceFlag> {
 		arg.put("eventCode", FinServiceEvent.FINFLAGS);
 
 		try {
-			if (afinanceFlag.isNew()) {
+			if (afinanceFlag.isNewRecord()) {
 				Executions.createComponents(
 						"/WEB-INF/pages/FinanceManagement/SelectFinance/SelectFinReferenceDialog.zul", null, arg);
 			} else {

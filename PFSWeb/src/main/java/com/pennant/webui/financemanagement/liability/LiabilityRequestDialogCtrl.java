@@ -458,7 +458,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		// force validation, if on, than execute by component.getValue()
 		// fill the financeMain object with the components data
 		this.doWriteComponentsToBean(aFinanceDetail.getFinScheduleData());
-		isNew = getLiabilityRequest().isNew();
+		isNew = getLiabilityRequest().isNewRecord();
 
 		// Document Details Saving
 		if (getDocumentDetailDialogCtrl() != null) {
@@ -633,7 +633,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	 * @return
 	 * @throws Exception
 	 */
-	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws Exception, InterfaceException {
+	protected boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws Exception, InterfaceException {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;
@@ -1575,7 +1575,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 			readOnlyComponent(true, this.nextRepayCpzDate);
 		}
 
-		if (!aFinanceMain.isNew() || !StringUtils.isNotBlank(aFinanceMain.getFinReference())) {
+		if (!aFinanceMain.isNewRecord() || !StringUtils.isNotBlank(aFinanceMain.getFinReference())) {
 			if (moduleDefiner.equals(FinServiceEvent.CHGGRCEND)) {
 
 				this.nextRepayCpzDate.setValue(aFinanceMain.getNextRepayCpzDate());

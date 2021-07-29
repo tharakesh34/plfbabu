@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "custCIF", "lovDescCIFName", "includeRepay", "repayAccountId", "authoritySignatory",
 		"sequence" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class JointAccountDetail extends AbstractWorkflowEntity implements Entity {
+public class JointAccountDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long jointAccountId = Long.MIN_VALUE;
@@ -79,8 +79,6 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 	private List<FinanceExposure> primaryList = null;
 	private List<FinanceExposure> secoundaryList = null;
 	private List<FinanceExposure> guarantorList = null;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private JointAccountDetail befImage;
 	private LoggedInUser userDetails;
@@ -179,14 +177,6 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 
 	public void setRepayAccountId(String repayAccountId) {
 		this.repayAccountId = repayAccountId;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

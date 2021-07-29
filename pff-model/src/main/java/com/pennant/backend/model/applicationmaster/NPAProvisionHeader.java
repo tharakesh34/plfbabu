@@ -71,8 +71,6 @@ public class NPAProvisionHeader extends AbstractWorkflowEntity {
 	@XmlElement
 	private String finType;
 	private String finTypeName;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private NPAProvisionHeader befImage;
 	private LoggedInUser userDetails;
@@ -103,7 +101,7 @@ public class NPAProvisionHeader extends AbstractWorkflowEntity {
 		entity.setEntityName(this.entityName);
 		entity.setFinType(this.finType);
 		entity.setFinTypeName(this.finTypeName);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setLovValue(this.lovValue);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
@@ -184,14 +182,6 @@ public class NPAProvisionHeader extends AbstractWorkflowEntity {
 
 	public void setFinTypeName(String finTypeName) {
 		this.finTypeName = finTypeName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

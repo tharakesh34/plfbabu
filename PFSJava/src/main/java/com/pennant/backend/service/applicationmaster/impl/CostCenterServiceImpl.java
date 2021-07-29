@@ -143,7 +143,7 @@ public class CostCenterServiceImpl extends GenericService<CostCenter> implements
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (costCenter.isNew()) {
+		if (costCenter.isNewRecord()) {
 			costCenter.setId(Long.parseLong(getCostCenterDAO().save(costCenter, tableType)));
 			auditHeader.getAuditDetail().setModelData(costCenter);
 			auditHeader.setAuditReference(String.valueOf(costCenter.getCostCenterID()));
@@ -348,7 +348,7 @@ public class CostCenterServiceImpl extends GenericService<CostCenter> implements
 		CostCenter costCenter = (CostCenter) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (costCenter.isNew() && costCenterDAO.isDuplicateKey(costCenter.getCostCenterID(),
+		if (costCenter.isNewRecord() && costCenterDAO.isDuplicateKey(costCenter.getCostCenterID(),
 				costCenter.getCostCenterCode(), costCenter.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 

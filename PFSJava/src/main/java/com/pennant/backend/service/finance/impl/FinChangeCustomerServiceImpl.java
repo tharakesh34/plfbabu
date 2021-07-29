@@ -113,7 +113,7 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (finChangeCustomer.isNew()) {
+		if (finChangeCustomer.isNewRecord()) {
 			finChangeCustomerDAO.save(finChangeCustomer, tableType);
 		} else {
 			finChangeCustomerDAO.update(finChangeCustomer, tableType);
@@ -412,7 +412,7 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 		parameters[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + FinChangeCustomer.getId();
 
 		// Check the unique keys.
-		if (FinChangeCustomer.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(FinChangeCustomer.getRecordType())
+		if (FinChangeCustomer.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(FinChangeCustomer.getRecordType())
 				&& finChangeCustomerDAO.isDuplicateKey(FinChangeCustomer.getId(), FinChangeCustomer.getFinReference(),
 						FinChangeCustomer.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));

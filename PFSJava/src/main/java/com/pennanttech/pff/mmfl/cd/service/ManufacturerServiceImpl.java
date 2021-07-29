@@ -36,7 +36,7 @@ public class ManufacturerServiceImpl extends GenericService<Manufacturer> implem
 		if (manufacturer.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-		if (manufacturer.isNew()) {
+		if (manufacturer.isNewRecord()) {
 			manufacturer.setManufacturerId(Long.parseLong(manufacturerDAO.save(manufacturer, tableType)));
 			auditHeader.getAuditDetail().setModelData(manufacturer);
 			auditHeader.setAuditReference(String.valueOf(manufacturer.getManufacturerId()));
@@ -170,7 +170,7 @@ public class ManufacturerServiceImpl extends GenericService<Manufacturer> implem
 		long code = manufacturer.getManufacturerId();
 
 		// Check the unique keys.
-		if (manufacturer.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(manufacturer.getRecordType())
+		if (manufacturer.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(manufacturer.getRecordType())
 				&& manufacturerDAO.isDuplicateKey(manufacturer,
 						manufacturer.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

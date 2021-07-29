@@ -311,7 +311,7 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 
 		this.recordStatus.setValue(aSalutation.getRecordStatus());
 
-		if (aSalutation.isNew() || (aSalutation.getRecordType() != null ? aSalutation.getRecordType() : "")
+		if (aSalutation.isNewRecord() || (aSalutation.getRecordType() != null ? aSalutation.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.salutationIsActive.setChecked(true);
 			this.salutationIsActive.setDisabled(true);
@@ -385,7 +385,7 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aSalutation.isNew()) {
+		if (aSalutation.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -407,7 +407,7 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 			// fill the components with the data
 			doWriteBeanToComponents(aSalutation);
 
-			if (aSalutation.isNew() || isWorkFlowEnabled()) {
+			if (aSalutation.isNewRecord() || isWorkFlowEnabled()) {
 				doCheckSystemDefault();
 			}
 
@@ -619,7 +619,7 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aSalutation.isNew();
+		isNew = aSalutation.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -667,7 +667,7 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Salutation aSalutation, String tranType) {
+	protected boolean doProcess(Salutation aSalutation, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -875,7 +875,7 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getSalutationListCtrl().search();
 	}
 

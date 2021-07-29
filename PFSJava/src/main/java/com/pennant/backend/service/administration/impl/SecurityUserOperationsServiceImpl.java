@@ -398,7 +398,7 @@ public class SecurityUserOperationsServiceImpl extends GenericService<SecurityUs
 			} else if (suo.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (suo.isNew()) {
+				} else if (suo.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

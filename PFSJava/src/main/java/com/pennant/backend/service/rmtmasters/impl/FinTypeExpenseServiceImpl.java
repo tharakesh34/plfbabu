@@ -129,7 +129,7 @@ public class FinTypeExpenseServiceImpl extends GenericService<FinTypeExpense> im
 			tableType = "_TEMP";
 		}
 
-		if (finTypeExpense.isNew()) {
+		if (finTypeExpense.isNewRecord()) {
 			finTypeExpense.setId(getFinTypeExpenseDAO().save(finTypeExpense, tableType));
 			auditHeader.getAuditDetail().setModelData(finTypeExpense);
 			auditHeader.setAuditReference(String.valueOf(finTypeExpense.getFinType()));
@@ -322,7 +322,7 @@ public class FinTypeExpenseServiceImpl extends GenericService<FinTypeExpense> im
 		valueParm[0] = finTypeExpense.getExpenseTypeCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_ExpenseCode") + ":" + valueParm[0];
 
-		if (finTypeExpense.isNew()) { // for New record or new record into work flow
+		if (finTypeExpense.isNewRecord()) { // for New record or new record into work flow
 			if (!finTypeExpense.isWorkflow()) {// With out Work flow only new records
 				if (befFinTypeExpense != null) { // Record Already Exists in the table then error
 					auditDetail
@@ -481,7 +481,7 @@ public class FinTypeExpenseServiceImpl extends GenericService<FinTypeExpense> im
 			} else if (finTypeExpense.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (finTypeExpense.isNew()) {
+				} else if (finTypeExpense.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

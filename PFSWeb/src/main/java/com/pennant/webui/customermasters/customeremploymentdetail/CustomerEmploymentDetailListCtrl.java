@@ -250,7 +250,7 @@ public class CustomerEmploymentDetailListCtrl extends GFCBaseListCtrl<CustomerEm
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("customerEmploymentDetail", customerEmploymentDetail);
 		arg.put("customerEmploymentDetailListCtrl", this);
-		arg.put("newRecord", customerEmploymentDetail.isNew());
+		arg.put("newRecord", customerEmploymentDetail.isNewRecord());
 
 		try {
 			Executions.createComponents(

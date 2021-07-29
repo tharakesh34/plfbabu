@@ -103,7 +103,6 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private boolean rcdVisible = true;
 	@XmlElement
 	private Date schdDate;
-	private boolean newRecord = false;
 	private String lovValue;
 	private FinFeeDetail befImage;
 	private LoggedInUser userDetails;
@@ -198,7 +197,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 		entity.setDataModified(this.dataModified);
 		entity.setRcdVisible(this.rcdVisible);
 		entity.setSchdDate(this.schdDate);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setLovValue(this.lovValue);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
@@ -484,14 +483,6 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 
 	public void setPercentage(BigDecimal percentage) {
 		this.percentage = percentage;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

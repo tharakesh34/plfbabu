@@ -8,14 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import javax.xml.bind.annotation.XmlTransient;
-
-public class DepositDetails extends AbstractWorkflowEntity implements Entity {
+public class DepositDetails extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -58727889587717168L;
 
@@ -25,7 +24,6 @@ public class DepositDetails extends AbstractWorkflowEntity implements Entity {
 	private String branchDesc;
 	private BigDecimal actualAmount = BigDecimal.ZERO;
 	private BigDecimal reservedAmount = BigDecimal.ZERO;
-	private boolean newRecord = false;
 	private DepositDetails befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
@@ -74,14 +72,6 @@ public class DepositDetails extends AbstractWorkflowEntity implements Entity {
 		this.depositType = depositType;
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
 	public DepositDetails getBefImage() {
 		return befImage;
 	}
@@ -98,17 +88,10 @@ public class DepositDetails extends AbstractWorkflowEntity implements Entity {
 		this.userDetails = userDetails;
 	}
 
-	@Override
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
-	@Override
 	public long getId() {
 		return this.depositId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.depositId = id;
 	}

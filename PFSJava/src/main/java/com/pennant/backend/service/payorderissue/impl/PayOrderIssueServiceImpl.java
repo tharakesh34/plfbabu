@@ -185,7 +185,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			tableType = "_Temp";
 		}
 
-		if (payOrderIssueHeader.isNew()) {
+		if (payOrderIssueHeader.isNewRecord()) {
 			payOrderIssueHeaderDAO.save(payOrderIssueHeader, tableType);
 		} else {
 			payOrderIssueHeaderDAO.update(payOrderIssueHeader, tableType);
@@ -595,7 +595,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (payOrderIssueHeader.isNew()) { // for New record or new record into
+		if (payOrderIssueHeader.isNewRecord()) { // for New record or new record into
 											// work flow
 
 			if (!payOrderIssueHeader.isWorkflow()) {// With out Work flow only

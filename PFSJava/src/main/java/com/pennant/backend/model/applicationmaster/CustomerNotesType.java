@@ -58,7 +58,6 @@ public class CustomerNotesType extends AbstractWorkflowEntity {
 	private String custNotesTypeArchiveFrq;
 	private String lovDescCustNotesTypeArcFrqName;
 	private boolean custNotesTypeIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private CustomerNotesType befImage;
 	private LoggedInUser userDetails;
@@ -134,14 +133,6 @@ public class CustomerNotesType extends AbstractWorkflowEntity {
 
 	public boolean isCustNotesTypeIsActive() {
 		return custNotesTypeIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

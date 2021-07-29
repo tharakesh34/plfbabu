@@ -59,7 +59,6 @@ public class Department extends AbstractWorkflowEntity {
 	private String deptCode;
 	private String deptDesc;
 	private boolean deptIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private Department befImage;
 	private LoggedInUser userDetails;
@@ -111,14 +110,6 @@ public class Department extends AbstractWorkflowEntity {
 
 	public void setDeptIsActive(boolean deptIsActive) {
 		this.deptIsActive = deptIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

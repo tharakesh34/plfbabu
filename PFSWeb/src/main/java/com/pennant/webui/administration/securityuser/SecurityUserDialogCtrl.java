@@ -605,7 +605,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrAcLocked.setChecked(aSecurityUser.isUsrAcLocked());
 		this.usrAcExpDt.setValue(aSecurityUser.getUsrAcExpDt());
 
-		if (securityUser.isNew()) {
+		if (securityUser.isNewRecord()) {
 			this.usrDftAppId.setSelectedIndex(0);
 		} else {
 			this.usrDftAppId.setValue(PennantAppUtil.getlabelDesc(String.valueOf(securityUser.getUsrDftAppId()),
@@ -968,7 +968,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			tab1.add(we);
 		}
 
-		if (!findUser && getSecurityUser().isNew() && aSecurityUser.getUsrLogin() != null) {
+		if (!findUser && getSecurityUser().isNewRecord() && aSecurityUser.getUsrLogin() != null) {
 			tab1.add(new WrongValueException(this.usrLogin, "User not found"));
 		} else {
 			this.usrLogin.setErrorMessage("");
@@ -1054,7 +1054,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			}
 		}
 
-		if (aSecurityUser.isNew()) {
+		if (aSecurityUser.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1485,7 +1485,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		logger.debug(Literal.ENTERING);
 		final SecurityUser aSecurityUser = new SecurityUser();
 		BeanUtils.copyProperties(getSecurityUser(), aSecurityUser);
-		boolean isNew = aSecurityUser.isNew();
+		boolean isNew = aSecurityUser.isNewRecord();
 
 		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
@@ -1555,7 +1555,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * @return processCompleted (boolean)
 	 * @throws InterruptedException
 	 */
-	private boolean doProcess(SecurityUser aSecurityUser, String tranType) throws InterruptedException {
+	protected boolean doProcess(SecurityUser aSecurityUser, String tranType) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -1947,7 +1947,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getSecurityUserListCtrl().search();
 	}
 
@@ -1992,7 +1992,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				button.setParent(hbox);
 				hbox.setParent(row);
 
-				if (getSecurityUser().isNew()) {
+				if (getSecurityUser().isNewRecord()) {
 					dynamicDivBranchs.put(userDivision, new HashMap<String, Object>());
 				} else {
 					Map<String, Object> tempSecDivBrMap = new HashMap<String, Object>();
@@ -2045,7 +2045,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	public List<SecurityUserDivBranch> getDivisionDetails(SecurityUser aSecurityUser) {
 		List<SecurityUserDivBranch> list = aSecurityUser.getSecurityUserDivBranchList();
 		List<DivisionDetail> divisions = getDivisionDetails();
-		if (aSecurityUser.isNew() || aSecurityUser.getSecurityUserDivBranchList().isEmpty()) {
+		if (aSecurityUser.isNewRecord() || aSecurityUser.getSecurityUserDivBranchList().isEmpty()) {
 			for (DivisionDetail division : divisions) {
 				SecurityUserDivBranch branch = new SecurityUserDivBranch();
 				branch.setEntity(division.getEntityCode());

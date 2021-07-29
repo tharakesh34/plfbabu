@@ -196,7 +196,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			tableType = "_Temp";
 		}
 
-		if (jVPosting.isNew()) {
+		if (jVPosting.isNewRecord()) {
 			jVPosting.setBatchReference(getJVPostingDAO().save(jVPosting, tableType));
 			if (jVPosting.getJVPostingEntrysList() != null && jVPosting.getJVPostingEntrysList().size() > 0) {
 				for (int i = 0; i < jVPosting.getJVPostingEntrysList().size(); i++) {
@@ -574,7 +574,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		valueParm[0] = Long.toString(jVPosting.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_BatchReference") + ":" + valueParm[0];
 
-		if (jVPosting.isNew()) { // for New record or new record into work flow
+		if (jVPosting.isNewRecord()) { // for New record or new record into work flow
 
 			if (!jVPosting.isWorkflow()) {// With out Work flow only new records
 				if (befJVPosting != null) { // Record Already Exists in the
@@ -830,7 +830,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			} else if (jVPostingEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (jVPostingEntry.isNew()) {
+				} else if (jVPostingEntry.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

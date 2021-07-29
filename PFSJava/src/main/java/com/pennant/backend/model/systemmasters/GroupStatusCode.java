@@ -57,7 +57,6 @@ public class GroupStatusCode extends AbstractWorkflowEntity {
 	private String grpStsCode;
 	private String grpStsDescription;
 	private boolean grpStsIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private GroupStatusCode befImage;
 	private LoggedInUser userDetails;
@@ -109,14 +108,6 @@ public class GroupStatusCode extends AbstractWorkflowEntity {
 
 	public void setGrpStsIsActive(boolean grpStsIsActive) {
 		this.grpStsIsActive = grpStsIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

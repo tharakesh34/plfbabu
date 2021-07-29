@@ -135,7 +135,7 @@ public class ProvisionMovementServiceImpl extends GenericService<ProvisionMoveme
 			tableType = "_Temp";
 		}
 
-		if (provisionMovement.isNew()) {
+		if (provisionMovement.isNewRecord()) {
 			getProvisionMovementDAO().save(provisionMovement, tableType);
 		} else {
 			getProvisionMovementDAO().update(provisionMovement, tableType);
@@ -341,7 +341,7 @@ public class ProvisionMovementServiceImpl extends GenericService<ProvisionMoveme
 		valueParm[0] = provisionMovement.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (provisionMovement.isNew()) { // for New record or new record into work flow
+		if (provisionMovement.isNewRecord()) { // for New record or new record into work flow
 
 			if (!provisionMovement.isWorkflow()) {// With out Work flow only new records  
 				if (befProvisionMovement != null) { // Record Already Exists in the table then error  

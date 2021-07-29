@@ -64,7 +64,6 @@ public class IRRCode extends AbstractWorkflowEntity {
 	private String iRRCode;
 	private String iRRCodeDesc;
 	private boolean active;
-	private boolean newRecord = false;
 	private String lovValue;
 	private IRRCode befImage;
 	private LoggedInUser userDetails;
@@ -127,14 +126,6 @@ public class IRRCode extends AbstractWorkflowEntity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

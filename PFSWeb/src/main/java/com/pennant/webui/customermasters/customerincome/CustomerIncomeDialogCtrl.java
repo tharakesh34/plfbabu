@@ -731,7 +731,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCustomerIncomeListCtrl().search();
 	}
 
@@ -928,7 +928,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		doSetValidation();
 		doWriteComponentsToBean(aCustomerIncome);
 
-		isNew = aCustomerIncome.isNew();
+		isNew = aCustomerIncome.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1106,7 +1106,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CustomerIncome aCustomerIncome, String tranType) {
+	protected boolean doProcess(CustomerIncome aCustomerIncome, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;

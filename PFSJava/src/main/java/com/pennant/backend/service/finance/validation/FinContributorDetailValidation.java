@@ -73,7 +73,7 @@ public class FinContributorDetailValidation {
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_CustCIF") + ":" + valueParm[1];
 
-		if (contributorDetail.isNew()) { // for New record or new record into work flow
+		if (contributorDetail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!contributorDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befFinContributorDetail != null) { // Record Already Exists in the table then error  

@@ -111,7 +111,6 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity {
 	private boolean inputElement;
 	private String parentTag;
 	private boolean editable;
-	private boolean newRecord;
 	private String lovValue;
 	private String lovDescErroDesc;
 	private ExtendedFieldDetail befImage;
@@ -284,14 +283,6 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity {
 
 	public void setExtendedType(int extendedType) {
 		this.extendedType = extendedType;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

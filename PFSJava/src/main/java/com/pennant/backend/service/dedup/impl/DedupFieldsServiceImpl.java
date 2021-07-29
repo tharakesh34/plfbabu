@@ -129,7 +129,7 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 			tableType = "_Temp";
 		}
 
-		if (dedupFields.isNew()) {
+		if (dedupFields.isNewRecord()) {
 			getDedupFieldsDAO().save(dedupFields, tableType);
 		} else {
 			getDedupFieldsDAO().update(dedupFields, tableType);
@@ -335,7 +335,7 @@ public class DedupFieldsServiceImpl implements DedupFieldsService {
 		errParm[0] = PennantJavaUtil.getLabel("label_FieldName");
 		errParm[1] = dedupFields.getId();
 
-		if (dedupFields.isNew()) { // for New record or new record into work flow
+		if (dedupFields.isNewRecord()) { // for New record or new record into work flow
 
 			if (!dedupFields.isWorkflow()) {// With out Work flow only new records
 				if (befDedupFields != null) { // Record Already Exists in the

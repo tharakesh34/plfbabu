@@ -4,12 +4,10 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class TransactionMapping extends AbstractWorkflowEntity implements Entity {
-
+public class TransactionMapping extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 221505141217792488L;
 
 	private long id = Long.MIN_VALUE;
@@ -20,7 +18,6 @@ public class TransactionMapping extends AbstractWorkflowEntity implements Entity
 	private long tid = Long.MIN_VALUE;
 	private String storeName;
 	private int storeId;
-	private boolean newRecord;
 	private String lovValue;
 	private TransactionMapping befImage;
 	private LoggedInUser userDetails;
@@ -76,14 +73,6 @@ public class TransactionMapping extends AbstractWorkflowEntity implements Entity
 		this.tid = tid;
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -124,17 +113,10 @@ public class TransactionMapping extends AbstractWorkflowEntity implements Entity
 		this.active = active;
 	}
 
-	@Override
-	public boolean isNew() {
-		return newRecord;
-	}
-
-	@Override
 	public long getId() {
 		return id;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.id = id;
 	}

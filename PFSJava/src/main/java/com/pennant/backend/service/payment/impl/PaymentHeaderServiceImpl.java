@@ -193,7 +193,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (paymentHeader.isNew()) {
+		if (paymentHeader.isNewRecord()) {
 			paymentHeader.setId(Long.parseLong(getPaymentHeaderDAO().save(paymentHeader, tableType)));
 			setPaymentHeaderId(paymentHeader);
 			auditHeader.getAuditDetail().setModelData(paymentHeader);

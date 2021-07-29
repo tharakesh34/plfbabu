@@ -78,7 +78,6 @@ public class Currency extends AbstractWorkflowEntity {
 	private boolean ccyIsAlwForDepo;
 	private boolean ccyIsAlwForAc;
 	private boolean ccyIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private Currency befImage;
 	private LoggedInUser userDetails;
@@ -290,14 +289,6 @@ public class Currency extends AbstractWorkflowEntity {
 
 	public void setCcyIsActive(boolean ccyIsActive) {
 		this.ccyIsActive = ccyIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

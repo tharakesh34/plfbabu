@@ -70,8 +70,6 @@ public class IRRFinanceType extends AbstractWorkflowEntity {
 	private String irrCode;
 	private String irrCodeDesc;
 	@XmlTransient
-	private boolean newRecord = false;
-	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private IRRFinanceType befImage;
@@ -99,7 +97,7 @@ public class IRRFinanceType extends AbstractWorkflowEntity {
 		entity.setFinTypeName(this.finTypeName);
 		entity.setIrrCode(this.irrCode);
 		entity.setIrrCodeDesc(this.irrCodeDesc);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setLovValue(this.lovValue);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
@@ -157,14 +155,6 @@ public class IRRFinanceType extends AbstractWorkflowEntity {
 
 	public void setFinTypeName(String finTypeName) {
 		this.finTypeName = finTypeName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -277,7 +277,7 @@ public class ReasonTypesDialogCtrl extends GFCBaseCtrl<ReasonTypes> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		reasonTypesListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -361,7 +361,7 @@ public class ReasonTypesDialogCtrl extends GFCBaseCtrl<ReasonTypes> {
 	public void doShowDialog(ReasonTypes reasonTypes) {
 		logger.debug(Literal.LEAVING);
 
-		if (reasonTypes.isNew()) {
+		if (reasonTypes.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -576,7 +576,7 @@ public class ReasonTypesDialogCtrl extends GFCBaseCtrl<ReasonTypes> {
 		doSetValidation();
 		doWriteComponentsToBean(aReasonTypes);
 
-		isNew = aReasonTypes.isNew();
+		isNew = aReasonTypes.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -624,7 +624,7 @@ public class ReasonTypesDialogCtrl extends GFCBaseCtrl<ReasonTypes> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(ReasonTypes aReasonTypes, String tranType) {
+	protected boolean doProcess(ReasonTypes aReasonTypes, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

@@ -458,7 +458,7 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 	public void doShowDialog(LegalApplicantDetail legalApplicantDetail) {
 		logger.debug(Literal.LEAVING);
 
-		if (legalApplicantDetail.isNew()) {
+		if (legalApplicantDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.title.focus();
@@ -766,7 +766,7 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 		doSetValidation();
 		doWriteComponentsToBean(aLegalApplicantDetail);
 
-		isNew = aLegalApplicantDetail.isNew();
+		isNew = aLegalApplicantDetail.isNewRecord();
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;

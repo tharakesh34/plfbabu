@@ -63,7 +63,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlType(propOrder = { "id", "providerId", "entityCode", "paymentMode", "bankCode", "bankBranchID", "accountNumber",
 		"receivableAdjustment", "reconciliationAmount", "active" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class VASProviderAccDetail extends AbstractWorkflowEntity implements Entity {
+public class VASProviderAccDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
@@ -82,8 +82,6 @@ public class VASProviderAccDetail extends AbstractWorkflowEntity implements Enti
 	private boolean receivableAdjustment;
 	private BigDecimal reconciliationAmount = BigDecimal.ZERO;
 	private boolean active = true;
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -251,14 +249,6 @@ public class VASProviderAccDetail extends AbstractWorkflowEntity implements Enti
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

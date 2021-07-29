@@ -54,14 +54,13 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>QueryCategory table</b>.<br>
  *
  */
-public class QueryCategory extends AbstractWorkflowEntity implements Entity {
+public class QueryCategory extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
 	private String code;
 	private String description;
 	private boolean active = true;
-	private boolean newRecord = false;
 	private String lovValue;
 	private QueryCategory befImage;
 	private LoggedInUser userDetails;
@@ -114,14 +113,6 @@ public class QueryCategory extends AbstractWorkflowEntity implements Entity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

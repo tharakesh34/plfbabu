@@ -12,7 +12,6 @@ public class Qualification extends AbstractWorkflowEntity {
 	private String code;
 	private String description;
 	private boolean active;
-	private boolean newRecord;
 	private String lovValue;
 	private Qualification befImage;
 	private LoggedInUser userDetails;
@@ -64,14 +63,6 @@ public class Qualification extends AbstractWorkflowEntity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

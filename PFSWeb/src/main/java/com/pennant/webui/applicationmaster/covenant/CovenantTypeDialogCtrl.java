@@ -355,7 +355,7 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<CovenantType> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		covenantTypeListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -749,7 +749,7 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<CovenantType> {
 
 		doWriteBeanToComponents(covenantType);
 
-		if (covenantType.isNew()) {
+		if (covenantType.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.code.setFocus(true);
@@ -1091,7 +1091,7 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<CovenantType> {
 			tranType = PennantConstants.TRAN_WF;
 			if (StringUtils.isBlank(aCovenantType.getRecordType())) {
 				aCovenantType.setVersion(aCovenantType.getVersion() + 1);
-				if (aCovenantType.isNew()) {
+				if (aCovenantType.isNewRecord()) {
 					aCovenantType.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
 					aCovenantType.setRecordType(PennantConstants.RECORD_TYPE_UPD);
@@ -1100,7 +1100,7 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<CovenantType> {
 			}
 		} else {
 			aCovenantType.setVersion(aCovenantType.getVersion() + 1);
-			if (aCovenantType.isNew()) {
+			if (aCovenantType.isNewRecord()) {
 				tranType = PennantConstants.TRAN_ADD;
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
@@ -1132,7 +1132,7 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<CovenantType> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CovenantType aCovenantType, String tranType) {
+	protected boolean doProcess(CovenantType aCovenantType, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

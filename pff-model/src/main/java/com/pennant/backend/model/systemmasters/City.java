@@ -66,7 +66,6 @@ public class City extends AbstractWorkflowEntity {
 	private String pCCityName;
 	private String pCCityClassification;
 	private String bankRefNo;
-	private boolean newRecord;
 	private String lovValue;
 	private City befImage;
 	private LoggedInUser userDetails;
@@ -154,14 +153,6 @@ public class City extends AbstractWorkflowEntity {
 
 	public void setPCCityName(String pCCityName) {
 		this.pCCityName = pCCityName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

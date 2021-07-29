@@ -6,11 +6,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class MiscPostingUpload extends AbstractWorkflowEntity implements Entity {
+public class MiscPostingUpload extends AbstractWorkflowEntity {
 	/**
 	 * 
 	 */
@@ -33,7 +32,6 @@ public class MiscPostingUpload extends AbstractWorkflowEntity implements Entity 
 	private String narrLine4;
 
 	private MiscPostingUpload befImage;
-	private boolean newRecord;
 	private LoggedInUser userDetails;
 	private String uploadStatus;
 	private String reason;
@@ -190,14 +188,6 @@ public class MiscPostingUpload extends AbstractWorkflowEntity implements Entity 
 		this.befImage = befImage;
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
@@ -222,17 +212,10 @@ public class MiscPostingUpload extends AbstractWorkflowEntity implements Entity 
 		this.reason = reason;
 	}
 
-	@Override
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
-	@Override
 	public long getId() {
 		return this.miscPostingId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.miscPostingId = id;
 	}

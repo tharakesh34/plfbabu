@@ -245,7 +245,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 					- (LengthConstants.LEN_BRANCH + LengthConstants.LEN_ACHEADCODE + LengthConstants.LEN_CURRENCY));
 			this.acSeqNumber.setWidth("40px");
 		}
-		if (this.accounts.isNew()) {
+		if (this.accounts.isNewRecord()) {
 			this.hbox_accountId_IntAc.setVisible(true);
 			if (this.accounts.isInternalAc()) {
 				this.ccyNumber.setVisible(true);
@@ -297,7 +297,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		if (this.accounts.getRecordType() != null) {
 			if (!this.accounts.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
 				if (this.accounts.isNewRecord() || StringUtils.isNotEmpty(this.accounts.getRecordType())) {
-					if (!(this.accounts.isNew()
+					if (!(this.accounts.isNewRecord()
 							&& this.accounts.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW))) {
 						this.row_Active_AcOpenDate.setVisible(false);
 						this.row_Blocked_Closed.setVisible(false);
@@ -432,7 +432,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	public void doWriteBeanToComponents(Accounts aAccounts) {
 		logger.debug("Entering");
 		this.accountId.setValue(aAccounts.getAccountId());
-		if (aAccounts.isNew()) {
+		if (aAccounts.isNewRecord()) {
 			this.branchCode.setValue(aAccounts.getAcBranch());
 			this.ccyNumber.setValue(aAccounts.getLovDescCcyNumber());
 			this.acHead.setValue(aAccounts.getLovDescAcHeadCode());
@@ -494,7 +494,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			if (!this.accounts.isInternalAc() && this.accounts.isNew()) {
+			if (!this.accounts.isInternalAc() && this.accounts.isNewRecord()) {
 				if (StringUtils.isBlank(this.acSeqNumber.getValue())) {
 					aAccounts.setAccountId(AccountNumberGeneration.genNewAcountNumber(aAccounts.getAcType(),
 							aAccounts.getAcCcy(), aAccounts.getAcBranch()));
@@ -507,7 +507,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 													- (LengthConstants.LEN_BRANCH + LengthConstants.LEN_ACHEADCODE),
 											'0'));
 				}
-			} else if (this.accounts.isInternalAc() && this.accounts.isNew()) {
+			} else if (this.accounts.isInternalAc() && this.accounts.isNewRecord()) {
 				/* Here account sequence number length is 16-(branch length(5)+acHead(4)+ccyNumber(3) =4 */
 				aAccounts.setAccountId(this.branchCode.getValue() + this.acHead.getValue()
 						+ StringUtils.leftPad(this.acSeqNumber.getValue().trim(),
@@ -589,7 +589,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		}
 
 		try {
-			if (aAccounts.isNew()) {
+			if (aAccounts.isNewRecord()) {
 				aAccounts.setAcActive(true);
 			} else {
 				aAccounts.setAcActive(this.acActive.isChecked());
@@ -640,7 +640,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aAccounts.isNew()) {
+		if (aAccounts.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -677,13 +677,13 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		logger.debug("Entering");
 		setValidationOn(true);
 
-		if (!this.accounts.isInternalAc() && this.accounts.isNew()) {
+		if (!this.accounts.isInternalAc() && this.accounts.isNewRecord()) {
 			if (!StringUtils.isBlank(this.acSeqNumber.getValue())) {
 				this.acSeqNumber
 						.setConstraint(new PTStringValidator(Labels.getLabel("label_AcountsDialog_AccountId.value"),
 								PennantRegularExpressions.REGEX_NUMERIC, true));
 			}
-		} else if (this.accounts.isInternalAc() && this.accounts.isNew()) {
+		} else if (this.accounts.isInternalAc() && this.accounts.isNewRecord()) {
 
 			this.acSeqNumber.setConstraint(new PTStringValidator(Labels.getLabel("label_AcountsDialog_AccountId.value"),
 					PennantRegularExpressions.REGEX_NUMERIC, true));
@@ -890,7 +890,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	/**
 	 * 
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug("Entering ");
 		final JdbcSearchObject<Accounts> soAcounts = getAcountsListCtrl().getSearchObj();
 		getAcountsListCtrl().pagingAcountsList.setActivePage(0);
@@ -1014,7 +1014,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aAccounts.isNew();
+		isNew = aAccounts.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1061,7 +1061,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	 * @param tranType
 	 * @return
 	 */
-	private boolean doProcess(Accounts aAccounts, String tranType) {
+	protected boolean doProcess(Accounts aAccounts, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

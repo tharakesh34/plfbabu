@@ -29,7 +29,6 @@ public class MerchantDetails extends AbstractWorkflowEntity {
 	private MerchantDetails befImage;
 	private LoggedInUser userDetails;
 	private String lovValue;
-	private boolean newRecord = false;
 	private String cityName;
 	private String stateName;
 	private String storeCountry;
@@ -171,14 +170,6 @@ public class MerchantDetails extends AbstractWorkflowEntity {
 
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public Timestamp getPrevMntOn() {

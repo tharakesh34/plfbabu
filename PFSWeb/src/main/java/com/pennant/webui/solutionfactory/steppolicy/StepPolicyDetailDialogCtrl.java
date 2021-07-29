@@ -411,7 +411,7 @@ public class StepPolicyDetailDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	 */
 	public void doShowDialog(StepPolicyDetail aStepPolicyDetail) throws Exception {
 		logger.debug("Entering");
-		if (aStepPolicyDetail.isNew()) {
+		if (aStepPolicyDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.stepNumber.focus();
@@ -607,7 +607,7 @@ public class StepPolicyDetailDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		// Write the additional validations as per below example
 		// get the selected StepPolicyDetail object from the listbox
 		// Do data level validations here
-		isNew = aStepPolicyDetail.isNew();
+		isNew = aStepPolicyDetail.isNewRecord();
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
@@ -674,7 +674,7 @@ public class StepPolicyDetailDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 				if (stepPolicyDetail.getPolicyCode().equals(aStepPolicyDetail.getPolicyCode())
 						&& stepPolicyDetail.getStepNumber() == aStepPolicyDetail.getStepNumber()) {
 					// Both Current and Existing list rating same
-					if (aStepPolicyDetail.isNew()) {
+					if (aStepPolicyDetail.isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm),
 								getUserWorkspace().getUserLanguage()));

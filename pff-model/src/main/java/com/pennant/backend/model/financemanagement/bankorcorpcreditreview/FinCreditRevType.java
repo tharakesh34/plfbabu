@@ -11,21 +11,12 @@ public class FinCreditRevType extends AbstractWorkflowEntity {
 	private String creditRevDesc;
 	private String creditCCY;
 	private String entryCCY;
-	private boolean newRecord = false;
 	private String lovValue;
 	private FinCreditRevType befImage;
 	private LoggedInUser userDetails;
 
 	public FinCreditRevType() {
 		super();
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

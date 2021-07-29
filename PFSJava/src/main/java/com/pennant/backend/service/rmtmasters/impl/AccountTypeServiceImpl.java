@@ -126,7 +126,7 @@ public class AccountTypeServiceImpl extends GenericService<AccountType> implemen
 			tableType = "_Temp";
 		}
 
-		if (accountType.isNew()) {
+		if (accountType.isNewRecord()) {
 			accountType.setAcType(getAccountTypeDAO().save(accountType, tableType));
 			auditHeader.getAuditDetail().setModelData(accountType);
 			auditHeader.setAuditReference(accountType.getAcType());
@@ -350,7 +350,7 @@ public class AccountTypeServiceImpl extends GenericService<AccountType> implemen
 		valueParm[0] = accountType.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_AcType") + ":" + valueParm[0];
 
-		if (accountType.isNew()) { // for New record or new record into workFlow
+		if (accountType.isNewRecord()) { // for New record or new record into workFlow
 
 			if (!accountType.isWorkflow()) {// With out Work flow only new records
 				if (befAccountType != null) { // Record Already Exists in the table then error

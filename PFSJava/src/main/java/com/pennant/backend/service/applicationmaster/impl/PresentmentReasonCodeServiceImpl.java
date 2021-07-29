@@ -47,7 +47,7 @@ public class PresentmentReasonCodeServiceImpl extends GenericService<Presentment
 			tableType = "_Temp";
 		}
 
-		if (presentmentReasonCode.isNew()) {
+		if (presentmentReasonCode.isNewRecord()) {
 			presentmentReasonCode.setCode(getPresentmentReasonCodeDAO().save(presentmentReasonCode, tableType));
 			auditHeader.getAuditDetail().setModelData(presentmentReasonCode);
 			auditHeader.setAuditReference(presentmentReasonCode.getCode());
@@ -178,7 +178,7 @@ public class PresentmentReasonCodeServiceImpl extends GenericService<Presentment
 		valueParm[0] = presentmentReasonCode.getCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_Code") + ":" + valueParm[0];
 
-		if (presentmentReasonCode.isNew()) { // for New record or new record into work flow
+		if (presentmentReasonCode.isNewRecord()) { // for New record or new record into work flow
 
 			if (!presentmentReasonCode.isWorkflow()) {// With out Work flow only new records
 				if (befPresentmentReasonCode != null) { // Record Already Exists in the table then error

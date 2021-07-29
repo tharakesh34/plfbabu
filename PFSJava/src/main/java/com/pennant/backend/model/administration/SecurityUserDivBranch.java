@@ -61,7 +61,6 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 	private String userDivision;
 	private String userBranch;
 	private String userBranchDesc;
-	private boolean newRecord = false;
 	private String lovValue;
 	private String lovDescPriKey;
 	private SecurityUserDivBranch befImage;
@@ -165,14 +164,6 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 
 	public String getUserBranchDesc() {
 		return userBranchDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "id", "cardSalesId", "month", "salesAmount", "noOfSettlements", "totalNoOfCredits",
 		"totalNoOfDebits", "totalCreditValue", "totalDebitValue", "inwardBounce", "outwardBounce" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class CustCardSalesDetails extends AbstractWorkflowEntity implements Entity {
+public class CustCardSalesDetails extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	@XmlElement(name = "id")
@@ -45,7 +45,6 @@ public class CustCardSalesDetails extends AbstractWorkflowEntity implements Enti
 	private BigDecimal outwardBounce;
 	private CustCardSalesDetails befImage;
 	private LoggedInUser userDetails;
-	private boolean newRecord = false;
 	private String lovValue;
 	private int keyValue = 0;
 
@@ -95,10 +94,6 @@ public class CustCardSalesDetails extends AbstractWorkflowEntity implements Enti
 		return userDetails;
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -141,10 +136,6 @@ public class CustCardSalesDetails extends AbstractWorkflowEntity implements Enti
 
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public void setLovValue(String lovValue) {

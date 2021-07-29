@@ -144,7 +144,7 @@ public class AssignmentPartnerServiceImpl extends GenericService<AssignmentPartn
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (assignmentPartner.isNew()) {
+		if (assignmentPartner.isNewRecord()) {
 			assignmentPartner.setId(Long.parseLong(getAssignmentPartnerDAO().save(assignmentPartner, tableType)));
 			auditHeader.getAuditDetail().setModelData(assignmentPartner);
 			auditHeader.setAuditReference(String.valueOf(assignmentPartner.getId()));
@@ -354,7 +354,7 @@ public class AssignmentPartnerServiceImpl extends GenericService<AssignmentPartn
 		parameters[0] = PennantJavaUtil.getLabel("label_Code") + ": " + assignmentPartner.getCode();
 
 		// Check the unique keys.
-		if (assignmentPartner.isNew()
+		if (assignmentPartner.isNewRecord()
 				&& assignmentPartnerDAO.isDuplicateKey(assignmentPartner.getId(), assignmentPartner.getCode(),
 						assignmentPartner.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 

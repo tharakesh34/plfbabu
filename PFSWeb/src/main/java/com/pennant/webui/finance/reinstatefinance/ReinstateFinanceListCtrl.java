@@ -332,7 +332,7 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 		arg.put("reinstateFinanceListCtrl", this);
 		arg.put("eventCode", FinServiceEvent.REINSTATE);
 		try {
-			if (aReinstateFinance.isNew()) {
+			if (aReinstateFinance.isNewRecord()) {
 				Executions.createComponents(
 						"/WEB-INF/pages/FinanceManagement/SelectFinance/SelectFinReferenceDialog.zul", null, arg);
 			} else {

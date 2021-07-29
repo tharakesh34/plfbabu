@@ -60,7 +60,6 @@ public class DeviationParam extends AbstractWorkflowEntity {
 	private String type;
 	private String formula;
 	private String dataType;
-	private boolean newRecord;
 	private String lovValue;
 	private DeviationParam befImage;
 	private LoggedInUser userDetails;
@@ -133,14 +132,6 @@ public class DeviationParam extends AbstractWorkflowEntity {
 
 	public void setDataType(String dataType) {
 		this.dataType = dataType;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

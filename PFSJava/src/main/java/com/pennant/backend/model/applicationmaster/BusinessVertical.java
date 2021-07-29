@@ -61,16 +61,13 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 @XmlType(propOrder = { "id", "code", "description" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BusinessVertical extends AbstractWorkflowEntity implements Entity {
+public class BusinessVertical extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
 	private String code;
 	private String description;
 	private boolean active;
-
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -118,14 +115,6 @@ public class BusinessVertical extends AbstractWorkflowEntity implements Entity {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

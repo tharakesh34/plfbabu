@@ -121,7 +121,7 @@ public class CustomerTypeServiceImpl extends GenericService<CustomerType> implem
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (customerType.isNew()) {
+		if (customerType.isNewRecord()) {
 			customerType.setCustTypeCode(getCustomerTypeDAO().save(customerType, tableType));
 			auditHeader.getAuditDetail().setModelData(customerType);
 			auditHeader.setAuditReference(customerType.getCustTypeCode());
@@ -316,7 +316,7 @@ public class CustomerTypeServiceImpl extends GenericService<CustomerType> implem
 		// Get the model object.
 		CustomerType customerType = (CustomerType) auditDetail.getModelData();
 		// Check the unique keys.
-		if (customerType.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(customerType.getRecordType())
+		if (customerType.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(customerType.getRecordType())
 				&& customerTypeDAO.isDuplicateKey(customerType.getId(),
 						customerType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

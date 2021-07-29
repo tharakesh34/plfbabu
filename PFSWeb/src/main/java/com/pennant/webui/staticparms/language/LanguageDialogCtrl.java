@@ -363,7 +363,7 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aLanguage.isNew()) {
+		if (aLanguage.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -590,7 +590,7 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aLanguage.isNew();
+		isNew = aLanguage.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -639,7 +639,7 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Language aLanguage, String tranType) {
+	protected boolean doProcess(Language aLanguage, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -854,7 +854,7 @@ public class LanguageDialogCtrl extends GFCBaseCtrl<Language> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getLanguageListCtrl().search();
 	}
 

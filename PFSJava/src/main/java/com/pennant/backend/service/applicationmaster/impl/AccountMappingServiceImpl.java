@@ -147,7 +147,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (accountMapping.isNew()) {
+		if (accountMapping.isNewRecord()) {
 			accountMapping.setAccount(getAccountMappingDAO().save(accountMapping, tableType));
 			auditHeader.getAuditDetail().setModelData(accountMapping);
 			auditHeader.setAuditReference(accountMapping.getAccount());
@@ -215,7 +215,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 				} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(accountMapping.getRecordType())) {
 					if (approveRec) {
 						deleteRecord = true;
-					} else if (accountMapping.isNew()) {
+					} else if (accountMapping.isNewRecord()) {
 						saveRecord = true;
 					} else {
 						updateRecord = true;
@@ -242,7 +242,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 					accountMapping.setRecordStatus(recordStatus);
 				}
 			} else {
-				if (accountMapping.isNew()) {
+				if (accountMapping.isNewRecord()) {
 					getAccountMappingDAO().save(accountMapping, tableType);
 				} else {
 					getAccountMappingDAO().update(accountMapping, tableType);
@@ -550,7 +550,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 					}
 				}
 			} else {
-				if (accountMapping.isNew()) {
+				if (accountMapping.isNewRecord()) {
 					auditTranType = PennantConstants.TRAN_ADD;
 				}
 			}
@@ -622,7 +622,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 		valueParm[0] = accountMapping.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_Account") + ":" + valueParm[0];
 
-		if (accountMapping.isNew()) { // for New record or new record into workFlow
+		if (accountMapping.isNewRecord()) { // for New record or new record into workFlow
 
 			if (!accountMapping.isWorkflow()) {// With out Work flow only new records
 				if (befAccountMapping != null) { // Record Already Exists in the table then error

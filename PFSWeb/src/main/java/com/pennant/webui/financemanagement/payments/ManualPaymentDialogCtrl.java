@@ -2128,7 +2128,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @return
 	 * @throws InterruptedException
 	 */
-	private boolean doProcess(RepayData aRepayData, String tranType) throws InterruptedException {
+	protected boolean doProcess(RepayData aRepayData, String tranType) throws InterruptedException {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;

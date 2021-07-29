@@ -61,15 +61,13 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 @XmlType(propOrder = { "id", "name", "city" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Locality extends AbstractWorkflowEntity implements Entity {
+public class Locality extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
 	private String name;
 	private String city;
 	private String cityName;
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -126,14 +124,6 @@ public class Locality extends AbstractWorkflowEntity implements Entity {
 
 	public void setCityName(String cityName) {
 		this.cityName = cityName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

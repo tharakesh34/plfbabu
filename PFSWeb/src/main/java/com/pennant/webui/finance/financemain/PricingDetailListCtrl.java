@@ -756,7 +756,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 					}
 
 					boolean isNew = false;
-					isNew = finMain.isNew();
+					isNew = finMain.isNewRecord();
 					String tranType = "";
 					boolean recordAdded = false;
 					if (finMain.isNewRecord()) {
@@ -876,7 +876,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 
 				finFeeDetail.setDataModified(isDataMaintained(finFeeDetail, finFeeDetail.getBefImage())); //For Data Saving
 
-				boolean isNew = finFeeDetail.isNew();
+				boolean isNew = finFeeDetail.isNewRecord();
 				String tranType = "";
 
 				if (finFeeDetail.isNewRecord()) {
@@ -961,7 +961,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 									.setFinReference(finReferenceMap.get("Topup" + listitem.getAttribute("TopUp")));
 							childFinFeeDetail.setDataModified(
 									isDataMaintained(childFinFeeDetail, childFinFeeDetail.getBefImage()));
-							boolean isNew = childFinFeeDetail.isNew();
+							boolean isNew = childFinFeeDetail.isNewRecord();
 							boolean recordAdded = false;
 							String tranType = "";
 
@@ -1201,7 +1201,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 							vasRecordings
 									.setPrimaryLinkRef(finReferenceMap.get("Topup" + listitem.getAttribute("TopUp")));
 							boolean isNew = false;
-							isNew = vasRecordings.isNew();
+							isNew = vasRecordings.isNewRecord();
 							String tranType = "";
 							boolean recordAdded = false;
 							if (vasRecordings.isNewRecord()) {

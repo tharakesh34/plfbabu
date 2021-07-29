@@ -60,7 +60,6 @@ public class AddressType extends AbstractWorkflowEntity {
 	private int addrTypePriority;
 	private boolean addrTypeFIRequired;
 	private boolean addrTypeIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private AddressType befImage;
 	private LoggedInUser userDetails;
@@ -128,14 +127,6 @@ public class AddressType extends AbstractWorkflowEntity {
 
 	public void setAddrTypeIsActive(boolean addrTypeIsActive) {
 		this.addrTypeIsActive = addrTypeIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

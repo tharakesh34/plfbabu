@@ -244,7 +244,7 @@ public class CustomerEMailListCtrl extends GFCBaseListCtrl<CustomerEMail> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("customerEMail", customerEMail);
 		arg.put("customerEMailListCtrl", this);
-		arg.put("newRecord", customerEMail.isNew());
+		arg.put("newRecord", customerEMail.isNewRecord());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerEMail/CustomerEMailDialog.zul", null,

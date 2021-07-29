@@ -237,7 +237,7 @@ public class CustomerRatingListCtrl extends GFCBaseListCtrl<CustomerRating> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("customerRating", customerRating);
 		arg.put("customerRatingListCtrl", this);
-		arg.put("newRecord", customerRating.isNew());
+		arg.put("newRecord", customerRating.isNewRecord());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerRating/CustomerRatingDialog.zul", null,

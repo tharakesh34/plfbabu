@@ -232,7 +232,7 @@ public class SplRateCodeListCtrl extends GFCBaseListCtrl<SplRateCode> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("splRateCode", aSplRateCode);
 		arg.put("splRateCodeListCtrl", this);
-		arg.put("newRecord", aSplRateCode.isNew());
+		arg.put("newRecord", aSplRateCode.isNewRecord());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/SplRateCode/SplRateCodeDialog.zul", null,

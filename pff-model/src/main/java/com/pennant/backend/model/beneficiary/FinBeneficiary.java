@@ -7,22 +7,17 @@ import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class FinBeneficiary extends AbstractWorkflowEntity implements Entity {
+public class FinBeneficiary extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long beneficiaryID = Long.MIN_VALUE;
 	private String finReference;
-	private boolean newRecord = false;
 	private FinBeneficiary befImage;
 	private LoggedInUser userDetails;
 	private Beneficiary beneficiary;
 
 	public boolean isNew() {
 		return isNewRecord();
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
 	}
 
 	public FinBeneficiary() {
@@ -78,10 +73,6 @@ public class FinBeneficiary extends AbstractWorkflowEntity implements Entity {
 
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public Beneficiary getBeneficiary() {

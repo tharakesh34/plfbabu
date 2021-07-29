@@ -59,7 +59,6 @@ public class NationalityCode extends AbstractWorkflowEntity {
 	private String nationalityCode;
 	private String nationalityDesc;
 	private boolean nationalityIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private NationalityCode befImage;
 	private LoggedInUser userDetails;
@@ -111,14 +110,6 @@ public class NationalityCode extends AbstractWorkflowEntity {
 
 	public void setNationalityIsActive(boolean nationalityIsActive) {
 		this.nationalityIsActive = nationalityIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

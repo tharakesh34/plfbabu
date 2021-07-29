@@ -157,7 +157,7 @@ public class ScoringGroupServiceImpl extends GenericService<ScoringGroup> implem
 		if (scoringGroup.isWorkflow()) {
 			tableType = "_Temp";
 		}
-		if (scoringGroup.isNew()) {
+		if (scoringGroup.isNewRecord()) {
 			scoringGroup.setId(getScoringGroupDAO().save(scoringGroup, tableType));
 			auditHeader.getAuditDetail().setModelData(scoringGroup);
 			auditHeader.setAuditReference(String.valueOf(scoringGroup.getScoreGroupId()));
@@ -484,7 +484,7 @@ public class ScoringGroupServiceImpl extends GenericService<ScoringGroup> implem
 		valueParm[0] = String.valueOf(scoringGroup.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_ScoreGroupId") + ":" + valueParm[0];
 
-		if (scoringGroup.isNew()) { // for New record or new record into work flow
+		if (scoringGroup.isNewRecord()) { // for New record or new record into work flow
 
 			if (!scoringGroup.isWorkflow()) {// With out Work flow only new records  
 				if (befScoringGroup != null) { // Record Already Exists in the table then error  
@@ -773,7 +773,7 @@ public class ScoringGroupServiceImpl extends GenericService<ScoringGroup> implem
 			} else if (scoringSlab.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (scoringSlab.isNew()) {
+				} else if (scoringSlab.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -870,7 +870,7 @@ public class ScoringGroupServiceImpl extends GenericService<ScoringGroup> implem
 			} else if (scoringMetrics.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (scoringMetrics.isNew()) {
+				} else if (scoringMetrics.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

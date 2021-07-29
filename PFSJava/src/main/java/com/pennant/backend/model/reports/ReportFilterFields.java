@@ -1,52 +1,33 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		: ReportFilterFields.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  23-09-2012    														*
- *                                                                  						*
- * Modified Date    :  23-09-2012     														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ReportFilterFields.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 23-09-2012 * * Modified
+ * Date : 23-09-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 23-09-2012             Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-09-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.model.reports;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class ReportFilterFields extends AbstractWorkflowEntity implements Entity {
+public class ReportFilterFields extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -619353564397203914L;
 	private long reportID;
@@ -72,8 +53,6 @@ public class ReportFilterFields extends AbstractWorkflowEntity implements Entity
 	private int fieldWidth;
 	private boolean filterRequired;
 	private String defaultFilter;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private ReportFilterFields befImage;
 	private LoggedInUser userDetails;
@@ -264,14 +243,6 @@ public class ReportFilterFields extends AbstractWorkflowEntity implements Entity
 		return fieldMaxValue;
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -316,12 +287,10 @@ public class ReportFilterFields extends AbstractWorkflowEntity implements Entity
 		return fieldID;
 	}
 
-	@Override
 	public long getId() {
 		return fieldID;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.fieldID = id;
 	}

@@ -447,7 +447,7 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aVasMovementDetail.isNew()) {
+		if (aVasMovementDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -697,7 +697,7 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aVasMovementDetail.isNew();
+		isNew = aVasMovementDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -776,7 +776,7 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 		valueParm[0] = String.valueOf(aVasMovementDetail.getVasMovementDetailId());
 		errParm[0] = PennantJavaUtil.getLabel("label_VasMovementDetailDialog_VasMovementId.value") + ":" + valueParm[0];
 
-		if (getVasMovementDetail().isNew()) {
+		if (getVasMovementDetail().isNewRecord()) {
 			long newSeqNo = 0;
 			for (VasMovementDetail vasDetail : getVasMovementDialogCtrl().getVasMovementDetailList()) {
 				if (aVasMovementDetail.getVasReference().equals(vasDetail.getVasReference())) {

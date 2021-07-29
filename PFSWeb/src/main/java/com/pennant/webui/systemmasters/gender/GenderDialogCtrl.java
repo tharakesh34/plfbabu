@@ -296,7 +296,7 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 		this.systemDefault.setChecked(aGender.isSystemDefault());
 		this.recordStatus.setValue(aGender.getRecordStatus());
 
-		if (aGender.isNew() || (aGender.getRecordType() != null ? aGender.getRecordType() : "")
+		if (aGender.isNewRecord() || (aGender.getRecordType() != null ? aGender.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.genderIsActive.setChecked(true);
 			this.genderIsActive.setDisabled(true);
@@ -364,7 +364,7 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aGender.isNew()) {
+		if (aGender.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -586,7 +586,7 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aGender.isNew();
+		isNew = aGender.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -636,7 +636,7 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Gender aGender, String tranType) {
+	protected boolean doProcess(Gender aGender, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -850,7 +850,7 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getGenderListCtrl().search();
 	}
 

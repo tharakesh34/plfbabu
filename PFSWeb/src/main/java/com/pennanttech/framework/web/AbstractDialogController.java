@@ -10,12 +10,15 @@ import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.A;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.South;
 import org.zkoss.zul.Window;
@@ -182,22 +185,29 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		return true;
 	}
 
-	protected boolean doClose(boolean askConfirmation) {
-		logger.debug("Entering");
+	/**
+	 * This method will be called post dialog window closed.
+	 */
+	protected void doPostClose() {
+		//
+	}
 
-		if (askConfirmation) {
-			if (MessageUtil.YES == MessageUtil.confirm(
-					"Any changes made will be lost if you close this window. Are you sure you want to continue?")) {
-				closeDialog();
-				return true;
-			}
-		} else {
+	protected void doClose(boolean askConfirmation) {
+		if (!askConfirmation) {
 			closeDialog();
-			return true;
 		}
 
-		logger.debug("Leaving");
-		return false;
+		MessageUtil.confirm(
+				"Any changes made will be lost if you close this window. Are you sure you want to continue?",
+				new EventListener<Event>() {
+					@Override
+					public void onEvent(Event event) throws Exception {
+						if (Messagebox.ON_YES.equals(event.getName())) {
+							closeDialog();
+							doPostClose();
+						}
+					}
+				});
 	}
 
 	/**
@@ -244,7 +254,6 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 	 * Deallocates the authorities on the dialog window allocated for the user and close the dialog window.
 	 */
 	public void closeDialog() {
-
 		deAllocateAuthorities(pageRightName);
 
 		if (window.inModal() || DialogType.MODAL == dialogType) {
@@ -484,6 +493,54 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		WorkflowEngine engine = new WorkflowEngine(WorkFlowUtil.getWorkflow(entity.getWorkflowId()).getWorkFlowXml());
 
 		return engine.isBackwardCase(entity.getTaskId(), entity.getNextTaskId().replace(";", ""));
+	}
+
+	protected void doDelete(String keyReference, T aEntity) {
+		AbstractWorkflowEntity entity = (AbstractWorkflowEntity) aEntity;
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ keyReference;
+
+		MessageUtil.confirm(msg, new EventListener<Event>() {
+			@Override
+			public void onEvent(Event event) throws Exception {
+				if (Messagebox.ON_YES.equals(event.getName())) {
+
+					String tranType = PennantConstants.TRAN_WF;
+					if (StringUtils.isBlank(((AbstractWorkflowEntity) entity).getRecordType())) {
+						entity.setVersion(entity.getVersion() + 1);
+						entity.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+
+						if (isWorkFlowEnabled()) {
+							entity.setNewRecord(true);
+							tranType = PennantConstants.TRAN_WF;
+						} else {
+							tranType = PennantConstants.TRAN_DEL;
+						}
+					}
+
+					try {
+						if (doProcess(aEntity, tranType)) {
+							refreshList();
+							closeDialog();
+						}
+
+					} catch (Exception e) {
+						MessageUtil.showError(e);
+					}
+
+				} else if (Messagebox.ON_NO.equals(event.getName())) {
+					//
+				}
+			}
+		});
+	}
+
+	protected void refreshList() {
+
+	}
+
+	protected boolean doProcess(T aEntity, String tranType) throws Exception {
+		return false;
 	}
 
 }

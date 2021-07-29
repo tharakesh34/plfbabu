@@ -59,7 +59,7 @@ public class CoOwnerDetailsValidation {
 		errParm[0] = PennantJavaUtil.getLabel("label_CollateralReference") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_CoOwnerCIF") + ":" + valueParm[1];
 
-		if (coOwnerDetail.isNew()) { // for New record or new record into work flow
+		if (coOwnerDetail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!coOwnerDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befCoOwnerDetail != null) { // Record Already Exists in the table then error  

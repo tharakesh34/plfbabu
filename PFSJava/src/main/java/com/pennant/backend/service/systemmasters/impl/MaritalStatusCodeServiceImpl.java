@@ -126,7 +126,7 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (maritalStatusCode.isNew()) {
+		if (maritalStatusCode.isNewRecord()) {
 			maritalStatusCode.setId(getMaritalStatusCodeDAO().save(maritalStatusCode, tableType));
 			auditHeader.getAuditDetail().setModelData(maritalStatusCode);
 			auditHeader.setAuditReference(maritalStatusCode.getId());
@@ -331,7 +331,7 @@ public class MaritalStatusCodeServiceImpl extends GenericService<MaritalStatusCo
 		// Get the model object.
 		MaritalStatusCode maritalStatusCode = (MaritalStatusCode) auditDetail.getModelData();
 		// Check the unique keys.
-		if (maritalStatusCode.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(maritalStatusCode.getRecordType())
+		if (maritalStatusCode.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(maritalStatusCode.getRecordType())
 				&& maritalStatusCodeDAO.isDuplicateKey(maritalStatusCode.getMaritalStsCode(),
 						maritalStatusCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

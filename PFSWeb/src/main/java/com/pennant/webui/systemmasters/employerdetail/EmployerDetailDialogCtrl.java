@@ -739,7 +739,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 			this.empProvince.setDescription(aEmployerDetail.getLovDescProvinceName());
 			this.empCity.setDescription(aEmployerDetail.getLovDescCityName());
 		}
-		if (aEmployerDetail.isNew() || (aEmployerDetail.getRecordType() != null ? aEmployerDetail.getRecordType() : "")
+		if (aEmployerDetail.isNewRecord() || (aEmployerDetail.getRecordType() != null ? aEmployerDetail.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.empIsActive.setChecked(true);
 			this.empIsActive.setDisabled(true);
@@ -1179,7 +1179,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getEmployerDetailListCtrl().search();
 	}
 
@@ -1297,7 +1297,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aEmployerDetail.isNew();
+		isNew = aEmployerDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1348,7 +1348,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	 * 
 	 */
 
-	private boolean doProcess(EmployerDetail aEmployerDetail, String tranType) {
+	protected boolean doProcess(EmployerDetail aEmployerDetail, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		aEmployerDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());

@@ -150,7 +150,7 @@ public class HoldDisbursementServiceImpl extends GenericService<HoldDisbursement
 		if (holdDisbursement.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-		if (holdDisbursement.isNew()) {
+		if (holdDisbursement.isNewRecord()) {
 			holdDisbursementDAO.save(holdDisbursement, tableType);
 		} else {
 			holdDisbursementDAO.update(holdDisbursement, tableType);
@@ -373,7 +373,7 @@ public class HoldDisbursementServiceImpl extends GenericService<HoldDisbursement
 		parameters[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + holdDisbursement.getFinReference();
 
 		// Check the unique keys.
-		if (holdDisbursement.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(holdDisbursement.getRecordType())
+		if (holdDisbursement.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(holdDisbursement.getRecordType())
 				&& getHoldDisbursementDAO().isDuplicateKey(holdDisbursement.getFinReference(),
 						holdDisbursement.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));

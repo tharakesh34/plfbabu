@@ -31,7 +31,6 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 	private int issuedPOCount;
 	private BigDecimal pODueAmount = BigDecimal.ZERO;
 	private int pODueCount;
-	private boolean newRecord = false;
 	private PayOrderIssueHeader befImage;
 	private LoggedInUser userDetails;
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
@@ -207,14 +206,6 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 
 	public void setTotalPOAmount(BigDecimal totalPOAmount) {
 		this.totalPOAmount = totalPOAmount;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public PayOrderIssueHeader getBefImage() {

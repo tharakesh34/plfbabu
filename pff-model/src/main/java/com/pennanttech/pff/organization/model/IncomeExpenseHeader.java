@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-
-import javax.xml.bind.annotation.XmlTransient;
 
 public class IncomeExpenseHeader extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
@@ -28,8 +28,6 @@ public class IncomeExpenseHeader extends AbstractWorkflowEntity {
 	private String name;
 	@XmlTransient
 	private IncomeExpenseHeader befImage;
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private LoggedInUser userDetails;
 	private IncomeExpenseDetail schoolIncomeExpense;
@@ -138,14 +136,6 @@ public class IncomeExpenseHeader extends AbstractWorkflowEntity {
 
 	public void setBefImage(IncomeExpenseHeader befImage) {
 		this.befImage = befImage;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public LoggedInUser getUserDetails() {

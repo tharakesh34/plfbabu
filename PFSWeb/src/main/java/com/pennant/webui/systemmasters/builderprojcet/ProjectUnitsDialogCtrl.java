@@ -564,7 +564,7 @@ public class ProjectUnitsDialogCtrl extends GFCBaseCtrl<ProjectUnits> {
 	 */
 	public void doShowDialog(ProjectUnits projectUnits) {
 		logger.debug(Literal.ENTERING);
-		if (projectUnits.isNew()) {
+		if (projectUnits.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 		} else {
@@ -939,7 +939,7 @@ public class ProjectUnitsDialogCtrl extends GFCBaseCtrl<ProjectUnits> {
 		boolean isNew = false;
 		doSetValidation();
 		doWriteComponentsToBean(aProjectUnits);
-		isNew = aProjectUnits.isNew();
+		isNew = aProjectUnits.isNewRecord();
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;

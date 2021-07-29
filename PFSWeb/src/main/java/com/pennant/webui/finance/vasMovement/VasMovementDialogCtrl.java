@@ -427,7 +427,7 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aVasMovement.isNew()) {
+		if (aVasMovement.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -625,7 +625,7 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aVasMovement.isNew();
+		isNew = aVasMovement.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -675,7 +675,7 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(VasMovement aVasMovement, String tranType) {
+	protected boolean doProcess(VasMovement aVasMovement, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -876,7 +876,7 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getVasMovementListCtrl().search();
 	}
 
@@ -931,7 +931,7 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 				map.put("vasMovementDetail", vasMovementDetail);
 				map.put("roleCode", getRole());
 				map.put("isEditable", isEditable);
-				map.put("isNewRecord", getVasMovement().isNew());
+				map.put("isNewRecord", getVasMovement().isNewRecord());
 				map.put("isAccessRights",
 						getUserWorkspace().isAllowed("button_VasMovementDialog_btnNew_VasMovementDetail"));
 

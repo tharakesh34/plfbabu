@@ -513,7 +513,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
-		if (aSuspHead.isNew()) {
+		if (aSuspHead.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -990,7 +990,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
-	private boolean doProcess(FinanceSuspHead aFinanceSuspHead, String tranType)
+	protected boolean doProcess(FinanceSuspHead aFinanceSuspHead, String tranType)
 			throws InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 

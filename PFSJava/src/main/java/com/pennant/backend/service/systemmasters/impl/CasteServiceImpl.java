@@ -131,7 +131,7 @@ public class CasteServiceImpl extends GenericService<Caste> implements CasteServ
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (caste.isNew()) {
+		if (caste.isNewRecord()) {
 			caste.setId(getCasteDAO().save(caste, tableType));
 			auditHeader.getAuditDetail().setModelData(caste);
 			auditHeader.setAuditReference(caste.getCasteCode());
@@ -324,7 +324,7 @@ public class CasteServiceImpl extends GenericService<Caste> implements CasteServ
 		parameters[0] = PennantJavaUtil.getLabel("label_CasteCode") + ": " + code;
 
 		// Check the unique keys.
-		if (caste.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(caste.getRecordType())
+		if (caste.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(caste.getRecordType())
 				&& casteDAO.isDuplicateKey(code, caste.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));

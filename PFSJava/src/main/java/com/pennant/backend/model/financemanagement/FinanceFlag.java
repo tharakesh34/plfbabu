@@ -73,8 +73,6 @@ public class FinanceFlag extends AbstractWorkflowEntity {
 	private BigDecimal finRepaymentAmount = BigDecimal.ZERO;
 	private BigDecimal totalProfit = BigDecimal.ZERO;
 	private BigDecimal effectiveRateOfReturn;
-
-	private boolean newRecord;
 	private FinanceFlag befImage;
 	private LoggedInUser userDetails;
 
@@ -159,14 +157,6 @@ public class FinanceFlag extends AbstractWorkflowEntity {
 
 	public void setBefImage(FinanceFlag befImage) {
 		this.befImage = befImage;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public LoggedInUser getUserDetails() {

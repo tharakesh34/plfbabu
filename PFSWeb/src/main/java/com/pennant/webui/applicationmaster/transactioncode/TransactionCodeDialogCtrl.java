@@ -310,7 +310,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 		this.tranIsActive.setChecked(aTransactionCode.isTranIsActive());
 		this.recordStatus.setValue(aTransactionCode.getRecordStatus());
 
-		if (aTransactionCode.isNew()
+		if (aTransactionCode.isNewRecord()
 				|| (aTransactionCode.getRecordType() != null ? aTransactionCode.getRecordType() : "")
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.tranIsActive.setChecked(true);
@@ -382,7 +382,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
-		if (aTransactionCode.isNew()) {
+		if (aTransactionCode.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -477,7 +477,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getTransactionCodeListCtrl().search();
 	}
 
@@ -620,7 +620,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aTransactionCode.isNew();
+		isNew = aTransactionCode.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -669,7 +669,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	 * 
 	 * @return boolean
 	 */
-	private boolean doProcess(TransactionCode aTransactionCode, String tranType) {
+	protected boolean doProcess(TransactionCode aTransactionCode, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;

@@ -389,7 +389,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		pmayListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -1238,7 +1238,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 	public void doShowDialog(PMAY aPMAY) {
 		logger.debug(Literal.ENTERING);
 
-		if (aPMAY.isNew()) {
+		if (aPMAY.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 		} else {
@@ -1521,7 +1521,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 			throw new WrongValuesException(wvea);
 		}
 
-		isNew = aPMAY.isNew();
+		isNew = aPMAY.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1620,7 +1620,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private boolean doProcess(PMAY aPMAY, String tranType) {
+	protected boolean doProcess(PMAY aPMAY, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;

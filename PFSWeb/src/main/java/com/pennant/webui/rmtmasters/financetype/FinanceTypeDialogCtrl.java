@@ -3660,7 +3660,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug(Literal.ENTERING);
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aFinanceType.isNew()) {
+		if (aFinanceType.isNewRecord()) {
 			// setFocus
 			if (isPromotion) {
 				this.product.focus();
@@ -4284,7 +4284,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getFinanceTypeListCtrl().search();
 	}
 
@@ -4829,7 +4829,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 		}
 
-		isNew = aFinanceType.isNew();
+		isNew = aFinanceType.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -4871,7 +4871,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * @param tranType     (String)
 	 * @return boolean
 	 */
-	private boolean doProcess(FinanceType aFinanceType, String tranType) {
+	protected boolean doProcess(FinanceType aFinanceType, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -7937,7 +7937,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		for (int i = 0; i < finTypeReceiptModesList.size(); i++) {
 			FinTypeReceiptModes finTypeReceiptModes = finTypeReceiptModesList.get(i);
 
-			boolean oldReceiptMode = finTypeReceiptModes.isNew();
+			boolean oldReceiptMode = finTypeReceiptModes.isNewRecord();
 
 			if (receiptModesMap.containsKey(finTypeReceiptModes.getReceiptMode())) {
 
@@ -8185,7 +8185,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		for (int i = 0; i < irrFinanceTypeList.size(); i++) {
 			IRRFinanceType irrFinanceType = irrFinanceTypeList.get(i);
 
-			boolean oldVasMand = irrFinanceType.isNew();
+			boolean oldVasMand = irrFinanceType.isNewRecord();
 
 			if (irrCodeMap.containsKey(irrFinanceType.getIRRID())) {
 

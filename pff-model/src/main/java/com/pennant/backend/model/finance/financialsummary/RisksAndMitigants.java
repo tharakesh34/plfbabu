@@ -66,7 +66,6 @@ public class RisksAndMitigants extends AbstractWorkflowEntity {
 	private long seqNo;
 	private String risk;
 	private String mitigants;
-	private boolean newRecord = false;
 	private RisksAndMitigants befImage;
 	private LoggedInUser userDetails;
 	private String finReference;
@@ -88,14 +87,6 @@ public class RisksAndMitigants extends AbstractWorkflowEntity {
 		Set<String> excludeFields = new HashSet<String>();
 
 		return excludeFields;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public long getId() {

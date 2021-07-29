@@ -560,7 +560,7 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 		doWriteBeanToComponents(aFacilityReferenceDetail);
 
 		/* set Read only mode accordingly if the object is new or not. */
-		if (aFacilityReferenceDetail.isNew()) {
+		if (aFacilityReferenceDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus

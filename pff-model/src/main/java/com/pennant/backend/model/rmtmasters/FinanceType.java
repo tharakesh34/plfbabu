@@ -213,8 +213,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 	// Suspend details
 	private String finSuspTrigger;
 	private String finSuspRemarks;
-
-	private boolean newRecord;
 	private String lovValue;
 	private FinanceType befImage;
 	private boolean alwMaxDisbCheckReq;
@@ -504,7 +502,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 				.forEach(e -> entity.getFinTypeReceiptModesList().add(e == null ? null : e.copyEntity()));
 		entity.setFinSuspTrigger(this.finSuspTrigger);
 		entity.setFinSuspRemarks(this.finSuspRemarks);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setLovValue(this.lovValue);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setAlwMaxDisbCheckReq(this.alwMaxDisbCheckReq);
@@ -1091,14 +1089,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

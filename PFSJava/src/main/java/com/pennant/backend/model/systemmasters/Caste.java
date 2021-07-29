@@ -13,7 +13,6 @@ public class Caste extends AbstractWorkflowEntity {
 	private String casteCode;
 	private String casteDesc;
 	private boolean casteIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private Caste befImage;
 	private LoggedInUser userDetails;
@@ -65,14 +64,6 @@ public class Caste extends AbstractWorkflowEntity {
 
 	public void setCasteIsActive(boolean casteIsActive) {
 		this.casteIsActive = casteIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

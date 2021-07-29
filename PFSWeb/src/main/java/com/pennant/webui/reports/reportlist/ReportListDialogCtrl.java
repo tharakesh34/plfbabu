@@ -424,7 +424,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aReportList.isNew()) {
+		if (aReportList.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -697,7 +697,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aReportList.isNew();
+		isNew = aReportList.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -747,7 +747,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(ReportList aReportList, String tranType) {
+	protected boolean doProcess(ReportList aReportList, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -992,7 +992,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getReportListListCtrl().search();
 	}
 

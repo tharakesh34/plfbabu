@@ -79,8 +79,6 @@ public class CustomerChequeInfo extends AbstractWorkflowEntity {
 	@XmlElement
 	private int returnChequeCount;
 	private String remarks;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private CustomerChequeInfo befImage;
 	private LoggedInUser userDetails;
@@ -190,14 +188,6 @@ public class CustomerChequeInfo extends AbstractWorkflowEntity {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -307,7 +307,7 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 		this.finAppIsActive.setChecked(aFinanceApplicationCode.isFinAppIsActive());
 		this.recordStatus.setValue(aFinanceApplicationCode.getRecordStatus());
 
-		if (aFinanceApplicationCode.isNew()
+		if (aFinanceApplicationCode.isNewRecord()
 				|| (aFinanceApplicationCode.getRecordType() != null ? aFinanceApplicationCode.getRecordType() : "")
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.finAppIsActive.setChecked(true);
@@ -371,7 +371,7 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aFinanceApplicationCode.isNew()) {
+		if (aFinanceApplicationCode.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -593,7 +593,7 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aFinanceApplicationCode.isNew();
+		isNew = aFinanceApplicationCode.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -643,7 +643,7 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(FinanceApplicationCode aFinanceApplicationCode, String tranType) {
+	protected boolean doProcess(FinanceApplicationCode aFinanceApplicationCode, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -863,7 +863,7 @@ public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplica
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getFinanceApplicationCodeListCtrl().search();
 	}
 

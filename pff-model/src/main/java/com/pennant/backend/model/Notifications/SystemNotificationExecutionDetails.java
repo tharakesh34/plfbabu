@@ -1,9 +1,8 @@
 package com.pennant.backend.model.Notifications;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
-public class SystemNotificationExecutionDetails extends AbstractWorkflowEntity implements Entity {
+public class SystemNotificationExecutionDetails extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -1472467289111692722L;
 
@@ -26,17 +25,10 @@ public class SystemNotificationExecutionDetails extends AbstractWorkflowEntity i
 	private String attachmentLocation;
 	private String attachmentFileNames;
 
-	@Override
-	public boolean isNew() {
-		return false;
-	}
-
-	@Override
 	public long getId() {
 		return id;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.id = id;
 	}

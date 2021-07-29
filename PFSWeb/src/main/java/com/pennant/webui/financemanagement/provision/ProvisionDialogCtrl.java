@@ -639,7 +639,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
-		if (aProvision.isNew()) {
+		if (aProvision.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -987,7 +987,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
-	private boolean doProcess(Provision aProvision, String tranType)
+	protected boolean doProcess(Provision aProvision, String tranType)
 			throws InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 

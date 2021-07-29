@@ -54,7 +54,6 @@ public class ReportSearchTemplate extends AbstractWorkflowEntity {
 	private String fieldType;
 	private String fieldValue;
 	private String templateName;
-	private boolean newRecord = false;
 	private String lovValue;
 
 	public ReportSearchTemplate() {
@@ -107,14 +106,6 @@ public class ReportSearchTemplate extends AbstractWorkflowEntity {
 
 	public void setTemplateName(String templateName) {
 		this.templateName = templateName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

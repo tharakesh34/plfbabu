@@ -125,7 +125,7 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (rejectDetail.isNew()) {
+		if (rejectDetail.isNewRecord()) {
 			rejectDetail.setRejectCode(getRejectDetailDAO().save(rejectDetail, tableType));
 			auditHeader.getAuditDetail().setModelData(rejectDetail);
 			auditHeader.setAuditReference(rejectDetail.getRejectCode());
@@ -319,7 +319,7 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 		RejectDetail rejectDetail = (RejectDetail) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (rejectDetail.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(rejectDetail.getRecordType())
+		if (rejectDetail.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(rejectDetail.getRecordType())
 				&& rejectDetailDAO.isDuplicateKey(rejectDetail.getRejectCode(),
 						rejectDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

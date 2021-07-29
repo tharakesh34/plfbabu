@@ -59,7 +59,6 @@ public class SecurityOperationRoles extends AbstractWorkflowEntity {
 	private String lovDescRoleCode;
 	private int lovDescRightType;
 	private String lovDescRightName;
-	private boolean newRecord;
 
 	private String lovDescRoleDesc;
 
@@ -155,14 +154,6 @@ public class SecurityOperationRoles extends AbstractWorkflowEntity {
 
 	public boolean isNew() {
 		return false;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovDescRoleCd() {

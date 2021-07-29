@@ -64,7 +64,6 @@ public class RecommendationNotes extends AbstractWorkflowEntity {
 	private long id = Long.MIN_VALUE;
 	private long ParticularId;
 	private String remarks;
-	private boolean newRecord = false;
 	private RecommendationNotes befImage;
 	private LoggedInUser userDetails;
 	private String finReference;
@@ -87,14 +86,6 @@ public class RecommendationNotes extends AbstractWorkflowEntity {
 		Set<String> excludeFields = new HashSet<String>();
 
 		return excludeFields;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public long getId() {

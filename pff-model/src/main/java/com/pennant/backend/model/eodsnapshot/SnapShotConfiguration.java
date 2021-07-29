@@ -57,7 +57,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>SnapShotConfiguration table</b>.<br>
  *
  */
-public class SnapShotConfiguration extends AbstractWorkflowEntity implements Entity {
+public class SnapShotConfiguration extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
@@ -72,7 +72,6 @@ public class SnapShotConfiguration extends AbstractWorkflowEntity implements Ent
 	private String executionMethod;
 	private int clearingType;
 	private boolean active;
-	private boolean newRecord = false;
 	private String lovValue;
 	private SnapShotConfiguration befImage;
 	private LoggedInUser userDetails;
@@ -195,14 +194,6 @@ public class SnapShotConfiguration extends AbstractWorkflowEntity implements Ent
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

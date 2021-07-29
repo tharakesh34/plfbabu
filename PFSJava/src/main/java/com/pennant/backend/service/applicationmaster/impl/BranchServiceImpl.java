@@ -170,7 +170,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (branch.isNew()) {
+		if (branch.isNewRecord()) {
 			branch.setBranchCode(getBranchDAO().save(branch, tableType));
 			auditHeader.getAuditDetail().setModelData(branch);
 			auditHeader.setAuditReference(branch.getBranchCode());
@@ -564,7 +564,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 		String code = branch.getBranchCode();
 
 		// Check the unique keys.
-		if (branch.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(branch.getRecordType())
+		if (branch.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(branch.getRecordType())
 				&& branchDAO.isDuplicateKey(code, branch.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_BranchCode") + ": " + code;

@@ -304,7 +304,7 @@ public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> 
 
 	}
 
-	private void refreshList() {
+	protected void refreshList() {
 		getFinanceDeviationsListCtrl().search();
 	}
 

@@ -64,8 +64,6 @@ public class FeePaymentDetail extends AbstractWorkflowEntity {
 	private BigDecimal paymentAmount = BigDecimal.ZERO;
 	private String paymentReference;
 	private Date valueDate;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private FeePaymentDetail befImage;
 	private LoggedInUser userDetails;
@@ -139,14 +137,6 @@ public class FeePaymentDetail extends AbstractWorkflowEntity {
 
 	public void setValueDate(Date valueDate) {
 		this.valueDate = valueDate;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -146,7 +146,7 @@ public class BankDetailServiceImpl extends GenericService<BankDetail> implements
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (bankDetail.isNew()) {
+		if (bankDetail.isNewRecord()) {
 			bankDetail.setId(getBankDetailDAO().save(bankDetail, tableType));
 			auditHeader.getAuditDetail().setModelData(bankDetail);
 			auditHeader.setAuditReference(bankDetail.getId());
@@ -358,7 +358,7 @@ public class BankDetailServiceImpl extends GenericService<BankDetail> implements
 		String code = bankDetail.getBankCode();
 
 		// Check the unique keys.
-		if (bankDetail.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(bankDetail.getRecordType()) && bankDetailDAO
+		if (bankDetail.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(bankDetail.getRecordType()) && bankDetailDAO
 				.isDuplicateKey(code, bankDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_BankCode") + ": " + code;

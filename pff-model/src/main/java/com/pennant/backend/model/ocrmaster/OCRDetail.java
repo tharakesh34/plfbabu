@@ -13,7 +13,6 @@ public class OCRDetail extends AbstractWorkflowEntity implements Comparable<OCRD
 	private BigDecimal customerContribution = BigDecimal.ZERO;
 	private BigDecimal financerContribution = BigDecimal.ZERO;
 	private String contributor;
-	private boolean newRecord = false;
 	private String lovValue;
 	private OCRDetail befImage;
 	private LoggedInUser userDetails;
@@ -69,14 +68,6 @@ public class OCRDetail extends AbstractWorkflowEntity implements Comparable<OCRD
 
 	public void setContributor(String contributor) {
 		this.contributor = contributor;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

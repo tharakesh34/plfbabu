@@ -158,7 +158,7 @@ public class ExtFieldConfigServiceImpl extends GenericService<ExtendedFieldHeade
 		ExtendedFieldHeader extFieldHeader = (ExtendedFieldHeader) headerDetail.get(0).getModelData();
 
 		long moduleId;
-		if (extFieldHeader.isNew()) {
+		if (extFieldHeader.isNewRecord()) {
 			moduleId = getExtendedFieldHeaderDAO().save(extFieldHeader, tableType);
 
 			//Setting Module ID to List

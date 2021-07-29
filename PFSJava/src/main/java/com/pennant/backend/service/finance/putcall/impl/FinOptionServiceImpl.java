@@ -122,7 +122,7 @@ public class FinOptionServiceImpl extends GenericService<FinOption> implements F
 		valueParm[0] = finOption.getFinReference();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (finOption.isNew()) {
+		if (finOption.isNewRecord()) {
 			if (!finOption.isWorkflow()) {
 				if (befFinOption != null) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
@@ -302,7 +302,7 @@ public class FinOptionServiceImpl extends GenericService<FinOption> implements F
 			} else if (StringUtils.equalsIgnoreCase(finOption.getRecordType(), (PennantConstants.RECORD_TYPE_DEL))) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (finOption.isNew()) {
+				} else if (finOption.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

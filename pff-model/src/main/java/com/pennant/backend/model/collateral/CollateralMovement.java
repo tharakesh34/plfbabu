@@ -3,9 +3,7 @@ package com.pennant.backend.model.collateral;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import com.pennant.backend.model.Entity;
-
-public class CollateralMovement implements Entity {
+public class CollateralMovement {
 
 	private long movementSeq;
 	private String module;
@@ -71,17 +69,10 @@ public class CollateralMovement implements Entity {
 		this.process = process;
 	}
 
-	@Override
-	public boolean isNew() {
-		return false;
-	}
-
-	@Override
 	public long getId() {
 		return 0;
 	}
 
-	@Override
 	public void setId(long id) {
 	}
 

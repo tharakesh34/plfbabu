@@ -296,7 +296,7 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		listCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -329,7 +329,7 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 		this.description.setValue(header.getDescription());
 		this.stageOrder.setValue(header.getStageOrder());
 
-		if (header.isNew() || (StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, header.getRecordType()))) {
+		if (header.isNewRecord() || (StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, header.getRecordType()))) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		} else {
@@ -408,7 +408,7 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 	public void doShowDialog(AssetClassificationHeader assetClassificationHeader) {
 		logger.debug(Literal.LEAVING);
 
-		if (assetClassificationHeader.isNew()) {
+		if (assetClassificationHeader.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -655,7 +655,7 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 		// FintypeDetails
 		classificationHeader.setAssetClassificationDetailList(fetchFinTypeDetails());
 
-		isNew = classificationHeader.isNew();
+		isNew = classificationHeader.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -703,7 +703,7 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(AssetClassificationHeader header, String tranType) {
+	protected boolean doProcess(AssetClassificationHeader header, String tranType) {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;

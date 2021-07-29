@@ -59,7 +59,6 @@ public class SubSegment extends AbstractWorkflowEntity {
 	private String subSegmentCode;
 	private String subSegmentDesc;
 	private boolean subSegmentIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private SubSegment befImage;
 	private LoggedInUser userDetails;
@@ -127,14 +126,6 @@ public class SubSegment extends AbstractWorkflowEntity {
 
 	public void setSubSegmentIsActive(boolean subSegmentIsActive) {
 		this.subSegmentIsActive = subSegmentIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

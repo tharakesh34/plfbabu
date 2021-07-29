@@ -124,7 +124,7 @@ public class TransactionCodeServiceImpl extends GenericService<TransactionCode> 
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (transactionCode.isNew()) {
+		if (transactionCode.isNewRecord()) {
 			transactionCode.setId(getTransactionCodeDAO().save(transactionCode, tableType));
 			auditHeader.getAuditDetail().setModelData(transactionCode);
 			auditHeader.setAuditReference(transactionCode.getTranCode());
@@ -323,7 +323,7 @@ public class TransactionCodeServiceImpl extends GenericService<TransactionCode> 
 		TransactionCode transactionCode = (TransactionCode) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (transactionCode.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(transactionCode.getRecordType())
+		if (transactionCode.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(transactionCode.getRecordType())
 				&& transactionCodeDAO.isDuplicateKey(transactionCode.getTranCode(),
 						transactionCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

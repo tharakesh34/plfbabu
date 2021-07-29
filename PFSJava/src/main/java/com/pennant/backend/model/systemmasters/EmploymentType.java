@@ -58,7 +58,6 @@ public class EmploymentType extends AbstractWorkflowEntity {
 
 	private String empType;
 	private String empTypeDesc;
-	private boolean newRecord;
 	private String lovValue;
 	private EmploymentType befImage;
 	private LoggedInUser userDetails;
@@ -103,14 +102,6 @@ public class EmploymentType extends AbstractWorkflowEntity {
 
 	public void setEmpTypeDesc(String empTypeDesc) {
 		this.empTypeDesc = empTypeDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

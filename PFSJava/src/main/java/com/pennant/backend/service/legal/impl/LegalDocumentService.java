@@ -120,7 +120,7 @@ public class LegalDocumentService extends GenericService<LegalDocument> {
 		errParm[0] = PennantJavaUtil.getLabel("label_LegalReference") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_LegalDocumentDialog_DocumentNo.value") + ":" + valueParm[1];
 
-		if (legalDocument.isNew()) {
+		if (legalDocument.isNewRecord()) {
 			if (!legalDocument.isWorkflow()) {
 				if (befApplicantDetail != null) {
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
@@ -269,7 +269,7 @@ public class LegalDocumentService extends GenericService<LegalDocument> {
 			} else if (legalDocument.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (legalDocument.isNew()) {
+				} else if (legalDocument.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

@@ -1014,7 +1014,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aScoringGroup.isNew()) {
+		if (aScoringGroup.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1365,7 +1365,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aScoringGroup.isNew();
+		isNew = aScoringGroup.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1408,7 +1408,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 * @param tranType
 	 * @return
 	 */
-	private boolean doProcess(ScoringGroup aScoringGroup, String tranType) {
+	protected boolean doProcess(ScoringGroup aScoringGroup, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -1764,7 +1764,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getScoringGroupListCtrl().search();
 
 	}

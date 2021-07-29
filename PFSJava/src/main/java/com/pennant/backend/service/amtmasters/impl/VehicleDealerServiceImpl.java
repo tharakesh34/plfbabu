@@ -138,7 +138,7 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 			tableType = "_Temp";
 		}
 
-		if (vehicleDealer.isNew()) {
+		if (vehicleDealer.isNewRecord()) {
 			vehicleDealer.setId(getVehicleDealerDAO().save(vehicleDealer, tableType));
 			auditHeader.getAuditDetail().setModelData(vehicleDealer);
 			auditHeader.setAuditReference(String.valueOf(vehicleDealer.getDealerId()));
@@ -364,7 +364,7 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 		valueParm[0] = String.valueOf(vehicleDealer.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_DealerId") + ":" + valueParm[0];
 
-		if (vehicleDealer.isNew()) { // for New record or new record into work
+		if (vehicleDealer.isNewRecord()) { // for New record or new record into work
 			// flow
 
 			if (!vehicleDealer.isWorkflow()) {// With out Work flow only new

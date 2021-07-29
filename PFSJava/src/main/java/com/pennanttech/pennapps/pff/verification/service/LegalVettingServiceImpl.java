@@ -97,7 +97,7 @@ public class LegalVettingServiceImpl extends GenericService<LegalVetting> implem
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (vetting.isNew()) {
+		if (vetting.isNewRecord()) {
 			legalVettingDAO.save(vetting, tableType);
 			auditHeader.getAuditDetail().setModelData(vetting);
 			auditHeader.setAuditReference(String.valueOf(vetting.getVerificationId()));
@@ -512,7 +512,7 @@ public class LegalVettingServiceImpl extends GenericService<LegalVetting> implem
 			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (documentDetails.isNew()) {
+				} else if (documentDetails.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -622,7 +622,7 @@ public class LegalVettingServiceImpl extends GenericService<LegalVetting> implem
 			} else if (lvDocument.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (lvDocument.isNew()) {
+				} else if (lvDocument.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

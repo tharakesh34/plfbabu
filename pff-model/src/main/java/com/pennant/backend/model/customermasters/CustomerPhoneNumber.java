@@ -77,7 +77,6 @@ public class CustomerPhoneNumber extends AbstractWorkflowEntity {
 	private String phoneAreaCode;
 	@XmlElement
 	private String phoneNumber;
-	private boolean newRecord;
 	private String lovValue;
 	private String lovDescCustRecordType;
 	private String lovDescCustCIF;
@@ -175,14 +174,6 @@ public class CustomerPhoneNumber extends AbstractWorkflowEntity {
 
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

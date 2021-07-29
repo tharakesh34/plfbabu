@@ -373,7 +373,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 
 		setPartnerBankProperties();
 
-		if (!aFinTypePartnerBank.isNew()) {
+		if (!aFinTypePartnerBank.isNewRecord()) {
 
 			this.partnerBankID.setValue(StringUtils.trimToEmpty(aFinTypePartnerBank.getPartnerBankCode()),
 					StringUtils.trimToEmpty(aFinTypePartnerBank.getPartnerBankName()));
@@ -469,7 +469,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 	public void doShowDialog(FinTypePartnerBank finTypePartnerBank) {
 		logger.debug(Literal.LEAVING);
 
-		if (finTypePartnerBank.isNew()) {
+		if (finTypePartnerBank.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -612,7 +612,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 
 		readOnlyComponent(true, this.finType);
 
-		if (this.finTypePartnerBank.isNew()) {
+		if (this.finTypePartnerBank.isNewRecord()) {
 			readOnlyComponent(isReadOnly("FinTypePartnerBankDialog_Purpose"), this.purpose);
 			readOnlyComponent(isReadOnly("FinTypePartnerBankDialog_PaymentMode"), this.paymentMode);
 			readOnlyComponent(isReadOnly("FinTypePartnerBankDialog_PartnerBankID"), this.partnerBankID);
@@ -765,7 +765,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		doSetValidation();
 		doWriteComponentsToBean(aFinTypePartnerBank);
 
-		isNew = aFinTypePartnerBank.isNew();
+		isNew = aFinTypePartnerBank.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -855,7 +855,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 								aFinTypePartnerBank.getPurpose())) {
 					// Both Current and Existing list rating same
 					if ((oldFinTypePartnerBank.isVanApplicable() && aFinTypePartnerBank.isVanApplicable())) {
-						if (aFinTypePartnerBank.isNew()) {
+						if (aFinTypePartnerBank.isNewRecord()) {
 							valueParm[0] = String.valueOf(aFinTypePartnerBank.isVanApplicable());
 							errParm[0] = PennantJavaUtil.getLabel("label_FinTypePartnerBankDialog_VanApplicable.value")
 									+ ":" + valueParm[0];
@@ -872,7 +872,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 						&& StringUtils.equals(oldFinTypePartnerBank.getPurpose(), aFinTypePartnerBank.getPurpose())) {
 					// Both Current and Existing list rating same
 
-					if (aFinTypePartnerBank.isNew()) {
+					if (aFinTypePartnerBank.isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm),
 								getUserWorkspace().getUserLanguage()));

@@ -463,7 +463,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		if (paymentHeaderListCtrl != null) {
 			paymentHeaderListCtrl.search();
@@ -775,7 +775,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	public void doShowDialog(PaymentHeader paymentHeader) {
 		logger.debug(Literal.LEAVING);
 
-		if (paymentHeader.isNew()) {
+		if (paymentHeader.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 		} else {
@@ -940,7 +940,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 		doWriteComponentsToBean(aPaymentHeader);
 
-		isNew = aPaymentHeader.isNew();
+		isNew = aPaymentHeader.isNewRecord();
 
 		String tranType = "";
 
@@ -1014,7 +1014,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(PaymentHeader aPaymentHeader, String tranType) throws InterfaceException {
+	protected boolean doProcess(PaymentHeader aPaymentHeader, String tranType) throws InterfaceException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

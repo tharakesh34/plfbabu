@@ -30,7 +30,6 @@ public class FinTypeVASProducts extends AbstractWorkflowEntity {
 	@XmlElement
 	private boolean mandatory;
 	private String mandatoryDesc;
-	private boolean newRecord = false;
 	private FinTypeVASProducts befImage;
 	private LoggedInUser userDetails;
 	private String productType;
@@ -65,7 +64,7 @@ public class FinTypeVASProducts extends AbstractWorkflowEntity {
 		entity.setVasProductDesc(this.vasProductDesc);
 		entity.setMandatory(this.mandatory);
 		entity.setMandatoryDesc(this.mandatoryDesc);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
 		entity.setProductType(this.productType);
@@ -118,14 +117,6 @@ public class FinTypeVASProducts extends AbstractWorkflowEntity {
 
 	public void setVasProduct(String vasProduct) {
 		this.vasProduct = vasProduct;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public FinTypeVASProducts getBefImage() {

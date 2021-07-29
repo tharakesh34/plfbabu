@@ -359,7 +359,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 			this.pCCountry.setDescription(aCity.getLovDescPCCountryName());
 			this.pCProvince.setDescription(aCity.getLovDescPCProvinceName());
 		}
-		if (aCity.isNew() || (aCity.getRecordType() != null ? aCity.getRecordType() : "")
+		if (aCity.isNewRecord() || (aCity.getRecordType() != null ? aCity.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.cityIsActive.setChecked(true);
 			this.cityIsActive.setDisabled(true);
@@ -446,7 +446,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aCity.isNew()) {
+		if (aCity.isNewRecord()) {
 			this.pCCountry.setVisible(true);
 			this.pCProvince.setVisible(true);
 			this.btnCtrl.setInitNew();
@@ -550,7 +550,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCityListCtrl().search();
 	}
 
@@ -696,7 +696,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aCity.isNew();
+		isNew = aCity.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -746,7 +746,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(City aCity, String tranType) {
+	protected boolean doProcess(City aCity, String tranType) {
 		logger.debug("Entering ");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

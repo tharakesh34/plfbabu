@@ -54,14 +54,13 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>LegalPropertyTitle table</b>.<br>
  *
  */
-public class LegalPropertyTitle extends AbstractWorkflowEntity implements Entity {
+public class LegalPropertyTitle extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long legalPropertyTitleId = Long.MIN_VALUE;
 	private long legalId = Long.MIN_VALUE;
 	private int seqNum = 0;
 	private String title;
-	private boolean newRecord = false;
 	private String lovValue;
 	private LegalPropertyTitle befImage;
 	private LoggedInUser userDetails;
@@ -107,14 +106,6 @@ public class LegalPropertyTitle extends AbstractWorkflowEntity implements Entity
 
 	public void setTitle(String title) {
 		this.title = title;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

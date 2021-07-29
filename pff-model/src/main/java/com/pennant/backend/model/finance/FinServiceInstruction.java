@@ -7,7 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.pennant.backend.model.Entity;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
@@ -15,13 +19,8 @@ import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-
 @XmlAccessorType(XmlAccessType.NONE)
-public class FinServiceInstruction extends AbstractWorkflowEntity implements Entity {
+public class FinServiceInstruction extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 2803331023129230226L;
 
 	public FinServiceInstruction() {
@@ -168,7 +167,6 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	@XmlElement(name = "overdue")
 	private FinODPenaltyRate finODPenaltyRate;
 	private String moduleDefiner;
-	private boolean newRecord;
 	private boolean wif;
 	private BigDecimal remPartPayAmt = BigDecimal.ZERO;
 	@XmlElement
@@ -388,7 +386,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 		this.finFeeDetails.stream().forEach(e -> entity.getFinFeeDetails().add(e == null ? null : e.copyEntity()));
 		entity.setFinODPenaltyRate(this.finODPenaltyRate == null ? null : this.finODPenaltyRate.copyEntity());
 		entity.setModuleDefiner(this.moduleDefiner);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setWif(this.wif);
 		entity.setRemPartPayAmt(this.remPartPayAmt);
 		entity.setUploadDetailId(this.UploadDetailId);
@@ -696,24 +694,10 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 		this.finEvent = finEvent;
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
-	@Override
 	public long getId() {
 		return serviceSeqId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.serviceSeqId = id;
 	}

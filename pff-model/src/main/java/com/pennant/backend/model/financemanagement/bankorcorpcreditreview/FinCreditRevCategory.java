@@ -14,21 +14,12 @@ public class FinCreditRevCategory extends AbstractWorkflowEntity {
 	private boolean changedsply;
 	private int noOfyears;
 	private int categorySeque;
-	private boolean newRecord = false;
 	private String lovValue;
 	private FinCreditRevCategory befImage;
 	private LoggedInUser userDetails;
 
 	public FinCreditRevCategory() {
 		super();
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

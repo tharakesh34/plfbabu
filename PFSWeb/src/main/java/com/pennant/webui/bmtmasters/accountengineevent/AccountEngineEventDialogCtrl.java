@@ -349,7 +349,7 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aAccountEngineEvent.isNew()) {
+		if (aAccountEngineEvent.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -561,7 +561,7 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aAccountEngineEvent.isNew();
+		isNew = aAccountEngineEvent.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -610,7 +610,7 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(AccountEngineEvent aAccountEngineEvent, String tranType) {
+	protected boolean doProcess(AccountEngineEvent aAccountEngineEvent, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -818,7 +818,7 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 	}
 
 	// Method for refreshing the list after successful updation
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug("Entering");
 		final JdbcSearchObject<AccountEngineEvent> soAccountEngineEvent = getAccountEngineEventListCtrl()
 				.getSearchObj();

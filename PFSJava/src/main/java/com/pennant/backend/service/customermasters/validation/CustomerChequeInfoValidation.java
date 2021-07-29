@@ -75,7 +75,7 @@ public class CustomerChequeInfoValidation {
 				+ ":" + valueParm[0] + " and ";
 		errParm[1] = PennantJavaUtil.getLabel("label_ChequeSeq") + "-" + valueParm[1];
 
-		if (customerChequeInfo.isNew()) { // for New record or new record into work flow
+		if (customerChequeInfo.isNewRecord()) { // for New record or new record into work flow
 
 			if (!customerChequeInfo.isWorkflow()) {// With out Work flow only new records  
 				if (befCustomerChequeInfo != null) { // Record Already Exists in the table then error  

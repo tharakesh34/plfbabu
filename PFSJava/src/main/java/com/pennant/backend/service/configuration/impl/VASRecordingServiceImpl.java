@@ -307,7 +307,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			tableType = "_Temp";
 		}
 
-		if (vASRecording.isNew()) {
+		if (vASRecording.isNewRecord()) {
 			getVASRecordingDAO().save(vASRecording, tableType);
 		} else {
 			getVASRecordingDAO().update(vASRecording, tableType);
@@ -1253,7 +1253,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 					if (approveRec) {
 						deleteRecord = true;
-					} else if (documentDetails.isNew()) {
+					} else if (documentDetails.isNewRecord()) {
 						saveRecord = true;
 					} else {
 						updateRecord = true;

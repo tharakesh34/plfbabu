@@ -428,7 +428,7 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
 	/*
-	 * private void refreshList() { getFinancialSummaryDialogCtrl().search(); }
+	 * protected void refreshList() { getFinancialSummaryDialogCtrl().search(); }
 	 */
 
 	// CRUD operations
@@ -590,7 +590,7 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = sanctionConditions.isNew();
+		isNew = sanctionConditions.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -744,7 +744,7 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(SanctionConditions sanctionConditions, String tranType) {
+	protected boolean doProcess(SanctionConditions sanctionConditions, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

@@ -278,7 +278,7 @@ public class ReligionDialogCtrl extends GFCBaseCtrl<Religion> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		religionListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -313,7 +313,7 @@ public class ReligionDialogCtrl extends GFCBaseCtrl<Religion> {
 
 		this.recordStatus.setValue(religion.getRecordStatus());
 
-		if (religion.isNew() || (religion.getRecordType() != null ? religion.getRecordType() : "")
+		if (religion.isNewRecord() || (religion.getRecordType() != null ? religion.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
@@ -373,7 +373,7 @@ public class ReligionDialogCtrl extends GFCBaseCtrl<Religion> {
 	public void doShowDialog(Religion religion) {
 		logger.debug(Literal.LEAVING);
 
-		if (religion.isNew()) {
+		if (religion.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -576,7 +576,7 @@ public class ReligionDialogCtrl extends GFCBaseCtrl<Religion> {
 		doSetValidation();
 		doWriteComponentsToBean(aReligion);
 
-		isNew = aReligion.isNew();
+		isNew = aReligion.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -624,7 +624,7 @@ public class ReligionDialogCtrl extends GFCBaseCtrl<Religion> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Religion aReligion, String tranType) {
+	protected boolean doProcess(Religion aReligion, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

@@ -55,7 +55,6 @@ public class SplRateCode extends AbstractWorkflowEntity {
 	private String sRType;
 	private String sRTypeDesc;
 	private boolean sRIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private SplRateCode befImage;
 	private LoggedInUser userDetails;
@@ -107,14 +106,6 @@ public class SplRateCode extends AbstractWorkflowEntity {
 
 	public void setSRIsActive(boolean sRIsActive) {
 		this.sRIsActive = sRIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

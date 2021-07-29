@@ -66,7 +66,6 @@ public class Cluster extends AbstractWorkflowEntity {
 	private String parentCode;
 	private String parentName;
 	private String parentType;
-	private boolean newRecord = false;
 	private String lovValue;
 	private Cluster befImage;
 	private LoggedInUser userDetails;
@@ -162,14 +161,6 @@ public class Cluster extends AbstractWorkflowEntity {
 
 	public void setParentName(String parentName) {
 		this.parentName = parentName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

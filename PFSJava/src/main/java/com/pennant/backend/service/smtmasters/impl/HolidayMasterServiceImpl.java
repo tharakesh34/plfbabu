@@ -123,14 +123,14 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 		if (holidayMaster.isWorkflow()) {
 			tableType = "_Temp";
 		} else {
-			if (holidayMaster.isNew()) {
+			if (holidayMaster.isNewRecord()) {
 				auditHeader.setAuditTranType(PennantConstants.TRAN_ADD);
 			} else {
 				auditHeader.setAuditTranType(PennantConstants.TRAN_UPD);
 			}
 		}
 
-		if (holidayMaster.isNew()) {
+		if (holidayMaster.isNewRecord()) {
 			getHolidayMasterDAO().save(holidayMaster, tableType);
 			auditHeader.getAuditDetail().setModelData(holidayMaster);
 			auditHeader.setAuditReference(holidayMaster.getHolidayCode());
@@ -326,7 +326,7 @@ public class HolidayMasterServiceImpl extends GenericService<HolidayMaster> impl
 		errParm[1] = PennantJavaUtil.getLabel("label_HolidayMasterDialog_HolidayYear.value") + ":" + valueParm[1];
 		errParm[2] = PennantJavaUtil.getLabel("label_HolidayMasterDialog_HolidayType.value") + ":" + valueParm[2];
 
-		if (holidayMaster.isNew()) { // for New record or new record into work
+		if (holidayMaster.isNewRecord()) { // for New record or new record into work
 			// flow
 
 			if (!holidayMaster.isWorkflow()) {// With out Work flow only new

@@ -420,7 +420,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		technicalVerificationListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -1089,7 +1089,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	public void doShowDialog(TechnicalVerification technicalVerification) {
 		logger.debug(Literal.ENTERING);
 
-		if (technicalVerification.isNew()) {
+		if (technicalVerification.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1407,7 +1407,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		doSetValidation();
 		doWriteComponentsToBean(tv);
 
-		isNew = tv.isNew();
+		isNew = tv.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1475,7 +1475,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(TechnicalVerification tv, String tranType) {
+	protected boolean doProcess(TechnicalVerification tv, String tranType) {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;

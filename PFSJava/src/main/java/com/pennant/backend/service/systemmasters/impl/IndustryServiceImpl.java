@@ -123,7 +123,7 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (industry.isNew()) {
+		if (industry.isNewRecord()) {
 			getIndustryDAO().save(industry, tableType);
 			auditHeader.getAuditDetail().setModelData(industry);
 			auditHeader.setAuditReference(
@@ -327,7 +327,7 @@ public class IndustryServiceImpl extends GenericService<Industry> implements Ind
 		String code = industry.getIndustryCode();
 
 		// Check the unique keys.
-		if (industry.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(industry.getRecordType())
+		if (industry.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(industry.getRecordType())
 				&& industryDAO.isDuplicateKey(code, industry.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_IndustryCode") + ": " + code;

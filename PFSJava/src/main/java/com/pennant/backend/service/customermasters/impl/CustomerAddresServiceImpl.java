@@ -140,7 +140,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres> im
 			tableType = "_Temp";
 		}
 
-		if (customerAddres.isNew()) {
+		if (customerAddres.isNewRecord()) {
 			customerAddres.setId(getCustomerAddresDAO().save(customerAddres, tableType));
 			auditHeader.getAuditDetail().setModelData(customerAddres);
 			/* auditHeader.setAuditReference(String.valueOf(customerAddres.getId())); */

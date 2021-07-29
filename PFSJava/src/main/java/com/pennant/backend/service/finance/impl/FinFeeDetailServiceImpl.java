@@ -270,7 +270,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			if (taxHeader != null && (finFeeDetail.isNewRecord() || (!finFeeDetail.isNewRecord()
 					&& (finFeeDetail.getTaxHeaderId() != null && finFeeDetail.getTaxHeaderId() > 0)))) {
 				taxHeader.setRecordType(finFeeDetail.getRecordType());
-				taxHeader.setNewRecord(finFeeDetail.isNew());
+				taxHeader.setNewRecord(finFeeDetail.isNewRecord());
 				taxHeader.setLastMntBy(finFeeDetail.getLastMntBy());
 				taxHeader.setLastMntOn(finFeeDetail.getLastMntOn());
 				taxHeader.setRecordStatus(finFeeDetail.getRecordStatus());
@@ -371,7 +371,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			} else if (fee.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (fee.isNew()) {
+				} else if (fee.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -495,7 +495,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				} else if (finFeeReceipt.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 					if (approveRec) {
 						deleteRecord = true;
-					} else if (finFeeReceipt.isNew()) {
+					} else if (finFeeReceipt.isNewRecord()) {
 						saveRecord = true;
 					} else {
 						updateRecord = true;
@@ -548,7 +548,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			if (taxHeader != null && (finFeeDetail.isNewRecord() || (!finFeeDetail.isNewRecord()
 					&& (finFeeDetail.getTaxHeaderId() != null && finFeeDetail.getTaxHeaderId() > 0)))) {
 				taxHeader.setRecordType(finFeeDetail.getRecordType());
-				taxHeader.setNewRecord(finFeeDetail.isNew());
+				taxHeader.setNewRecord(finFeeDetail.isNewRecord());
 				taxHeader.setRecordStatus(finFeeDetail.getRecordStatus());
 				taxHeader.setLastMntBy(finFeeDetail.getLastMntBy());
 				taxHeader.setLastMntOn(finFeeDetail.getLastMntOn());
@@ -1162,7 +1162,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		valueParm[0] = String.valueOf(finFeeDetail.getFeeTypeDesc());
 		errParm[0] = PennantJavaUtil.getLabel("FeeType") + ":" + valueParm[0];
 
-		if (finFeeDetail.isNew()) { // for New record or new record into work
+		if (finFeeDetail.isNewRecord()) { // for New record or new record into work
 									// flow
 
 			if (!finFeeDetail.isWorkflow()) {// With out Work flow only new
@@ -1290,7 +1290,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		valueParm[0] = String.valueOf(finFeeReceipt.getFeeTypeDesc());
 		errParm[0] = PennantJavaUtil.getLabel("FeeType") + ":" + valueParm[0];
 
-		if (finFeeReceipt.isNew()) { // for New record or new record into work
+		if (finFeeReceipt.isNewRecord()) { // for New record or new record into work
 										// flow
 			if (!finFeeReceipt.isWorkflow()) {// With out Work flow only new
 												// records

@@ -310,7 +310,7 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 		this.incomeTypeIsActive.setChecked(aIncomeType.isIncomeTypeIsActive());
 		this.recordStatus.setValue(aIncomeType.getRecordStatus());
 
-		if (aIncomeType.isNew() || (aIncomeType.getRecordType() != null ? aIncomeType.getRecordType() : "")
+		if (aIncomeType.isNewRecord() || (aIncomeType.getRecordType() != null ? aIncomeType.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.incomeTypeIsActive.setChecked(true);
 			this.incomeTypeIsActive.setDisabled(true);
@@ -400,7 +400,7 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aIncomeType.isNew()) {
+		if (aIncomeType.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -644,7 +644,7 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aIncomeType.isNew();
+		isNew = aIncomeType.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -694,7 +694,7 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(IncomeType aIncomeType, String tranType) {
+	protected boolean doProcess(IncomeType aIncomeType, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -904,7 +904,7 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getIncomeTypeListCtrl().search();
 	}
 

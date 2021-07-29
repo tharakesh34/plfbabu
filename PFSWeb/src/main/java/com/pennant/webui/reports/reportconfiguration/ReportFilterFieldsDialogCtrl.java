@@ -809,7 +809,7 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (enqModule) {
 			doReadOnly(true);
-		} else if (aReportFilterFields.isNew()) {
+		} else if (aReportFilterFields.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			// setFocus
 			this.fieldName.focus();
@@ -1183,7 +1183,7 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aReportFilterFields.isNew();
+		isNew = aReportFilterFields.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1270,7 +1270,7 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 						.equalsIgnoreCase(reportFilterFields.getFieldName().trim())) {
 					// Both Current and Existing list expense same
 					// if same educational expenses added twice set error detail
-					if (getReportFilterFields().isNew()) {
+					if (getReportFilterFields().isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
 								getUserWorkspace().getUserLanguage()));

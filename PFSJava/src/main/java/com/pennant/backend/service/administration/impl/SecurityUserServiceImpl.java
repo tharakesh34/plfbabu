@@ -134,7 +134,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		} else {
 
-			if (securityUser.isNew()) {
+			if (securityUser.isNewRecord()) {
 				auditHeader.setAuditTranType(PennantConstants.TRAN_ADD);
 			} else {
 				auditHeader.setAuditTranType(PennantConstants.TRAN_UPD);
@@ -288,7 +288,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			} else if (securityUserDivBranch.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (securityUserDivBranch.isNew()) {
+				} else if (securityUserDivBranch.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -1263,7 +1263,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (reportingManager.isNew()) {
+				} else if (reportingManager.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

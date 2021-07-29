@@ -136,7 +136,7 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (dPDBucketConfiguration.isNew()) {
+		if (dPDBucketConfiguration.isNewRecord()) {
 			dPDBucketConfiguration
 					.setId(Long.parseLong(getDPDBucketConfigurationDAO().save(dPDBucketConfiguration, tableType)));
 			auditHeader.getAuditDetail().setModelData(dPDBucketConfiguration);
@@ -354,7 +354,7 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 		DPDBucketConfiguration dPDBucketConfiguration = (DPDBucketConfiguration) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (dPDBucketConfiguration.isNew()
+		if (dPDBucketConfiguration.isNewRecord()
 				&& dPDBucketConfigurationDAO.isDuplicateKey(dPDBucketConfiguration.getConfigID(),
 						dPDBucketConfiguration.getProductCode(), dPDBucketConfiguration.getBucketID(),
 						dPDBucketConfiguration.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {

@@ -92,8 +92,6 @@ public class FieldInvestigation extends AbstractWorkflowEntity {
 	private String agencyName;
 	private List<DocumentDetails> documents = null;
 	@XmlTransient
-	private boolean newRecord = false;
-	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private FieldInvestigation befImage;
@@ -409,14 +407,6 @@ public class FieldInvestigation extends AbstractWorkflowEntity {
 
 	public void setLovrelationdesc(String lovrelationdesc) {
 		this.lovrelationdesc = lovrelationdesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

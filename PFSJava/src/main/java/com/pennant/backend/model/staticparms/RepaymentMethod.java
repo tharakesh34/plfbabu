@@ -56,7 +56,6 @@ public class RepaymentMethod extends AbstractWorkflowEntity {
 
 	private String repayMethod = null;
 	private String repayMethodDesc;
-	private boolean newRecord = false;
 	private String lovValue;
 	private RepaymentMethod befImage;
 	private LoggedInUser userDetails;
@@ -100,14 +99,6 @@ public class RepaymentMethod extends AbstractWorkflowEntity {
 
 	public void setRepayMethodDesc(String repayMethodDesc) {
 		this.repayMethodDesc = repayMethodDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

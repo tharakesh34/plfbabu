@@ -112,7 +112,7 @@ public class CustomerIncomeValidation {
 			return auditDetail;
 		}
 
-		if (customerIncome.isNew()) { // for New record or new record into work flow
+		if (customerIncome.isNewRecord()) { // for New record or new record into work flow
 
 			if (!customerIncome.isWorkflow()) {// With out Work flow only new records
 				if (befCustomerIncome != null) { // Record Already Exists in the table then error

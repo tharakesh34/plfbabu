@@ -51,13 +51,12 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>ScoringSlab table</b>.<br>
  *
  */
-public class ScoringSlab extends AbstractWorkflowEntity implements Entity {
+public class ScoringSlab extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 	private long scoreGroupId = Long.MIN_VALUE;
 	private long scoringSlab;
 	private String lovDescScoreGroupCode;
 	private String creditWorthness;
-	private boolean newRecord = false;
 	private String lovValue;
 	private ScoringSlab befImage;
 	private LoggedInUser userDetails;
@@ -108,14 +107,6 @@ public class ScoringSlab extends AbstractWorkflowEntity implements Entity {
 
 	public void setCreditWorthness(String creditWorthness) {
 		this.creditWorthness = creditWorthness;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

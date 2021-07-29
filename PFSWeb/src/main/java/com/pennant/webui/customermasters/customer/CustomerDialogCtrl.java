@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerDialogCtrl.java                                              * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2011    														*
- *                                                                  						*
- * Modified Date    :  27-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2011 * * Modified
+ * Date : 27-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 09-05-2018		Vinay					 0.2      Extended Details tab changes for 		*
- * 													  Customer Enquiry menu based on rights	* 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-05-2011 Pennant 0.1 * * 09-05-2018 Vinay 0.2 Extended Details tab changes for * Customer Enquiry menu based on
+ * rights * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.customermasters.customer;
@@ -1305,8 +1287,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
-		boolean isClosed = doClose(this.btnSave.isVisible());
-		if (isClosed && extendedFieldCtrl != null && customerDetails.getExtendedFieldHeader() != null) {
+		doClose(this.btnSave.isVisible());
+
+	}
+
+	protected void doPostClose() {
+		if (extendedFieldCtrl != null && customerDetails.getExtendedFieldHeader() != null) {
 			extendedFieldCtrl.deAllocateAuthorities();
 		}
 	}
@@ -1425,7 +1411,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.target.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescTargetName()));
 		this.salariedCustomer.setChecked(aCustomer.isSalariedCustomer());
 
-		if (!aCustomer.isNew()) {
+		if (!aCustomer.isNewRecord()) {
 			this.custGroupId.setValue(StringUtils.trimToEmpty(aCustomer.getLovDescCustGroupCode()),
 					StringUtils.trimToEmpty(aCustomer.getLovDesccustGroupIDName()));
 			this.custGroupId.setAttribute("CustGroupId", aCustomer.getCustGroupID());
@@ -3341,7 +3327,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCustomerListCtrl().search();
 	}
 
@@ -3410,7 +3396,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 			if (!isReadOnly("CustomerDialog_coreBankID")) {
 				Customer aCustomer = this.customerDetails.getCustomer();
-				if (aCustomer.isNew()) {
+				if (aCustomer.isNewRecord()) {
 					this.custCoreBank.setReadonly(false);
 				}
 				if (PennantConstants.RECORD_TYPE_NEW.equals(aCustomer.getRecordType())) {
@@ -4273,7 +4259,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		aCustomer.setNextRoleCode(nextRoleCode);
 	}
 
-	private boolean doProcess(CustomerDetails aCustomerDetails, String tranType)
+	protected boolean doProcess(CustomerDetails aCustomerDetails, String tranType)
 			throws InterfaceException, InterruptedException {
 		logger.debug("Entering");
 		boolean processCompleted = true;
@@ -4302,7 +4288,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			} else {
 				if (StringUtils.isEmpty(aCustomerDetails.getCustomer().getRecordType())
 						&& StringUtils.isEmpty(details.getRecordType())) {
-					if (aCustomerDetails.getCustomer().isNew()) {
+					if (aCustomerDetails.getCustomer().isNewRecord()) {
 						details.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					} else {
 						details.setRecordType(PennantConstants.RECORD_TYPE_UPD);

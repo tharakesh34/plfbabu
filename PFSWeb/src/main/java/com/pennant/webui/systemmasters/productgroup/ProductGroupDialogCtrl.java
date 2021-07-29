@@ -121,7 +121,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 	public void doShowDialog(ProductGroup productGroup) {
 		logger.debug(Literal.LEAVING);
 
-		if (productGroup.isNew()) {
+		if (productGroup.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -262,7 +262,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 		this.modelId.setValue(aProductGroup.getModelId());
 		this.txtchannel.setValue(aProductGroup.getChannel());
 		this.active.setChecked(aProductGroup.isActive());
-		if (productGroup.isNew() || (productGroup.getRecordType() != null ? productGroup.getRecordType() : "")
+		if (productGroup.isNewRecord() || (productGroup.getRecordType() != null ? productGroup.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
@@ -470,7 +470,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		productGroupListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -558,7 +558,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 		doSetValidation();
 		doWriteComponentsToBean(aProductGroup);
 
-		isNew = aProductGroup.isNew();
+		isNew = aProductGroup.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -605,7 +605,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(ProductGroup aProductGroup, String tranType) {
+	protected boolean doProcess(ProductGroup aProductGroup, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

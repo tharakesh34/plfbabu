@@ -175,7 +175,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 			tableType = "_Temp";
 		}
 
-		if (accountingSet.isNew()) {
+		if (accountingSet.isNewRecord()) {
 			accountingSet.setId(getAccountingSetDAO().save(accountingSet, tableType));
 			auditHeader.getAuditDetail().setModelData(accountingSet);
 			auditHeader.setAuditReference(String.valueOf(accountingSet.getAccountSetid()));
@@ -438,7 +438,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 		valueParm[0] = accountingSet.getAccountSetCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_AccountSetCode") + " : " + valueParm[0];
 
-		if (accountingSet.isNew()) {
+		if (accountingSet.isNewRecord()) {
 			// for New record or new record into work flow
 			if (!accountingSet.isWorkflow()) {
 				// With out Work flow only new records
@@ -720,7 +720,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 			} else if (transactionEntry.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (transactionEntry.isNew()) {
+				} else if (transactionEntry.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

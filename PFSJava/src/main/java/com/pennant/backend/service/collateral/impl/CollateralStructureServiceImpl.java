@@ -164,7 +164,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 			tableType = "_Temp";
 		}
 
-		if (collateralStructure.isNew()) {
+		if (collateralStructure.isNewRecord()) {
 			getCollateralStructureDAO().save(collateralStructure, tableType);
 		} else {
 			getCollateralStructureDAO().update(collateralStructure, tableType);
@@ -176,7 +176,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 		ExtendedFieldHeader extFieldHeader = (ExtendedFieldHeader) headerDetail.get(0).getModelData();
 
 		long moduleId;
-		if (extFieldHeader.isNew()) {
+		if (extFieldHeader.isNewRecord()) {
 			moduleId = getExtendedFieldHeaderDAO().save(extFieldHeader, tableType);
 
 			// Setting Module ID to List
@@ -659,7 +659,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 		valueParm[0] = collateralStructure.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_CollateralType") + ":" + valueParm[0];
 
-		if (collateralStructure.isNew()) { // for New record or new record into work flow
+		if (collateralStructure.isNewRecord()) { // for New record or new record into work flow
 
 			if (!collateralStructure.isWorkflow()) {// With out Work flow only new records  
 				if (befCollateralStructure != null) { // Record Already Exists in the table then error  

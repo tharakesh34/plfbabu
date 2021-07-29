@@ -122,7 +122,7 @@ public class AgreementDefinitionServiceImpl extends GenericService<AgreementDefi
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (agreementDefinition.isNew()) {
+		if (agreementDefinition.isNewRecord()) {
 			getAgreementDefinitionDAO().save(agreementDefinition, tableType);
 		} else {
 			getAgreementDefinitionDAO().update(agreementDefinition, tableType);
@@ -328,7 +328,7 @@ public class AgreementDefinitionServiceImpl extends GenericService<AgreementDefi
 		// Get the model object.
 		AgreementDefinition agreementDefinition = (AgreementDefinition) auditDetail.getModelData();
 		// Check the unique keys.
-		if (agreementDefinition.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(agreementDefinition.getRecordType())
+		if (agreementDefinition.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(agreementDefinition.getRecordType())
 				&& agreementDefinitionDAO.isDuplicateKey(agreementDefinition.getAggCode(),
 						agreementDefinition.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

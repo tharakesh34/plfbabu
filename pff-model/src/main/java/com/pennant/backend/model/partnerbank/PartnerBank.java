@@ -64,8 +64,6 @@ public class PartnerBank extends AbstractWorkflowEntity {
 	private boolean alwDisb;
 	private boolean alwPayment;
 	private boolean alwReceipt;
-
-	private boolean newRecord;
 	private String lovValue;
 	private PartnerBank befImage;
 	private LoggedInUser userDetails;
@@ -191,14 +189,6 @@ public class PartnerBank extends AbstractWorkflowEntity {
 
 	public void setAccountNo(String accountNo) {
 		this.accountNo = accountNo;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	@XmlTransient

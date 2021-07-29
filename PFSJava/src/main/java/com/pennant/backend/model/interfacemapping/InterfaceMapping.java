@@ -71,7 +71,6 @@ public class InterfaceMapping extends AbstractWorkflowEntity {
 	private boolean active;
 	private String mappingType;
 	private String module;
-	private boolean newRecord;
 	private String lovValue;
 	private InterfaceMapping befImage;
 	private LoggedInUser userDetails;
@@ -145,14 +144,6 @@ public class InterfaceMapping extends AbstractWorkflowEntity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

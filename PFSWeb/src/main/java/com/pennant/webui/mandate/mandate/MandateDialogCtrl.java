@@ -1036,7 +1036,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aMandate.isNew()) {
+		if (aMandate.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			Date appDate = SysParamUtil.getAppDate();
 			Date sysDate = DateUtil.getSysDate();
@@ -1293,7 +1293,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			}
 		}
 
-		if (!this.mandate.isNew() && StringUtils.isEmpty(this.mandate.getRecordType())
+		if (!this.mandate.isNewRecord() && StringUtils.isEmpty(this.mandate.getRecordType())
 				|| StringUtils.equals(this.mandate.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
 			readOnlyComponent(true, this.entityCode);
 		} else {
@@ -1462,7 +1462,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		this.approvalID.setValue(aMandate.getApprovalID());
 		this.recordStatus.setValue(aMandate.getRecordStatus());
-		if (aMandate.isNew()) {
+		if (aMandate.isNewRecord()) {
 			Date appDate = SysParamUtil.getAppDate();
 			Date sysDate = DateUtil.getSysDate();
 
@@ -2148,7 +2148,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		if (registration) {
 			getMandateRegistrationListCtrl().search();
 		} else {
@@ -2430,7 +2430,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aMandate.isNew();
+		isNew = aMandate.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -2491,7 +2491,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * 
 	 */
 
-	private boolean doProcess(Mandate aMandate, String tranType) {
+	protected boolean doProcess(Mandate aMandate, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		aMandate.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());

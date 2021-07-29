@@ -42,7 +42,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 
 @XmlType(propOrder = { "code", "description" })
-public class ManualDeviation extends AbstractWorkflowEntity implements Entity {
+public class ManualDeviation extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long deviationID = Long.MIN_VALUE;
@@ -57,7 +57,6 @@ public class ManualDeviation extends AbstractWorkflowEntity implements Entity {
 	private String categorizationName;
 	private long severity;
 	private boolean active = false;
-	private boolean newRecord = false;
 	private String lovValue;
 	private ManualDeviation befImage;
 	private LoggedInUser userDetails;
@@ -163,14 +162,6 @@ public class ManualDeviation extends AbstractWorkflowEntity implements Entity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

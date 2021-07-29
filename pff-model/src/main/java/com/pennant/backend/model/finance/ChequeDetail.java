@@ -89,8 +89,6 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	private String status;
 	private boolean active = false;
 	@XmlTransient
-	private boolean newRecord = false;
-	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private ChequeDetail befImage;
@@ -237,14 +235,6 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -90,9 +90,6 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	private ExtendedFieldHeader onePagerExtHeader;
 	private ExtendedFieldRender onePagerExtRender;
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
-
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -403,14 +400,6 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 
 	public void setOnePagerExtHeader(ExtendedFieldHeader onePagerExtHeader) {
 		this.onePagerExtHeader = onePagerExtHeader;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

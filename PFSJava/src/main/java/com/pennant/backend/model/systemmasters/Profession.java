@@ -60,7 +60,6 @@ public class Profession extends AbstractWorkflowEntity {
 	private String professionDesc;
 	private boolean professionIsActive;
 	private boolean selfEmployee;
-	private boolean newRecord;
 	private String lovValue;
 	private Profession befImage;
 	private LoggedInUser userDetails;
@@ -112,14 +111,6 @@ public class Profession extends AbstractWorkflowEntity {
 
 	public void setProfessionIsActive(boolean professionIsActive) {
 		this.professionIsActive = professionIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

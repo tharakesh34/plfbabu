@@ -137,7 +137,7 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (reasonCode.isNew()) {
+		if (reasonCode.isNewRecord()) {
 			reasonCode.setId(Long.parseLong(getReasonCodeDAO().save(reasonCode, tableType)));
 			auditHeader.getAuditDetail().setModelData(reasonCode);
 			auditHeader.setAuditReference(String.valueOf(reasonCode.getId()));
@@ -342,7 +342,7 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 		ReasonCode reasonCode = (ReasonCode) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (reasonCode.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(reasonCode.getRecordType())
+		if (reasonCode.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(reasonCode.getRecordType())
 				&& reasonCodeDAO.isDuplicateKey(reasonCode.getReasonTypeID(), reasonCode.getReasonCategoryID(),
 						reasonCode.getCode().trim(),
 						reasonCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {

@@ -45,8 +45,6 @@ public class LinkedFinances extends AbstractWorkflowEntity {
 	private boolean finIsActive;
 	private String status;
 	private String linkedFinType;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private LinkedFinances befImage;
 	private LoggedInUser userDetails;
@@ -77,14 +75,6 @@ public class LinkedFinances extends AbstractWorkflowEntity {
 
 	public long getId() {
 		return iD;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

@@ -123,7 +123,7 @@ public class SectorServiceImpl extends GenericService<Sector> implements SectorS
 		if (sector.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-		if (sector.isNew()) {
+		if (sector.isNewRecord()) {
 			sector.setSectorCode(getSectorDAO().save(sector, tableType));
 			auditHeader.getAuditDetail().setModelData(sector);
 			auditHeader.setAuditReference(sector.getSectorCode());
@@ -315,7 +315,7 @@ public class SectorServiceImpl extends GenericService<Sector> implements SectorS
 		String code = sector.getSectorCode();
 
 		// Check the unique keys.
-		if (sector.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(sector.getRecordType())
+		if (sector.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(sector.getRecordType())
 				&& sectorDAO.isDuplicateKey(code, sector.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_Sector_Code") + ": " + code;

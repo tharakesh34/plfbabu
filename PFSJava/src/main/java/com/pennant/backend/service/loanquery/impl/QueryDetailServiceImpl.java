@@ -149,7 +149,7 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (queryDetail.isNew()) {
+		if (queryDetail.isNewRecord()) {
 			queryDetail.setId(Long.parseLong(getQueryDetailDAO().save(queryDetail, tableType)));
 			auditHeader.getAuditDetail().setModelData(queryDetail);
 			auditHeader.setAuditReference(String.valueOf(queryDetail.getId()));
@@ -164,7 +164,7 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 				documentDetails.setFinReference(queryDetail.getFinReference());
 				documentDetails.setUserDetails(queryDetail.getUserDetails());
 				documentDetails.setCustId(queryDetail.getCustId());
-				if (documentDetails.isNew()
+				if (documentDetails.isNewRecord()
 						&& (documentDetails.getDocRefId() == null || documentDetails.getDocRefId() <= 0)) {
 
 					saveDocument(DMSModule.FINANCE, DMSModule.QUERY_MGMT, documentDetails);
@@ -497,7 +497,7 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 			for (DocumentDetails documentDetails : queryDetail.getDocumentDetailsList()) {
 				documentDetails.setReferenceId(String.valueOf(queryDetail.getId()));
 				documentDetails.setCustId(queryDetail.getCustId());
-				if (documentDetails.isNew() && documentDetails.getDocRefId() <= 0) {
+				if (documentDetails.isNewRecord() && documentDetails.getDocRefId() <= 0) {
 					saveDocument(DMSModule.FINANCE, DMSModule.QUERY_MGMT, documentDetails);
 
 					documentDetailsDAO.save(documentDetails, tableType.getSuffix());

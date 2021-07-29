@@ -2042,7 +2042,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				adjust.setId(getComponentId(FEE_UNIQUEID_ADJUST, finFeeDetail));
 				lc = new Listcell();
 				lc.appendChild(adjust);
-				if ((finFeeDetail.isNew() && finFeeDetail.isOriginationFee())
+				if ((finFeeDetail.isNewRecord() && finFeeDetail.isOriginationFee())
 						|| (paidBox.getValue().compareTo(BigDecimal.ZERO) == 0)) {
 					readOnlyComponent(true, adjust);
 				} else {

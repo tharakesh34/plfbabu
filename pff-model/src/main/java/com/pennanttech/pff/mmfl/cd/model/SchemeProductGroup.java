@@ -18,7 +18,6 @@ public class SchemeProductGroup extends AbstractWorkflowEntity {
 	private SchemeProductGroup befImage;
 	private LoggedInUser userDetails;
 	private String lovValue;
-	private boolean newRecord = false;
 	private boolean isSave = false;
 
 	public Set<String> getExcludeFields() {
@@ -89,14 +88,6 @@ public class SchemeProductGroup extends AbstractWorkflowEntity {
 
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public Timestamp getPrevMntOn() {

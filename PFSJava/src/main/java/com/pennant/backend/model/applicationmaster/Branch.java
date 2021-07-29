@@ -92,8 +92,6 @@ public class Branch extends AbstractWorkflowEntity {
 	private Long clusterId;
 	private String clusterCode;
 	private String clusterName;
-
-	private boolean newRecord;
 	private String lovValue;
 	private Branch befImage;
 	private LoggedInUser userDetails;
@@ -311,14 +309,6 @@ public class Branch extends AbstractWorkflowEntity {
 
 	public void setNewBranchDesc(String newBranchDesc) {
 		this.newBranchDesc = newBranchDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

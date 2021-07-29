@@ -162,7 +162,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 			tableType = "_Temp";
 		}
 
-		if (customerDocument.isNew()) {
+		if (customerDocument.isNewRecord()) {
 			customerDocument.setId(getCustomerDocumentDAO().save(customerDocument, tableType));
 			auditHeader.getAuditDetail().setModelData(customerDocument);
 		} else {

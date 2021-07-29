@@ -781,7 +781,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		pSLDetailListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -1042,7 +1042,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 	public void doShowDialog(PSLDetail pSLDetail) {
 		logger.debug(Literal.LEAVING);
 
-		if (pSLDetail.isNew()) {
+		if (pSLDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1364,7 +1364,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 		doSetValidation();
 		doWriteComponentsToBean(aPSLDetail);
 
-		isNew = aPSLDetail.isNew();
+		isNew = aPSLDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1412,7 +1412,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(PSLDetail aPSLDetail, String tranType) {
+	protected boolean doProcess(PSLDetail aPSLDetail, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

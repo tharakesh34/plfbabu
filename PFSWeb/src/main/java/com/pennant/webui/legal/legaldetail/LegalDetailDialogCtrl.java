@@ -494,7 +494,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		legalDetailListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -519,7 +519,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 */
 	public void doShowDialog(LegalDetail legalDetail) {
 		logger.debug(Literal.ENTERING);
-		if (legalDetail.isNew()) {
+		if (legalDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 		} else {
@@ -839,7 +839,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			return;
 		}
 
-		boolean isNew = aLegalDetail.isNew();
+		boolean isNew = aLegalDetail.isNewRecord();
 		if (this.newRecord) {
 			if (isNew) {
 				aLegalDetail.setVersion(1);
@@ -884,7 +884,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			return;
 		}
 
-		boolean isNew = aLegalDetail.isNew();
+		boolean isNew = aLegalDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1175,7 +1175,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 * @throws InterruptedException
 	 * 
 	 */
-	private boolean doProcess(LegalDetail aLegalDetail, String tranType) throws InterruptedException {
+	protected boolean doProcess(LegalDetail aLegalDetail, String tranType) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

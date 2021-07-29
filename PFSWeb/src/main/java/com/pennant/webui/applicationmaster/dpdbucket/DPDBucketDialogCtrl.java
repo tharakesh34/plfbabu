@@ -260,7 +260,7 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		dPDBucketListCtrl.search();
 	}
 
@@ -291,7 +291,7 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 		this.bucketDesc.setValue(aDPDBucket.getBucketDesc());
 		this.active.setChecked(aDPDBucket.isActive());
 
-		if (aDPDBucket.isNew() || PennantConstants.RECORD_TYPE_NEW.equals(aDPDBucket.getRecordType())) {
+		if (aDPDBucket.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(aDPDBucket.getRecordType())) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
@@ -354,7 +354,7 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 	public void doShowDialog(DPDBucket dPDBucket) {
 		logger.debug(Literal.LEAVING);
 
-		if (dPDBucket.isNew()) {
+		if (dPDBucket.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -580,7 +580,7 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 		doSetValidation();
 		doWriteComponentsToBean(aDPDBucket);
 
-		isNew = aDPDBucket.isNew();
+		isNew = aDPDBucket.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -627,7 +627,7 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(DPDBucket aDPDBucket, String tranType) {
+	protected boolean doProcess(DPDBucket aDPDBucket, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

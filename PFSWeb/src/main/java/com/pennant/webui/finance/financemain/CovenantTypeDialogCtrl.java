@@ -297,7 +297,7 @@
 /*
  * public void doShowDialog(FinCovenantType finCovenantType) { logger.debug("Entering");
  * 
- * // set ReadOnly mode accordingly if the object is new or not. if (finCovenantType.isNew()) {
+ * // set ReadOnly mode accordingly if the object is new or not. if (finCovenantType.isNewRecord()) {
  * this.btnCtrl.setInitNew(); doEdit(); } else { if (isWorkFlowEnabled()) { this.description.focus(); if
  * (StringUtils.isNotBlank(finCovenantType.getRecordType())) { this.btnNotes.setVisible(true); } doEdit(); } else {
  * this.btnCtrl.setInitEdit(); doReadOnly(); btnCancel.setVisible(false); } }
@@ -457,7 +457,7 @@
  * // Write the additional validations as per below example // get the selected branch object from the list box // Do
  * data level validations here
  * 
- * isNew = aFinCovenantType.isNew(); String tranType;
+ * isNew = aFinCovenantType.isNewRecord(); String tranType;
  * 
  * if (isWorkFlowEnabled()) { tranType = PennantConstants.TRAN_WF; if
  * (StringUtils.isBlank(aFinCovenantType.getRecordType())) { aFinCovenantType.setVersion(aFinCovenantType.getVersion() +
@@ -484,7 +484,7 @@
 	 * 
 	 */
 /*
- * private boolean doProcess(FinCovenantType aFinCovenantType, String tranType) { logger.debug("Entering"); boolean
+ * protected boolean doProcess(FinCovenantType aFinCovenantType, String tranType) { logger.debug("Entering"); boolean
  * processCompleted = false; AuditHeader auditHeader; String nextRoleCode = "";
  * 
  * aFinCovenantType.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
@@ -599,7 +599,7 @@
  *//**
 	 * Refresh the list page with the filters that are applied in list page.
 	 *//*
-	 * private void refreshList() { covenantListCtrl.search(); }
+	 * protected void refreshList() { covenantListCtrl.search(); }
 	 * 
 	 * @Override protected String getReference() { return String.valueOf(this.finCovenantType.getFinReference()); }
 	 * 

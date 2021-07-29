@@ -99,7 +99,7 @@ public class InstrumentwiseLimitServiceImpl extends GenericService<Instrumentwis
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (instrumentwiseLimit.isNew()) {
+		if (instrumentwiseLimit.isNewRecord()) {
 			instrumentwiseLimit.setId(Long.parseLong(getInstrumentwiseLimitDAO().save(instrumentwiseLimit, tableType)));
 			auditHeader.getAuditDetail().setModelData(instrumentwiseLimit);
 			auditHeader.setAuditReference(String.valueOf(instrumentwiseLimit.getId()));
@@ -308,7 +308,7 @@ public class InstrumentwiseLimitServiceImpl extends GenericService<Instrumentwis
 		InstrumentwiseLimit instrumentwiseLimit = (InstrumentwiseLimit) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (instrumentwiseLimit.isNew() && instrumentwiseLimitDAO.isDuplicateKey(instrumentwiseLimit.getId(),
+		if (instrumentwiseLimit.isNewRecord() && instrumentwiseLimitDAO.isDuplicateKey(instrumentwiseLimit.getId(),
 				instrumentwiseLimit.getInstrumentMode(),
 				instrumentwiseLimit.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];

@@ -241,7 +241,7 @@ public class CustomerGroupListCtrl extends GFCBaseListCtrl<CustomerGroup> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("customerGroup", customerGroup);
 		arg.put("customerGroupListCtrl", this);
-		arg.put("newRecord", customerGroup.isNew());
+		arg.put("newRecord", customerGroup.isNewRecord());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerGroup/CustomerGroupDialog.zul", null,

@@ -234,7 +234,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 				extendedFieldHeader.setNewRecord(true);
 			}
 			extendedFieldHeader.setModuleName(this.module.getSelectedItem().getValue());
-			if (extendedFieldHeader.isNew()) {
+			if (extendedFieldHeader.isNewRecord()) {
 				extendedFieldHeader.setSubModuleName(extendedFieldHeader.getSubModuleName());
 				extendedFieldHeader.setNumberOfColumns("2");
 			}
@@ -243,7 +243,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 			map.put("roleCode", getRole());
 			map.put("dialogCtrl", this);
 			map.put("firstTaskRole", StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole()));
-			map.put("newRecord", extendedFieldHeader.isNew());
+			map.put("newRecord", extendedFieldHeader.isNewRecord());
 			map.put("moduleName", this.module.getSelectedItem().getValue());
 
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/ExtendedFieldDialog.zul",
@@ -945,7 +945,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		logger.debug(Literal.ENTERING);
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (extendedFieldHeader.isNew()) {
+		if (extendedFieldHeader.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.module.focus();
@@ -1239,7 +1239,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = extendedFieldHeader.isNew();
+		isNew = extendedFieldHeader.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1285,7 +1285,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(ExtendedFieldHeader extendedFieldHeader, String tranType) {
+	protected boolean doProcess(ExtendedFieldHeader extendedFieldHeader, String tranType) {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;
@@ -1483,7 +1483,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		configListCtrl.search();
 	}
 

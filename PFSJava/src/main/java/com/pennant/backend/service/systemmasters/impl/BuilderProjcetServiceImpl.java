@@ -113,7 +113,7 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (builderProjcet.isNew()) {
+		if (builderProjcet.isNewRecord()) {
 			builderProjcet.setId(Long.parseLong(getBuilderProjcetDAO().save(builderProjcet, tableType)));
 			auditHeader.getAuditDetail().setModelData(builderProjcet);
 			auditHeader.setAuditReference(String.valueOf(builderProjcet.getId()));
@@ -605,7 +605,7 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 			} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(projectUnit.getRecordType())) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (projectUnit.isNew()) {
+				} else if (projectUnit.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -712,7 +712,7 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 				} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(documentDetails.getRecordType())) {
 					if (approveRec) {
 						deleteRecord = true;
-					} else if (documentDetails.isNew()) {
+					} else if (documentDetails.isNewRecord()) {
 						saveRecord = true;
 					} else {
 						updateRecord = true;

@@ -380,7 +380,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		try {
 			doWriteBeanToComponents(aFinCovenantType);
 
-			if (aFinCovenantType.isNew()) {
+			if (aFinCovenantType.isNewRecord()) {
 				this.btnCtrl.setInitNew();
 				doEdit();
 				this.covenantType.focus();
@@ -1348,7 +1348,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			}
 		}
 
-		isNew = aFinCovenantType.isNew();
+		isNew = aFinCovenantType.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -2080,7 +2080,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		String finreference = financedetail.getFinScheduleData().getFinanceMain().getFinReference();
 
 		for (CovenantDocument covenantDocument : covenantDocuments) {
-			if (covenantDocument.isNew()) {
+			if (covenantDocument.isNewRecord()) {
 				DocumentDetails details = covenantDocument.getDocumentDetail();
 				details.setRecordStatus(covenantDocument.getRecordStatus());
 				details.setRecordType(covenantDocument.getRecordType());

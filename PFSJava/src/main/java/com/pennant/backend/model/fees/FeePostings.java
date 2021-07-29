@@ -36,7 +36,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
-import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -46,7 +45,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * 
  */
 @XmlAccessorType(XmlAccessType.NONE)
-public class FeePostings extends AbstractWorkflowEntity implements Entity {
+public class FeePostings extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long postId = Long.MIN_VALUE;
@@ -59,7 +58,6 @@ public class FeePostings extends AbstractWorkflowEntity implements Entity {
 	private Date postDate;
 	@XmlElement
 	private Date valueDate;
-	private boolean newRecord = false;
 	private String lovValue;
 	private FeePostings befImage;
 	private LoggedInUser userDetails;
@@ -141,17 +139,8 @@ public class FeePostings extends AbstractWorkflowEntity implements Entity {
 		return postId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.postId = id;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

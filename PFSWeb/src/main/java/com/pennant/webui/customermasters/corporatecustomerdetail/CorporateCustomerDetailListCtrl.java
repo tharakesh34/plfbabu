@@ -212,7 +212,7 @@ public class CorporateCustomerDetailListCtrl extends GFCBaseListCtrl<CorporateCu
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("corporateCustomerDetail", corporateCustomerDetail);
 		arg.put("corporateCustomerDetailListCtrl", this);
-		arg.put("newRecord", corporateCustomerDetail.isNew());
+		arg.put("newRecord", corporateCustomerDetail.isNewRecord());
 
 		try {
 			Executions.createComponents(

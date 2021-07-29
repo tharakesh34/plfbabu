@@ -127,7 +127,7 @@ public class SubSegmentServiceImpl extends GenericService<SubSegment> implements
 			tableType = "_Temp";
 		}
 
-		if (subSegment.isNew()) {
+		if (subSegment.isNewRecord()) {
 			getSubSegmentDAO().save(subSegment, tableType);
 			auditHeader.getAuditDetail().setModelData(subSegment);
 			auditHeader.setAuditReference(
@@ -337,7 +337,7 @@ public class SubSegmentServiceImpl extends GenericService<SubSegment> implements
 		errParm[0] = PennantJavaUtil.getLabel("label_SegmentCode") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_SubSegmentCode") + ":" + valueParm[1];
 
-		if (subSegment.isNew()) { // for New record or new record into work flow
+		if (subSegment.isNewRecord()) { // for New record or new record into work flow
 
 			if (!subSegment.isWorkflow()) {// With out Work flow only new records
 				if (befSubSegment != null) { // Record Already Exists in the table then error

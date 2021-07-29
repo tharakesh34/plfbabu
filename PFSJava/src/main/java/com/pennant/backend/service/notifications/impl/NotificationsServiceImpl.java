@@ -130,7 +130,7 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 			tableType = "_Temp";
 		}
 
-		if (notifications.isNew()) {
+		if (notifications.isNewRecord()) {
 			notifications.setRuleId(getNotificationsDAO().save(notifications, tableType));
 			auditHeader.getAuditDetail().setModelData(notifications);
 			auditHeader.setAuditReference(notifications.getRuleCode());
@@ -364,7 +364,7 @@ public class NotificationsServiceImpl extends GenericService<Notifications> impl
 		errParm[0] = PennantJavaUtil.getLabel("label_Notifications_RuleCode") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_Notifications_RuleModule") + ":" + valueParm[1];
 
-		if (notifications.isNew()) { // for New record or new record into work flow
+		if (notifications.isNewRecord()) { // for New record or new record into work flow
 
 			if (!notifications.isWorkflow()) {// With out Work flow only new records
 				if (befNotifications != null) { // Record Already Exists in the table

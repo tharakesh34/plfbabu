@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  VASProductType.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  09-01-2017    														*
- *                                                                  						*
- * Modified Date    :  09-01-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : VASProductType.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 09-01-2017 * * Modified Date
+ * : 09-01-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 09-01-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 09-01-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -63,8 +45,6 @@ public class VASProductType extends AbstractWorkflowEntity {
 	private String productCtg;
 	private String productCtgDesc;
 	private boolean active = true;
-
-	private boolean newRecord;
 	private String lovValue;
 	private VASProductType befImage;
 	private LoggedInUser userDetails;
@@ -123,15 +103,6 @@ public class VASProductType extends AbstractWorkflowEntity {
 
 	public void setProductCtg(String productCtg) {
 		this.productCtg = productCtg;
-	}
-
-	@XmlTransient
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	@XmlTransient

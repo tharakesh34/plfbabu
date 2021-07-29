@@ -123,7 +123,7 @@ public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implem
 			tableType = "_Temp";
 		}
 
-		if (lovFieldCode.isNew()) {
+		if (lovFieldCode.isNewRecord()) {
 			getLovFieldCodeDAO().save(lovFieldCode, tableType);
 		} else {
 			getLovFieldCodeDAO().update(lovFieldCode, tableType);
@@ -323,7 +323,7 @@ public class LovFieldCodeServiceImpl extends GenericService<LovFieldCode> implem
 		valueParm[0] = lovFieldCode.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_FieldCode") + ":" + valueParm[0];
 
-		if (lovFieldCode.isNew()) { // for New record or new record into work flow
+		if (lovFieldCode.isNewRecord()) { // for New record or new record into work flow
 
 			if (!lovFieldCode.isWorkflow()) {// With out Work flow only new records  
 				if (befLovFieldCode != null) { // Record Already Exists in the table then error  

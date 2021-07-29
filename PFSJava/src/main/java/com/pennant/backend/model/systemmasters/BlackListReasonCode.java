@@ -57,7 +57,6 @@ public class BlackListReasonCode extends AbstractWorkflowEntity {
 	private String bLRsnCode;
 	private String bLRsnDesc;
 	private boolean bLIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private BlackListReasonCode befImage;
 	private LoggedInUser userDetails;
@@ -109,14 +108,6 @@ public class BlackListReasonCode extends AbstractWorkflowEntity {
 
 	public void setBLIsActive(boolean bLIsActive) {
 		this.bLIsActive = bLIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

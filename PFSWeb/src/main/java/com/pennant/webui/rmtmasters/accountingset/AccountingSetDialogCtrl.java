@@ -472,7 +472,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aAccountingSet.isNew()) {
+		if (aAccountingSet.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -640,7 +640,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getAccountingSetListCtrl().search();
 	}
 
@@ -809,7 +809,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aAccountingSet.isNew();
+		isNew = aAccountingSet.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -857,7 +857,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(AccountingSet aAccountingSet, String tranType) {
+	protected boolean doProcess(AccountingSet aAccountingSet, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;

@@ -129,7 +129,7 @@ public class FinanceApplicationCodeServiceImpl extends GenericService<AddressTyp
 			tableType = "_Temp";
 		}
 
-		if (financeApplicationCode.isNew()) {
+		if (financeApplicationCode.isNewRecord()) {
 			financeApplicationCode.setId(getFinanceApplicationCodeDAO().save(financeApplicationCode, tableType));
 			auditHeader.getAuditDetail().setModelData(financeApplicationCode);
 			auditHeader.setAuditReference(financeApplicationCode.getId());
@@ -351,7 +351,7 @@ public class FinanceApplicationCodeServiceImpl extends GenericService<AddressTyp
 		valueParm[0] = financeApplicationCode.getFinAppType();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinAppType") + ":" + valueParm[0];
 
-		if (financeApplicationCode.isNew()) { // for New record or new record
+		if (financeApplicationCode.isNewRecord()) { // for New record or new record
 			// into work flow
 
 			if (!financeApplicationCode.isWorkflow()) {// With out Work flow

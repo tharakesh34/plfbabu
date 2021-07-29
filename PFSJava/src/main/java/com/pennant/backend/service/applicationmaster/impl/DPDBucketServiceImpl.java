@@ -136,7 +136,7 @@ public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements D
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (dPDBucket.isNew()) {
+		if (dPDBucket.isNewRecord()) {
 			dPDBucket.setId(Long.valueOf(getDPDBucketDAO().save(dPDBucket, tableType)));
 			auditHeader.getAuditDetail().setModelData(dPDBucket);
 			auditHeader.setAuditReference(String.valueOf(dPDBucket.getBucketID()));
@@ -350,7 +350,7 @@ public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements D
 		DPDBucket dPDBucket = (DPDBucket) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (dPDBucket.isNew() && dPDBucketDAO.isDuplicateKey(dPDBucket.getBucketID(), dPDBucket.getBucketCode(),
+		if (dPDBucket.isNewRecord() && dPDBucketDAO.isDuplicateKey(dPDBucket.getBucketID(), dPDBucket.getBucketCode(),
 				dPDBucket.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 

@@ -47,8 +47,6 @@ public class LegalVetting extends AbstractWorkflowEntity {
 	private List<DocumentDetails> documents = null;
 	private List<LVDocument> vettingDocuments = new ArrayList<>();
 	@XmlTransient
-	private boolean newRecord = false;
-	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private LegalVetting befImage;
@@ -247,14 +245,6 @@ public class LegalVetting extends AbstractWorkflowEntity {
 
 	public void setDocumentSubId(String documentSubId) {
 		this.documentSubId = documentSubId;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

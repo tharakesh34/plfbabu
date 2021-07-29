@@ -81,7 +81,7 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 				linkedFin.setLastMntOn(finMainInst.getLastMntOn());
 			}
 
-			if (finMainInst.isNew()) {
+			if (finMainInst.isNewRecord()) {
 				finMaintainInstructionDAO.save(finMainInst, tableType);
 				linkedFinancesDAO.saveList(financeDetail.getLinkedFinancesList(), "_TEMP");
 				auditHeader.getAuditDetail().setModelData(finMainInst);
@@ -91,7 +91,7 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 				List<LinkedFinances> updateFinances = new ArrayList<>();
 				finMaintainInstructionDAO.update(finMainInst, tableType);
 				for (LinkedFinances linkedFin : financeDetail.getLinkedFinancesList()) {
-					if (linkedFin.isNew()) {
+					if (linkedFin.isNewRecord()) {
 						saveFinances.add(linkedFin);
 						if (saveFinances.size() == PennantConstants.CHUNK_SIZE) {
 							linkedFinancesDAO.saveList(saveFinances, "_Temp");
@@ -342,7 +342,7 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 		}
 
 		String auditTranType;
-		if (financeMain.isNew()) {
+		if (financeMain.isNewRecord()) {
 			auditTranType = PennantConstants.TRAN_ADD;
 			linkedFinancesDAO.saveList(financeDetail.getLinkedFinancesList(), type);
 		} else {
@@ -350,7 +350,7 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 			List<LinkedFinances> saveFinances = new ArrayList<>();
 			List<LinkedFinances> updateFinances = new ArrayList<>();
 			for (LinkedFinances linkedFin : financeDetail.getLinkedFinancesList()) {
-				if (linkedFin.isNew()) {
+				if (linkedFin.isNewRecord()) {
 					saveFinances.add(linkedFin);
 					if (saveFinances.size() == PennantConstants.CHUNK_SIZE) {
 						linkedFinancesDAO.saveList(saveFinances, type);

@@ -131,7 +131,7 @@ public class EODConfigServiceImpl extends GenericService<EODConfig> implements E
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (eODConfig.isNew()) {
+		if (eODConfig.isNewRecord()) {
 			eODConfig.setId(Long.parseLong(getEODConfigDAO().save(eODConfig, tableType)));
 			auditHeader.getAuditDetail().setModelData(eODConfig);
 			auditHeader.setAuditReference(String.valueOf(eODConfig.getEodConfigId()));

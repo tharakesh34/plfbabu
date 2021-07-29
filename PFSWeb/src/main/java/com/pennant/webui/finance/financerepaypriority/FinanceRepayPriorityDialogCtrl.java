@@ -374,7 +374,7 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
-		if (aFinanceRepayPriority.isNew()) {
+		if (aFinanceRepayPriority.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -561,7 +561,7 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aFinanceRepayPriority.isNew();
+		isNew = aFinanceRepayPriority.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -599,7 +599,7 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 		logger.debug("Leaving");
 	}
 
-	private boolean doProcess(FinanceRepayPriority aFinanceRepayPriority, String tranType) {
+	protected boolean doProcess(FinanceRepayPriority aFinanceRepayPriority, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -848,7 +848,7 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getFinanceRepayPriorityListCtrl().search();
 	}
 

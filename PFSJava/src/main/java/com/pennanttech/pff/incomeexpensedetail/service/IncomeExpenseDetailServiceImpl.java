@@ -56,7 +56,7 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (incomeExpenseHeader.isNew()) {
+		if (incomeExpenseHeader.isNewRecord()) {
 			incomeExpenseHeader.setId(incomeExpenseHeaderDAO.save(incomeExpenseHeader, tableType));
 			auditHeader.getAuditDetail().setModelData(incomeExpenseHeader);
 			auditHeader.setAuditReference(String.valueOf(incomeExpenseHeader.getId()));
@@ -142,7 +142,7 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 			} else if (coreIncomeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (coreIncomeDetail.isNew()) {
+				} else if (coreIncomeDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

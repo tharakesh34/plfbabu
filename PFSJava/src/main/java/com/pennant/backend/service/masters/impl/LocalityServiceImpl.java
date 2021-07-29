@@ -125,7 +125,7 @@ public class LocalityServiceImpl extends GenericService<Locality> implements Loc
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (locality.isNew()) {
+		if (locality.isNewRecord()) {
 			locality.setId(Long.parseLong(getLocalityDAO().save(locality, tableType)));
 			auditHeader.getAuditDetail().setModelData(locality);
 			auditHeader.setAuditReference(String.valueOf(locality.getId()));

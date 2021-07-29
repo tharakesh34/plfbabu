@@ -794,7 +794,7 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aFinanceStepPolicyDetail.isNew();
+		isNew = aFinanceStepPolicyDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {

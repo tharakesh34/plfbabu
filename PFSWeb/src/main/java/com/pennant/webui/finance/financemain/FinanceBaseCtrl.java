@@ -1174,7 +1174,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		if (!onLoadProcess || (getFinanceDetail().getFinScheduleData().getFinanceMain().isStepFinance()
 				&& (!getFinanceDetail().getFinScheduleData().getStepPolicyDetails().isEmpty()
-						|| getFinanceDetail().getFinScheduleData().getFinanceMain().isNew()))) {
+						|| getFinanceDetail().getFinScheduleData().getFinanceMain().isNewRecord()))) {
 
 			final Map<String, Object> map = getDefaultArguments();
 			map.put("isWIF", false);
@@ -2176,7 +2176,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			this.nextGrcPftDate_two.setValue(aFinanceMain.getNextGrcPftDate());
 			this.nextGrcPftRvwDate_two.setValue(aFinanceMain.getNextGrcPftRvwDate());
 			this.nextGrcCpzDate_two.setValue(aFinanceMain.getNextGrcCpzDate());
-			if (!aFinanceMain.isNew() || StringUtils.isNotBlank(aFinanceMain.getFinReference())) {
+			if (!aFinanceMain.isNewRecord() || StringUtils.isNotBlank(aFinanceMain.getFinReference())) {
 				/*
 				 * this.nextGrcPftDate.setValue(aFinanceMain.getNextGrcPftDate());
 				 * this.nextGrcPftRvwDate.setValue(aFinanceMain.getNextGrcPftRvwDate());
@@ -2414,7 +2414,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			System.out.println(nextRepayCpzDate.isDisabled());
 		}
 
-		if (!isOverdraft && (!aFinanceMain.isNew() || StringUtils.isNotBlank(aFinanceMain.getFinReference()))) {
+		if (!isOverdraft && (!aFinanceMain.isNewRecord() || StringUtils.isNotBlank(aFinanceMain.getFinReference()))) {
 			if (moduleDefiner.equals(FinServiceEvent.CHGGRCEND)) {
 				// this.nextRepayDate.setValue(aFinanceMain.getNextRepayDate());
 				this.nextRepayCpzDate.setValue(aFinanceMain.getNextRepayCpzDate());
@@ -4039,7 +4039,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		try {
 			financeDate = this.finStartDate.getValue();
 			aFinanceMain.setFinStartDate(this.finStartDate.getValue());
-			if (aFinanceMain.isNew()
+			if (aFinanceMain.isNewRecord()
 					|| StringUtils.trimToEmpty(aFinanceMain.getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)) {
 				aFinanceMain.setLastRepayDate(this.finStartDate.getValue());
 				aFinanceMain.setLastRepayPftDate(this.finStartDate.getValue());

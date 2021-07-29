@@ -649,7 +649,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 
 		taxDetailListCtrl.search();
@@ -732,7 +732,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 			}
 		}
 
-		if (!aTaxDetail.isNew()) {
+		if (!aTaxDetail.isNewRecord()) {
 			ArrayList<Filter> filters = new ArrayList<Filter>();
 
 			if (this.country.getValue() != null && !this.country.getValue().isEmpty()) {
@@ -900,7 +900,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	public void doShowDialog(TaxDetail taxDetail) {
 		logger.debug(Literal.LEAVING);
 
-		if (taxDetail.isNew()) {
+		if (taxDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -1288,7 +1288,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 				}
 			}
 		}
-		isNew = aTaxDetail.isNew();
+		isNew = aTaxDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1458,7 +1458,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(TaxDetail aTaxDetail, String tranType) {
+	protected boolean doProcess(TaxDetail aTaxDetail, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

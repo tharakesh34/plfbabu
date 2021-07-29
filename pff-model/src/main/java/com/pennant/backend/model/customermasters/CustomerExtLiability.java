@@ -7,12 +7,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 @XmlType(propOrder = { "seqNo", "finType", "loanBankName", "instalmentAmount", "outstandingBalance", "originalAmount",
 		"finDate", "finStatus" })
@@ -70,7 +70,6 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 	private String repayBankName;
 	@XmlElement
 	private String otherFinInstitute;
-	private boolean newRecord = false;
 	private CustomerExtLiability befImage;
 	private LoggedInUser userDetails;
 	private String sourceId;
@@ -353,14 +352,6 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 
 	public void setRepayBankName(String repayBankName) {
 		this.repayBankName = repayBankName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public CustomerExtLiability getBefImage() {

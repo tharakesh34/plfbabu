@@ -290,7 +290,7 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		merchantDetailsListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -338,7 +338,7 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 		this.refundAllowed.setChecked(merchantDetails.isAllowRefund());
 		this.txtchannel.setText(merchantDetails.getChannel());
 		this.active.setChecked(merchantDetails.isActive());
-		if (merchantDetails.isNew() || (merchantDetails.getRecordType() != null ? merchantDetails.getRecordType() : "")
+		if (merchantDetails.isNewRecord() || (merchantDetails.getRecordType() != null ? merchantDetails.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
@@ -522,7 +522,7 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 	public void doShowDialog(MerchantDetails consumerProduct) {
 		logger.debug(Literal.ENTERING);
 
-		if (consumerProduct.isNew()) {
+		if (consumerProduct.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.merchantName.setFocus(true);
@@ -877,7 +877,7 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 			tranType = PennantConstants.TRAN_WF;
 			if (StringUtils.isBlank(consumerProduct.getRecordType())) {
 				consumerProduct.setVersion(consumerProduct.getVersion() + 1);
-				if (consumerProduct.isNew()) {
+				if (consumerProduct.isNewRecord()) {
 					consumerProduct.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
 					consumerProduct.setRecordType(PennantConstants.RECORD_TYPE_UPD);
@@ -886,7 +886,7 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 			}
 		} else {
 			consumerProduct.setVersion(consumerProduct.getVersion() + 1);
-			if (consumerProduct.isNew()) {
+			if (consumerProduct.isNewRecord()) {
 				tranType = PennantConstants.TRAN_ADD;
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
@@ -918,7 +918,7 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(MerchantDetails consumenrProduct, String tranType) {
+	protected boolean doProcess(MerchantDetails consumenrProduct, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

@@ -332,7 +332,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 		this.deleteRate.setChecked(aBaseRate.isDelExistingRates());
 		this.bRTypeIsActive.setChecked(aBaseRate.isbRTypeIsActive());
 
-		if (aBaseRate.isNew() || (aBaseRate.getRecordType() != null ? aBaseRate.getRecordType() : "")
+		if (aBaseRate.isNewRecord() || (aBaseRate.getRecordType() != null ? aBaseRate.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.bRTypeIsActive.setChecked(true);
 			this.bRTypeIsActive.setDisabled(true);
@@ -430,7 +430,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aBaseRate.isNew()) {
+		if (aBaseRate.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -526,7 +526,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getBaseRateListCtrl().search();
 	}
 
@@ -689,7 +689,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aBaseRate.isNew();
+		isNew = aBaseRate.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -739,7 +739,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(BaseRate aBaseRate, String tranType) {
+	protected boolean doProcess(BaseRate aBaseRate, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

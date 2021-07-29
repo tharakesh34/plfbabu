@@ -17,7 +17,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
+public class FinReceiptHeader extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -58727889587717168L;
 
@@ -95,7 +95,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private String remarks;
 	private boolean depositProcess = false;
 	private String depositBranch;
-	private boolean newRecord;
 	private String lovValue;
 	private FinReceiptHeader befImage;
 	@XmlTransient
@@ -395,7 +394,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		entity.setRemarks(this.remarks);
 		entity.setDepositProcess(this.depositProcess);
 		entity.setDepositBranch(this.depositBranch);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setLovValue(this.lovValue);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
@@ -626,14 +625,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setAllocations(List<ReceiptAllocationDetail> allocations) {
 		this.allocations = allocations;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

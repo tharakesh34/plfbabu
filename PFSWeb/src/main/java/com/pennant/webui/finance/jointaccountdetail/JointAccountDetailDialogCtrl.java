@@ -739,7 +739,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		arg.put("customerDetails", customerDetails);
 		arg.put("isNewCustCret", true);
 		arg.put("jointAccountDetailDialogCtrl", this);
-		arg.put("newRecord", customerDetails.getCustomer().isNew());
+		arg.put("newRecord", customerDetails.getCustomer().isNewRecord());
 		arg.put("fromLoan", true);
 		arg.put("coAppFilter", cif);
 		arg.put("applicationNo", applicationNo);
@@ -1638,7 +1638,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		// Write the additional validations as per below example
 		// get the selected branch object from the listBox
 		// Do data level validations here
-		isNew = aJointAccountDetail.isNew();
+		isNew = aJointAccountDetail.isNewRecord();
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;

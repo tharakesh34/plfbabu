@@ -118,7 +118,7 @@ public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscus
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (pd.isNew()) {
+		if (pd.isNewRecord()) {
 			pd.setId(Long.parseLong(personalDiscussionDAO.save(pd, tableType)));
 			auditHeader.getAuditDetail().setModelData(pd);
 			auditHeader.setAuditReference(String.valueOf(pd.getId()));
@@ -221,7 +221,7 @@ public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscus
 			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (documentDetails.isNew()) {
+				} else if (documentDetails.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

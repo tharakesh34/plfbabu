@@ -630,7 +630,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCustomerPhoneNumberListCtrl().search();
 	}
 
@@ -822,7 +822,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aCustomerPhoneNumber.isNew();
+		isNew = aCustomerPhoneNumber.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1000,7 +1000,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CustomerPhoneNumber aCustomerPhoneNumber, String tranType) {
+	protected boolean doProcess(CustomerPhoneNumber aCustomerPhoneNumber, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

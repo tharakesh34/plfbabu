@@ -75,7 +75,7 @@ public class CustomerEMailValidation {
 				+ valueParm[0] + " and ";
 		errParm[1] = PennantJavaUtil.getLabel("label_CustEMailTypeCode") + "-" + valueParm[1];
 
-		if (customerEMail.isNew()) { // for New record or new record into work flow
+		if (customerEMail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!customerEMail.isWorkflow()) {// With out Work flow only new records  
 				if (befCustomerEMail != null) { // Record Already Exists in the table then error  

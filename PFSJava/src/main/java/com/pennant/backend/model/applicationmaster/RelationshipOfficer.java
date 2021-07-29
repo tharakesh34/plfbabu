@@ -79,7 +79,6 @@ public class RelationshipOfficer extends AbstractWorkflowEntity {
 	@XmlElement
 	private String genDesignation;
 	private String gendesgdesc;
-	private boolean newRecord;
 	private String lovValue;
 	private RelationshipOfficer befImage;
 	private LoggedInUser userDetails;
@@ -214,14 +213,6 @@ public class RelationshipOfficer extends AbstractWorkflowEntity {
 
 	public void setGendesgdesc(String gendesgdesc) {
 		this.gendesgdesc = gendesgdesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

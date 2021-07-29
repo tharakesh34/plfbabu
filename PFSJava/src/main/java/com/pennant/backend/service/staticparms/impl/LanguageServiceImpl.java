@@ -127,7 +127,7 @@ public class LanguageServiceImpl extends GenericService<Language> implements Lan
 			tableType = "_Temp";
 		}
 
-		if (language.isNew()) {
+		if (language.isNewRecord()) {
 			language.setId(getLanguageDAO().save(language, tableType));
 			auditHeader.getAuditDetail().setModelData(language);
 			auditHeader.setAuditReference(language.getId());
@@ -339,7 +339,7 @@ public class LanguageServiceImpl extends GenericService<Language> implements Lan
 		valueParm[0] = language.getLngCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_LngCode") + ":" + valueParm[0];
 
-		if (language.isNew()) { // for New record or new record into work flow
+		if (language.isNewRecord()) { // for New record or new record into work flow
 
 			if (!language.isWorkflow()) {// With out Work flow only new records
 				if (befLanguage != null) { // Record Already Exists in the table then error

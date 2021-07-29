@@ -282,7 +282,7 @@ public class MandateCheckDigitDialogCtrl extends GFCBaseCtrl<MandateCheckDigit> 
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		mandateCheckDigitListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -393,7 +393,7 @@ public class MandateCheckDigitDialogCtrl extends GFCBaseCtrl<MandateCheckDigit> 
 	public void doShowDialog(MandateCheckDigit mandateCheckDigit) {
 		logger.debug(Literal.LEAVING);
 
-		if (mandateCheckDigit.isNew()) {
+		if (mandateCheckDigit.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -613,7 +613,7 @@ public class MandateCheckDigitDialogCtrl extends GFCBaseCtrl<MandateCheckDigit> 
 		doSetValidation();
 		doWriteComponentsToBean(aMandateCheckDigit);
 
-		isNew = aMandateCheckDigit.isNew();
+		isNew = aMandateCheckDigit.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -661,7 +661,7 @@ public class MandateCheckDigitDialogCtrl extends GFCBaseCtrl<MandateCheckDigit> 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(MandateCheckDigit aMandateCheckDigit, String tranType) {
+	protected boolean doProcess(MandateCheckDigit aMandateCheckDigit, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

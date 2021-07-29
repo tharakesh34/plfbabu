@@ -414,7 +414,7 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
-		if (aWeekendMaster.isNew()) {
+		if (aWeekendMaster.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			btnCancel.setVisible(false);
@@ -611,7 +611,7 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aWeekendMaster.isNew();
+		isNew = aWeekendMaster.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -668,7 +668,7 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 		logger.debug("Leaving doSave()");
 	}
 
-	private boolean doProcess(WeekendMaster aWeekendMaster, String tranType) {
+	protected boolean doProcess(WeekendMaster aWeekendMaster, String tranType) {
 		logger.debug("Entering doProcess()");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -935,7 +935,7 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getWeekendMasterListCtrl().search();
 	}
 

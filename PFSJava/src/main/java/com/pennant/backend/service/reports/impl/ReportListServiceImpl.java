@@ -132,7 +132,7 @@ public class ReportListServiceImpl extends GenericService<ReportList> implements
 			tableType = "_Temp";
 		}
 
-		if (reportList.isNew()) {
+		if (reportList.isNewRecord()) {
 			getReportListDAO().save(reportList, tableType);
 		} else {
 			getReportListDAO().update(reportList, tableType);
@@ -337,7 +337,7 @@ public class ReportListServiceImpl extends GenericService<ReportList> implements
 		valueParm[0] = reportList.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_Code") + ":" + valueParm[0];
 
-		if (reportList.isNew()) { // for New record or new record into work flow
+		if (reportList.isNewRecord()) { // for New record or new record into work flow
 
 			if (!reportList.isWorkflow()) {// With out Work flow only new records  
 				if (befReportList != null) { // Record Already Exists in the table then error  

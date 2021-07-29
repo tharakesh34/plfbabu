@@ -330,7 +330,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	public void doShowDialog(FeePostings aFeePostings) throws Exception {
 		logger.debug("Entering");
 		// set Read only mode accordingly if the object is new or not.
-		if (aFeePostings.isNew()) {
+		if (aFeePostings.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -650,12 +650,12 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 				"");
 		this.reference.setValue(aFeePostings.getReference());
 		this.feeTypeCode
-				.setValue(aFeePostings.isNew() ? aFeePostings.getFeeTyeCode() : aFeePostings.getFeeTyeCode().trim());
+				.setValue(aFeePostings.isNewRecord() ? aFeePostings.getFeeTyeCode() : aFeePostings.getFeeTyeCode().trim());
 		this.postingAmount
 				.setValue(PennantAppUtil.formateAmount(aFeePostings.getPostingAmount(), aCurrency.getCcyEditField()));
 		this.postingDivision.setValue(aFeePostings.getPostingDivision(), aFeePostings.getDivisionCodeDesc());
 		this.postingCcy.setValue(aFeePostings.getCurrency());
-		if (aFeePostings.isNew()) {
+		if (aFeePostings.isNewRecord()) {
 			this.postDate.setValue(DateUtility.getAppDate());
 			this.valueDate.setValue(DateUtility.getAppDate());
 		} else {
@@ -663,7 +663,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 			this.valueDate.setValue(aFeePostings.getValueDate());
 		}
 
-		if (!aFeePostings.isNew()) {
+		if (!aFeePostings.isNewRecord()) {
 			this.partnerBankID.setObject(new PartnerBank(aFeePostings.getPartnerBankId()));
 			this.partnerBankID.setValue(String.valueOf(aFeePostings.getPartnerBankId()));
 			this.partnerBankID.setDescription(aFeePostings.getPartnerBankName());
@@ -1054,7 +1054,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		}
 
 		// doStoreInitValues();
-		isNew = aFeePosting.isNew();
+		isNew = aFeePosting.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1114,7 +1114,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	/**
 	 * Method for Refreshing List after Save/Delete a Record
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		final JdbcSearchObject<FeePostings> soFeePostings = getFeePostingsListCtrl().getSearchObject();
 		getFeePostingsListCtrl().pagingFeePostingList.setActivePage(0);
 		getFeePostingsListCtrl().getPagedListWrapper().setSearchObject(soFeePostings);
@@ -1135,7 +1135,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 * 
 	 */
 
-	private boolean doProcess(FeePostings aFeePostings, String tranType) throws InterfaceException {
+	protected boolean doProcess(FeePostings aFeePostings, String tranType) throws InterfaceException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

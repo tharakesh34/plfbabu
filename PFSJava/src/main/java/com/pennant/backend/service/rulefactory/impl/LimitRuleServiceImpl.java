@@ -128,7 +128,7 @@ public class LimitRuleServiceImpl extends GenericService<LimitFilterQuery> imple
 		if (rule.isWorkflow()) {
 			tableType = "_Temp";
 		}
-		if (rule.isNew()) {
+		if (rule.isNewRecord()) {
 			getLimitRuleDAO().save(rule, tableType);
 			auditHeader.getAuditDetail().setModelData(rule);
 			auditHeader.setAuditReference(rule.getQueryCode());
@@ -386,7 +386,7 @@ public class LimitRuleServiceImpl extends GenericService<LimitFilterQuery> imple
 		valueParm[0] = dedupParm.getQueryCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_QueryCode") + ":" + valueParm[0];
 
-		if (dedupParm.isNew()) { // for New record or new record into work flow
+		if (dedupParm.isNewRecord()) { // for New record or new record into work flow
 
 			if (!dedupParm.isWorkflow()) {// With out Work flow only new records
 				if (befDedupParm != null) { // Record Already Exists in the

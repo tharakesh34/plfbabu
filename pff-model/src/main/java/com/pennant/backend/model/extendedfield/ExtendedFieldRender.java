@@ -17,7 +17,6 @@ public class ExtendedFieldRender extends AbstractWorkflowEntity {
 	private String typeCodeDesc;
 	private Map<String, Object> mapValues = null;
 	private Map<String, Object> auditMapValues = null;
-	private boolean newRecord = false;
 	private ExtendedFieldRender befImage;
 	private long instructionUID = Long.MIN_VALUE;
 
@@ -29,14 +28,6 @@ public class ExtendedFieldRender extends AbstractWorkflowEntity {
 
 	public boolean isNew() {
 		return isNewRecord();
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public int getSeqNo() {

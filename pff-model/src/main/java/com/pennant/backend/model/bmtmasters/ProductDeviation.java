@@ -7,7 +7,6 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class ProductDeviation extends AbstractWorkflowEntity {
-
 	private static final long serialVersionUID = -2063878715762100939L;
 
 	private long productDevID = Long.MIN_VALUE;
@@ -16,7 +15,6 @@ public class ProductDeviation extends AbstractWorkflowEntity {
 	private String deviationCode;
 	private String deviationDesc;
 	private long severity;
-	private boolean newRecord;
 	private String lovValue;
 	private Product befImage;
 	private LoggedInUser userDetails;
@@ -58,14 +56,6 @@ public class ProductDeviation extends AbstractWorkflowEntity {
 		this.deviationID = deviationID;
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -105,7 +95,6 @@ public class ProductDeviation extends AbstractWorkflowEntity {
 	public void setLoginDetails(LoggedInUser userDetails) {
 		setLastMntBy(userDetails.getUserId());
 		this.userDetails = userDetails;
-
 	}
 
 	public boolean isNew() {

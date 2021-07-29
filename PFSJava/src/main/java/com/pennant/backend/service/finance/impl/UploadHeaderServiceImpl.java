@@ -584,7 +584,7 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 			tableType1 = TableType.TEMP_TAB;
 		}
 
-		if (uploadHeader.isNew()) {
+		if (uploadHeader.isNewRecord()) {
 			uploadHeader.setUploadId(this.uploadHeaderDAO.save(uploadHeader, tableType1));
 			// MiscPostingUploads
 			if (CollectionUtils.isNotEmpty(uploadHeader.getMiscPostingUploads())) {
@@ -697,7 +697,7 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 		UploadHeader uploadHeader = (UploadHeader) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (uploadHeader.isNew() && this.uploadHeaderDAO.isDuplicateKey(uploadHeader.getUploadId(),
+		if (uploadHeader.isNewRecord() && this.uploadHeaderDAO.isDuplicateKey(uploadHeader.getUploadId(),
 				uploadHeader.getFileName(), uploadHeader.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_MiscPostingUploadDialog_Filename.value") + ": "

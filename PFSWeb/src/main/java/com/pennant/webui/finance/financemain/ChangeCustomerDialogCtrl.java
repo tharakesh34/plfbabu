@@ -250,7 +250,7 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<JointAccountDetail> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		finChangeCustomerListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -422,7 +422,7 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<JointAccountDetail> {
 	public void doShowDialog(FinChangeCustomer finChangeCustomer) {
 		logger.debug(Literal.ENTERING);
 
-		if (finChangeCustomer.isNew()) {
+		if (finChangeCustomer.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -617,7 +617,7 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<JointAccountDetail> {
 		doSetValidation();
 		doWriteComponentsToBean(aFinChangeCustomer);
 		aFinChangeCustomer.setJointAccountDetail(jointAccountDetail);
-		isNew = aFinChangeCustomer.isNew();
+		isNew = aFinChangeCustomer.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -665,7 +665,7 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<JointAccountDetail> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(FinChangeCustomer aFinChangeCustomer, String tranType) {
+	protected boolean doProcess(FinChangeCustomer aFinChangeCustomer, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

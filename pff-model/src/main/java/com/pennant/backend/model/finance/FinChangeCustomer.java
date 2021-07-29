@@ -70,7 +70,6 @@ public class FinChangeCustomer extends AbstractWorkflowEntity {
 	private String custCif;
 	private String jcustCif;
 	private boolean collateralDelinkStatus = true;
-	private boolean newRecord = false;
 	private FinChangeCustomer befImage;
 	private LoggedInUser userDetails;
 	protected JointAccountDetail jointAccountDetail;
@@ -117,14 +116,6 @@ public class FinChangeCustomer extends AbstractWorkflowEntity {
 
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public FinChangeCustomer getBefImage() {

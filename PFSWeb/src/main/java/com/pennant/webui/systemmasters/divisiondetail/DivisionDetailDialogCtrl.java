@@ -315,7 +315,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	public void doShowDialog(DivisionDetail aDivisionDetail) throws Exception {
 		logger.debug("Entering");
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aDivisionDetail.isNew()) {
+		if (aDivisionDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -518,7 +518,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		this.entityCode.setValue(aDivisionDetail.getEntityCode());
 		this.recordStatus.setValue(aDivisionDetail.getRecordStatus());
 		//this.recordType.setValue(aDivisionDetail.getRecordType());
-		if (aDivisionDetail.isNew()) {
+		if (aDivisionDetail.isNewRecord()) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		} else {
@@ -692,7 +692,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getDivisionDetailListCtrl().search();
 	}
 
@@ -784,7 +784,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aDivisionDetail.isNew();
+		isNew = aDivisionDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -834,7 +834,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	 * 
 	 */
 
-	private boolean doProcess(DivisionDetail aDivisionDetail, String tranType) {
+	protected boolean doProcess(DivisionDetail aDivisionDetail, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		aDivisionDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());

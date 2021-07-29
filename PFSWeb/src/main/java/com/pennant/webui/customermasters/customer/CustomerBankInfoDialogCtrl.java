@@ -1381,7 +1381,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		listCell = new Listcell();
 		Datebox monthYear = new Datebox();
 		monthYear.setFormat(PennantConstants.monthYearFormat);
-		if (bankInfoDetail.isNew() && StringUtils.isEmpty(bankInfoDetail.getRecordType())) {
+		if (bankInfoDetail.isNewRecord() && StringUtils.isEmpty(bankInfoDetail.getRecordType())) {
 			readOnlyComponent(false, monthYear);
 		} else {
 			readOnlyComponent(true, monthYear);
@@ -2497,7 +2497,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				showErrorDetails(wve);
 
 				boolean isNew = false;
-				isNew = bankInfoDetail.isNew();
+				isNew = bankInfoDetail.isNewRecord();
 				String tranType = "";
 
 				if (bankInfoDetail.isNewRecord()) {
@@ -3721,7 +3721,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aCustomerBankInfo.isNew();
+		isNew = aCustomerBankInfo.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -4194,7 +4194,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				lc.setLabel(DateUtility.formatToLongDate(externalDocument.getToDate()));
 				lc.setParent(item);
 
-				if (!externalDocument.isNew()) {
+				if (!externalDocument.isNewRecord()) {
 					lc = new Listcell();
 					lc.setId("ResDoc".concat(String.valueOf(i)));
 					A responseDoc = new A();

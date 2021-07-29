@@ -310,7 +310,7 @@ public class IRRCodeDialogCtrl extends GFCBaseCtrl<IRRCode> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		iRRCodeListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -438,7 +438,7 @@ public class IRRCodeDialogCtrl extends GFCBaseCtrl<IRRCode> {
 
 		this.iRRCode.setValue(aIRRCode.getIRRCode());
 		this.iRRCodeDesc.setValue(aIRRCode.getIRRCodeDesc());
-		if (aIRRCode.isNew()) {
+		if (aIRRCode.isNewRecord()) {
 			this.active.setChecked(true);
 		} else {
 			this.active.setChecked(aIRRCode.isActive());
@@ -502,7 +502,7 @@ public class IRRCodeDialogCtrl extends GFCBaseCtrl<IRRCode> {
 	public void doShowDialog(IRRCode iRRCode) {
 		logger.debug(Literal.LEAVING);
 
-		if (iRRCode.isNew()) {
+		if (iRRCode.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -730,7 +730,7 @@ public class IRRCodeDialogCtrl extends GFCBaseCtrl<IRRCode> {
 		 */
 		aIRRCode.setIrrFeeTypesList(getIrrFeeTypesList());
 
-		isNew = aIRRCode.isNew();
+		isNew = aIRRCode.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -778,7 +778,7 @@ public class IRRCodeDialogCtrl extends GFCBaseCtrl<IRRCode> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(IRRCode aIRRCode, String tranType) {
+	protected boolean doProcess(IRRCode aIRRCode, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

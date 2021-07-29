@@ -64,8 +64,6 @@ public class QBFieldDetail extends AbstractWorkflowEntity {
 	private String qbFldTableName;
 	private String qbStFlds;
 	private String moduleCode;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	@SuppressWarnings("unused")
 	private QBFieldDetail befImage;
@@ -166,14 +164,6 @@ public class QBFieldDetail extends AbstractWorkflowEntity {
 
 	public void setEntityCode(String entityCode) {
 		this.entityCode = entityCode;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

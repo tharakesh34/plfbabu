@@ -54,8 +54,6 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 	private String lastMntByUser;
 	private String finCcy;
 	private String finTypeDesc;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private String lovDescCustRecordType;
 	private String lovDescCustCIF;
@@ -238,14 +236,6 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 
 	public void setDeptDesc(String deptDesc) {
 		this.deptDesc = deptDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

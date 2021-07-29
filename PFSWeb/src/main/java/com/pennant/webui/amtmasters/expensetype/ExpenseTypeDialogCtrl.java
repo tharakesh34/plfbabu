@@ -394,7 +394,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
-		if (aExpenseType.isNew()) {
+		if (aExpenseType.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -593,7 +593,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aExpenseType.isNew();
+		isNew = aExpenseType.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -631,7 +631,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 		logger.debug("Leaving");
 	}
 
-	private boolean doProcess(ExpenseType aExpenseType, String tranType) {
+	protected boolean doProcess(ExpenseType aExpenseType, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -860,7 +860,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getExpenseTypeListCtrl().search();
 	}
 

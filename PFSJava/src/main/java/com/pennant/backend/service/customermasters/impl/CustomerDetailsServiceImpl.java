@@ -1090,7 +1090,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			tableType = "_Temp";
 		}
 
-		if (customer.isNew()) {
+		if (customer.isNewRecord()) {
 			if (StringUtils.isEmpty(tableType)) {
 				customer.setRecordType("");
 				customer.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -1302,7 +1302,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			custEmpDetail.setBefImage(custEmployeeDetail);
 
 			boolean isSaveRecord = false;
-			if (financeMain.isNew()) {
+			if (financeMain.isNewRecord()) {
 				if (custEmployeeDetail == null) {
 					isSaveRecord = true;
 				} else {
@@ -4388,7 +4388,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		errParm[0] = PennantJavaUtil.getLabel("label_CustCIF") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_CustCtgCode") + ":" + valueParm[1];
 
-		if (customer.isNew()) { // for New record or new record into work flow
+		if (customer.isNewRecord()) { // for New record or new record into work flow
 
 			if (!customer.isWorkflow()) {// With out Work flow only new records
 				if (befCustomer != null) { // Record Already Exists in the table
@@ -4608,7 +4608,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			} else if (customerRating.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (customerRating.isNew()) {
+				} else if (customerRating.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -4696,7 +4696,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			} else if (customerEmploymentDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (customerEmploymentDetail.isNew()) {
+				} else if (customerEmploymentDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -4782,7 +4782,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			} else if (customerIncome.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (customerIncome.isNew()) {
+				} else if (customerIncome.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -4868,7 +4868,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			} else if (customerEMail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (customerEMail.isNew()) {
+				} else if (customerEMail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -4953,7 +4953,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			} else if (customerAddres.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (customerAddres.isNew()) {
+				} else if (customerAddres.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -5045,7 +5045,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (customerDocument.isNew()) {
+				} else if (customerDocument.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -5132,7 +5132,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			} else if (customerBankInfo.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (customerBankInfo.isNew()) {
+				} else if (customerBankInfo.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -5264,7 +5264,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			} else if (bankInfoDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (bankInfoDetail.isNew()) {
+				} else if (bankInfoDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -5399,7 +5399,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			} else if (customerCardSalesInfo.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (customerCardSalesInfo.isNew()) {
+				} else if (customerCardSalesInfo.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -5494,7 +5494,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			} else if (custCardMonthSales.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (custCardMonthSales.isNew()) {
+				} else if (custCardMonthSales.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -5579,7 +5579,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			} else if (customerChequeInfo.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (customerChequeInfo.isNew()) {
+				} else if (customerChequeInfo.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -5665,7 +5665,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			} else if (customerExtLiability.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (customerExtLiability.isNew()) {
+				} else if (customerExtLiability.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -5781,7 +5781,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			} else if (customerPhoneNumber.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (customerPhoneNumber.isNew()) {
+				} else if (customerPhoneNumber.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -5866,7 +5866,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			} else if (directorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (directorDetail.isNew()) {
+				} else if (directorDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -7798,7 +7798,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			} else if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (customerGST.isNew()) {
+				} else if (customerGST.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -7898,7 +7898,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			} else if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (customerGSTDetails.isNew()) {
+				} else if (customerGSTDetails.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

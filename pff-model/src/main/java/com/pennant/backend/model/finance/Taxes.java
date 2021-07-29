@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  Taxes.java                                                   		* 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  
- *                                                                  						*
- * Modified Date    :      																	*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : Taxes.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : * Modified Date : * * Description : *
+ * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 23-07-2019       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-07-2019 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.model.finance;
@@ -46,20 +28,18 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-import javax.xml.bind.annotation.XmlTransient;
-
-public class Taxes extends AbstractWorkflowEntity implements Entity {
-
+public class Taxes extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
+
 	private long id = Long.MIN_VALUE;
 	private long referenceId = Long.MIN_VALUE;
 	private String taxType;
 	private BigDecimal taxPerc = BigDecimal.ZERO;
-	private boolean newRecord;
 	private TaxHeader befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
@@ -76,7 +56,7 @@ public class Taxes extends AbstractWorkflowEntity implements Entity {
 		entity.setReferenceId(this.referenceId);
 		entity.setTaxType(this.taxType);
 		entity.setTaxPerc(this.taxPerc);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
 		entity.setActualTax(this.actualTax);
@@ -98,17 +78,10 @@ public class Taxes extends AbstractWorkflowEntity implements Entity {
 		return entity;
 	}
 
-	@Override
-	public boolean isNew() {
-		return newRecord;
-	}
-
-	@Override
 	public long getId() {
 		return id;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.id = id;
 	}
@@ -177,20 +150,12 @@ public class Taxes extends AbstractWorkflowEntity implements Entity {
 		return waivedTax;
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
 	public TaxHeader getBefImage() {
 		return befImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public void setBefImage(TaxHeader befImage) {

@@ -54,7 +54,6 @@ public class CostOfFundCode extends AbstractWorkflowEntity {
 
 	private String cofCode;
 	private String cofDesc;
-	private boolean newRecord;
 	private String lovValue;
 	private CostOfFundCode befImage;
 	private LoggedInUser userDetails;
@@ -78,14 +77,6 @@ public class CostOfFundCode extends AbstractWorkflowEntity {
 
 	public void setCofDesc(String cofDesc) {
 		this.cofDesc = cofDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

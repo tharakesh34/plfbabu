@@ -54,7 +54,6 @@ public class DedupFields extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 	private String fieldName = null;
 	private String fieldControl;
-	private boolean newRecord = false;
 	private String lovValue;
 	private DedupFields befImage;
 	private LoggedInUser userDetails;
@@ -97,14 +96,6 @@ public class DedupFields extends AbstractWorkflowEntity {
 
 	public void setFieldControl(String fieldControl) {
 		this.fieldControl = fieldControl;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

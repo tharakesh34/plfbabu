@@ -134,7 +134,7 @@ public class FinanceStatusCodeServiceImpl extends GenericService<FinanceStatusCo
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (financeStatusCode.isNew()) {
+		if (financeStatusCode.isNewRecord()) {
 			financeStatusCode.setId(Long.parseLong(getFinanceStatusCodeDAO().save(financeStatusCode, tableType)));
 			auditHeader.getAuditDetail().setModelData(financeStatusCode);
 			auditHeader.setAuditReference(String.valueOf(financeStatusCode.getStatusId()));
@@ -340,7 +340,7 @@ public class FinanceStatusCodeServiceImpl extends GenericService<FinanceStatusCo
 		FinanceStatusCode financeStatusCode = (FinanceStatusCode) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (financeStatusCode.isNew() && financeStatusCodeDAO.isDuplicateKey(financeStatusCode.getStatusId(),
+		if (financeStatusCode.isNewRecord() && financeStatusCodeDAO.isDuplicateKey(financeStatusCode.getStatusId(),
 				financeStatusCode.getStatusCode(),
 				financeStatusCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];

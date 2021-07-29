@@ -64,7 +64,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(propOrder = { "id", "authLimitId", "code", "limitAmount" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AuthorizationLimitDetail extends AbstractWorkflowEntity implements Entity {
+public class AuthorizationLimitDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
@@ -73,8 +73,6 @@ public class AuthorizationLimitDetail extends AbstractWorkflowEntity implements 
 	private String productDesc;
 	private String collateralDesc;
 	private BigDecimal limitAmount = BigDecimal.ZERO;
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -155,14 +153,6 @@ public class AuthorizationLimitDetail extends AbstractWorkflowEntity implements 
 
 	public void setLimitAmount(BigDecimal limitAmount) {
 		this.limitAmount = limitAmount;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

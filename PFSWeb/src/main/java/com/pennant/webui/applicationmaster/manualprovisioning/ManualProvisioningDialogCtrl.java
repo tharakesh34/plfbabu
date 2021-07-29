@@ -602,7 +602,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	public void doShowDialog(Provision provision) {
 		logger.debug(Literal.ENTERING);
 
-		if (provision.isNew()) {
+		if (provision.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 		} else {
@@ -796,7 +796,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aProvision.isNew();
+		isNew = aProvision.isNewRecord();
 		String tranType;
 
 		if (isWorkFlowEnabled()) {
@@ -832,7 +832,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private boolean doProcess(Provision aProvision, String tranType)
+	protected boolean doProcess(Provision aProvision, String tranType)
 			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
@@ -1097,7 +1097,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		manualProvisioningListCtrl.search();
 	}
 

@@ -279,7 +279,7 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 		} else {
 			this.parentGroupId.setSclass("");
 		}
-		if (aAccountTypeGroup.isNew()
+		if (aAccountTypeGroup.isNewRecord()
 				|| (aAccountTypeGroup.getRecordType() != null ? aAccountTypeGroup.getRecordType() : "")
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.groupIsActive.setChecked(true);
@@ -359,7 +359,7 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aAccountTypeGroup.isNew()) {
+		if (aAccountTypeGroup.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -454,7 +454,7 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getAccountTypeGroupListCtrl().search();
 	}
 
@@ -633,7 +633,7 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aAccountTypeGroup.isNew();
+		isNew = aAccountTypeGroup.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -682,7 +682,7 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(AccountTypeGroup aAccountTypeGroup, String tranType) {
+	protected boolean doProcess(AccountTypeGroup aAccountTypeGroup, String tranType) {
 		logger.debug("Entering ");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

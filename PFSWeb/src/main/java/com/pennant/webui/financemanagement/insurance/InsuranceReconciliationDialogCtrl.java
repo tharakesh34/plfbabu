@@ -317,7 +317,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		insuranceDetailsListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -430,7 +430,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	public void doShowDialog(InsuranceDetails insuranceDetails) {
 		logger.debug(Literal.ENTERING);
 
-		if (insuranceDetails.isNew()) {
+		if (insuranceDetails.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.reconReasonCategory.focus();
@@ -732,7 +732,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 			}
 		}
 
-		isNew = ainsuranceDetails.isNew();
+		isNew = ainsuranceDetails.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -777,7 +777,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	 * @throws Exception
 	 * 
 	 */
-	private boolean doProcess(InsuranceDetails detail, String tranType) throws Exception {
+	protected boolean doProcess(InsuranceDetails detail, String tranType) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;

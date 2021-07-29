@@ -144,7 +144,7 @@ public class ManualDeviationServiceImpl extends GenericService<ManualDeviation> 
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (manualDeviation.isNew()) {
+		if (manualDeviation.isNewRecord()) {
 			manualDeviation.setId(Long.parseLong(manualDeviationDAO.save(manualDeviation, tableType)));
 			auditHeader.getAuditDetail().setModelData(manualDeviation);
 			auditHeader.setAuditReference(String.valueOf(manualDeviation.getDeviationID()));
@@ -350,7 +350,7 @@ public class ManualDeviationServiceImpl extends GenericService<ManualDeviation> 
 		ManualDeviation manualDeviation = (ManualDeviation) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (manualDeviation.isNew() && manualDeviationDAO.isDuplicateKey(manualDeviation.getDeviationID(),
+		if (manualDeviation.isNewRecord() && manualDeviationDAO.isDuplicateKey(manualDeviation.getDeviationID(),
 				manualDeviation.getCode(), manualDeviation.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 

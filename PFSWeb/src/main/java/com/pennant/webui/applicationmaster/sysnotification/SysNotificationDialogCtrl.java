@@ -516,7 +516,7 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getSysNotificationListCtrl().search();
 	}
 

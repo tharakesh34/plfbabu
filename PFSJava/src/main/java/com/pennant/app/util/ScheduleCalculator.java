@@ -3839,7 +3839,7 @@ public class ScheduleCalculator {
 
 		// FIXME: PV: 13MAY17: It is kept on the assumption reqMaturity fields
 		// in not used any where else
-		if (finMain.isNew() || StringUtils.equals(finMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+		if (finMain.isNewRecord() || StringUtils.equals(finMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			finMain.setReqMaturity(finMain.getCalMaturity());
 		}
 

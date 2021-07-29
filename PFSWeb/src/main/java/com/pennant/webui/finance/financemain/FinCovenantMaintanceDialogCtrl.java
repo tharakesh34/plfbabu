@@ -359,7 +359,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (finMaintainInstruction.isNew()) {
+		if (finMaintainInstruction.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -448,7 +448,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 		doWriteComponentsToBean(aFinMaintainInstruction);
 
 		boolean isNew;
-		isNew = aFinMaintainInstruction.isNew();
+		isNew = aFinMaintainInstruction.isNewRecord();
 		String tranType;
 
 		if (isWorkFlowEnabled()) {
@@ -508,7 +508,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(FinMaintainInstruction aFinMaintainInstruction, String tranType) {
+	protected boolean doProcess(FinMaintainInstruction aFinMaintainInstruction, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -868,7 +868,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		final JdbcSearchObject<FinanceMain> soFinanceMain = getFinanceSelectCtrl().getSearchObj(true);
 		getFinanceSelectCtrl().getPagingFinanceList().setActivePage(0);
 		getFinanceSelectCtrl().getPagedListWrapper().setSearchObject(soFinanceMain);

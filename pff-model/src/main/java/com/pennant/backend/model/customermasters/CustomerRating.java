@@ -48,7 +48,6 @@ public class CustomerRating extends AbstractWorkflowEntity {
 	private String custRating;
 	private String lovDescCustRatingName;
 	private boolean valueType;
-	private boolean newRecord;
 	private String lovValue;
 	private CustomerRating befImage;
 	private LoggedInUser userDetails;
@@ -155,14 +154,6 @@ public class CustomerRating extends AbstractWorkflowEntity {
 
 	public void setLovDesccustRatingCodeDesc(String lovDesccustRatingCodeDesc) {
 		this.lovDesccustRatingCodeDesc = lovDesccustRatingCodeDesc;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

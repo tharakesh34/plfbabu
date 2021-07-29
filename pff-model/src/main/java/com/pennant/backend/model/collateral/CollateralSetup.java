@@ -133,7 +133,6 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 
 	@XmlElement
 	private String remarks;
-	private boolean newRecord = false;
 	private String lovValue;
 
 	private CollateralSetup befImage;
@@ -366,14 +365,6 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

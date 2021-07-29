@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AccountTypeDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AccountTypeDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * *
+ * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.rmtmasters.accounttype;
@@ -377,12 +359,14 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	 */
 	public void onClick$btnCopyTo(Event event) throws InterruptedException {
 		logger.debug("Entering");
-		if (doClose(this.btnSave.isVisible())) {
-			Events.postEvent("onClick$button_AccountTypeList_NewAccountType",
-					accountTypeListCtrl.window_AccountTypeList, getAccountType());
-		}
+		doClose(this.btnSave.isVisible());
 		logger.debug("Leaving");
 
+	}
+
+	protected void doPostClose() {
+		Events.postEvent("onClick$button_AccountTypeList_NewAccountType", accountTypeListCtrl.window_AccountTypeList,
+				getAccountType());
 	}
 
 	// GUI operations
@@ -439,8 +423,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aAccountType
-	 *            AccountType
+	 * @param aAccountType AccountType
 	 */
 	public void doWriteBeanToComponents(AccountType aAccountType) {
 		logger.debug("Entering");
@@ -464,7 +447,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 
 		this.gSTApplicable.setChecked(aAccountType.isTaxApplicable());
 		this.recordStatus.setValue(aAccountType.getRecordStatus());
-		if (aAccountType.isNew() || PennantConstants.RECORD_TYPE_NEW.equals(aAccountType.getRecordType())) {
+		if (aAccountType.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(aAccountType.getRecordType())) {
 			this.acTypeIsActive.setChecked(true);
 			this.acTypeIsActive.setDisabled(true);
 		}
@@ -668,7 +651,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			}
 		}
 
-		//GST Applicable
+		// GST Applicable
 		try {
 			aAccountType.setTaxApplicable(this.gSTApplicable.isChecked());
 		} catch (WrongValueException we) {
@@ -688,7 +671,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			wve.add(we);
 		}
 
-		//GST Applicable
+		// GST Applicable
 		try {
 			aAccountType.setaCCADDLCHAR1(this.revChargeApplicable.isChecked());
 		} catch (WrongValueException we) {
@@ -722,7 +705,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aAccountType.isNew()) {
+		if (aAccountType.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -869,7 +852,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getAccountTypeListCtrl().search();
 	}
 
@@ -1060,7 +1043,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aAccountType.isNew();
+		isNew = aAccountType.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1099,16 +1082,14 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAccountType
-	 *            (AccountType)
+	 * @param aAccountType (AccountType)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType     (String)
 	 * 
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(AccountType aAccountType, String tranType) {
+	protected boolean doProcess(AccountType aAccountType, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -1190,11 +1171,9 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1370,8 +1349,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1389,8 +1367,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

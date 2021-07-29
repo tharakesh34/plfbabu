@@ -315,7 +315,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		gstRateListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -358,7 +358,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 
 		this.recordStatus.setValue(aGSTRate.getRecordStatus());
 
-		if (aGSTRate.isNew() || (aGSTRate.getRecordType() != null ? aGSTRate.getRecordType() : "")
+		if (aGSTRate.isNewRecord() || (aGSTRate.getRecordType() != null ? aGSTRate.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			fillComboBox(this.calcType, RuleConstants.CALCTYPE_PERCENTAGE, listCalcType, "");
 			this.active.setChecked(true);
@@ -549,7 +549,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	public void doShowDialog(GSTRate gSTRate) {
 		logger.debug(Literal.ENTERING);
 
-		if (gSTRate.isNew()) {
+		if (gSTRate.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -813,7 +813,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 		doSetValidation();
 		doWriteComponentsToBean(aGSTRate);
 
-		isNew = aGSTRate.isNew();
+		isNew = aGSTRate.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -861,7 +861,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(GSTRate aGSTRate, String tranType) {
+	protected boolean doProcess(GSTRate aGSTRate, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

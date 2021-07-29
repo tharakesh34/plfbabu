@@ -93,7 +93,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (academic.isNew()) {
+		if (academic.isNewRecord()) {
 			academic.setAcademicID(Long.parseLong(getAcademicDAO().save(academic, tableType)));
 			auditHeader.getAuditDetail().setModelData(academic);
 			auditHeader.setAuditReference(String.valueOf(academic.getAcademicID()));
@@ -292,7 +292,7 @@ public class AcademicServiceImpl extends GenericService<Academic> implements Aca
 		Academic academic = (Academic) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (academic.isNew() && academicDAO.isDuplicateKey(academic.getAcademicID(), academic.getAcademicLevel(),
+		if (academic.isNewRecord() && academicDAO.isDuplicateKey(academic.getAcademicID(), academic.getAcademicLevel(),
 				academic.getAcademicDecipline(), academic.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 			parameters[0] = PennantJavaUtil.getLabel("label_AcademicLevel") + ": " + academic.getAcademicLevel();

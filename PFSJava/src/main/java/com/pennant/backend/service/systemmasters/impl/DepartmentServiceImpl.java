@@ -122,7 +122,7 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (department.isNew()) {
+		if (department.isNewRecord()) {
 			department.setId(getDepartmentDAO().save(department, tableType));
 			auditHeader.getAuditDetail().setModelData(department);
 			auditHeader.setAuditReference(department.getId());
@@ -320,7 +320,7 @@ public class DepartmentServiceImpl extends GenericService<Department> implements
 		Department department = (Department) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (department.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(department.getRecordType())
+		if (department.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(department.getRecordType())
 				&& departmentDAO.isDuplicateKey(department.getDeptCode(),
 						department.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

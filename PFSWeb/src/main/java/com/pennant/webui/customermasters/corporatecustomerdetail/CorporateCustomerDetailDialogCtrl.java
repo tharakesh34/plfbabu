@@ -1197,7 +1197,7 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aCorporateCustomerDetail.isNew();
+		isNew = aCorporateCustomerDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1246,7 +1246,7 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CorporateCustomerDetail aCorporateCustomerDetail, String tranType) {
+	protected boolean doProcess(CorporateCustomerDetail aCorporateCustomerDetail, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -1453,7 +1453,7 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	}
 
 	// Method for refreshing the list after successful updating
-	private void refreshList() {
+	protected void refreshList() {
 		getCorporateCustomerDetailListCtrl().search();
 	}
 

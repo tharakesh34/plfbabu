@@ -17,7 +17,6 @@ public class CollateralThirdParty extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 	private String collateralRef;
 	private long customerId;
-	private boolean newRecord = false;
 
 	@XmlElement(name = "thirdPartyCif")
 	private String custCIF;
@@ -60,14 +59,6 @@ public class CollateralThirdParty extends AbstractWorkflowEntity {
 
 	public void setCustomerId(long customerId) {
 		this.customerId = customerId;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public CollateralThirdParty getBefImage() {

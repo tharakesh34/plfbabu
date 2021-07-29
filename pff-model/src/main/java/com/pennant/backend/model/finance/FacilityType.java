@@ -11,7 +11,6 @@ public class FacilityType extends AbstractWorkflowEntity {
 	private String facilityDesc;
 	private String facilityFor;
 	private String revolving;
-	private boolean newRecord = false;
 	private String lovValue;
 	private FacilityType befImage;
 	private LoggedInUser userDetails;
@@ -71,14 +70,6 @@ public class FacilityType extends AbstractWorkflowEntity {
 
 	public void setRevolving(String revolving) {
 		this.revolving = revolving;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

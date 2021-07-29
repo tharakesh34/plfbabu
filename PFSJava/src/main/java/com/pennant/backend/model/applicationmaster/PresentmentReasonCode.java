@@ -10,7 +10,6 @@ public class PresentmentReasonCode extends AbstractWorkflowEntity {
 	private String code;
 	private String description;
 	private boolean active;
-	private boolean newRecord;
 	private String lovValue;
 	private PresentmentReasonCode befImage;
 	private LoggedInUser userDetails;
@@ -38,14 +37,6 @@ public class PresentmentReasonCode extends AbstractWorkflowEntity {
 
 	public void setId(String id) {
 		this.code = id;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

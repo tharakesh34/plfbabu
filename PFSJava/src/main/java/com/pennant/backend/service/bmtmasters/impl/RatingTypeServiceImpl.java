@@ -123,7 +123,7 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 		if (ratingType.isWorkflow()) {
 			tableType = "_Temp";
 		}
-		if (ratingType.isNew()) {
+		if (ratingType.isNewRecord()) {
 			ratingType.setId(getRatingTypeDAO().save(ratingType, tableType));
 			auditHeader.getAuditDetail().setModelData(ratingType);
 			auditHeader.setAuditReference(ratingType.getRatingType());
@@ -319,7 +319,7 @@ public class RatingTypeServiceImpl extends GenericService<RatingType> implements
 		valueParm[0] = ratingType.getRatingType();
 		errParm[0] = PennantJavaUtil.getLabel("label_RatingType") + ":" + valueParm[0];
 
-		if (ratingType.isNew()) { // for New record or new record into work flow
+		if (ratingType.isNewRecord()) { // for New record or new record into work flow
 
 			if (!ratingType.isWorkflow()) {// With out Work flow only new records
 				if (befRatingType != null) { // Record Already Exists in the table then error

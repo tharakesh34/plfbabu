@@ -77,7 +77,7 @@ public class CustTypePANMappingServiceImpl extends GenericService<CustTypePANMap
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (custTypePANMapping.isNew()) {
+		if (custTypePANMapping.isNewRecord()) {
 			custTypePANMapping
 					.setMappingID(Long.parseLong(getCustTypePANMappingDAO().save(custTypePANMapping, tableType)));
 			auditHeader.getAuditDetail().setModelData(custTypePANMapping);
@@ -285,7 +285,7 @@ public class CustTypePANMappingServiceImpl extends GenericService<CustTypePANMap
 		errParm[0] = PennantJavaUtil.getLabel("label_CustType") + " : " + valueParm[0];
 
 		// Check the unique keys.
-		if (custTypePANMapping.isNew() && custTypePANMappingDAO.isDuplicateKey(custTypePANMapping.getMappingID(),
+		if (custTypePANMapping.isNewRecord() && custTypePANMappingDAO.isDuplicateKey(custTypePANMapping.getMappingID(),
 				custTypePANMapping.getCustType(), custTypePANMapping.getPanLetter(),
 				custTypePANMapping.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];

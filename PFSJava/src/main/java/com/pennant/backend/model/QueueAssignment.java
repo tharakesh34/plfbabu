@@ -80,7 +80,6 @@ public class QueueAssignment extends AbstractWorkflowEntity {
 	private int processedCount = 0;
 	private Timestamp lastProcessedOn = null;
 	private boolean userActive = true;
-	private boolean newRecord = false;
 	private String lovValue;
 	private QueueAssignment befImage;
 	private LoggedInUser userDetails;
@@ -215,14 +214,6 @@ public class QueueAssignment extends AbstractWorkflowEntity {
 
 	public void setReference(String reference) {
 		this.reference = reference;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

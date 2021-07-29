@@ -310,7 +310,7 @@ public class OtherBankFinanceTypeDialogCtrl extends GFCBaseCtrl<OtherBankFinance
 		this.finType.setValue(aOtherBankFinanceType.getFinType());
 		this.finTypeDesc.setValue(aOtherBankFinanceType.getFinTypeDesc());
 		this.active.setChecked(aOtherBankFinanceType.isActive());
-		if (aOtherBankFinanceType.isNew()
+		if (aOtherBankFinanceType.isNewRecord()
 				|| (aOtherBankFinanceType.getRecordType() != null ? aOtherBankFinanceType.getRecordType() : "")
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
@@ -374,7 +374,7 @@ public class OtherBankFinanceTypeDialogCtrl extends GFCBaseCtrl<OtherBankFinance
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
-		if (aOtherBankFinanceType.isNew()) {
+		if (aOtherBankFinanceType.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -572,7 +572,7 @@ public class OtherBankFinanceTypeDialogCtrl extends GFCBaseCtrl<OtherBankFinance
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aOtherBankFinanceType.isNew();
+		isNew = aOtherBankFinanceType.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -610,7 +610,7 @@ public class OtherBankFinanceTypeDialogCtrl extends GFCBaseCtrl<OtherBankFinance
 		logger.debug("Leaving");
 	}
 
-	private boolean doProcess(OtherBankFinanceType aOtherBankFinanceType, String tranType) {
+	protected boolean doProcess(OtherBankFinanceType aOtherBankFinanceType, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -835,7 +835,7 @@ public class OtherBankFinanceTypeDialogCtrl extends GFCBaseCtrl<OtherBankFinance
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getOtherBankFinanceTypeListCtrl().search();
 	}
 

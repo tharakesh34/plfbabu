@@ -62,7 +62,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class LegalPropertyDetail extends AbstractWorkflowEntity implements Entity {
+public class LegalPropertyDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long legalPropertyId = Long.MIN_VALUE;
@@ -94,8 +94,6 @@ public class LegalPropertyDetail extends AbstractWorkflowEntity implements Entit
 	@XmlElement
 	private String propertyOwner;
 	private String listApplicantNames;
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -278,14 +276,6 @@ public class LegalPropertyDetail extends AbstractWorkflowEntity implements Entit
 
 	public void setPropertyOwner(String propertyOwner) {
 		this.propertyOwner = propertyOwner;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

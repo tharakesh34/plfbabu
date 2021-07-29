@@ -136,7 +136,7 @@ public class FinanceRepayPriorityServiceImpl extends GenericService<FinanceRepay
 			tableType = "_Temp";
 		}
 
-		if (financeRepayPriority.isNew()) {
+		if (financeRepayPriority.isNewRecord()) {
 			getFinanceRepayPriorityDAO().save(financeRepayPriority, tableType);
 		} else {
 			getFinanceRepayPriorityDAO().update(financeRepayPriority, tableType);
@@ -342,7 +342,7 @@ public class FinanceRepayPriorityServiceImpl extends GenericService<FinanceRepay
 		valueParm[0] = financeRepayPriority.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinType") + ":" + valueParm[0];
 
-		if (financeRepayPriority.isNew()) { // for New record or new record into work flow
+		if (financeRepayPriority.isNewRecord()) { // for New record or new record into work flow
 
 			if (!financeRepayPriority.isWorkflow()) {// With out Work flow only new records  
 				if (befFinanceRepayPriority != null) { // Record Already Exists in the table then error  

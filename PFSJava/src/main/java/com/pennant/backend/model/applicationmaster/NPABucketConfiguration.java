@@ -61,7 +61,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 @XmlType(propOrder = { "configID", "productCode", "bucketID", "dueDays", "suspendProfit" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class NPABucketConfiguration extends AbstractWorkflowEntity implements Entity {
+public class NPABucketConfiguration extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long configID = Long.MIN_VALUE;
@@ -72,8 +72,6 @@ public class NPABucketConfiguration extends AbstractWorkflowEntity implements En
 	private String bucketCode;
 	private int dueDays;
 	private boolean suspendProfit;
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
@@ -164,14 +162,6 @@ public class NPABucketConfiguration extends AbstractWorkflowEntity implements En
 
 	public void setSuspendProfit(boolean suspendProfit) {
 		this.suspendProfit = suspendProfit;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

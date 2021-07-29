@@ -385,7 +385,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			tableType = "_Temp";
 		}
 
-		if (commitment.isNew()) {
+		if (commitment.isNewRecord()) {
 
 			// Commitment
 			getCommitmentDAO().save(commitment, tableType);
@@ -789,7 +789,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		errParmFacRef[0] = PennantJavaUtil.getLabel("label_FacilityRef") + " : " + commitment.getFacilityRef() + " For";
 		valueParmFacRef[0] = PennantJavaUtil.getLabel("label_custID") + " : " + commitment.getCustCIF();
 
-		if (commitment.isNew()) { // for New record or new record into work flow
+		if (commitment.isNewRecord()) { // for New record or new record into work flow
 
 			if (!commitment.isWorkflow()) {// With out Work flow only new
 											// records
@@ -1493,7 +1493,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		} else if (commitmentMovement.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 			if (approveRec) {
 				deleteRecord = true;
-			} else if (commitmentMovement.isNew()) {
+			} else if (commitmentMovement.isNewRecord()) {
 				saveRecord = true;
 			} else {
 				updateRecord = true;
@@ -1592,7 +1592,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			} else if (finFlagsDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (finFlagsDetail.isNew()) {
+				} else if (finFlagsDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -1694,7 +1694,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			} else if (commitmentRate.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (commitmentRate.isNew()) {
+				} else if (commitmentRate.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -1835,7 +1835,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			} else if (collateralAssignment.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (collateralAssignment.isNew()) {
+				} else if (collateralAssignment.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -1944,7 +1944,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				} else if (documentDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 					if (approveRec) {
 						deleteRecord = true;
-					} else if (documentDetail.isNew()) {
+					} else if (documentDetail.isNewRecord()) {
 						saveRecord = true;
 					} else {
 						updateRecord = true;

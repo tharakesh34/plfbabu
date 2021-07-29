@@ -467,7 +467,7 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 	public void doShowDialog(Collateral aCollateral) throws InterruptedException {
 		logger.debug("Entering");
 		// set Readonly mode accordingly if the object is new or not.
-		if (aCollateral.isNew()) {
+		if (aCollateral.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -697,7 +697,7 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
 		// Do data level validations here
-		isNew = aCollateral.isNew();
+		isNew = aCollateral.isNewRecord();
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
@@ -759,7 +759,7 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 				Collateral collateral = list.get(i);
 				if (collateral.getReference().equals(aCollateral.getReference())) {
 					// Both Current and Existing list rating same
-					if (aCollateral.isNew()) {
+					if (aCollateral.isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm),
 								getUserWorkspace().getUserLanguage()));

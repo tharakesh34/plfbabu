@@ -1103,7 +1103,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 			setFinanceReferenceDetail(lsFinanceReferenceDetail);
 			BeanUtils.copyProperties(getFinanceReferenceDetail(), aFinanceReferenceDetail);
 			boolean isNew = false;
-			isNew = aFinanceReferenceDetail.isNew();
+			isNew = aFinanceReferenceDetail.isNewRecord();
 			String tranType = "";
 			aFinanceReferenceDetail.setVersion(aFinanceReferenceDetail.getVersion() + 1);
 			if (isNew) {
@@ -1147,7 +1147,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		logger.debug("Leaving");
 	}
 
-	private boolean doProcess(FinanceReferenceDetail aFinanceReferenceDetail, String tranType) {
+	protected boolean doProcess(FinanceReferenceDetail aFinanceReferenceDetail, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

@@ -16,7 +16,6 @@ public class AccountHistoryDetail extends AbstractWorkflowEntity {
 	private BigDecimal shadowBal = BigDecimal.ZERO;
 	private BigDecimal acBalance = BigDecimal.ZERO;
 	private BigDecimal openingBal = BigDecimal.ZERO;
-	private boolean newRecord = false;
 	private String entityCode;
 	private String postBranch;
 	private String branchProvince;
@@ -87,14 +86,6 @@ public class AccountHistoryDetail extends AbstractWorkflowEntity {
 
 	public void setOpeningBal(BigDecimal openingBal) {
 		this.openingBal = openingBal;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getEntityCode() {

@@ -4,18 +4,17 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 @XmlType(propOrder = { "gstNumber", "frequancy", "financialYear", "salAmount" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class CustomerGSTDetails extends AbstractWorkflowEntity implements Entity {
+public class CustomerGSTDetails extends AbstractWorkflowEntity {
 	/**
 	 * 
 	 */
@@ -31,20 +30,11 @@ public class CustomerGSTDetails extends AbstractWorkflowEntity implements Entity
 	private String financialYear;
 	@XmlElement
 	private BigDecimal salAmount = BigDecimal.ZERO;
-	private boolean newRecord;
 	private String lovValue;
 	private CustomerGSTDetails befImage;
 	private int keyValue = 0;
 
 	private LoggedInUser userDetails;
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
 
 	public String getLovValue() {
 		return lovValue;
@@ -92,11 +82,6 @@ public class CustomerGSTDetails extends AbstractWorkflowEntity implements Entity
 
 	public void setHeaderId(long headerId) {
 		this.headerId = headerId;
-	}
-
-	@Override
-	public boolean isNew() {
-		return newRecord;
 	}
 
 	public CustomerGSTDetails getBefImage() {

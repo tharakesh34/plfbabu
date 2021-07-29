@@ -53,7 +53,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * Model class for the <b>TransactionEntry table</b>.<br>
  *
  */
-public class TransactionEntry extends AbstractWorkflowEntity implements Entity {
+public class TransactionEntry extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -477902982694204735L;
 	private long accountSetid;
@@ -82,8 +82,6 @@ public class TransactionEntry extends AbstractWorkflowEntity implements Entity {
 	private String lovDescFeeCodeName;
 	private boolean entryByInvestment;
 	private boolean openNewFinAc;
-
-	private boolean newRecord = false;
 	private String lovValue;
 	private TransactionEntry befImage;
 
@@ -135,7 +133,7 @@ public class TransactionEntry extends AbstractWorkflowEntity implements Entity {
 		entity.setLovDescFeeCodeName(this.lovDescFeeCodeName);
 		entity.setEntryByInvestment(this.entryByInvestment);
 		entity.setOpenNewFinAc(this.openNewFinAc);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setLovValue(this.lovValue);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
@@ -315,14 +313,6 @@ public class TransactionEntry extends AbstractWorkflowEntity implements Entity {
 
 	public void setAmountRule(String amountRule) {
 		this.amountRule = amountRule;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

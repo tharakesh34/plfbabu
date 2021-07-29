@@ -308,7 +308,7 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		ExtInterfaceConfigurationListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -449,7 +449,7 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 	public void doShowDialog(InterfaceConfiguration interfaceConfiguration) {
 		logger.debug(Literal.LEAVING);
 
-		if (interfaceConfiguration.isNew()) {
+		if (interfaceConfiguration.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -722,7 +722,7 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 		doSetValidation();
 		doWriteComponentsToBean(aExtInterfaceConfiguration);
 
-		isNew = aExtInterfaceConfiguration.isNew();
+		isNew = aExtInterfaceConfiguration.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -770,7 +770,7 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(InterfaceConfiguration configuration, String tranType) {
+	protected boolean doProcess(InterfaceConfiguration configuration, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

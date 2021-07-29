@@ -55,7 +55,6 @@ public class FinanceRepayPriority extends AbstractWorkflowEntity {
 	private String finType = null;
 	private String lovDescFinTypeName;
 	private int finPriority;
-	private boolean newRecord;
 	private String lovValue;
 	private FinanceRepayPriority befImage;
 	private LoggedInUser userDetails;
@@ -105,14 +104,6 @@ public class FinanceRepayPriority extends AbstractWorkflowEntity {
 
 	public void setFinPriority(int finPriority) {
 		this.finPriority = finPriority;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

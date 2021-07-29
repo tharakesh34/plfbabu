@@ -535,7 +535,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 	public void doShowDialog(JVPostingEntry aJVPostingEntry) throws Exception {
 		logger.debug("Entering");
 
-		if (aJVPostingEntry.isNew()) {
+		if (aJVPostingEntry.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -947,7 +947,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 		logger.debug("Entering");
 
 		this.batch.setValue(getjVPosting().getBatch());
-		if (getjVPosting().isNew()) {
+		if (getjVPosting().isNewRecord()) {
 			this.batchReference.setValue("");
 		} else {
 			this.batchReference.setValue(String.valueOf(getjVPosting().getBatchReference()));
@@ -1361,7 +1361,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
 		// Do data level validations here
-		isNew = aJVPostingEntry.isNew();
+		isNew = aJVPostingEntry.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {

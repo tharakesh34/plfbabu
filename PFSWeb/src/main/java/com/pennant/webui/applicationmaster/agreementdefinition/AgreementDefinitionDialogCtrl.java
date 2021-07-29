@@ -454,7 +454,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 			this.autoDownload.setVisible(false);
 			this.label_AgreementDefinitionDialog_autoDownload.setVisible(false);
 		}
-		if (aAgreementDefinition.isNew()
+		if (aAgreementDefinition.isNewRecord()
 				|| (aAgreementDefinition.getRecordType() != null ? aAgreementDefinition.getRecordType() : "")
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.aggIsActive.setChecked(true);
@@ -787,7 +787,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aAgreementDefinition.isNew()) {
+		if (aAgreementDefinition.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			this.autoDownload.setVisible(false);
 			this.label_AgreementDefinitionDialog_autoDownload.setVisible(false);
@@ -813,7 +813,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 			// fill the components with the data
 			doWriteBeanToComponents(aAgreementDefinition);
 
-			if (!aAgreementDefinition.isNew() && !isWorkFlowEnabled()) {
+			if (!aAgreementDefinition.isNewRecord() && !isWorkFlowEnabled()) {
 				doDisable(true);
 			}
 
@@ -1092,7 +1092,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aAgreementDefinition.isNew();
+		isNew = aAgreementDefinition.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1141,7 +1141,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(AgreementDefinition aAgreementDefinition, String tranType) {
+	protected boolean doProcess(AgreementDefinition aAgreementDefinition, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -1362,7 +1362,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getAgreementDefinitionListCtrl().search();
 	}
 

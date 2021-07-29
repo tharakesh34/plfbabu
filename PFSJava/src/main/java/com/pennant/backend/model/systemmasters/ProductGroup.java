@@ -4,11 +4,10 @@ import java.sql.Timestamp;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class ProductGroup extends AbstractWorkflowEntity implements Entity {
+public class ProductGroup extends AbstractWorkflowEntity {
 
 	/**
 	 * 
@@ -20,9 +19,6 @@ public class ProductGroup extends AbstractWorkflowEntity implements Entity {
 	private String productCategoryId;
 	private boolean active;
 	private String channel;
-
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private ProductGroup befImage;
 	@XmlTransient
@@ -78,14 +74,6 @@ public class ProductGroup extends AbstractWorkflowEntity implements Entity {
 		this.channel = channel;
 	}
 
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
 	public ProductGroup getBefImage() {
 		return befImage;
 	}
@@ -102,22 +90,12 @@ public class ProductGroup extends AbstractWorkflowEntity implements Entity {
 		this.userDetails = userDetails;
 	}
 
-	@Override
-	public boolean isNew() {
-		// TODO Auto-generated method stub
-		return isNewRecord();
-	}
-
-	@Override
 	public long getId() {
-		// TODO Auto-generated method stub
 		return this.productGroupId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.productGroupId = id;
-
 	}
 
 	public Timestamp getPrevMntOn() {

@@ -63,7 +63,6 @@ public class HoldDisbursement extends AbstractWorkflowEntity {
 	private BigDecimal disbursedAmount = BigDecimal.ZERO;
 	private BigDecimal holdLimitAmount = BigDecimal.ZERO;
 	private String remarks;
-	private boolean newRecord = false;
 	//private String lovValue;
 	private HoldDisbursement befImage;
 	private LoggedInUser userDetails;
@@ -140,14 +139,6 @@ public class HoldDisbursement extends AbstractWorkflowEntity {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	/*

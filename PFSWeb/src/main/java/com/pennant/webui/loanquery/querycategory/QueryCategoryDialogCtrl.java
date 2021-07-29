@@ -283,7 +283,7 @@ public class QueryCategoryDialogCtrl extends GFCBaseCtrl<QueryCategory> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		queryCategoryListCtrl.search();
 		logger.debug(Literal.LEAVING);
@@ -375,7 +375,7 @@ public class QueryCategoryDialogCtrl extends GFCBaseCtrl<QueryCategory> {
 	public void doShowDialog(QueryCategory queryCategory) {
 		logger.debug(Literal.LEAVING);
 
-		if (queryCategory.isNew()) {
+		if (queryCategory.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -594,7 +594,7 @@ public class QueryCategoryDialogCtrl extends GFCBaseCtrl<QueryCategory> {
 		doSetValidation();
 		doWriteComponentsToBean(aQueryCategory);
 
-		isNew = aQueryCategory.isNew();
+		isNew = aQueryCategory.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -642,7 +642,7 @@ public class QueryCategoryDialogCtrl extends GFCBaseCtrl<QueryCategory> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(QueryCategory aQueryCategory, String tranType) {
+	protected boolean doProcess(QueryCategory aQueryCategory, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

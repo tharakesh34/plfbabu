@@ -156,7 +156,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (finMaintainInstruction.isNew()) {
+		if (finMaintainInstruction.isNewRecord()) {
 			finMaintainInstruction.setFinMaintainId(
 					Long.parseLong(getFinMaintainInstructionDAO().save(finMaintainInstruction, tableType)));
 			auditHeader.getAuditDetail().setModelData(finMaintainInstruction);
@@ -441,7 +441,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 		FinMaintainInstruction finMaintainInstruction = (FinMaintainInstruction) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (isUniqueCheckReq && finMaintainInstruction.isNew()
+		if (isUniqueCheckReq && finMaintainInstruction.isNewRecord()
 				&& finMaintainInstructionDAO.isDuplicateKey(finMaintainInstruction.getEvent(),
 						finMaintainInstruction.getFinReference(),
 						finMaintainInstruction.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
@@ -523,7 +523,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 			} else if (finCovenantType.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (finCovenantType.isNew()) {
+				} else if (finCovenantType.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -860,7 +860,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 		valueParm[0] = covenantType.getFinReference();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (covenantType.isNew()) { // for New record or new record into work
+		if (covenantType.isNewRecord()) { // for New record or new record into work
 										// flow
 
 			if (!covenantType.isWorkflow()) {// With out Work flow only new

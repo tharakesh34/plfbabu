@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -22,8 +24,6 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-
-import javax.xml.bind.annotation.XmlTransient;
 
 public class Sampling extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
@@ -110,8 +110,6 @@ public class Sampling extends AbstractWorkflowEntity {
 	private BigDecimal originalTotalLiability = BigDecimal.ZERO;
 
 	private Sampling befImage;
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private LoggedInUser userDetails;
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
@@ -480,14 +478,6 @@ public class Sampling extends AbstractWorkflowEntity {
 
 	public void setBefImage(Sampling befImage) {
 		this.befImage = befImage;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public LoggedInUser getUserDetails() {

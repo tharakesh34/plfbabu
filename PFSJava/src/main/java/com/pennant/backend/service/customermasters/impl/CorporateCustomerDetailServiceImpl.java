@@ -129,7 +129,7 @@ public class CorporateCustomerDetailServiceImpl extends GenericService<Corporate
 			tableType = "_Temp";
 		}
 
-		if (corporateCustomerDetail.isNew()) {
+		if (corporateCustomerDetail.isNewRecord()) {
 			corporateCustomerDetail.setId(getCorporateCustomerDetailDAO().save(corporateCustomerDetail, tableType));
 			auditHeader.getAuditDetail().setModelData(corporateCustomerDetail);
 			auditHeader.setAuditReference(String.valueOf(corporateCustomerDetail.getCustId()));

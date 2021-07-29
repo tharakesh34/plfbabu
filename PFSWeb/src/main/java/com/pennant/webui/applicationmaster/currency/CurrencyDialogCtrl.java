@@ -387,7 +387,7 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl<Currency> {
 		}
 		this.recordStatus.setValue(aCurrency.getRecordStatus());
 
-		if (aCurrency.isNew() || (aCurrency.getRecordType() != null ? aCurrency.getRecordType() : "")
+		if (aCurrency.isNewRecord() || (aCurrency.getRecordType() != null ? aCurrency.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.ccyIsActive.setChecked(true);
 			this.ccyIsActive.setDisabled(true);
@@ -564,7 +564,7 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl<Currency> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aCurrency.isNew()) {
+		if (aCurrency.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -713,7 +713,7 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl<Currency> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCurrencyListCtrl().search();
 	}
 
@@ -906,7 +906,7 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl<Currency> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aCurrency.isNew();
+		isNew = aCurrency.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -956,7 +956,7 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl<Currency> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Currency aCurrency, String tranType) {
+	protected boolean doProcess(Currency aCurrency, String tranType) {
 		logger.debug("Entering ");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

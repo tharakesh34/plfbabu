@@ -162,7 +162,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 			tableType = "_Temp";
 		}
 
-		if (bankBranch.isNew()) {
+		if (bankBranch.isNewRecord()) {
 			bankBranch.setId(getBankBranchDAO().save(bankBranch, tableType));
 			auditHeader.getAuditDetail().setModelData(bankBranch);
 			auditHeader.setAuditReference(String.valueOf(bankBranch.getBankBranchID()));
@@ -380,7 +380,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 		// Get the model object.
 		BankBranch bankBranch = (BankBranch) auditDetail.getModelData();
 		// Check the unique keys.
-		if (bankBranch.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(bankBranch.getRecordType())
+		if (bankBranch.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(bankBranch.getRecordType())
 				&& bankBranchDAO.isDuplicateKey(bankBranch.getBankCode(), bankBranch.getBranchCode(),
 						bankBranch.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];

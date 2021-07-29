@@ -171,7 +171,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 			tableType = "_Temp";
 		}
 
-		if (product.isNew()) {
+		if (product.isNewRecord()) {
 			getProductDAO().save(product, tableType);
 		} else {
 			getProductDAO().update(product, tableType);
@@ -455,7 +455,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 
 		errParm[0] = PennantJavaUtil.getLabel("label_ProductCode") + ":" + valueParm[0];
 
-		if (product.isNew()) { // for New record or new record into work flow
+		if (product.isNewRecord()) { // for New record or new record into work flow
 
 			if (!product.isWorkflow()) {// With out Work flow only new records
 				if (befProduct != null) { // Record Already Exists in the table then error
@@ -683,7 +683,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 			} else if (productAsset.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (productAsset.isNew()) {
+				} else if (productAsset.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -902,7 +902,7 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 			} else if (productDeviation.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (productDeviation.isNew()) {
+				} else if (productDeviation.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

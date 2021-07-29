@@ -368,7 +368,7 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
-		if (aCourse.isNew()) {
+		if (aCourse.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -574,7 +574,7 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aCourse.isNew();
+		isNew = aCourse.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -612,7 +612,7 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 		logger.debug("Leaving");
 	}
 
-	private boolean doProcess(Course aCourse, String tranType) {
+	protected boolean doProcess(Course aCourse, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -768,7 +768,7 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCourseListCtrl().search();
 	}
 

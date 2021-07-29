@@ -355,7 +355,7 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aScheduleMethod.isNew()) {
+		if (aScheduleMethod.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -573,7 +573,7 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aScheduleMethod.isNew();
+		isNew = aScheduleMethod.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -622,7 +622,7 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(ScheduleMethod aScheduleMethod, String tranType) {
+	protected boolean doProcess(ScheduleMethod aScheduleMethod, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -829,7 +829,7 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getScheduleMethodListCtrl().search();
 	}
 

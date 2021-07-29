@@ -59,7 +59,7 @@ public class QualificationServiceImpl extends GenericService<Qualification> impl
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		}
 
-		if (qualification.isNew()) {
+		if (qualification.isNewRecord()) {
 			qualification.setCode(qualificationDAO.save(qualification, tableType));
 			auditHeader.getAuditDetail().setModelData(qualification);
 			auditHeader.setAuditReference(qualification.getCode());
@@ -253,7 +253,7 @@ public class QualificationServiceImpl extends GenericService<Qualification> impl
 		String code = qualification.getCode();
 
 		// Check the unique keys.
-		if (qualification.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(qualification.getRecordType())
+		if (qualification.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(qualification.getRecordType())
 				&& qualificationDAO.isDuplicateKey(code,
 						qualification.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];

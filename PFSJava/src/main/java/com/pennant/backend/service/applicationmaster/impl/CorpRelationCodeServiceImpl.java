@@ -125,7 +125,7 @@ public class CorpRelationCodeServiceImpl extends GenericService<CorpRelationCode
 			tableType = "_Temp";
 		}
 
-		if (corpRelationCode.isNew()) {
+		if (corpRelationCode.isNewRecord()) {
 			corpRelationCode.setId(getCorpRelationCodeDAO().save(corpRelationCode, tableType));
 			auditHeader.getAuditDetail().setModelData(corpRelationCode);
 			auditHeader.setAuditReference(corpRelationCode.getCorpRelationCode());
@@ -331,7 +331,7 @@ public class CorpRelationCodeServiceImpl extends GenericService<CorpRelationCode
 		valueParm[0] = corpRelationCode.getCorpRelationCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_CorpRelationCode") + ":" + valueParm[0];
 
-		if (corpRelationCode.isNew()) { // for New record or new record into
+		if (corpRelationCode.isNewRecord()) { // for New record or new record into
 			// work flow
 
 			if (!corpRelationCode.isWorkflow()) {// With out Work flow only new

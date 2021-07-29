@@ -697,7 +697,7 @@ public class CDScheduleCalculator {
 
 		// FIXME: PV: 13MAY17: It is kept on the assumption reqMaturity fields
 		// in not used any where else
-		if (fm.isNew() || StringUtils.equals(fm.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+		if (fm.isNewRecord() || StringUtils.equals(fm.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			fm.setReqMaturity(fm.getCalMaturity());
 		}
 

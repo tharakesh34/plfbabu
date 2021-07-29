@@ -313,7 +313,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 		this.phoneTypeIsActive.setChecked(aPhoneType.isPhoneTypeIsActive());
 		this.recordStatus.setValue(aPhoneType.getRecordStatus());
 
-		if (aPhoneType.isNew() || (aPhoneType.getRecordType() != null ? aPhoneType.getRecordType() : "")
+		if (aPhoneType.isNewRecord() || (aPhoneType.getRecordType() != null ? aPhoneType.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.phoneTypeIsActive.setChecked(true);
 			this.phoneTypeIsActive.setDisabled(true);
@@ -395,7 +395,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
-		if (aPhoneType.isNew()) {
+		if (aPhoneType.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -622,7 +622,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 		// get the selected branch object from the list box
 		// Do data level validations here
 
-		isNew = aPhoneType.isNew();
+		isNew = aPhoneType.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -670,7 +670,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(PhoneType aPhoneType, String tranType) {
+	protected boolean doProcess(PhoneType aPhoneType, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -876,7 +876,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getPhoneTypeListCtrl().search();
 	}
 

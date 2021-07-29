@@ -125,7 +125,7 @@ public class EMailTypeServiceImpl extends GenericService<EMailType> implements E
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (eMailType.isNew()) {
+		if (eMailType.isNewRecord()) {
 			eMailType.setId(getEMailTypeDAO().save(eMailType, tableType));
 			auditHeader.getAuditDetail().setModelData(eMailType);
 			auditHeader.setAuditReference(eMailType.getId());
@@ -325,7 +325,7 @@ public class EMailTypeServiceImpl extends GenericService<EMailType> implements E
 		String code = eMailType.getEmailTypeCode();
 
 		// Check the unique keys.
-		if (eMailType.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(eMailType.getRecordType()) && eMailTypeDAO
+		if (eMailType.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(eMailType.getRecordType()) && eMailTypeDAO
 				.isDuplicateKey(code, eMailType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_EmailTypeCode") + ": " + code;

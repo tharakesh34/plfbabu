@@ -883,7 +883,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aFinContributorDetail.isNew();
+		isNew = aFinContributorDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {

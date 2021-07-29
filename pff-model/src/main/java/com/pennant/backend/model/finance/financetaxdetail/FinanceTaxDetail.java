@@ -97,8 +97,6 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	private String pinCode;
 	private String pinCodeName;
 	@XmlTransient
-	private boolean newRecord = false;
-	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private FinanceTaxDetail befImage;
@@ -279,14 +277,6 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 
 	public void setPinCodeName(String pinCodeName) {
 		this.pinCodeName = pinCodeName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

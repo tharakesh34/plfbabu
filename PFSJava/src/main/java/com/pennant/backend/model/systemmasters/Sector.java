@@ -61,7 +61,6 @@ public class Sector extends AbstractWorkflowEntity {
 	private String sectorDesc;
 	private BigDecimal sectorLimit;
 	private boolean sectorIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private Sector befImage;
 	private LoggedInUser userDetails;
@@ -121,14 +120,6 @@ public class Sector extends AbstractWorkflowEntity {
 
 	public void setSectorIsActive(boolean sectorIsActive) {
 		this.sectorIsActive = sectorIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

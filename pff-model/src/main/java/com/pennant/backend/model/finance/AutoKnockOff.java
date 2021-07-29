@@ -24,8 +24,6 @@ public class AutoKnockOff extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private AutoKnockOff befImage;
 	@XmlTransient
-	private boolean newRecord = false;
-	@XmlTransient
 	private String lovValue;
 	private String finreference;
 	private String finType;
@@ -107,14 +105,6 @@ public class AutoKnockOff extends AbstractWorkflowEntity {
 
 	public void setBefImage(AutoKnockOff befImage) {
 		this.befImage = befImage;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

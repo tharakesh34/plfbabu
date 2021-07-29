@@ -624,7 +624,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aFinAdvancePayments.isNew()) {
+		if (aFinAdvancePayments.isNewRecord()) {
 
 			this.btnCtrl.setInitNew();
 			doEdit();
@@ -738,7 +738,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		}
 
 		//Added in QDP changes
-		if (finAdvancePayments.isNew() || DisbursementConstants.STATUS_NEW.equals(finAdvancePayments.getStatus())
+		if (finAdvancePayments.isNewRecord() || DisbursementConstants.STATUS_NEW.equals(finAdvancePayments.getStatus())
 				|| DisbursementConstants.STATUS_APPROVED.equals(finAdvancePayments.getStatus())
 				|| DisbursementConstants.STATUS_HOLD.equals(finAdvancePayments.getStatus())) {
 			readOnlyComponent(isReadOnly("FinAdvancePaymentsDialog_holdDisbIsActive"), this.holdDisbursement); //TODO create right name
@@ -2042,7 +2042,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			doWriteComponentsToBean(aFinAdvancePayments);
 		}
 
-		isNew = aFinAdvancePayments.isNew();
+		isNew = aFinAdvancePayments.isNewRecord();
 
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox

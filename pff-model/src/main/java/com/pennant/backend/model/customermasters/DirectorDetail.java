@@ -147,7 +147,6 @@ public class DirectorDetail extends AbstractWorkflowEntity {
 	@XmlElement
 	private Date dob;
 	private boolean idReferenceMand = false;
-	private boolean newRecord = false;
 	private String lovValue;
 	private DirectorDetail befImage;
 	private LoggedInUser userDetails;
@@ -413,14 +412,6 @@ public class DirectorDetail extends AbstractWorkflowEntity {
 
 	public void setLovDescCustShrtName(String lovDescCustShrtName) {
 		this.lovDescCustShrtName = lovDescCustShrtName;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

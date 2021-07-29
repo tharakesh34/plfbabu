@@ -51,7 +51,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>DedupParm table</b>.<br>
  *
  */
-public class LimitFilterQuery extends AbstractWorkflowEntity implements Entity {
+public class LimitFilterQuery extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -5474091857496782851L;
 
@@ -63,7 +63,6 @@ public class LimitFilterQuery extends AbstractWorkflowEntity implements Entity {
 	private String sQLQuery;
 	private String actualBlock;
 	private boolean active;
-	private boolean newRecord = false;
 	private String lovValue;
 	private LimitFilterQuery befImage;
 	private LoggedInUser userDetails;
@@ -147,14 +146,6 @@ public class LimitFilterQuery extends AbstractWorkflowEntity implements Entity {
 
 	public void setActualBlock(String actualBlock) {
 		this.actualBlock = actualBlock;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

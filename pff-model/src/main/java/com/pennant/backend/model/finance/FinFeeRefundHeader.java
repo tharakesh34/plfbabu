@@ -8,12 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class FinFeeRefundHeader extends AbstractWorkflowEntity implements Entity {
+public class FinFeeRefundHeader extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long headerId = Long.MIN_VALUE;
@@ -49,7 +48,6 @@ public class FinFeeRefundHeader extends AbstractWorkflowEntity implements Entity
 		return excludeFields;
 	}
 
-	private boolean newRecord = false;
 	private FinFeeRefundHeader befImage;
 	private LoggedInUser userDetails;
 
@@ -57,17 +55,10 @@ public class FinFeeRefundHeader extends AbstractWorkflowEntity implements Entity
 		super();
 	}
 
-	@Override
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
-	@Override
 	public long getId() {
 		return this.headerId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.headerId = id;
 	}
@@ -118,14 +109,6 @@ public class FinFeeRefundHeader extends AbstractWorkflowEntity implements Entity
 
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public FinFeeRefundHeader getBefImage() {

@@ -178,7 +178,7 @@ public class LimitStructureServiceImpl extends GenericService<LimitStructure> im
 			tableType = "_Temp";
 		}
 
-		if (limitStructure.isNew()) {
+		if (limitStructure.isNewRecord()) {
 			getLimitStructureDAO().save(limitStructure, tableType);
 		} else {
 			getLimitStructureDAO().update(limitStructure, tableType);
@@ -435,7 +435,7 @@ public class LimitStructureServiceImpl extends GenericService<LimitStructure> im
 		valueParm[0] = limitStructure.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_StructureCode") + ":" + valueParm[0];
 
-		if (limitStructure.isNew()) { // for New record or new record into work flow
+		if (limitStructure.isNewRecord()) { // for New record or new record into work flow
 			if (!limitStructure.isWorkflow()) {// With out Work flow only new records  
 				if (befLimitStructure != null) { // Record Already Exists in the table then error  
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
@@ -642,7 +642,7 @@ public class LimitStructureServiceImpl extends GenericService<LimitStructure> im
 			} else if (limitStructureDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (limitStructureDetail.isNew()) {
+				} else if (limitStructureDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

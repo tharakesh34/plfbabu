@@ -467,7 +467,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (aCheckListDetail.isNew()) {
+		if (aCheckListDetail.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -730,7 +730,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
-		isNew = aCheckListDetail.isNew();
+		isNew = aCheckListDetail.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -808,7 +808,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 		valueParm[0] = String.valueOf(aCheckListDetail.getAnsDesc());
 		errParm[0] = PennantJavaUtil.getLabel("label_AnsDesc") + ":" + valueParm[0];
 
-		if (getCheckListDetail().isNew()) {
+		if (getCheckListDetail().isNewRecord()) {
 			long newSeqNo = 0;
 			for (CheckListDetail aCheckList : getCheckListDialogCtrl().getChekListDetailsList()) {
 				if (newSeqNo <= aCheckList.getAnsSeqNo()) {

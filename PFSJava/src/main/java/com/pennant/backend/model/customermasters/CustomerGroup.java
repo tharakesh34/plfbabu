@@ -51,7 +51,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>CustomerGroup table</b>.<br>
  *
  */
-public class CustomerGroup extends AbstractWorkflowEntity implements Entity {
+public class CustomerGroup extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 6577918356160899476L;
 
@@ -62,7 +62,6 @@ public class CustomerGroup extends AbstractWorkflowEntity implements Entity {
 	private String lovDescCustGrpRO1Name;
 	private long custGrpLimit;
 	private boolean custGrpIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private CustomerGroup befImage;
 	private LoggedInUser userDetails;
@@ -146,14 +145,6 @@ public class CustomerGroup extends AbstractWorkflowEntity implements Entity {
 
 	public void setCustGrpIsActive(boolean custGrpIsActive) {
 		this.custGrpIsActive = custGrpIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

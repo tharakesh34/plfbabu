@@ -127,7 +127,7 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 			return auditHeader;
 		}
 
-		if (workFlowDetails.isNew()) {
+		if (workFlowDetails.isNewRecord()) {
 			workFlowId = getWorkFlowDetailsDAO().save(workFlowDetails);
 			workFlowDetails.setId(workFlowId);
 			auditHeader.setModelData(workFlowDetails);
@@ -202,7 +202,7 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 		valueParm[0] = workFlowDetails.getWorkFlowType();
 		errParm[0] = PennantJavaUtil.getLabel("label_WorkFlowType") + ":" + valueParm[0];
 
-		if (workFlowDetails.isNew()) {
+		if (workFlowDetails.isNewRecord()) {
 			if (flowDetails != null) {
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 			}

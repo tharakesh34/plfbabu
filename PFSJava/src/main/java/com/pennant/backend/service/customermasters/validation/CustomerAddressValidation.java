@@ -86,7 +86,7 @@ public class CustomerAddressValidation {
 		errParm[1] = PennantJavaUtil.getLabel("label_CustAddrType") + "-" + valueParm[1];
 
 		/*
-		 * if (customerAddres.isNew()) { // for New record or new record into work // flow
+		 * if (customerAddres.isNewRecord()) { // for New record or new record into work // flow
 		 * 
 		 * if (!customerAddres.isWorkflow()) {// With out Work flow only new // records if (befCustomerAddres != null) {
 		 * // Record Already Exists in the // table then error auditDetail.setErrorDetail(new ErrorDetail(

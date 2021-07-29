@@ -144,7 +144,7 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 			tableType = "_Temp";
 		}
 
-		if (customerEmploymentDetail.isNew()) {
+		if (customerEmploymentDetail.isNewRecord()) {
 			customerEmploymentDetail.setId(getCustomerEmploymentDetailDAO().save(customerEmploymentDetail, tableType));
 			auditHeader.getAuditDetail().setModelData(customerEmploymentDetail);
 			auditHeader.setAuditReference(String.valueOf(customerEmploymentDetail.getId()));

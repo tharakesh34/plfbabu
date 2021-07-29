@@ -51,7 +51,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>AuthorizationDetail table</b>.<br>
  * 
  */
-public class AuthorizationDetail extends AbstractWorkflowEntity implements Entity {
+public class AuthorizationDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 	private long uPPAuthId = Long.MIN_VALUE;
 	private long authChannelId;
@@ -59,7 +59,6 @@ public class AuthorizationDetail extends AbstractWorkflowEntity implements Entit
 	private String ChannelCode;
 	private String authChannelIP;
 	private boolean status;
-	private boolean newRecord = false;
 	private String lovValue;
 	private AuthorizationDetail befImage;
 	private LoggedInUser userDetails;
@@ -133,14 +132,6 @@ public class AuthorizationDetail extends AbstractWorkflowEntity implements Entit
 
 	public void setStatus(boolean status) {
 		this.status = status;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

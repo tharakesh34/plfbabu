@@ -62,7 +62,7 @@ import javax.xml.bind.annotation.XmlTransient;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AccountingSet extends AbstractWorkflowEntity implements Entity {
+public class AccountingSet extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 3832850641524383002L;
 
@@ -72,8 +72,6 @@ public class AccountingSet extends AbstractWorkflowEntity implements Entity {
 	private String accountSetCode;
 	private String accountSetCodeName;
 	private boolean entryByInvestment;
-
-	private boolean newRecord;
 	private String lovValue;
 	private AccountingSet befImage;
 
@@ -107,7 +105,7 @@ public class AccountingSet extends AbstractWorkflowEntity implements Entity {
 		entity.setAccountSetCode(this.accountSetCode);
 		entity.setAccountSetCodeName(this.accountSetCodeName);
 		entity.setEntryByInvestment(this.entryByInvestment);
-		entity.setNewRecord(this.newRecord);
+		entity.setNewRecord(super.isNewRecord());
 		entity.setLovValue(this.lovValue);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
@@ -195,14 +193,6 @@ public class AccountingSet extends AbstractWorkflowEntity implements Entity {
 
 	public boolean isEntryByInvestment() {
 		return entryByInvestment;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

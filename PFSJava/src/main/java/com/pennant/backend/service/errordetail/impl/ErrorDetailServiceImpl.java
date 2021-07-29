@@ -146,7 +146,7 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 			tableType = "_Temp";
 		}
 
-		if (errorDetail.isNew()) {
+		if (errorDetail.isNewRecord()) {
 			getErrorDetailDAO().save(errorDetail, tableType);
 		} else {
 			getErrorDetailDAO().update(errorDetail, tableType);
@@ -368,7 +368,7 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 		valueParm[0] = errorDetail.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_ErrorCode") + ":" + valueParm[0];
 
-		if (errorDetail.isNew()) { // for New record or new record into work flow
+		if (errorDetail.isNewRecord()) { // for New record or new record into work flow
 
 			if (!errorDetail.isWorkflow()) {// With out Work flow only new records  
 				if (befErrorDetail != null) { // Record Already Exists in the table then error  

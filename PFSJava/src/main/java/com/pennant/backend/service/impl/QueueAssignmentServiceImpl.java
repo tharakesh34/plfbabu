@@ -131,7 +131,7 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 			tableType = "_Temp";
 		}
 
-		if (queueAssignmentHeader.isNew()) {
+		if (queueAssignmentHeader.isNewRecord()) {
 			getQueueAssignmentDAO().saveHeader(queueAssignmentHeader, tableType);
 		} else {
 			getQueueAssignmentDAO().updateHeader(queueAssignmentHeader, tableType);
@@ -212,7 +212,7 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 			} else if (queueDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (queueDetail.isNew()) {
+				} else if (queueDetail.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

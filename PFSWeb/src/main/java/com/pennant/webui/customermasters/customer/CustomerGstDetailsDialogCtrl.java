@@ -257,7 +257,7 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 		custId = acustomerGST.getCustId();
 		fillComboBox(this.frequencyType, acustomerGST.getFrequencytype(), PennantStaticListUtil.getfrequencyType(), "");
 
-		if (acustomerGST.isNew() && !fromDouble) {
+		if (acustomerGST.isNewRecord() && !fromDouble) {
 			this.frequencyType.setSelectedIndex(1);
 		}
 		if (fromDouble) {
@@ -538,7 +538,7 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 			showErrorDetails(wve);
 			CustomerGSTDetails customerGSTDetails = (CustomerGSTDetails) listitem.getAttribute("data");
 			boolean isNew = false;
-			isNew = customerGSTDetails.isNew();
+			isNew = customerGSTDetails.isNewRecord();
 			String tranType = "";
 			if (isNewCustomer()) {
 				if (customerGSTDetails.isNewRecord()) {
@@ -708,7 +708,7 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 	/**
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
-	private void refreshList() {
+	protected void refreshList() {
 		getCustomerGSTListCtrl().search();
 	}
 
@@ -724,7 +724,7 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(CustomerGST aCustomergst, String tranType) {
+	protected boolean doProcess(CustomerGST aCustomergst, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -897,7 +897,7 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 		listCell = new Listcell();
 		Combobox frequency = new Combobox();
 		fillComboBox(frequency, customerGSTDetails.getFrequancy(), frequencyList, " ");
-		if (customerGSTDetails.isNew() && StringUtils.isEmpty(customerGSTDetails.getRecordType())) {
+		if (customerGSTDetails.isNewRecord() && StringUtils.isEmpty(customerGSTDetails.getRecordType())) {
 			readOnlyComponent(false, frequency);
 		} else {
 			readOnlyComponent(true, frequency);
@@ -916,7 +916,7 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 		listCell = new Listcell();
 		Combobox year = new Combobox();
 		fillComboBox(year, customerGSTDetails.getFinancialYear(), getYearList(), " ");
-		if (customerGSTDetails.isNew() && StringUtils.isEmpty(customerGSTDetails.getRecordType())) {
+		if (customerGSTDetails.isNewRecord() && StringUtils.isEmpty(customerGSTDetails.getRecordType())) {
 			readOnlyComponent(false, year);
 		} else {
 			readOnlyComponent(true, year);

@@ -361,7 +361,7 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
-		if (aDedupFields.isNew()) {
+		if (aDedupFields.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -565,7 +565,7 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aDedupFields.isNew();
+		isNew = aDedupFields.isNewRecord();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -620,7 +620,7 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 		logger.debug("Leaving");
 	}
 
-	private boolean doProcess(DedupFields aDedupFields, String tranType) {
+	protected boolean doProcess(DedupFields aDedupFields, String tranType) {
 		logger.debug("Enterring");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

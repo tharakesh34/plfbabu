@@ -64,7 +64,6 @@ public class DivisionDetail extends AbstractWorkflowEntity {
 	private boolean active;
 	private String entityCode;
 	private String entityDesc;
-	private boolean newRecord;
 	private String lovValue;
 	private DivisionDetail befImage;
 	private LoggedInUser userDetails;
@@ -130,14 +129,6 @@ public class DivisionDetail extends AbstractWorkflowEntity {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

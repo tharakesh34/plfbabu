@@ -104,7 +104,6 @@ public class CollateralStructure extends AbstractWorkflowEntity {
 
 	@XmlElement(name = "maxLtvWaiverPerc")
 	private BigDecimal maxLtvWaiver;
-	private boolean newRecord = false;
 	private String lovValue;
 	private CollateralStructure befImage;
 	@XmlTransient
@@ -283,14 +282,6 @@ public class CollateralStructure extends AbstractWorkflowEntity {
 
 	public void setMaxLtvWaiver(BigDecimal maxLtvWaiver) {
 		this.maxLtvWaiver = maxLtvWaiver;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

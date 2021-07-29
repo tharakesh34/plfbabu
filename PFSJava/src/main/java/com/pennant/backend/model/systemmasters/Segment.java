@@ -57,7 +57,6 @@ public class Segment extends AbstractWorkflowEntity {
 	private String segmentCode;
 	private String segmentDesc;
 	private boolean segmentIsActive;
-	private boolean newRecord;
 	private String lovValue;
 	private Segment befImage;
 	private LoggedInUser userDetails;
@@ -109,14 +108,6 @@ public class Segment extends AbstractWorkflowEntity {
 
 	public void setSegmentIsActive(boolean segmentIsActive) {
 		this.segmentIsActive = segmentIsActive;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {

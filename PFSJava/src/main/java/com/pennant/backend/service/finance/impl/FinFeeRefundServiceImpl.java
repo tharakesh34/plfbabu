@@ -95,7 +95,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (refundHeader.isNew()) {
+		if (refundHeader.isNewRecord()) {
 			refundHeader.setHeaderId(finFeeRefundDao.save(refundHeader, tableType.getSuffix()));
 			auditHeader.getAuditDetail().setModelData(refundHeader);
 			auditHeader.setAuditReference(String.valueOf(refundHeader.getHeaderId()));
@@ -388,7 +388,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_FeeTypeCode") + ":" + valueParm[1];
 
-		if (refundDetails.isNew()) { // for New record or new record into work flow
+		if (refundDetails.isNewRecord()) { // for New record or new record into work flow
 
 			if (!refundDetails.isWorkflow()) {// With out Work flow only new records  
 				if (befRefundDetail != null) { // Record Already Exists in the table then error  
@@ -485,7 +485,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_CustCIF") + ":" + valueParm[1];
 
-		if (refundHeader.isNew()) { // for New record or new record into work flow
+		if (refundHeader.isNewRecord()) { // for New record or new record into work flow
 
 			if (!refundHeader.isWorkflow()) {// With out Work flow only new records  
 				if (befRefundHeader != null) { // Record Already Exists in the table then error  
@@ -602,7 +602,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 			} else if (refundDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (refundDetails.isNew()) {
+				} else if (refundDetails.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -666,7 +666,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 		logger.debug(Literal.ENTERING);
 		List<FinFeeDetail> finFeeDetails = new ArrayList<>();
 		List<FinFeeDetail> list = finFeeDetailDAO.getPaidFinFeeDetails(header.getFinReference(), type);
-		if (!header.isNew()) {
+		if (!header.isNewRecord()) {
 			List<FinFeeRefundDetails> finFeeRefundDetails = finFeeRefundDao
 					.getFinFeeRefundDetailsByHeaderId(header.getHeaderId(), type);
 			for (FinFeeRefundDetails refundDetail : finFeeRefundDetails) {

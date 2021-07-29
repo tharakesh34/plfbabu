@@ -80,7 +80,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (rcu.isNew()) {
+		if (rcu.isNewRecord()) {
 			rcu.setId(Long.parseLong(riskContainmentUnitDAO.save(rcu, tableType)));
 			auditHeader.getAuditDetail().setModelData(rcu);
 			auditHeader.setAuditReference(String.valueOf(rcu.getId()));
@@ -163,7 +163,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 			} else if (rcuDocument.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (rcuDocument.isNew()) {
+				} else if (rcuDocument.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -270,7 +270,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (documentDetails.isNew()) {
+				} else if (documentDetails.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

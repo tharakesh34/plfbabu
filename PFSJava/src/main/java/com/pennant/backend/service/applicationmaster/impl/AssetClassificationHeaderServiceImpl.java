@@ -143,7 +143,7 @@ public class AssetClassificationHeaderServiceImpl extends GenericService<AssetCl
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (header.isNew()) {
+		if (header.isNewRecord()) {
 			header.setId(Long.parseLong(getAssetClassificationHeaderDAO().save(header, tableType)));
 			auditHeader.getAuditDetail().setModelData(header);
 			auditHeader.setAuditReference(String.valueOf(header.getId()));
@@ -463,7 +463,7 @@ public class AssetClassificationHeaderServiceImpl extends GenericService<AssetCl
 		// Check the unique keys.
 		Long templateId = header.getNpaTemplateId();
 		int stageOrder = header.getStageOrder();
-		if (header.isNew() && assetClassificationHeaderDAO.isDuplicateKey(header.getId(), header.getCode(), stageOrder,
+		if (header.isNewRecord() && assetClassificationHeaderDAO.isDuplicateKey(header.getId(), header.getCode(), stageOrder,
 				templateId, header.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 
@@ -474,8 +474,8 @@ public class AssetClassificationHeaderServiceImpl extends GenericService<AssetCl
 		}
 
 		//Stage Order Unique Key Checking
-		if (header.isNew() && header.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-			if (header.isNew()
+		if (header.isNewRecord() && header.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			if (header.isNewRecord()
 					&& assetClassificationHeaderDAO.isStageOrderExists(stageOrder, templateId, TableType.VIEW)) {
 				String[] parameters = new String[1];
 				parameters[0] = PennantJavaUtil.getLabel("label_StageOrder") + ": " + stageOrder;
@@ -484,8 +484,8 @@ public class AssetClassificationHeaderServiceImpl extends GenericService<AssetCl
 		}
 
 		//Asset Code Unique Key Checking
-		if (header.isNew() && header.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-			if (header.isNew() && assetClassificationHeaderDAO.isAssetCodeExists(header.getCode(), TableType.VIEW)) {
+		if (header.isNewRecord() && header.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			if (header.isNewRecord() && assetClassificationHeaderDAO.isAssetCodeExists(header.getCode(), TableType.VIEW)) {
 				String[] parameters = new String[1];
 				parameters[0] = PennantJavaUtil.getLabel("label_AssetCode") + ": " + header.getCode();
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));

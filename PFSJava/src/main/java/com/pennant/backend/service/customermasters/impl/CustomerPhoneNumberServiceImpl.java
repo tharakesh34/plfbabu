@@ -140,7 +140,7 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 			tableType = "_Temp";
 		}
 
-		if (customerPhoneNumber.isNew()) {
+		if (customerPhoneNumber.isNewRecord()) {
 			customerPhoneNumber.setId(getCustomerPhoneNumberDAO().save(customerPhoneNumber, tableType));
 			auditHeader.getAuditDetail().setModelData(customerPhoneNumber);
 		} else {

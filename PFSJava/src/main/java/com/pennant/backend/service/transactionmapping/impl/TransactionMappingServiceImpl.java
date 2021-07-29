@@ -39,7 +39,7 @@ public class TransactionMappingServiceImpl extends GenericService<TransactionMap
 		if (mapping.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-		if (mapping.isNew()) {
+		if (mapping.isNewRecord()) {
 			mapping.setId(Long.parseLong(transactionMappingDAO.save(mapping, tableType)));
 			auditHeader.getAuditDetail().setModelData(mapping);
 			auditHeader.setAuditReference(String.valueOf(mapping.getId()));
@@ -169,7 +169,7 @@ public class TransactionMappingServiceImpl extends GenericService<TransactionMap
 		String code = String.valueOf(mapping.getTid());
 
 		// Check the unique keys.
-		if (mapping.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(mapping.getRecordType()) && transactionMappingDAO
+		if (mapping.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(mapping.getRecordType()) && transactionMappingDAO
 				.isDuplicateKey(mapping, mapping.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_TransactionMapping_TID.value") + ": " + code;

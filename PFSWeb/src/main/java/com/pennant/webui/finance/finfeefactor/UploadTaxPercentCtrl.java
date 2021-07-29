@@ -147,7 +147,7 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (uploadHeader.isNew()) {
+		if (uploadHeader.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -181,7 +181,7 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 	private void doEdit() {
 		logger.debug("Entering");
 
-		if (this.uploadHeader.isNew()) {
+		if (this.uploadHeader.isNewRecord()) {
 			this.btnUpload.setVisible(true);
 			this.btnUpload.setDisabled(false);
 		}
@@ -190,7 +190,7 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
-			if (this.uploadHeader.isNew()) {
+			if (this.uploadHeader.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
 			} else {

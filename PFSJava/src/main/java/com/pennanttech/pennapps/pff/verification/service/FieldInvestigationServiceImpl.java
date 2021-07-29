@@ -123,7 +123,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (fi.isNew()) {
+		if (fi.isNewRecord()) {
 			fi.setId(Long.parseLong(fieldInvestigationDAO.save(fi, tableType)));
 			auditHeader.getAuditDetail().setModelData(fi);
 			auditHeader.setAuditReference(String.valueOf(fi.getId()));
@@ -232,7 +232,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (documentDetails.isNew()) {
+				} else if (documentDetails.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;

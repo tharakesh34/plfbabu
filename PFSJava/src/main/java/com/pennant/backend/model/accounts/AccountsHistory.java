@@ -61,7 +61,6 @@ public class AccountsHistory extends AbstractWorkflowEntity {
 	private BigDecimal todayNet = BigDecimal.ZERO;
 	private BigDecimal shadowBal = BigDecimal.ZERO;
 	private BigDecimal acBalance = BigDecimal.ZERO;
-	private boolean newRecord = false;
 
 	public AccountsHistory() {
 		super();
@@ -82,14 +81,6 @@ public class AccountsHistory extends AbstractWorkflowEntity {
 
 	public void setAccountId(String accountId) {
 		this.accountId = accountId;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public Date getPostDate() {

@@ -57,7 +57,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>FinanceReferenceDetail table</b>.<br>
  * 
  */
-public class FacilityReferenceDetail extends AbstractWorkflowEntity implements Entity {
+public class FacilityReferenceDetail extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 6569842731762889262L;
 
@@ -87,7 +87,6 @@ public class FacilityReferenceDetail extends AbstractWorkflowEntity implements E
 	private int lovDescminScore;
 	private boolean lovDescisoverride;
 	private int lovDescoverrideScore;
-	private boolean newRecord = false;
 	private String lovValue;
 	private FacilityReferenceDetail befImage;
 	private LoggedInUser userDetails;
@@ -221,14 +220,6 @@ public class FacilityReferenceDetail extends AbstractWorkflowEntity implements E
 
 	public void setLovDescRegenerate(boolean lovDescRegenerate) {
 		this.lovDescRegenerate = lovDescRegenerate;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
 	}
 
 	public String getLovValue() {
