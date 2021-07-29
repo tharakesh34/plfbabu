@@ -4,11 +4,10 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-
-import javax.xml.bind.annotation.XmlTransient;
 
 public class NegativeReasoncodes extends AbstractWorkflowEntity {
 
@@ -23,10 +22,6 @@ public class NegativeReasoncodes extends AbstractWorkflowEntity {
 	private NegativeReasoncodes befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public NegativeReasoncodes() {
 		super();

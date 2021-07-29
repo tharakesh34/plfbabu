@@ -29,14 +29,13 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>Collateral table</b>.<br>
@@ -88,10 +87,6 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 
 	private boolean alwPreIncomization;
 	private boolean tdsReq;
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public FinTypeFees() {
 		super();

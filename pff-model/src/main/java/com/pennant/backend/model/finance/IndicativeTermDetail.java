@@ -63,10 +63,6 @@ public class IndicativeTermDetail extends AbstractWorkflowEntity {
 	private int tenorMonth = 0;
 	private String tenorDesc = "";
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public IndicativeTermDetail() {
 		super();
 	}
@@ -384,7 +380,7 @@ public class IndicativeTermDetail extends AbstractWorkflowEntity {
 		this.appLastYear = appLastYear;
 	}
 
-	//Ck Editor Display fields
+	// Ck Editor Display fields
 	public String getHtmlCommission() {
 		return commission;
 	}

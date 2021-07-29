@@ -63,10 +63,6 @@ public class Organization extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public long getOrganizationId() {
 		return organizationId;
 	}

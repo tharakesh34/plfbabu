@@ -171,10 +171,6 @@ public class LegalDetail extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public LegalDetail() {
 		super();
 	}

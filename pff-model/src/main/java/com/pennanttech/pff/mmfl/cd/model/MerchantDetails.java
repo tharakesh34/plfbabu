@@ -176,10 +176,6 @@ public class MerchantDetails extends AbstractWorkflowEntity {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public String getStoreAddressLine1() {
 		return storeAddressLine1;
 	}

@@ -70,10 +70,6 @@ public class UploadManualAdvise extends AbstractWorkflowEntity {
 		this.manualAdviseId = manualAdviseId;
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public UploadManualAdvise() {
 		super();
 	}

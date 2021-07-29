@@ -6,7 +6,6 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -25,10 +24,6 @@ public class AccountTypeGroup extends AbstractWorkflowEntity {
 	@XmlTransient
 	private LoggedInUser userDetails;
 	private boolean groupIsActive;
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public AccountTypeGroup() {
 		super();

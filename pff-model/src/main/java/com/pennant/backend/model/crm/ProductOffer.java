@@ -4,14 +4,13 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import com.pennant.backend.model.Entity;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProductOffer extends AbstractWorkflowEntity implements Entity, Serializable {
+public class ProductOffer extends AbstractWorkflowEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private long leadId;
@@ -125,17 +124,10 @@ public class ProductOffer extends AbstractWorkflowEntity implements Entity, Seri
 		super();
 	}
 
-	@Override
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
-	@Override
 	public long getId() {
 		return offerId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.offerId = id;
 	}

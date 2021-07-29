@@ -30,10 +30,6 @@ public class FinContributorHeader extends AbstractWorkflowEntity {
 
 	private List<FinContributorDetail> contributorDetailList = new ArrayList<FinContributorDetail>();
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public FinContributorHeader() {
 		super();
 	}

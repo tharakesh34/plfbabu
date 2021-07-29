@@ -3,9 +3,9 @@ package com.pennant.backend.model.finance;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-
 import javax.xml.bind.annotation.XmlTransient;
+
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 public class CreditReviewData extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 6579430447635480792L;
@@ -46,10 +46,6 @@ public class CreditReviewData extends AbstractWorkflowEntity {
 
 	public void setTemplateData(String templateData) {
 		this.templateData = templateData;
-	}
-
-	public boolean isNew() {
-		return isNewRecord();
 	}
 
 	@XmlTransient

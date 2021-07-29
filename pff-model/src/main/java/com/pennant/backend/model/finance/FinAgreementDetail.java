@@ -21,10 +21,6 @@ public class FinAgreementDetail extends AbstractWorkflowEntity {
 	private FinAgreementDetail befImage;
 	private LoggedInUser userDetails;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public FinAgreementDetail() {
 		super();
 	}

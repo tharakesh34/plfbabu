@@ -1,53 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  TransactionEntry.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-12-2011    														*
- *                                                                  						*
- * Modified Date    :  14-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : TransactionEntry.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-12-2011 * * Modified
+ * Date : 14-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.model.rmtmasters;
 
-import com.pennant.backend.model.Entity;
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Model class for the <b>TransactionEntry table</b>.<br>
@@ -78,7 +59,7 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 	private int derivedTranOrder;
 
 	private String feeCode;
-	//private String ruleDecider;
+	// private String ruleDecider;
 	private String lovDescFeeCodeName;
 	private boolean entryByInvestment;
 	private boolean openNewFinAc;
@@ -93,10 +74,6 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 	private String lovDescAccSetCodeName;
 	private String lovDescAccSetCodeDesc;
 	private String lovDescSysInAcTypeName;
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public TransactionEntry() {
 		super();
@@ -156,7 +133,7 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 		return entity;
 	}
 
-	//Getter and Setter methods
+	// Getter and Setter methods
 
 	public long getId() {
 		return accountSetid;
@@ -206,8 +183,7 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 	}
 
 	/**
-	 * @param shadowPosting
-	 *            the shadowPosting to set
+	 * @param shadowPosting the shadowPosting to set
 	 */
 	public void setShadowPosting(boolean shadowPosting) {
 		this.shadowPosting = shadowPosting;
@@ -221,8 +197,7 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 	}
 
 	/**
-	 * @param account
-	 *            the account to set
+	 * @param account the account to set
 	 */
 	public void setAccount(String account) {
 		this.account = account;
@@ -244,8 +219,7 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 	}
 
 	/**
-	 * @param accountBranch
-	 *            the accountBranch to set
+	 * @param accountBranch the accountBranch to set
 	 */
 	public void setAccountBranch(String accountBranch) {
 		this.accountBranch = accountBranch;
@@ -371,8 +345,7 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 	}
 
 	/**
-	 * @param lovDescAccountBranchName
-	 *            the lovDescAccountBranchName to set
+	 * @param lovDescAccountBranchName the lovDescAccountBranchName to set
 	 */
 	public void setLovDescAccountBranchName(String lovDescAccountBranchName) {
 		this.lovDescAccountBranchName = lovDescAccountBranchName;

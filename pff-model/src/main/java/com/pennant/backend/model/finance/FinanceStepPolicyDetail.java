@@ -5,13 +5,13 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 @XmlType(propOrder = { "stepNo", "tenorSplitPerc", "rateMargin", "emiSplitPerc", "installments", "steppedEMI",
 		"stepSpecifier", "autoCal" })
@@ -42,10 +42,6 @@ public class FinanceStepPolicyDetail extends AbstractWorkflowEntity {
 	private Date stepEnd;
 	@XmlElement
 	private boolean autoCal = false;
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public FinanceStepPolicyDetail() {
 		super();

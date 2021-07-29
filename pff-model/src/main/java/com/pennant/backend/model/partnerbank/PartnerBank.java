@@ -31,10 +31,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Model class for the <b>PartnerBank table</b>.<br>
@@ -80,10 +80,6 @@ public class PartnerBank extends AbstractWorkflowEntity {
 
 	private List<PartnerBankModes> partnerBankModesList = new ArrayList<PartnerBankModes>();
 	private List<PartnerBranchModes> partnerBranchModesList = new ArrayList<PartnerBranchModes>();
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public PartnerBank() {
 		super();

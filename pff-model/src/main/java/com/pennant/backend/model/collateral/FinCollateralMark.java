@@ -4,9 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import com.pennant.backend.model.Entity;
-
-public class FinCollateralMark implements Serializable, Entity {
+public class FinCollateralMark implements Serializable {
 
 	private static final long serialVersionUID = -5665749691631296093L;
 
@@ -27,16 +25,10 @@ public class FinCollateralMark implements Serializable, Entity {
 
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	@Override
 	public long getId() {
 		return FinCollateralId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.FinCollateralId = id;
 	}
@@ -135,11 +127,6 @@ public class FinCollateralMark implements Serializable, Entity {
 
 	public void setProcessed(boolean processed) {
 		this.processed = processed;
-	}
-
-	@Override
-	public boolean isNew() {
-		return false;
 	}
 
 }

@@ -2,10 +2,9 @@ package com.pennant.backend.model.lenderdataupload;
 
 import java.io.Serializable;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
-public class LenderDataUpload extends AbstractWorkflowEntity implements Entity, Serializable {
+public class LenderDataUpload extends AbstractWorkflowEntity implements Serializable {
 
 	private static final long serialVersionUID = 5866599146152795309L;
 
@@ -64,17 +63,10 @@ public class LenderDataUpload extends AbstractWorkflowEntity implements Entity, 
 		this.reason = reason;
 	}
 
-	@Override
-	public boolean isNew() {
-		return false;
-	}
-
-	@Override
 	public long getId() {
 		return uploadId;
 	}
 
-	@Override
 	public void setId(long id) {
 		uploadId = id;
 	}

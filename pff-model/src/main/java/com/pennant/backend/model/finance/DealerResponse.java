@@ -1,10 +1,9 @@
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-import com.pennant.backend.model.Entity;
-
-public class DealerResponse implements java.io.Serializable, Entity {
+public class DealerResponse implements Serializable {
 	private static final long serialVersionUID = -5364509511869836239L;
 
 	private long dealerResponseId = Long.MIN_VALUE;
@@ -112,18 +111,11 @@ public class DealerResponse implements java.io.Serializable, Entity {
 		this.responseDate = responseDate;
 	}
 
-	@Override
-	public boolean isNew() {
-		return false;
-	}
-
-	@Override
 	public long getId() {
 		return dealerResponseId;
 
 	}
 
-	@Override
 	public void setId(long id) {
 		this.dealerResponseId = id;
 

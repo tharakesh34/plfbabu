@@ -4,10 +4,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
-
-public class FinanceScoreHeader implements Serializable, Entity {
-
+public class FinanceScoreHeader implements Serializable {
 	private static final long serialVersionUID = -453344106804424915L;
 
 	private long headerId = Long.MIN_VALUE;
@@ -28,17 +25,10 @@ public class FinanceScoreHeader implements Serializable, Entity {
 
 	}
 
-	@Override
-	public boolean isNew() {
-		return false;
-	}
-
-	@Override
 	public long getId() {
 		return headerId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.headerId = id;
 	}

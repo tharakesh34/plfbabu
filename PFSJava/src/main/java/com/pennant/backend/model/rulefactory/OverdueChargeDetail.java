@@ -27,14 +27,6 @@ public class OverdueChargeDetail extends AbstractWorkflowEntity {
 		super();
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public String getoDCRuleCode() {
 		return oDCRuleCode;
 	}

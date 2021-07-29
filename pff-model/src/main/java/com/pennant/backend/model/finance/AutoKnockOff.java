@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-
-import javax.xml.bind.annotation.XmlTransient;
 
 public class AutoKnockOff extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
@@ -121,10 +121,6 @@ public class AutoKnockOff extends AbstractWorkflowEntity {
 
 	public void setLovDescAuditDetailMap(Map<String, List<AuditDetail>> lovDescAuditDetailMap) {
 		this.lovDescAuditDetailMap = lovDescAuditDetailMap;
-	}
-
-	public boolean isNew() {
-		return isNewRecord();
 	}
 
 	public long getId() {

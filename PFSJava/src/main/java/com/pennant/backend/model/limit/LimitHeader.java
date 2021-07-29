@@ -159,10 +159,6 @@ public class LimitHeader extends AbstractWorkflowEntity {
 	private Date valueDate;
 	private Date loanMaturityDate;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public LimitHeader() {
 		super();
 	}

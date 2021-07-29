@@ -1,8 +1,8 @@
 package com.pennant.backend.model.finance;
 
-import com.pennant.backend.model.Entity;
+import java.io.Serializable;
 
-public class TATNotificationLog implements java.io.Serializable, Entity {
+public class TATNotificationLog implements Serializable {
 
 	private static final long serialVersionUID = 8862601771682801641L;
 
@@ -39,17 +39,10 @@ public class TATNotificationLog implements java.io.Serializable, Entity {
 		this.roleCode = roleCode;
 	}
 
-	@Override
-	public boolean isNew() {
-		return false;
-	}
-
-	@Override
 	public long getId() {
 		return 0;
 	}
 
-	@Override
 	public void setId(long id) {
 
 	}

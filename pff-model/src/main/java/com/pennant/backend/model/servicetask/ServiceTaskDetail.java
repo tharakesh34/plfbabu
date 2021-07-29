@@ -3,9 +3,7 @@ package com.pennant.backend.model.servicetask;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import com.pennant.backend.model.Entity;
-
-public class ServiceTaskDetail implements Serializable, Entity {
+public class ServiceTaskDetail implements Serializable {
 
 	private static final long serialVersionUID = 5808007043258253326L;
 
@@ -87,17 +85,10 @@ public class ServiceTaskDetail implements Serializable, Entity {
 		this.remarks = remarks;
 	}
 
-	@Override
-	public boolean isNew() {
-		return false;
-	}
-
-	@Override
 	public long getId() {
 		return taskExecutionId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.taskExecutionId = id;
 	}

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CollateralAssignment.java                                            * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  07-05-2016    														*
- *                                                                  						*
- * Modified Date    :  07-05-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CollateralAssignment.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 07-05-2016 * * Modified
+ * Date : 07-05-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 07-05-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 16-05-2018       Srinivasa Varma          0.2          Development Item 82               * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 07-05-2016 Pennant 0.1 * * 16-05-2018 Srinivasa Varma 0.2 Development Item 82 * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.model.collateral;
@@ -46,14 +28,14 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>CollateralAssignment table</b>.<br>
@@ -82,10 +64,10 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	private CollateralAssignment befImage;
 	private String hostReference;
 
-	//### 16-05-2018 Start Development Item 82
+	// ### 16-05-2018 Start Development Item 82
 	private BigDecimal specialLTV = BigDecimal.ZERO;
 	private BigDecimal bankLTV = BigDecimal.ZERO;
-	//### 16-05-2018 End Development Item 82
+	// ### 16-05-2018 End Development Item 82
 	@XmlElement
 	private String assignmentReference;
 	@XmlElement(name = "seq")
@@ -102,10 +84,10 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 		excludeFields.add("availableAssignPerc");
 		excludeFields.add("availableAssignValue");
 		excludeFields.add("totAssignedPerc");
-		//### 16-05-2018 Start Development Item 82
+		// ### 16-05-2018 Start Development Item 82
 		excludeFields.add("specialLTV");
 		excludeFields.add("bankLTV");
-		//### 16-05-2018 End Development Item 82
+		// ### 16-05-2018 End Development Item 82
 		excludeFields.add("assignmentReference");
 		excludeFields.add("assignmentSeq");
 		excludeFields.add("depositorCIF");
@@ -115,10 +97,6 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 
 	@XmlTransient
 	private LoggedInUser userDetails;
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public CollateralAssignment() {
 		super();
@@ -244,7 +222,7 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 		this.active = active;
 	}
 
-	//### 16-05-2018 Start Development Item 82
+	// ### 16-05-2018 Start Development Item 82
 	public BigDecimal getSpecialLTV() {
 		return specialLTV;
 	}
@@ -269,7 +247,7 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 		this.hostReference = hostReference;
 	}
 
-	//### 16-05-2018 End Development Item 82
+	// ### 16-05-2018 End Development Item 82
 	public String getAssignmentReference() {
 		return assignmentReference;
 	}

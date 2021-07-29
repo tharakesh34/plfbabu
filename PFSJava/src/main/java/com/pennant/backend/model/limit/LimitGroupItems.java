@@ -31,10 +31,6 @@ public class LimitGroupItems extends AbstractWorkflowEntity {
 
 	private int key;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public LimitGroupItems() {
 		super();
 		setWorkflowId(WorkFlowUtil.getWorkFlowID("LimitGroup"));

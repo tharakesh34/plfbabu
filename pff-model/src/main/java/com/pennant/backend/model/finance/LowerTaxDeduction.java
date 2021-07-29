@@ -25,10 +25,6 @@ public class LowerTaxDeduction extends AbstractWorkflowEntity {
 		super();
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		return excludeFields;

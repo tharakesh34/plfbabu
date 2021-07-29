@@ -114,10 +114,6 @@ public class PresentmentHeader extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public PresentmentHeader() {
 		super();
 	}

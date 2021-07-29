@@ -47,13 +47,13 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.WSReturnStatus;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennant.backend.model.WSReturnStatus;
 
 @XmlType(propOrder = { "utilityCode", "userName", "umrnNo", "destAccHolder", "IFSC", "micr", "accountNo",
 		"txnReference", "chequeAmount", "presentationDate", "mandateType", "status", "presentment", "returnStatus" })

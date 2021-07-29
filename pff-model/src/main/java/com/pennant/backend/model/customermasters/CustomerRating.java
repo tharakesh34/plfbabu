@@ -54,10 +54,6 @@ public class CustomerRating extends AbstractWorkflowEntity {
 	private String lovDescCustRecordType;
 	private String lovDescCustCIF;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public CustomerRating() {
 		super();
 	}

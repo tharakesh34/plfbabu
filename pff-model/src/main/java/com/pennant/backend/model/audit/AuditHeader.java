@@ -1,45 +1,36 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  AuditHeader.java														*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  26-04-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : AuditHeader.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 26-04-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.model.audit;
 
 import java.sql.Timestamp;
@@ -138,10 +129,6 @@ public class AuditHeader implements java.io.Serializable {
 
 	public long getId() {
 		return auditId;
-	}
-
-	public boolean isNew() {
-		return getId() == Long.MIN_VALUE;
 	}
 
 	public void setId(long id) {
@@ -435,9 +422,9 @@ public class AuditHeader implements java.io.Serializable {
 
 			if (StringUtils.trimToEmpty(errorDetails.getSeverity()).equalsIgnoreCase("I")) { // PennantConstants.ERR_SEV_INFO
 				setInfoMessage(errorDetails);
-			} else if (StringUtils.trimToEmpty(errorDetails.getSeverity()).equalsIgnoreCase("W")) { //PennantConstants.ERR_SEV_WARNING
+			} else if (StringUtils.trimToEmpty(errorDetails.getSeverity()).equalsIgnoreCase("W")) { // PennantConstants.ERR_SEV_WARNING
 				setOverideMessage(errorDetails);
-			} else if (StringUtils.trimToEmpty(errorDetails.getSeverity()).equalsIgnoreCase("E")) { //PennantConstants.ERR_SEV_ERROR
+			} else if (StringUtils.trimToEmpty(errorDetails.getSeverity()).equalsIgnoreCase("E")) { // PennantConstants.ERR_SEV_ERROR
 				setErrorMessage(errorDetails);
 			}
 		}

@@ -4,9 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import com.pennant.backend.model.Entity;
-
-public class FinLogEntryDetail implements Serializable, Entity {
+public class FinLogEntryDetail implements Serializable {
 
 	private static final long serialVersionUID = 587826313209520957L;
 
@@ -75,17 +73,10 @@ public class FinLogEntryDetail implements Serializable, Entity {
 		this.reversalCompleted = reversalCompleted;
 	}
 
-	@Override
-	public boolean isNew() {
-		return false;
-	}
-
-	@Override
 	public long getId() {
 		return 0;
 	}
 
-	@Override
 	public void setId(long id) {
 	}
 

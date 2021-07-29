@@ -97,10 +97,6 @@ public class RCUDocument extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public long getVerificationId() {
 		return verificationId;
 	}

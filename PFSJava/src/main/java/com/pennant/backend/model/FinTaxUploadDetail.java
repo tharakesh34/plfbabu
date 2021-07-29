@@ -165,10 +165,6 @@ public class FinTaxUploadDetail extends AbstractWorkflowEntity {
 		this.befImage = befImage;
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public int getSeqNo() {
 		return seqNo;
 	}

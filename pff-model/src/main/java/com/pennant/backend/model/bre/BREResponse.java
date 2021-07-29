@@ -4,13 +4,13 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Map;
 
-import org.zkoss.json.JSONObject;
-
-import com.pennant.backend.model.WSReturnStatus;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+
+import org.zkoss.json.JSONObject;
+
+import com.pennant.backend.model.WSReturnStatus;
 
 /**
  * @author shinde.b

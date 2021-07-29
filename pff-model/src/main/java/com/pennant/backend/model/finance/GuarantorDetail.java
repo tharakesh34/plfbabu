@@ -30,15 +30,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.customermasters.CustomerDetails;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>GuarantorDetail table</b>.<br>
@@ -159,14 +158,6 @@ public class GuarantorDetail extends AbstractWorkflowEntity {
 		excludeFields.add("lovCustDob");
 
 		return excludeFields;
-	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public boolean isNew() {
-		return isNewRecord();
 	}
 
 	public GuarantorDetail(long id) {

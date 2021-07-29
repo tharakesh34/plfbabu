@@ -28,7 +28,6 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -58,10 +57,6 @@ public class Collateral extends AbstractWorkflowEntity {
 
 	private long CustID;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public Collateral() {
 		super();
 	}
@@ -78,7 +73,7 @@ public class Collateral extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-	//Getter and Setter methods
+	// Getter and Setter methods
 
 	public long getId() {
 		return Long.parseLong(reference);

@@ -73,10 +73,6 @@ public class VasMovement extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public VasMovement() {
 		super();
 	}

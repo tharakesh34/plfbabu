@@ -40,10 +40,6 @@ public class ReportingManager extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public long getId() {
 		return id;
 	}

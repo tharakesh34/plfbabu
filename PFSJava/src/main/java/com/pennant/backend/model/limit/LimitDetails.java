@@ -25,6 +25,7 @@
 
 package com.pennant.backend.model.limit;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -40,7 +41,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.Entity;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
@@ -51,8 +52,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"limitChkMethod", "limitSanctioned", "reservedLimit", "limitActualexposure", "limitReservedexposure",
 		"actualLimit" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class LimitDetails implements java.io.Serializable, Entity {
-
+public class LimitDetails extends AbstractWorkflowEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@XmlElement(name = "limitDetailId")
@@ -89,7 +89,6 @@ public class LimitDetails implements java.io.Serializable, Entity {
 
 	@XmlElement
 	private String limitChkMethod;
-	private int version;
 
 	private String displayStyle;
 	private boolean editable;
@@ -128,37 +127,15 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	@SuppressWarnings("unused")
 	private XMLGregorianCalendar createdDate;
 
-	@XmlTransient
-	private long lastMntBy;
 	private String lastMaintainedUser;
-	@XmlTransient
-	private Timestamp lastMntOn;
 	@SuppressWarnings("unused")
 	private XMLGregorianCalendar lastMaintainedOn;
-	@XmlTransient
-	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private LimitDetails befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
-	@XmlTransient
-	private String recordStatus;
-	@XmlTransient
-	private String roleCode = "";
-	@XmlTransient
-	private String nextRoleCode = "";
-	@XmlTransient
-	private String taskId = "";
-	@XmlTransient
-	private String nextTaskId = "";
-	@XmlTransient
-	private String recordType;
-	@XmlTransient
-	private String userAction = "Save";
-	@XmlTransient
-	private long workflowId = 0;
 
 	// API Purpose
 	@XmlElement(name = "actualexposure")
@@ -172,10 +149,6 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	private String externalRef;
 	private String externalRef1;
 	private int tenor;
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public LimitDetails() {
 	}
@@ -340,14 +313,6 @@ public class LimitDetails implements java.io.Serializable, Entity {
 		this.limitLineDesc = limitLineDesc;
 	}
 
-	public int getVersion() {
-		return version;
-	}
-
-	public void setVersion(int version) {
-		this.version = version;
-	}
-
 	@XmlTransient
 	public long getCreatedBy() {
 		return createdBy;
@@ -391,15 +356,6 @@ public class LimitDetails implements java.io.Serializable, Entity {
 		return DateUtility.getXMLDate(createdOn);
 	}
 
-	@XmlTransient
-	public long getLastMntBy() {
-		return lastMntBy;
-	}
-
-	public void setLastMntBy(long lastMntBy) {
-		this.lastMntBy = lastMntBy;
-	}
-
 	public String getLastMaintainedUser() {
 		return lastMaintainedUser;
 	}
@@ -408,37 +364,19 @@ public class LimitDetails implements java.io.Serializable, Entity {
 		this.lastMaintainedUser = lastMaintainedUser;
 	}
 
-	@XmlTransient
-	public Timestamp getLastMntOn() {
-		return lastMntOn;
-	}
-
 	public void setLastMaintainedOn(XMLGregorianCalendar xmlCalendar) {
 		if (xmlCalendar != null) {
-			lastMntOn = DateUtility.ConvertFromXMLTime(xmlCalendar);
+			setLastMntOn(DateUtility.ConvertFromXMLTime(xmlCalendar));
 			lastMaintainedOn = xmlCalendar;
 		}
 	}
 
 	public XMLGregorianCalendar getLastMaintainedOn() throws DatatypeConfigurationException {
 
-		if (lastMntOn == null) {
+		if (getLastMntOn() == null) {
 			return null;
 		}
-		return DateUtility.getXMLDate(lastMntOn);
-	}
-
-	public void setLastMntOn(Timestamp lastMntON) {
-		this.lastMntOn = lastMntON;
-	}
-
-	@XmlTransient
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
+		return DateUtility.getXMLDate(getLastMntOn());
 	}
 
 	@XmlTransient
@@ -466,84 +404,6 @@ public class LimitDetails implements java.io.Serializable, Entity {
 
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
-	}
-
-	@XmlTransient
-	public String getRecordStatus() {
-		return recordStatus;
-	}
-
-	public void setRecordStatus(String recordStatus) {
-		this.recordStatus = recordStatus;
-	}
-
-	@XmlTransient
-	public String getRoleCode() {
-		return roleCode;
-	}
-
-	public void setRoleCode(String roleCode) {
-		this.roleCode = roleCode;
-	}
-
-	@XmlTransient
-	public String getNextRoleCode() {
-		return nextRoleCode;
-	}
-
-	public void setNextRoleCode(String nextRoleCode) {
-		this.nextRoleCode = nextRoleCode;
-	}
-
-	@XmlTransient
-	public String getTaskId() {
-		return taskId;
-	}
-
-	public void setTaskId(String taskId) {
-		this.taskId = taskId;
-	}
-
-	@XmlTransient
-	public String getNextTaskId() {
-		return nextTaskId;
-	}
-
-	public void setNextTaskId(String nextTaskId) {
-		this.nextTaskId = nextTaskId;
-	}
-
-	@XmlTransient
-	public String getRecordType() {
-		return recordType;
-	}
-
-	public void setRecordType(String recordType) {
-		this.recordType = recordType;
-	}
-
-	@XmlTransient
-	public String getUserAction() {
-		return userAction;
-	}
-
-	public void setUserAction(String userAction) {
-		this.userAction = userAction;
-	}
-
-	public boolean isWorkflow() {
-		if (this.workflowId == 0) {
-			return false;
-		}
-		return true;
-	}
-
-	public long getWorkflowId() {
-		return workflowId;
-	}
-
-	public void setWorkflowId(long workflowId) {
-		this.workflowId = workflowId;
 	}
 
 	public int getItemSeq() {

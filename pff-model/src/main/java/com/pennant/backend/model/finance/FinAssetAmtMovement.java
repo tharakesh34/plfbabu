@@ -1,12 +1,11 @@
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import com.pennant.backend.model.Entity;
-
-public class FinAssetAmtMovement implements Entity, java.io.Serializable {
+public class FinAssetAmtMovement implements Serializable {
 	private static final long serialVersionUID = -2091525494536161888L;
 
 	private long finServiceInstID;
@@ -120,17 +119,10 @@ public class FinAssetAmtMovement implements Entity, java.io.Serializable {
 		this.lastMntOn = lastMntOn;
 	}
 
-	@Override
-	public boolean isNew() {
-		return false;
-	}
-
-	@Override
 	public long getId() {
 		return 0;
 	}
 
-	@Override
 	public void setId(long id) {
 	}
 

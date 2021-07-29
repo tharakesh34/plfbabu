@@ -28,10 +28,6 @@ public class ReturnedChequeDetails extends AbstractWorkflowEntity {
 		super();
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public ReturnedChequeDetails(String id) {
 		super();
 		this.setId(id);

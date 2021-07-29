@@ -17,10 +17,6 @@ public class OverDraftMaintenance extends AbstractWorkflowEntity {
 		super();
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	private long serviceSeqId = Long.MIN_VALUE;
 	@XmlElement
 	private String finReference;

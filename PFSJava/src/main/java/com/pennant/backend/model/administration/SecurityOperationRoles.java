@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SecurityOperationRoles.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  10-03-2014    														*
- *                                                                  						*
- * Modified Date    :  10-03-2014    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SecurityOperationRoles.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 10-03-2014 * *
+ * Modified Date : 10-03-2014 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-03-2014       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-03-2014 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.model.administration;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -51,7 +33,7 @@ public class SecurityOperationRoles extends AbstractWorkflowEntity {
 	private long oprRoleID = Long.MIN_VALUE;
 	private long oprID;
 	private long roleID;
-	private String lovDescRoleCd;//role code
+	private String lovDescRoleCd;// role code
 	private LoggedInUser userDetails;
 	private SecurityOperationRoles befImage;
 	private String lovDescOprCode;
@@ -150,10 +132,6 @@ public class SecurityOperationRoles extends AbstractWorkflowEntity {
 
 	public void setBefImage(SecurityOperationRoles befImage) {
 		this.befImage = befImage;
-	}
-
-	public boolean isNew() {
-		return false;
 	}
 
 	public String getLovDescRoleCd() {

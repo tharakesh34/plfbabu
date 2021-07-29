@@ -5,14 +5,14 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 @XmlType(propOrder = { "disbSeq", "demandAmount", "paidAmount", "remarks", "fileName", "docImage" })
 @XmlRootElement(name = "finOCRCapture")
@@ -89,10 +89,6 @@ public class FinOCRCapture extends AbstractWorkflowEntity implements Comparable<
 
 	public void setPaidAmount(BigDecimal paidAmount) {
 		this.paidAmount = paidAmount;
-	}
-
-	public boolean isNew() {
-		return isNewRecord();
 	}
 
 	public FinOCRCapture getBefImage() {

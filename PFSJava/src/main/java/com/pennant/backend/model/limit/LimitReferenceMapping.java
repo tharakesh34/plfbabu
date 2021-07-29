@@ -1,12 +1,11 @@
 package com.pennant.backend.model.limit;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
-
-public class LimitReferenceMapping implements java.io.Serializable, Entity {
+public class LimitReferenceMapping implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private long referenceId = Long.MIN_VALUE;
 	private String referenceCode;
@@ -21,10 +20,6 @@ public class LimitReferenceMapping implements java.io.Serializable, Entity {
 	private boolean newRecord = false;
 	private boolean proceeed = true;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public LimitReferenceMapping() {
 
 	}
@@ -38,16 +33,10 @@ public class LimitReferenceMapping implements java.io.Serializable, Entity {
 		return new HashSet<String>();
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter ******************//
-	// ******************************************************//
-
-	@Override
 	public long getId() {
 		return referenceId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.referenceId = id;
 

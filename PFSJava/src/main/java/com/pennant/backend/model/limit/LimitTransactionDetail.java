@@ -1,5 +1,6 @@
 package com.pennant.backend.model.limit;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.HashSet;
@@ -12,14 +13,13 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinanceMain;
 
 @XmlType(propOrder = { "headerId", "custCIF", "custGrpCode", "referenceCode", "referenceNumber", "limitCurrency",
 		"limitAmount", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class LimitTransactionDetail implements java.io.Serializable, Entity {
+public class LimitTransactionDetail implements Serializable {
 
 	private static final long serialVersionUID = 3749037992177767072L;
 	private long transactionId = Long.MIN_VALUE;
@@ -77,17 +77,10 @@ public class LimitTransactionDetail implements java.io.Serializable, Entity {
 		return excludeFields;
 	}
 
-	@Override
-	public boolean isNew() {
-		return false;
-	}
-
-	@Override
 	public long getId() {
 		return transactionId;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.transactionId = id;
 	}

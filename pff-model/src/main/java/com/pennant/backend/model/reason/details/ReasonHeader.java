@@ -105,10 +105,6 @@ public class ReasonHeader implements Serializable {
 		this.detailsList = detailsList;
 	}
 
-	public boolean isNew() {
-		return false;
-	}
-
 	public Long getReasonId() {
 		return reasonId;
 	}

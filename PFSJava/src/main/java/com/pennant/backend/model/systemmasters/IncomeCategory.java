@@ -42,10 +42,6 @@ public class IncomeCategory extends AbstractWorkflowEntity {
 	private IncomeCategory befImage;
 	private LoggedInUser userDetails;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public IncomeCategory() {
 		super();
 	}

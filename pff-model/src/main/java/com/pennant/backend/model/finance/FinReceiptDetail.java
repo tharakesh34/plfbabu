@@ -175,14 +175,6 @@ public class FinReceiptDetail implements Serializable {
 		return excludeFields;
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public boolean isNew() {
-		return false;
-	}
-
 	public long getId() {
 		return receiptSeqID;
 	}

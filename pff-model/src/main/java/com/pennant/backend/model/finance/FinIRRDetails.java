@@ -47,10 +47,6 @@ public class FinIRRDetails extends AbstractWorkflowEntity {
 	private IRRCode befImage;
 	private LoggedInUser userDetails;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public String getiRRCode() {
 		return iRRCode;
 	}

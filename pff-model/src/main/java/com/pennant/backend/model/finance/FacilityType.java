@@ -15,10 +15,6 @@ public class FacilityType extends AbstractWorkflowEntity {
 	private FacilityType befImage;
 	private LoggedInUser userDetails;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public FacilityType() {
 		super();
 	}

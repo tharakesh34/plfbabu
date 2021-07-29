@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinCovenantType.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  13-10-2011    														*
- *                                                                  						*
- * Modified Date    :  13-10-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinCovenantType.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 13-10-2011 * * Modified Date
+ * : 13-10-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 13-10-2011       Pennant	                 0.1                                            * 
- * 16-05-2018       Pennant                  0.2           Added Property Alwotc.                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 13-10-2011 Pennant 0.1 * 16-05-2018 Pennant 0.2 Added Property Alwotc. * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.model.finance;
 
@@ -47,13 +29,13 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>FinCovenantType table</b>.<br>
@@ -81,7 +63,7 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 	private boolean alwOtc;
 	@XmlElement
 	private boolean internalUse;
-	//@XmlElement
+	// @XmlElement
 	private int postponeDays;
 	private String module;
 	private String lovValue;
@@ -98,10 +80,6 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 	// API validation purpose only
 	@SuppressWarnings("unused")
 	private FinCovenantType validateCovenantType = this;
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public FinCovenantType() {
 		super();

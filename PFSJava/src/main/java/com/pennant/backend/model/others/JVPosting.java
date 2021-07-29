@@ -90,10 +90,6 @@ public class JVPosting extends AbstractWorkflowEntity {
 	private String divisionCodeDesc;
 	private String finSourceID;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public JVPosting() {
 		super();
 	}

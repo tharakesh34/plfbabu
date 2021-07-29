@@ -1,58 +1,40 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  Limitrule.java                                                   	* 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  18-07-2016    														*
- *                                                                  						*
- * Modified Date    :  23-07-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : Limitrule.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 18-07-2016 * * Modified Date :
+ * 23-07-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 23-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.model.rulefactory;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>DedupParm table</b>.<br>
  *
  */
-public class LimitRule implements java.io.Serializable, Entity {
+public class LimitRule implements Serializable {
 
 	private static final long serialVersionUID = -5474091857496782851L;
 
@@ -80,10 +62,6 @@ public class LimitRule implements java.io.Serializable, Entity {
 	private String recordType;
 	private String userAction = "Save";
 	private long workflowId = 0;
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public LimitRule() {
 

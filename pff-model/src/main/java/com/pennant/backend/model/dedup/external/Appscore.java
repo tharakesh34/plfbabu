@@ -1,9 +1,9 @@
 package com.pennant.backend.model.dedup.external;
 
+import javax.xml.bind.annotation.XmlElement;
+
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-
-import javax.xml.bind.annotation.XmlElement;
 
 @JsonPropertyOrder({ "appscore", "appscoreDP" })
 @JsonSerialize

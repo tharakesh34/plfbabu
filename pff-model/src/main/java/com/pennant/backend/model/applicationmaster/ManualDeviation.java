@@ -29,12 +29,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-
-import javax.xml.bind.annotation.XmlType;
 
 /**
  * Model class for the <b>ManualDeviation table</b>.<br>
@@ -60,10 +58,6 @@ public class ManualDeviation extends AbstractWorkflowEntity {
 	private String lovValue;
 	private ManualDeviation befImage;
 	private LoggedInUser userDetails;
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public ManualDeviation() {
 		super();

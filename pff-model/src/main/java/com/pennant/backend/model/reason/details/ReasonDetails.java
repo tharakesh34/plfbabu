@@ -22,10 +22,6 @@ public class ReasonDetails implements Serializable {
 		return entity;
 	}
 
-	public boolean isNew() {
-		return false;
-	}
-
 	public long getHeaderId() {
 		return headerId;
 	}

@@ -165,10 +165,6 @@ public class FinCreditRevSubCategory extends AbstractWorkflowEntity {
 		return calcSeque;
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public String getId() {
 		return subCategoryCode;
 	}

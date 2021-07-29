@@ -107,10 +107,6 @@ public class BuilderCompany extends AbstractWorkflowEntity {
 	private long custId;
 	private Long pinCodeId;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public BuilderCompany() {
 		super();
 	}

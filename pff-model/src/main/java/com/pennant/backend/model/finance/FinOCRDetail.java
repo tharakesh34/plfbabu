@@ -4,14 +4,14 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 @XmlType(propOrder = { "stepSequence", "customerContribution", "financerContribution", "contributor" })
 @XmlRootElement(name = "finOCRDetail")
@@ -39,10 +39,6 @@ public class FinOCRDetail extends AbstractWorkflowEntity implements Comparable<F
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		return excludeFields;
-	}
-
-	public boolean isNew() {
-		return isNewRecord();
 	}
 
 	public int getStepSequence() {

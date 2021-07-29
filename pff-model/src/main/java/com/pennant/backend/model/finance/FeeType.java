@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FeeType.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-01-2017    														*
- *                                                                  						*
- * Modified Date    :  03-01-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FeeType.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-01-2017 * * Modified Date :
+ * 03-01-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-01-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-01-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.model.finance;
 
@@ -57,7 +39,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class FeeType extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
-	//FIXME GDP: Copied from java. We need to remove this bean from java.
+	// FIXME GDP: Copied from java. We need to remove this bean from java.
 
 	private long feeTypeID = Long.MIN_VALUE;
 	private String feeTypeCode;
@@ -72,7 +54,7 @@ public class FeeType extends AbstractWorkflowEntity {
 	private FeeType befImage;
 	private LoggedInUser userDetails;
 	private String hostFeeTypeCode;
-	//GST fields
+	// GST fields
 	private boolean taxApplicable;
 	private String taxComponent;
 
@@ -84,10 +66,6 @@ public class FeeType extends AbstractWorkflowEntity {
 	private String dueAcctSetCode;
 	private String dueAcctSetCodeName;
 	private boolean tdsReq;
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public FeeType() {
 		super();

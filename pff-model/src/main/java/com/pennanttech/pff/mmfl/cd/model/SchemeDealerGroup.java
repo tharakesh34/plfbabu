@@ -69,10 +69,6 @@ public class SchemeDealerGroup extends AbstractWorkflowEntity {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public long getSchemeDealerGroupId() {
 		return schemeDealerGroupId;
 	}

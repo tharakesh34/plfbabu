@@ -49,10 +49,6 @@ public class VASProductType extends AbstractWorkflowEntity {
 	private VASProductType befImage;
 	private LoggedInUser userDetails;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public VASProductType() {
 		super();
 	}

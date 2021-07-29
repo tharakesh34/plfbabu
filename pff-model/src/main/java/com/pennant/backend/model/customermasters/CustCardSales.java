@@ -7,16 +7,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
-import com.pennant.backend.model.audit.AuditDetail;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 @XmlType(propOrder = { "custId", "merchantId", "custCardMonthSales" })
 @XmlAccessorType(XmlAccessType.NONE)
@@ -54,10 +53,6 @@ public class CustCardSales extends AbstractWorkflowEntity {
 
 	public void setCustID(long custID) {
 		this.custID = custID;
-	}
-
-	public boolean isNew() {
-		return isNewRecord();
 	}
 
 	public CustCardSales getBefImage() {

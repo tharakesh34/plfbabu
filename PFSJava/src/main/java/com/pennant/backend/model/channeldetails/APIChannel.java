@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -19,10 +18,6 @@ public class APIChannel extends AbstractWorkflowEntity {
 	private APIChannel befImage;
 	private LoggedInUser userDetails;
 	private List<APIChannelIP> ipList = new ArrayList<APIChannelIP>();
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public APIChannel() {
 		super();

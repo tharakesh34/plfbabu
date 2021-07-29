@@ -21,10 +21,6 @@ public class Entities extends AbstractWorkflowEntity {
 	@XmlTransient
 	private LoggedInUser userDetails;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public Entities() {
 		super();
 	}

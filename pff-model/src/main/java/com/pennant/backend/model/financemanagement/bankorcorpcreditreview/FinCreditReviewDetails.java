@@ -128,10 +128,6 @@ public class FinCreditReviewDetails extends AbstractWorkflowEntity {
 		super();
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public long getDetailId() {
 		return detailId;
 	}

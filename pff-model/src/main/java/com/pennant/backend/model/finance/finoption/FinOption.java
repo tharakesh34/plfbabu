@@ -77,10 +77,6 @@ public class FinOption extends AbstractWorkflowEntity {
 
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public String getFinReference() {
 		return finReference;
 	}

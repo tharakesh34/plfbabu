@@ -114,10 +114,6 @@ public class BuilderProjcet extends AbstractWorkflowEntity {
 	private List<DocumentDetails> documentDetails;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public BuilderProjcet() {
 		super();
 	}

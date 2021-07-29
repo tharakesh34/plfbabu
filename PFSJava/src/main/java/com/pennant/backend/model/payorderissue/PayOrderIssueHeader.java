@@ -38,7 +38,7 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 	private FinanceMain financeMain;
 	private BigDecimal finAssetValue = BigDecimal.TEN;
 
-	//others
+	// others
 	private String custCIF;
 	private String custShrtName;
 	private Date requestDate;
@@ -59,10 +59,6 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 	private List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>(1);
 	private List<FinFeeDetail> finFeeDetailList = new ArrayList<FinFeeDetail>(1);
 	private List<JointAccountDetail> jointAccountDetails = new ArrayList<JointAccountDetail>(1);
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public PayOrderIssueHeader() {
 		super();

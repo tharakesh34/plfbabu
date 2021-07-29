@@ -43,10 +43,6 @@ public class FinExcessAmount implements Serializable {
 		return excludeFields;
 	}
 
-	public boolean isNew() {
-		return false;
-	}
-
 	public long getId() {
 		return excessID;
 	}

@@ -22,10 +22,6 @@ public class FinAssetTypes extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public String getAssetType() {
 		return assetType;
 	}

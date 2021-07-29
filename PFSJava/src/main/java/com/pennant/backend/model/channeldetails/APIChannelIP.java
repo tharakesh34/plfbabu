@@ -18,10 +18,6 @@ public class APIChannelIP extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private APIChannelIP befImage;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public APIChannelIP() {
 		super();
 	}

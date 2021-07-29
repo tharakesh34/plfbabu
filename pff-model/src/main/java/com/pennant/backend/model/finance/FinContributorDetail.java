@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -27,10 +26,6 @@ public class FinContributorDetail extends AbstractWorkflowEntity {
 	private String lovValue;
 	private FinContributorDetail befImage;
 	private LoggedInUser userDetails;
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public FinContributorDetail() {
 		super();

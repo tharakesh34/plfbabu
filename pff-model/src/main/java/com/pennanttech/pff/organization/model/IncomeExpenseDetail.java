@@ -78,10 +78,6 @@ public class IncomeExpenseDetail extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public long getId() {
 		return id;
 	}

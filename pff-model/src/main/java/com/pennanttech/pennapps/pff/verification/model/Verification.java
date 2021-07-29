@@ -19,16 +19,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 
 /**
  * Model class for the <b>Verification table</b>
@@ -124,7 +124,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private String accNumber;
 	@XmlElement
 	private String bankName;
-	//New Field for BHFL.
+	// New Field for BHFL.
 	@XmlElement
 	private int verificationCategory;
 	private BigDecimal finalValAsPerPE = BigDecimal.ZERO;
@@ -133,7 +133,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private String finalValRemarks;
 	private BigDecimal valuationAmount = BigDecimal.ZERO;
 
-	//Value As Per Cost Of Property
+	// Value As Per Cost Of Property
 	private BigDecimal valueForCOP = BigDecimal.ZERO;
 	private String tvRecordStatus;
 	private List<LVDocument> vettingDocuments = new ArrayList<>();
@@ -204,10 +204,6 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("returnStatus");
 		excludeFields.add("collRef");
 		return excludeFields;
-	}
-
-	public boolean isNew() {
-		return isNewRecord();
 	}
 
 	public long getId() {

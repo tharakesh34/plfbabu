@@ -24,10 +24,6 @@ public class CommodityType extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public CommodityType getBefImage() {
 		return this.befImage;
 	}

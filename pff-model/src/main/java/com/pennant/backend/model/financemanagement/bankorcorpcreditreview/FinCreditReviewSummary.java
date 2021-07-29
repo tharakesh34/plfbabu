@@ -65,10 +65,6 @@ public class FinCreditReviewSummary extends AbstractWorkflowEntity {
 		super();
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public long getSummaryId() {
 		return this.summaryId;
 	}

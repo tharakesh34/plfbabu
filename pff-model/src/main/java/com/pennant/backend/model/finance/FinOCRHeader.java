@@ -7,15 +7,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.pennant.backend.model.audit.AuditDetail;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 @XmlType(propOrder = { "ocrID", "ocrDescription", "customerPortion", "ocrType", "totalDemand", "ocrDetailList",
 		"finOCRCapturesList" })
@@ -64,10 +64,6 @@ public class FinOCRHeader extends AbstractWorkflowEntity {
 		excludeFields.add("ocrTotalDemand");
 		excludeFields.add("ocrTotalPaid");
 		return excludeFields;
-	}
-
-	public boolean isNew() {
-		return isNewRecord();
 	}
 
 	public long getHeaderID() {

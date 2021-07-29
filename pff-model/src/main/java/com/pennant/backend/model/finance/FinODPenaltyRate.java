@@ -66,14 +66,6 @@ public class FinODPenaltyRate implements Serializable {
 		return entity;
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public boolean isNew() {
-		return false;
-	}
-
 	public long getId() {
 		return logKey;
 	}

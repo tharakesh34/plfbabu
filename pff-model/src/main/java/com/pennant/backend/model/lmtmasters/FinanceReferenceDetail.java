@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceReferenceDetail.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-11-2011    														*
- *                                                                  						*
- * Modified Date    :  26-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceReferenceDetail.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-11-2011 * *
+ * Modified Date : 26-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -48,7 +30,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -80,7 +61,8 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity {
 	private long lovDescCheckMinCount;
 	private long lovDescCheckMaxCount;
 
-	private String lovDescStgRuleValue; ////////////////////Stage Accounting with Stage Accounting Rules change///////////
+	private String lovDescStgRuleValue; //////////////////// Stage Accounting with Stage Accounting Rules
+										//////////////////// change///////////
 	private String lovDescElgRuleValue;
 	private String lovDescAggReportName;
 	private String lovDescAggReportPath;
@@ -110,10 +92,6 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity {
 	private String moduleType;
 	private boolean resendReq;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public FinanceReferenceDetail() {
 		super();
 	}
@@ -132,7 +110,7 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-	//Getter and Setter methods
+	// Getter and Setter methods
 
 	// Getter and Setter methods
 

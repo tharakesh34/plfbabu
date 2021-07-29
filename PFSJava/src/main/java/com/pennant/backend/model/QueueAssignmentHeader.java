@@ -37,10 +37,6 @@ public class QueueAssignmentHeader extends AbstractWorkflowEntity {
 		super();
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public String getUserId() {
 		return userId;
 	}

@@ -4,12 +4,12 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import com.pennant.backend.model.eventproperties.EventProperties;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennant.backend.model.eventproperties.EventProperties;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(propOrder = { "postref", "finEvent", "postDate", "valueDate", "tranCode", "tranDesc", "revTranCode", "account",

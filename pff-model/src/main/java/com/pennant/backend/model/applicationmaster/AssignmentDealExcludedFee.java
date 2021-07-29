@@ -58,10 +58,6 @@ public class AssignmentDealExcludedFee extends AbstractWorkflowEntity {
 	private String feeTypeCode;
 	private String feeTypeDesc;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public AssignmentDealExcludedFee() {
 		super();
 	}

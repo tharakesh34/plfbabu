@@ -57,10 +57,6 @@ public class HolidayDetail implements java.io.Serializable {
 		this.holidayDescription = holidayDescription;
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public boolean isNewRecord() {
 		return newRecord;
 	}

@@ -13,10 +13,6 @@ public class CAFFacilityType extends AbstractWorkflowEntity {
 	private CAFFacilityType befImage;
 	private LoggedInUser userDetails;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public CAFFacilityType() {
 		super();
 	}

@@ -61,10 +61,6 @@ public class LinkedFinances extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public long getID() {
 		return iD;
 	}

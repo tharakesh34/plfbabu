@@ -34,10 +34,6 @@ public class OCRHeader extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public long getId() {
 		return headerID;
 	}

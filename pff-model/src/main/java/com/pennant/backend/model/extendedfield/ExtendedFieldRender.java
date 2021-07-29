@@ -26,10 +26,6 @@ public class ExtendedFieldRender extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public int getSeqNo() {
 		return seqNo;
 	}

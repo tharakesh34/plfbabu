@@ -17,10 +17,6 @@ public class Caste extends AbstractWorkflowEntity {
 	private Caste befImage;
 	private LoggedInUser userDetails;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public Caste() {
 		super();
 	}

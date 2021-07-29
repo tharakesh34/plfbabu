@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ScoringMetrics.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-12-2011    														*
- *                                                                  						*
- * Modified Date    :  05-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ScoringMetrics.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-12-2011 * * Modified Date
+ * : 05-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -55,14 +37,14 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class ScoringMetrics extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 5228231887285744745L;
-	private long scoreGroupId = 0; //Scoring Group ID
-	private long scoringId; //Scoring Metric Id
+	private long scoreGroupId = 0; // Scoring Group ID
+	private long scoringId; // Scoring Metric Id
 	private String categoryType;
 
-	private String lovDescScoringGroupCode; //Scoring Group Code
-	private String lovDescScoringCode; //Scoring Metric Group Id/Rule Code
-	private String lovDescScoringCodeDesc;//Scoring Metric Group Desc/ Rule Desc
-	private BigDecimal lovDescMetricMaxPoints;//Rule Max Score/ Sum of Rules Max Score for SubGroup
+	private String lovDescScoringGroupCode; // Scoring Group Code
+	private String lovDescScoringCode; // Scoring Metric Group Id/Rule Code
+	private String lovDescScoringCodeDesc;// Scoring Metric Group Desc/ Rule Desc
+	private BigDecimal lovDescMetricMaxPoints;// Rule Max Score/ Sum of Rules Max Score for SubGroup
 	private String lovDescMetricTotPerc;
 	private int lovDescScoreMetricSeq; // Scoring Metric Group Seq / Rule Seq order
 	private String lovDescSQLRule;
@@ -70,10 +52,6 @@ public class ScoringMetrics extends AbstractWorkflowEntity {
 	private String lovValue;
 	private ScoringMetrics befImage;
 	private LoggedInUser userDetails;
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public ScoringMetrics() {
 		super();

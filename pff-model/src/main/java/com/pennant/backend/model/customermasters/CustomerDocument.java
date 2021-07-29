@@ -109,10 +109,6 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	@XmlElement
 	private int docTypeId;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public CustomerDocument() {
 		super();
 	}

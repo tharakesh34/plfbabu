@@ -16,10 +16,6 @@ public class Qualification extends AbstractWorkflowEntity {
 	private Qualification befImage;
 	private LoggedInUser userDetails;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public Qualification() {
 		super();
 	}

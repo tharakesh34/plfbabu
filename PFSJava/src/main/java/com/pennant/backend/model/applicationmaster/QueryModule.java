@@ -19,10 +19,6 @@ public class QueryModule extends AbstractWorkflowEntity {
 	private QueryModule befImage;
 	private LoggedInUser userDetails;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public QueryModule(String queryModuleCode) {
 		super();
 		this.queryModuleCode = queryModuleCode;

@@ -153,10 +153,6 @@ public class PFSParameter extends AbstractWorkflowEntity {
 		return sysParmDescription;
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public String getLovValue() {
 		return lovValue;
 	}

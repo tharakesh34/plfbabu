@@ -8,14 +8,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.pennant.backend.model.audit.AuditDetail;
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 @XmlType(propOrder = { "custCIF", "custCtgCode", "custFName", "custLName", "custShrtName", "custDOB", "custCRCPR",
 		"mobileNumber" })
@@ -132,7 +132,7 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 	private String assOrRelConcernLName;
 	private String otherSourceFirstName;
 	private String otherSourceLastName;
-	//for Corporate
+	// for Corporate
 	private String director1Name;
 	private String director2Name;
 	private String director3Name;
@@ -145,7 +145,7 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 	private String director10Name;
 	private String assOrRelConcern;
 	private String otherSource;
-	//Like Operators
+	// Like Operators
 	private String likeDirector1FirstName;
 	private String likeDirector1LastName;
 	private String likeDirector2FirstName;
@@ -286,10 +286,6 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 
 		excludeFields.add("sourceCIF");
 		return excludeFields;
-	}
-
-	public boolean isNew() {
-		return isNewRecord();
 	}
 
 	public BlackListCustomers() {

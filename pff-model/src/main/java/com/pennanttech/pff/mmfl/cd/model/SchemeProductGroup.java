@@ -94,10 +94,6 @@ public class SchemeProductGroup extends AbstractWorkflowEntity {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public boolean isSave() {
 		return isSave;
 	}

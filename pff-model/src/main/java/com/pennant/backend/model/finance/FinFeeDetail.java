@@ -147,10 +147,6 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 		super();
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public FinFeeDetail copyEntity() {
 		FinFeeDetail entity = new FinFeeDetail();
 		entity.setFeeID(this.feeID);

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceScheduleDetail.java                                           * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  13-08-2012    														*
- *                                                                  						*
- * Modified Date    :  13-08-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceScheduleDetail.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 13-08-2012 * *
+ * Modified Date : 13-08-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 16-03-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 16-03-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.model.finance;
@@ -48,14 +30,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
  * Model class for the <b>WIFFinanceScheduleDetail table</b>.<br>
@@ -175,10 +157,6 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 		this.schDate = schDate;
 		this.repayOnSchDate = repayOnSchDate;
 		this.actRate = actRate;
-	}
-
-	public boolean isNew() {
-		return isNewRecord();
 	}
 
 	public FinanceScheduleDetail() {
@@ -552,8 +530,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	}
 
 	/**
-	 * @param defSchdDate
-	 *            the defSchdDate to set
+	 * @param defSchdDate the defSchdDate to set
 	 */
 	public void setDefSchdDate(Date defSchdDate) {
 		this.defSchdDate = defSchdDate;
@@ -567,8 +544,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	}
 
 	/**
-	 * @param schdPftPaid
-	 *            the schdPftPaid to set
+	 * @param schdPftPaid the schdPftPaid to set
 	 */
 	public void setSchdPftPaid(BigDecimal schdPftPaid) {
 		this.schdPftPaid = schdPftPaid;

@@ -70,10 +70,6 @@ public class FinTaxUploadHeader extends AbstractWorkflowEntity {
 		this.batchApprovedDate = batchApprovedDate;
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public String getStatus() {
 		return status;
 	}

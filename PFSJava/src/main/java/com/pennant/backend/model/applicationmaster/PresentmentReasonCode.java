@@ -14,10 +14,6 @@ public class PresentmentReasonCode extends AbstractWorkflowEntity {
 	private PresentmentReasonCode befImage;
 	private LoggedInUser userDetails;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public PresentmentReasonCode() {
 		super();
 	}

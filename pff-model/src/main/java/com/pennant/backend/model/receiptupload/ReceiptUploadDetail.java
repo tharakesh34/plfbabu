@@ -67,10 +67,6 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity {
 
 	}
 
-	public boolean isNew() {
-		return false;
-	}
-
 	public long getUploadheaderId() {
 		return uploadheaderId;
 	}

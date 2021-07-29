@@ -58,10 +58,6 @@ public class ReportFilterFields extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private String filterFileds = null;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public ReportFilterFields() {
 		super();
 	}

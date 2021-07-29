@@ -13,10 +13,6 @@ public class TargetDetail extends AbstractWorkflowEntity {
 	private TargetDetail befImage;
 	private LoggedInUser userDetails;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public TargetDetail() {
 		super();
 	}

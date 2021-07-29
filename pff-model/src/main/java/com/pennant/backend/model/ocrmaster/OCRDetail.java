@@ -17,10 +17,6 @@ public class OCRDetail extends AbstractWorkflowEntity implements Comparable<OCRD
 	private OCRDetail befImage;
 	private LoggedInUser userDetails;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public OCRDetail() {
 		super();
 	}

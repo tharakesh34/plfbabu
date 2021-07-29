@@ -35,7 +35,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -110,10 +109,6 @@ public class JVPostingEntry extends AbstractWorkflowEntity {
 	private JVPostingEntry befImage;
 	private LoggedInUser userDetails;
 	private String finSourceID;
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public JVPostingEntry() {
 		super();

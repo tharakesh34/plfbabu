@@ -73,10 +73,6 @@ public class FinCollaterals extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private String markStatus;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public FinCollaterals() {
 		super();
 	}

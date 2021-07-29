@@ -3,7 +3,6 @@ package com.pennant.backend.model.beneficiary;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -15,10 +14,6 @@ public class FinBeneficiary extends AbstractWorkflowEntity {
 	private FinBeneficiary befImage;
 	private LoggedInUser userDetails;
 	private Beneficiary beneficiary;
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public FinBeneficiary() {
 		super();

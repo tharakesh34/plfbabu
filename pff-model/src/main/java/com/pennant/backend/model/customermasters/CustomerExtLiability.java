@@ -107,10 +107,6 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 	@XmlElement(name = "extLiabilitiesPayment")
 	private List<ExtLiabilityPaymentdetails> extLiabilitiesPayments = new ArrayList<>();
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public CustomerExtLiability() {
 		super();
 	}

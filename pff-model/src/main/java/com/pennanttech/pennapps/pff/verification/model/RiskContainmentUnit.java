@@ -107,10 +107,6 @@ public class RiskContainmentUnit extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public long getId() {
 		return verificationId;
 	}

@@ -1,11 +1,10 @@
 package com.pennant.backend.model.Repayments;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import com.pennant.backend.model.Entity;
-
-public class FinanceRepayments implements java.io.Serializable, Entity {
+public class FinanceRepayments implements Serializable {
 	private static final long serialVersionUID = -2866729395743867717L;
 
 	private String finReference;
@@ -86,17 +85,10 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 		return entity;
 	}
 
-	@Override
-	public boolean isNew() {
-		return false;
-	}
-
-	@Override
 	public long getId() {
 		return this.finPaySeq;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.finPaySeq = id;
 

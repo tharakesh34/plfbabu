@@ -173,10 +173,6 @@ public class VASRecording extends AbstractWorkflowEntity {
 	private long paymentInsId = Long.MIN_VALUE;
 	private long receivableAdviseId = Long.MIN_VALUE;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public VASRecording() {
 		super();
 	}

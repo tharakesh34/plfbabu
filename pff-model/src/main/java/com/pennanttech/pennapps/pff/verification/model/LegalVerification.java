@@ -120,10 +120,6 @@ public class LegalVerification extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public Date getVerificationDate() {
 		return verificationDate;
 	}

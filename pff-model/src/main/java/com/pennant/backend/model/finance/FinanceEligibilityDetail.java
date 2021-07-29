@@ -7,12 +7,12 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.zkoss.json.JSONObject;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.zkoss.json.JSONObject;
 
 @XmlType(propOrder = { "elgRuleCode", "ruleResultType", "ruleResult" })
 @XmlAccessorType(XmlAccessType.NONE)

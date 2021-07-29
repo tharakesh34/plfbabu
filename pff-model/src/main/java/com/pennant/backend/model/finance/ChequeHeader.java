@@ -85,10 +85,6 @@ public class ChequeHeader extends AbstractWorkflowEntity {
 	@XmlElement
 	public WSReturnStatus returnStatus = null;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public ChequeHeader() {
 		super();
 	}

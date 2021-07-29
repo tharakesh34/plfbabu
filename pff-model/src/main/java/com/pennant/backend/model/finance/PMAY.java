@@ -10,10 +10,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * @author nikhil.t
@@ -55,10 +55,6 @@ public class PMAY extends AbstractWorkflowEntity {
 		excludeFields.add("custShrtName");
 		excludeFields.add("townName");
 		return excludeFields;
-	}
-
-	public boolean isNew() {
-		return isNewRecord();
 	}
 
 	public String getFinReference() {

@@ -3,14 +3,13 @@ package com.pennant.backend.model.collateral;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlTransient;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class CollateralThirdParty extends AbstractWorkflowEntity {
@@ -39,10 +38,6 @@ public class CollateralThirdParty extends AbstractWorkflowEntity {
 		excludeFields.add("custNationality");
 		excludeFields.add("custCtgCode");
 		return excludeFields;
-	}
-
-	public boolean isNew() {
-		return isNewRecord();
 	}
 
 	public String getCollateralRef() {

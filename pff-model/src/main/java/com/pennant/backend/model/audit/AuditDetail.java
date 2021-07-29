@@ -170,10 +170,6 @@ public class AuditDetail implements java.io.Serializable {
 		this.modelData = modelData;
 	}
 
-	public boolean isNew() {
-		return getId() == Long.MIN_VALUE;
-	}
-
 	public long getId() {
 		return auditId;
 	}

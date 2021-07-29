@@ -121,10 +121,6 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	private String fileName;
 	private List<VASPremiumCalcDetails> premiumCalcDetList = new ArrayList<>();
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public VASConfiguration() {
 		super();
 	}

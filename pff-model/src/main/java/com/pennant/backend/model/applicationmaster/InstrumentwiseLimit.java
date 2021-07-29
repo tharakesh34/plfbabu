@@ -52,10 +52,6 @@ public class InstrumentwiseLimit extends AbstractWorkflowEntity {
 	private InstrumentwiseLimit befImage;
 	private LoggedInUser userDetails;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public InstrumentwiseLimit() {
 		super();
 	}

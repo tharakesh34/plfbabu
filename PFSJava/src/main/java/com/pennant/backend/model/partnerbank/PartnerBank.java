@@ -81,10 +81,6 @@ public class PartnerBank extends AbstractWorkflowEntity {
 	private List<PartnerBankModes> partnerBankModesList = new ArrayList<PartnerBankModes>();
 	private List<PartnerBranchModes> partnerBranchModesList = new ArrayList<PartnerBranchModes>();
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public PartnerBank() {
 		super();
 	}

@@ -97,10 +97,6 @@ public class ProductDeviation extends AbstractWorkflowEntity {
 		this.userDetails = userDetails;
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public String getDeviationDesc() {
 		return deviationDesc;
 	}

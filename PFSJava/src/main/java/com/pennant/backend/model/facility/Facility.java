@@ -132,12 +132,12 @@ public class Facility extends AbstractWorkflowEntity {
 	private List<FacilityReferenceDetail> aggrementList = new ArrayList<FacilityReferenceDetail>();
 	private List<FacilityReferenceDetail> scoringGroupList = new ArrayList<FacilityReferenceDetail>();
 	private List<FacilityReferenceDetail> corpScoringGroupList = new ArrayList<FacilityReferenceDetail>();
-	//Taken from finance details
+	// Taken from finance details
 	private List<FacilityReferenceDetail> finRefDetailsList;
 	private CustomerEligibilityCheck customerEligibilityCheck;
 	private Map<Long, Long> lovDescSelAnsCountMap = new HashMap<Long, Long>();
 	private List<FinanceCheckListReference> financeCheckList = new ArrayList<FinanceCheckListReference>();
-	//Scoring
+	// Scoring
 	private boolean sufficientScore;
 	private List<ScoringMetrics> finScoringMetricList = new ArrayList<ScoringMetrics>();
 	private List<ScoringMetrics> nonFinScoringMetricList = new ArrayList<ScoringMetrics>();
@@ -147,10 +147,6 @@ public class Facility extends AbstractWorkflowEntity {
 	private Map<Long, List<FinanceScoreDetail>> scoreDetailListMap = new HashMap<Long, List<FinanceScoreDetail>>();
 
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public Facility(String cAFReference) {
 		super();

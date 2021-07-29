@@ -1,10 +1,9 @@
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-import com.pennant.backend.model.Entity;
-
-public class TATDetail implements java.io.Serializable, Entity {
+public class TATDetail implements Serializable {
 
 	private static final long serialVersionUID = 5429008289209512218L;
 
@@ -78,17 +77,10 @@ public class TATDetail implements java.io.Serializable, Entity {
 		this.finType = finType;
 	}
 
-	@Override
-	public boolean isNew() {
-		return false;
-	}
-
-	@Override
 	public long getId() {
 		return 0;
 	}
 
-	@Override
 	public void setId(long id) {
 
 	}

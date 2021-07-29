@@ -82,10 +82,6 @@ public class LimitStructure extends AbstractWorkflowEntity {
 	@XmlElement
 	private WSReturnStatus returnStatus;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public LimitStructure() {
 		super();
 		setWorkflowId(WorkFlowUtil.getWorkFlowID("LimitStructure"));

@@ -32,10 +32,6 @@ public class CommitmentMovement extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private Map<String, AuditDetail> lovDescAuditDetailMap = new HashMap<>();
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public CommitmentMovement() {
 		super();
 	}

@@ -53,10 +53,6 @@ public class Query extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private boolean active;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public Query(String queryCode) {
 		super();
 		this.queryCode = queryCode;

@@ -65,10 +65,6 @@ public class Manufacturer extends AbstractWorkflowEntity {
 		this.lovValue = lovValue;
 	}
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public String getChannel() {
 		return channel;
 	}

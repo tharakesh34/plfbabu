@@ -25,6 +25,7 @@
 
 package com.pennant.backend.model.limit;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,7 +41,6 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.Entity;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -51,7 +51,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlType(propOrder = { "limitStructureDetailsID", "groupCode", "limitLine", "groupName", "limitLineDesc",
 		"structureName", "revolving", "editable", "limitCheck", "itemLevel", "itemSeq" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class LimitStructureDetail implements java.io.Serializable, Entity {
+public class LimitStructureDetail implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@XmlElement(name = "structureDetailId")
@@ -114,10 +114,6 @@ public class LimitStructureDetail implements java.io.Serializable, Entity {
 	private String recordType;
 	private String userAction = "Save";
 	private long workflowId = 0;
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public LimitStructureDetail() {
 		this.workflowId = WorkFlowUtil.getWorkFlowID("LimitStructureDetail");

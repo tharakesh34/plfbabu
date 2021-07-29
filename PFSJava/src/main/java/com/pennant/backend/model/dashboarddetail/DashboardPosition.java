@@ -1,45 +1,36 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  *********************************************************************************************
- *                                 FILE HEADER                                               *
+ * FILE HEADER *
  *********************************************************************************************
  *
- * FileName    		:  DashboardDetails.java                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES              			
- *                                                                  
- * Creation Date    :  08-06-2011    
- *                                                                  
- * Modified Date    :  08-06-2011    
- *                                                                  
- * Description 		:                                             
- *                                                                                          
+ * FileName : DashboardDetails.java
+ * 
+ * Author : PENNANT TECHONOLOGIES
+ * 
+ * Creation Date : 08-06-2011
+ * 
+ * Modified Date : 08-06-2011
+ * 
+ * Description :
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 08-06-2011       Pennant	                 0.1                                         * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 08-06-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.model.dashboarddetail;
 
@@ -61,10 +52,6 @@ public class DashboardPosition extends AbstractWorkflowEntity {
 	private DashboardPosition befImage;
 	private LoggedInUser userDetails;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public DashboardPosition() {
 		super();
 	}
@@ -74,7 +61,7 @@ public class DashboardPosition extends AbstractWorkflowEntity {
 		this.setDashboardRef(id);
 	}
 
-	//Getter and Setter methods
+	// Getter and Setter methods
 
 	public void setId(String dashboardRef) {
 		this.dashboardRef = dashboardRef;
@@ -92,8 +79,7 @@ public class DashboardPosition extends AbstractWorkflowEntity {
 	}
 
 	/**
-	 * @param dashboardId
-	 *            the dashboardId to set
+	 * @param dashboardId the dashboardId to set
 	 */
 	public void setDashboardRef(String dashboardRef) {
 		this.dashboardRef = dashboardRef;
@@ -107,8 +93,7 @@ public class DashboardPosition extends AbstractWorkflowEntity {
 	}
 
 	/**
-	 * @param userId
-	 *            the userId to set
+	 * @param userId the userId to set
 	 */
 	public void setUsrId(long usrId) {
 		UsrId = usrId;
@@ -122,8 +107,7 @@ public class DashboardPosition extends AbstractWorkflowEntity {
 	}
 
 	/**
-	 * @param dashboardCol
-	 *            the dashboardCol to set
+	 * @param dashboardCol the dashboardCol to set
 	 */
 	public void setDashboardCol(int dashboardCol) {
 		this.dashboardCol = dashboardCol;
@@ -145,8 +129,7 @@ public class DashboardPosition extends AbstractWorkflowEntity {
 	}
 
 	/**
-	 * @param dashboardRow
-	 *            the dashboardRow to set
+	 * @param dashboardRow the dashboardRow to set
 	 */
 	public void setDashboardRow(int dashboardRow) {
 		this.dashboardRow = dashboardRow;
@@ -160,8 +143,7 @@ public class DashboardPosition extends AbstractWorkflowEntity {
 	}
 
 	/**
-	 * @param dashboardDesc
-	 *            the dashboardDesc to set
+	 * @param dashboardDesc the dashboardDesc to set
 	 */
 	public void setDashboardDesc(String dashboardDesc) {
 		DashboardDesc = dashboardDesc;

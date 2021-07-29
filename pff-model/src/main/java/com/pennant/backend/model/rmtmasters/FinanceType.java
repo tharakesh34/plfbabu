@@ -1,6 +1,6 @@
 /**
-
-
+ * 
+ * 
  * Copyright 2011 - Pennant Technologies This file is part of Pennant Java Application Framework and related Products.
  * All components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
  * Technologies. Copyright and other intellectual property laws protect these materials. Reproduction or retransmission
@@ -32,16 +32,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.pennant.backend.model.applicationmaster.IRRFinanceType;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.financemanagement.FinTypeReceiptModes;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Model class for the <b>FinanceType table</b>.<br>
@@ -332,10 +332,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String tdsType;
 	private String calcOfSteps;
 	private String stepsAppliedFor;
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public FinanceType() {
 		super();

@@ -20,7 +20,7 @@ public class ReasonDetailsLog implements Serializable {
 	private String roleDesc;
 	private Date logTime;
 	private String code;
-	//Reject Reason Description
+	// Reject Reason Description
 	private String rejectReasonDesc;
 
 	public String getModule() {
@@ -133,10 +133,6 @@ public class ReasonDetailsLog implements Serializable {
 
 	public void setCode(String code) {
 		this.code = code;
-	}
-
-	public boolean isNew() {
-		return false;
 	}
 
 	public long getId() {

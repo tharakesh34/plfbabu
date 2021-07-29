@@ -4,11 +4,11 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
+
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-
-import javax.xml.bind.annotation.XmlElement;
 
 public class CovenantDocument extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
@@ -55,10 +55,6 @@ public class CovenantDocument extends AbstractWorkflowEntity {
 		excludeFields.add("originalDocument");
 
 		return excludeFields;
-	}
-
-	public boolean isNew() {
-		return isNewRecord();
 	}
 
 	public long getId() {

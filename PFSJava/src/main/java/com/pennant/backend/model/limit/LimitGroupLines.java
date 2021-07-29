@@ -31,10 +31,6 @@ public class LimitGroupLines extends AbstractWorkflowEntity {
 
 	private int key;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public LimitGroupLines() {
 		super();
 		setWorkflowId(WorkFlowUtil.getWorkFlowID("LimitGroup"));

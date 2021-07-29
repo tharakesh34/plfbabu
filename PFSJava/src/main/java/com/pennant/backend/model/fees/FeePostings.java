@@ -89,10 +89,6 @@ public class FeePostings extends AbstractWorkflowEntity {
 	@SuppressWarnings("unused")
 	private FeePostings validateFeePostings = this;
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
-
 	public FeePostings() {
 		super();
 	}
