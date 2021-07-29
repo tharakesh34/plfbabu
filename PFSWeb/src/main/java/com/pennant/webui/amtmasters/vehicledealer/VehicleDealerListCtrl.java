@@ -285,7 +285,7 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 		logger.debug(Literal.ENTERING);
 
 		this.dealerId.setMaxlength(19);
-		this.dealerName.setMaxlength(50);
+		this.dealerName.setMaxlength(100);
 		this.dealerTelephone.setMaxlength(10);
 		this.recordStatus.setMaxlength(50);
 
