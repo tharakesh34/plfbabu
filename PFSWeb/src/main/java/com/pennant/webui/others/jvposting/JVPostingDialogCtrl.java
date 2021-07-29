@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  JVPostingDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-06-2013    														*
- *                                                                  						*
- * Modified Date    :  21-06-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : JVPostingDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-06-2013 * * Modified
+ * Date : 21-06-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-06-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-06-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.others.jvposting;
@@ -380,20 +362,20 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
-		if (doClose(this.btnSave.isVisible())) {
-			getJVPostingListCtrl().refreshList();
-		}
+		doClose(this.btnSave.isVisible());
+	}
+
+	protected void doPostClose() {
+		getJVPostingListCtrl().refreshList();
 	}
 
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -430,8 +412,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	 * Opens the detail view. <br>
 	 * Overhanded some params in a map if needed. <br>
 	 * 
-	 * @param JVPosting
-	 *            (aJVPosting)
+	 * @param JVPosting (aJVPosting)
 	 * @throws Exception
 	 */
 	private void showDetailView(JVPostingEntry aJVPostingEntry, boolean isFilter, boolean setNewRecord)
@@ -516,11 +497,11 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 				}
 			}
 
-			//			if(!aJVPostingEntry.getRecordType().equals("ADD")){}else{
-			//				if (aJVPostingEntry.getTxnEntry().equals(AccountConstants.TRANTYPE_CREDIT)) {
-			//				showDetailView(aJVPostingEntry, false, false);
-			//				}
-			//			}
+			// if(!aJVPostingEntry.getRecordType().equals("ADD")){}else{
+			// if (aJVPostingEntry.getTxnEntry().equals(AccountConstants.TRANTYPE_CREDIT)) {
+			// showDetailView(aJVPostingEntry, false, false);
+			// }
+			// }
 		}
 		logger.debug("Leaving");
 	}
@@ -652,7 +633,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			//btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}
@@ -789,13 +770,13 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			tempReadOnly = true;
 		}
 
-		// Batch Header Details		
+		// Batch Header Details
 
 		readOnlyComponent(isReadOnly("JVPostingDialog_expReference"), this.expReference);
 		readOnlyComponent(isReadOnly("JVPostingDialog_Batch"), this.batch);
 		readOnlyComponent(true, this.batchReference);
 		readOnlyComponent(isReadOnly("JVPostingDialog_BatchCcy"), this.baseCCy);
-		//readOnlyComponent(isReadOnly("JVPostingDialog_Branch"), this.postingBranch);
+		// readOnlyComponent(isReadOnly("JVPostingDialog_Branch"), this.postingBranch);
 		readOnlyComponent(isReadOnly("JVPostingDialog_PostingAgainst"), this.postingAgainst);
 		readOnlyComponent(isReadOnly("JVPostingDialog_Reference"), this.reference);
 		readOnlyComponent(isReadOnly("JVPostingDialog_Reference"), this.postingDivision);
@@ -808,7 +789,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		readOnlyComponent(true, this.debitCount);
 		readOnlyComponent(true, this.creditsCount);
 		readOnlyComponent(isReadOnly("JVPostingDialog_BatchPurpose"), this.batchPurpose);
-		//readOnlyComponent(isReadOnly("JVPostingDialog_btnUpload"), this.btn_Upload);
+		// readOnlyComponent(isReadOnly("JVPostingDialog_btnUpload"), this.btn_Upload);
 
 		if (enqModule) {
 			readOnlyComponent(true, this.expReference);
@@ -926,8 +907,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aJVPosting
-	 *            JVPosting
+	 * @param aJVPosting JVPosting
 	 */
 	public void doWriteBeanToComponents(JVPosting aJVPosting) {
 		logger.debug("Entering");
@@ -948,7 +928,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 					PennantStaticListUtil.getpostingPurposeList(), "");
 		}
 
-		//Added to map with legal expenses
+		// Added to map with legal expenses
 		if (!StringUtils.isEmpty(aJVPosting.getExpReference())) {
 			this.expReference.setValue(aJVPosting.getExpReference());
 			expenses = getLegalExpensesService().getLegalExpensesById(aJVPosting.getExpReference());
@@ -1132,7 +1112,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//reference
+		// reference
 		try {
 			if (this.reference.getValue() != null) {
 				aJVPosting.setReference(this.reference.getValue());
@@ -1145,7 +1125,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//postingagainst
+		// postingagainst
 		try {
 			if (!this.postingAgainst.isReadonly()
 					&& getComboboxValue(this.postingAgainst).equals(PennantConstants.List_Select)) {
@@ -1189,13 +1169,13 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			this.batch.setConstraint(new PTStringValidator(Labels.getLabel("label_JVPostingDialog_Batch.value"),
 					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
-		//Exp Reference
+		// Exp Reference
 		if (!this.expReference.isReadonly()) {
 			this.expReference
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_JVPostingDialog_ExpReference.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM, false));
 		}
-		//  Reference
+		// Reference
 		if (!this.reference.isReadonly()) {
 			this.reference.setConstraint(new PTStringValidator(Labels.getLabel("label_JVPostingDialog_Reference.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM, true));
@@ -1447,11 +1427,9 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1536,7 +1514,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 
 	protected String getServiceTasks(String taskId, JVPosting jvPosting, String finishedTasks) {
 		logger.debug("Entering");
-		// changes regarding parallel work flow 
+		// changes regarding parallel work flow
 		String nextRoleCode = StringUtils.trimToEmpty(jvPosting.getNextRoleCode());
 		String nextRoleCodes[] = nextRoleCode.split(",");
 
@@ -1617,10 +1595,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */
@@ -1882,7 +1858,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 
 		creditAmount = creditAmount.setScale(2, RoundingMode.HALF_DOWN);
 		debitAmount = debitAmount.setScale(2, RoundingMode.HALF_DOWN);
-		
+
 		this.totCreditsByBatchCcy.setValue(
 				PennantAppUtil.formateAmount(creditAmount, CurrencyUtil.getFormat(getJVPosting().getCurrency())));
 		this.creditsCount.setValue(creditCount);

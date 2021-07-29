@@ -77,8 +77,7 @@ public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_IncomeAmortization(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -168,10 +167,12 @@ public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 	 * @param event
 	 */
 	public void onClick$btnClose(Event event) {
-		if (doClose(false)) {
-			if (this.tabbox != null) {
-				this.tabbox.getSelectedTab().close();
-			}
+		doClose(false);
+	}
+
+	protected void doPostClose() {
+		if (this.tabbox != null) {
+			this.tabbox.getSelectedTab().close();
 		}
 	}
 

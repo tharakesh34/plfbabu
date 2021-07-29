@@ -6878,11 +6878,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	public void onClick$btnCopyTo(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
-		if (doClose(this.btnSave.isVisible())) {
-			Events.postEvent("onClick$button_FinanceTypeList_NewFinanceType",
-					financeTypeListCtrl.window_FinanceTypeList, getFinanceType());
-		}
+		doClose(this.btnSave.isVisible());
 		logger.debug(Literal.LEAVING);
+	}
+
+	protected void doPostClose() {
+		Events.postEvent("onClick$button_FinanceTypeList_NewFinanceType", financeTypeListCtrl.window_FinanceTypeList,
+				getFinanceType());
 	}
 
 	// tasks # >>Start Advance EMI and DSF

@@ -308,12 +308,13 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * 
 	 */
 	private void closeDialg(boolean confirmationreq) {
-		if (doClose(confirmationreq)) {
-			Borderlayout borderlayout = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
-			Tabbox tabbox = (Tabbox) borderlayout.getFellow("center").getFellow("divCenter")
-					.getFellow("tabBoxIndexCenter");
-			tabbox.getSelectedTab().close();
-		}
+		doClose(confirmationreq);
+	}
+
+	protected void doPostClose() {
+		Borderlayout borderlayout = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
+		Tabbox tabbox = (Tabbox) borderlayout.getFellow("center").getFellow("divCenter").getFellow("tabBoxIndexCenter");
+		tabbox.getSelectedTab().close();
 	}
 
 	/**
@@ -792,8 +793,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			List<String> finEvents = uploadHeaderService.getFinEventByFinRef(finReference, "_Temp");
 
 			if (CollectionUtils.isNotEmpty(finEvents)) {
-				if (finEvents.contains(FinServiceEvent.ADDDISB)
-						|| finEvents.contains(FinServiceEvent.RATECHG)
+				if (finEvents.contains(FinServiceEvent.ADDDISB) || finEvents.contains(FinServiceEvent.RATECHG)
 						|| finEvents.contains(FinServiceEvent.EARLYRPY)) {
 					reason = Labels.getLabel("LOAN_SERVICE_PROCESS");
 					error = true;

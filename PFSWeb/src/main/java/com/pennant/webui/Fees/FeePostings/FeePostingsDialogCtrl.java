@@ -290,9 +290,11 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
-		if (doClose(this.btnSave.isVisible())) {
-			getFeePostingsListCtrl().refreshList();
-		}
+		doClose(this.btnSave.isVisible());
+	}
+
+	protected void doPostClose() {
+		getFeePostingsListCtrl().refreshList();
 	}
 
 	/**
@@ -649,8 +651,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		fillComboBox(this.postingAgainst, aFeePostings.getPostAgainst(), PennantStaticListUtil.getpostingPurposeList(),
 				"");
 		this.reference.setValue(aFeePostings.getReference());
-		this.feeTypeCode
-				.setValue(aFeePostings.isNewRecord() ? aFeePostings.getFeeTyeCode() : aFeePostings.getFeeTyeCode().trim());
+		this.feeTypeCode.setValue(
+				aFeePostings.isNewRecord() ? aFeePostings.getFeeTyeCode() : aFeePostings.getFeeTyeCode().trim());
 		this.postingAmount
 				.setValue(PennantAppUtil.formateAmount(aFeePostings.getPostingAmount(), aCurrency.getCcyEditField()));
 		this.postingDivision.setValue(aFeePostings.getPostingDivision(), aFeePostings.getDivisionCodeDesc());

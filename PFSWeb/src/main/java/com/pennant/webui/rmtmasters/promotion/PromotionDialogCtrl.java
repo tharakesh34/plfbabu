@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PromotionDialogCtrl.java                                             * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-03-2017    														*
- *                                                                  						*
- * Modified Date    :  21-03-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PromotionDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-03-2017 * * Modified
+ * Date : 21-03-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-03-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-03-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.rmtmasters.promotion;
@@ -231,6 +213,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 	private final List<ValueLabel> cashBackPayoutOptionsList = PennantStaticListUtil.getCashBackPayoutOptionsList();
 	private final List<ValueLabel> DBDPercentageList = PennantStaticListUtil.getDBDPercentageList();
+	private String postEvent;
 
 	/**
 	 * default constructor.<br>
@@ -451,7 +434,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		}
 
 		boolean isMaintenance = true;
-		if (promotion.isNewRecord() || StringUtils.equals(promotion.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+		if (promotion.isNewRecord()
+				|| StringUtils.equals(promotion.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			isMaintenance = false;
 		}
 
@@ -487,8 +471,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		doSave();
@@ -497,8 +480,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		doEdit();
@@ -507,8 +489,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		MessageUtil.showHelpWindow(event, super.window);
@@ -517,8 +498,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) {
 		doDelete();
@@ -527,8 +507,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		doCancel();
@@ -537,8 +516,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -700,8 +678,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aPromotion
-	 *            Promotion
+	 * @param aPromotion Promotion
 	 */
 	public void doWriteBeanToComponents(Promotion aPromotion) {
 		logger.debug("Entering");
@@ -819,7 +796,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 			if (!consumerDurable) {
 				appendAccountingDetailsTab();
-				//appendInsuranceDetailsTab();	//commented as per Bajaj requirement
+				// appendInsuranceDetailsTab(); //commented as per Bajaj requirement
 			}
 		}
 
@@ -846,7 +823,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			map.put("isCompReadonly", !allowChildMaintenance());
 			map.put("excludeAppFeeCodes", true);
 
-			if (promotion.isNewRecord() || StringUtils.equals(promotion.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+			if (promotion.isNewRecord()
+					|| StringUtils.equals(promotion.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 				isMaintenance = false;
 			}
 
@@ -1329,8 +1307,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param promotion
-	 *            The entity that need to be render.
+	 * @param promotion The entity that need to be render.
 	 */
 	public void doShowDialog(Promotion promotion) throws InterruptedException {
 		logger.debug("Entering");
@@ -1749,7 +1726,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		// Some of the Fields cannot be modified for the Maintenance level
 		if (maintenanceChkReq) {
 			boolean isMaintenance = true;
-			if (promotion.isNewRecord() || StringUtils.equals(promotion.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+			if (promotion.isNewRecord()
+					|| StringUtils.equals(promotion.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 				isMaintenance = false;
 			}
 
@@ -1875,18 +1853,24 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 	public void onClick$btnCopy(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
-		if (doClose(this.btnSave.isVisible())) {
-			Events.postEvent("onClick$CopychemeIdCreation", promotionListCtrl.window_PromotionList, promotion);
-		}
+		postEvent = "onClick$CopychemeIdCreation";
+		doClose(this.btnSave.isVisible());
 		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnNewSchemeId(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
-		if (doClose(this.btnSave.isVisible())) {
-			Events.postEvent("onClick$NewSchemeIdCreation", promotionListCtrl.window_PromotionList, promotion);
-		}
+		postEvent = "onClick$NewSchemeIdCreation";
+		doClose(this.btnSave.isVisible());
 		logger.debug(Literal.LEAVING);
+	}
+
+	protected void doPostClose() {
+		if (StringUtils.isEmpty(postEvent)) {
+			return;
+		}
+		Events.postEvent(postEvent, promotionListCtrl.window_PromotionList, promotion);
+		postEvent = null;
 	}
 
 	/**
@@ -2200,11 +2184,9 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -2298,10 +2280,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */
@@ -2389,8 +2369,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.promotion);

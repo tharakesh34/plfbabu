@@ -396,9 +396,11 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
-		if (doClose(this.btnSave.isVisible())) {
-			getAccountingSetDialogCtrl().window_AccountingSetDialog.setVisible(true);
-		}
+		doClose(this.btnSave.isVisible());
+	}
+
+	protected void doPostClose() {
+		getAccountingSetDialogCtrl().window_AccountingSetDialog.setVisible(true);
 	}
 
 	/**

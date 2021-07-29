@@ -195,6 +195,7 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 	protected void doClose(boolean askConfirmation) {
 		if (!askConfirmation) {
 			closeDialog();
+			doPostClose();
 		}
 
 		MessageUtil.confirm(

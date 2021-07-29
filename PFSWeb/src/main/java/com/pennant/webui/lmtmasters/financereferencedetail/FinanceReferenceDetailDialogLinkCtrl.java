@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceReferenceDetailDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-11-2011    														*
- *                                                                  						*
- * Modified Date    :  26-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceReferenceDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-11-2011
+ * * * Modified Date : 26-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.lmtmasters.financereferencedetail;
@@ -403,14 +385,14 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
-		boolean isClosed = doClose(this.btnSave.isVisible());
-		if (isClosed) {
-			getFinanceReferenceDetailDialogCtrl().window_FinanceReferenceDetailDialog.setVisible(true);
-		}
+		doClose(this.btnSave.isVisible());
+	}
+
+	protected void doPostClose() {
+		getFinanceReferenceDetailDialogCtrl().window_FinanceReferenceDetailDialog.setVisible(true);
 	}
 
 	/**
@@ -433,8 +415,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceReferenceDetail
-	 *            FinanceReferenceDetail
+	 * @param aFinanceReferenceDetail FinanceReferenceDetail
 	 */
 	public void doWriteBeanToComponents(FinanceReferenceDetail aFinanceReferenceDetail) {
 		logger.debug("Entering");
@@ -714,7 +695,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	}
 
 	private void hasSingleApprStage(FinanceReferenceDetail aFinanceReferenceDetail) {
-		//Verification Approval Event validations in Miscellaneous Tab
+		// Verification Approval Event validations in Miscellaneous Tab
 		String reference = aFinanceReferenceDetail.getLovDescNamelov();
 
 		/**
@@ -1004,7 +985,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		this.allowPostpone.setDisabled(true);
 		this.allowExpire.setDisabled(true);
 		this.alertType.setDisabled(true);
-		//this.row_AlertType.setVisible(false);
+		// this.row_AlertType.setVisible(false);
 		doToggleInReadOnlyMode(this.listboxshowInStage, true);
 		doToggleInReadOnlyMode(this.listboxmandInputInStage, true);
 		doToggleInReadOnlyMode(this.listboxallowInputInStage, true);
@@ -1241,7 +1222,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	public void onClick$btnSearchAccounting(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		//////////////////Stage Accounting with Stage Accounting Rules change///////////
+		////////////////// Stage Accounting with Stage Accounting Rules change///////////
 		/*
 		 * Filter[] filter = new Filter[1]; filter[0] = new Filter("EventCode", AccountEventConstants.ACCEVENT_STAGE,
 		 * Filter.OP_EQUAL);
@@ -1731,7 +1712,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			this.allowInputInStage.setReadonly(true);// not required
 			this.mandInputInStage.setReadonly(false);
 
-			//Deviation
+			// Deviation
 			this.rowDeviation.setVisible(true);
 
 			// error labels
@@ -2190,7 +2171,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 				if (financeReferenceDetail.getRecordType().equals(PennantConstants.RCD_DEL)) {
 					financeReferenceDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				} else if (StringUtils.isEmpty(financeReferenceDetail.getRecordType())) {
-					//setting record type as Update while changing approved record,since record type is empty ""
+					// setting record type as Update while changing approved record,since record type is empty ""
 					financeReferenceDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
 			}

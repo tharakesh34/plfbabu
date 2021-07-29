@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PromotionPickListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PromotionPickListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
+ * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.enquiry;
@@ -130,7 +112,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 	protected Borderlayout borderlayoutEligibilityCheck;
 	protected Groupbox gb_BasicDetails;
 
-	//Basic Details
+	// Basic Details
 	protected Textbox customerCIF;
 	protected Label customerName;
 	protected Hbox hbox_custSelection;
@@ -269,7 +251,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 	private CustomerEligibilityCheck setCustomerEligibilityData(Customer customer) {
 		logger.debug("Entering");
 
-		//Customer Eligibility Amounts Calculation
+		// Customer Eligibility Amounts Calculation
 		BigDecimal financeAmount = PennantApplicationUtil.unFormateAmount(this.finAmount.getActualValue(), formatter);
 
 		BigDecimal curFinAmount = BigDecimal.ZERO;
@@ -311,7 +293,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 			}
 		}
 
-		// Customer Details Tab ---> Customer Details 
+		// Customer Details Tab ---> Customer Details
 		if (getCustomerDialogCtrl() != null) {
 			if (getCustomerDialogCtrl().getCustomerDetails() != null) {
 				getCustomerDialogCtrl().doSave_CustomerDetail(getFinanceDetail(), false);
@@ -329,7 +311,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 		}
 
 		try {
-			//Setting Data
+			// Setting Data
 			CustomerEligibilityCheck custElgCheck = setCustomerEligibilityData(
 					getFinanceDetail().getCustomerDetails().getCustomer());
 			Map<String, Object> fieldsandvalues = custElgCheck.getDeclaredFieldValues();
@@ -344,7 +326,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 				FinanceEligibility financeEligibility = null;
 				for (FinanceType detail : promotionDetailList) {
 
-					//Rule List Execution
+					// Rule List Execution
 					fieldsandvalues.put("reqFinType", detail.getFinType());
 					fieldsandvalues.put("reqProduct", detail.getFinCategory());
 					fieldsandvalues.put("reqCampaign", "");
@@ -355,7 +337,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 					fieldsandvalues.put("stepFinance", detail.isStepFinance());
 					fieldsandvalues.put("alwPlannedDefer", detail.isAlwPlanDeferment());
 
-					//Currency Conversions if Currency Constants Exists in Rule 
+					// Currency Conversions if Currency Constants Exists in Rule
 					String sqlRule = rule.getSQLRule();
 					sqlRule = RuleExecutionUtil.replaceCurrencyCode(sqlRule, null);
 
@@ -374,7 +356,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 						ruleReturnType = RuleReturnType.OBJECT;
 					}
 
-					//Rule Execution Process
+					// Rule Execution Process
 					Object object = RuleExecutionUtil.executeRule(sqlRule, fieldsandvalues, null, ruleReturnType);
 
 					financeEligibility = new FinanceEligibility();
@@ -385,8 +367,9 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 					financeEligibility.setPromotionDesc(detail.getFinTypeDesc());
 					financeEligibility.setFinCategory(detail.getFinCategory());
 					financeEligibility.setFinAssetType(detail.getFinAssetType());
-					financeEligibility.setRepayProfitRate(detail.getFinIntRate().compareTo(BigDecimal.ZERO) == 0
-							? BigDecimal.ZERO : detail.getFinIntRate());
+					financeEligibility
+							.setRepayProfitRate(detail.getFinIntRate().compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO
+									: detail.getFinIntRate());
 					financeEligibility.setNumberOfTerms(detail.getFinDftTerms());
 					financeEligibility.setProductFeature(detail.getRemarks());
 					financeEligibility.setElgAmount(new BigDecimal(object.toString()));
@@ -415,7 +398,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 	private List<FinanceType> getPromotionDetails() {
 		logger.debug("Entering");
 
-		//Fetch Workflow Defined Promotion Types
+		// Fetch Workflow Defined Promotion Types
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		JdbcSearchObject<FinanceType> finWorflowSearchObject = new JdbcSearchObject<FinanceType>(FinanceType.class);
 		finWorflowSearchObject.addTabelName("LMTFinanceWorkFlowDef");
@@ -430,14 +413,14 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 			finTypes.add(financeType.getFinType());
 		}
 
-		//Fetch Promotion Type Details
+		// Fetch Promotion Type Details
 		JdbcSearchObject<FinanceType> jdbcSearchObject = new JdbcSearchObject<FinanceType>(FinanceType.class);
 		jdbcSearchObject.addTabelName("RMTFinanceTypes_AView");
 		jdbcSearchObject.addFilter(Filter.equalTo("FinIsActive", 1));
 		jdbcSearchObject.addFilter(Filter.notEqual("Product", ""));
 		jdbcSearchObject.addFilter(Filter.in("FinType", finTypes));
 
-		//Field Details
+		// Field Details
 		jdbcSearchObject.addField("Product");
 		jdbcSearchObject.addField("LovDescPromoFinTypeDesc");
 		jdbcSearchObject.addField("FinType");
@@ -510,7 +493,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 		customer.setLovDescCustRiskCountryName(defaultCountry.getCountryDesc());
 		customer.setLovDescCustNationalityName(defaultCountry.getCountryDesc());
 
-		//Setting Primary Relation Ship Officer
+		// Setting Primary Relation Ship Officer
 		RelationshipOfficer officer = getRelationshipOfficerService()
 				.getApprovedRelationshipOfficerById(getUserWorkspace().getLoggedInUser().getUserName());
 		if (officer != null) {
@@ -518,14 +501,14 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 			customer.setLovDescCustRO1Name(officer.getROfficerDesc());
 		}
 
-		//Setting User Branch to Customer Branch
+		// Setting User Branch to Customer Branch
 		Branch branch = getBranchService().getApprovedBranchById(getUserWorkspace().getLoggedInUser().getBranchCode());
 		if (branch != null) {
 			customer.setCustDftBranch(branch.getBranchCode());
 			customer.setLovDescCustDftBranchName(branch.getBranchDesc());
 		}
 
-		//Setting User Branch to Customer Branch
+		// Setting User Branch to Customer Branch
 		CustomerType customerType = getCustomerTypeService()
 				.getApprovedCustomerTypeById(PennantConstants.DEFAULT_CUST_TYPE);
 		if (customerType != null) {
@@ -616,13 +599,10 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
-		if (doClose(false)) {
-
-		}
+		doClose(false);
 	}
 
 	public void onCheck$existing(Event event) {

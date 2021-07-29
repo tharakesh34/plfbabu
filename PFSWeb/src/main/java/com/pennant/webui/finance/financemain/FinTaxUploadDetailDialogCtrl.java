@@ -804,9 +804,11 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
-		if (doClose(this.btnSave.isVisible())) {
-			getFinTaxUploadDetailListCtrl().refreshList();
-		}
+		doClose(this.btnSave.isVisible());
+	}
+
+	protected void doPostClose() {
+		getFinTaxUploadDetailListCtrl().refreshList();
 	}
 
 	public FinTaxUploadDetailListCtrl getFinTaxUploadDetailListCtrl() {

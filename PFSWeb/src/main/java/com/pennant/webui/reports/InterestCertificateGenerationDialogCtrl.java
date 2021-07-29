@@ -652,10 +652,12 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
-		if (doClose(false)) {
-			if (tabbox != null) {
-				tabbox.getSelectedTab().close();
-			}
+		doClose(false);
+	}
+
+	protected void doPostClose() {
+		if (tabbox != null) {
+			tabbox.getSelectedTab().close();
 		}
 	}
 

@@ -1656,11 +1656,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void doClose() throws Exception {
 		logger.debug(Literal.ENTERING);
-		boolean isClosed = doClose(this.btnSave.isVisible());
-		if (isClosed && extendedFieldCtrl != null && financeDetail.getExtendedFieldHeader() != null) {
+		doClose(this.btnSave.isVisible());
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	protected void doPostClose() {
+		if (extendedFieldCtrl != null && financeDetail.getExtendedFieldHeader() != null) {
 			extendedFieldCtrl.deAllocateAuthorities();
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**

@@ -140,8 +140,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_NPAProvisionHeaderDialog(Event event) throws Exception {
@@ -221,8 +220,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -234,8 +232,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -246,8 +243,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -258,8 +254,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -270,8 +265,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -282,8 +276,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -294,8 +287,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -362,8 +354,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param nPAProvisionHeader
-	 *            The entity that need to be render.
+	 * @param nPAProvisionHeader The entity that need to be render.
 	 */
 	public void doShowDialog(NPAProvisionHeader nPAProvisionHeader) {
 		logger.debug(Literal.ENTERING);
@@ -601,11 +592,9 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -716,10 +705,8 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */
@@ -792,7 +779,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		return processCompleted;
 	}
 
-	//####### Provision details processing start #####////
+	// ####### Provision details processing start #####////
 
 	private void doFillProvisionDetails(NPAProvisionHeader provisionHeader) {
 		logger.debug(Literal.ENTERING);
@@ -802,7 +789,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		if (CollectionUtils.isEmpty(provisionDetailsList)) {
 			return;
 		}
-		//Sorting provision details based on Stage order
+		// Sorting provision details based on Stage order
 		sortProvisionDetails(provisionDetailsList);
 
 		boolean isReadOnly = isReadOnly("NPAProvisionHeaderDialog_DetailsList");
@@ -827,12 +814,12 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		boolean mandatory = true;
 		int stageOrder = detail.getAssetStageOrder();
 
-		//Asset Code
+		// Asset Code
 		Listcell lc_AssetCode = new Listcell(detail.getAssetCode());
 		item.appendChild(lc_AssetCode);
 		lc_AssetCode.setParent(item);
 
-		//NPA check box
+		// NPA check box
 		Listcell lc_NPACheckBox = new Listcell();
 		Checkbox npa_CheckBox = new Checkbox();
 		npa_CheckBox.setId("NPACheckBox_" + stageOrder);
@@ -844,7 +831,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		lc_NPACheckBox.appendChild(npa_CheckBox);
 		item.appendChild(lc_NPACheckBox);
 
-		//DPD-Days
+		// DPD-Days
 		Listcell lc_DPDDays = new Listcell();
 		Intbox dpdDays = new Intbox();
 		dpdDays.setId("DPDDays_" + stageOrder);
@@ -856,7 +843,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		getSpacing(lc_DPDDays, dpdDays, mandatory, stageOrder, "DPDDays_");
 		item.appendChild(lc_DPDDays);
 
-		//NPA Payment Apportionment
+		// NPA Payment Apportionment
 		Listcell lc_NPAPaymt = new Listcell();
 		Combobox paymnt_Combobox = new Combobox();
 		paymnt_Combobox.setId("NPAPymntApprtn_" + stageOrder);
@@ -989,7 +976,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 				continue;
 			}
 
-			//DPD Days
+			// DPD Days
 			if (detail.getDPDdays() <= 0) {
 				throw new WrongValueException(dpdDays, Labels.getLabel("DPDDAYS_SHOULD_NOT_ZERO_LABEL"));
 			} else if (detail.getDPDdays() > 999) {
@@ -1003,7 +990,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 
 			dpdDaysVal = dpdDays.intValue();
 
-			//NPA Payment Type
+			// NPA Payment Type
 			if (StringUtils.equals(PennantConstants.List_Select, detail.getNPARepayApprtnmnt())) {
 				throw new WrongValueException(npaPymntApprtn, Labels.getLabel("label_NPAPayemntType_Value"));
 			}
@@ -1022,7 +1009,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		return provisionDetailsList;
 	}
 
-	//NPA Check option
+	// NPA Check option
 	public void onClick_NPA_CheckBox(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
@@ -1031,12 +1018,12 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 
 		if (!checkbox.isChecked()) {
 
-			//ALL Asset Codes are Set to Default values if user  uncheck one NPA check box also.
+			// ALL Asset Codes are Set to Default values if user uncheck one NPA check box also.
 			for (int i = 0; i < listBoxProvisionDeatils.getItems().size(); i++) {
 
 				Listitem item = listBoxProvisionDeatils.getItems().get(i);
-				//To UnCheck Particular Asset Code it will set to default values.
-				//Listitem item = listBoxProvisionDeatils.getItems().get(sequence-1);
+				// To UnCheck Particular Asset Code it will set to default values.
+				// Listitem item = listBoxProvisionDeatils.getItems().get(sequence-1);
 				int stageOrder = Integer.parseInt(item.getId().replaceAll("listitem_", ""));
 
 				Checkbox unCheckNpaActive = (Checkbox) listBoxProvisionDeatils
@@ -1153,25 +1140,27 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		logger.debug(Literal.LEAVING);
 	}
 
-	//Copy Button 
+	// Copy Button
 	public void onClick$btnCopyTo(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
-		if (doClose(this.btnSave.isVisible())) {
-			//code added to copy current screen changes
-			NPAProvisionHeader aNPAProvisionHeader = new NPAProvisionHeader();
-			BeanUtils.copyProperties(this.nPAProvisionHeader, aNPAProvisionHeader);
-			doWriteComponentsToBean(aNPAProvisionHeader);
-			List<NPAProvisionDetail> listNPAProvisionDetail = getProvisionDetails();
-			aNPAProvisionHeader.setProvisionDetailsList(listNPAProvisionDetail);
-			Events.postEvent("onClick$button_NPAProvisionHeaderList_NewNPAProvisionHeader",
-					nPAProvisionHeaderListCtrl.window_NPAProvisionHeaderList, aNPAProvisionHeader);
-		}
+		doClose(this.btnSave.isVisible());
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	//Extract Button 
+	protected void doPostClose() {
+		NPAProvisionHeader aNPAProvisionHeader = new NPAProvisionHeader();
+		BeanUtils.copyProperties(this.nPAProvisionHeader, aNPAProvisionHeader);
+		doWriteComponentsToBean(aNPAProvisionHeader);
+		List<NPAProvisionDetail> listNPAProvisionDetail = getProvisionDetails();
+		aNPAProvisionHeader.setProvisionDetailsList(listNPAProvisionDetail);
+		Events.postEvent("onClick$button_NPAProvisionHeaderList_NewNPAProvisionHeader",
+				nPAProvisionHeaderListCtrl.window_NPAProvisionHeaderList, aNPAProvisionHeader);
+
+	}
+
+	// Extract Button
 	public void onClick$btnExtract(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
@@ -1235,7 +1224,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		});
 	}
 
-	//####### Provision details processing end #####////
+	// ####### Provision details processing end #####////
 
 	/**
 	 * @param aAuthorizedSignatoryRepository

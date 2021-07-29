@@ -114,10 +114,12 @@ public class LimitRebuildListCtrl extends GFCBaseCtrl<LimitHeader> {
 	 * @param event
 	 */
 	public void onClick$btnClose(Event event) {
-		if (doClose(false)) {
-			if (this.tabbox != null) {
-				this.tabbox.getSelectedTab().close();
-			}
+		doClose(false);
+	}
+
+	protected void doPostClose() {
+		if (this.tabbox != null) {
+			this.tabbox.getSelectedTab().close();
 		}
 	}
 
@@ -238,8 +240,8 @@ public class LimitRebuildListCtrl extends GFCBaseCtrl<LimitHeader> {
 			}
 		}
 
-		//MessageUtil.showMessage(Labels.getLabel("LimitRebuild_Sucess"));
-		//Events.sendEvent("onClick$btnClose", this.window_LimitRebuildList, "");
+		// MessageUtil.showMessage(Labels.getLabel("LimitRebuild_Sucess"));
+		// Events.sendEvent("onClick$btnClose", this.window_LimitRebuildList, "");
 
 		Clients.showNotification(Labels.getLabel("LimitRebuild_Sucess"));
 		logger.debug(Literal.LEAVING);
