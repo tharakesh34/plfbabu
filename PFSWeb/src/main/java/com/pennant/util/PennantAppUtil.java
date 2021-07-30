@@ -168,6 +168,34 @@ public class PennantAppUtil {
 		return productList;
 	}
 
+	public static LovFieldDetail getLovFieldDetail(String fieldCode) {
+
+		ArrayList<ValueLabel> fieldCodeList = new ArrayList<ValueLabel>();
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+
+		JdbcSearchObject<LovFieldDetail> searchObject = new JdbcSearchObject<LovFieldDetail>(LovFieldDetail.class);
+		searchObject.addSort("FieldCodeValue", false);
+		searchObject.addFilter(new Filter("FieldCode", fieldCode, Filter.OP_EQUAL));
+		searchObject.addFilter(new Filter("IsActive", 1, Filter.OP_EQUAL));
+		searchObject.addField("FieldCodeValue");
+		searchObject.addField("ValueDesc");
+		searchObject.addField("SystemDefault");
+
+		LovFieldDetail lovFieldDetail = new LovFieldDetail();
+
+		List<LovFieldDetail> appList = pagedListService.getBySearchObject(searchObject);
+		for (int i = 0; i < appList.size(); i++) {
+			ValueLabel codeValue = new ValueLabel(String.valueOf(appList.get(i).getFieldCodeValue()),
+					appList.get(i).getValueDesc());
+			fieldCodeList.add(codeValue);
+			if (appList.get(i).isSystemDefault()) {
+				lovFieldDetail.setFieldCodeValue(appList.get(i).getFieldCodeValue());
+			}
+		}
+		lovFieldDetail.setValueLabelList(fieldCodeList);
+		return lovFieldDetail;
+	}
+
 	public static ArrayList<ValueLabel> getFieldCodeList(String fieldCode) {
 
 		ArrayList<ValueLabel> fieldCodeList = new ArrayList<ValueLabel>();

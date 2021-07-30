@@ -26,7 +26,11 @@
 package com.pennant.backend.model.systemmasters;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+import com.pennant.backend.model.ValueLabel;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -48,6 +52,13 @@ public class LovFieldDetail extends AbstractWorkflowEntity {
 	private LovFieldDetail befImage;
 	private LoggedInUser userDetails;
 	private boolean systemDefault;
+	private List<ValueLabel> valueLabelList;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<>();
+		excludeFields.add("valueLabelList");
+		return excludeFields;
+	}
 
 	public LovFieldDetail() {
 		super();
@@ -149,4 +160,13 @@ public class LovFieldDetail extends AbstractWorkflowEntity {
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
+
+	public List<ValueLabel> getValueLabelList() {
+		return valueLabelList;
+	}
+
+	public void setValueLabelList(List<ValueLabel> valueLabelList) {
+		this.valueLabelList = valueLabelList;
+	}
+
 }

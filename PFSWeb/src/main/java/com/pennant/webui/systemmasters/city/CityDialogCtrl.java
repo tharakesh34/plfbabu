@@ -44,7 +44,6 @@ package com.pennant.webui.systemmasters.city;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -61,10 +60,10 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.City;
+import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.systemmasters.CityService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -108,7 +107,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	// ServiceDAOs / Domain Classes
 	private transient CityService cityService;
 
-	private final List<ValueLabel> cityClassList = PennantAppUtil.getFieldCodeList("CITYCLSS");
+	private final LovFieldDetail lovFieldDetail = PennantAppUtil.getLovFieldDetail("CITYCLSS");
 
 	/**
 	 * default constructor.<br>
@@ -348,7 +347,14 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		this.pCCity.setValue(aCity.getPCCity());
 		this.pCCityName.setValue(aCity.getPCCityName());
 		this.bankRefNo.setValue(aCity.getBankRefNo());
-		fillComboBox(this.pCCityClass, aCity.getPCCityClassification(), cityClassList, "");
+		String pCCityClassification = null;
+		if (lovFieldDetail.getFieldCodeValue() != null && !lovFieldDetail.getFieldCodeValue().isEmpty()) {
+			pCCityClassification = lovFieldDetail.getFieldCodeValue();
+		}
+		if (aCity.getPCCityClassification() != null && !aCity.getPCCityClassification().isEmpty()) {
+			pCCityClassification = aCity.getPCCityClassification();
+		}
+		fillComboBox(this.pCCityClass, pCCityClassification, lovFieldDetail.getValueLabelList(), "");
 		this.recordStatus.setValue(aCity.getRecordStatus());
 		this.cityIsActive.setChecked(aCity.isCityIsActive());
 
