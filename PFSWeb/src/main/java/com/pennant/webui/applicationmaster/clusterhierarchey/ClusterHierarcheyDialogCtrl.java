@@ -73,6 +73,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.applicationmaster.ClusterHierarchyService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -537,8 +538,13 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 
 			Listitem listitem = (Listitem) component;
 			Uppercasebox textBox = (Uppercasebox) listitem.getFirstChild().getFirstChild();
-			textBox.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_ClusterHierarcheyDialog_ClusterType.value"), null, true));
+			textBox.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ClusterHierarcheyDialog_ClusterType.value"),
+							PennantRegularExpressions.REGEX_ALPHA, true));
+			Intbox seqOrder = (Intbox) listitem.getLastChild().getLastChild();
+			seqOrder.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ClusterHierarcheyDialog_seqOrder.value"),
+							PennantRegularExpressions.REGEX_NUMERIC, true));
 		}
 
 		logger.debug(Literal.LEAVING);
