@@ -5623,7 +5623,7 @@
 	</bean>
 	
 	<!-- DB-Based Scheduler -->
-	<bean id="jobMonitorCtrl" class="com.pennanttech.pennapps.web.job.JobMonitoringCtrl">
+	<bean id="jobMonitorCtrl" class="com.pennanttech.pennapps.web.job.JobMonitoringCtrl" scope="prototype">
 		<property name="jobDataAccess" ref="jobDataAccess"/>
 		<property name="jobJmxClient" ref="jobJmxClient"/>
 	</bean>
