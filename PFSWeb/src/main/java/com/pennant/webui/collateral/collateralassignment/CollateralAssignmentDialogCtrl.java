@@ -32,6 +32,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
@@ -51,6 +52,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.CollateralHeaderDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
@@ -1244,6 +1246,8 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 				whereClause.append(
 						" Select CollateralRef From CollateralAssignment union Select CollateralRef From CollateralAssignment_Temp)) ");
 				whereClause.append(" OR MultiLoanAssignment = 1))  ");
+				whereClause.append(" AND (expirydate isNull");
+				whereClause.append(" OR expirydate >= '" + JdbcUtil.getDate(SysParamUtil.getAppDate()) + "')");
 			} else {
 				whereClause.append(" ((DepositorId = ");
 				whereClause.append(customerId).append(") ");
