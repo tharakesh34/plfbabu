@@ -447,6 +447,11 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		}
 
 		ainterfaceMapping.setRecordStatus(this.recordStatus.getValue());
+
+		if (interfaceMapping.getMasterMappingList() == null) {
+			this.masterMappingList.clear();
+		}
+
 		ainterfaceMapping.setMasterMappingList(this.masterMappingList);
 
 		logger.debug("Leaving");
