@@ -145,19 +145,19 @@
 								</hbox>
 								<label id="label_RateAsPerBranchAPF" value="${c:l('label_ProjectUnitsDialog_RateAsPerBranchAPF.value')}" />
 								<hbox>
-									<space spacing="2px" />
+									<space id="space_rateAsPerBranchAPF" spacing="2px" />
 									<decimalbox id="rateAsPerBranchAPF" width="200px" />
 								</hbox>
 							</row>
 							<row>
 								<label id="label_RateAsPerCostSheet" value="${c:l('label_ProjectUnitsDialog_RateAsPerCostSheet.value')}" />
 								<hbox>
-									<space spacing="2px" />
+									<space id="space_rateAsPerCostSheet" spacing="2px" />
 									<decimalbox id="rateAsPerCostSheet" width="200px" />
 								</hbox>
 								<label id="label_UnitRpsf" value="${c:l('label_ProjectUnitsDialog_UnitRpsf.value')}" />
 								<hbox>
-									<space spacing="2px" />
+									<space id="space_unitRpsf" spacing="2px" />
 									<decimalbox id="unitRpsf" width="200px" />
 								</hbox>
 							</row>

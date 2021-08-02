@@ -82,6 +82,9 @@ public class ProjectUnitsDialogCtrl extends GFCBaseCtrl<ProjectUnits> {
 	protected Space space_rateAsPerCarpetArea;
 	protected Space space_rateAsPerBuiltUpArea;
 	protected Space space_rateAsPerSuperBuiltUpArea;
+	protected Space space_rateAsPerBranchAPF;
+	protected Space space_rateAsPerCostSheet;
+	protected Space space_unitRpsf;
 	private ProjectUnits projectUnits;
 	private static List<ValueLabel> unitTypesList = PennantStaticListUtil.getUnitTypes();
 	private static List<ValueLabel> unitAreaConsideredList = PennantStaticListUtil.getUnitAreaConsidered();
@@ -1128,78 +1131,250 @@ public class ProjectUnitsDialogCtrl extends GFCBaseCtrl<ProjectUnits> {
 	public void onSelectRateConsidered() {
 		logger.debug(Literal.ENTERING);
 		if (rateConsidered.getSelectedItem().getValue() != null) {
-			if (rateConsidered.getSelectedItem().getValue()
-					.equals(PennantStaticListUtil.geRateConsidered().get(0).getValue())) {
+			switch (rateConsidered.getSelectedItem().getValue().toString()) {
+			case PennantConstants.CARPET_AREA_RATE:
 				this.rateAsPerCarpetArea.setDisabled(false);
 				this.space_rateAsPerCarpetArea.setSclass("mandatory");
+
 				this.rateAsPerBuiltUpArea.setDisabled(true);
 				this.rateAsPerBuiltUpArea.setConstraint("");
 				this.rateAsPerBuiltUpArea.setErrorMessage("");
 				this.rateAsPerBuiltUpArea.clearErrorMessage();
 				this.space_rateAsPerBuiltUpArea.setSclass("");
+				this.rateAsPerBuiltUpArea.setValue(BigDecimal.ZERO);
+
 				this.rateAsPerSuperBuiltUpArea.setDisabled(true);
 				this.rateAsPerSuperBuiltUpArea.setConstraint("");
 				this.rateAsPerSuperBuiltUpArea.setErrorMessage("");
 				this.rateAsPerSuperBuiltUpArea.clearErrorMessage();
 				this.space_rateAsPerSuperBuiltUpArea.setSclass("");
-				this.rateAsPerBuiltUpArea.setValue(BigDecimal.ZERO);
 				this.rateAsPerSuperBuiltUpArea.setValue(BigDecimal.ZERO);
+
 				this.rateAsPerBranchAPF.setDisabled(true);
+				this.rateAsPerBranchAPF.setConstraint("");
+				this.rateAsPerBranchAPF.setErrorMessage("");
+				this.rateAsPerBranchAPF.clearErrorMessage();
+				this.space_rateAsPerBranchAPF.setSclass("");
 				this.rateAsPerBranchAPF.setValue(BigDecimal.ZERO);
+
 				this.rateAsPerCostSheet.setDisabled(true);
+				this.rateAsPerCostSheet.setConstraint("");
+				this.rateAsPerCostSheet.setErrorMessage("");
+				this.rateAsPerCostSheet.clearErrorMessage();
+				this.space_rateAsPerCostSheet.setSclass("");
 				this.rateAsPerCostSheet.setValue(BigDecimal.ZERO);
+
 				this.unitRpsf.setDisabled(true);
+				this.unitRpsf.setConstraint("");
+				this.unitRpsf.setErrorMessage("");
+				this.unitRpsf.clearErrorMessage();
+				this.space_unitRpsf.setSclass("");
 				this.unitRpsf.setValue(BigDecimal.ZERO);
 
-			}
-			if (rateConsidered.getSelectedItem().getValue()
-					.equals(PennantStaticListUtil.geRateConsidered().get(1).getValue())) {
+				break;
+			case PennantConstants.BUILTUP_AREA_RATE:
 				this.rateAsPerBuiltUpArea.setDisabled(false);
 				this.space_rateAsPerBuiltUpArea.setSclass("mandatory");
+
 				this.rateAsPerCarpetArea.setDisabled(true);
 				this.rateAsPerCarpetArea.setConstraint("");
 				this.rateAsPerCarpetArea.setErrorMessage("");
 				this.rateAsPerCarpetArea.clearErrorMessage();
 				this.space_rateAsPerCarpetArea.setSclass("");
+				this.rateAsPerCarpetArea.setValue(BigDecimal.ZERO);
+
 				this.rateAsPerSuperBuiltUpArea.setDisabled(true);
 				this.rateAsPerSuperBuiltUpArea.setConstraint("");
 				this.rateAsPerSuperBuiltUpArea.setErrorMessage("");
 				this.rateAsPerSuperBuiltUpArea.clearErrorMessage();
 				this.space_rateAsPerSuperBuiltUpArea.setSclass("");
-				this.rateAsPerCarpetArea.setValue(BigDecimal.ZERO);
 				this.rateAsPerSuperBuiltUpArea.setValue(BigDecimal.ZERO);
+
 				this.rateAsPerBranchAPF.setDisabled(true);
+				this.rateAsPerBranchAPF.setConstraint("");
+				this.rateAsPerBranchAPF.setErrorMessage("");
+				this.rateAsPerBranchAPF.clearErrorMessage();
+				this.space_rateAsPerBranchAPF.setSclass("");
 				this.rateAsPerBranchAPF.setValue(BigDecimal.ZERO);
+
 				this.rateAsPerCostSheet.setDisabled(true);
+				this.rateAsPerCostSheet.setConstraint("");
+				this.rateAsPerCostSheet.setErrorMessage("");
+				this.rateAsPerCostSheet.clearErrorMessage();
+				this.space_rateAsPerCostSheet.setSclass("");
 				this.rateAsPerCostSheet.setValue(BigDecimal.ZERO);
+
 				this.unitRpsf.setDisabled(true);
+				this.unitRpsf.setConstraint("");
+				this.unitRpsf.setErrorMessage("");
+				this.unitRpsf.clearErrorMessage();
+				this.space_unitRpsf.setSclass("");
 				this.unitRpsf.setValue(BigDecimal.ZERO);
-			}
-			if (rateConsidered.getSelectedItem().getValue()
-					.equals(PennantStaticListUtil.geRateConsidered().get(2).getValue())) {
+
+				break;
+			case PennantConstants.SUPERBUILTUP_AREA_RATE:
 				this.rateAsPerSuperBuiltUpArea.setDisabled(false);
 				this.space_rateAsPerSuperBuiltUpArea.setSclass("mandatory");
+
 				this.rateAsPerCarpetArea.setDisabled(true);
 				this.rateAsPerCarpetArea.setConstraint("");
 				this.rateAsPerCarpetArea.setErrorMessage("");
 				this.rateAsPerCarpetArea.clearErrorMessage();
 				this.space_rateAsPerCarpetArea.setSclass("");
+				this.rateAsPerCarpetArea.setValue(BigDecimal.ZERO);
+
 				this.rateAsPerBuiltUpArea.setDisabled(true);
 				this.rateAsPerBuiltUpArea.setConstraint("");
 				this.rateAsPerBuiltUpArea.setErrorMessage("");
 				this.rateAsPerBuiltUpArea.clearErrorMessage();
 				this.space_rateAsPerBuiltUpArea.setSclass("");
-				this.rateAsPerCarpetArea.setValue(BigDecimal.ZERO);
 				this.rateAsPerBuiltUpArea.setValue(BigDecimal.ZERO);
+
 				this.rateAsPerBranchAPF.setDisabled(true);
+				this.rateAsPerBranchAPF.setConstraint("");
+				this.rateAsPerBranchAPF.setErrorMessage("");
+				this.rateAsPerBranchAPF.clearErrorMessage();
+				this.space_rateAsPerBranchAPF.setSclass("");
 				this.rateAsPerBranchAPF.setValue(BigDecimal.ZERO);
+
 				this.rateAsPerCostSheet.setDisabled(true);
+				this.rateAsPerCostSheet.setConstraint("");
+				this.rateAsPerCostSheet.setErrorMessage("");
+				this.rateAsPerCostSheet.clearErrorMessage();
+				this.space_rateAsPerCostSheet.setSclass("");
 				this.rateAsPerCostSheet.setValue(BigDecimal.ZERO);
+
 				this.unitRpsf.setDisabled(true);
+				this.unitRpsf.setConstraint("");
+				this.unitRpsf.setErrorMessage("");
+				this.unitRpsf.clearErrorMessage();
+				this.space_unitRpsf.setSclass("");
+				this.unitRpsf.setValue(BigDecimal.ZERO);
+				break;
+			case PennantConstants.BRANCH_APF_RATE:
+				this.rateAsPerBranchAPF.setDisabled(false);
+				this.space_rateAsPerBranchAPF.setSclass("mandatory");
+
+				this.rateAsPerCarpetArea.setDisabled(true);
+				this.rateAsPerCarpetArea.setConstraint("");
+				this.rateAsPerCarpetArea.setErrorMessage("");
+				this.rateAsPerCarpetArea.clearErrorMessage();
+				this.space_rateAsPerCarpetArea.setSclass("");
+				this.rateAsPerCarpetArea.setValue(BigDecimal.ZERO);
+
+				this.rateAsPerBuiltUpArea.setDisabled(true);
+				this.rateAsPerBuiltUpArea.setConstraint("");
+				this.rateAsPerBuiltUpArea.setErrorMessage("");
+				this.rateAsPerBuiltUpArea.clearErrorMessage();
+				this.space_rateAsPerBuiltUpArea.setSclass("");
+				this.rateAsPerBuiltUpArea.setValue(BigDecimal.ZERO);
+
+				this.rateAsPerSuperBuiltUpArea.setDisabled(true);
+				this.rateAsPerSuperBuiltUpArea.setConstraint("");
+				this.rateAsPerSuperBuiltUpArea.setErrorMessage("");
+				this.rateAsPerSuperBuiltUpArea.clearErrorMessage();
+				this.space_rateAsPerSuperBuiltUpArea.setSclass("");
+				this.rateAsPerSuperBuiltUpArea.setValue(BigDecimal.ZERO);
+
+				this.rateAsPerCostSheet.setDisabled(true);
+				this.rateAsPerCostSheet.setConstraint("");
+				this.rateAsPerCostSheet.setErrorMessage("");
+				this.rateAsPerCostSheet.clearErrorMessage();
+				this.space_rateAsPerCostSheet.setSclass("");
+				this.rateAsPerCostSheet.setValue(BigDecimal.ZERO);
+
+				this.unitRpsf.setDisabled(true);
+				this.unitRpsf.setConstraint("");
+				this.unitRpsf.setErrorMessage("");
+				this.unitRpsf.clearErrorMessage();
+				this.space_unitRpsf.setSclass("");
 				this.unitRpsf.setValue(BigDecimal.ZERO);
 
+				break;
+			case PennantConstants.COST_SHEET_RATE:
+				this.rateAsPerCostSheet.setDisabled(false);
+				this.space_rateAsPerCostSheet.setSclass("mandatory");
+
+				this.rateAsPerCarpetArea.setDisabled(true);
+				this.rateAsPerCarpetArea.setConstraint("");
+				this.rateAsPerCarpetArea.setErrorMessage("");
+				this.rateAsPerCarpetArea.clearErrorMessage();
+				this.space_rateAsPerCarpetArea.setSclass("");
+				this.rateAsPerCarpetArea.setValue(BigDecimal.ZERO);
+
+				this.rateAsPerBuiltUpArea.setDisabled(true);
+				this.rateAsPerBuiltUpArea.setConstraint("");
+				this.rateAsPerBuiltUpArea.setErrorMessage("");
+				this.rateAsPerBuiltUpArea.clearErrorMessage();
+				this.space_rateAsPerBuiltUpArea.setSclass("");
+				this.rateAsPerBuiltUpArea.setValue(BigDecimal.ZERO);
+
+				this.rateAsPerSuperBuiltUpArea.setDisabled(true);
+				this.rateAsPerSuperBuiltUpArea.setConstraint("");
+				this.rateAsPerSuperBuiltUpArea.setErrorMessage("");
+				this.rateAsPerSuperBuiltUpArea.clearErrorMessage();
+				this.space_rateAsPerSuperBuiltUpArea.setSclass("");
+				this.rateAsPerSuperBuiltUpArea.setValue(BigDecimal.ZERO);
+
+				this.rateAsPerBranchAPF.setDisabled(true);
+				this.rateAsPerBranchAPF.setConstraint("");
+				this.rateAsPerBranchAPF.setErrorMessage("");
+				this.rateAsPerBranchAPF.clearErrorMessage();
+				this.space_rateAsPerBranchAPF.setSclass("");
+				this.rateAsPerBranchAPF.setValue(BigDecimal.ZERO);
+
+				this.unitRpsf.setDisabled(true);
+				this.unitRpsf.setConstraint("");
+				this.unitRpsf.setErrorMessage("");
+				this.unitRpsf.clearErrorMessage();
+				this.space_unitRpsf.setSclass("");
+				this.unitRpsf.setValue(BigDecimal.ZERO);
+
+				break;
+			case PennantConstants.RATE_PER_SQUARE_FEET:
+				this.unitRpsf.setDisabled(false);
+				this.space_unitRpsf.setSclass("mandatory");
+
+				this.rateAsPerCarpetArea.setDisabled(true);
+				this.rateAsPerCarpetArea.setConstraint("");
+				this.rateAsPerCarpetArea.setErrorMessage("");
+				this.rateAsPerCarpetArea.clearErrorMessage();
+				this.space_rateAsPerCarpetArea.setSclass("");
+				this.rateAsPerCarpetArea.setValue(BigDecimal.ZERO);
+
+				this.rateAsPerBuiltUpArea.setDisabled(true);
+				this.rateAsPerBuiltUpArea.setConstraint("");
+				this.rateAsPerBuiltUpArea.setErrorMessage("");
+				this.rateAsPerBuiltUpArea.clearErrorMessage();
+				this.space_rateAsPerBuiltUpArea.setSclass("");
+				this.rateAsPerBuiltUpArea.setValue(BigDecimal.ZERO);
+
+				this.rateAsPerSuperBuiltUpArea.setDisabled(true);
+				this.rateAsPerSuperBuiltUpArea.setConstraint("");
+				this.rateAsPerSuperBuiltUpArea.setErrorMessage("");
+				this.rateAsPerSuperBuiltUpArea.clearErrorMessage();
+				this.space_rateAsPerSuperBuiltUpArea.setSclass("");
+				this.rateAsPerSuperBuiltUpArea.setValue(BigDecimal.ZERO);
+
+				this.rateAsPerBranchAPF.setDisabled(true);
+				this.rateAsPerBranchAPF.setConstraint("");
+				this.rateAsPerBranchAPF.setErrorMessage("");
+				this.rateAsPerBranchAPF.clearErrorMessage();
+				this.space_rateAsPerBranchAPF.setSclass("");
+				this.rateAsPerBranchAPF.setValue(BigDecimal.ZERO);
+
+				this.rateAsPerCostSheet.setDisabled(true);
+				this.rateAsPerCostSheet.setConstraint("");
+				this.rateAsPerCostSheet.setErrorMessage("");
+				this.rateAsPerCostSheet.clearErrorMessage();
+				this.space_rateAsPerCostSheet.setSclass("");
+				this.rateAsPerCostSheet.setValue(BigDecimal.ZERO);
+				break;
+			default:
+				break;
 			}
 		}
+
 		onChangeUnitArea();
 		totalPrice.setValue(price.getActualValue().add(getTotalPrice()));
 		logger.debug(Literal.LEAVING);
