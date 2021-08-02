@@ -33924,4 +33924,34 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</update>
 	</changeSet>
 	
+	<changeSet id="PSD#177025" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				DELETE FROM REPORTLIST WHERE CODE = 'VASM';
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('VASM', 'VASProvider', 'label_VehicleDealerSearch_DealerName.value,label_VehicleDealerSearch_Email.value,label_VehicleDealerSearch_DealerTelephone.value,listheader_DealerProvince.label,label_VehicleDealerSearch_DealerCity.value,label_VehicleDealerSearch_Active.value', 'dealerName,email,dealerTelephone,dealerProvince,dealerCity,active', 'String,String,String,String,String,String', null, 'ReportList06', 'Sourcing Officers', 'Application Masters', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0, 0);
+
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#177025.1" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				DELETE FROM REPORTLIST WHERE CODE = 'DSM';
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('DSM', 'DealerDetails', 'label_VehicleDealerSearch_DealerName.value,label_VehicleDealerSearch_Email.value,label_VehicleDealerSearch_DealerTelephone.value,listheader_DealerProvince.label,label_VehicleDealerSearch_DealerCity.value,label_VehicleDealerSearch_Active.value', 'dealerName,email,dealerTelephone,dealerProvince,dealerCity,active', 'String,String,String,String,String,String', null, 'ReportList06', 'Sourcing Officers', 'Application Masters', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0, 0);
+
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#177025.2" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				DELETE FROM REPORTLIST WHERE CODE = 'MANF';
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('MANF', 'Manufacturer', 'label_VehicleDealerSearch_DealerName.value,label_VehicleDealerSearch_Email.value,label_VehicleDealerSearch_DealerTelephone.value,listheader_DealerProvince.label,label_VehicleDealerSearch_DealerCity.value,label_VehicleDealerSearch_Active.value', 'dealerName,email,dealerTelephone,dealerProvince,dealerCity,active', 'String,String,String,String,String,String', null, 'ReportList06', 'Sourcing Officers', 'Application Masters', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0, 0);
+
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
