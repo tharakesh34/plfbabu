@@ -196,8 +196,6 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	protected Grid postValidationGrid;
 	protected Button btnCopyTo;
 
-	private boolean enqModule = false;
-
 	private VASConfiguration vASConfiguration;
 	private transient VASConfigurationListCtrl vASConfigurationListCtrl;
 	private transient ExtendedFieldDialogCtrl extendedFieldDialogCtrl;
@@ -250,9 +248,9 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		setPageComponents(window_VASConfigurationDialog);
 		try {
 			if (arguments.containsKey("enqModule")) {
-				enqModule = (Boolean) arguments.get("enqModule");
+				enqiryModule = (Boolean) arguments.get("enqModule");
 			} else {
-				enqModule = false;
+				enqiryModule = false;
 			}
 
 			this.alwCopyOption = (Boolean) arguments.get("alwCopyOption");
@@ -274,11 +272,11 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			doLoadWorkFlow(this.vASConfiguration.isWorkflow(), this.vASConfiguration.getWorkflowId(),
 					this.vASConfiguration.getNextTaskId());
 
-			if (isWorkFlowEnabled() && !enqModule) {
+			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "VASConfigurationDialog");
 			} else {
-				if (!enqModule) {
+				if (!enqiryModule) {
 					getUserWorkspace().allocateAuthorities("VASConfigurationDialog");
 				}
 			}
@@ -1666,39 +1664,6 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
-
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Closes the dialog window. <br>
-	 * <br>
-	 * Before closing we check if there are unsaved changes in <br>
-	 * the components and ask the user if saving the modifications. <br>
-	 * 
-	 * @throws InterruptedException
-	 * 
-	 */
-	private void doClose() throws InterruptedException {
-		logger.debug("Entering");
-		boolean close = true;
-		if (!enqModule && isDataChanged()) {
-			logger.debug("isDataChanged : true");
-
-			// Show a confirm box
-			final String msg = Labels.getLabel("message_Data_Modified_Save_Data_YesNo");
-
-			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-				doSave();
-				close = false;
-			}
-		} else {
-			logger.debug("isDataChanged : false");
-		}
-
-		if (close) {
-			closeDialog();
-		}
 
 		logger.debug("Leaving");
 	}

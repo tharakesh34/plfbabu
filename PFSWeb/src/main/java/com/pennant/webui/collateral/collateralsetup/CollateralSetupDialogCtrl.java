@@ -2080,14 +2080,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws Exception
-	 * 
-	 * @throws InterruptedException
-	 */
-	private void doSave() throws Exception {
+	protected void doSave() throws Exception {
 		logger.debug("Entering");
 
 		final CollateralSetup aCollateralSetup = new CollateralSetup();

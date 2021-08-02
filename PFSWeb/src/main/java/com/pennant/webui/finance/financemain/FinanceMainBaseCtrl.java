@@ -1645,16 +1645,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 	}
 
-	/**
-	 * Closes the dialog window. <br>
-	 * <br>
-	 * Before closing we check if there are unsaved changes in <br>
-	 * the components and ask the user if saving the modifications. <br>
-	 * 
-	 * @throws Exception
-	 * 
-	 */
-	protected void doClose() throws Exception {
+	protected void doClose() {
 		logger.debug(Literal.ENTERING);
 		doClose(this.btnSave.isVisible());
 

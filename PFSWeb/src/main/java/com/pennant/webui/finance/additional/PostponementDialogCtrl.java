@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *											    											*
- * FileName    		:  PostponementDialogCtrl.java                          	            * 	  
- *                                                                    			    		*
- * Author      		:  PENNANT TECHONOLOGIES              				    				*
- *                                                                  			    		*
- * Creation Date    :  05-10-2011    							    						*
- *                                                                  			    		*
- * Modified Date    :  05-10-2011    							    						*
- *                                                                  			    		*
- * Description 		:                                             			    			*
- *                                                                                          *
+ * * FileName : PostponementDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-10-2011 * *
+ * Modified Date : 05-10-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-10-2011       Pennant	                 0.1                                        	* 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-10-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.additional;
@@ -209,15 +191,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * when the "Apply" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 */
-	public void onClick$btnPostponement(Event event)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	public void onClick$btnPostponement(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -226,8 +200,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -243,14 +216,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		doClose(false);
 	}
 
-	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 */
-	private void doSave() throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	protected void doSave() throws Exception {
 		logger.debug("Entering");
 		doWriteComponentsToBean();
 		this.window_PostponementDialog.onClose();
@@ -260,8 +226,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceMain
-	 *            FinanceMain
+	 * @param aFinanceMain FinanceMain
 	 */
 	private void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
@@ -337,7 +302,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
-				//Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
+				// Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
 				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
 						|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
 					dateCombobox.getItems().clear();
@@ -438,7 +403,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
-				//Profit && Paid (Partial/Full)
+				// Profit && Paid (Partial/Full)
 				if (curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) == 0
 						&& curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) == 0) {
 					continue;
@@ -536,7 +501,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					throw new WrongValueException(this.cbRecalToDate, Labels.getLabel("STATIC_INVALID",
 							new String[] { Labels.getLabel("label_PostponementDialog_RecalToDate.value") }));
 				}
-				//if schdpftBal greater than zero throw validation
+				// if schdpftBal greater than zero throw validation
 				if (this.cbRecalToDate.getSelectedItem().getAttribute("pftBal") != null) {
 					throw new WrongValueException(this.cbRecalToDate, Labels.getLabel("Label_finSchdTillDate"));
 				}
@@ -610,7 +575,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 			}
 
-			//Check max limit
+			// Check max limit
 			if (getFinScheduleData().getFinanceMain().getAvailedDefRpyChange() + adjTerms > getFinScheduleData()
 					.getFinanceMain().getDefferments()) {
 				MessageUtil.showError(Labels.getLabel("label_PostponementDialog_MaxPostponement.value",
@@ -618,7 +583,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				return;
 			}
 		} else if (StringUtils.equals(FinServiceEvent.UNPLANEMIH, moduleDefiner)) {
-			//Check max limit
+			// Check max limit
 			if (getFinScheduleData().getFinanceMain().getAvailedUnPlanEmi() + adjTerms > getFinScheduleData()
 					.getFinanceMain().getMaxUnplannedEmi()) {
 				MessageUtil.showError(Labels.getLabel("label_PostponementDialog_MaxUnPlanEMIH.value",
@@ -626,7 +591,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				return;
 			}
 		} else if (StringUtils.equals(FinServiceEvent.REAGING, moduleDefiner)) {
-			//Check max limit
+			// Check max limit
 			if (getFinScheduleData().getFinanceMain().getAvailedReAgeH() + adjTerms > getFinScheduleData()
 					.getFinanceMain().getMaxReAgeHolidays()) {
 				MessageUtil.showError(Labels.getLabel("label_PostponementDialog_MaxReAgeH.value",
@@ -664,7 +629,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
 		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
 
-		//Show Error Details in Schedule Maintenance
+		// Show Error Details in Schedule Maintenance
 		if (getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()) {
 			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));
 			getFinScheduleData().getErrorDetails().clear();
@@ -742,7 +707,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 		}
 
-		//Check total deferments made in the specified year.
+		// Check total deferments made in the specified year.
 		if (defermentStart != null && defermentEnd != null) {
 
 			int curretnDefCount = 0;

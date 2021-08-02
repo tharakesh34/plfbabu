@@ -1,6 +1,5 @@
 package com.pennant.webui.finance.additional;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -126,8 +125,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -143,16 +141,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		doClose(false);
 	}
 
-	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws WrongValueException
-	 */
-	private void doSave()
-			throws InterruptedException, WrongValueException, IllegalAccessException, InvocationTargetException {
+	protected void doSave() throws Exception {
 		logger.debug("Entering");
 		doSetValidation();
 		doWriteComponentsToBean();
@@ -188,9 +177,9 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/*	*//**
 			 * Method to clear error message
 			 *//*
-			 * private void doRemoveValidation() { logger.debug("Entering"); this.holdEMIFromDate.setConstraint("");
-			 * this.holdEMIToDate.setConstraint(""); logger.debug("Leaving"); }
-			 */
+				 * private void doRemoveValidation() { logger.debug("Entering"); this.holdEMIFromDate.setConstraint("");
+				 * this.holdEMIToDate.setConstraint(""); logger.debug("Leaving"); }
+				 */
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
@@ -235,8 +224,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceMain
-	 *            FinanceMain
+	 * @param aFinanceMain FinanceMain
 	 */
 	public void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
@@ -508,16 +496,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * when the "Apply" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws WrongValueException
-	 */
-	public void onClick$btnHoldEMI(Event event)
-			throws InterruptedException, WrongValueException, IllegalAccessException, InvocationTargetException {
+	public void onClick$btnHoldEMI(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		if (getFinanceScheduleDetail() != null) {
 			if (isDataChanged()) {

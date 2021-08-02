@@ -72,7 +72,7 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 			}
 
 			if (isWorkFlowEnabled() && !enqiryModule) {
-				//this.userAction = setListRecordStatus(this.userAction);
+				// this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 			}
 
@@ -190,7 +190,7 @@ public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 		doSave();
 	}
 
-	private void doSave() {
+	protected void doSave() {
 		logger.debug(Literal.ENTERING);
 
 		final Sampling sampling = new Sampling();

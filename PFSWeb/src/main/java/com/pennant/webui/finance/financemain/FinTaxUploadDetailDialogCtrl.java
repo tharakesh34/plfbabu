@@ -425,7 +425,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		doSave();
 	}
 
-	private void doSave() {
+	protected void doSave() {
 		logger.debug(Literal.ENTERING);
 		FinTaxUploadHeader afinTaxUploadHeader = new FinTaxUploadHeader();
 		BeanUtils.copyProperties(getFinTaxUploadHeader(), afinTaxUploadHeader);

@@ -82,7 +82,6 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 
 	protected Label recordType;
 	protected Groupbox gb_statusDetails;
-	private boolean enqModule = false;
 
 	private VASProductCategory vASProductCategory;
 	private transient VASProductCategoryListCtrl vASProductCategoryListCtrl;
@@ -115,9 +114,9 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 
 			// get the params map that are overhanded by creation.
 			if (arguments.containsKey("enqModule")) {
-				enqModule = (Boolean) arguments.get("enqModule");
+				enqiryModule = (Boolean) arguments.get("enqModule");
 			} else {
-				enqModule = false;
+				enqiryModule = false;
 			}
 
 			// READ OVERHANDED params !
@@ -134,11 +133,11 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 			doLoadWorkFlow(this.vASProductCategory.isWorkflow(), this.vASProductCategory.getWorkflowId(),
 					this.vASProductCategory.getNextTaskId());
 
-			if (isWorkFlowEnabled() && !enqModule) {
+			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "VASProductCategoryDialog");
 			} else {
-				if (!enqModule) {
+				if (!enqiryModule) {
 					getUserWorkspace().allocateAuthorities("VASProductCategoryDialog");
 				}
 			}
@@ -549,39 +548,6 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
-
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Closes the dialog window. <br>
-	 * <br>
-	 * Before closing we check if there are unsaved changes in <br>
-	 * the components and ask the user if saving the modifications. <br>
-	 * 
-	 * @throws InterruptedException
-	 * 
-	 */
-	private void doClose() throws InterruptedException {
-		logger.debug("Entering");
-		boolean close = true;
-		if (!enqModule && isDataChanged()) {
-			logger.debug("isDataChanged : true");
-
-			// Show a confirm box
-			final String msg = Labels.getLabel("message_Data_Modified_Save_Data_YesNo");
-
-			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-				doSave();
-				close = false;
-			}
-		} else {
-			logger.debug("isDataChanged : false");
-		}
-
-		if (close) {
-			closeDialog();
-		}
 
 		logger.debug("Leaving");
 	}

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FieldsListSelectCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  23-01-2012    														*
- *                                                                  						*
- * Modified Date    :  23-01-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FieldsListSelectCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 23-01-2012 * * Modified
+ * Date : 23-01-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 23-01-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-01-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.reports.reportlist;
@@ -105,7 +87,7 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 	protected Listheader listheader_Type; // autoWired
 
 	// not auto wired variables
-	private ReportList reportList; // overHanded per parameter                        
+	private ReportList reportList; // overHanded per parameter
 	private transient PagedListService pagedListService;
 	private transient ReportListDialogCtrl reportListDialogCtrl;
 	protected JdbcSearchObject<ReportList> searchObj;
@@ -183,20 +165,13 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
 	}
 
-	/**
-	 * when the "save" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws InterruptedException
-	 */
-	public void onClick$btnSave(Event event) throws InterruptedException {
+	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -205,8 +180,7 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aReportList
-	 *            ReportList
+	 * @param aReportList ReportList
 	 */
 	public void doWriteBeanToComponents(ReportList aReportList) {
 		logger.debug("Entering");
@@ -271,14 +245,7 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
-
-	/**
-	 * Saves the components to ReportList. <br>
-	 * 
-	 * @throws InterruptedException
-	 */
-	private void doSave() throws InterruptedException {
+	protected void doSave() throws Exception {
 		logger.debug("Entering");
 
 		boolean error = false;
@@ -324,7 +291,7 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 						selectedCount = selectedCount + 1;
 					}
 
-					//Setting Maximum Sequence Number Usage
+					// Setting Maximum Sequence Number Usage
 					if (seqMaxValue < seq) {
 						seqMaxValue = seq;
 					}

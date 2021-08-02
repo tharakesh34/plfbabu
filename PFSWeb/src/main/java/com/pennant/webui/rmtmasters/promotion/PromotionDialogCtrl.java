@@ -1277,12 +1277,12 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		}
 
 		if (this.finTypeFeesListCtrl != null) {
-			aPromotion.setFinTypeFeesList(this.finTypeFeesListCtrl.doSave());
+			aPromotion.setFinTypeFeesList(this.finTypeFeesListCtrl.onSave());
 		}
 
 		if (wve.isEmpty() && this.finTypeAccountingListCtrl != null) {
 			if (this.finTypeAccountingListCtrl != null) {
-				aPromotion.setFinTypeAccountingList(this.finTypeAccountingListCtrl.doSave());
+				aPromotion.setFinTypeAccountingList(this.finTypeAccountingListCtrl.onSave());
 			}
 		} else {
 			this.basicDetails.setSelected(true);

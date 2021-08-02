@@ -225,7 +225,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 
 	public void onClick$btnNew_NewFinOption(Event event) throws Exception {
 		FinOption option = new FinOption();
-		//FIXME GDP Default value set to 7, need to parameterized.
+		// FIXME GDP Default value set to 7, need to parameterized.
 		option.setAlertDays(7);
 		isFinOptionNew = true;
 		option.setNewRecord(true);
@@ -1097,7 +1097,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 
 		if (isWorkFlowEnabled()) {
 
-			//Notes button
+			// Notes button
 			if (!fromLoan) {
 				if (StringUtils.isNotBlank(this.finMaintainInstruction.getRecordType())) {
 					this.btnNotes.setVisible(true);
@@ -1164,7 +1164,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		doSave();
 	}
 
-	private void doSave() {
+	protected void doSave() {
 		logger.debug(Literal.ENTERING);
 
 		FinMaintainInstruction aFinMaintainInstruction = new FinMaintainInstruction();

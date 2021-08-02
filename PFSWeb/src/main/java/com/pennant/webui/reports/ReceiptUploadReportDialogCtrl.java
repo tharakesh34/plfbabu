@@ -213,7 +213,7 @@ public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 		doClose();
 	}
 
-	private void doClose() {
+	protected void doClose() {
 		doClose(false);
 	}
 

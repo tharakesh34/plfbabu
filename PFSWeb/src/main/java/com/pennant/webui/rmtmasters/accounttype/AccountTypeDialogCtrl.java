@@ -282,13 +282,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
-	 * when the "save" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws InterruptedException
-	 */
-	public void onClick$btnSave(Event event) throws InterruptedException {
+	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -367,43 +361,6 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	protected void doPostClose() {
 		Events.postEvent("onClick$button_AccountTypeList_NewAccountType", accountTypeListCtrl.window_AccountTypeList,
 				getAccountType());
-	}
-
-	// GUI operations
-
-	/**
-	 * Closes the dialog window. <br>
-	 * <br>
-	 * Before closing we check if there are unsaved changes in <br>
-	 * the components and ask the user if saving the modifications. <br>
-	 * 
-	 * @throws InterruptedException
-	 * 
-	 */
-	private void doClose(String msg) throws InterruptedException {
-		logger.debug("Entering");
-		boolean close = true;
-
-		if (isDataChanged()) {
-			logger.debug("Data Changed(): True");
-
-			// Show a confirm box
-			if (msg == null) {
-				msg = Labels.getLabel("message_Data_Modified_Save_Data_YesNo");
-			}
-
-			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-				doSave();
-				close = false;
-			}
-		} else {
-			logger.debug("Data Changed(): false");
-		}
-
-		if (close) {
-			closeDialog();
-		}
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -1000,7 +957,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	 * 
 	 * @throws InterruptedException
 	 */
-	public void doSave() throws InterruptedException {
+	public void doSave() throws Exception {
 		logger.debug("Entering");
 		final AccountType aAccountType = new AccountType();
 		BeanUtils.copyProperties(getAccountType(), aAccountType);

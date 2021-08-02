@@ -700,35 +700,6 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignmentHeader
 	}
 
 	/**
-	 * Closes the dialog window. <br>
-	 * Before closing we check if there are unsaved changes in <br>
-	 * the components and ask the user if saving the modifications. <br>
-	 * 
-	 * @throws InterruptedException
-	 * 
-	 */
-	public void doClose() throws InterruptedException {
-
-		logger.debug("Entering ");
-		boolean close = true;
-		// before close check whether data changed.
-		if (isDataChanged()) {
-			// Show a confirm box
-			final String msg = Labels.getLabel("message_Data_Modified_Save_Data_YesNo");
-
-			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-				doSave();
-				close = false;
-			}
-		}
-		if (close) {
-			refreshList();
-			closeDialog(); // QueueAssignment
-		}
-		logger.debug("Leaving ");
-	}
-
-	/**
 	 * This method cancels the previous operations
 	 * 
 	 * @throws Exception

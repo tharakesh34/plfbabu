@@ -741,7 +741,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		}
 
 		if (getDisbursementInstructionsDialogCtrl() != null) {
-			PaymentInstruction paymentInstruction = getDisbursementInstructionsDialogCtrl().doSave();
+			PaymentInstruction paymentInstruction = getDisbursementInstructionsDialogCtrl().onSave();
 			aPaymentHeader.setPaymentInstruction(paymentInstruction);
 		}
 		// Save PaymentDetails

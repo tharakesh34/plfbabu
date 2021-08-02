@@ -539,7 +539,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 	/**
 	 * This method will save the external liabilities
 	 */
-	private void doSave() {
+	protected void doSave() {
 		logger.debug(Literal.ENTERING);
 		boolean flag = false;
 		try {

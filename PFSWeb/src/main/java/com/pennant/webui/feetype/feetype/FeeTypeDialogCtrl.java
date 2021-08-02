@@ -132,7 +132,6 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 	protected Label recordType;
 	protected Groupbox gb_statusDetails;
-	private boolean enqModule = false;
 
 	// due DueAccReq
 	protected Row row_DueAccReq;
@@ -202,9 +201,9 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 			// READ OVERHANDED params !
 			if (arguments.containsKey("enqModule")) {
-				enqModule = (Boolean) arguments.get("enqModule");
+				enqiryModule = (Boolean) arguments.get("enqModule");
 			} else {
-				enqModule = false;
+				enqiryModule = false;
 			}
 
 			// READ OVERHANDED params !
@@ -229,7 +228,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 			doLoadWorkFlow(this.feeType.isWorkflow(), this.feeType.getWorkflowId(), this.feeType.getNextTaskId());
 
-			if (isWorkFlowEnabled() && !enqModule) {
+			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "FeeTypeDialog");
 			} else {
@@ -947,39 +946,6 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
-
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Closes the dialog window. <br>
-	 * <br>
-	 * Before closing we check if there are unsaved changes in <br>
-	 * the components and ask the user if saving the modifications. <br>
-	 * 
-	 * @throws InterruptedException
-	 * 
-	 */
-	private void doClose() throws InterruptedException {
-		logger.debug("Entering");
-		boolean close = true;
-		if (!enqModule && isDataChanged()) {
-			logger.debug("isDataChanged : true");
-
-			// Show a confirm box
-			final String msg = Labels.getLabel("message_Data_Modified_Save_Data_YesNo");
-
-			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-				doSave();
-				close = false;
-			}
-		} else {
-			logger.debug("isDataChanged : false");
-		}
-
-		if (close) {
-			closeDialog();
-		}
 
 		logger.debug("Leaving");
 	}

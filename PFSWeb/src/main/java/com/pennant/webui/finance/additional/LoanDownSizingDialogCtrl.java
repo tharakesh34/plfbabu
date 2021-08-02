@@ -303,8 +303,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceMain
-	 *            FinanceMain
+	 * @param aFinanceMain FinanceMain
 	 * @throws Exception
 	 */
 	private void doWriteBeanToComponents(FinanceMain aFinanceMain) throws Exception {
@@ -342,7 +341,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.availableAmt.setValue(finAvailableAmt.subtract(downSizingAmount));
 		this.revisedSanctionedAmt.setValue(finAssetValue.subtract(downSizingAmount));
 
-		//Filling Child Window Details Tabs
+		// Filling Child Window Details Tabs
 		doFillTabs(getFinanceDetail(), true, true);
 
 		logger.debug(Literal.LEAVING);
@@ -363,10 +362,10 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			appendScheduleDetailTab(aFinanceDetail, false);
 		}
 
-		//Show Accounting Tab Details Based upon Role Condition using Work flow
+		// Show Accounting Tab Details Based upon Role Condition using Work flow
 		if (isFullDisb && isReqToLoad && "Accounting".equals(getTaskTabs(getTaskId(getRole())))) {
 
-			//Accounting Details Tab Addition
+			// Accounting Details Tab Addition
 			appendAccountingDetailTab(aFinanceDetail, onLoad);
 		}
 
@@ -431,8 +430,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -454,8 +452,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -598,7 +595,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * 
 	 * @throws Exception
 	 */
-	private void doSave() throws Exception {
+	protected void doSave() throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		recSave = false;
@@ -705,11 +702,9 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAcademic
-	 *            (Academic)
+	 * @param aAcademic (Academic)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType  (String)
 	 * 
 	 * @return boolean
 	 * @throws JaxenException
@@ -817,11 +812,9 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * @throws JaxenException
@@ -843,7 +836,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				if (StringUtils.isBlank(method)) {
 					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						//auditHeader = loanDownSizingService.delete(auditHeader);
+						// auditHeader = loanDownSizingService.delete(auditHeader);
 						deleteNotes = true;
 					} else {
 						auditHeader = loanDownSizingService.saveOrUpdate(auditHeader);
@@ -971,8 +964,9 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 			}
 
-			finServiceInstruction.setAmount(PennantApplicationUtil.unFormateAmount(this.downSizingAmt.isReadonly()
-					? this.downSizingAmt.getActualValue() : this.downSizingAmt.getValidateValue(), formatter));
+			finServiceInstruction.setAmount(PennantApplicationUtil
+					.unFormateAmount(this.downSizingAmt.isReadonly() ? this.downSizingAmt.getActualValue()
+							: this.downSizingAmt.getValidateValue(), formatter));
 
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1060,7 +1054,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		isSchdBuildReq = false;
 		isDownsizeError = false;
 
-		// Actual Schedules 
+		// Actual Schedules
 		FinScheduleData scheduleData = cloner.deepClone(finScheduleData);
 
 		if (finAvailableAmt.compareTo(this.downSizingAmt.getActualValue()) == 0) {
@@ -1227,7 +1221,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 		}
 
-		//Finance Accounting Details Execution
+		// Finance Accounting Details Execution
 		executeAccounting(onLoadProcess);
 
 		logger.debug(Literal.LEAVING);
@@ -1250,7 +1244,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		if (aeEvent != null) {
 
-			// PftChg is the POST AMOUNT in Posting entries 
+			// PftChg is the POST AMOUNT in Posting entries
 			List<FinServiceInstruction> finServInstList = getFinScheduleData().getFinServiceInstructions();
 			if (!finServInstList.isEmpty()) {
 				finServInstList.get(0).setPftChg(getFinScheduleData().getPftChg());
@@ -1338,7 +1332,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		arrayList.add(9, custShrtName);
 		arrayList.add(10, getFinanceMain().isNewRecord());
 		arrayList.add(11, moduleDefiner);
-		//arrayList.add(12, getFinanceMain().getFlexiType());
+		// arrayList.add(12, getFinanceMain().getFlexiType());
 
 		return arrayList;
 	}

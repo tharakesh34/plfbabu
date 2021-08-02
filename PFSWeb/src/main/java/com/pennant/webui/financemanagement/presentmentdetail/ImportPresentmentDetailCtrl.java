@@ -374,7 +374,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doSave() throws Exception {
+	protected void doSave() throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		LoggedInUser loggedInUser = getUserWorkspace().getLoggedInUser();

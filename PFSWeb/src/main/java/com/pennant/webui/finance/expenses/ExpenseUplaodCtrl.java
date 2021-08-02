@@ -167,8 +167,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param aAcademic
-	 *            The entity that need to be render.
+	 * @param aAcademic The entity that need to be render.
 	 */
 	public void doShowDialog(UploadHeader uploadHeader) {
 		logger.debug(Literal.ENTERING);
@@ -348,9 +347,9 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 		} else if (PennantConstants.EXPENSE_UPLOAD_LOANTYPE.equals(selectedModuleType)) {
 			reportName = "ExpenseReport_LoanType";
 		}
-		
+
 		String userName = getUserWorkspace().getLoggedInUser().getFullName();
-		
+
 		try {
 			ReportsUtil.generateReport(userName, reportName, whereCond, searchCriteria);
 		} catch (Exception e) {
@@ -890,7 +889,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doSave() throws Exception {
+	protected void doSave() throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		if (media == null) {

@@ -1,42 +1,24 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinCovenantTypeListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-08-2013    														*
- *                                                                  						*
- * Modified Date    :  14-08-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinCovenantTypeListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-08-2013 * *
+ * Modified Date : 14-08-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-08-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-08-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.covenant;
@@ -150,7 +132,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	protected boolean disbEnquiry = false;
 	protected Combobox enquiryCombobox;
 
-	//File Upload functionality in Covenants
+	// File Upload functionality in Covenants
 	protected Textbox fileName;
 	protected Button btnFileUpload;
 	protected Button btnImport;
@@ -669,8 +651,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		doSave();
@@ -685,7 +666,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		return this.financedetail.getFinScheduleData().getFinanceMain().getFinReference();
 	}
 
-	private void doSave() {
+	protected void doSave() {
 		logger.debug(Literal.ENTERING);
 
 		FinMaintainInstruction aFinMaintainInstruction = new FinMaintainInstruction();
@@ -756,11 +737,9 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aFinMaintainInstruction
-	 *            (FinMaintainInstruction)
+	 * @param aFinMaintainInstruction (FinMaintainInstruction)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -861,11 +840,9 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -943,8 +920,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		doEdit();
@@ -953,8 +929,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		MessageUtil.showHelpWindow(event, super.window);
@@ -963,8 +938,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		doCancel();
@@ -1024,8 +998,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		if (disbEnquiry && enquiryCombobox != null) {

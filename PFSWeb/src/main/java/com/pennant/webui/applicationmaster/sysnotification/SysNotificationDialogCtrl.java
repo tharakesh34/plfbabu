@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SysNotificationDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  11-06-2015    														*
- *                                                                  						*
- * Modified Date    :  11-06-2015    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SysNotificationDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 11-06-2015 * *
+ * Modified Date : 11-06-2015 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 11-06-2015       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 11-06-2015 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.applicationmaster.sysnotification;
@@ -315,8 +297,7 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aSysNotification
-	 *            SysNotification
+	 * @param aSysNotification SysNotification
 	 */
 	public void doWriteBeanToComponents(SysNotification aSysNotification) {
 		logger.debug("Entering");
@@ -404,7 +385,7 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	private void doSave() {
+	protected void doSave() {
 		logger.debug("Entering");
 
 		final SysNotification aSysNotification = new SysNotification();

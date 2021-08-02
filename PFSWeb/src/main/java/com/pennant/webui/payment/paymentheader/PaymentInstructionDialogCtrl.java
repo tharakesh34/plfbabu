@@ -194,12 +194,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
-	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws InterruptedException
-	 */
-	public PaymentInstruction doSave() {
+	public PaymentInstruction onSave() {
 		logger.debug("Entering");
 
 		doSetValidation();

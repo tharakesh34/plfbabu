@@ -300,7 +300,7 @@ public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
 		}
 	}
 
-	public List<FinTypeAccounting> doSave() {
+	public List<FinTypeAccounting> onSave() {
 		logger.debug("Entering");
 
 		List<FinTypeAccounting> finTypeAccountingList = processAccountingDetails();

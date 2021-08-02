@@ -190,6 +190,22 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		//
 	}
 
+	protected void doClose(final String msg) {
+		if (!enqiryModule && isDataChanged()) {
+			MessageUtil.confirm(msg, event -> {
+				if (Messagebox.ON_YES.equals(event.getName())) {
+					doSave();
+				} else {
+					closeDialog();
+				}
+			});
+		}
+	}
+
+	protected void doClose() {
+		doClose(Labels.getLabel("message_Data_Modified_Save_Data_YesNo"));
+	}
+
 	protected void doClose(boolean askConfirmation) {
 		if (!askConfirmation) {
 			closeDialog();
@@ -495,52 +511,55 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 	}
 
 	protected void doDelete(String keyReference, T aEntity) {
-		AbstractWorkflowEntity entity = (AbstractWorkflowEntity) aEntity;
+		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ keyReference;
 
 		MessageUtil.confirm(msg, event -> {
 			if (Messagebox.ON_YES.equals(event.getName())) {
-
-				String tranType = PennantConstants.TRAN_WF;
-				if (StringUtils.isBlank(((AbstractWorkflowEntity) entity).getRecordType())) {
-					entity.setVersion(entity.getVersion() + 1);
-					entity.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-					doDeleteChild(aEntity);
-
-					if (isWorkFlowEnabled()) {
-						entity.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-						entity.setNewRecord(true);
-						tranType = PennantConstants.TRAN_WF;
-						getWorkFlowDetails(userAction.getSelectedItem().getLabel(), entity.getNextTaskId(), entity);
-					} else {
-						tranType = PennantConstants.TRAN_DEL;
-					}
-				}
-
-				if (customProcess(aEntity)) {
-					return;
-				}
-
-				try {
-					if (doProcess(aEntity, tranType)) {
-						refreshList();
-						closeDialog();
-					}
-
-				} catch (Exception e) {
-					MessageUtil.showError(e);
-				}
-
-			} else if (Messagebox.ON_NO.equals(event.getName())) {
-				//
+				onDoDelete(aEntity);
 			}
 		});
 	}
 
-	protected boolean customProcess(T aEntity) {
-		return false;
+	private void onDoDelete(T aEntity) {
+		AbstractWorkflowEntity entity = (AbstractWorkflowEntity) aEntity;
+		String tranType = PennantConstants.TRAN_WF;
+
+		if (StringUtils.isBlank(entity.getRecordType())) {
+			entity.setVersion(entity.getVersion() + 1);
+			entity.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+
+			doDeleteChild(aEntity);
+			if (isWorkFlowEnabled()) {
+				/* FIXME THIS NEEDS TO BE CHECKED */
+				entity.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+				entity.setNewRecord(true);
+				tranType = PennantConstants.TRAN_WF;
+				/* FIXME THIS NEEDS TO BE CHECKED */
+				getWorkFlowDetails(userAction.getSelectedItem().getLabel(), entity.getNextTaskId(), aEntity);
+			} else {
+				tranType = PennantConstants.TRAN_DEL;
+			}
+		} else if (PennantConstants.RCD_UPD.equals(entity.getRecordType())) {/* FIXME THIS NEEDS TO BE CHECKED */
+			entity.setVersion(entity.getVersion() + 1);
+			entity.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		}
+
+		try {
+			if (doCustomDelete(aEntity)) {
+				if (doProcess(aEntity, tranType)) {
+					refreshList();
+					closeDialog();
+				}
+			}
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+	}
+
+	protected boolean doCustomDelete(T aEntity) {
+		return true;
 	}
 
 	protected void refreshList() {
@@ -548,6 +567,26 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 	}
 
 	protected boolean doProcess(T aEntity, String tranType) throws Exception {
+		return true;
+	}
+
+	protected void doSave(T aEntity, String tranType) {
+		try {
+			if (doProcess(aEntity, tranType)) {
+				refreshList();
+				closeDialog();
+			}
+
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+	}
+
+	protected void doSave() throws Exception {
+
+	}
+
+	protected boolean customProcess(T aEntity) {
 		return false;
 	}
 

@@ -112,7 +112,6 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 	protected Button btnCopyTo;
 
 	private AssetType assetConfigurationType;
-	private boolean enqModule = false;
 	protected Label preModuleDesc;
 	protected Label preSubModuleDesc;
 	protected Label postModuleDesc;
@@ -158,9 +157,9 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 
 			// READ OVERHANDED params !
 			if (arguments.containsKey("enqModule")) {
-				enqModule = (Boolean) arguments.get("enqModule");
+				enqiryModule = (Boolean) arguments.get("enqModule");
 			} else {
-				enqModule = false;
+				enqiryModule = false;
 			}
 
 			this.alwCopyOption = (Boolean) arguments.get("alwCopyOption");
@@ -180,7 +179,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 			doLoadWorkFlow(this.assetConfigurationType.isWorkflow(), this.assetConfigurationType.getWorkflowId(),
 					this.assetConfigurationType.getNextTaskId());
 
-			if (isWorkFlowEnabled() && !enqModule) {
+			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "AssetTypeDialog");
 			} else {
@@ -959,39 +958,6 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
-
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Closes the dialog window. <br>
-	 * <br>
-	 * Before closing we check if there are unsaved changes in <br>
-	 * the components and ask the user if saving the modifications. <br>
-	 * 
-	 * @throws InterruptedException
-	 * 
-	 */
-	private void doClose() throws InterruptedException {
-		logger.debug("Entering");
-		boolean close = true;
-		if (!enqModule && isDataChanged()) {
-			logger.debug("isDataChanged : true");
-
-			// Show a confirm box
-			final String msg = Labels.getLabel("message_Data_Modified_Save_Data_YesNo");
-
-			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-				doSave();
-				close = false;
-			}
-		} else {
-			logger.debug("isDataChanged : false");
-		}
-
-		if (close) {
-			closeAssetWindow();
-		}
 
 		logger.debug("Leaving");
 	}

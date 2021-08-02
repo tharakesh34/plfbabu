@@ -329,7 +329,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	 * 
 	 * @throws InterruptedException
 	 */
-	private void doSave() {
+	protected void doSave() {
 		logger.debug("Entering");
 
 		final FinanceFlag aFinanceFlags = new FinanceFlag();

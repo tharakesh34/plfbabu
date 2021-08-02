@@ -1,44 +1,26 @@
 /**
-
+ * 
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *											    											*
- * FileName    		:  AddDisbursementDialogCtrl.java                          	            * 	  
- *                                                                    			    		*
- * Author      		:  PENNANT TECHONOLOGIES              				    				*
- *                                                                  			    		*
- * Creation Date    :  05-10-2011    							    						*
- *                                                                  			    		*
- * Modified Date    :  05-10-2011    							    						*
- *                                                                  			    		*
- * Description 		:                                             			    			*
- *                                                                                          *
+ * * FileName : AddDisbursementDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-10-2011 * *
+ * Modified Date : 05-10-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-10-2011       Pennant	                 0.1                                        	* 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-10-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.additional;
@@ -276,8 +258,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceMain
-	 *            FinanceMain
+	 * @param aFinanceMain FinanceMain
 	 */
 	private void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
@@ -303,7 +284,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.disbAmount.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO,
 					CurrencyUtil.getFormat(SysParamUtil.getAppCurrency())));
 		}
-		// Future Disbursements not allowed at any case, because with Future Disbursements 
+		// Future Disbursements not allowed at any case, because with Future Disbursements
 		// there is an issue with SOA, Disbursement Uploads, Fore Closure Report..etc
 		if (!isWIF) {
 			this.fromDate.setValue(SysParamUtil.getAppDate());
@@ -734,7 +715,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						}
 					}
 				}
-				//Allow revolving checking
+				// Allow revolving checking
 			} else if (finMain.isAllowRevolving()) {
 				BigDecimal avalLimit = finMain.getFinAssetValue().subtract(finMain.getFinCurrAssetValue())
 						.add(finMain.getFinRepaymentAmount());
@@ -799,7 +780,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if (isValidComboValue(this.cbSchdMthd, Labels.getLabel("label_AddDisbursementDialog_SchdMthd.value"))
 					&& this.cbSchdMthd.getSelectedIndex() != 0) {
 				finServiceInstruction.setSchdMethod(getComboboxValue(this.cbSchdMthd));
-				//finMain.setRecalSchdMethod(getComboboxValue(this.cbSchdMthd));
+				// finMain.setRecalSchdMethod(getComboboxValue(this.cbSchdMthd));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -871,7 +852,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 											DateUtility.formatToLongDate((Date) this.fromDate.getValue()) }));
 				}
 
-				//throw Exception if the selected schedule in To Date is having profit balance     
+				// throw Exception if the selected schedule in To Date is having profit balance
 				if (this.cbTillDate.getSelectedItem().getAttribute("pftBal") != null) {
 					throw new WrongValueException(this.cbTillDate, Labels.getLabel("Label_finSchdTillDate"));
 				}
@@ -881,7 +862,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 		}
 
-		//For step loan adj terms setting in processStepLoans method if steps calculated on amount
+		// For step loan adj terms setting in processStepLoans method if steps calculated on amount
 		if (!(isStepLoan && PennantConstants.STEPPING_CALC_AMT.equals(finMain.getCalcOfSteps()))) {
 			finMain.setAdjTerms(0);
 		}
@@ -897,7 +878,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				wve.add(we);
 			}
 		}
-
 
 		try {
 			if (this.alwAssetUtilize.isChecked()) {
@@ -1042,7 +1022,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			finMain.setRecalToDate(maturityDate);
 			finServiceInstruction.setRecalToDate(maturityDate);
 		}
-		//TODO:Once Check
+		// TODO:Once Check
 		if (isDevFinance) {
 			finMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 			finMain.setEventFromDate(this.fromDate.getValue());
@@ -1106,7 +1086,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		aFinScheduleData.getFinanceMain().resetRecalculationFields();
 		aFinScheduleData.setFinServiceInstruction(finServiceInstruction);
 
-		//Set DisbSeq as Reference in Service Instruction
+		// Set DisbSeq as Reference in Service Instruction
 		int disbSeq = 0;
 		for (int i = 0; i < aFinScheduleData.getDisbursementDetails().size(); i++) {
 			FinanceDisbursement curDisb = aFinScheduleData.getDisbursementDetails().get(i);
@@ -1154,16 +1134,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * when the "Apply" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws WrongValueException
-	 */
-	public void onClick$btnAddDisbursement(Event event)
-			throws InterruptedException, WrongValueException, IllegalAccessException, InvocationTargetException {
+	public void onClick$btnAddDisbursement(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		if (getFinanceScheduleDetail() != null) {
 			if (isDataChanged()) {
@@ -1180,8 +1151,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -1197,16 +1167,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		doClose(false);
 	}
 
-	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws WrongValueException
-	 */
-	private void doSave()
-			throws InterruptedException, WrongValueException, IllegalAccessException, InvocationTargetException {
+	protected void doSave() throws Exception {
 		logger.debug("Entering");
 		doSetValidation();
 		doWriteComponentsToBean(getFinScheduleData());

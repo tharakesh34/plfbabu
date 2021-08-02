@@ -135,10 +135,10 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
 
-		//this.btnUpload.setVisible(getUserWorkspace().isAllowed("button_FinTypeExpenseUpload_Browse"));
-		//this.btnRefresh.setVisible(getUserWorkspace().isAllowed("button_FinTypeExpenseUpload_Refresh"));
-		//this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinTypeExpenseUpload_Refresh"));
-		//this.btndownload.setVisible(getUserWorkspace().isAllowed("button_FinTypeExpenseUpload_Report"));
+		// this.btnUpload.setVisible(getUserWorkspace().isAllowed("button_FinTypeExpenseUpload_Browse"));
+		// this.btnRefresh.setVisible(getUserWorkspace().isAllowed("button_FinTypeExpenseUpload_Refresh"));
+		// this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinTypeExpenseUpload_Refresh"));
+		// this.btndownload.setVisible(getUserWorkspace().isAllowed("button_FinTypeExpenseUpload_Report"));
 
 		logger.debug("Leaving");
 	}
@@ -146,8 +146,7 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param aAcademic
-	 *            The entity that need to be render.
+	 * @param aAcademic The entity that need to be render.
 	 */
 	public void doShowDialog(UploadHeader uploadHeader) {
 		logger.debug("Entering");
@@ -166,9 +165,9 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 				}
 				doEdit();
 			} else {
-				//this.btnCtrl.setInitEdit();
-				//doReadOnly();
-				//btnCancel.setVisible(false);
+				// this.btnCtrl.setInitEdit();
+				// doReadOnly();
+				// btnCancel.setVisible(false);
 			}
 		}
 
@@ -176,7 +175,7 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 			this.btnCtrl.setBtnStatus_Enquiry();
 		}
 
-		//setDialog(DialogType.EMBEDDED);
+		// setDialog(DialogType.EMBEDDED);
 
 		logger.debug("Leaving");
 	}
@@ -203,7 +202,7 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
 		} else {
-			//this.btnCtrl.setBtnStatus_Edit();
+			// this.btnCtrl.setBtnStatus_Edit();
 		}
 
 		logger.debug("Leaving ");
@@ -303,8 +302,8 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 			if (rowIndex > 0) {
 				List<String> rowValue = getRowValuesByIndex(this.workbook, 0, rowIndex);
 				if (CollectionUtils.isNotEmpty(rowValue)) {
-					String reason = null; //tell us the reason of the failure
-					boolean valid = true; //for data has been getting any errors or not
+					String reason = null; // tell us the reason of the failure
+					boolean valid = true; // for data has been getting any errors or not
 					finType = rowValue.get(0);
 					expenseTypeCode = rowValue.get(1);
 					amountValue = rowValue.get(2);
@@ -315,7 +314,7 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 					uploadDetail.setFinType(finType);
 					uploadDetail.setExpenseTypeCode(expenseTypeCode);
 
-					//validate the Upload data
+					// validate the Upload data
 					valid = validateUploadData(uploadDetail, percentage, amountValue, valid, reason);
 
 					if (valid) {
@@ -339,7 +338,7 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 		BigDecimal percentageValue = BigDecimal.ZERO;
 		BigDecimal amountValue = BigDecimal.ZERO;
 		String expenseType = uploadDetail.getExpenseTypeCode();
-		//Loan Type validation
+		// Loan Type validation
 		if (StringUtils.isBlank(uploadDetail.getFinType())) {
 			reason = "Loan Type is mandatory.";
 			valid = false;
@@ -359,7 +358,7 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 				}
 			}
 		}
-		//Percentage
+		// Percentage
 		try {
 			if (StringUtils.isBlank(percentage) || BigDecimal.ZERO.compareTo(new BigDecimal(percentage)) == 0) {
 				uploadDetail.setPercentage(BigDecimal.ZERO);
@@ -395,7 +394,7 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 			uploadDetail.setPercentage(BigDecimal.ZERO);
 		}
 
-		//Amount
+		// Amount
 		try {
 			if (StringUtils.isBlank(amount) || BigDecimal.ZERO.compareTo(new BigDecimal(amount)) == 0) {
 				uploadDetail.setAmountValue(BigDecimal.ZERO);
@@ -430,7 +429,7 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 				reason = reason + "| " + e.getMessage();
 			}
 		}
-		//Validate the amount and percentage
+		// Validate the amount and percentage
 		if (BigDecimal.ZERO.compareTo(uploadDetail.getAmountValue()) == 0
 				&& BigDecimal.ZERO.compareTo(uploadDetail.getPercentage()) == 0) {
 			if (valid) {
@@ -453,7 +452,7 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 			uploadDetail.setPercentage(BigDecimal.ZERO);
 		}
 
-		//Expense Type Code
+		// Expense Type Code
 		if (StringUtils.isBlank(expenseType)) {
 			if (valid) {
 				valid = false;
@@ -603,7 +602,7 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doSave() throws Exception {
+	protected void doSave() throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		String tranType;
@@ -637,7 +636,7 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 
 					long uploadId = this.uploadHeaderService.save(uploadHeader);
 
-					//Process the Upload Details
+					// Process the Upload Details
 					List<UploadFinTypeExpense> uploadDetails = processUploadDetails(uploadId);
 
 					if (uploadDetails != null && !uploadDetails.isEmpty()) {
@@ -722,10 +721,10 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 
 					Clients.showNotification("Data imported successfully.", "info", null, null, -1);
 
-					//Create backup file
+					// Create backup file
 					this.fileImport.backUpFile();
 
-					//doResetData();
+					// doResetData();
 					this.statusGrid.setVisible(true);
 					this.btnDownload.setVisible(true);
 					this.totalCount.setValue(String.valueOf(uploadHeader.getTotalRecords()));

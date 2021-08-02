@@ -808,44 +808,6 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		logger.debug("Leaving");
 	}
 
-	// GUI PROCESS
-
-	/**
-	 * Closes the dialog window. <br>
-	 * <br>
-	 * Before closing we check if there are unsaved changes in <br>
-	 * the components and ask the user if saving the modifications. <br>
-	 * 
-	 * @throws InterruptedException
-	 * 
-	 */
-	private void doClose(String msg) throws InterruptedException {
-		logger.debug("Entering");
-
-		boolean close = true;
-		if (isDataChanged()) {
-			logger.debug("isDataChanged : true");
-
-			// Show a confirm box
-			if (msg == null) {
-				msg = Labels.getLabel("message_Data_Modified_Save_Data_YesNo");
-			}
-
-			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-				doSave();
-				close = false;
-			}
-		} else {
-			logger.debug("isDataChanged : false");
-		}
-
-		if (close) {
-			closeDialog();
-		}
-
-		logger.debug("Leaving");
-	}
-
 	/**
 	 * Cancel the actual operation. <br>
 	 * <br>

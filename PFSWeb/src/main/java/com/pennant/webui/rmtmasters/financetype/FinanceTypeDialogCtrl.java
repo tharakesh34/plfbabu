@@ -3567,11 +3567,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		// Fees
 		if (getFinTypeFeesListCtrl() != null) {
-			aFinanceType.setFinTypeFeesList(getFinTypeFeesListCtrl().doSave());
+			aFinanceType.setFinTypeFeesList(getFinTypeFeesListCtrl().onSave());
 		}
 		// Accounting
 		if (wve.isEmpty() && getFinTypeAccountingListCtrl() != null) {
-			aFinanceType.setFinTypeAccountingList(getFinTypeAccountingListCtrl().doSave());
+			aFinanceType.setFinTypeAccountingList(getFinTypeAccountingListCtrl().onSave());
 		}
 		// PartnerBank
 		if (getFinTypePartnerBankListCtrl() != null) {
@@ -3580,7 +3580,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		// Expenses
 		if (getFinTypeExpenseListCtrl() != null) {
-			aFinanceType.setFinTypeExpenseList(getFinTypeExpenseListCtrl().doSave());
+			aFinanceType.setFinTypeExpenseList(getFinTypeExpenseListCtrl().onSave());
 		}
 
 		if (!isOverdraft && !consumerDurable) {

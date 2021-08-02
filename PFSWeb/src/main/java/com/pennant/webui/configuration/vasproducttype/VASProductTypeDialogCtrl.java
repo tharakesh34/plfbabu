@@ -94,7 +94,6 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 
 	protected Label recordType;
 	protected Groupbox gb_statusDetails;
-	private boolean enqModule = false;
 
 	private VASProductType vASProductType;
 	private transient VASProductTypeListCtrl vASProductTypeListCtrl;
@@ -125,9 +124,9 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 		try {
 			setPageComponents(window_VASProductTypeDialog);
 			if (arguments.containsKey("enqModule")) {
-				enqModule = (Boolean) arguments.get("enqModule");
+				enqiryModule = (Boolean) arguments.get("enqModule");
 			} else {
-				enqModule = false;
+				enqiryModule = false;
 			}
 
 			// READ OVERHANDED params !
@@ -144,7 +143,7 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 			doLoadWorkFlow(this.vASProductType.isWorkflow(), this.vASProductType.getWorkflowId(),
 					this.vASProductType.getNextTaskId());
 
-			if (isWorkFlowEnabled() && !enqModule) {
+			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "VASProductTypeDialog");
 			} else {
@@ -611,39 +610,6 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
-
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Closes the dialog window. <br>
-	 * <br>
-	 * Before closing we check if there are unsaved changes in <br>
-	 * the components and ask the user if saving the modifications. <br>
-	 * 
-	 * @throws InterruptedException
-	 * 
-	 */
-	private void doClose() throws InterruptedException {
-		logger.debug("Entering");
-		boolean close = true;
-		if (!enqModule && isDataChanged()) {
-			logger.debug("isDataChanged : true");
-
-			// Show a confirm box
-			final String msg = Labels.getLabel("message_Data_Modified_Save_Data_YesNo");
-
-			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-				doSave();
-				close = false;
-			}
-		} else {
-			logger.debug("isDataChanged : false");
-		}
-
-		if (close) {
-			closeDialog();
-		}
 
 		logger.debug("Leaving");
 	}

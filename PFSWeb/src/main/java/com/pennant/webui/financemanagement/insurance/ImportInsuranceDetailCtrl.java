@@ -149,7 +149,7 @@ public class ImportInsuranceDetailCtrl extends GFCBaseCtrl<InsuranceDetails> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doSave() throws InterruptedException {
+	protected void doSave() throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		ProcessData processData = new ProcessData(getUserWorkspace().getLoggedInUser(), INSURANCE_FILE_IMPORT_STATUS,
