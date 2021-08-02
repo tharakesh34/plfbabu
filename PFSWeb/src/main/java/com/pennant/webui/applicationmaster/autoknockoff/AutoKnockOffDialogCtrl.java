@@ -749,24 +749,53 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	/**
+	 * Deletes a VoucherVendor object from database.<br>
+	 * 
+	 * @throws InterruptedException
+	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		final AutoKnockOff aknockOff = new AutoKnockOff();
 		BeanUtils.copyProperties(getAutoKnockOff(), aknockOff);
+		String tranType = PennantConstants.TRAN_WF;
 
-		doDelete(String.valueOf(aknockOff.getId()), aknockOff);
+		// Show a confirm box
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aknockOff.getId();
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+			if (StringUtils.trimToEmpty(aknockOff.getRecordType()).equals("")) {
+				aknockOff.setVersion(aknockOff.getVersion() + 1);
+				aknockOff.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				for (AutoKnockOffFeeMapping autoKnockOffFeeMapping : aknockOff.getMappingList()) {
+					autoKnockOffFeeMapping.setVersion(autoKnockOffFeeMapping.getVersion() + 1);
+					autoKnockOffFeeMapping.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					autoKnockOffFeeMapping.setNewRecord(true);
+				}
 
-		logger.debug(Literal.LEAVING);
-	}
+				if (isWorkFlowEnabled()) {
+					aknockOff.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+					aknockOff.setNewRecord(true);
+					tranType = PennantConstants.TRAN_WF;
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aknockOff.getNextTaskId(), aknockOff);
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
+				}
+			}
 
-	protected void doDeleteChild(AutoKnockOff aknockOff) {
-		for (AutoKnockOffFeeMapping autoKnockOffFeeMapping : aknockOff.getMappingList()) {
-			autoKnockOffFeeMapping.setVersion(autoKnockOffFeeMapping.getVersion() + 1);
-			autoKnockOffFeeMapping.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			autoKnockOffFeeMapping.setNewRecord(true);
+			try {
+				if (doProcess(aknockOff, tranType)) {
+					refreshList();
+					closeDialog();
+				}
+
+			} catch (DataAccessException e) {
+				MessageUtil.showError(e);
+			}
 		}
 
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

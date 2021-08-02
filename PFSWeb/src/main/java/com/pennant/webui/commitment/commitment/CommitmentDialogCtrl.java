@@ -42,6 +42,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -2628,24 +2629,54 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		logger.debug("Leaving");
 	}
 
+	/**
+	 * Deletes a Commitment object from database.<br>
+	 * 
+	 * @throws InterruptedException
+	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug(Literal.ENTERING);
+		logger.debug("Entering");
 
 		final Commitment aCommitment = new Commitment();
 		BeanUtils.copyProperties(getCommitment(), aCommitment);
+		String tranType = PennantConstants.TRAN_WF;
 
-		String keyReference = Labels.getLabel("label_CommitmentDialog_CmtReference.value") + " : "
-				+ aCommitment.getCmtReference();
-		doDelete(keyReference, aCommitment);
+		// Show a confirm box
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ Labels.getLabel("label_CommitmentDialog_CmtReference.value") + " : " + aCommitment.getCmtReference();
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+			if (StringUtils.isBlank(aCommitment.getRecordType())) {
+				aCommitment.setVersion(aCommitment.getVersion() + 1);
+				aCommitment.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				aCommitment.getCommitmentMovement().setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-		logger.debug(Literal.LEAVING);
-	}
+				if (isWorkFlowEnabled()) {
+					aCommitment.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+					aCommitment.getCommitmentMovement()
+							.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+					aCommitment.setNewRecord(true);
+					tranType = PennantConstants.TRAN_WF;
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aCommitment.getNextTaskId(),
+							aCommitment);
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
+				}
+			}
 
-	protected void doDeleteChild(Commitment aCommitment) {
-		aCommitment.getCommitmentMovement().setRecordType(PennantConstants.RECORD_TYPE_DEL);
-		if (isWorkFlowEnabled()) {
-			aCommitment.getCommitmentMovement().setRecordStatus(userAction.getSelectedItem().getValue().toString());
+			try {
+				if (doProcess(aCommitment, tranType)) {
+					refreshList();
+
+					closeDialog();
+				}
+
+			} catch (DataAccessException e) {
+				MessageUtil.showError(e);
+			}
+
 		}
+
+		logger.debug("Leaving");
 	}
 
 	/**
