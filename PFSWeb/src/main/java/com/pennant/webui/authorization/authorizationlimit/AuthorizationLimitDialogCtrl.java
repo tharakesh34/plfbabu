@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AuthorizationLimitDialogCtrl.java                                    * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  06-04-2018    														*
- *                                                                  						*
- * Modified Date    :  06-04-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AuthorizationLimitDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 06-04-2018 * *
+ * Modified Date : 06-04-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 06-04-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 06-04-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.authorization.authorizationlimit;
 
 import java.math.BigDecimal;
@@ -210,51 +192,18 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a AuthorizationLimit object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		final AuthorizationLimit aAuthorizationLimit = new AuthorizationLimit();
 		BeanUtils.copyProperties(this.authorizationLimit, aAuthorizationLimit);
-		String tranType = PennantConstants.TRAN_WF;
 
 		String record = "User ID : " + aAuthorizationLimit.getUsrLogin();
 		if (!userRow.isVisible()) {
 			record = "Role Code : " + aAuthorizationLimit.getRoleCd();
 		}
 
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ record;
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aAuthorizationLimit.getRecordType()).equals("")) {
-				aAuthorizationLimit.setVersion(aAuthorizationLimit.getVersion() + 1);
-				aAuthorizationLimit.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aAuthorizationLimit.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aAuthorizationLimit.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aAuthorizationLimit.getNextTaskId(),
-							aAuthorizationLimit);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aAuthorizationLimit, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(record, aAuthorizationLimit);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -355,11 +304,9 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -552,10 +499,8 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */
@@ -736,7 +681,8 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 
 		if (holdRow.isVisible()) {
 			if (this.holdStartDate.isVisible() && !this.holdStartDate.isReadonly()) {
-				//this.holdStartDate.setConstraint(new PTDateValidator(Labels.getLabel("label_AuthorizationLimitDialog_HoldStartDate.value"),true,false));
+				// this.holdStartDate.setConstraint(new
+				// PTDateValidator(Labels.getLabel("label_AuthorizationLimitDialog_HoldStartDate.value"),true,false));
 			}
 			if (this.holdExpiryDate.isVisible() && !this.holdExpiryDate.isReadonly()) {
 				this.holdExpiryDate.setConstraint(
@@ -750,8 +696,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param authorizationLimit
-	 *            The entity that need to be render.
+	 * @param authorizationLimit The entity that need to be render.
 	 */
 	public void doShowDialog(AuthorizationLimit authorizationLimit) {
 		logger.debug(Literal.LEAVING);
@@ -844,7 +789,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		boolean validAmount = false;
 		if (aAuthorizationLimit.getLimitType() == 1) {
-			//User I D
+			// User I D
 			try {
 				this.userId.getValue();
 				SecurityUser user = (SecurityUser) this.userId.getObject();
@@ -858,7 +803,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 			}
 
 		} else {
-			//Role Id
+			// Role Id
 			try {
 				this.roleId.getValidatedValue();
 				SecurityRole role = (SecurityRole) this.roleId.getObject();
@@ -871,7 +816,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 				wve.add(we);
 			}
 		}
-		//Limit Amount
+		// Limit Amount
 		try {
 			aAuthorizationLimit.setLimitAmount(PennantApplicationUtil
 					.unFormateAmount(this.limitAmount.getValidateValue(), CurrencyUtil.getFormat("")));
@@ -879,31 +824,31 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Start Date
+		// Start Date
 		try {
 			aAuthorizationLimit.setStartDate(this.startDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Expiry Date
+		// Expiry Date
 		try {
 			aAuthorizationLimit.setExpiryDate(this.expiryDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Hold Start Date
+		// Hold Start Date
 		try {
 			aAuthorizationLimit.setHoldStartDate(this.holdStartDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Hold Expiry Date
+		// Hold Expiry Date
 		try {
 			aAuthorizationLimit.setHoldExpiryDate(this.holdExpiryDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Active
+		// Active
 		try {
 			aAuthorizationLimit.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
@@ -921,7 +866,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 				boolean valid = true;
 				if (component instanceof Listitem) {
 					Listitem listitem = (Listitem) component;
-					// Validation 
+					// Validation
 
 					ExtendedCombobox combobox = (ExtendedCombobox) listitem.getFirstChild().getFirstChild();
 					CurrencyBox codeLimitAmount = (CurrencyBox) listitem.getFirstChild().getNextSibling()
@@ -1022,8 +967,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -1034,8 +978,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -1046,8 +989,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -1058,8 +1000,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -1070,8 +1011,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -1082,8 +1022,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -1094,8 +1033,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -1108,8 +1046,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_AuthorizationLimitDialog(Event event) throws Exception {
@@ -1460,7 +1397,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 		operationLabel.setValue(detail.getRecordType());
 	}
 
-	//label_Cancel
+	// label_Cancel
 
 	public void setAuthorizationLimitService(AuthorizationLimitService authorizationLimitService) {
 		this.authorizationLimitService = authorizationLimitService;

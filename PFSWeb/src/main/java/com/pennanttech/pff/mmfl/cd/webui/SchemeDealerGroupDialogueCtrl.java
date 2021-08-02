@@ -73,8 +73,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_schemeDealerGroupDialogue(Event event) throws AppException {
@@ -143,8 +142,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -156,8 +154,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -168,8 +165,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -180,8 +176,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -192,8 +187,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -204,8 +198,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -216,8 +209,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -316,8 +308,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param covenantType
-	 *            The entity that need to be render.
+	 * @param covenantType The entity that need to be render.
 	 */
 	public void doShowDialog(SchemeDealerGroup schemeDealerGroup) {
 		logger.debug(Literal.ENTERING);
@@ -399,49 +390,13 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a CovenantType object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		final SchemeDealerGroup schemeDealerGroup = new SchemeDealerGroup();
 		BeanUtils.copyProperties(this.schemeDealerGroup, schemeDealerGroup);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ schemeDealerGroup.getDealerGroupCode();
-		if (MessageUtil.confirm(msg) != MessageUtil.YES) {
-			return;
-		}
-
-		if (StringUtils.trimToEmpty(schemeDealerGroup.getRecordType()).equals("")) {
-			schemeDealerGroup.setVersion(schemeDealerGroup.getVersion() + 1);
-			schemeDealerGroup.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-			if (isWorkFlowEnabled()) {
-				schemeDealerGroup.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-				schemeDealerGroup.setNewRecord(true);
-				tranType = PennantConstants.TRAN_WF;
-				getWorkFlowDetails(userAction.getSelectedItem().getLabel(), schemeDealerGroup.getNextTaskId(),
-						schemeDealerGroup);
-			} else {
-				tranType = PennantConstants.TRAN_DEL;
-			}
-		}
-
-		try {
-			if (doProcess(schemeDealerGroup, tranType)) {
-				refreshList();
-				closeDialog();
-			}
-
-		} catch (DataAccessException e) {
-			MessageUtil.showError(e);
-		}
+		doDelete(String.valueOf(schemeDealerGroup.getDealerGroupCode()), schemeDealerGroup);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -566,11 +521,9 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -650,10 +603,8 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

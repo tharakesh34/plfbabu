@@ -118,8 +118,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_AssignmentUploadDialog(Event event) throws Exception {
@@ -210,8 +209,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		doSave();
@@ -220,8 +218,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		doEdit();
@@ -230,8 +227,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		MessageUtil.showHelpWindow(event, super.window);
@@ -240,8 +236,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) {
 		doDelete();
@@ -250,8 +245,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		doCancel();
@@ -260,8 +254,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -386,7 +379,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		List<Object> reportList = new ArrayList<Object>();
 		reportList.add(uploadHeader.getAssignmentUploads());
 
-		//Excel file downloading automatically using Jasper Report
+		// Excel file downloading automatically using Jasper Report
 		String userName = getUserWorkspace().getLoggedInUser().getFullName();
 		ReportsUtil.generateExcel(this.REPORT_NAME, null, reportList, userName);
 
@@ -475,14 +468,14 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<>();
 
-		//Entity Code
+		// Entity Code
 		try {
 			uploadHeader.setEntityCode(this.entityCode.getValidatedValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		//Assignment Partner Code
+		// Assignment Partner Code
 		try {
 			this.assignmentPartner.getValidatedValue();
 			Long partnerId = (Long) this.assignmentPartner.getAttribute("partnerId");
@@ -493,7 +486,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			wve.add(we);
 		}
 
-		//File Name
+		// File Name
 		try {
 			if (StringUtils.trimToNull(this.txtFileName.getValue()) == null) {
 				throw new WrongValueException(this.txtFileName, Labels.getLabel("empty_file"));
@@ -542,7 +535,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 						List<Object> reportList = new ArrayList<Object>();
 						reportList.add(uploadHeader.getAssignmentUploads());
 
-						//Excel file downloading automatically using Jasper Report
+						// Excel file downloading automatically using Jasper Report
 						String userName = getUserWorkspace().getLoggedInUser().getFullName();
 						ReportsUtil.generateExcel(this.REPORT_NAME, null, reportList, userName);
 						MessageUtil.showError("Some of the records failed, Please check the downloaded file.");
@@ -576,7 +569,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.ENTERING);
 
 		if (this.csvFile) {
-			//CSV File
+			// CSV File
 			processCSVUploadDetails(uploadHeader);
 		} else if (this.fileImport != null) {
 
@@ -599,9 +592,9 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				if (noOfRows == 0) {
 					MessageUtil.showError("File is empty.");
 				} else if (noOfRows <= maxRecords + 1) {
-					//Process the records
+					// Process the records
 					processExcelUploadDetails(uploadHeader);
-					//Back up File
+					// Back up File
 					this.fileImport.backUpFile();
 				} else {
 					MessageUtil.showError("File should not contain more than " + maxRecords + " records.");
@@ -645,7 +638,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				List<String> row = Arrays.asList(line.split(cvsSplitBy, totalColumns));
 
 				if (row.size() >= totalColumns) {
-					if (count == 0) { //Skip Header row
+					if (count == 0) { // Skip Header row
 						if (!("Loan Reference ".equalsIgnoreCase(row.get(0))
 								&& "Assignment Code".equalsIgnoreCase(row.get(1))
 								&& "Asignment Date".equalsIgnoreCase(row.get(2))
@@ -658,7 +651,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 								.add(prepareAssignmentUploadBean(row, dateFormat, uploadHeader.getEntityCode()));
 					}
 				} else {
-					//Failure Case
+					// Failure Case
 					AssignmentUpload assignmentUpload = new AssignmentUpload();
 					assignmentUpload.setNewRecord(true);
 					assignmentUpload.setRecordType(PennantConstants.RCD_ADD);
@@ -705,7 +698,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		assignmentUpload.setRecordType(PennantConstants.RCD_ADD);
 		assignmentUpload.setVersion(assignmentUpload.getVersion() + 1);
 
-		//FinReference
+		// FinReference
 		finRefernce = row.get(0);
 		if (StringUtils.isBlank(finRefernce)) {
 			reason = "Loan Reference is mandatory.";
@@ -720,7 +713,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		}
 		assignmentUpload.setFinReference(finRefernce);
 
-		//Assignment Code (Assignment Id)
+		// Assignment Code (Assignment Id)
 		if (StringUtils.isNotBlank(row.get(1))) {
 			try {
 				assignmentId = Long.parseLong(row.get(1));
@@ -737,7 +730,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		}
 		assignmentUpload.setAssignmentId(assignmentId);
 
-		//Assignment Date
+		// Assignment Date
 		try {
 			assignmentDate = getUtilDate(row.get(2), dateFormat);
 		} catch (Exception e) {
@@ -750,7 +743,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		}
 		assignmentUpload.setAssignmentDate(assignmentDate);
 
-		//Effective Date
+		// Effective Date
 		try {
 			effectiveDate = getUtilDate(row.get(3), dateFormat);
 		} catch (Exception e) {
@@ -889,11 +882,11 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				if (CollectionUtils.isNotEmpty(columns)) {
 
 					if (columns.size() >= totalColumns) {
-						//Success case
+						// Success case
 						assignmentUploads
 								.add(prepareAssignmentUploadBean(columns, dateFormat, uploadHeader.getEntityCode()));
 					} else {
-						//Fail Case
+						// Fail Case
 						AssignmentUpload assignmentUpload = new AssignmentUpload();
 						assignmentUpload.setNewRecord(true);
 						assignmentUpload.setRecordType(PennantConstants.RCD_ADD);
@@ -937,8 +930,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param aUploadHeader
-	 *            The entity that need to be render.
+	 * @param aUploadHeader The entity that need to be render.
 	 */
 	public void doShowDialog(UploadHeader uploadHeader) {
 		logger.debug(Literal.ENTERING);
@@ -1037,43 +1029,15 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a UploadHeader entity from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() {
 		logger.debug(Literal.ENTERING);
 
 		final UploadHeader entity = new UploadHeader();
 		BeanUtils.copyProperties(this.uploadHeader, entity);
-		String tranType = PennantConstants.TRAN_WF;
+		String keyReference = Labels.getLabel("label_AssignmentUploadDialog_Filename.value") + " : "
+				+ uploadHeader.getFileName();
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_AssignmentUploadDialog_Filename.value") + " : " + uploadHeader.getFileName();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(uploadHeader.getRecordType())) {
-				uploadHeader.setVersion(uploadHeader.getVersion() + 1);
-				uploadHeader.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					uploadHeader.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(uploadHeader, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(keyReference, uploadHeader);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1219,11 +1183,9 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aUploadHeader
-	 *            (UploadHeader)
+	 * @param aUploadHeader (UploadHeader)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1309,11 +1271,9 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1408,8 +1368,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.uploadHeader);

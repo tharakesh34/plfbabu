@@ -403,7 +403,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		final NPAProvisionHeader aNPAProvisionHeader = new NPAProvisionHeader();
 		BeanUtils.copyProperties(this.nPAProvisionHeader, aNPAProvisionHeader);
 		String tranType = PennantConstants.TRAN_WF;
-
+doDelete(aNPAProvisionHeader.getFinType() + " - " + aNPAProvisionHeader.getFinTypeName(), aNPAProvisionHeader);
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ aNPAProvisionHeader.getFinType() + " - " + aNPAProvisionHeader.getFinTypeName();

@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  TransactionCodeDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  10-11-2011    														*
- *                                                                  						*
- * Modified Date    :  10-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : TransactionCodeDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 10-11-2011 * *
+ * Modified Date : 10-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.applicationmaster.transactioncode;
 
 import java.sql.Timestamp;
@@ -74,6 +56,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -182,7 +165,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.tranCode.setMaxlength(8);
 		this.tranDesc.setMaxlength(50);
 
@@ -274,8 +257,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -299,8 +281,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aTransactionCode
-	 *            TransactionCode
+	 * @param aTransactionCode TransactionCode
 	 */
 	public void doWriteBeanToComponents(TransactionCode aTransactionCode) {
 		logger.debug("Entering");
@@ -481,47 +462,18 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 		getTransactionCodeListCtrl().search();
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a TransactionCode object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final TransactionCode aTransactionCode = new TransactionCode();
 		BeanUtils.copyProperties(getTransactionCode(), aTransactionCode);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_TransactionCodeDialog_TranCode.value") + " : "
+		String keyReference = Labels.getLabel("label_TransactionCodeDialog_TranCode.value") + " : "
 				+ aTransactionCode.getTranCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aTransactionCode.getRecordType())) {
-				aTransactionCode.setVersion(aTransactionCode.getVersion() + 1);
-				aTransactionCode.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()) {
-					aTransactionCode.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		doDelete(keyReference, aTransactionCode);
 
-			try {
-				if (doProcess(aTransactionCode, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -593,7 +545,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 		// remove validation, if there are a save before
 		this.tranCode.setValue("");
 		this.tranDesc.setValue("");
-		//this.tranType.setValue("");
+		// this.tranType.setValue("");
 		this.tranIsActive.setChecked(false);
 
 		logger.debug("Leaving");
@@ -661,11 +613,9 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aTransactionCode
-	 *            (TransactionCode)
+	 * @param aTransactionCode (TransactionCode)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType         (String)
 	 * 
 	 * @return boolean
 	 */
@@ -753,11 +703,9 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -836,10 +784,8 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	/**
 	 * Get Audit Header Details
 	 * 
-	 * @param aTransactionCode
-	 *            (TransactionCode)
-	 * @param tranType
-	 *            (String)
+	 * @param aTransactionCode (TransactionCode)
+	 * @param tranType         (String)
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(TransactionCode aTransactionCode, String tranType) {
@@ -851,8 +797,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -871,8 +816,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

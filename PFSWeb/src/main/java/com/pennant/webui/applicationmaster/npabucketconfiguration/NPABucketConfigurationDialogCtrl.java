@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  NPABucketConfigurationDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-04-2017    														*
- *                                                                  						*
- * Modified Date    :  21-04-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : NPABucketConfigurationDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-04-2017
+ * * * Modified Date : 21-04-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-04-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-04-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.applicationmaster.npabucketconfiguration;
@@ -120,8 +102,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_NPABucketConfigurationDialog(Event event) throws Exception {
@@ -210,8 +191,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		doSave();
@@ -220,8 +200,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		doEdit();
@@ -230,8 +209,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		MessageUtil.showHelpWindow(event, super.window);
@@ -240,8 +218,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) {
 		doDelete();
@@ -250,8 +227,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		doCancel();
@@ -260,8 +236,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -270,8 +245,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.nPABucketConfiguration);
@@ -336,14 +310,14 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Product Code
+		// Product Code
 		try {
 			aNPABucketConfiguration.setProductCode(this.productCode.getValidatedValue());
 			aNPABucketConfiguration.setProductCodeName(this.productCode.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Bucket ID
+		// Bucket ID
 		try {
 			this.bucketID.getValidatedValue();
 			NPABucket nPABucket = (NPABucket) this.bucketID.getObject();
@@ -354,13 +328,13 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Due Days
+		// Due Days
 		try {
 			aNPABucketConfiguration.setDueDays(this.dueDays.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Suspend Profit
+		// Suspend Profit
 		try {
 			aNPABucketConfiguration.setSuspendProfit(this.suspendProfit.isChecked());
 		} catch (WrongValueException we) {
@@ -384,8 +358,7 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param nPABucketConfiguration
-	 *            The entity that need to be render.
+	 * @param nPABucketConfiguration The entity that need to be render.
 	 */
 	public void doShowDialog(NPABucketConfiguration nPABucketConfiguration) {
 		logger.debug(Literal.LEAVING);
@@ -465,11 +438,11 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 	private void doSetLOVValidation() {
 		logger.debug(Literal.LEAVING);
 
-		//Config ID
-		//Product Code
-		//Bucket ID
-		//Due Days
-		//Suspend Profit
+		// Config ID
+		// Product Code
+		// Bucket ID
+		// Due Days
+		// Suspend Profit
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -501,49 +474,14 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 	 * this.bucketID.setAttribute("BucketID", details.getBucketID()); } } logger.debug("Leaving" + event.toString()); }
 	 */
 
-	/**
-	 * Deletes a NPABucketConfiguration object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() {
 		logger.debug(Literal.LEAVING);
 
 		final NPABucketConfiguration aNPABucketConfiguration = new NPABucketConfiguration();
 		BeanUtils.copyProperties(this.nPABucketConfiguration, aNPABucketConfiguration);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_NPABucketConfigurationDialog_ProductCode.value") + " : "
-				+ aNPABucketConfiguration.getProductCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aNPABucketConfiguration.getRecordType()).equals("")) {
-				aNPABucketConfiguration.setVersion(aNPABucketConfiguration.getVersion() + 1);
-				aNPABucketConfiguration.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aNPABucketConfiguration.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aNPABucketConfiguration.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aNPABucketConfiguration.getNextTaskId(),
-							aNPABucketConfiguration);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aNPABucketConfiguration, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
+		doDelete(Labels.getLabel("label_NPABucketConfigurationDialog_ProductCode.value") + " : "
+				+ aNPABucketConfiguration.getProductCode(), aNPABucketConfiguration);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -673,11 +611,9 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -764,10 +700,8 @@ public class NPABucketConfigurationDialogCtrl extends GFCBaseCtrl<NPABucketConfi
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

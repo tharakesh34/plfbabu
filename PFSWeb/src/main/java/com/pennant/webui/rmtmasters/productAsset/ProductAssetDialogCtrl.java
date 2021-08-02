@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ProductAssetDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  19-11-2011    														*
- *                                                                  						*
- * Modified Date    :  19-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ProductAssetDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 19-11-2011 * *
+ * Modified Date : 19-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 19-11-2011       Pennant~	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 19-11-2011 Pennant~ 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.rmtmasters.productAsset;
@@ -206,7 +188,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.productCode.setMaxlength(8);
 
 		this.assetCode.setMaxlength(8);
@@ -314,8 +296,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -339,8 +320,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aProductAsset
-	 *            ProductAsset
+	 * @param aProductAsset ProductAsset
 	 */
 	public void doWriteBeanToComponents(ProductAsset aProductAsset) {
 		logger.debug("Entering");
@@ -509,13 +489,6 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a ProductAsset object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug("Entering");
 
@@ -752,7 +725,9 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 				ProductAsset productAsset = getProductDialogCtrl().getProductAssetList().get(i);
 
 				if (aProductAsset.getAssetCode().equals(productAsset.getAssetCode())
-						&& aProductAsset.getProductCode().equals(productAsset.getProductCode())) { // Both Current and Existing list addresses same
+						&& aProductAsset.getProductCode().equals(productAsset.getProductCode())) { // Both Current and
+																									// Existing list
+																									// addresses same
 
 					if (aProductAsset.isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
@@ -836,8 +811,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -853,8 +827,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

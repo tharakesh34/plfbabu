@@ -31,7 +31,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -64,6 +63,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -856,46 +856,18 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		getAccountTypeListCtrl().search();
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a AccountType object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final AccountType aAccountType = new AccountType();
 		BeanUtils.copyProperties(getAccountType(), aAccountType);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_AccountTypeDialog_AcType.value") + " : " + aAccountType.getAcType();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aAccountType.getRecordType())) {
-				aAccountType.setVersion(aAccountType.getVersion() + 1);
-				aAccountType.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		String keyReference = Labels.getLabel("label_AccountTypeDialog_AcType.value") + " : "
+				+ aAccountType.getAcType();
 
-				if (isWorkFlowEnabled()) {
-					aAccountType.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		doDelete(keyReference, aAccountType);
 
-			try {
-				if (doProcess(aAccountType, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

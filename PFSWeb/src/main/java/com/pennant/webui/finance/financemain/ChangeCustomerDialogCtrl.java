@@ -43,7 +43,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<JointAccountDetail> {
+public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<FinChangeCustomer> {
 	private static final long serialVersionUID = -4578996988245614938L;
 
 	private static final Logger logger = LogManager.getLogger(ChangeCustomerDialogCtrl.class);
@@ -165,8 +165,7 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<JointAccountDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -178,8 +177,7 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<JointAccountDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.setJointAccountDetail
+	 * @param event An event sent to the event handler of the component.setJointAccountDetail
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -190,8 +188,7 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<JointAccountDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -202,8 +199,7 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<JointAccountDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -214,8 +210,7 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<JointAccountDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -226,8 +221,7 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<JointAccountDetail> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -238,8 +232,7 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<JointAccountDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -386,7 +379,7 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<JointAccountDetail> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Fin Reference
+		// Fin Reference
 		try {
 			if (coaplicantCustId == 0) {
 				MessageUtil.showError("Please Select one Customer to Proceed");
@@ -416,8 +409,7 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<JointAccountDetail> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param finChangeCustomer
-	 *            The entity that need to be render.
+	 * @param finChangeCustomer The entity that need to be render.
 	 */
 	public void doShowDialog(FinChangeCustomer finChangeCustomer) {
 		logger.debug(Literal.ENTERING);
@@ -426,16 +418,16 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<JointAccountDetail> {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
-			//this.finReference.focus();
+			// this.finReference.focus();
 		} else {
-			//this.finReference.setReadonly(true);
+			// this.finReference.setReadonly(true);
 
 			if (isWorkFlowEnabled()) {
 				if (StringUtils.isNotBlank(finChangeCustomer.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
 				// setFocus
-				//this.hold.focus();
+				// this.hold.focus();
 				doEdit();
 			} else {
 				this.btnCtrl.setInitEdit();
@@ -508,37 +500,8 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<JointAccountDetail> {
 
 		final FinChangeCustomer aFinChangeCustomer = new FinChangeCustomer();
 		BeanUtils.copyProperties(this.finChangeCustomer, aFinChangeCustomer);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aFinChangeCustomer.getFinReference();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aFinChangeCustomer.getRecordType()).equals("")) {
-				aFinChangeCustomer.setVersion(aFinChangeCustomer.getVersion() + 1);
-				aFinChangeCustomer.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aFinChangeCustomer.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aFinChangeCustomer.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aFinChangeCustomer.getNextTaskId(),
-							aFinChangeCustomer);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aFinChangeCustomer, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(aFinChangeCustomer.getFinReference(), aFinChangeCustomer);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -551,11 +514,11 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<JointAccountDetail> {
 
 		if (this.finChangeCustomer.isNewRecord()) {
 			this.btnCancel.setVisible(false);
-			//readOnlyComponent(true, this.finReference);
+			// readOnlyComponent(true, this.finReference);
 		} else {
 			this.btnCancel.setVisible(true);
-			//readOnlyComponent(true, this.finReference);
-			//readOnlyComponent(true, this.finReference);
+			// readOnlyComponent(true, this.finReference);
+			// readOnlyComponent(true, this.finReference);
 		}
 
 		if (isWorkFlowEnabled()) {
@@ -581,7 +544,7 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<JointAccountDetail> {
 	public void doReadOnly() {
 		logger.debug(Literal.ENTERING);
 
-		//readOnlyComponent(true, this.finReference);
+		// readOnlyComponent(true, this.finReference);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -600,7 +563,7 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<JointAccountDetail> {
 	 */
 	public void doClear() {
 		logger.debug(Literal.ENTERING);
-		//this.finReference.setValue("");
+		// this.finReference.setValue("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -656,11 +619,9 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<JointAccountDetail> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -747,10 +708,8 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<JointAccountDetail> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

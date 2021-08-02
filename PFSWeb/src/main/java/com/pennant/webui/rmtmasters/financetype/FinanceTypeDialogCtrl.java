@@ -44,7 +44,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -4166,44 +4165,17 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a FinanceType object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
+
 		final FinanceType aFinanceType = new FinanceType();
 		BeanUtils.copyProperties(getFinanceType(), aFinanceType);
-		String tranType = PennantConstants.TRAN_WF;
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ (isPromotion ? Labels.getLabel("label_FinanceTypeDialog_PromoCode.value")
-						: Labels.getLabel("label_FinanceTypeDialog_FinType.value"))
-				+ " : " + aFinanceType.getFinType();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aFinanceType.getRecordType())) {
-				aFinanceType.setVersion(aFinanceType.getVersion() + 1);
-				aFinanceType.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()) {
-					aFinanceType.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (doProcess(aFinanceType, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
+		String keyReference = (isPromotion ? Labels.getLabel("label_FinanceTypeDialog_PromoCode.value")
+				: Labels.getLabel("label_FinanceTypeDialog_FinType.value")) + " : " + aFinanceType.getFinType();
+
+		doDelete(keyReference, aFinanceType);
+
 		logger.debug(Literal.LEAVING);
 	}
 

@@ -1,46 +1,28 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  BranchDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : BranchDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * * Modified
+ * Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 09-05-2018		Vinay				     0.2      Branch Code field working on rights	*
- * 													  functionality changes.                * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * 09-05-2018 Vinay 0.2 Branch Code field working on rights * functionality changes. * * * *
+ * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.applicationmaster.branch;
 
 import java.sql.Timestamp;
@@ -257,7 +239,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.branchCode.setMaxlength(LengthConstants.LEN_BRANCH);
 		this.branchDesc.setMaxlength(50);
 		this.branchAddrLine1.setMaxlength(50);
@@ -426,8 +408,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -452,8 +433,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aBranch
-	 *            Branch
+	 * @param aBranch Branch
 	 */
 	public void doWriteBeanToComponents(Branch aBranch) {
 		logger.debug("Entering");
@@ -1115,10 +1095,9 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		final Branch aBranch = new Branch();
 		BeanUtils.copyProperties(getBranch(), aBranch);
-		String tranType = PennantConstants.TRAN_WF;
 
 		if (aBranch.getClusterId() != null) {
 			if (aBranch.getClusterId() == 0) {
@@ -1126,33 +1105,9 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			}
 		}
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_BranchDialog_BranchCode.value") + " : " + aBranch.getBranchCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aBranch.getRecordType())) {
-				aBranch.setVersion(aBranch.getVersion() + 1);
-				aBranch.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(Labels.getLabel("label_BranchDialog_BranchCode.value") + " : " + aBranch.getBranchCode(), aBranch);
 
-				if (isWorkFlowEnabled()) {
-					aBranch.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aBranch, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1287,7 +1242,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	 */
 	public void doClear() {
 		logger.debug("Entering");
-		// remove validation, if there are a save before		
+		// remove validation, if there are a save before
 		this.branchCode.setValue("");
 		this.branchDesc.setValue("");
 		this.branchAddrLine1.setValue("");
@@ -1403,11 +1358,9 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aBranch
-	 *            (Branch)
+	 * @param aBranch  (Branch)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1494,11 +1447,9 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1826,8 +1777,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	/**
 	 * Display Message in Error Box
 	 *
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1845,8 +1795,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -1856,8 +1805,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 
 	/**
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

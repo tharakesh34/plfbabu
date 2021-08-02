@@ -437,8 +437,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -450,8 +449,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -462,8 +460,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -474,8 +471,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -486,8 +482,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -498,8 +493,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -510,8 +504,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -784,36 +777,8 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 
 		final Organization entity = new Organization();
 		BeanUtils.copyProperties(this.organization, entity);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ entity.getId();
-		if (MessageUtil.YES == MessageUtil.confirm(msg)) {
-			if (("").equals(StringUtils.trimToEmpty(entity.getRecordType()))) {
-				entity.setVersion(entity.getVersion() + 1);
-				entity.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					entity.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					entity.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), entity.getNextTaskId(), entity);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(entity, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(String.valueOf(entity.getId()), entity);
 
 		logger.debug(Literal.LEAVING);
 	}

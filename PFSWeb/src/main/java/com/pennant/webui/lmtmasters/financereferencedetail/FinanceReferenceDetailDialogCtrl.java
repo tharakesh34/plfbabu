@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceReferenceDetailDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-11-2011    														*
- *                                                                  						*
- * Modified Date    :  26-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceReferenceDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-11-2011
+ * * * Modified Date : 26-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.lmtmasters.financereferencedetail;
@@ -53,7 +35,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
@@ -169,7 +150,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 	protected Button btnNew_FinanceTabs;
 	protected Listbox listboxFinanceTabs;
 
-	// Tab Details 
+	// Tab Details
 	protected Tab tabFinanceCheckList;
 	protected Tab tabFinanceAgreement;
 	protected Tab tabFinanceEligibility;
@@ -260,12 +241,12 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 				setFinanceReference(null);
 			}
 
-			// Event Name 
+			// Event Name
 			if (arguments.containsKey("eventAction")) {
 				eventAction = (String) arguments.get("eventAction");
 			}
 
-			// Module Name 
+			// Module Name
 			if (arguments.containsKey("moduleName")) {
 				moduleName = (String) arguments.get("moduleName");
 			}
@@ -358,9 +339,9 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		logger.debug("Entering");
 
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
-		this.btnNew.setVisible(false);//getUserWorkspace().isAllowed("button_FinanceReferenceDetailDialog_btnNew")
-		this.btnEdit.setVisible(false);//getUserWorkspace().isAllowed("button_FinanceReferenceDetailDialog_btnEdit")
-		this.btnDelete.setVisible(false);//getUserWorkspace().isAllowed("button_FinanceReferenceDetailDialog_btnDelete")
+		this.btnNew.setVisible(false);// getUserWorkspace().isAllowed("button_FinanceReferenceDetailDialog_btnNew")
+		this.btnEdit.setVisible(false);// getUserWorkspace().isAllowed("button_FinanceReferenceDetailDialog_btnEdit")
+		this.btnDelete.setVisible(false);// getUserWorkspace().isAllowed("button_FinanceReferenceDetailDialog_btnDelete")
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinanceReferenceDetailDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
@@ -427,8 +408,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -454,8 +434,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceReferenceDetail
-	 *            FinanceReferenceDetail
+	 * @param aFinanceReferenceDetail FinanceReferenceDetail
 	 */
 	public void doWriteBeanToComponents(FinanceReference aFinanceReference) {
 		logger.debug("Entering");
@@ -589,7 +568,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		logger.debug("Entering");
 
 		try {
-			//To get delegating authorities
+			// To get delegating authorities
 			WorkflowEngine workflow = new WorkflowEngine(
 					WorkFlowUtil.getDetailsByType(getFinanceReference().getWorkFlowType()).getWorkFlowXml());
 			deviationConfigCtrl.init(this.delationDeviation, aFinanceReference.getFinType(), workflow.getActors(true));
@@ -601,7 +580,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 				this.btnNotes.setVisible(true);
 				doEdit();
 			} else {
-				//this.btnCtrl.setInitEdit();
+				// this.btnCtrl.setInitEdit();
 				doReadOnly();
 				btnCancel.setVisible(false);
 				btnSave.setVisible(true);
@@ -669,47 +648,15 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a FinanceReferenceDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final FinanceReferenceDetail aFinanceReferenceDetail = new FinanceReferenceDetail();
 		BeanUtils.copyProperties(getFinanceReferenceDetail(), aFinanceReferenceDetail);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aFinanceReferenceDetail.getFinRefDetailId();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aFinanceReferenceDetail.getRecordType())) {
-				aFinanceReferenceDetail.setVersion(aFinanceReferenceDetail.getVersion() + 1);
-				aFinanceReferenceDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(String.valueOf(aFinanceReferenceDetail.getFinRefDetailId()), aFinanceReferenceDetail);
 
-				if (isWorkFlowEnabled()) {
-					aFinanceReferenceDetail.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aFinanceReferenceDetail, tranType)) {
-					// refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -859,7 +806,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		logger.debug("Leaving");
 	}
 
-	////////////////////Stage Accounting with Stage Accounting Rules change///////////
+	//////////////////// Stage Accounting with Stage Accounting Rules change///////////
 
 	/*
 	 * private boolean validateFeeAccounting(){ List<FinanceReferenceDetail> finReferenceDetails = new
@@ -973,7 +920,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 
 	}
 
-	////////////////////Stage Accounting with Stage Accounting Rules change///////////
+	//////////////////// Stage Accounting with Stage Accounting Rules change///////////
 	/*
 	 * private boolean validateFees(Map<String,String> sourceFeeMap,Map<String,String> destFeeMap,boolean
 	 * isFinTypeFeesValidate){
@@ -1048,7 +995,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		doSetValidation();
 		// doWriteComponentsToBean(getFinanceAgreementList());
 
-		////////////////////Stage Accounting with Stage Accounting Rules change///////////
+		//////////////////// Stage Accounting with Stage Accounting Rules change///////////
 		/*
 		 * if(!validateFeeAccounting()){ return; }
 		 */
@@ -1598,10 +1545,10 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		} else if (listbox.getId().equals(this.listBoxScoringGroup.getId())) {
 			deviationConfigCtrl.fillScoringDeviations(this.listBoxScoringGroup);
 		}
-		////////////////////Stage Accounting with Stage Accounting Rules change///////////
-		//else if (listbox.getId().equals(this.listBoxAccounts.getId())) {
-		//	deviationConfigCtrl.fillFeeDeviations(this.listBoxAccounts,this.finType.getValue());
-		//} 
+		//////////////////// Stage Accounting with Stage Accounting Rules change///////////
+		// else if (listbox.getId().equals(this.listBoxAccounts.getId())) {
+		// deviationConfigCtrl.fillFeeDeviations(this.listBoxAccounts,this.finType.getValue());
+		// }
 
 	}
 

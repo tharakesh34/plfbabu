@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CheckListDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-12-2011    														*
- *                                                                  						*
- * Modified Date    :  12-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CheckListDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-12-2011 * * Modified
+ * Date : 12-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.applicationmaster.checklist;
@@ -55,7 +37,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -96,6 +77,7 @@ import com.pennant.webui.applicationmaster.checklist.model.CheckListDetailListMo
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -240,7 +222,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.checkListDesc.setMaxlength(100);
 		this.checkMinCount.setMaxlength(2);
 		this.checkMaxCount.setMaxlength(2);
@@ -348,8 +330,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -375,8 +356,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCheckList
-	 *            CheckList
+	 * @param aCheckList CheckList
 	 */
 	public void doWriteBeanToComponents(CheckList aCheckList) {
 		logger.debug("Entering");
@@ -616,44 +596,16 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a CheckList object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final CheckList aCheckList = new CheckList();
 		BeanUtils.copyProperties(getCheckList(), aCheckList);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_CheckListDialog_CheckListDesc.value") + " : " + aCheckList.getCheckListDesc();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCheckList.getRecordType())) {
-				aCheckList.setVersion(aCheckList.getVersion() + 1);
-				aCheckList.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(Labels.getLabel("label_CheckListDialog_CheckListDesc.value") + " : " + aCheckList.getCheckListDesc(),
+				aCheckList);
 
-				if (isWorkFlowEnabled()) {
-					aCheckList.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (doProcess(aCheckList, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -692,7 +644,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			//btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 
 		logger.debug("Leaving");
@@ -833,11 +785,9 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aCheckList
-	 *            (CheckList)
+	 * @param aCheckList (CheckList)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType   (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -923,11 +873,9 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1014,8 +962,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1031,8 +978,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -1122,7 +1068,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 		logger.debug("Entering ");
 		Comparator<Object> comp = new BeanComparator<Object>("ansDesc");
 		Collections.sort(checkListDetailList, comp);
-		//FIXME should checked better to remove the paging 
+		// FIXME should checked better to remove the paging
 		this.pagingChkListDetailsList.setPageSize(100);
 		this.setChekListDetailsList(checkListDetailList);
 		getCheckList().setChkListList(checkListDetailList);

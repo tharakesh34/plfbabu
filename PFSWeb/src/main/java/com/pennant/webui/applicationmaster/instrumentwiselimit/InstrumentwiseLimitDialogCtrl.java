@@ -1,45 +1,28 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  InstrumentwiseLimitDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  18-01-2018    														*
- *                                                                  						*
- * Modified Date    :  18-01-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : InstrumentwiseLimitDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 18-01-2018 * *
+ * Modified Date : 18-01-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 18-01-2018       PENNANT	                 0.1                                            * 
- * 20-08-2018       Somasekhar.p             0.2          Commented exclude Payment field,  * 
- *                                                        discussed with siva as no effect with* 
- *                                                        existing functionality            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 18-01-2018 PENNANT 0.1 * 20-08-2018 Somasekhar.p 0.2 Commented exclude Payment field, * discussed with siva as no
+ * effect with* existing functionality * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.applicationmaster.instrumentwiselimit;
 
 import java.math.BigDecimal;
@@ -99,7 +82,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	protected CurrencyBox receiptMinAmtperTran;
 	protected CurrencyBox receiptMaxAmtperTran;
 	protected CurrencyBox receiptMaxAmtperDay;
-	//IMPS Splitting changes
+	// IMPS Splitting changes
 	protected CurrencyBox maxAmtPerInstruction;
 	protected Row row_MaxAmtPerInstruction;
 
@@ -134,8 +117,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_InstrumentwiseLimitDialog(Event event) throws Exception {
@@ -248,8 +230,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -261,8 +242,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -273,8 +253,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -285,8 +264,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -297,8 +275,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -309,8 +286,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -321,8 +297,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -362,7 +337,8 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	public void doWriteBeanToComponents(InstrumentwiseLimit aInstrumentwiseLimit) {
 		logger.debug(Literal.ENTERING);
 
-		//String excludeModes = ","+DisbursementConstants.PAYMENT_TYPE_ESCROW+",";//## PSD Ticket id:124998,Receipt Upload
+		// String excludeModes = ","+DisbursementConstants.PAYMENT_TYPE_ESCROW+",";//## PSD Ticket id:124998,Receipt
+		// Upload
 		fillComboBox(this.instrumentMode, aInstrumentwiseLimit.getInstrumentMode(), listInstrumentMode, "");
 		this.paymentMinAmtperTrans.setValue(PennantApplicationUtil
 				.formateAmount(aInstrumentwiseLimit.getPaymentMinAmtperTrans(), PennantConstants.defaultCCYDecPos));
@@ -418,7 +394,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 			wve.add(we);
 		}
 
-		//Payments Min, Max Amounts per Transactions
+		// Payments Min, Max Amounts per Transactions
 		try {
 			BigDecimal paymentMinAmtperTrans = PennantApplicationUtil
 					.unFormateAmount(this.paymentMinAmtperTrans.getActualValue(), PennantConstants.defaultCCYDecPos);
@@ -449,7 +425,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 			wve.add(we);
 		}
 
-		//Receipts Min, Max Amounts per Transactions
+		// Receipts Min, Max Amounts per Transactions
 		try {
 			BigDecimal receiptMinAmtperTran = PennantApplicationUtil
 					.unFormateAmount(this.receiptMinAmtperTran.getActualValue(), PennantConstants.defaultCCYDecPos);
@@ -483,7 +459,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 			wve.add(we);
 		}
 
-		//Imps Splitting (payment Max Amount per Instruction)
+		// Imps Splitting (payment Max Amount per Instruction)
 		if (this.row_MaxAmtPerInstruction.isVisible()) {
 			try {
 				BigDecimal maxAmtPerInstruction = PennantApplicationUtil
@@ -513,8 +489,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param instrumentwiseLimit
-	 *            The entity that need to be render.
+	 * @param instrumentwiseLimit The entity that need to be render.
 	 */
 	public void doShowDialog(InstrumentwiseLimit instrumentwiseLimit) {
 		logger.debug(Literal.ENTERING);
@@ -539,7 +514,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 				btnCancel.setVisible(false);
 			}
 		}
-		//once record approved than delete and notes button visible false
+		// once record approved than delete and notes button visible false
 		if (StringUtils.contains(instrumentwiseLimit.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)) {
 			this.btnNotes.setVisible(false);
 			this.btnDelete.setVisible(false);
@@ -672,47 +647,13 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a InstrumentwiseLimit object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		final InstrumentwiseLimit aInstrumentwiseLimit = new InstrumentwiseLimit();
 		BeanUtils.copyProperties(this.instrumentwiseLimit, aInstrumentwiseLimit);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aInstrumentwiseLimit.getId();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aInstrumentwiseLimit.getRecordType()).equals("")) {
-				aInstrumentwiseLimit.setVersion(aInstrumentwiseLimit.getVersion() + 1);
-				aInstrumentwiseLimit.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aInstrumentwiseLimit.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aInstrumentwiseLimit.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aInstrumentwiseLimit.getNextTaskId(),
-							aInstrumentwiseLimit);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aInstrumentwiseLimit, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(String.valueOf(aInstrumentwiseLimit.getId()), aInstrumentwiseLimit);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -851,11 +792,9 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -942,10 +881,8 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

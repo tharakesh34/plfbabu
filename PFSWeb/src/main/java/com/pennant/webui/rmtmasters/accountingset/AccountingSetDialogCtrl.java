@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AccountingSetDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-12-2011    														*
- *                                                                  						*
- * Modified Date    :  14-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AccountingSetDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-12-2011 * *
+ * Modified Date : 14-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.rmtmasters.accountingset;
@@ -54,7 +36,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -99,12 +80,13 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/RulesFactory/AccountingSet/accountingSetDialog.zul file.
  */
-public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
+public class AccountingSetDialogCtrl extends GFCBaseCtrl<AccountingSet> {
 	private static final long serialVersionUID = 8602015982512929710L;
 	private static final Logger logger = LogManager.getLogger(AccountingSetDialogCtrl.class);
 
@@ -348,8 +330,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -372,8 +353,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aAccountingSet
-	 *            (AccountingSet)
+	 * @param aAccountingSet (AccountingSet)
 	 */
 	public void doWriteBeanToComponents(AccountingSet aAccountingSet) {
 		logger.debug("Entering");
@@ -652,41 +632,19 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final AccountingSet aAccountingSet = new AccountingSet();
 		BeanUtils.copyProperties(getAccountingSet(), aAccountingSet);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_AccountingSetDialog_EventCode.value") + ":" + aAccountingSet.getEventCode()
-				+ ", " + Labels.getLabel("label_AccountingSetDialog_AccountSetCode.value") + ":"
+		String keyReference = Labels.getLabel("label_AccountingSetDialog_EventCode.value") + ":"
+				+ aAccountingSet.getEventCode() + ", "
+				+ Labels.getLabel("label_AccountingSetDialog_AccountSetCode.value") + ":"
 				+ aAccountingSet.getAccountSetCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aAccountingSet.getRecordType())) {
-				aAccountingSet.setVersion(aAccountingSet.getVersion() + 1);
-				aAccountingSet.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()) {
-					aAccountingSet.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		doDelete(keyReference, aAccountingSet);
 
-			try {
-				if (doProcess(aAccountingSet, tranType)) {
-					refreshList();
-					// do Close the dialog
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -714,7 +672,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		 * this.button_TransactionEntryList_NewTransactionEntry.setVisible(false); }else{
 		 */
 
-		//}
+		// }
 
 		this.systemDefault.setDisabled(isReadOnly("AccountingSetDialog_systemDefault"));
 		this.entryByInvestment.setDisabled(isReadOnly("AccountingSetDialog_entryByInvestment"));
@@ -848,11 +806,9 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAccountingSet
-	 *            (AccountingSet)
+	 * @param aAccountingSet (AccountingSet)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -943,11 +899,9 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1051,7 +1005,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		this.accountSetCodeName.setValue("");
 		this.accountSetCode.setReadonly(false);
 		this.btnSearchAccountSetCode.setVisible(false);
-		//}
+		// }
 
 		disableNewTransactionEntry();
 		logger.debug("Leaving" + event.toString());
@@ -1071,7 +1025,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 				this.accountSetCode.setValue(details.getODCRuleCode());
 				this.accountSetCodeName.setValue(details.getoDCRuleDescription());
 
-				//OverDue transaction Entries preparation manually
+				// OverDue transaction Entries preparation manually
 				List<TransactionEntry> transactionEntries = getAccountingSetService().getODTransactionEntries();
 
 				PFSParameter debitCode = SysParamUtil.getSystemParameterObject("ODC_DTCD");
@@ -1201,8 +1155,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1220,8 +1173,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

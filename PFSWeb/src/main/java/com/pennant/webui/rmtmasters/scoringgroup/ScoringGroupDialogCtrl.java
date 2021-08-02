@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ScoringGroupDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-12-2011    														*
- *                                                                  						*
- * Modified Date    :  05-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ScoringGroupDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-12-2011 * *
+ * Modified Date : 05-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.rmtmasters.scoringgroup;
@@ -57,7 +39,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -104,6 +85,7 @@ import com.pennant.webui.rmtmasters.scoringslab.model.ScoringSlabListModelItemRe
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -261,7 +243,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.scoreGroupCode.setMaxlength(8);
 		this.scoreGroupName.setMaxlength(50);
 		this.minScore.setMaxlength(4);
@@ -880,8 +862,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aScoringGroup
-	 *            ScoringGroup
+	 * @param aScoringGroup ScoringGroup
 	 */
 	public void doWriteBeanToComponents(ScoringGroup aScoringGroup) {
 		logger.debug("Entering");
@@ -1041,7 +1022,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 
 			if (aScoringGroup.getScoringMetricsList() != null) {
 
-				//Calculation Of Max Metric Score & Percentage In Total Group Score
+				// Calculation Of Max Metric Score & Percentage In Total Group Score
 				doCalMetricPercentage(aScoringGroup.getScoringMetricsList(), "R");
 
 				doFillScoringMetrics(aScoringGroup.getScoringMetricsList(), "R");
@@ -1049,7 +1030,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 
 			if (aScoringGroup.getFinScoringMetricsList() != null) {
 
-				//Calculation Of Max Metric Score & Percentage In Total Group Score
+				// Calculation Of Max Metric Score & Percentage In Total Group Score
 				doCalMetricPercentage(aScoringGroup.getFinScoringMetricsList(), "F");
 
 				doFillScoringMetrics(aScoringGroup.getFinScoringMetricsList(), "F");
@@ -1057,7 +1038,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 
 			if (aScoringGroup.getNonFinScoringMetricsList() != null) {
 
-				//Calculation Of Max Metric Score & Percentage In Total Group Score
+				// Calculation Of Max Metric Score & Percentage In Total Group Score
 				doCalMetricPercentage(aScoringGroup.getNonFinScoringMetricsList(), "N");
 
 				doFillScoringMetrics(aScoringGroup.getNonFinScoringMetricsList(), "N");
@@ -1217,48 +1198,18 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a ScoringGroup object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final ScoringGroup aScoringGroup = new ScoringGroup();
 		BeanUtils.copyProperties(getScoringGroup(), aScoringGroup);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_ScoringGroupDialog_ScoreGroupCode.value") + " : "
+		String keyReference = Labels.getLabel("label_ScoringGroupDialog_ScoreGroupCode.value") + " : "
 				+ aScoringGroup.getScoreGroupCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aScoringGroup.getRecordType())) {
-				aScoringGroup.setVersion(aScoringGroup.getVersion() + 1);
-				aScoringGroup.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()) {
-					aScoringGroup.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		doDelete(keyReference, aScoringGroup);
 
-			try {
-				if (doProcess(aScoringGroup, tranType)) {
-					refreshList();
-					//do close the Dialog window
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1279,7 +1230,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		}
 
 		this.scoreGroupName.setReadonly(isReadOnly("ScoringGroupDialog_scoreGroupName"));
-		//this.categoryType.setDisabled(isReadOnly("ScoringGroupDialog_categoryType"));
+		// this.categoryType.setDisabled(isReadOnly("ScoringGroupDialog_categoryType"));
 		this.minScore.setReadonly(isReadOnly("ScoringGroupDialog_minScore"));
 		this.isoverride.setDisabled(isReadOnly("ScoringGroupDialog_isoverride"));
 		this.overrideScore.setReadonly(isReadOnly("ScoringGroupDialog_overrideScore"));
@@ -1392,7 +1343,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		try {
 			if (doProcess(aScoringGroup, tranType)) {
 				refreshList();
-				//do Close the Exiting dialog
+				// do Close the Exiting dialog
 				closeDialog();
 			}
 		} catch (Exception e) {
@@ -1493,11 +1444,9 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1607,7 +1556,8 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 						}
 					}
 					code = String.valueOf(RuleExecutionUtil.executeRule("Result = " + code + ";", fieldValuesMap, null,
-							RuleReturnType.INTEGER)); //FIXME Why Code is being Used and Unnecessary Conversions to be Removed 
+							RuleReturnType.INTEGER)); // FIXME Why Code is being Used and Unnecessary Conversions to be
+														// Removed
 				}
 
 				if (new BigDecimal(code.trim()).compareTo(max) > 0) {
@@ -1627,7 +1577,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 */
 	public List<ScoringMetrics> doCalMetricPercentage(List<ScoringMetrics> scoringMetricsList, String categoryType) {
 		logger.debug("Entering ");
-		BigDecimal totMetricScoringPoints = BigDecimal.ZERO; //total metric points
+		BigDecimal totMetricScoringPoints = BigDecimal.ZERO; // total metric points
 		for (int i = 0; i < scoringMetricsList.size(); i++) {
 			if (!(PennantConstants.RECORD_TYPE_DEL.equals(scoringMetricsList.get(i).getRecordType())
 					|| PennantConstants.RECORD_TYPE_CAN.equals(scoringMetricsList.get(i).getRecordType()))) {
@@ -1733,8 +1683,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1752,8 +1701,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

@@ -75,8 +75,7 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_schemeProductGroupDialogue(Event event) throws AppException {
@@ -146,8 +145,7 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -159,8 +157,7 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -171,8 +168,7 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -183,8 +179,7 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -195,8 +190,7 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -207,8 +201,7 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -219,8 +212,7 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -326,8 +318,7 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param covenantType
-	 *            The entity that need to be render.
+	 * @param covenantType The entity that need to be render.
 	 */
 	public void doShowDialog(SchemeProductGroup schemeProductGroup) {
 		logger.debug(Literal.ENTERING);
@@ -418,49 +409,13 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a CovenantType object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		final SchemeProductGroup schemeProductGroup = new SchemeProductGroup();
 		BeanUtils.copyProperties(this.schemeProductGroup, schemeProductGroup);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ schemeProductGroup.getProductGroupCode();
-		if (MessageUtil.confirm(msg) != MessageUtil.YES) {
-			return;
-		}
-
-		if (StringUtils.trimToEmpty(schemeProductGroup.getRecordType()).equals("")) {
-			schemeProductGroup.setVersion(schemeProductGroup.getVersion() + 1);
-			schemeProductGroup.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-			if (isWorkFlowEnabled()) {
-				schemeProductGroup.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-				schemeProductGroup.setNewRecord(true);
-				tranType = PennantConstants.TRAN_WF;
-				getWorkFlowDetails(userAction.getSelectedItem().getLabel(), schemeProductGroup.getNextTaskId(),
-						schemeProductGroup);
-			} else {
-				tranType = PennantConstants.TRAN_DEL;
-			}
-		}
-
-		try {
-			if (doProcess(schemeProductGroup, tranType)) {
-				refreshList();
-				closeDialog();
-			}
-
-		} catch (DataAccessException e) {
-			MessageUtil.showError(e);
-		}
+		doDelete(String.valueOf(schemeProductGroup.getProductGroupCode()), schemeProductGroup);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -586,11 +541,9 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -670,10 +623,8 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

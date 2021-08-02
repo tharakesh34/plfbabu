@@ -190,7 +190,7 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 				doEdit();
 			} else {
 				this.btnCtrl.setInitEdit();
-				//doReadOnly();
+				// doReadOnly();
 				btnCancel.setVisible(false);
 			}
 		}
@@ -740,7 +740,13 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 
 				if ((incomeExpenseDetail.getCategory()).equals(aSchoolExpense.getCategory())
 						&& incomeExpenseDetail.getIncomeExpense().equals(aSchoolExpense.getIncomeExpense())
-						&& incomeExpenseDetail.getIncomeExpenseCode().equals(aSchoolExpense.getIncomeExpenseCode())) { // Both Current and Existing list rating same
+						&& incomeExpenseDetail.getIncomeExpenseCode().equals(aSchoolExpense.getIncomeExpenseCode())) { // Both
+																														// Current
+																														// and
+																														// Existing
+																														// list
+																														// rating
+																														// same
 
 					if (aSchoolExpense.isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
@@ -1756,36 +1762,8 @@ public class IncomeExpenseDetailDialogCtrl extends GFCBaseCtrl<IncomeExpenseHead
 
 		final IncomeExpenseHeader entity = new IncomeExpenseHeader();
 		BeanUtils.copyProperties(this.incomeExpenseHeader, entity);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ entity.getId();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (("").equals(StringUtils.trimToEmpty(entity.getRecordType()))) {
-				entity.setVersion(entity.getVersion() + 1);
-				entity.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					entity.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					entity.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), entity.getNextTaskId(), entity);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(entity, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(String.valueOf(entity.getId()), entity);
 
 		logger.debug(Literal.LEAVING);
 	}

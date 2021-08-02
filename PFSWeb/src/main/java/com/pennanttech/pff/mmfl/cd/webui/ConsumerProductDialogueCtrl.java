@@ -84,8 +84,7 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_consumerProductDialogue(Event event) throws AppException {
@@ -162,8 +161,7 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -175,8 +173,7 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -187,8 +184,7 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -199,8 +195,7 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -211,8 +206,7 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -223,8 +217,7 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -235,8 +228,7 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -286,8 +278,9 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 				CurrencyUtil.getFormat(SysParamUtil.getAppCurrency())));
 		this.modelStatus.setText(consumerProduct.getModelStatus());
 		this.active.setChecked(consumerProduct.isActive());
-		if (consumerProduct.isNewRecord() || (consumerProduct.getRecordType() != null ? consumerProduct.getRecordType() : "")
-				.equals(PennantConstants.RECORD_TYPE_NEW)) {
+		if (consumerProduct.isNewRecord()
+				|| (consumerProduct.getRecordType() != null ? consumerProduct.getRecordType() : "")
+						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
@@ -380,8 +373,7 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param covenantType
-	 *            The entity that need to be render.
+	 * @param covenantType The entity that need to be render.
 	 */
 	public void doShowDialog(ConsumerProduct consumerProduct) {
 		logger.debug(Literal.ENTERING);
@@ -517,49 +509,13 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a CovenantType object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		final ConsumerProduct consumerProduct = new ConsumerProduct();
 		BeanUtils.copyProperties(this.consumerProduct, consumerProduct);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ consumerProduct.getModelId();
-		if (MessageUtil.confirm(msg) != MessageUtil.YES) {
-			return;
-		}
-
-		if (StringUtils.trimToEmpty(consumerProduct.getRecordType()).equals("")) {
-			consumerProduct.setVersion(consumerProduct.getVersion() + 1);
-			consumerProduct.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-			if (isWorkFlowEnabled()) {
-				consumerProduct.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-				consumerProduct.setNewRecord(true);
-				tranType = PennantConstants.TRAN_WF;
-				getWorkFlowDetails(userAction.getSelectedItem().getLabel(), consumerProduct.getNextTaskId(),
-						consumerProduct);
-			} else {
-				tranType = PennantConstants.TRAN_DEL;
-			}
-		}
-
-		try {
-			if (doProcess(consumerProduct, tranType)) {
-				refreshList();
-				closeDialog();
-			}
-
-		} catch (DataAccessException e) {
-			MessageUtil.showError(e);
-		}
+		doDelete(consumerProduct.getModelId(), consumerProduct);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -696,11 +652,9 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -780,10 +734,8 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

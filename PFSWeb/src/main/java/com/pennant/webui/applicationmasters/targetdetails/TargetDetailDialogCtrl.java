@@ -7,7 +7,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -26,6 +25,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
@@ -119,8 +119,7 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -182,8 +181,7 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -383,43 +381,16 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Deletes a TargetDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final TargetDetail aTargetDetail = new TargetDetail();
 		BeanUtils.copyProperties(getTargetDetail(), aTargetDetail);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_TargetDetailDialog_TargetCode.value") + " : " + aTargetDetail.getTargetCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aTargetDetail.getRecordType())) {
-				aTargetDetail.setVersion(aTargetDetail.getVersion() + 1);
-				aTargetDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(Labels.getLabel("label_TargetDetailDialog_TargetCode.value") + " : " + aTargetDetail.getTargetCode(),
+				aTargetDetail);
 
-				if (isWorkFlowEnabled()) {
-					aTargetDetail.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (doProcess(aTargetDetail, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void doSave() throws InterruptedException {

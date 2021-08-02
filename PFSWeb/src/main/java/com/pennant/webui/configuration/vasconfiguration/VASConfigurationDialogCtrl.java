@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  VASConfigurationDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  29-11-2016    														*
- *                                                                  						*
- * Modified Date    :  29-11-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : VASConfigurationDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 29-11-2016 * *
+ * Modified Date : 29-11-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 29-11-2016       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 29-11-2016 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -56,7 +38,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.codemirror.Codemirror;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
@@ -178,12 +159,12 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	protected Checkbox active;
 	protected Textbox remarks;
 
-	//New Fields for Insurance
+	// New Fields for Insurance
 	protected Combobox modeOfPayment;
 	protected Combobox allowFeeType;
 	protected Checkbox medicalApplicable;
 
-	//File Import
+	// File Import
 	protected Groupbox grpBox_FileImport;
 	protected Button btnImport;
 	protected Button btnUpload;
@@ -259,8 +240,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_VASConfigurationDialog(Event event) throws Exception {
@@ -328,8 +308,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug("Entring" + event.toString());
@@ -372,8 +351,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug("Entring" + event.toString());
@@ -383,8 +361,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
@@ -395,8 +372,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 * @throws ParseException
 	 */
@@ -408,8 +384,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug("Entring" + event.toString());
@@ -459,8 +434,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -557,8 +531,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param aVASConfiguration
-	 *            The entity that need to be render.
+	 * @param aVASConfiguration The entity that need to be render.
 	 */
 	public void doShowDialog(VASConfiguration aVASConfiguration) throws InterruptedException {
 		logger.debug("Entering");
@@ -931,7 +904,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		logger.debug("Entering" + event.toString());
 		if (validate(event, false, false)) {
 			preScriptValidated = true;
-			//check if code mirror is empty or not 
+			// check if code mirror is empty or not
 			if (StringUtils.isNotEmpty(this.preValidation.getValue().trim())) {
 				if (MessageUtil.confirm("NO Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
 					// create a new window for input values
@@ -952,7 +925,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		logger.debug("Entering" + event.toString());
 		if (validate(event, true, false)) {
 			postScriptValidated = true;
-			//check if code mirror is empty or not 
+			// check if code mirror is empty or not
 			if (StringUtils.isNotEmpty(this.postValidation.getValue().trim())) {
 				if (MessageUtil.confirm("NO Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
 					// create a new window for input values
@@ -1260,13 +1233,13 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		// Default Values Setting for Script Validations
 		postScriptValidated = true;
 		preScriptValidated = true;
-		//FLP CalculatedOn
+		// FLP CalculatedOn
 		fillComboBox(this.flpCalculatedOn, aVASConfiguration.getFlpCalculatedOn(), listFlpCalculatedOn, "");
 		visibleComponents(aVASConfiguration.getFreeLockPeriod());
 		// Extended Field Details tab
 		appendExtendedFieldsTab();
 
-		//Premium Calculation File Upload
+		// Premium Calculation File Upload
 		setPremiumCalcDetList(aVASConfiguration.getPremiumCalcDetList());
 
 		this.recordStatus.setValue(aVASConfiguration.getRecordStatus());
@@ -1293,7 +1266,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Basic Details Tab
+		// Basic Details Tab
 
 		// Product Code
 		try {
@@ -1401,7 +1374,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//FLP Calculated On
+		// FLP Calculated On
 		try {
 			if (!this.flpCalculatedOn.isDisabled() && this.freeLockPeriod.intValue() >= 1
 					&& "#".equals(this.flpCalculatedOn.getSelectedItem().getValue())) {
@@ -1428,7 +1401,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			wve.add(we);
 		}
 
-		//Medical Applicable
+		// Medical Applicable
 		try {
 			aVASConfiguration.setMedicalApplicable(this.medicalApplicable.isChecked());
 		} catch (WrongValueException we) {
@@ -1453,7 +1426,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Short Code
+		// Short Code
 		try {
 			aVASConfiguration.setShortCode(this.shortCode.getValue());
 		} catch (WrongValueException we) {
@@ -1546,13 +1519,13 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 					new PTStringValidator(Labels.getLabel("label_VASConfigurationDialog_ProductDesc.value"),
 							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-		//VAS Type
+		// VAS Type
 		if (!this.vasType.isButtonDisabled()) {
 			this.vasType.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_VASConfigurationDialog_VASType.value"), null, true, true));
 		}
 
-		//vasFee
+		// vasFee
 		if (!this.vasFee.isReadonly()
 				&& !(VASConsatnts.VAS_ALLOWFEE_AUTO.equals(this.allowFeeType.getSelectedItem().getValue()))) {
 			this.vasFee.setConstraint(new PTDecimalValidator(
@@ -1569,7 +1542,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			this.accrualAccounting.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_VASConfigurationDialog_AccrualAccounting.value"), null, true, true));
 		}
-		//Cancellation Fee Type
+		// Cancellation Fee Type
 		if (!this.cancellationFeeType.isReadonly()) {
 			this.cancellationFeeType.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_VASConfigurationDialog_CancellationFeeType.value"), null, true, true));
@@ -1580,7 +1553,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 					Labels.getLabel("label_VASConfigurationDialog_FreeLockPeriod.value"), false, false, 0, 999));
 		}
 
-		//Manufacturer
+		// Manufacturer
 		if (!this.manufacturer.isButtonDisabled()) {
 			this.manufacturer.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_VASConfigurationDialog_Manufacturer.value"), null, true, true));
@@ -1598,14 +1571,14 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 							PennantRegularExpressions.REGEX_DESCRIPTION, false));
 		}
 
-		//Allow Fee types
+		// Allow Fee types
 		if (!this.allowFeeType.isDisabled()) {
 			this.allowFeeType.setConstraint(
 					new PTListValidator(Labels.getLabel("label_VASConfigurationDialog_AllowFeeType.value"),
 							PennantStaticListUtil.getVasAllowFeeTypes(), true));
 		}
 
-		//Allow Mode Of Payments
+		// Allow Mode Of Payments
 		if (!this.modeOfPayment.isDisabled()) {
 			this.modeOfPayment.setConstraint(
 					new PTListValidator(Labels.getLabel("label_VASConfigurationDialog_ModeOfPayment.value"),
@@ -1730,48 +1703,15 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Deletes a VASConfiguration object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final VASConfiguration aVASConfiguration = new VASConfiguration();
 		BeanUtils.copyProperties(getVASConfiguration(), aVASConfiguration);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aVASConfiguration.getProductCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aVASConfiguration.getRecordType()).equals("")) {
-				aVASConfiguration.setVersion(aVASConfiguration.getVersion() + 1);
-				aVASConfiguration.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(aVASConfiguration.getProductCode(), aVASConfiguration);
 
-				if (isWorkFlowEnabled()) {
-					aVASConfiguration.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aVASConfiguration.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aVASConfiguration.getNextTaskId(),
-							aVASConfiguration);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aVASConfiguration, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1849,7 +1789,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			aVASConfiguration.setPremiumCalcDetList(new ArrayList<>());
 		}
 
-		//Batch Id
+		// Batch Id
 		if (CollectionUtils.isNotEmpty(aVASConfiguration.getPremiumCalcDetList())) {
 			aVASConfiguration.setBatchId(aVASConfiguration.getPremiumCalcDetList().get(0).getBatchId());
 		}
@@ -1903,11 +1843,9 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1969,7 +1907,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			aVASConfiguration.setRoleCode(getRole());
 			aVASConfiguration.setNextRoleCode(nextRoleCode);
 
-			//Premium calculation details
+			// Premium calculation details
 			if (CollectionUtils.isNotEmpty(aVASConfiguration.getPremiumCalcDetList())) {
 				for (VASPremiumCalcDetails premiumCalcDetails : aVASConfiguration.getPremiumCalcDetList()) {
 					premiumCalcDetails.setProductCode(aVASConfiguration.getProductCode());
@@ -2037,10 +1975,8 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */
@@ -2304,7 +2240,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		}
 	}
 
-	//File import related changes end//
+	// File import related changes end//
 
 	@Override
 	protected String getReference() {

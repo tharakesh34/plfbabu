@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AccountsDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  02-01-2012    														*
- *                                                                  						*
- * Modified Date    :  02-01-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AccountsDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 02-01-2012 * * Modified
+ * Date : 02-01-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 02-01-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 02-01-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.accounts.accounts;
@@ -54,7 +36,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -91,6 +72,7 @@ import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -233,7 +215,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		if (!this.accounts.isInternalAc()) {
 			this.acSeqNumber.setMaxlength(
 					LengthConstants.LEN_ACCOUNT - (LengthConstants.LEN_BRANCH + LengthConstants.LEN_ACHEADCODE));
@@ -402,8 +384,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -426,8 +407,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aAccounts
-	 *            Accounts
+	 * @param aAccounts Accounts
 	 */
 	public void doWriteBeanToComponents(Accounts aAccounts) {
 		logger.debug("Entering");
@@ -462,7 +442,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		this.acAccrualBal.setValue(PennantAppUtil.formateAmount(aAccounts.getShadowBal(), 0));
 		this.acTodayBal.setValue(PennantAppUtil.formateAmount(aAccounts.getAcBalance(), 0));
 
-		//FIXME: PV: 07MAY17: To be fixed when screen used
+		// FIXME: PV: 07MAY17: To be fixed when screen used
 		/*
 		 * this.acPrvDayBal.setValue(PennantAppUtil.formateAmount(aAccounts.getAcPrvDayBal(),0));
 		 * this.acTodayDr.setValue(PennantAppUtil.formateAmount(aAccounts.getAcTodayDr(),0));
@@ -575,7 +555,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 			wve.add(we);
 		}
 
-		//FIXME: PV: 07MAY17: To be fixed when screen used
+		// FIXME: PV: 07MAY17: To be fixed when screen used
 		/*
 		 * try { if(this.acPrvDayBal.getValue()!=null){
 		 * aAccounts.setAcPrvDayBal(PennantAppUtil.unFormateAmount(this.acPrvDayBal.getValue(), 0)); } }catch
@@ -909,40 +889,13 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		final Accounts aAccounts = new Accounts();
 		BeanUtils.copyProperties(getAcounts(), aAccounts);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aAccounts.getAccountId();
+		doDelete(aAccounts.getAccountId(), aAccounts);
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aAccounts.getRecordType())) {
-				aAccounts.setVersion(aAccounts.getVersion() + 1);
-				aAccounts.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aAccounts.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aAccounts, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

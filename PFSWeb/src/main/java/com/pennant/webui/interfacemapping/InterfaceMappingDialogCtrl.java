@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  InterfaceMappingDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : InterfaceMappingDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * *
+ * Modified Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.interfacemapping;
@@ -46,6 +28,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -82,6 +65,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.bajaj.process.collections.model.CollectionConstants;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -303,8 +287,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -330,8 +313,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param ainterfaceMapping
-	 *            InterfaceMapping
+	 * @param ainterfaceMapping InterfaceMapping
 	 */
 	public void doWriteBeanToComponents(InterfaceMapping ainterfaceMapping) {
 		logger.debug("Entering");
@@ -382,7 +364,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 			wve.add(we);
 		}
 
-		//if mapping type is column,validation will check
+		// if mapping type is column,validation will check
 		if (StringUtils.equals(mappingType, CollectionConstants.INTERFACEMAPPING_COLUMN)) {
 
 			try {
@@ -402,7 +384,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 			}
 		}
 
-		//if mapping type is Value,validation will check
+		// if mapping type is Value,validation will check
 		if (StringUtils.equals(mappingType, CollectionConstants.INTERFACEMAPPING_VALUE)) {
 			try {
 				ainterfaceMapping.setMappingValue(this.mappingValue.getValue());
@@ -577,65 +559,30 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a interfaceMapping object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final InterfaceMapping entity = new InterfaceMapping();
 		BeanUtils.copyProperties(getInterfaceMapping(), entity);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_InterfaceMappingDialog_InterfaceName.value") + " : "
+		String keyReference = Labels.getLabel("label_InterfaceMappingDialog_InterfaceName.value") + " : "
 				+ interfaceMapping.getInterfaceName();
+		doDelete(keyReference, interfaceMapping);
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+		logger.debug(Literal.LEAVING);
+	}
 
-			if (StringUtils.isBlank(interfaceMapping.getRecordType())) {
-				interfaceMapping.setVersion(interfaceMapping.getVersion() + 1);
-				interfaceMapping.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+	protected void doDeleteChild(InterfaceMapping interfaceMapping) {
+		if (CollectionUtils.isNotEmpty(interfaceMapping.getMasterMappingList())) {
+			for (int i = 0; i < interfaceMapping.getMasterMappingList().size(); i++) {
+				MasterMapping masterMapping = interfaceMapping.getMasterMappingList().get(i);
 
-				if (isWorkFlowEnabled()) {
-					interfaceMapping.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-
-					if (interfaceMapping.getMasterMappingList() != null
-							&& !interfaceMapping.getMasterMappingList().isEmpty()) {
-
-						for (int i = 0; i < interfaceMapping.getMasterMappingList().size(); i++) {
-							MasterMapping masterMapping = interfaceMapping.getMasterMappingList().get(i);
-
-							if (StringUtils.isBlank(masterMapping.getInterfaceValue())) {
-								interfaceMapping.getMasterMappingList().remove(i);
-								i = 0;
-							}
-						}
-					}
-
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
+				if (StringUtils.isBlank(masterMapping.getInterfaceValue())) {
+					interfaceMapping.getMasterMappingList().remove(i);
+					i = 0;
 				}
-			}
-
-			try {
-				if (doProcess(interfaceMapping, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (Exception e) {
-				MessageUtil.showError(e);
 			}
 		}
-
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -795,11 +742,9 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param ainterfaceMapping
-	 *            (InterfaceMapping)
+	 * @param ainterfaceMapping (InterfaceMapping)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType          (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -889,11 +834,9 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1070,7 +1013,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 			this.mappingTable.setValue(interfaceField.getTableName());
 			this.mappingTable.setButtonDisabled(true);
 
-			//List of column Name will retrieve based on interfaceField table name
+			// List of column Name will retrieve based on interfaceField table name
 			List<String> tableColumnsList = getInterfaceMappingService()
 					.getTableNameColumnsList(interfaceField.getTableName());
 
@@ -1142,8 +1085,8 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 			this.row2.setVisible(false);
 			this.listBoxInterfaceMapping.setVisible(true);
 
-			//Get the Latest data from the Master Mapping Table
-			//boolean condition = isReadOnly("InterfaceMappingDialog_List");
+			// Get the Latest data from the Master Mapping Table
+			// boolean condition = isReadOnly("InterfaceMappingDialog_List");
 
 			if (!PennantConstants.RECORD_TYPE_DEL.equals(interfaceMapping.getRecordType())) {
 				prepareMasterMappingList(interfaceMapping.getMasterMappingList(), interfaceMapping.getModule());
@@ -1187,7 +1130,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 				Listitem item = new Listitem();
 				Listcell lc;
 
-				//PLF Value
+				// PLF Value
 				lc = new Listcell(masterMapping.getPlfValue());
 				lc.setParent(item);
 
@@ -1357,7 +1300,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	public void prepareMasterMappingList(List<MasterMapping> masterList, String module) {
 		logger.debug("Entering");
 
-		//get table name based on module type
+		// get table name based on module type
 		String tableName = ModuleUtil.getLovTableName(module);
 		String[] vale = ModuleUtil.getLovFields(module);
 
@@ -1407,8 +1350,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

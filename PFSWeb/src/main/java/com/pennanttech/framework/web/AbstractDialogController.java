@@ -10,8 +10,6 @@ import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.A;
 import org.zkoss.zul.Button;
@@ -199,14 +197,10 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		}
 
 		MessageUtil.confirm(
-				"Any changes made will be lost if you close this window. Are you sure you want to continue?",
-				new EventListener<Event>() {
-					@Override
-					public void onEvent(Event event) throws Exception {
-						if (Messagebox.ON_YES.equals(event.getName())) {
-							closeDialog();
-							doPostClose();
-						}
+				"Any changes made will be lost if you close this window. Are you sure you want to continue?", event -> {
+					if (Messagebox.ON_YES.equals(event.getName())) {
+						closeDialog();
+						doPostClose();
 					}
 				});
 	}
@@ -496,44 +490,57 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		return engine.isBackwardCase(entity.getTaskId(), entity.getNextTaskId().replace(";", ""));
 	}
 
+	protected void doDeleteChild(T aEntity) {
+		//
+	}
+
 	protected void doDelete(String keyReference, T aEntity) {
 		AbstractWorkflowEntity entity = (AbstractWorkflowEntity) aEntity;
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ keyReference;
 
-		MessageUtil.confirm(msg, new EventListener<Event>() {
-			@Override
-			public void onEvent(Event event) throws Exception {
-				if (Messagebox.ON_YES.equals(event.getName())) {
+		MessageUtil.confirm(msg, event -> {
+			if (Messagebox.ON_YES.equals(event.getName())) {
 
-					String tranType = PennantConstants.TRAN_WF;
-					if (StringUtils.isBlank(((AbstractWorkflowEntity) entity).getRecordType())) {
-						entity.setVersion(entity.getVersion() + 1);
-						entity.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				String tranType = PennantConstants.TRAN_WF;
+				if (StringUtils.isBlank(((AbstractWorkflowEntity) entity).getRecordType())) {
+					entity.setVersion(entity.getVersion() + 1);
+					entity.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-						if (isWorkFlowEnabled()) {
-							entity.setNewRecord(true);
-							tranType = PennantConstants.TRAN_WF;
-						} else {
-							tranType = PennantConstants.TRAN_DEL;
-						}
+					doDeleteChild(aEntity);
+
+					if (isWorkFlowEnabled()) {
+						entity.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+						entity.setNewRecord(true);
+						tranType = PennantConstants.TRAN_WF;
+						getWorkFlowDetails(userAction.getSelectedItem().getLabel(), entity.getNextTaskId(), entity);
+					} else {
+						tranType = PennantConstants.TRAN_DEL;
 					}
-
-					try {
-						if (doProcess(aEntity, tranType)) {
-							refreshList();
-							closeDialog();
-						}
-
-					} catch (Exception e) {
-						MessageUtil.showError(e);
-					}
-
-				} else if (Messagebox.ON_NO.equals(event.getName())) {
-					//
 				}
+
+				if (customProcess(aEntity)) {
+					return;
+				}
+
+				try {
+					if (doProcess(aEntity, tranType)) {
+						refreshList();
+						closeDialog();
+					}
+
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
+
+			} else if (Messagebox.ON_NO.equals(event.getName())) {
+				//
 			}
 		});
+	}
+
+	protected boolean customProcess(T aEntity) {
+		return false;
 	}
 
 	protected void refreshList() {

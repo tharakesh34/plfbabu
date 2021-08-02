@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DocumentTypeDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DocumentTypeDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * *
+ * Modified Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.systemmasters.documenttype;
@@ -302,8 +284,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -327,8 +308,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aDocumentType
-	 *            DocumentType
+	 * @param aDocumentType DocumentType
 	 */
 	public void doWriteBeanToComponents(DocumentType aDocumentType) {
 		logger.debug("Entering");
@@ -483,7 +463,8 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		}
 		try {
 			aDocumentType.setDocExternalRef(org.apache.commons.lang3.StringUtils.isBlank(this.docExternalRef.getValue())
-					? this.docTypeCode.getValue() : this.docExternalRef.getValue());
+					? this.docTypeCode.getValue()
+					: this.docExternalRef.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -637,46 +618,18 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a DocumentType object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final DocumentType aDocumentType = new DocumentType();
 		BeanUtils.copyProperties(getDocumentType(), aDocumentType);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_DocumentTypeDialog_DocTypeCode.value") + " : "
+		String keyReference = Labels.getLabel("label_DocumentTypeDialog_DocTypeCode.value") + " : "
 				+ aDocumentType.getDocTypeCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aDocumentType.getRecordType())) {
-				aDocumentType.setVersion(aDocumentType.getVersion() + 1);
-				aDocumentType.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()) {
-					aDocumentType.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (doProcess(aDocumentType, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+		doDelete(keyReference, aDocumentType);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -731,7 +684,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			//btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}
@@ -848,11 +801,9 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aDocumentType
-	 *            (DocumentType)
+	 * @param aDocumentType (DocumentType)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -939,11 +890,9 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1033,8 +982,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1067,7 +1015,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		this.mappingRef.setConstraint("");
 		this.mappingRef.setErrorMessage("");
 		this.mappingRef.setValue("");
-		//this.rowMappingRef.setVisible(docIsPdfExtRequired.isChecked());
+		// this.rowMappingRef.setVisible(docIsPdfExtRequired.isChecked());
 	}
 
 	/**
@@ -1095,8 +1043,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

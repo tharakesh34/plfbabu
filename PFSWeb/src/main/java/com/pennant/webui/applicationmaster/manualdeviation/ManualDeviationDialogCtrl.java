@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ManualDeviationDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-04-2018    														*
- *                                                                  						*
- * Modified Date    :  03-04-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ManualDeviationDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-04-2018 * *
+ * Modified Date : 03-04-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-04-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-04-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.applicationmaster.manualdeviation;
 
 import java.sql.Timestamp;
@@ -135,8 +117,7 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_ManualDeviationDialog(Event event) throws Exception {
@@ -221,8 +202,7 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -234,8 +214,7 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -246,8 +225,7 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -258,8 +236,7 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -270,8 +247,7 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -282,8 +258,7 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -294,8 +269,7 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -388,19 +362,19 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Code
+		// Code
 		try {
 			aManualDeviation.setCode(this.code.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Description
+		// Description
 		try {
 			aManualDeviation.setDescription(this.description.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Module
+		// Module
 		try {
 			String strModule = null;
 			if (this.module.getSelectedItem() != null) {
@@ -415,7 +389,7 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Categorization
+		// Categorization
 		try {
 			this.categorization.getValidatedValue();
 			Object obj = this.categorization.getAttribute("categorization");
@@ -428,7 +402,7 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Severity
+		// Severity
 		// ### 06-05-2018 - Start - story #361(Tuleap server) Manual Deviations
 		try {
 			if (severity.getSelectedIndex() <= 0) {
@@ -440,7 +414,7 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Active
+		// Active
 		try {
 			aManualDeviation.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
@@ -463,8 +437,7 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param manualDeviation
-	 *            The entity that need to be render.
+	 * @param manualDeviation The entity that need to be render.
 	 */
 	public void doShowDialog(ManualDeviation manualDeviation) {
 		logger.debug(Literal.LEAVING);
@@ -577,47 +550,13 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a ManualDeviation object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		final ManualDeviation aManualDeviation = new ManualDeviation();
 		BeanUtils.copyProperties(this.manualDeviation, aManualDeviation);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aManualDeviation.getCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aManualDeviation.getRecordType()).equals("")) {
-				aManualDeviation.setVersion(aManualDeviation.getVersion() + 1);
-				aManualDeviation.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aManualDeviation.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aManualDeviation.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aManualDeviation.getNextTaskId(),
-							aManualDeviation);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aManualDeviation, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(aManualDeviation.getCode(), aManualDeviation);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -750,11 +689,9 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -841,10 +778,8 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

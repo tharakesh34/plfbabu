@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceFlagsDialogCtrl.java                                          * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceFlagsDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * *
+ * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.financeFlags;
@@ -101,6 +83,7 @@ import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -274,7 +257,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 		getUserWorkspace().allocateAuthorities("FinanceFlagsDialog", getRole());
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FinanceFlagsDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FinanceFlagsDialog_btnEdit"));
-		//this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinanceFlagsDialog_btnDelete"));
+		// this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinanceFlagsDialog_btnDelete"));
 		this.btnDelete.setVisible(false);
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinanceFlagsDialog_btnSave"));
 		this.btnCancel.setVisible(false);
@@ -323,51 +306,18 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
-	 * Deletes a FinanceFlags object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final FinanceFlag afinanceFlags = new FinanceFlag();
 		BeanUtils.copyProperties(getFinanceFlag(), afinanceFlags);
 
-		String tranType = PennantConstants.TRAN_WF;
-
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_FinanceFlagsDialog_finReference.value") + " : "
+		String keyReference = Labels.getLabel("label_FinanceFlagsDialog_finReference.value") + " : "
 				+ afinanceFlags.getFinReference();
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(afinanceFlags.getRecordType())) {
-				afinanceFlags.setVersion(afinanceFlags.getVersion() + 1);
-				afinanceFlags.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(keyReference, afinanceFlags);
 
-				if (isWorkFlowEnabled()) {
-					afinanceFlags.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					afinanceFlags.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), afinanceFlags.getNextTaskId(),
-							afinanceFlags);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(afinanceFlags, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	// ****************************************************************
@@ -452,15 +402,14 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceFlags
-	 *            aFinanceFlags
+	 * @param aFinanceFlags aFinanceFlags
 	 */
 	private void doWriteComponentsToBean(FinanceFlag aFinanceFlags) {
 		logger.debug("Entering");
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//FinReference
+		// FinReference
 		try {
 			aFinanceFlags.setFinReference(this.finReference.getValue());
 		} catch (WrongValueException we) {
@@ -525,8 +474,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -626,7 +574,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 
 	protected String getServiceTasks(String taskId, FinanceFlag financeFlag, String finishedTasks) {
 		logger.debug("Entering");
-		// changes regarding parallel work flow 
+		// changes regarding parallel work flow
 		String nextRoleCode = StringUtils.trimToEmpty(financeFlag.getNextRoleCode());
 		String nextRoleCodes[] = nextRoleCode.split(",");
 
@@ -707,10 +655,8 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */
@@ -848,8 +794,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceFlags
-	 *            aFinanceFlags
+	 * @param aFinanceFlags aFinanceFlags
 	 */
 
 	private void doWriteBeanToComponents(FinanceFlag aFinanceFlags) {
@@ -905,11 +850,11 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 
 	private void setWorkflowDetails(String finType) {
 
-		//Finance Maintenance Workflow Check & Assignment
+		// Finance Maintenance Workflow Check & Assignment
 		WorkFlowDetails workFlowDetails = null;
 		if (StringUtils.isNotEmpty(FinServiceEvent.FINFLAGS)) {
 			FinanceWorkFlow financeWorkflow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(finType,
-					FinServiceEvent.FINFLAGS, PennantConstants.WORFLOW_MODULE_FINANCE);//TODO: Check Promotion case
+					FinServiceEvent.FINFLAGS, PennantConstants.WORFLOW_MODULE_FINANCE);// TODO: Check Promotion case
 			if (financeWorkflow != null && financeWorkflow.getWorkFlowType() != null) {
 				workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkflow.getWorkFlowType());
 			}
@@ -1046,9 +991,9 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 			this.finFlags_purchasePrice
 					.setValue(PennantAppUtil.formateAmount(financeMain.getFinAmount(), ccyFormatter));
 			this.finFlags_otherExp.setValue(PennantAppUtil.formateAmount(financeMain.getFeeChargeAmt(), ccyFormatter));
-			this.finFlags_totalCost.setValue(PennantAppUtil.formateAmount(financeMain.getFinAmount()
-					.subtract(financeMain.getDownPaySupl())
-					.add(financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO : financeMain.getFeeChargeAmt()),
+			this.finFlags_totalCost.setValue(PennantAppUtil.formateAmount(
+					financeMain.getFinAmount().subtract(financeMain.getDownPaySupl()).add(
+							financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO : financeMain.getFeeChargeAmt()),
 					ccyFormatter));
 			this.finFlags_totalPft.setValue(PennantAppUtil.formateAmount(financeMain.getTotalProfit(), ccyFormatter));
 			this.finFlags_contractPrice
@@ -1141,7 +1086,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 			if (!StringUtils.isEmpty(flagCode)) {
 				this.listBoxFinanceFlags.appendChild(item);
 			}
-			//List Details preparation
+			// List Details preparation
 			FinFlagsDetail afinFlagsDetail = new FinFlagsDetail();
 			afinFlagsDetail.setFlagCode(flagCode);
 			afinFlagsDetail.setFlagDesc(flagDesc);
@@ -1176,8 +1121,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -1208,8 +1152,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

@@ -511,45 +511,13 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a ChequeHeader object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		final ChequeHeader aChequeHeader = new ChequeHeader();
 		BeanUtils.copyProperties(this.chequeHeader, aChequeHeader);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aChequeHeader.getHeaderID();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aChequeHeader.getRecordType()).equals("")) {
-				aChequeHeader.setVersion(aChequeHeader.getVersion() + 1);
-				aChequeHeader.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aChequeHeader.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aChequeHeader.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aChequeHeader.getNextTaskId(),
-							aChequeHeader);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (doProcess(aChequeHeader, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(String.valueOf(aChequeHeader.getHeaderID()), aChequeHeader);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1477,9 +1445,9 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				emiAmount = fsd.getRepayAmount();
 				if (fsd.getTDSAmount() != null && fsd.getTDSAmount().compareTo(BigDecimal.ZERO) > 0) {
 					emiAmount = emiAmount.subtract(fsd.getTDSAmount());
-						totalChequeAmt = PennantApplicationUtil.unFormateAmount(totalChequeAmt, ccyEditField)
-								.add(emiAmount);
-						this.totAmount.setValue(PennantApplicationUtil.formateAmount(totalChequeAmt, ccyEditField));
+					totalChequeAmt = PennantApplicationUtil.unFormateAmount(totalChequeAmt, ccyEditField)
+							.add(emiAmount);
+					this.totAmount.setValue(PennantApplicationUtil.formateAmount(totalChequeAmt, ccyEditField));
 				}
 				break;
 			}

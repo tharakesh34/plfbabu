@@ -1170,43 +1170,15 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a UploadHeader entity from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() {
 		logger.debug(Literal.ENTERING);
 
 		final UploadHeader entity = new UploadHeader();
 		BeanUtils.copyProperties(this.uploadHeader, entity);
-		String tranType = PennantConstants.TRAN_WF;
+		String keyReference = Labels.getLabel("label_UploadAdviseDialog_FileName.value") + " : "
+				+ uploadHeader.getFileName();
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_UploadAdviseDialog_FileName.value") + " : " + uploadHeader.getFileName();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(uploadHeader.getRecordType())) {
-				uploadHeader.setVersion(uploadHeader.getVersion() + 1);
-				uploadHeader.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					uploadHeader.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(uploadHeader, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(keyReference, uploadHeader);
 
 		logger.debug(Literal.LEAVING);
 	}

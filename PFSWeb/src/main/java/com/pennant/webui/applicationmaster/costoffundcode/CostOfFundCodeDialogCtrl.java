@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CostOfFundCodeDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-05-2011    														*
- *                                                                  						*
- * Modified Date    :  03-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CostOfFundCodeDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-05-2011 * *
+ * Modified Date : 03-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.applicationmaster.costoffundcode;
@@ -72,6 +54,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -180,7 +163,7 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.cofCode.setMaxlength(8);
 		this.cofDesc.setMaxlength(50);
 
@@ -271,8 +254,7 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -296,8 +278,7 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCostOfFundCode
-	 *            CostOfFundCode
+	 * @param aCostOfFundCode CostOfFundCode
 	 */
 	public void doWriteBeanToComponents(CostOfFundCode aCostOfFundCode) {
 		logger.debug("Entering");
@@ -305,8 +286,9 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 		this.cofDesc.setValue(aCostOfFundCode.getCofDesc());
 		this.recordStatus.setValue(aCostOfFundCode.getRecordStatus());
 		this.active.setChecked(aCostOfFundCode.isActive());
-		if (aCostOfFundCode.isNewRecord() || (aCostOfFundCode.getRecordType() != null ? aCostOfFundCode.getRecordType() : "")
-				.equals(PennantConstants.RECORD_TYPE_NEW)) {
+		if (aCostOfFundCode.isNewRecord()
+				|| (aCostOfFundCode.getRecordType() != null ? aCostOfFundCode.getRecordType() : "")
+						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
@@ -460,47 +442,16 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 		getCostOfFundCodeListCtrl().search();
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a CostOfFundCode object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final CostOfFundCode aCostOfFundCode = new CostOfFundCode();
 		BeanUtils.copyProperties(getCostOfFundCode(), aCostOfFundCode);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_CostOfFundCodeDialog_CofCode.value") + " : " + aCostOfFundCode.getCofCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCostOfFundCode.getRecordType())) {
-				aCostOfFundCode.setVersion(aCostOfFundCode.getVersion() + 1);
-				aCostOfFundCode.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(Labels.getLabel("label_CostOfFundCodeDialog_CofCode.value") + " : " + aCostOfFundCode.getCofCode(),
+				aCostOfFundCode);
 
-				if (isWorkFlowEnabled()) {
-					aCostOfFundCode.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aCostOfFundCode, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -562,7 +513,7 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	 */
 	public void doClear() {
 		logger.debug("Entering");
-		// remove validation, if there are a save before		
+		// remove validation, if there are a save before
 		this.cofCode.setValue("");
 		this.cofDesc.setValue("");
 		this.active.setChecked(false);
@@ -631,11 +582,9 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aCostOfFundCode
-	 *            (CostOfFundCode)
+	 * @param aCostOfFundCode (CostOfFundCode)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType        (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -722,11 +671,9 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -815,8 +762,7 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	/**
 	 * Display Message in Error Box
 	 *
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -834,8 +780,7 @@ public class CostOfFundCodeDialogCtrl extends GFCBaseCtrl<CostOfFundCode> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

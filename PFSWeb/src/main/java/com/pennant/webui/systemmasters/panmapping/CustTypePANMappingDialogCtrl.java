@@ -88,8 +88,7 @@ public class CustTypePANMappingDialogCtrl extends GFCBaseCtrl<CustTypePANMapping
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_PANMappingDialog(Event event) throws Exception {
@@ -172,8 +171,7 @@ public class CustTypePANMappingDialogCtrl extends GFCBaseCtrl<CustTypePANMapping
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		doSave();
@@ -182,8 +180,7 @@ public class CustTypePANMappingDialogCtrl extends GFCBaseCtrl<CustTypePANMapping
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		doEdit();
@@ -192,8 +189,7 @@ public class CustTypePANMappingDialogCtrl extends GFCBaseCtrl<CustTypePANMapping
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		MessageUtil.showHelpWindow(event, super.window);
@@ -202,8 +198,7 @@ public class CustTypePANMappingDialogCtrl extends GFCBaseCtrl<CustTypePANMapping
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) {
 		doDelete();
@@ -212,8 +207,7 @@ public class CustTypePANMappingDialogCtrl extends GFCBaseCtrl<CustTypePANMapping
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		doCancel();
@@ -222,8 +216,7 @@ public class CustTypePANMappingDialogCtrl extends GFCBaseCtrl<CustTypePANMapping
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -299,16 +292,16 @@ public class CustTypePANMappingDialogCtrl extends GFCBaseCtrl<CustTypePANMapping
 	public void doWriteBeanToComponents(CustTypePANMapping custTypePANMapping) {
 		logger.debug(Literal.ENTERING);
 
-		//Customer Category
+		// Customer Category
 		fillComboBox(this.custCategory, custTypePANMapping.getCustCategory(), CustCtgType, "");
 
-		//Customer Type
+		// Customer Type
 		this.custType.setValue(custTypePANMapping.getCustType(), custTypePANMapping.getCustTypeDesc());
 
-		//PAN 4th Letter
+		// PAN 4th Letter
 		this.panLetter.setValue(custTypePANMapping.getPanLetter());
 
-		//Active
+		// Active
 		if (custTypePANMapping.isNewRecord()) {
 			this.active.setChecked(true);
 		} else {
@@ -373,8 +366,7 @@ public class CustTypePANMappingDialogCtrl extends GFCBaseCtrl<CustTypePANMapping
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param custTypePANMapping
-	 *            The entity that need to be render.
+	 * @param custTypePANMapping The entity that need to be render.
 	 */
 	public void doShowDialog(CustTypePANMapping custTypePANMapping) {
 		logger.debug(Literal.ENTERING);
@@ -479,46 +471,14 @@ public class CustTypePANMappingDialogCtrl extends GFCBaseCtrl<CustTypePANMapping
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a CustTypePANMapping entity from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() {
 		logger.debug(Literal.ENTERING);
 
 		final CustTypePANMapping entity = new CustTypePANMapping();
 		BeanUtils.copyProperties(this.custTypePANMapping, entity);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_PANMappingDialog_panLetter.value") + " : " + custTypePANMapping.getPanLetter();
-
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-
-			if (StringUtils.isBlank(custTypePANMapping.getRecordType())) {
-
-				custTypePANMapping.setVersion(custTypePANMapping.getVersion() + 1);
-				custTypePANMapping.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					custTypePANMapping.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(custTypePANMapping, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(Labels.getLabel("label_PANMappingDialog_panLetter.value") + " : " + custTypePANMapping.getPanLetter(),
+				custTypePANMapping);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -654,11 +614,9 @@ public class CustTypePANMappingDialogCtrl extends GFCBaseCtrl<CustTypePANMapping
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aCustTypePANMapping
-	 *            (CustTypePANMapping)
+	 * @param aCustTypePANMapping (CustTypePANMapping)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -744,11 +702,9 @@ public class CustTypePANMappingDialogCtrl extends GFCBaseCtrl<CustTypePANMapping
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -837,8 +793,7 @@ public class CustTypePANMappingDialogCtrl extends GFCBaseCtrl<CustTypePANMapping
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.custTypePANMapping);

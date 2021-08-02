@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  InsuranceRebookingDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  02-12-2016    														*
- *                                                                  						*
- * Modified Date    :  02-12-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : InsuranceRebookingDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 02-12-2016 * *
+ * Modified Date : 02-12-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 02-12-2016       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 02-12-2016 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.insurance;
@@ -208,7 +190,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	protected Textbox customerCif;
 	protected Label customerShortName;
 
-	//Status details from Maintenance
+	// Status details from Maintenance
 	protected Groupbox gb_MaintenanceDetails;
 	protected Textbox status;
 	protected Checkbox reconciled;
@@ -301,8 +283,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_InsuranceRebooking(Event event) throws Exception {
@@ -361,8 +342,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		doEdit();
@@ -371,8 +351,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		MessageUtil.showHelpWindow(event, super.window);
@@ -381,8 +360,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 * @throws InterfaceException
 	 * @throws InvocationTargetException
@@ -396,8 +374,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 * @throws ParseException
 	 * @throws ScriptException
@@ -409,8 +386,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -431,8 +407,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -503,44 +478,16 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a VASConfiguration object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 * @throws InterfaceException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 */
 	private void doDelete()
 			throws InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug(Literal.ENTERING);
 
 		final VASRecording aVASRecording = new VASRecording();
 		BeanUtils.copyProperties(getVASRecording(), aVASRecording);
-		String tranType = PennantConstants.TRAN_WF;
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_VASReference") + " : " + aVASRecording.getVasReference();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aVASRecording.getRecordType()).equals("")) {
-				aVASRecording.setVersion(aVASRecording.getVersion() + 1);
-				aVASRecording.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (isWorkFlowEnabled()) {
-					aVASRecording.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (doProcess(aVASRecording, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}
+		String keyReference = Labels.getLabel("label_VASReference") + " : " + aVASRecording.getVasReference();
+
+		doDelete(keyReference, aVASRecording);
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -701,11 +648,9 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * @throws InterfaceException
@@ -862,10 +807,8 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * @throws InterfaceException
 	 * @throws InvocationTargetException
@@ -889,7 +832,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 					}
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						//Current app date as a vas approval date
+						// Current app date as a vas approval date
 						VASRecording recording = (VASRecording) auditHeader.getAuditDetail().getModelData();
 						recording.setValueDate(DateUtility.getAppDate());
 						auditHeader = getVASRecordingService().doApprove(auditHeader);
@@ -1143,16 +1086,16 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.medicalApplicable.setChecked(aVASRecording.isMedicalApplicable());
 		}
 
-		//Medical Applicable
+		// Medical Applicable
 		setMedicalStatusVisibility(this.medicalApplicable.isChecked());
 
-		//Vas configuration 
+		// Vas configuration
 		fillComboBox(this.modeOfPayment, vASConfiguration.getModeOfPayment(),
 				PennantStaticListUtil.getVasModeOfPayments(), "");
 		fillComboBox(this.allowFeeType, vASConfiguration.getAllowFeeType(), PennantStaticListUtil.getVasAllowFeeTypes(),
 				"");
 
-		//Term Insurance Lien Fields
+		// Term Insurance Lien Fields
 		this.termInsuranceLien.setChecked(aVASRecording.isTermInsuranceLien());
 		this.providerName.setValue(aVASRecording.getProviderName());
 		this.policyNumber.setValue(aVASRecording.getPolicyNumber());
@@ -1354,7 +1297,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			logger.error("Exception: ", e);
 		}
 
-		//Enable and disabling the Premium amount Button 
+		// Enable and disabling the Premium amount Button
 		setPremiumCalcButton(aVASRecording);
 
 		logger.debug(Literal.LEAVING);
@@ -2494,7 +2437,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 	}
 
-	//Premium calculation button enable and disable
+	// Premium calculation button enable and disable
 	private void setPremiumCalcButton(VASRecording aVASRecording) {
 		Component component = generator.getWindow().getFellowIfAny("CALCULATEPREMIUM");
 		if (component != null) {
@@ -2519,7 +2462,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			Component component = null;
 			BigDecimal loanAmt = BigDecimal.ZERO;
 
-			//CustomerCif
+			// CustomerCif
 			component = generator.getWindow().getFellowIfAny("ad_CUSTOMERCIF");
 			if (component != null) {
 				Textbox txtCustomerCif = (Textbox) component;
@@ -2531,7 +2474,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				}
 			}
 
-			//Insurance Terms
+			// Insurance Terms
 			component = generator.getWindow().getFellowIfAny("ad_INSURANCETERMS");
 			if (component != null) {
 				Intbox intInsuranceTerms = (Intbox) component;
@@ -2542,13 +2485,13 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				}
 			}
 
-			//Finance details Object
+			// Finance details Object
 			if (getClonedFinanceDetail() == null) {
 				MessageUtil.showError("Required details are not available for premium calculation.");
 				return;
 			}
 
-			//Loan Amount
+			// Loan Amount
 			loanAmt = getClonedFinanceDetail().getFinScheduleData().getFinanceMain().getFinAssetValue();
 			loanAmt = PennantApplicationUtil.formateAmount(loanAmt, getCcyFormat());
 			if (BigDecimal.ZERO.compareTo(loanAmt) > 0) {
@@ -2590,7 +2533,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			VASPremiumCalcDetails newPremiumCalcDetails = getVasPremiumCalculation()
 					.getPrimiumPercentage(premiumCalcDetails);
 
-			//Medical applicable or not checking
+			// Medical applicable or not checking
 			if (PennantConstants.YES.equals(SysParamUtil.getValueAsString("VAS_MEDICAL_STATUS_CALCULATION_YES_NO"))
 					&& (getVASRecording().isNewRecord()) && (this.vASConfiguration.isMedicalApplicable())) {
 				boolean medicalApplicable = getVasPremiumCalculation().getMedicalStatus(premiumCalcDetails);
@@ -2631,7 +2574,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	}
 	/*********************** Extended fields script execution data setup end ********************/
 
-	//Primary link reference info
+	// Primary link reference info
 	/**
 	 * When user clicks on button "Search Selection based on posting Against" button
 	 * 
@@ -2780,7 +2723,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		return this.vasReference.getValue();
 	}
 
-	//Getters and setters
+	// Getters and setters
 	public VASRecording getVASRecording() {
 		return this.vASRecording;
 	}

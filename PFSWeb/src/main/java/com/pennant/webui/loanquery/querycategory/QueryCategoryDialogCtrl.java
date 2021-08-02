@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  QueryCategoryDialogCtrl.java                                         * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  08-05-2018    														*
- *                                                                  						*
- * Modified Date    :  08-05-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : QueryCategoryDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 08-05-2018 * *
+ * Modified Date : 08-05-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 08-05-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 08-05-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.loanquery.querycategory;
 
 import java.sql.Timestamp;
@@ -118,8 +100,7 @@ public class QueryCategoryDialogCtrl extends GFCBaseCtrl<QueryCategory> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_QueryCategoryDialog(Event event) throws Exception {
@@ -198,8 +179,7 @@ public class QueryCategoryDialogCtrl extends GFCBaseCtrl<QueryCategory> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -211,8 +191,7 @@ public class QueryCategoryDialogCtrl extends GFCBaseCtrl<QueryCategory> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -223,8 +202,7 @@ public class QueryCategoryDialogCtrl extends GFCBaseCtrl<QueryCategory> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -235,8 +213,7 @@ public class QueryCategoryDialogCtrl extends GFCBaseCtrl<QueryCategory> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -247,8 +224,7 @@ public class QueryCategoryDialogCtrl extends GFCBaseCtrl<QueryCategory> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -259,8 +235,7 @@ public class QueryCategoryDialogCtrl extends GFCBaseCtrl<QueryCategory> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -271,8 +246,7 @@ public class QueryCategoryDialogCtrl extends GFCBaseCtrl<QueryCategory> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -333,19 +307,19 @@ public class QueryCategoryDialogCtrl extends GFCBaseCtrl<QueryCategory> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Category Code
+		// Category Code
 		try {
 			aQueryCategory.setCode(this.code.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Category Description
+		// Category Description
 		try {
 			aQueryCategory.setDescription(this.description.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Active
+		// Active
 		try {
 			aQueryCategory.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
@@ -369,8 +343,7 @@ public class QueryCategoryDialogCtrl extends GFCBaseCtrl<QueryCategory> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param queryCategory
-	 *            The entity that need to be render.
+	 * @param queryCategory The entity that need to be render.
 	 */
 	public void doShowDialog(QueryCategory queryCategory) {
 		logger.debug(Literal.LEAVING);
@@ -468,47 +441,13 @@ public class QueryCategoryDialogCtrl extends GFCBaseCtrl<QueryCategory> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a QueryCategory object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		final QueryCategory aQueryCategory = new QueryCategory();
 		BeanUtils.copyProperties(this.queryCategory, aQueryCategory);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aQueryCategory.getId();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aQueryCategory.getRecordType()).equals("")) {
-				aQueryCategory.setVersion(aQueryCategory.getVersion() + 1);
-				aQueryCategory.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aQueryCategory.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aQueryCategory.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aQueryCategory.getNextTaskId(),
-							aQueryCategory);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aQueryCategory, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(String.valueOf(aQueryCategory.getId()), aQueryCategory);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -633,11 +572,9 @@ public class QueryCategoryDialogCtrl extends GFCBaseCtrl<QueryCategory> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -724,10 +661,8 @@ public class QueryCategoryDialogCtrl extends GFCBaseCtrl<QueryCategory> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AccountMappingDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  24-04-2017    														*
- *                                                                  						*
- * Modified Date    :  24-04-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AccountMappingDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 24-04-2017 * *
+ * Modified Date : 24-04-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 24-04-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 24-04-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.applicationmaster.accountmapping;
 
 import java.sql.Timestamp;
@@ -132,8 +114,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_AccountMappingDialog(Event event) throws Exception {
@@ -267,7 +248,8 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 				List<String> glCodeList = new ArrayList<>();
 
 				for (TransactionEntry transactionEntry : transactionEntries) {
-					if (StringUtils.equals("BANK", transactionEntry.getAccountType())) { // FIXME Hard-Code should be remove
+					if (StringUtils.equals("BANK", transactionEntry.getAccountType())) { // FIXME Hard-Code should be
+																							// remove
 						continue;
 					}
 					executeMap = new HashMap<String, Object>();
@@ -282,7 +264,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 						continue;
 					}
 
-					//Fix for remove duplicate glcodes
+					// Fix for remove duplicate glcodes
 					glCodeList.add(glCode);
 
 					accountMapping = this.accountMappingService.getAccountMapping(glCode);
@@ -388,8 +370,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		doSave();
@@ -457,8 +438,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -469,8 +449,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -481,8 +460,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -493,8 +471,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -505,8 +482,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -517,8 +493,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -575,13 +550,13 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Account
+		// Account
 		try {
 			aAccountMapping.setAccount(this.account.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Host Account
+		// Host Account
 		try {
 			aAccountMapping.setHostAccount(this.hostAccount.getValue());
 		} catch (WrongValueException we) {
@@ -605,8 +580,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param accountMapping
-	 *            The entity that need to be render.
+	 * @param accountMapping The entity that need to be render.
 	 */
 	public void doShowDialog(AccountMapping accountMapping) {
 		logger.debug(Literal.LEAVING);
@@ -681,47 +655,13 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a AccountMapping object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.LEAVING);
 
 		final AccountMapping aAccountMapping = new AccountMapping();
 		BeanUtils.copyProperties(this.accountMapping, aAccountMapping);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aAccountMapping.getAccount();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aAccountMapping.getRecordType()).equals("")) {
-				aAccountMapping.setVersion(aAccountMapping.getVersion() + 1);
-				aAccountMapping.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aAccountMapping.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aAccountMapping.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aAccountMapping.getNextTaskId(),
-							aAccountMapping);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aAccountMapping, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
+		doDelete(aAccountMapping.getAccount(), aAccountMapping);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -803,7 +743,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		Textbox sapGlCode_Textbox = null;
 		Label glCode_Label = null;
 		AccountMapping accountMapping = null;
-		//Finance Type
+		// Finance Type
 		this.finType.setErrorMessage("");
 		this.finType.setConstraint(
 				new PTStringValidator(Labels.getLabel("label_AccountMappingDialog_FinType.value"), null, true, true));
@@ -820,7 +760,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 
 		for (Listitem listItem : items) {
 			accountMapping = new AccountMapping();
-			//BeanUtils.copyProperties(this.accountMapping, accountMapping);
+			// BeanUtils.copyProperties(this.accountMapping, accountMapping);
 			glCode_Label = (Label) listItem.getFellow("glCode_" + count);
 			sapGlCode_Textbox = (Textbox) listItem.getFellow("sapGlCode_" + count);
 			accountType = (Textbox) listItem.getFellow("accountType_" + count);
@@ -844,13 +784,13 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 					new PTStringValidator(Labels.getLabel("label_AccountMappingDialog_CostCenter.value"), null, true));
 			accountType.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_AccountMappingDialog_AccountType.value"), null, false));
-			//GL Code
+			// GL Code
 			try {
 				accountMapping.setAccount(glCode_Label.getValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			//SAP GL Code
+			// SAP GL Code
 			try {
 				accountMapping.setHostAccount(sapGlCode_Textbox.getValue());
 			} catch (WrongValueException we) {
@@ -905,11 +845,9 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -996,10 +934,8 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

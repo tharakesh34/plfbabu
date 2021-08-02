@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  *********************************************************************************************
- *                                 FILE HEADER                                               *
+ * FILE HEADER *
  *********************************************************************************************
  *
- * FileName    		:  FeeReceiptDialogCtrl.java                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES              			
- *                                                                  
- * Creation Date    :  19-12-2019    
- *                                                                  
- * Modified Date    :  19-12-2019    
- *                                                                  
- * Description 		:                                             
- *                                                                                          
+ * FileName : FeeReceiptDialogCtrl.java
+ * 
+ * Author : PENNANT TECHONOLOGIES
+ * 
+ * Creation Date : 19-12-2019
+ * 
+ * Modified Date : 19-12-2019
+ * 
+ * Description :
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 19-12-2019       Ganesh.P                    0.1                                         * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 19-12-2019 Ganesh.P 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.receipts;
@@ -137,7 +128,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	protected Window window_FinFeeRefundDialog;
 	protected Borderlayout borderlayout_FinFeeRefund;
 
-	//Receipt Details
+	// Receipt Details
 	protected ExtendedCombobox finType;
 	protected ExtendedCombobox finReference;
 	protected ExtendedCombobox finCcy;
@@ -154,7 +145,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	private FinFeeRefundService finFeeRefundService;
 	private FinanceDetail financeDetail;
 
-	//Buttons
+	// Buttons
 	protected Button btnReceipt;
 
 	protected transient FinFeeRefundListCtrl finFeeRefundListCtrl = null;
@@ -168,7 +159,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	private long custID;
 	private Map<String, BigDecimal> taxPercentages;
 
-	//Mapping Fields.
+	// Mapping Fields.
 	private final String FINFEEREFUNDDETAIL = "FINFEEREFUNDDETAIL";
 	private final String PRVFINFEEREFUNDDETAIL = "PRVFINFEEREFUNDDETAIL";
 	private final String ALLOCATED_AMOUNT = "ALLOCATED_AMOUNT";
@@ -256,7 +247,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	 */
 	protected void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.finReference.setModuleName("FeeRefundFinanceMain");
 		this.finReference.setMandatoryStyle(true);
 		this.finReference.setValueColumn("FinReference");
@@ -287,8 +278,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param aAcademic
-	 *            The entity that need to be render.
+	 * @param aAcademic The entity that need to be render.
 	 */
 	public void doShowDialog(FinFeeRefundHeader finFeeRefund) {
 		logger.debug(Literal.ENTERING);
@@ -306,7 +296,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 				doEdit();
 			} else {
 				this.btnCtrl.setInitEdit();
-				//doReadOnly();
+				// doReadOnly();
 				btnCancel.setVisible(false);
 			}
 		}
@@ -341,44 +331,16 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a Academic entity from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() {
 		logger.debug(Literal.ENTERING);
 
 		final FinFeeRefundHeader entity = new FinFeeRefundHeader();
 		BeanUtils.copyProperties(this.feeRefundHeader, entity);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_FinFeeRefundDialog_FinReference.value") + " : "
+		String keyReference = Labels.getLabel("label_FinFeeRefundDialog_FinReference.value") + " : "
 				+ feeRefundHeader.getFinReference();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(feeRefundHeader.getRecordType())) {
-				feeRefundHeader.setVersion(feeRefundHeader.getVersion() + 1);
-				feeRefundHeader.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()) {
-					feeRefundHeader.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(feeRefundHeader, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(keyReference, feeRefundHeader);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -463,11 +425,9 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param afinFeeRefundHeader
-	 *            (FinFeeRefundHeader)
+	 * @param afinFeeRefundHeader (FinFeeRefundHeader)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -553,11 +513,9 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -741,10 +699,10 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 			doFillFeeDetails(finFeeRefundService.getPaidFeeDetails(feeRefund, type));
 			this.recordStatus.setValue(feeRefund.getRecordStatus());
 		}
-		//Show Accounting Tab Details Based upon Role Condition using Work flow
+		// Show Accounting Tab Details Based upon Role Condition using Work flow
 		if ("Accounting".equals(getTaskTabs(getTaskId(getRole()))) || (enqiryModule
 				&& PennantConstants.RCD_STATUS_APPROVED.equalsIgnoreCase(feeRefund.getRecordStatus()))) {
-			//Accounting Details Tab Addition
+			// Accounting Details Tab Addition
 			appendAccountingDetailTab(true);
 		}
 	}
@@ -791,56 +749,56 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 					fee.setFeeTypeDesc(feeType);
 				}
 
-				//FeeType Desc
+				// FeeType Desc
 				lc = new Listcell(feeType);
 				lc.setStyle("font-weight:bold;color: #FF6600;");
 				lc.setParent(item);
 
-				//Paid Amount
+				// Paid Amount
 				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getPaidAmountOriginal(), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
-				//Paid Amount GST
+				// Paid Amount GST
 				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getPaidAmountGST(), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
-				//Paid TDS
+				// Paid TDS
 				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getPaidTDS(), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
-				//Total Paid Amount
+				// Total Paid Amount
 				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getPaidAmount(), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
-				//Early Refund Amount
+				// Early Refund Amount
 				lc = new Listcell(
 						PennantApplicationUtil.amountFormate(prvsFinFeeRefund.getTotRefundAmtOriginal(), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
-				//Early Refund Amount  GST
+				// Early Refund Amount GST
 				lc = new Listcell(
 						PennantApplicationUtil.amountFormate(prvsFinFeeRefund.getTotRefundAmtGST(), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
-				//Early Refund Amount  TDS
+				// Early Refund Amount TDS
 				lc = new Listcell(
 						PennantApplicationUtil.amountFormate(prvsFinFeeRefund.getTotRefundAmtTDS(), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
-				//Early Refund Amount with GST
+				// Early Refund Amount with GST
 				lc = new Listcell(
 						PennantApplicationUtil.amountFormate(prvsFinFeeRefund.getTotRefundAmount(), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
-				//Refund Amount without GST
+				// Refund Amount without GST
 				Decimalbox allocAmtBox = getDecimalbox(finFormatter, true);
 				allocAmtBox
 						.setValue(PennantAppUtil.formateAmount(curFinFeeRefund.getRefundAmtOriginal(), finFormatter));
@@ -849,7 +807,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 				lc.appendChild(allocAmtBox);
 				lc.setParent(item);
 
-				//Refund Amount  GST
+				// Refund Amount GST
 				Decimalbox allocAmtGstBox = getDecimalbox(finFormatter, true);
 				allocAmtGstBox.setValue(PennantAppUtil.formateAmount(curFinFeeRefund.getRefundAmtGST(), finFormatter));
 				lc = new Listcell();
@@ -864,7 +822,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 				lc.appendChild(allocAmtTdsBox);
 				lc.setParent(item);
 
-				//Refund Amount total
+				// Refund Amount total
 				Decimalbox totAllocAmtTotBox = getDecimalbox(finFormatter, !readOnly);
 				totAllocAmtTotBox
 						.setValue(PennantAppUtil.formateAmount(curFinFeeRefund.getRefundAmount(), finFormatter));
@@ -925,7 +883,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 		refundDetail.setFeeId(fee.getFeeID());
 		refundDetail.setFeeTypeCode(fee.getFeeTypeCode());
 		refundDetail.setTaxComponent(fee.getTaxComponent());
-		//TODO:
+		// TODO:
 		feeRefundHeader.getFinFeeRefundDetails().add(refundDetail);
 		logger.debug(Literal.LEAVING);
 		return refundDetail;
@@ -1018,7 +976,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 		Listcell lc;
 		Listitem item;
 
-		//Summary Details
+		// Summary Details
 		item = new Listitem();
 		item.setId(LISTITEM_SUMMARY);
 		lc = new Listcell(Labels.getLabel("listcell_Total.label"));
@@ -1052,7 +1010,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 				summaryItem = listitem;
 				continue;
 			} else {
-				//Total remaining
+				// Total remaining
 				Listcell totRemLC = list.get(12);
 				Decimalbox totRemBox = (Decimalbox) totRemLC.getFirstChild();
 				totRefund = totRefund.add(totRemBox.getValue());
@@ -1060,7 +1018,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 		}
 
 		List<Listcell> list = summaryItem.getChildren();
-		//Total remaining
+		// Total remaining
 		Listcell totRemLC = list.get(1);
 		Decimalbox totRemBox = (Decimalbox) totRemLC.getFirstChild();
 		totRemBox.setValue(totRefund);
@@ -1088,7 +1046,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 				FinanceMain financeMain = scheduleData.getFinanceMain();
 				this.custCIF.setValue(financeMain.getLovDescCustCIF());
 				this.custName.setValue(financeMain.getLovDescCustShrtName());
-				//setting data
+				// setting data
 				custID = financeMain.getCustID();
 				setTaxPercentages(calcTaxPercentages());
 				this.feeRefundHeader.setFinReference(main.getFinReference());
@@ -1153,8 +1111,8 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 			map.put("finHeaderList", getFinBasicDetails(getFinanceDetail()));
 
 			// Fetch Accounting Set ID
-			AccountingSet accountingSet = accountingSetService.getAccSetSysDflByEvent(
-					AccountingEvent.FEEREFUND, AccountingEvent.FEEREFUND, "");
+			AccountingSet accountingSet = accountingSetService.getAccSetSysDflByEvent(AccountingEvent.FEEREFUND,
+					AccountingEvent.FEEREFUND, "");
 
 			long acSetID = 0;
 			if (accountingSet != null) {
@@ -1373,8 +1331,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		doSave();
@@ -1383,8 +1340,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		doEdit();
@@ -1393,8 +1349,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		MessageUtil.showHelpWindow(event, super.window);
@@ -1403,8 +1358,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) {
 		doDelete();
@@ -1413,8 +1367,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		doCancel();
@@ -1423,8 +1376,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ProductDialogCtrl.java                                               * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-08-2011    														*
- *                                                                  						*
- * Modified Date    :  12-08-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ProductDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-08-2011 * * Modified
+ * Date : 12-08-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.bmtmasters.product;
@@ -54,7 +36,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -100,7 +81,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 /**
  * This is the controller class for the /WEB-INF/pages/SolutionFactory/Product/productDialog.zul file.
  */
-public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
+public class ProductDialogCtrl extends GFCBaseCtrl<Product> {
 	private static final long serialVersionUID = -8421583705358772016L;
 	private static final Logger logger = LogManager.getLogger(ProductDialogCtrl.class);
 
@@ -147,7 +128,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	private List<ProductAsset> productAssetList = new ArrayList<ProductAsset>();
 	private PagedListWrapper<ProductAsset> productAssetPagedListWrapper;
 
-	//Added Manual Deviation Details
+	// Added Manual Deviation Details
 	protected Checkbox allowDeviation;
 	protected Textbox manualDeviations;
 	protected Label label_ProductDialog_ManualDeviations;
@@ -353,8 +334,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -377,8 +357,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aProduct
-	 *            Product
+	 * @param aProduct Product
 	 */
 	public void doWriteBeanToComponents(Product aProduct) {
 		logger.debug("Entering");
@@ -389,7 +368,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		fillComboBox(this.productCategory, aProduct.getProductCategory(), PennantStaticListUtil.getProductCategories(),
 				"");
 		doFillProductAsset(aProduct.getProductAssetList());
-		//Manual Deviations
+		// Manual Deviations
 		this.allowDeviation.setChecked(aProduct.isAllowDeviation());
 		allowManualDeviation();
 		doFillProductDeviationDetails(aProduct.getProductDeviationDetails());
@@ -508,7 +487,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 			this.productCategory.setConstraint(new StaticListValidator(PennantStaticListUtil.getProductCategories(),
 					Labels.getLabel("label_ProductDialog_ProductCategory.value")));
 		}
-		//Manual Deviation
+		// Manual Deviation
 		if (!this.btnManualDeviation.isDisabled()) {
 			this.manualDeviations.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_ProductDialog_ManualDeviations.value"), null, true));
@@ -573,37 +552,10 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 
 		final Product aProduct = new Product();
 		BeanUtils.copyProperties(getProduct(), aProduct);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_ProductDialog_ProductCode.value") + " : " + aProduct.getProductCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			doWriteBeanToComponents(aProduct);
+		doDelete(Labels.getLabel("label_ProductDialog_ProductCode.value") + " : " + aProduct.getProductCode(),
+				aProduct);
 
-			if (StringUtils.isBlank(aProduct.getRecordType())) {
-				aProduct.setVersion(aProduct.getVersion() + 1);
-				aProduct.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aProduct.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aProduct, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
 		logger.debug("Leaving");
 	}
 
@@ -1024,10 +976,8 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	/**
 	 * Get Audit Header Details
 	 * 
-	 * @param aGender
-	 *            (Gender)
-	 * @param tranType
-	 *            (String)
+	 * @param aGender  (Gender)
+	 * @param tranType (String)
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(Product aProduct, String tranType) {
@@ -1039,8 +989,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1058,8 +1007,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -1168,7 +1116,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 			if (flagMap.containsKey(deviationCode)) {
 				// Do Nothing
 
-				//Removing from map to identify existing modifications
+				// Removing from map to identify existing modifications
 				boolean isDelete = false;
 				if (this.userAction.getSelectedItem() != null) {
 					if ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
@@ -1191,7 +1139,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 			}
 		}
 
-		//Removing unavailable records from DB by using Work flow details
+		// Removing unavailable records from DB by using Work flow details
 		if (flagMap.size() > 0) {
 			for (ProductDeviation deviation : productDeviationDetails) {
 				if (flagMap.containsKey(deviation.getDeviationCode())) {

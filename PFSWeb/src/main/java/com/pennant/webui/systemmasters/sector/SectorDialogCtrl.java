@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SectorDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-05-2011    														*
- *                                                                  						*
- * Modified Date    :  03-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SectorDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-05-2011 * * Modified
+ * Date : 03-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.systemmasters.sector;
@@ -72,6 +54,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -266,8 +249,7 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -291,8 +273,7 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aSector
-	 *            (Sector)
+	 * @param aSector (Sector)
 	 * 
 	 */
 	public void doWriteBeanToComponents(Sector aSector) {
@@ -314,8 +295,7 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
-	 * @param aSector
-	 *            (Sector)
+	 * @param aSector (Sector)
 	 */
 	public void doWriteComponentsToBean(Sector aSector) {
 		logger.debug("Entering");
@@ -364,8 +344,7 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 	 * 
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
-	 * @param aSector
-	 *            (Sector)
+	 * @param aSector (Sector)
 	 * @throws Exception
 	 */
 	public void doShowDialog(Sector aSector) throws Exception {
@@ -467,43 +446,15 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 
 	// CRUD operations
 
-	/**
-	 * Deletes a Sector object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final Sector aSector = new Sector();
 		BeanUtils.copyProperties(getSector(), aSector);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_SectorDialog_SectorCode.value") + " : " + aSector.getSectorCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aSector.getRecordType())) {
-				aSector.setVersion(aSector.getVersion() + 1);
-				aSector.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(Labels.getLabel("label_SectorDialog_SectorCode.value") + " : " + aSector.getSectorCode(), aSector);
 
-				if (isWorkFlowEnabled()) {
-					aSector.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aSector, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -637,11 +588,9 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aSector
-	 *            (Sector)
+	 * @param aSector  (Sector)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -729,11 +678,9 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -807,10 +754,8 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 	/**
 	 * Get Audit Header Details
 	 * 
-	 * @param aSubSegment
-	 *            (SubSegment)
-	 * @param tranType
-	 *            (String)
+	 * @param aSubSegment (SubSegment)
+	 * @param tranType    (String)
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(Sector aSector, String tranType) {
@@ -822,8 +767,7 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -841,8 +785,7 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

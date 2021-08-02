@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AssetTypeDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-12-2016    														*
- *                                                                  						*
- * Modified Date    :  14-12-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AssetTypeDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-12-2016 * * Modified
+ * Date : 14-12-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-12-2016       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-12-2016 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -54,7 +36,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.codemirror.Codemirror;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
@@ -94,6 +75,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -292,7 +274,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 		logger.debug("Entering" + event.toString());
 		if (validate(event, false, false)) {
 			preScriptValidated = true;
-			//check if code mirror is empty or not 
+			// check if code mirror is empty or not
 			if (StringUtils.isNotEmpty(this.preValidation.getValue().trim())) {
 				if (MessageUtil.confirm("NO Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
 					// create a new window for input values
@@ -313,7 +295,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 		logger.debug("Entering" + event.toString());
 		if (validate(event, true, false)) {
 			postScriptValidated = true;
-			//check if code mirror is empty or not 
+			// check if code mirror is empty or not
 			if (StringUtils.isNotEmpty(this.postValidation.getValue().trim())) {
 				if (MessageUtil.confirm("NO Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
 					// create a new window for input values
@@ -484,8 +466,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		doEdit();
@@ -526,8 +507,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		MessageUtil.showHelpWindow(event, super.window);
@@ -536,8 +516,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
@@ -547,8 +526,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 * @throws ParseException
 	 */
@@ -559,8 +537,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -575,7 +552,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 	public void onClick$btnSave(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 
-		// TODO: Open Comment If, save is working on ZK scripts for validation 
+		// TODO: Open Comment If, save is working on ZK scripts for validation
 		/*
 		 * boolean validationReq = true; if (this.userAction.getSelectedItem() != null){ if
 		 * ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) ||
@@ -618,8 +595,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -630,8 +606,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param aAssetType
-	 *            The entity that need to be render.
+	 * @param aAssetType The entity that need to be render.
 	 */
 	public void doShowDialog(AssetType aAssetType) throws InterruptedException {
 		logger.debug("Entering");
@@ -766,7 +741,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.assetType.setMaxlength(8);
 		this.assetDesc.setMaxlength(20);
 		this.remarks.setMaxlength(1000);
@@ -787,8 +762,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aAssetType
-	 *            AssetType
+	 * @param aAssetType AssetType
 	 */
 	public void doWriteBeanToComponents(AssetType aAssetType) {
 		logger.debug("Entering");
@@ -805,7 +779,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 		this.assetDesc.setValue(aAssetType.getAssetDesc());
 		this.remarks.setValue(aAssetType.getRemarks());
 
-		//Extended Field Details tab
+		// Extended Field Details tab
 		appendExtendedFieldsTab();
 
 		// Default Values Setting for Script Validations
@@ -827,25 +801,25 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Asset Type
+		// Asset Type
 		try {
 			aAssetType.setAssetType(this.assetType.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Asset Description
+		// Asset Description
 		try {
 			aAssetType.setAssetDesc(this.assetDesc.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Remarks
+		// Remarks
 		try {
 			aAssetType.setRemarks(this.remarks.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Active
+		// Active
 		try {
 			aAssetType.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
@@ -861,7 +835,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Extended Field Details 
+		// Extended Field Details
 		if (getExtendedFieldDialogCtrl() != null) {
 			ExtendedFieldHeader extendedFieldHeader = getExtendedFieldDialogCtrl()
 					.doSave_ExtendedFields(extendedDetailsTab);
@@ -888,17 +862,17 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
-		//Asset Type
+		// Asset Type
 		if (!this.assetType.isReadonly()) {
 			this.assetType.setConstraint(new PTStringValidator(Labels.getLabel("label_AssetTypeDialog_AssetType.value"),
 					PennantRegularExpressions.REGEX_UPP_BOX_ALPHA, true));
 		}
-		//Asset Description
+		// Asset Description
 		if (!this.assetDesc.isReadonly()) {
 			this.assetDesc.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_AssetTypeDialog_AssetDescription.value"), null, true));
 		}
-		//Remarks
+		// Remarks
 		if (!this.remarks.isReadonly()) {
 			this.remarks.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_AssetTypeDialog_Remarks.value"), null, false));
@@ -917,7 +891,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 		logger.debug("Leaving");
 	}
 
-	//Append ExtendedFieldsTab 
+	// Append ExtendedFieldsTab
 	private void appendExtendedFieldsTab() {
 		try {
 			ExtendedFieldHeader extendedFieldHeader = assetConfigurationType.getExtendedFieldHeader();
@@ -1030,47 +1004,15 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 		closeDialog();
 	}
 
-	/**
-	 * Deletes a AssetType object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final AssetType aAssetType = new AssetType();
 		BeanUtils.copyProperties(getAssetType(), aAssetType);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aAssetType.getAssetType();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aAssetType.getRecordType()).equals("")) {
-				aAssetType.setVersion(aAssetType.getVersion() + 1);
-				aAssetType.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(aAssetType.getAssetType(), aAssetType);
 
-				if (isWorkFlowEnabled()) {
-					aAssetType.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aAssetType.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aAssetType.getNextTaskId(), aAssetType);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aAssetType, tranType)) {
-					refreshList();
-					closeAssetWindow();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1142,11 +1084,9 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1268,10 +1208,8 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

@@ -63,7 +63,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 
 	@Override
 	protected void doSetProperties() {
-		//super.pageRightName = "DealerMappingDialog";
+		// super.pageRightName = "DealerMappingDialog";
 	}
 
 	@Override
@@ -76,8 +76,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_DealerMappingDialog(Event event) throws AppException {
@@ -155,8 +154,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -168,8 +166,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -180,8 +177,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -192,8 +188,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -204,8 +199,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -216,8 +210,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -228,8 +221,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -444,8 +436,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param covenantType
-	 *            The entity that need to be render.
+	 * @param covenantType The entity that need to be render.
 	 */
 	public void doShowDialog(DealerMapping dealerMapping) {
 		logger.debug(Literal.ENTERING);
@@ -455,7 +446,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 			doEdit();
 			this.merchantName.setFocus(true);
 		} else {
-			//this.description.setFocus(true);
+			// this.description.setFocus(true);
 			if (isWorkFlowEnabled()) {
 				if (StringUtils.isNotBlank(dealerMapping.getRecordType())) {
 					this.btnNotes.setVisible(true);
@@ -542,39 +533,8 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 
 		final DealerMapping aDealerMapping = new DealerMapping();
 		BeanUtils.copyProperties(this.dealerMapping, aDealerMapping);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aDealerMapping.getMerchantId();
-		if (MessageUtil.confirm(msg) != MessageUtil.YES) {
-			return;
-		}
-
-		if (StringUtils.trimToEmpty(aDealerMapping.getRecordType()).equals("")) {
-			aDealerMapping.setVersion(aDealerMapping.getVersion() + 1);
-			aDealerMapping.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-			if (isWorkFlowEnabled()) {
-				aDealerMapping.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-				aDealerMapping.setNewRecord(true);
-				tranType = PennantConstants.TRAN_WF;
-				getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aDealerMapping.getNextTaskId(),
-						aDealerMapping);
-			} else {
-				tranType = PennantConstants.TRAN_DEL;
-			}
-		}
-
-		try {
-			if (doProcess(aDealerMapping, tranType)) {
-				refreshList();
-				closeDialog();
-			}
-
-		} catch (DataAccessException e) {
-			MessageUtil.showError(e);
-		}
+		doDelete(String.valueOf(aDealerMapping.getMerchantId()), aDealerMapping);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -694,11 +654,9 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -778,10 +736,8 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

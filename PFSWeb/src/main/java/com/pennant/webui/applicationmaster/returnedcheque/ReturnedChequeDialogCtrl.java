@@ -39,6 +39,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -285,8 +286,7 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -524,48 +524,19 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 		getReturnedChequeListCtrl().search();
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a ReturnedCheque object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
+
 		final ReturnedChequeDetails aReturnedCheque = new ReturnedChequeDetails();
 		BeanUtils.copyProperties(getReturnedCheque(), aReturnedCheque);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_ReturnedChequeDialog_CustCIF.value") + " : " + aReturnedCheque.getCustCIF()
-				+ "," + Labels.getLabel("label_ReturnedChequeDialog_ChequeNo.value") + " : "
-				+ aReturnedCheque.getChequeNo();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aReturnedCheque.getRecordType())) {
-				aReturnedCheque.setVersion(aReturnedCheque.getVersion() + 1);
-				aReturnedCheque.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		String keyReference = Labels.getLabel("label_ReturnedChequeDialog_CustCIF.value") + " : "
+				+ aReturnedCheque.getCustCIF() + "," + Labels.getLabel("label_ReturnedChequeDialog_ChequeNo.value")
+				+ " : " + aReturnedCheque.getChequeNo();
 
-				if (isWorkFlowEnabled()) {
-					aReturnedCheque.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		doDelete(keyReference, aReturnedCheque);
 
-			try {
-				if (doProcess(aReturnedCheque, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -711,11 +682,9 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aReturnedcheque
-	 *            (Returnedcheque)
+	 * @param aReturnedcheque (Returnedcheque)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType        (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -799,11 +768,9 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -893,8 +860,7 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -913,8 +879,7 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {

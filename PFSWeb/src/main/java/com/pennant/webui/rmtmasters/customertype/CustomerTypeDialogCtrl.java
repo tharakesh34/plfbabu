@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerTypeDialogCtrl.java                                          * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-05-2011    														*
- *                                                                  						*
- * Modified Date    :  03-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerTypeDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-05-2011 * *
+ * Modified Date : 03-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.rmtmasters.customertype;
 
 import java.sql.Timestamp;
@@ -72,6 +54,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -175,7 +158,7 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.custTypeCode.setMaxlength(8);
 		this.custTypeDesc.setMaxlength(100);
 
@@ -268,8 +251,7 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -292,8 +274,7 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCustomerType
-	 *            CustomerType
+	 * @param aCustomerType CustomerType
 	 */
 	public void doWriteBeanToComponents(CustomerType aCustomerType) {
 		logger.debug("Entering");
@@ -487,47 +468,15 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 		getCustomerTypeListCtrl().search();
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a CustomerType object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final CustomerType aCustomerType = new CustomerType();
 		BeanUtils.copyProperties(getCustomerType(), aCustomerType);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aCustomerType.getCustTypeCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCustomerType.getRecordType())) {
-				aCustomerType.setVersion(aCustomerType.getVersion() + 1);
-				aCustomerType.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(aCustomerType.getCustTypeCode(), aCustomerType);
 
-				if (isWorkFlowEnabled()) {
-					aCustomerType.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aCustomerType, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -661,11 +610,9 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aCustomerType
-	 *            (CustomerType)
+	 * @param aCustomerType (CustomerType)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -754,11 +701,9 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -834,10 +779,8 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	/**
 	 * Get Audit Header Details
 	 * 
-	 * @param aCustomerType
-	 *            (CustomerType)
-	 * @param tranType
-	 *            (String)
+	 * @param aCustomerType (CustomerType)
+	 * @param tranType      (String)
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(CustomerType aCustomerType, String tranType) {
@@ -849,8 +792,7 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

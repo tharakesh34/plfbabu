@@ -15,7 +15,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -104,12 +103,13 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
-public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditReviewSummary> {
+public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditReviewDetails> {
 	private static final long serialVersionUID = 8602015982512929710L;
 	private static final Logger logger = LogManager.getLogger(CreditApplicationReviewDialogCtrl.class);
 
@@ -494,8 +494,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -518,8 +517,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCreditReviewDetails
-	 *            (FinCreditReviewDetails)
+	 * @param aCreditReviewDetails (FinCreditReviewDetails)
 	 * @throws Exception
 	 */
 
@@ -527,9 +525,11 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Entering");
 		this.custID.setValue(aCreditReviewDetails.getCustomerId());
 		this.custCIF.setValue(aCreditReviewDetails.getLovDescCustCIF() != null
-				? StringUtils.trimToEmpty(aCreditReviewDetails.getLovDescCustCIF()) : "");
+				? StringUtils.trimToEmpty(aCreditReviewDetails.getLovDescCustCIF())
+				: "");
 		this.custCIF.setTooltiptext(aCreditReviewDetails.getLovDescCustCIF() != null
-				? StringUtils.trimToEmpty(aCreditReviewDetails.getLovDescCustCIF()) : "");
+				? StringUtils.trimToEmpty(aCreditReviewDetails.getLovDescCustCIF())
+				: "");
 		this.custShrtName.setValue(aCreditReviewDetails.getLovDescCustShrtName());
 		this.creditRevCode = aCreditReviewDetails.getCreditRevCode();
 		this.bankName.setValue(aCreditReviewDetails.getBankName());
@@ -938,47 +938,15 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		getCreditApplicationReviewListCtrl().search();
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a FinCreditReviewDetails object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final FinCreditReviewDetails aCreditReviewDetails = new FinCreditReviewDetails();
 		BeanUtils.copyProperties(getCreditReviewDetails(), aCreditReviewDetails);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aCreditReviewDetails.getDetailId();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCreditReviewDetails.getRecordType())) {
-				aCreditReviewDetails.setVersion(aCreditReviewDetails.getVersion() + 1);
-				aCreditReviewDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(String.valueOf(aCreditReviewDetails.getDetailId()), aCreditReviewDetails);
 
-				if (isWorkFlowEnabled()) {
-					aCreditReviewDetails.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aCreditReviewDetails, tranType)) {
-					refreshList();
-					// do Close the dialog
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1156,11 +1124,9 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aCreditReviewDetails
-	 *            (FinCreditReviewDetails)
+	 * @param aCreditReviewDetails (FinCreditReviewDetails)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType             (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1252,11 +1218,9 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1352,8 +1316,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1371,8 +1334,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -1958,8 +1920,9 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 							getCreditReviewDetails().isQualified() ? FacilityConstants.CREDITREVIEW_QUALIFIED
 									: FacilityConstants.CREDITREVIEW_UNQUALIFIED,
 							String.valueOf(getCreditReviewDetails().getAuditPeriod()) });
-			audQual = getCreditReviewDetails().getAuditType() + "/" + (getCreditReviewDetails().isQualified()
-					? FacilityConstants.CREDITREVIEW_QUALIFIED : FacilityConstants.CREDITREVIEW_UNQUALIFIED);
+			audQual = getCreditReviewDetails().getAuditType() + "/"
+					+ (getCreditReviewDetails().isQualified() ? FacilityConstants.CREDITREVIEW_QUALIFIED
+							: FacilityConstants.CREDITREVIEW_UNQUALIFIED);
 			auxHeaderCurYerLabel = getCreditReviewDetails().getAuditYear() + " - "
 					+ String.valueOf(getCreditReviewDetails().getAuditPeriod()) + FacilityConstants.MONTH;
 			creditReviewSubCtgDetailsHeaders.setCurYearAuditValueHeader(audQualRePort);
@@ -2867,8 +2830,9 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 					.setCalcSeque(String.valueOf(Integer.parseInt(preFinCreditRevSubCategory.getCalcSeque()) + 1));
 
 			if (categoryItemType != null) {
-				aFinCreditRevSubCategory.setSubCategoryItemType(categoryItemType.isChecked()
-						? FacilityConstants.CREDITREVIEW_CALCULATED_FIELD : FacilityConstants.CREDITREVIEW_ENTRY_FIELD);
+				aFinCreditRevSubCategory.setSubCategoryItemType(
+						categoryItemType.isChecked() ? FacilityConstants.CREDITREVIEW_CALCULATED_FIELD
+								: FacilityConstants.CREDITREVIEW_ENTRY_FIELD);
 			} else {
 				aFinCreditRevSubCategory.setSubCategoryItemType(FacilityConstants.CREDITREVIEW_ENTRY_FIELD);
 			}
@@ -3028,7 +2992,8 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		db_Amount.setAttribute("ListBoxdata", listbox);
 		db_Amount.setFormat(amtFormat);
 		curAmt = curYearValuesMap.get(finCreditRevSubCategory.getSubCategoryCode()) != null
-				? curYearValuesMap.get(finCreditRevSubCategory.getSubCategoryCode()) : BigDecimal.ZERO;
+				? curYearValuesMap.get(finCreditRevSubCategory.getSubCategoryCode())
+				: BigDecimal.ZERO;
 		db_Amount.setValue(curAmt);
 		creditReviewSubCtgDetails.setCurYearAuditValue(PennantAppUtil.formatAmount(curAmt, this.currFormatter));
 
@@ -3258,8 +3223,9 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		for (FinCreditRevSubCategory finCreditRevSubCategory : listOfFinCreditRevSubCategory) {
 			if (tdsubCategoryCode.getValue().trim()
 					.equalsIgnoreCase(finCreditRevSubCategory.getSubCategoryCode().trim())) {
-				throw new WrongValueException(tdsubCategoryCode, Labels.getLabel("FIELD_NO_DUPLICATE",
-						new String[] { Labels.getLabel("label_FinCreditRevSubCategoryDialog_SubCategoryCode.value"),
+				throw new WrongValueException(tdsubCategoryCode,
+						Labels.getLabel("FIELD_NO_DUPLICATE", new String[] {
+								Labels.getLabel("label_FinCreditRevSubCategoryDialog_SubCategoryCode.value"),
 								Labels.getLabel("label_FinCreditRevSubCategoryDialog_SubCategoryCode.value") }));
 			}
 		}

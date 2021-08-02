@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SuspenseDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-05-2012    														*
- *                                                                  						*
- * Modified Date    :  31-05-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SuspenseDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-05-2012 * * Modified
+ * Date : 31-05-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-05-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-05-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.suspense;
@@ -56,7 +38,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -90,6 +71,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
@@ -259,8 +241,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -269,8 +250,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aSuspense
-	 *            Suspense
+	 * @param aSuspense Suspense
 	 */
 	public void doWriteBeanToComponents(Customer aCustomer) {
 		logger.debug("Entering");
@@ -281,8 +261,8 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 			this.space_custCIF.setSclass("");
 			this.space_custSuspDate.setSclass("");
 
-			//this.custSuspSts.setDisabled(true);
-			//this.custSuspRemarks.setDisabled(true);
+			// this.custSuspSts.setDisabled(true);
+			// this.custSuspRemarks.setDisabled(true);
 		}
 		this.custID.setValue(aCustomer.getCustID());
 		this.custCIF.setValue(aCustomer.getCustCIF());
@@ -396,8 +376,8 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 				doEdit();
 			} else {
 				this.btnCtrl.setInitEdit();
-				//doReadOnly();
-				//doEdit();
+				// doReadOnly();
+				// doEdit();
 				btnCancel.setVisible(false);
 			}
 		}
@@ -471,7 +451,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			//btnCancel.setVisible(false);
+			// btnCancel.setVisible(false);
 		}
 
 		logger.debug("Leaving");
@@ -540,47 +520,19 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Deletes a Customer Suspense details from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 * @throws InterfaceException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 */
 	private void doDelete()
 			throws InterruptedException, IllegalAccessException, InvocationTargetException, InterfaceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final Customer aCustomer = new Customer();
 		BeanUtils.copyProperties(getCustomer(), aCustomer);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_TargetDetailDialog_TargetCode.value") + " : " + aCustomer.getCustID();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCustomer.getRecordType())) {
-				aCustomer.setVersion(aCustomer.getVersion() + 1);
-				aCustomer.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		String keyReference = Labels.getLabel("label_TargetDetailDialog_TargetCode.value") + " : "
+				+ aCustomer.getCustID();
 
-				if (isWorkFlowEnabled()) {
-					aCustomer.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (doProcess(aCustomer, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+		doDelete(keyReference, aCustomer);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	// CRUD operations
@@ -635,7 +587,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 
 				refreshList();
 
-				//Customer Notification for Role Identification
+				// Customer Notification for Role Identification
 				if (StringUtils.isBlank(aCustomer.getNextTaskId())) {
 					aCustomer.setNextRoleCode("");
 				}
@@ -644,7 +596,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 						aCustomer.getRecordStatus());
 				Clients.showNotification(msg, "info", null, null, -1);
 
-				//Mail Alert Notification for User
+				// Mail Alert Notification for User
 				if (StringUtils.isNotBlank(aCustomer.getNextTaskId())
 						&& !StringUtils.trimToEmpty(aCustomer.getNextRoleCode()).equals(aCustomer.getRoleCode())) {
 					notificationService.sendNotifications(NotificationConstants.MAIL_MODULE_MANUALSUSPENSE, aCustomer);
@@ -657,14 +609,14 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 			MessageUtil.showError(e);
 		}
 		// Update the Customer table
-		//getCustomerService().updateCustSuspenseDetails(aCustomer);
+		// getCustomerService().updateCustSuspenseDetails(aCustomer);
 
 		// Save the Customer Suspense details into Log Table
-		//getCustomerService().saveCustSuspMovements(prepareSuspMovementDetail(aCustomer));
+		// getCustomerService().saveCustSuspMovements(prepareSuspMovementDetail(aCustomer));
 
-		//refreshList();
+		// refreshList();
 		// Close the Existing Dialog
-		//closeDialog();
+		// closeDialog();
 
 		logger.debug("Leaving");
 	}
@@ -830,8 +782,8 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 
 		Customer suspendCustomer = getCustomerService().getSuspendCustomer(this.custID.getValue());
 		if (suspendCustomer != null) {
-			//this.btnSave.setVisible(false);
-			//this.btnEdit.setVisible(true);
+			// this.btnSave.setVisible(false);
+			// this.btnEdit.setVisible(true);
 			doEdit();
 			suspTrigger = suspendCustomer.getCustSuspTrigger();
 			doWriteBeanToComponents(suspendCustomer);
@@ -871,7 +823,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 			while (retValue == PennantConstants.porcessOVERIDE) {
 				if (StringUtils.isBlank(method)) {
 					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						//auditHeader = getCustomerService().delete(auditHeader);
+						// auditHeader = getCustomerService().delete(auditHeader);
 						deleteNotes = true;
 					} else {
 						getCustomerService().updateCustSuspenseDetails(aCustomer, "");

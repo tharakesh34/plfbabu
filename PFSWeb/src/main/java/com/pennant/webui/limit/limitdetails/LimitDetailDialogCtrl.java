@@ -41,7 +41,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -96,6 +95,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -104,7 +104,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * This is the controller class for the /WEB-INF/pages/Limit/LimitHeader/limitHeaderDialog.zul file. <br>
  * ************************************************************<br>
  */
-public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements Serializable {
+public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LogManager.getLogger(LimitDetailDialogCtrl.class);
@@ -1224,48 +1224,15 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		logger.debug("Leaving");
 	}
 
-	// *****************************************************************
-	// ************************* crud operations ***********************
-	// *****************************************************************
-
-	/**
-	 * Deletes a LimitHeader object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 * @throws DatatypeConfigurationException
-	 */
 	private void doDelete() throws InterruptedException, DatatypeConfigurationException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final LimitHeader aLimitHeader = new LimitHeader();
 		BeanUtils.copyProperties(getLimitHeader(), aLimitHeader);
-		String tranType = PennantConstants.TRAN_WF;
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aLimitHeader.getHeaderId();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aLimitHeader.getRecordType()).equals("")) {
-				aLimitHeader.setVersion(aLimitHeader.getVersion() + 1);
-				aLimitHeader.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (isWorkFlowEnabled()) {
-					aLimitHeader.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aLimitHeader.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aLimitHeader.getNextTaskId(),
-							aLimitHeader);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (doProcess(aLimitHeader, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+
+		doDelete(String.valueOf(aLimitHeader.getHeaderId()), aLimitHeader);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

@@ -78,12 +78,12 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	protected Textbox custCin; // autoWired
 	protected Textbox reasonCode; // autoWired
 	protected Button btnReasonCode; // autoWired
-	//protected Textbox 				custPassport; // autoWired
-	//protected Textbox 				custMobileNum; // autoWired
-	//protected Textbox				phoneCountryCode; // autoWired						
-	//protected Textbox				phoneAreaCode;	// autoWired									
-	protected Textbox custMobileNum; // autoWired								
-	protected Textbox source; // autoWired								
+	// protected Textbox custPassport; // autoWired
+	// protected Textbox custMobileNum; // autoWired
+	// protected Textbox phoneCountryCode; // autoWired
+	// protected Textbox phoneAreaCode; // autoWired
+	protected Textbox custMobileNum; // autoWired
+	protected Textbox source; // autoWired
 	protected ExtendedCombobox employer; // autoWired
 	protected ExtendedCombobox custNationality;
 	protected Checkbox custIsActive;
@@ -112,17 +112,17 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	protected Combobox custGenderCode;
 	protected ExtendedCombobox custAddrType;
 	protected Textbox custVid; // autoWired
-	protected Textbox custDl; // autoWired								
-	protected Textbox ProductAppliedInFi; // autoWired								
-	protected Textbox CustForgedDocumentType; // autoWired								
-	protected Textbox custPassport; // autoWired								
-	protected ExtendedCombobox custAddrZIP; // autoWired								
-	protected Textbox custAddrStreet; // autoWired								
-	protected ExtendedCombobox custAddrCity; // autoWired								
-	protected ExtendedCombobox custAddrProvince; // autoWired								
-	protected ExtendedCombobox custAddrCountry; // autoWired								
-	protected Textbox custAddrHNbr; // autoWired								
-	protected Textbox custCmd; // autoWired								
+	protected Textbox custDl; // autoWired
+	protected Textbox ProductAppliedInFi; // autoWired
+	protected Textbox CustForgedDocumentType; // autoWired
+	protected Textbox custPassport; // autoWired
+	protected ExtendedCombobox custAddrZIP; // autoWired
+	protected Textbox custAddrStreet; // autoWired
+	protected ExtendedCombobox custAddrCity; // autoWired
+	protected ExtendedCombobox custAddrProvince; // autoWired
+	protected ExtendedCombobox custAddrCountry; // autoWired
+	protected Textbox custAddrHNbr; // autoWired
+	protected Textbox custCmd; // autoWired
 	public boolean validateAllDetails = true;
 	protected ExtendedCombobox branch;
 	protected Datebox additionalField0;
@@ -237,7 +237,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.custFName.setMaxlength(350);
 		this.custLName.setMaxlength(350);
 		this.custEID.setMaxlength(12);
-		//	this.custPassport.setMaxlength(20);
+		// this.custPassport.setMaxlength(20);
 		this.custMobileNum.setMaxlength(10);
 		this.custAadhar.setMaxlength(12);
 		this.reasonCode.setDisabled(true);
@@ -453,8 +453,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -478,8 +477,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCurrency
-	 *            Currency
+	 * @param aCurrency Currency
 	 */
 	public void doWriteBeanToComponents(BlackListCustomers aBlackListCustomers) {
 		logger.debug("Entering ");
@@ -498,7 +496,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 
 		this.custLName.setValue(aBlackListCustomers.getCustLName());
 		this.custEID.setValue(PennantApplicationUtil.formatEIDNumber(aBlackListCustomers.getCustCRCPR()));
-		//this.custPassport.setValue(aBlackListCustomers.getCustPassportNo());
+		// this.custPassport.setValue(aBlackListCustomers.getCustPassportNo());
 		this.custMobileNum.setValue(aBlackListCustomers.getMobileNumber());
 		this.custNationality.setValue(aBlackListCustomers.getCustNationality());
 		this.custNationality.setDescription(aBlackListCustomers.getLovDescNationalityDesc());
@@ -1156,46 +1154,16 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		getBlacklistCustomerListCtrl().search();
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a Currency object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
+
 		final BlackListCustomers aBlackListCustomers = new BlackListCustomers();
 		BeanUtils.copyProperties(getBlacklistCustomer(), aBlackListCustomers);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_BlacklistCustomerDialog_CustCIF.value") + " : "
-				+ aBlackListCustomers.getCustCIF();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aBlackListCustomers.getRecordType())) {
-				aBlackListCustomers.setVersion(aBlackListCustomers.getVersion() + 1);
-				aBlackListCustomers.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(Labels.getLabel("label_BlacklistCustomerDialog_CustCIF.value") + " : "
+				+ aBlackListCustomers.getCustCIF(), aBlackListCustomers);
 
-				if (isWorkFlowEnabled()) {
-					aBlackListCustomers.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aBlackListCustomers, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1273,7 +1241,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			//btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}
@@ -1449,11 +1417,9 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aCurrency
-	 *            (Currency)
+	 * @param aCurrency (Currency)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType  (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1556,11 +1522,9 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1646,8 +1610,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1993,8 +1956,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

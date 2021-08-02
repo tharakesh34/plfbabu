@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DedupParmDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  23-08-2011    														*
- *                                                                  						*
- * Modified Date    :  23-08-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DedupParmDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 23-08-2011 * * Modified
+ * Date : 23-08-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 23-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.dedup.dedupparm;
@@ -54,7 +36,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.codemirror.Codemirror;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -100,6 +81,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -273,7 +255,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 			doSetFieldProperties();
 			doShowDialog(getDedupParm());
 
-			//BFLW2 only for Bajaj Demo button is visible false, should be implement this.
+			// BFLW2 only for Bajaj Demo button is visible false, should be implement this.
 			if (moduleName.equals(FinanceConstants.DEDUP_COLLATERAL)) {
 				this.btnValidation.setVisible(false);
 			}
@@ -386,8 +368,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -411,8 +392,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aDedupParm
-	 *            DedupParm
+	 * @param aDedupParm DedupParm
 	 */
 	public void doWriteBeanToComponents(DedupParm aDedupParm) {
 		logger.debug("Entering");
@@ -1042,7 +1022,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 
 						if (nextcomp != null && !isItemSibling) {
 							treechildren.appendChild(treeitem);
-							//treechildren.insertBefore(treeitem, nextcomp);//remove comment if child add in stack format
+							// treechildren.insertBefore(treeitem, nextcomp);//remove comment if child add in stack
+							// format
 							addSubButton.setVisible(false); // Added
 							addButton.setVisible(false); // Added
 							break;
@@ -1359,7 +1340,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		}
 
 		resultQuery = resultQuery + "\n" + sQLQuery.getValue();
-		//List Checking
+		// List Checking
 		String toReplace = "(" + PennantConstants.CUST_DEDUP_LISTFILED2 + " = :"
 				+ PennantConstants.CUST_DEDUP_LISTFILED2 + " and " + PennantConstants.CUST_DEDUP_LISTFILED3 + "=:"
 				+ PennantConstants.CUST_DEDUP_LISTFILED3 + ")";
@@ -1536,44 +1517,16 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 
 	// CRUD operations
 
-	/**
-	 * Deletes a DedupParm object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final DedupParm aDedupParm = new DedupParm();
 		BeanUtils.copyProperties(getDedupParm(), aDedupParm);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_DedupParmDialog_QueryCode.value") + " : " + aDedupParm.getQueryCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aDedupParm.getRecordType())) {
-				aDedupParm.setVersion(aDedupParm.getVersion() + 1);
-				aDedupParm.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(Labels.getLabel("label_DedupParmDialog_QueryCode.value") + " : " + aDedupParm.getQueryCode(),
+				aDedupParm);
 
-				if (isWorkFlowEnabled()) {
-					aDedupParm.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aDedupParm, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1752,11 +1705,9 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aDedupParm
-	 *            (DedupParm)
+	 * @param aDedupParm (DedupParm)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType   (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1845,11 +1796,9 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1938,8 +1887,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1957,8 +1905,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

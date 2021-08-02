@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  InterestRateTypeDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  06-05-2011    														*
- *                                                                  						*
- * Modified Date    :  06-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : InterestRateTypeDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 06-05-2011 * *
+ * Modified Date : 06-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 06-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 06-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.applicationmaster.interestratetype;
@@ -49,7 +31,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -72,6 +53,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -204,7 +186,7 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl<InterestRateType> {
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_InterestRateTypeDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_InterestRateTypeDialog_btnEdit"));
-		this.btnDelete.setVisible(false);//getUserWorkspace().isAllowed("button_InterestRateTypeDialog_btnDelete"));
+		this.btnDelete.setVisible(false);// getUserWorkspace().isAllowed("button_InterestRateTypeDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_InterestRateTypeDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
@@ -271,8 +253,7 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl<InterestRateType> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -290,7 +271,7 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl<InterestRateType> {
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
-		//Delete Operation not required for this module
+		// Delete Operation not required for this module
 		this.btnDelete.setVisible(false);
 		logger.debug("Leaving");
 	}
@@ -298,8 +279,7 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl<InterestRateType> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aInterestRateType
-	 *            InterestRateType
+	 * @param aInterestRateType InterestRateType
 	 */
 	public void doWriteBeanToComponents(InterestRateType aInterestRateType) {
 		logger.debug("Entering");
@@ -476,47 +456,18 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl<InterestRateType> {
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a InterestRateType object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final InterestRateType aInterestRateType = new InterestRateType();
 		BeanUtils.copyProperties(getInterestRateType(), aInterestRateType);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_InterestRateTypeDialog_IntRateTypeCode.value") + " : "
+		String keyReference = Labels.getLabel("label_InterestRateTypeDialog_IntRateTypeCode.value") + " : "
 				+ PennantStaticListUtil.getlabelDesc(StringUtils.trimToEmpty(aInterestRateType.getIntRateTypeCode()),
 						PennantStaticListUtil.getInterestRateType(true));
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aInterestRateType.getRecordType())) {
-				aInterestRateType.setVersion(aInterestRateType.getVersion() + 1);
-				aInterestRateType.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(keyReference, aInterestRateType);
 
-				if (isWorkFlowEnabled()) {
-					aInterestRateType.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (doProcess(aInterestRateType, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -645,11 +596,9 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl<InterestRateType> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aInterestRateType
-	 *            (InterestRateType)
+	 * @param aInterestRateType (InterestRateType)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType          (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -735,11 +684,9 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl<InterestRateType> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -830,8 +777,7 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl<InterestRateType> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -850,8 +796,7 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl<InterestRateType> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

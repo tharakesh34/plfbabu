@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  EmployerDetailDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-07-2013    														*
- *                                                                  						*
- * Modified Date    :  31-07-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : EmployerDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-07-2013 * *
+ * Modified Date : 31-07-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-07-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-07-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.systemmasters.employerdetail;
@@ -51,7 +33,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -88,6 +69,7 @@ import com.pennant.util.Constraint.PTWebValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -176,8 +158,8 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	protected Space space_EmpPhone;
 
 	protected Textbox empPhone;
-	//protected Textbox 		phoneCountryCode; 						
-	//protected Textbox 		phoneAreaCode; 	
+	// protected Textbox phoneCountryCode;
+	// protected Textbox phoneAreaCode;
 
 	protected Label label_EmpFax;
 	protected Hlayout hlayout_EmpFax;
@@ -218,8 +200,8 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	protected Space space_ContactPersonNo;
 
 	protected Textbox contactPersonNo;
-	//protected Textbox 		cpPhoneCountryCode; 						
-	//protected Textbox 		cpPhoneAreaCode; 	
+	// protected Textbox cpPhoneCountryCode;
+	// protected Textbox cpPhoneAreaCode;
 
 	protected Label label_EmpAlocationType;
 	protected Hlayout hlayout_EmpAlocationType;
@@ -400,8 +382,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -410,8 +391,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -633,7 +613,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.empIndustry.setMaxlength(8);
 		this.empName.setMaxlength(150);
 		this.establishDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -685,8 +665,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aEmployerDetail
-	 *            EmployerDetail
+	 * @param aEmployerDetail EmployerDetail
 	 */
 	public void doWriteBeanToComponents(EmployerDetail aEmployerDetail) {
 		logger.debug("Entering");
@@ -739,8 +718,9 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 			this.empProvince.setDescription(aEmployerDetail.getLovDescProvinceName());
 			this.empCity.setDescription(aEmployerDetail.getLovDescCityName());
 		}
-		if (aEmployerDetail.isNewRecord() || (aEmployerDetail.getRecordType() != null ? aEmployerDetail.getRecordType() : "")
-				.equals(PennantConstants.RECORD_TYPE_NEW)) {
+		if (aEmployerDetail.isNewRecord()
+				|| (aEmployerDetail.getRecordType() != null ? aEmployerDetail.getRecordType() : "")
+						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.empIsActive.setChecked(true);
 			this.empIsActive.setDisabled(true);
 		}
@@ -763,76 +743,76 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Emp Industry
+		// Emp Industry
 		try {
 			aEmployerDetail.setLovDescIndustryDesc(this.empIndustry.getDescription());
 			aEmployerDetail.setEmpIndustry(StringUtils.trimToNull(this.empIndustry.getValidatedValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Emp Name
+		// Emp Name
 		try {
 			aEmployerDetail.setEmpName(this.empName.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Establish Date
+		// Establish Date
 		try {
 			aEmployerDetail.setEstablishDate(this.establishDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Emp Addr H Nbr
+		// Emp Addr H Nbr
 		try {
 			aEmployerDetail.setEmpAddrHNbr(this.empAddrHNbr.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Emp Flat Nbr
+		// Emp Flat Nbr
 		try {
 			aEmployerDetail.setEmpFlatNbr(this.empFlatNbr.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Emp Addr Street
+		// Emp Addr Street
 		try {
 			aEmployerDetail.setEmpAddrStreet(this.empAddrStreet.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Emp Addr Line1
+		// Emp Addr Line1
 		try {
 			aEmployerDetail.setEmpAddrLine1(this.empAddrLine1.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Emp Addr Line2
+		// Emp Addr Line2
 		try {
 			aEmployerDetail.setEmpAddrLine2(this.empAddrLine2.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Emp P O Box
+		// Emp P O Box
 		try {
 			aEmployerDetail.setEmpPOBox(this.empPOBox.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Emp Country
+		// Emp Country
 		try {
 			aEmployerDetail.setLovDescCountryDesc(this.empCountry.getDescription());
 			aEmployerDetail.setEmpCountry(StringUtils.trimToNull(this.empCountry.getValidatedValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Emp Province
+		// Emp Province
 		try {
 			aEmployerDetail.setLovDescProvinceName(this.empProvince.getDescription());
 			aEmployerDetail.setEmpProvince(StringUtils.trimToNull(this.empProvince.getValidatedValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Emp City
+		// Emp City
 		try {
 
 			if (PennantConstants.CITY_FREETEXT) {
@@ -844,51 +824,51 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Emp Phone
+		// Emp Phone
 		try {
 			aEmployerDetail.setEmpPhone(this.empPhone.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Emp Fax
+		// Emp Fax
 		try {
 			aEmployerDetail.setEmpFax(PennantApplicationUtil.formatPhoneNumber(this.empFaxCountryCode.getValue(),
 					this.empFaxAreaCode.getValue(), this.empFax.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Emp Telex No
+		// Emp Telex No
 		try {
 			aEmployerDetail.setEmpTelexNo(PennantApplicationUtil.formatPhoneNumber(this.empTelexCountryCode.getValue(),
 					this.empTelexAreaCode.getValue(), this.empTelexNo.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Emp Email Id
+		// Emp Email Id
 		try {
 			aEmployerDetail.setEmpEmailId(this.empEmailId.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Emp Web Site
+		// Emp Web Site
 		try {
 			aEmployerDetail.setEmpWebSite(this.empWebSite.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Contact Person Name
+		// Contact Person Name
 		try {
 			aEmployerDetail.setContactPersonName(this.contactPersonName.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Contact Person No
+		// Contact Person No
 		try {
 			aEmployerDetail.setContactPersonNo(this.contactPersonNo.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Emp Alocation Type
+		// Emp Alocation Type
 		try {
 			String strEmpAlocationType = null;
 			if (this.empAlocationType.getSelectedItem() != null) {
@@ -902,13 +882,13 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Bank Reference Number
+		// Bank Reference Number
 		try {
 			aEmployerDetail.setBankRefNo(this.bankRefNo.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Employer Category
+		// Employer Category
 		try {
 			if (!this.empCategory.isDisabled()
 					&& PennantConstants.List_Select.equals(getComboboxValue(this.empCategory))) {
@@ -947,13 +927,13 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		logger.debug("Entering");
 		Date appStartDate = SysParamUtil.getAppDate();
 		Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
-		//Emp Name
+		// Emp Name
 		if (!this.empName.isReadonly()) {
 			this.empName
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_EmpName.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL, true));
 		}
-		//Establish Date
+		// Establish Date
 		if (!this.establishDate.isReadonly()) {
 			this.establishDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_EmployerDetailDialog_EstablishDate.value"), false,
@@ -966,43 +946,43 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 				&& StringUtils.isBlank(this.empAddrLine2.getValue())) {
 			addressConstraint = true;
 		}
-		//Emp Addr H Nbr
+		// Emp Addr H Nbr
 		if (addressConstraint) {
 			this.empAddrHNbr.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_EmpAddrHNbr.value"),
 							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
-		//Emp Flat Nbr
+		// Emp Flat Nbr
 		if (addressConstraint) {
 			this.empFlatNbr
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_EmpFlatNbr.value"),
 							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
-		//Emp Addr Street
+		// Emp Addr Street
 		if (addressConstraint) {
 			this.empAddrStreet.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_EmpAddrStreet.value"),
 							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
-		//Emp Addr Line1
+		// Emp Addr Line1
 		if (addressConstraint) {
 			this.empAddrLine1.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_EmpAddrLine1.value"),
 							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
-		//Emp Addr Line2
+		// Emp Addr Line2
 		if (addressConstraint) {
 			this.empAddrLine2.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_EmpAddrLine2.value"),
 							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
-		//Emp P O Box
+		// Emp P O Box
 		if (!this.empPOBox.isReadonly()) {
 			this.empPOBox
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_EmpPOBox.value"),
 							PennantRegularExpressions.REGEX_NUMERIC, false));
 		}
-		//Emp Phone
+		// Emp Phone
 		if (!this.empPhone.isReadonly()) {
 			this.empPhone.setConstraint(
 					new PTMobileNumberValidator(Labels.getLabel("label_EmployerDetailDialog_EmpPhone.value"), false));
@@ -1015,7 +995,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 			this.empFaxAreaCode.setConstraint(new PTPhoneNumberValidator(
 					Labels.getLabel("label_EmployerDetailDialog_faxAreaCode.value"), false, 2));
 		}
-		//Emp Fax
+		// Emp Fax
 		if (!this.empFax.isReadonly()) {
 			this.empFax.setConstraint(
 					new PTPhoneNumberValidator(Labels.getLabel("label_EmployerDetailDialog_EmpFax.value"), false, 3));
@@ -1028,37 +1008,37 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 			this.empTelexAreaCode.setConstraint(new PTPhoneNumberValidator(
 					Labels.getLabel("label_EmployerDetailDialog_telexAreaCode.value"), false, 2));
 		}
-		//Emp Telex No
+		// Emp Telex No
 		if (!this.empTelexNo.isReadonly()) {
 			this.empTelexNo.setConstraint(new PTPhoneNumberValidator(
 					Labels.getLabel("label_EmployerDetailDialog_EmpTelexNo.value"), false, 3));
 		}
-		//Emp Email Id MAND_FIELD_MAIL
+		// Emp Email Id MAND_FIELD_MAIL
 		if (!this.empEmailId.isReadonly()) {
 			this.empEmailId.setConstraint(
 					new PTEmailValidator(Labels.getLabel("label_EmployerDetailDialog_EmpEmailId.value"), false));
 		}
-		//Emp Web Site
+		// Emp Web Site
 		if (!this.empWebSite.isReadonly()) {
 			this.empWebSite.setConstraint(
 					new PTWebValidator(Labels.getLabel("label_EmployerDetailDialog_EmpWebSite.value"), false));
 		}
-		//Contact Person Name
+		// Contact Person Name
 		if (!this.contactPersonName.isReadonly()) {
 			this.contactPersonName.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_ContactPersonName.value"),
 							PennantRegularExpressions.REGEX_NAME, false));
 		}
-		//Contact Person No
+		// Contact Person No
 		if (!this.contactPersonNo.isReadonly()) {
 			this.contactPersonNo.setConstraint(new PTMobileNumberValidator(
 					Labels.getLabel("label_EmployerDetailDialog_ContactPersonNo.value"), false));
 		}
-		//Emp Alocation Type
-		//		if (!this.empAlocationType.isDisabled()) {
-		//			this.empAlocationType.setConstraint(new StaticListValidator(alocationList,
-		//					Labels.getLabel("label_EmployerDetailDialog_EmpAlocationType.value")));
-		//		}
+		// Emp Alocation Type
+		// if (!this.empAlocationType.isDisabled()) {
+		// this.empAlocationType.setConstraint(new StaticListValidator(alocationList,
+		// Labels.getLabel("label_EmployerDetailDialog_EmpAlocationType.value")));
+		// }
 
 		// city name
 		if (PennantConstants.CITY_FREETEXT) {
@@ -1068,7 +1048,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 								PennantRegularExpressions.REGEX_NAME, false));
 			}
 		}
-		//Emp Name
+		// Emp Name
 		if (!this.bankRefNo.isReadonly()) {
 			this.bankRefNo
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_BankRefNo.value"),
@@ -1113,16 +1093,16 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	 */
 
 	private void doSetLOVValidation() {
-		//Emp Industry
+		// Emp Industry
 		this.empIndustry.setConstraint(new PTStringValidator(
 				Labels.getLabel("label_EmployerDetailDialog_EmpIndustry.value"), null, false, true));
-		//Emp Country
+		// Emp Country
 		this.empCountry.setConstraint(new PTStringValidator(
 				Labels.getLabel("label_EmployerDetailDialog_EmpCountry.value"), null, false, true));
-		//Emp Province
+		// Emp Province
 		this.empProvince.setConstraint(new PTStringValidator(
 				Labels.getLabel("label_EmployerDetailDialog_EmpProvince.value"), null, false, true));
-		//Emp City
+		// Emp City
 		if (!PennantConstants.CITY_FREETEXT) {
 			this.empCity.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_EmployerDetailDialog_EmpCity.value"), null, false, true));
@@ -1183,50 +1163,18 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		getEmployerDetailListCtrl().search();
 	}
 
-	/**
-	 * Deletes a EmployerDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final EmployerDetail aEmployerDetail = new EmployerDetail();
 		BeanUtils.copyProperties(getEmployerDetail(), aEmployerDetail);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_EmployerDetailDialog_EmpCategory.value") + " : "
+		String keyReference = Labels.getLabel("label_EmployerDetailDialog_EmpCategory.value") + " : "
 				+ aEmployerDetail.getEmpIndustry() + "," + Labels.getLabel("label_EmployerDetailDialog_EmpName.value")
 				+ " : " + aEmployerDetail.getEmpName();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aEmployerDetail.getRecordType())) {
-				aEmployerDetail.setVersion(aEmployerDetail.getVersion() + 1);
-				aEmployerDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(keyReference, aEmployerDetail);
 
-				if (isWorkFlowEnabled()) {
-					aEmployerDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aEmployerDetail.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aEmployerDetail.getNextTaskId(),
-							aEmployerDetail);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aEmployerDetail, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1324,7 +1272,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		try {
 
 			if (doProcess(aEmployerDetail, tranType)) {
-				//doWriteBeanToComponents(aEmployerDetail);
+				// doWriteBeanToComponents(aEmployerDetail);
 				refreshList();
 				closeDialog();
 			}
@@ -1338,11 +1286,9 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1395,10 +1341,8 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

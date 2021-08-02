@@ -1573,47 +1573,15 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Deletes a Promotion object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final Promotion aPromotion = new Promotion();
 		BeanUtils.copyProperties(this.promotion, aPromotion);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aPromotion.getPromotionCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aPromotion.getRecordType()).equals("")) {
-				aPromotion.setVersion(aPromotion.getVersion() + 1);
-				aPromotion.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(aPromotion.getPromotionCode(), aPromotion);
 
-				if (isWorkFlowEnabled()) {
-					aPromotion.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aPromotion.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aPromotion.getNextTaskId(), aPromotion);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aPromotion, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

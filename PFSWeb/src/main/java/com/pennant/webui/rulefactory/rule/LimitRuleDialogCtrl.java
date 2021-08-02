@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LimitRuleDialogCtrl.java                                             * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  23-08-2011    														*
- *                                                                  						*
- * Modified Date    :  23-08-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LimitRuleDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 23-08-2011 * * Modified
+ * Date : 23-08-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 23-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.rulefactory.rule;
@@ -57,7 +39,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.codemirror.Codemirror;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -115,6 +96,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.GlobalVariable;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -135,7 +117,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	protected Textbox queryCode; // autoWired
 	protected Textbox queryDesc; // autoWired
 	protected Textbox queryModule; // autoWired
-	//protected Combobox 	custCtgCode; 			// autoWired
+	// protected Combobox custCtgCode; // autoWired
 	protected Codemirror sQLQuery; // autoWired
 	protected Combobox combo;
 	protected Row rowCustCtgCode;
@@ -186,13 +168,14 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	private transient PagedListService pagedListService;
 
 	private List<LimitFldCriterias> operatorsList;
-	//For Changes in comboBox's depend on Selection Types in Any ComboBox 
+	// For Changes in comboBox's depend on Selection Types in Any ComboBox
 	private Map<String, String> fieldTypeMap = new HashMap<String, String>();
 	private Map<String, String> selectionTypeMap = new HashMap<String, String>();
 	private Map<String, String> dbTableMap = new HashMap<String, String>();
 	private Map<String, Object> fieldObjectMap = new HashMap<String, Object>();
 
-	private List<GlobalVariable> globalVariableList = new ArrayList<GlobalVariable>();// retrieve values from table--GlobalVariable	
+	private List<GlobalVariable> globalVariableList = new ArrayList<GlobalVariable>();// retrieve values from
+																						// table--GlobalVariable
 	List<String> sqlQueryValueList = new ArrayList<String>();// list of tree values
 	List<Component> itemList = new ArrayList<Component>();// list of items(tree item) in tree
 	List<BMTRBFldDetails> objectFieldList = new ArrayList<BMTRBFldDetails>();// retrieve values from
@@ -397,8 +380,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -421,14 +403,13 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aLimitRule
-	 *            LimitFilterQuery
+	 * @param aLimitRule LimitFilterQuery
 	 */
 	public void doWriteBeanToComponents(LimitFilterQuery aLimitRule) {
 		logger.debug("Entering");
 
 		custCategoryList = PennantStaticListUtil.getLimitCategories();
-		//fillComboBox(this.custCtgCode,aLimitRule.getQuerySubCode(),this.custCategoryList,"");		
+		// fillComboBox(this.custCtgCode,aLimitRule.getQuerySubCode(),this.custCategoryList,"");
 
 		this.queryModule.setValue(moduleName);
 		this.queryCode.setValue(aLimitRule.getQueryCode());
@@ -471,7 +452,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Active
+		// Active
 		try {
 			aLimitRule.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
@@ -557,7 +538,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 			JdbcSearchObject<GlobalVariable> searchObj2 = new JdbcSearchObject<GlobalVariable>(GlobalVariable.class);
 			globalVariableList = this.pagedListService.getBySearchObject(searchObj2);
 
-			//getting List of Operators depend on FieldType and SelectionType
+			// getting List of Operators depend on FieldType and SelectionType
 			operatorsList = getLimitRuleService().getOperatorsList();
 
 			// building tree based on condition
@@ -568,7 +549,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 					sqlQueryValueList.add(st.nextToken());
 				}
 			}
-			// Fetches the List of DedupFields		
+			// Fetches the List of DedupFields
 			objectFieldList = (List<BMTRBFldDetails>) getLimitRuleService().getFieldList(RuleConstants.MODULE_IRLFILTER,
 					RuleConstants.EVENT_BANK);
 			// Method for Building tree with /Without existing params
@@ -757,7 +738,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 		logger.debug("Leaving");
 	}
 
-	//Method for Enable or disable Components Depend on selection type
+	// Method for Enable or disable Components Depend on selection type
 	private void internalComboFill(Component component) {
 		logger.debug("Entering");
 		Component posCmp = null;
@@ -1105,11 +1086,11 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 			Combobox fieldCombo = (Combobox) selectionCombo.getPreviousSibling().getPreviousSibling();
 			String fieldName = fieldCombo.getSelectedItem().getValue().toString();
 
-			//For Calling Extended ListBox From DB
+			// For Calling Extended ListBox From DB
 			if (oprLabel.equalsIgnoreCase("Equal") || oprLabel.equalsIgnoreCase("Not Equal")) {
 				Object dataObject = ExtendedSearchListBox.show(this.window_LimitRuleDialog, dbTableMap.get(fieldName));
 				if (dataObject == null) {
-					//do Nothing
+					// do Nothing
 				} else if (dataObject instanceof String) {
 					textbox.setValue("");
 				} else {
@@ -1119,14 +1100,14 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 					}
 				}
 			} else if (oprLabel.equalsIgnoreCase("IN") || oprLabel.equalsIgnoreCase("Not IN")) {
-				//Calling MultiSelection ListBox From DB
+				// Calling MultiSelection ListBox From DB
 				String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_LimitRuleDialog,
 						dbTableMap.get(fieldName), textbox.getValue(), new Filter[] {});
 				if (selectedValues != null) {
 					textbox.setValue(selectedValues);
 					textbox.setTooltiptext(selectedValues);
 				} else {
-					//do Nothing
+					// do Nothing
 				}
 			}
 		}
@@ -1652,7 +1633,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 				} else if (childComp instanceof Textbox) {
 					// Component related to textBox
 
-					//if(isSimulation){
+					// if(isSimulation){
 					Textbox textbox = (Textbox) childComp;
 					textbox.setErrorMessage("");
 					if (textbox.getValue() == null || textbox.getValue().equals("")) {
@@ -1767,46 +1748,18 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a LimitFilterQuery object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final LimitFilterQuery aLimitRule = new LimitFilterQuery();
 		BeanUtils.copyProperties(getLimitFilterQuery(), aLimitRule);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_LimitParmDialog_QueryCode.value") + " : " + aLimitRule.getQueryCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aLimitRule.getRecordType()).equals("")) {
-				aLimitRule.setVersion(aLimitRule.getVersion() + 1);
-				aLimitRule.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		String keyReference = Labels.getLabel("label_LimitParmDialog_QueryCode.value") + " : "
+				+ aLimitRule.getQueryCode();
 
-				if (isWorkFlowEnabled()) {
-					aLimitRule.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		doDelete(keyReference, aLimitRule);
 
-			try {
-				if (doProcess(aLimitRule, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1916,7 +1869,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
-		//active.setDisabled(!getUserWorkspace().isAllowed("button_RuleDialog_btnLimitDefRuleNew") && enqiryModule);
+		// active.setDisabled(!getUserWorkspace().isAllowed("button_RuleDialog_btnLimitDefRuleNew") && enqiryModule);
 		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
@@ -1997,11 +1950,9 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aLimitRule
-	 *            (LimitFilterQuery)
+	 * @param aLimitRule (LimitFilterQuery)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType   (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -2090,11 +2041,9 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -2183,8 +2132,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -2202,8 +2150,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.limitRule);

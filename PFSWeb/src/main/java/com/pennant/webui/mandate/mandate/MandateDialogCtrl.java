@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  MandateDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  18-10-2016    														*
- *                                                                  						*
- * Modified Date    :  18-10-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : MandateDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 18-10-2016 * * Modified
+ * Date : 18-10-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 18-10-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 18-10-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.mandate.mandate;
@@ -141,6 +123,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.MediaUtil;
@@ -682,8 +665,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -829,7 +811,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		Filter filter[] = new Filter[2];
 		filter[0] = new Filter("CustID", custID, Filter.OP_EQUAL);
 		filter[1] = new Filter("RepaymentFrom", "Y", Filter.OP_EQUAL);
-		//this.custID.setValueType(DataType.LONG);
+		// this.custID.setValueType(DataType.LONG);
 
 		Object dataObject = ExtendedSearchListBox.show(this.window_MandateDialog, "CustomerBankInfoAccntNumbers",
 				filter, "");
@@ -1407,8 +1389,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aMandate
-	 *            Mandate
+	 * @param aMandate Mandate
 	 * @param tab
 	 * @throws Exception
 	 * @throws WrongValueException
@@ -1477,7 +1458,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.inputDate.setValue(aMandate.getInputDate());
 		}
 
-		//visibleDocFrame(aMandate.getDocImage());
+		// visibleDocFrame(aMandate.getDocImage());
 
 		logger.debug("Leaving");
 	}
@@ -1682,7 +1663,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 		// Bank Branch ID
 		try {
-			//this.bankBranchID.getValidatedValue();
+			// this.bankBranchID.getValidatedValue();
 			Object obj = this.bankBranchID.getAttribute("bankBranchID");
 			if (obj != null) {
 				aMandate.setBankBranchID(Long.valueOf(String.valueOf(obj)));
@@ -2212,7 +2193,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				this.btnFetchAccountDetails.setDisabled(true);
 			}
 		}
-		//making the loan reference as read only if it is from loan queue 
+		// making the loan reference as read only if it is from loan queue
 		if (!fromLoan) {
 			getFinReferences();
 		}
@@ -2310,20 +2291,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		return AmtInWord.toString().trim();
 	}
 
-	// *****************************************************************
-	// ************************+ crud operations ***********************
-	// *****************************************************************
-
-	/**
-	 * Deletes a Mandate object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		final Mandate aMandate = new Mandate();
 		BeanUtils.copyProperties(getMandate(), aMandate);
-		String tranType = PennantConstants.TRAN_WF;
 
 		// in delete case if approver approves needs notes
 		if (this.btnNotes.isVisible() && !notesEntered) {
@@ -2331,35 +2302,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			return;
 		}
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aMandate.getMandateID();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aMandate.getRecordType()).equals("")) {
-				aMandate.setVersion(aMandate.getVersion() + 1);
-				aMandate.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(String.valueOf(aMandate.getMandateID()), aMandate);
 
-				if (isWorkFlowEnabled()) {
-					aMandate.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aMandate.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aMandate.getNextTaskId(), aMandate);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aMandate, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2481,11 +2426,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -2538,10 +2481,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */
@@ -2843,9 +2784,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (getMandate() != null) {
 			custCIFs.add(getMandate().getCustCIF());
 		}
-		//Inside loan queue
+		// Inside loan queue
 		if (getFinanceMainDialogCtrl() != null && getFinanceMainDialogCtrl() instanceof FinanceMainBaseCtrl) {
-			//Get coapplicant CIF's
+			// Get coapplicant CIF's
 			JointAccountDetailDialogCtrl financeJointAccountDetailDialogCtrl = ((FinanceMainBaseCtrl) getFinanceMainDialogCtrl())
 					.getJointAccountDetailDialogCtrl();
 			if (financeJointAccountDetailDialogCtrl != null) {
@@ -2855,7 +2796,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				}
 			}
 		}
-		//primary customer
+		// primary customer
 		custCIFs.add(getCIFForCustomer(financeDetail));
 		Filter[] filter = new Filter[1];
 		filter[0] = new Filter("CustCIF", custCIFs, Filter.OP_IN);

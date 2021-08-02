@@ -103,8 +103,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_AutoKnockOffDialog(Event event) throws Exception {
@@ -179,8 +178,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -192,8 +190,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -204,8 +201,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -216,8 +212,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -228,8 +223,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -240,8 +234,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -252,8 +245,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -294,7 +286,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 			isReadOnly = true;
 		}
 
-		//Order IntBox
+		// Order IntBox
 		listCell = new Listcell();
 		hbox = new Hbox();
 		space = new Space();
@@ -311,7 +303,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 		listCell.appendChild(hbox);
 		listCell.setParent(listItem);
 
-		//FeeTypeCode ExtendedCombobox
+		// FeeTypeCode ExtendedCombobox
 		listCell = new Listcell();
 		hbox = new Hbox();
 		space = new Space();
@@ -432,7 +424,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 		this.recordStatus.setValue(knockOff.getRecordStatus());
 		if (knockOff.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(knockOff.getRecordType())) {
 			this.active.setChecked(true);
-			//this.active.setDisabled(true);
+			// this.active.setDisabled(true);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -448,13 +440,13 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//knockOffCode
+		// knockOffCode
 		try {
 			aknockOff.setCode(this.knockOffCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//description
+		// description
 		try {
 			aknockOff.setDescription(this.description.getValue());
 		} catch (WrongValueException we) {
@@ -467,7 +459,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 			wve.add(we);
 		}
 
-		//Active
+		// Active
 		try {
 			aknockOff.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
@@ -519,7 +511,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 						}
 					}
 				} else {
-					//set the tranType according to RecordType 
+					// set the tranType according to RecordType
 					if (isNew) {
 						tranType = PennantConstants.TRAN_ADD;
 						mapping.setVersion(1);
@@ -629,8 +621,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param voucherVendor
-	 *            The entity that need to be render.
+	 * @param voucherVendor The entity that need to be render.
 	 */
 	public void doShowDialog(AutoKnockOff knockOff) {
 		logger.debug(Literal.ENTERING);
@@ -700,7 +691,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 		this.knockOffCode.setConstraint("");
 		this.description.setConstraint("");
 		this.executionDays.setConstraint("");
-		//this.frequency.setConstraint("");
+		// this.frequency.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -758,53 +749,24 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a VoucherVendor object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		final AutoKnockOff aknockOff = new AutoKnockOff();
 		BeanUtils.copyProperties(getAutoKnockOff(), aknockOff);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aknockOff.getId();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aknockOff.getRecordType()).equals("")) {
-				aknockOff.setVersion(aknockOff.getVersion() + 1);
-				aknockOff.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				for (AutoKnockOffFeeMapping autoKnockOffFeeMapping : aknockOff.getMappingList()) {
-					autoKnockOffFeeMapping.setVersion(autoKnockOffFeeMapping.getVersion() + 1);
-					autoKnockOffFeeMapping.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					autoKnockOffFeeMapping.setNewRecord(true);
-				}
-
-				if (isWorkFlowEnabled()) {
-					aknockOff.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aknockOff.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aknockOff.getNextTaskId(), aknockOff);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aknockOff, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(String.valueOf(aknockOff.getId()), aknockOff);
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	protected void doDeleteChild(AutoKnockOff aknockOff) {
+		for (AutoKnockOffFeeMapping autoKnockOffFeeMapping : aknockOff.getMappingList()) {
+			autoKnockOffFeeMapping.setVersion(autoKnockOffFeeMapping.getVersion() + 1);
+			autoKnockOffFeeMapping.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			autoKnockOffFeeMapping.setNewRecord(true);
+		}
+
 	}
 
 	/**
@@ -933,11 +895,9 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1025,10 +985,8 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

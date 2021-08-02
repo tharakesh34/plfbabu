@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LovFieldDetailDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  04-10-2011    														*
- *                                                                  						*
- * Modified Date    :  19-10-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LovFieldDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 04-10-2011 * *
+ * Modified Date : 19-10-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- *19-10-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 19-10-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.systemmasters.lovfielddetail;
@@ -73,6 +55,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -180,7 +163,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.fieldCode.setMaxlength(10);
 		this.fieldCode.getTextbox().setMaxlength(50);
 		this.fieldCodeValue.setMaxlength(50);
@@ -207,7 +190,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_LovFieldDetailDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_LovFieldDetailDialog_btnEdit"));
-		this.btnDelete.setVisible(false);//getUserWorkspace().isAllowed("button_LovFieldDetailDialog_btnDelete")
+		this.btnDelete.setVisible(false);// getUserWorkspace().isAllowed("button_LovFieldDetailDialog_btnDelete")
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_LovFieldDetailDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
@@ -275,8 +258,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -301,8 +283,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aLovFieldDetail
-	 *            LovFieldDetail
+	 * @param aLovFieldDetail LovFieldDetail
 	 */
 	public void doWriteBeanToComponents(LovFieldDetail aLovFieldDetail) {
 		logger.debug("Entering");
@@ -319,8 +300,9 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 		}
 		this.recordStatus.setValue(aLovFieldDetail.getRecordStatus());
 
-		if (aLovFieldDetail.isNewRecord() || (aLovFieldDetail.getRecordType() != null ? aLovFieldDetail.getRecordType() : "")
-				.equals(PennantConstants.RECORD_TYPE_NEW)) {
+		if (aLovFieldDetail.isNewRecord()
+				|| (aLovFieldDetail.getRecordType() != null ? aLovFieldDetail.getRecordType() : "")
+						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.isActive.setChecked(true);
 			this.isActive.setDisabled(true);
 		}
@@ -478,48 +460,16 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 		getLovFieldDetailListCtrl().search();
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a LovFieldDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final LovFieldDetail aLovFieldDetail = new LovFieldDetail();
 		BeanUtils.copyProperties(getLovFieldDetail(), aLovFieldDetail);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_LovFieldDetailDialog_FieldCode.value") + " : "
-				+ aLovFieldDetail.getFieldCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aLovFieldDetail.getRecordType())) {
-				aLovFieldDetail.setVersion(aLovFieldDetail.getVersion() + 1);
-				aLovFieldDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(Labels.getLabel("label_LovFieldDetailDialog_FieldCode.value") + " : " + aLovFieldDetail.getFieldCode(),
+				aLovFieldDetail);
 
-				if (isWorkFlowEnabled()) {
-					aLovFieldDetail.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aLovFieldDetail, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

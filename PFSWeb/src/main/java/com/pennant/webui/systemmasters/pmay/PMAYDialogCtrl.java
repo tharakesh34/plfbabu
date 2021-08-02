@@ -1353,47 +1353,13 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a PMAY object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		final PMAY aPMAY = new PMAY();
 		BeanUtils.copyProperties(this.pmay, aPMAY);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aPMAY.getFinReference();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aPMAY.getRecordType()).equals("")) {
-				aPMAY.setVersion(aPMAY.getVersion() + 1);
-				aPMAY.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aPMAY.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aPMAY.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aPMAY.getNextTaskId(), aPMAY);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aPMAY, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
+		doDelete(aPMAY.getFinReference(), aPMAY);
 
 		logger.debug(Literal.LEAVING);
 	}

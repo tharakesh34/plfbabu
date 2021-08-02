@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SplRateCodeDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SplRateCodeDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * *
+ * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.applicationmaster.splratecode;
@@ -51,7 +33,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
@@ -72,6 +53,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -174,7 +156,7 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.sRType.setMaxlength(8);
 		this.sRTypeDesc.setMaxlength(50);
 
@@ -266,8 +248,7 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -291,8 +272,7 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aSplRateCode
-	 *            SplRateCode
+	 * @param aSplRateCode SplRateCode
 	 */
 	public void doWriteBeanToComponents(SplRateCode aSplRateCode) {
 		logger.debug("Entering");
@@ -456,45 +436,18 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 		getSplRateCodeListCtrl().search();
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a SplRateCode object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final SplRateCode aSplRateCode = new SplRateCode();
 		BeanUtils.copyProperties(getSplRateCode(), aSplRateCode);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_SplRateCodeDialog_SRType.value") + " : " + aSplRateCode.getSRType();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aSplRateCode.getRecordType())) {
-				aSplRateCode.setVersion(aSplRateCode.getVersion() + 1);
-				aSplRateCode.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		String keyReference = Labels.getLabel("label_SplRateCodeDialog_SRType.value") + " : "
+				+ aSplRateCode.getSRType();
 
-				if (isWorkFlowEnabled()) {
-					aSplRateCode.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		doDelete(keyReference, aSplRateCode);
 
-			try {
-				if (doProcess(aSplRateCode, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -623,11 +576,9 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aSplRateCode
-	 *            (SplRateCode)
+	 * @param aSplRateCode (SplRateCode)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType     (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -713,11 +664,9 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -791,10 +740,8 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	/**
 	 * Get Audit Header Details
 	 * 
-	 * @param aSplRateCode
-	 *            (SplRateCode)
-	 * @param tranType
-	 *            (String)
+	 * @param aSplRateCode (SplRateCode)
+	 * @param tranType     (String)
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(SplRateCode aSplRateCode, String tranType) {
@@ -806,8 +753,7 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	/**
 	 * Display Message in Error Box
 	 *
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -825,8 +771,7 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

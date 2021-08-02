@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceWorkFlowDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  19-11-2011    														*
- *                                                                  						*
- * Modified Date    :  19-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceWorkFlowDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 19-11-2011 * *
+ * Modified Date : 19-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 19-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 19-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.lmtmasters.financeworkflow;
@@ -54,7 +36,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -81,6 +62,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -180,7 +162,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 				}
 			}
 
-			// Event Name 
+			// Event Name
 			if (arguments.containsKey("eventAction")) {
 				eventAction = (String) arguments.get("eventAction");
 			}
@@ -238,7 +220,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.finType.setMaxlength(8);
 		this.finType.setMandatoryStyle(true);
 		doSetFinTypeProperties();
@@ -394,8 +376,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -418,8 +399,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceWorkFlow
-	 *            FinanceWorkFlow
+	 * @param aFinanceWorkFlow FinanceWorkFlow
 	 */
 	public void doWriteBeanToComponents(FinanceWorkFlow aFinanceWorkFlow) {
 		logger.debug("Entering");
@@ -430,7 +410,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 					+ "," + PennantConstants.WORFLOW_MODULE_COLLATERAL + "," + PennantConstants.WORFLOW_MODULE_VAS + ","
 					+ PennantConstants.WORFLOW_MODULE_COMMITMENT + ",";
 		} else {
-			//Remove Facility If Facility module Exists
+			// Remove Facility If Facility module Exists
 			exclFields = "," + PennantConstants.WORFLOW_MODULE_PROMOTION + ","
 					+ PennantConstants.WORFLOW_MODULE_COLLATERAL + "," + PennantConstants.WORFLOW_MODULE_VAS + ","
 					+ PennantConstants.WORFLOW_MODULE_COMMITMENT + ",";
@@ -735,43 +715,21 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final FinanceWorkFlow aFinanceWorkFlow = new FinanceWorkFlow();
 		BeanUtils.copyProperties(getFinanceWorkFlow(), aFinanceWorkFlow);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_FinanceWorkFlowDialog_FinType.value") + " : " + aFinanceWorkFlow.getFinType();
+		String keyReference = Labels.getLabel("label_FinanceWorkFlowDialog_FinType.value") + " : "
+				+ aFinanceWorkFlow.getFinType();
 		if (!StringUtils.equals(aFinanceWorkFlow.getFinEvent(), FinServiceEvent.ORG)) {
-			msg = msg.concat(" & " + Labels.getLabel("label_FinanceWorkFlowDialog_FinEvent.value") + " : "
-					+ aFinanceWorkFlow.getFinEvent());
+			keyReference = keyReference.concat(" & " + Labels.getLabel("label_FinanceWorkFlowDialog_FinEvent.value")
+					+ " : " + aFinanceWorkFlow.getFinEvent());
 		}
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aFinanceWorkFlow.getRecordType())) {
-				aFinanceWorkFlow.setVersion(aFinanceWorkFlow.getVersion() + 1);
-				aFinanceWorkFlow.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()) {
-					aFinanceWorkFlow.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		doDelete(keyReference, aFinanceWorkFlow);
 
-			try {
-				if (doProcess(aFinanceWorkFlow, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -916,11 +874,9 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aFinanceWorkFlow
-	 *            (FinanceWorkFlow)
+	 * @param aFinanceWorkFlow (FinanceWorkFlow)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType         (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1011,11 +967,9 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1152,10 +1106,8 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	/**
 	 * Get Audit Header Details
 	 * 
-	 * @param aSubSegment
-	 *            (SubSegment)
-	 * @param tranType
-	 *            (String)
+	 * @param aSubSegment (SubSegment)
+	 * @param tranType    (String)
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(FinanceWorkFlow aFinanceWorkFlow, String tranType) {
@@ -1167,8 +1119,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1184,8 +1135,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

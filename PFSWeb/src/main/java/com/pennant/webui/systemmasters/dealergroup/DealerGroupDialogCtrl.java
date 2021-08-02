@@ -114,8 +114,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param builderCompany
-	 *            The entity that need to be render.
+	 * @param builderCompany The entity that need to be render.
 	 */
 	public void doShowDialog(DealerGroup dealerGroup) {
 		logger.debug(Literal.LEAVING);
@@ -172,8 +171,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -242,8 +240,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -337,8 +334,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -406,8 +402,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -425,48 +420,13 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a BuilderGroup object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		final DealerGroup aDealerGroup = new DealerGroup();
 		BeanUtils.copyProperties(this.dealerGroup, aDealerGroup);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aDealerGroup.getDealerCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aDealerGroup.getRecordType()).equals("")) {
-				aDealerGroup.setVersion(aDealerGroup.getVersion() + 1);
-				aDealerGroup.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aDealerGroup.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aDealerGroup.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aDealerGroup.getNextTaskId(),
-							aDealerGroup);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aDealerGroup, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
+		doDelete(aDealerGroup.getDealerCode(), aDealerGroup);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -599,11 +559,9 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -690,10 +648,8 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */
@@ -769,8 +725,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);

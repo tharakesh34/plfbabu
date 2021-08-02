@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  BusinessVerticalDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-12-2018    														*
- *                                                                  						*
- * Modified Date    :  14-12-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : BusinessVerticalDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-12-2018 * *
+ * Modified Date : 14-12-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-12-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-12-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.applicationmaster.businessvertical;
 
 import java.sql.Timestamp;
@@ -117,8 +99,7 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_BusinessVerticalDialog(Event event) throws Exception {
@@ -197,8 +178,7 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -210,8 +190,7 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -222,8 +201,7 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -234,8 +212,7 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -246,8 +223,7 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -258,8 +234,7 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -270,8 +245,7 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -339,19 +313,19 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Code
+		// Code
 		try {
 			aBusinessVertical.setCode(this.code.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Description
+		// Description
 		try {
 			aBusinessVertical.setDescription(this.description.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//active
+		// active
 		try {
 			aBusinessVertical.setActive(active.isChecked());
 		} catch (WrongValueException we) {
@@ -375,8 +349,7 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param businessVertical
-	 *            The entity that need to be render.
+	 * @param businessVertical The entity that need to be render.
 	 */
 	public void doShowDialog(BusinessVertical businessVertical) {
 		logger.debug(Literal.LEAVING);
@@ -476,47 +449,13 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a BusinessVertical object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.LEAVING);
 
 		final BusinessVertical aBusinessVertical = new BusinessVertical();
 		BeanUtils.copyProperties(this.businessVertical, aBusinessVertical);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aBusinessVertical.getId();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aBusinessVertical.getRecordType()).equals("")) {
-				aBusinessVertical.setVersion(aBusinessVertical.getVersion() + 1);
-				aBusinessVertical.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aBusinessVertical.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aBusinessVertical.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aBusinessVertical.getNextTaskId(),
-							aBusinessVertical);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aBusinessVertical, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(String.valueOf(aBusinessVertical.getId()), aBusinessVertical);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -641,11 +580,9 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -732,10 +669,8 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

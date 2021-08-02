@@ -78,8 +78,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_TransactionMappingDialog(Event event) throws AppException {
@@ -173,8 +172,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -186,8 +184,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -198,8 +195,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -210,8 +206,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -222,8 +217,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -234,8 +228,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -246,8 +239,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -416,8 +408,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param covenantType
-	 *            The entity that need to be render.
+	 * @param covenantType The entity that need to be render.
 	 */
 	public void doShowDialog(TransactionMapping mapping) {
 		logger.debug(Literal.ENTERING);
@@ -427,7 +418,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 			doEdit();
 			this.posId.setFocus(true);
 		} else {
-			//this.description.setFocus(true);
+			// this.description.setFocus(true);
 			if (isWorkFlowEnabled()) {
 				if (StringUtils.isNotBlank(mapping.getRecordType())) {
 					this.btnNotes.setVisible(true);
@@ -533,49 +524,13 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a CovenantType object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		final TransactionMapping aTransactionMapping = new TransactionMapping();
 		BeanUtils.copyProperties(this.transactionMapping, aTransactionMapping);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aTransactionMapping.getPosId();
-		if (MessageUtil.confirm(msg) != MessageUtil.YES) {
-			return;
-		}
-
-		if (StringUtils.trimToEmpty(aTransactionMapping.getRecordType()).equals("")) {
-			aTransactionMapping.setVersion(aTransactionMapping.getVersion() + 1);
-			aTransactionMapping.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-			if (isWorkFlowEnabled()) {
-				aTransactionMapping.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-				aTransactionMapping.setNewRecord(true);
-				tranType = PennantConstants.TRAN_WF;
-				getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aTransactionMapping.getNextTaskId(),
-						aTransactionMapping);
-			} else {
-				tranType = PennantConstants.TRAN_DEL;
-			}
-		}
-
-		try {
-			if (doProcess(aTransactionMapping, tranType)) {
-				refreshList();
-				closeDialog();
-			}
-
-		} catch (DataAccessException e) {
-			MessageUtil.showError(e);
-		}
+		doDelete(String.valueOf(aTransactionMapping.getPosId()), aTransactionMapping);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -701,11 +656,9 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -785,10 +738,8 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

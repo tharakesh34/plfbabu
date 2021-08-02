@@ -36,6 +36,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -75,8 +76,7 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_AcademicDialog(Event event) throws Exception {
@@ -153,8 +153,7 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		doSave();
@@ -163,8 +162,7 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		doEdit();
@@ -173,8 +171,7 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		MessageUtil.showHelpWindow(event, super.window);
@@ -183,8 +180,7 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) {
 		doDelete();
@@ -193,8 +189,7 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		doCancel();
@@ -203,8 +198,7 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -291,8 +285,7 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param aAcademic
-	 *            The entity that need to be render.
+	 * @param aAcademic The entity that need to be render.
 	 */
 	public void doShowDialog(Academic academic) {
 		logger.debug("Entering");
@@ -396,45 +389,18 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Deletes a Academic entity from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final Academic entity = new Academic();
 		BeanUtils.copyProperties(this.academic, entity);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_AcademicDialog_AcademicLevel.value") + " : " + academic.getAcademicLevel();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(academic.getRecordType())) {
-				academic.setVersion(academic.getVersion() + 1);
-				academic.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		String keyReference = Labels.getLabel("label_AcademicDialog_AcademicLevel.value") + " : "
+				+ academic.getAcademicLevel();
 
-				if (isWorkFlowEnabled()) {
-					academic.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		doDelete(keyReference, entity);
 
-			try {
-				if (doProcess(academic, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -569,11 +535,9 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAcademic
-	 *            (Academic)
+	 * @param aAcademic (Academic)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType  (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -659,11 +623,9 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -752,8 +714,7 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.academic);

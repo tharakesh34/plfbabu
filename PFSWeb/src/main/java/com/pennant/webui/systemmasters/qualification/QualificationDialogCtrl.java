@@ -209,8 +209,7 @@ public class QualificationDialogCtrl extends GFCBaseCtrl<Qualification> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -234,8 +233,7 @@ public class QualificationDialogCtrl extends GFCBaseCtrl<Qualification> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aProfession
-	 *            Profession
+	 * @param aProfession Profession
 	 */
 	public void doWriteBeanToComponents(Qualification aQualification) {
 		logger.debug(Literal.ENTERING);
@@ -244,8 +242,9 @@ public class QualificationDialogCtrl extends GFCBaseCtrl<Qualification> {
 		this.qualificationIsActive.setChecked(aQualification.isActive());
 		this.recordStatus.setValue(aQualification.getRecordStatus());
 
-		if (qualification.isNewRecord() || (aQualification.getRecordType() != null ? aQualification.getRecordType() : "")
-				.equals(PennantConstants.RECORD_TYPE_NEW)) {
+		if (qualification.isNewRecord()
+				|| (aQualification.getRecordType() != null ? aQualification.getRecordType() : "")
+						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.qualificationIsActive.setChecked(true);
 			this.qualificationIsActive.setDisabled(true);
 
@@ -397,47 +396,16 @@ public class QualificationDialogCtrl extends GFCBaseCtrl<Qualification> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a Profession object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		final Qualification aQualification = new Qualification();
 		BeanUtils.copyProperties(getQualification(), aQualification);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_QualificationDialog_QualificationCode.value") + " : "
+		String keyReference = Labels.getLabel("label_QualificationDialog_QualificationCode.value") + " : "
 				+ aQualification.getCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aQualification.getRecordType())) {
-				aQualification.setVersion(aQualification.getVersion() + 1);
-				aQualification.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(keyReference, aQualification);
 
-				if (isWorkFlowEnabled()) {
-					aQualification.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aQualification, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -571,11 +539,9 @@ public class QualificationDialogCtrl extends GFCBaseCtrl<Qualification> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aQualification
-	 *            (Qualification)
+	 * @param aQualification (Qualification)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -664,11 +630,9 @@ public class QualificationDialogCtrl extends GFCBaseCtrl<Qualification> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -744,10 +708,8 @@ public class QualificationDialogCtrl extends GFCBaseCtrl<Qualification> {
 	/**
 	 * Get Audit Header Details
 	 * 
-	 * @param aQualification
-	 *            (Qualification)
-	 * @param tranType
-	 *            (String)
+	 * @param aQualification (Qualification)
+	 * @param tranType       (String)
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(Qualification aQualification, String tranType) {
@@ -759,8 +721,7 @@ public class QualificationDialogCtrl extends GFCBaseCtrl<Qualification> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -779,8 +740,7 @@ public class QualificationDialogCtrl extends GFCBaseCtrl<Qualification> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

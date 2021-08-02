@@ -61,7 +61,7 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 	protected Textbox ocrDescription;
 	protected Decimalbox customerPortion;
 	protected Combobox ocrType;
-	//protected Checkbox splitApplicable;
+	// protected Checkbox splitApplicable;
 	protected Checkbox active; // autoWired
 	protected Label label_OCRDialog_OCRType;
 	protected Groupbox ocrSteps;
@@ -241,8 +241,7 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -278,7 +277,7 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 		if (aOCRHeader.getOcrType() == null) {
 			this.ocrType.setSelectedIndex(1);
 		}
-		//this.splitApplicable.setChecked(aOCRHeader.isSplitApplicable());
+		// this.splitApplicable.setChecked(aOCRHeader.isSplitApplicable());
 		this.recordStatus.setValue(aOCRHeader.getRecordStatus());
 		this.active.setChecked(aOCRHeader.isActive());
 		if (StringUtils.equals(PennantConstants.SEGMENTED_VALUE, aOCRHeader.getOcrType())) {
@@ -304,13 +303,13 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//OCR  ID
+		// OCR ID
 		try {
 			aOCRHeader.setOcrID(this.ocrID.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Description
+		// Description
 		try {
 			aOCRHeader.setOcrDescription(this.ocrDescription.getValue());
 		} catch (WrongValueException we) {
@@ -340,7 +339,7 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 		 * //Split Applicable try { //aOCRHeader.setSplitApplicable(this.splitApplicable.isChecked()); } catch
 		 * (WrongValueException we) { wve.add(we); }
 		 */
-		//Active
+		// Active
 		try {
 			aOCRHeader.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
@@ -428,7 +427,7 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 					.setConstraint(new PTDecimalValidator(Labels.getLabel("label_OCRDialog_CustomerPortion.value"),
 							PennantConstants.defaultCCYDecPos, true, false, 0, 100));
 		}
-		//Applicable On
+		// Applicable On
 		if (!this.ocrType.isDisabled() && this.label_OCRDialog_OCRType.isVisible()) {
 			this.ocrType.setConstraint(new StaticListValidator(ocrApplicableList,
 					Labels.getLabel("label_OCRDialog_OCRApplicableOn.value")));
@@ -469,47 +468,14 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 		getOCRHeaderListCtrl().search();
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a OCRHeader object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
+
 		final OCRHeader aOCRHeader = new OCRHeader();
 		BeanUtils.copyProperties(getOCRHeader(), aOCRHeader);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_OCRDialog_OCRID.value") + " : " + aOCRHeader.getOcrID();
+		doDelete(String.valueOf(aOCRHeader.getOcrID()), aOCRHeader);
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aOCRHeader.getRecordType())) {
-				aOCRHeader.setVersion(aOCRHeader.getVersion() + 1);
-				aOCRHeader.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aOCRHeader.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aOCRHeader.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aOCRHeader.getNextTaskId(), aOCRHeader);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aOCRHeader, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -529,9 +495,9 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 		this.ocrDescription.setReadonly(isReadOnly("OCRHeaderDialog_OCRDescription"));
 		this.customerPortion.setReadonly(isReadOnly("OCRHeaderDialog_CustomerPortion"));
 		this.ocrType.setDisabled(isReadOnly("OCRHeaderDialog_OCRApplicableOn"));
-		//this.splitApplicable.setDisabled(isReadOnly("OCRHeaderDialog_SplitApplicable"));
+		// this.splitApplicable.setDisabled(isReadOnly("OCRHeaderDialog_SplitApplicable"));
 		this.active.setDisabled(isReadOnly("OCRHeaderDialog_Active"));
-		this.btnNew_OCRSteps.setVisible(!isReadOnly("button_OCRHeaderDialog_btnNew_OCRSteps")); //fix me
+		this.btnNew_OCRSteps.setVisible(!isReadOnly("button_OCRHeaderDialog_btnNew_OCRSteps")); // fix me
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -559,7 +525,7 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 		this.ocrDescription.setReadonly(true);
 		this.customerPortion.setReadonly(true);
 		this.ocrType.setDisabled(true);
-		//this.splitApplicable.setDisabled(true);
+		// this.splitApplicable.setDisabled(true);
 		this.active.setDisabled(true);
 
 		if (isWorkFlowEnabled()) {
@@ -583,7 +549,7 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 		this.ocrID.setValue("");
 		this.ocrDescription.setValue("");
 		this.ocrType.setValue("");
-		//this.splitApplicable.setChecked(false);
+		// this.splitApplicable.setChecked(false);
 		this.active.setChecked(false);
 		logger.debug(Literal.LEAVING);
 	}
@@ -649,11 +615,9 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aOCRHeader
-	 *            (OCRHeader)
+	 * @param aOCRHeader (OCRHeader)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType   (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -760,11 +724,9 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -852,8 +814,7 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 	/**
 	 * Display Message in Error Box
 	 *
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -871,8 +832,7 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -892,11 +852,11 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 		 */
 		if (checkOCRStepsDeleted()) {
 			MessageUtil.showError(Labels.getLabel("label_OCRDetailDialog_OCRStepsDeletionAlert.value"));
-			//this.splitApplicable.setChecked(true);
+			// this.splitApplicable.setChecked(true);
 			return;
 		}
 		this.ocrSteps.setVisible(false);
-		//}
+		// }
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1003,7 +963,7 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 				ComponentsCtrl.applyForward(item, "onDoubleClick=onOCRDetailItemDoubleClicked");
 				this.listBoxOCRStepsDetail.appendChild(item);
 			}
-			//group total
+			// group total
 			if (listBoxOCRStepsDetail != null && listBoxOCRStepsDetail.getItems().size() > 0) {
 				Listitem item = new Listitem();
 				Listcell lc = new Listcell(Labels.getLabel("listheader_AdvancePayments_GrandTotal.label"));

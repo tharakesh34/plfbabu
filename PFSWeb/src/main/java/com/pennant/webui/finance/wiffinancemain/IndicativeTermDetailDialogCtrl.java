@@ -1,42 +1,24 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CarLoanDetailDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  08-10-2011    														*
- *                                                                  						*
- * Modified Date    :  08-10-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CarLoanDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 08-10-2011 * *
+ * Modified Date : 08-10-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 08-10-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 08-10-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.wiffinancemain;
@@ -107,6 +89,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -489,8 +472,9 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 						indicativeTermDetail.setFax("");
 					}
 					if (customerDetails.getAddressList() != null && customerDetails.getAddressList().size() > 0) {
-						indicativeTermDetail.setCity(customerDetails.getAddressList().get(0).getCustAddrCity() == null
-								? "" : customerDetails.getAddressList().get(0).getCustAddrCity());
+						indicativeTermDetail
+								.setCity(customerDetails.getAddressList().get(0).getCustAddrCity() == null ? ""
+										: customerDetails.getAddressList().get(0).getCustAddrCity());
 					} else {
 						indicativeTermDetail.setCity("");
 					}
@@ -504,8 +488,9 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 					}
 
 					if (customerDetails.getAddressList() != null && customerDetails.getAddressList().size() > 0) {
-						indicativeTermDetail.setPoBox(customerDetails.getAddressList().get(0).getCustAddrZIP() == null
-								? "" : customerDetails.getAddressList().get(0).getCustAddrZIP());
+						indicativeTermDetail
+								.setPoBox(customerDetails.getAddressList().get(0).getCustAddrZIP() == null ? ""
+										: customerDetails.getAddressList().get(0).getCustAddrZIP());
 					} else {
 						indicativeTermDetail.setPoBox("");
 					}
@@ -578,8 +563,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -663,8 +647,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param indicativeTermDetail
-	 *            CarLoanDetail
+	 * @param indicativeTermDetail CarLoanDetail
 	 */
 	public void doWriteBeanToComponents(IndicativeTermDetail indicativeTermDetail) {
 		logger.debug("Entering");
@@ -1166,43 +1149,15 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a CarLoanDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final IndicativeTermDetail aIndicativeTermDetail = new IndicativeTermDetail();
 		BeanUtils.copyProperties(getIndicativeTermDetail(), aIndicativeTermDetail);
-		String tranType = PennantConstants.TRAN_WF;
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aIndicativeTermDetail.getFinReference();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aIndicativeTermDetail.getRecordType())) {
-				aIndicativeTermDetail.setVersion(aIndicativeTermDetail.getVersion() + 1);
-				aIndicativeTermDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (isWorkFlowEnabled()) {
-					aIndicativeTermDetail.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (doProcess(aIndicativeTermDetail, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
-		}
-		logger.debug("Leaving");
+
+		doDelete(aIndicativeTermDetail.getFinReference(), aIndicativeTermDetail);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1414,11 +1369,9 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aIndicativeTermDetail
-	 *            (CarLoanDetail)
+	 * @param aIndicativeTermDetail (CarLoanDetail)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType              (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1496,10 +1449,8 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
-	 * @param method
-	 *            (String)
+	 * @param auditHeader (AuditHeader)
+	 * @param method      (String)
 	 * @return boolean
 	 */
 	@SuppressWarnings("unused")
@@ -1633,8 +1584,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		AuditHeader auditHeader = new AuditHeader();
@@ -1649,8 +1599,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

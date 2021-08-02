@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  VasMovementDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-12-2011    														*
- *                                                                  						*
- * Modified Date    :  12-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : VasMovementDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-12-2011 * *
+ * Modified Date : 12-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.vasMovement;
@@ -56,7 +38,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -87,6 +68,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -247,7 +229,7 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		//getUserWorkspace().allocateAuthorities(super.pageRightName, getRole());
+		// getUserWorkspace().allocateAuthorities(super.pageRightName, getRole());
 
 		this.btnNew_VasMovementDetail
 				.setVisible(getUserWorkspace().isAllowed("button_VasMovementDialog_btnNew_VasMovementDetail"));
@@ -323,8 +305,7 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -350,8 +331,7 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aVasMovement
-	 *            VasMovement
+	 * @param aVasMovement VasMovement
 	 */
 	public void doWriteBeanToComponents(VasMovement aVasMovement) {
 		logger.debug("Entering");
@@ -399,7 +379,7 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 			wve.add(we);
 		}
 
-		//vasMovement.setVasMvntList(this.list);
+		// vasMovement.setVasMvntList(this.list);
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -505,44 +485,17 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a VasMovement object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final VasMovement aVasMovement = new VasMovement();
 		BeanUtils.copyProperties(getVasMovement(), aVasMovement);
-		String tranType = PennantConstants.TRAN_WF;
+		String keyReference = Labels.getLabel("listheader_VasMovementFinreference") + " : "
+				+ aVasMovement.getFinReference();
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("listheader_VasMovementFinreference") + " : " + aVasMovement.getFinReference();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aVasMovement.getRecordType())) {
-				aVasMovement.setVersion(aVasMovement.getVersion() + 1);
-				aVasMovement.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(keyReference, aVasMovement);
 
-				if (isWorkFlowEnabled()) {
-					aVasMovement.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (doProcess(aVasMovement, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -570,7 +523,7 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			//btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 
 		logger.debug("Leaving");
@@ -666,11 +619,9 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aVasMovement
-	 *            (VasMovement)
+	 * @param aVasMovement (VasMovement)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType     (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -756,11 +707,9 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -847,8 +796,7 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -864,8 +812,7 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -956,7 +903,7 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 		logger.debug("Entering ");
 		Comparator<Object> comp = new BeanComparator<Object>("vasMovementDetailId");
 		Collections.sort(vasMovementDetailList, comp);
-		//FIXME should checked better to remove the paging 
+		// FIXME should checked better to remove the paging
 		this.pagingVasMvmtDetailsList.setPageSize(100);
 		this.setVasMovementDetailList(vasMovementDetailList);
 		getVasMovement().setVasMvntList(vasMovementDetailList);

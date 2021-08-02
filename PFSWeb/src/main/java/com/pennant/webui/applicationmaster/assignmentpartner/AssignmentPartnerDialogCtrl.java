@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AssignmentPartnerDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-09-2018    														*
- *                                                                  						*
- * Modified Date    :  12-09-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AssignmentPartnerDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-09-2018 * *
+ * Modified Date : 12-09-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-09-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-09-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.applicationmaster.assignmentpartner;
 
 import java.sql.Timestamp;
@@ -120,8 +102,7 @@ public class AssignmentPartnerDialogCtrl extends GFCBaseCtrl<AssignmentPartner> 
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_AssignmentPartnerDialog(Event event) throws Exception {
@@ -211,8 +192,7 @@ public class AssignmentPartnerDialogCtrl extends GFCBaseCtrl<AssignmentPartner> 
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -224,8 +204,7 @@ public class AssignmentPartnerDialogCtrl extends GFCBaseCtrl<AssignmentPartner> 
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -236,8 +215,7 @@ public class AssignmentPartnerDialogCtrl extends GFCBaseCtrl<AssignmentPartner> 
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -248,8 +226,7 @@ public class AssignmentPartnerDialogCtrl extends GFCBaseCtrl<AssignmentPartner> 
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -260,8 +237,7 @@ public class AssignmentPartnerDialogCtrl extends GFCBaseCtrl<AssignmentPartner> 
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -272,8 +248,7 @@ public class AssignmentPartnerDialogCtrl extends GFCBaseCtrl<AssignmentPartner> 
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -284,8 +259,7 @@ public class AssignmentPartnerDialogCtrl extends GFCBaseCtrl<AssignmentPartner> 
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -363,19 +337,19 @@ public class AssignmentPartnerDialogCtrl extends GFCBaseCtrl<AssignmentPartner> 
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Code
+		// Code
 		try {
 			aAssignmentPartner.setCode(this.code.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Description
+		// Description
 		try {
 			aAssignmentPartner.setDescription(this.description.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Entity
+		// Entity
 		try {
 			aAssignmentPartner.setEntityCode(this.entityCode.getValidatedValue());
 			/*
@@ -385,7 +359,7 @@ public class AssignmentPartnerDialogCtrl extends GFCBaseCtrl<AssignmentPartner> 
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//G L Code
+		// G L Code
 		try {
 			aAssignmentPartner.setGLCode(this.gLCode.getValidatedValue());
 			Object obj = this.gLCode.getAttribute("GLCode");
@@ -395,13 +369,13 @@ public class AssignmentPartnerDialogCtrl extends GFCBaseCtrl<AssignmentPartner> 
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//SAPCustCode
+		// SAPCustCode
 		try {
 			aAssignmentPartner.setSapCustCode(this.sapCustCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Active
+		// Active
 		try {
 			aAssignmentPartner.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
@@ -425,8 +399,7 @@ public class AssignmentPartnerDialogCtrl extends GFCBaseCtrl<AssignmentPartner> 
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param assignmentPartner
-	 *            The entity that need to be render.
+	 * @param assignmentPartner The entity that need to be render.
 	 */
 	public void doShowDialog(AssignmentPartner assignmentPartner) {
 		logger.debug(Literal.LEAVING);
@@ -539,47 +512,13 @@ public class AssignmentPartnerDialogCtrl extends GFCBaseCtrl<AssignmentPartner> 
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a AssignmentPartner object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.LEAVING);
 
 		final AssignmentPartner aAssignmentPartner = new AssignmentPartner();
 		BeanUtils.copyProperties(this.assignmentPartner, aAssignmentPartner);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aAssignmentPartner.getCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aAssignmentPartner.getRecordType()).equals("")) {
-				aAssignmentPartner.setVersion(aAssignmentPartner.getVersion() + 1);
-				aAssignmentPartner.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aAssignmentPartner.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aAssignmentPartner.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aAssignmentPartner.getNextTaskId(),
-							aAssignmentPartner);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aAssignmentPartner, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(aAssignmentPartner.getCode(), aAssignmentPartner);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -715,11 +654,9 @@ public class AssignmentPartnerDialogCtrl extends GFCBaseCtrl<AssignmentPartner> 
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -806,10 +743,8 @@ public class AssignmentPartnerDialogCtrl extends GFCBaseCtrl<AssignmentPartner> 
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

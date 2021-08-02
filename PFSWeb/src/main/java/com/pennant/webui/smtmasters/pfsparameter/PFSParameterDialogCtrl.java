@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PFSParameterDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-07-2011    														*
- *                                                                  						*
- * Modified Date    :  12-07-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PFSParameterDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-07-2011 * *
+ * Modified Date : 12-07-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-07-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-07-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.smtmasters.pfsparameter;
@@ -54,7 +36,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -88,6 +69,7 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -328,8 +310,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -355,8 +336,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aPFSParameter
-	 *            PFSParameter
+	 * @param aPFSParameter PFSParameter
 	 * @throws ParseException
 	 */
 	public void doWriteBeanToComponents(PFSParameter aPFSParameter) throws ParseException {
@@ -488,7 +468,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 		default:
 
 			this.txtParmValue.setVisible(true);
-			//this.txtParmValue.setReadonly(false);
+			// this.txtParmValue.setReadonly(false);
 			this.txtParmValue.setMaxlength(this.sysParmLength);
 			this.txtParmValue.setValue(this.sysParmValue.getValue());
 			this.comboParmValue.setDisabled(true);
@@ -707,49 +687,18 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 		logger.debug("Leaving ");
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a PFSParameter object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
 		final PFSParameter aPFSParameter = new PFSParameter();
 		BeanUtils.copyProperties(getPFSParameter(), aPFSParameter);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_PFSParameterDialog_SysParmCode.value") + " : "
+		String keyReference = Labels.getLabel("label_PFSParameterDialog_SysParmCode.value") + " : "
 				+ aPFSParameter.getSysParmCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aPFSParameter.getRecordType())) {
-				aPFSParameter.setVersion(aPFSParameter.getVersion() + 1);
-				aPFSParameter.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()) {
-					aPFSParameter.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		doDelete(keyReference, aPFSParameter);
 
-			try {
-				if (doProcess(aPFSParameter, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -896,7 +845,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 
 			if (doProcess(aPFSParameter, tranType)) {
 
-				//Parameter Updation in Map Details
+				// Parameter Updation in Map Details
 				SysParamUtil.setParmDetails(aPFSParameter.getSysParmCode(), aPFSParameter.getSysParmValue());
 				refreshList();
 				// Close the Existing Dialog
@@ -912,11 +861,9 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aPFSParameter
-	 *            (PFSParameter)
+	 * @param aPFSParameter (PFSParameter)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1003,11 +950,9 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1093,8 +1038,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1112,8 +1056,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

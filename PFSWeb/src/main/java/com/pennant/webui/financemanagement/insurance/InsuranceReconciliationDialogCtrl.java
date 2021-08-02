@@ -598,46 +598,13 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 		appendAccountingDetailTab(this.insuranceDetails, false);
 	}
 
-	/**
-	 * Deletes a insuranceDetails object from database.<br>
-	 * 
-	 * @throws Exception
-	 */
 	private void doDelete() throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		final InsuranceDetails ainsuranceDetails = new InsuranceDetails();
 		BeanUtils.copyProperties(this.insuranceDetails, ainsuranceDetails);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ ainsuranceDetails.getReference();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(ainsuranceDetails.getRecordType()).equals("")) {
-				ainsuranceDetails.setVersion(ainsuranceDetails.getVersion() + 1);
-				ainsuranceDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					ainsuranceDetails.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					ainsuranceDetails.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), ainsuranceDetails.getNextTaskId(),
-							ainsuranceDetails);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (doProcess(ainsuranceDetails, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(ainsuranceDetails.getReference(), ainsuranceDetails);
 
 		logger.debug(Literal.LEAVING);
 	}

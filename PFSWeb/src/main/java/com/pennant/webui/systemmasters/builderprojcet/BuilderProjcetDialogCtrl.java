@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  BuilderProjcetDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  22-05-2017    														*
- *                                                                  						*
- * Modified Date    :  22-05-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : BuilderProjcetDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 22-05-2017 * *
+ * Modified Date : 22-05-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 22-05-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 22-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.systemmasters.builderprojcet;
 
 import java.sql.Timestamp;
@@ -130,7 +112,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_BuilderProjcetDialog;
-	//	protected Longbox 		        id; 
+	// protected Longbox id;
 	protected Uppercasebox name;
 	protected ExtendedCombobox builderId;
 	protected Textbox apfNo;
@@ -149,7 +131,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 	protected Tabpanel tp_ProjectDetails;
 	protected Tabpanel tp_ProjectUnits;
 	protected Div divKeyDetails;
-	//Project Details
+	// Project Details
 	protected Textbox registrationNumber;
 	protected Textbox addressLine1;
 	protected Textbox addressLine2;
@@ -225,8 +207,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_BuilderProjcetDialog(Event event) throws Exception {
@@ -261,7 +242,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 			} else {
 				getUserWorkspace().allocateAuthorities(this.pageRightName, null);
 			}
-			//Generating the APF Sequence
+			// Generating the APF Sequence
 			if (StringUtils.isEmpty(builderProjcet.getApfNo())) {
 				apfSequence = ReferenceGenerator.generateAPFSequence();
 			} else {
@@ -295,19 +276,19 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 		this.apfNo.setMaxlength(14);
 		this.apfNo.setReadonly(true);
 
-		//state
+		// state
 		this.state.setModuleName("Province");
 		this.state.setValueColumn("CPProvince");
 		this.state.setDescColumn("CPProvinceName");
 		this.state.setValidateColumns(new String[] { "CPProvince" });
 		this.state.setMandatoryStyle(false);
-		//City
+		// City
 		this.city.setModuleName("City");
 		this.city.setValueColumn("PCCity");
 		this.city.setDescColumn("PCCityName");
 		this.city.setValidateColumns(new String[] { "PCCity" });
 		this.city.setMandatoryStyle(false);
-		//Pincode
+		// Pincode
 		this.pinCode.setModuleName("PinCode");
 		this.pinCode.setValueColumn("PinCode");
 		this.pinCode.setDescColumn("AreaName");
@@ -363,8 +344,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -376,8 +356,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -388,8 +367,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -400,8 +378,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -412,8 +389,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -424,8 +400,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -436,8 +411,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -488,7 +462,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 			this.builderId.setAttribute("builderId", aBuilderProjcet.getBuilderId());
 		}
 		this.recordStatus.setValue(aBuilderProjcet.getRecordStatus());
-		//Project Details
+		// Project Details
 		this.registrationNumber.setValue(aBuilderProjcet.getRegistrationNumber());
 
 		this.addressLine1.setValue(aBuilderProjcet.getAddressLine1());
@@ -596,13 +570,13 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 		 * //Project ID try { aBuilderProjcet.setId(this.id.getValue()); }catch (WrongValueException we ) { wve.add(we);
 		 * }
 		 */
-		//Name
+		// Name
 		try {
 			aBuilderProjcet.setName(this.name.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Company
+		// Company
 		try {
 			String validatedValue = this.builderId.getValidatedValue();
 
@@ -621,14 +595,14 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 			wve.add(we);
 		}
 
-		//APF No
+		// APF No
 		try {
 			aBuilderProjcet.setApfNo(this.apfNo.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		//Project Details
+		// Project Details
 		try {
 			aBuilderProjcet.setRegistrationNumber(this.registrationNumber.getValue());
 		} catch (WrongValueException we) {
@@ -836,8 +810,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param builderProjcet
-	 *            The entity that need to be render.
+	 * @param builderProjcet The entity that need to be render.
 	 */
 	public void doShowDialog(BuilderProjcet builderProjcet) {
 		logger.debug(Literal.LEAVING);
@@ -1021,10 +994,10 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 	private void doSetLOVValidation() {
 		logger.debug(Literal.LEAVING);
 
-		//Project ID
-		//Name
-		//Company
-		//APF No
+		// Project ID
+		// Name
+		// Company
+		// APF No
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1096,48 +1069,13 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a BuilderProjcet object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		final BuilderProjcet aBuilderProjcet = new BuilderProjcet();
 		BeanUtils.copyProperties(this.builderProjcet, aBuilderProjcet);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aBuilderProjcet.getId();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aBuilderProjcet.getRecordType()).equals("")) {
-				aBuilderProjcet.setVersion(aBuilderProjcet.getVersion() + 1);
-				aBuilderProjcet.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aBuilderProjcet.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aBuilderProjcet.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aBuilderProjcet.getNextTaskId(),
-							aBuilderProjcet);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aBuilderProjcet, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
+		doDelete(String.valueOf(aBuilderProjcet.getId()), aBuilderProjcet);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1157,7 +1095,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 
 		readOnlyComponent(isReadOnly("BuilderProjcetDialog_name"), this.name);
 		readOnlyComponent(isReadOnly("BuilderProjcetDialog_builderId"), this.builderId);
-		//OnlyComponent(isReadOnly("BuilderProjcetDialog_apfNo"), this.apfNo);
+		// OnlyComponent(isReadOnly("BuilderProjcetDialog_apfNo"), this.apfNo);
 		readOnlyComponent(isReadOnly("BuilderProjcetDialog_registrationNumber"), this.registrationNumber);
 		readOnlyComponent(isReadOnly("BuilderProjcetDialog_addressLine1"), this.addressLine1);
 		readOnlyComponent(isReadOnly("BuilderProjcetDialog_addressLine2"), this.addressLine2);
@@ -1355,11 +1293,9 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1417,7 +1353,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 			aBuilderProjcet.setNextTaskId(nextTaskId);
 			aBuilderProjcet.setRoleCode(getRole());
 			aBuilderProjcet.setNextRoleCode(nextRoleCode);
-			//Document Details
+			// Document Details
 			if (aBuilderProjcet.getDocumentDetails() != null && !aBuilderProjcet.getDocumentDetails().isEmpty()) {
 				for (DocumentDetails details : aBuilderProjcet.getDocumentDetails()) {
 					details.setReferenceId(String.valueOf(aBuilderProjcet.getId()));
@@ -1439,7 +1375,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 				}
 			}
 
-			//Project Unit Details
+			// Project Unit Details
 			if (!CollectionUtils.isEmpty(aBuilderProjcet.getProjectUnits())) {
 				for (ProjectUnits projectUnits : aBuilderProjcet.getProjectUnits()) {
 					projectUnits.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
@@ -1486,10 +1422,8 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */
@@ -1815,8 +1749,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNewProjectUnits(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -1834,8 +1767,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param builderprojcet
-	 *            The entity that need to be passed to the dialog.
+	 * @param builderprojcet The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(ProjectUnits aProjectUnits) {
 		logger.debug(Literal.ENTERING);

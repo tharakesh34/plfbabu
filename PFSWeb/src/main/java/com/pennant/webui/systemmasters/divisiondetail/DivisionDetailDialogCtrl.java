@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DivisionDetailDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  02-08-2013    														*
- *                                                                  						*
- * Modified Date    :  02-08-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DivisionDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 02-08-2013 * *
+ * Modified Date : 02-08-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 02-08-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 02-08-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.systemmasters.divisiondetail;
 
 import java.sql.Timestamp;
@@ -77,6 +59,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -272,8 +255,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -282,8 +264,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -340,7 +321,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 			doWriteBeanToComponents(aDivisionDetail);
 			// set ReadOnly mode accordingly if the object is new or not.
 
-			//displayComponents(ScreenCTL.getMode(enqModule,isWorkFlowEnabled(),aDivisionDetail.isNewRecord()));
+			// displayComponents(ScreenCTL.getMode(enqModule,isWorkFlowEnabled(),aDivisionDetail.isNewRecord()));
 
 			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e) {
@@ -362,7 +343,8 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	private void displayComponents(int mode) {
 		logger.debug("Entering");
 
-		//doReadOnly(ScreenCTL.initButtons(mode, this.btnCtrl, this.btnNotes, isWorkFlowEnabled(),isFirstTask(), this.userAction,this.divisionCode,this.divisionCodeDesc));
+		// doReadOnly(ScreenCTL.initButtons(mode, this.btnCtrl, this.btnNotes, isWorkFlowEnabled(),isFirstTask(),
+		// this.userAction,this.divisionCode,this.divisionCodeDesc));
 
 		if (getDivisionDetail().isNewRecord()) {
 			setComponentAccessType("DivisionDetailDialog_DivisionCode", false, this.divisionCode,
@@ -389,7 +371,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 			this.btnCancel.setVisible(true);
 		}
 
-		//this.suspTrigger.setDisabled(false);//TODO:Right Name
+		// this.suspTrigger.setDisabled(false);//TODO:Right Name
 		this.alwPromotion.setDisabled(isReadOnly("DivisionDetailDialog_Active"));
 		this.suspTrigger.setDisabled(isReadOnly("DivisionDetailDialog_Active"));
 		this.divisionSuspRemarks.setReadonly(isReadOnly("DivisionDetailDialog_Active"));
@@ -409,7 +391,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			//btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving ");
 	}
@@ -481,7 +463,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.divisionCode.setMaxlength(8);
 		this.divisionCodeDesc.setMaxlength(50);
 		this.row_Suspremarks.setVisible(false);
@@ -503,8 +485,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aDivisionDetail
-	 *            DivisionDetail
+	 * @param aDivisionDetail DivisionDetail
 	 */
 	public void doWriteBeanToComponents(DivisionDetail aDivisionDetail) {
 		logger.debug("Entering");
@@ -517,7 +498,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		this.active.setChecked(aDivisionDetail.isActive());
 		this.entityCode.setValue(aDivisionDetail.getEntityCode());
 		this.recordStatus.setValue(aDivisionDetail.getRecordStatus());
-		//this.recordType.setValue(aDivisionDetail.getRecordType());
+		// this.recordType.setValue(aDivisionDetail.getRecordType());
 		if (aDivisionDetail.isNewRecord()) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
@@ -550,25 +531,26 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Division Code
+		// Division Code
 		try {
 			aDivisionDetail.setDivisionCode(this.divisionCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Division Code Desc
+		// Division Code Desc
 		try {
 			aDivisionDetail.setDivisionCodeDesc(this.divisionCodeDesc.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aDivisionDetail.setDivSuspTrigger(PennantConstants.List_Select.equals(getComboboxValue(this.suspTrigger))
-					? "" : getComboboxValue(this.suspTrigger));
+			aDivisionDetail
+					.setDivSuspTrigger(PennantConstants.List_Select.equals(getComboboxValue(this.suspTrigger)) ? ""
+							: getComboboxValue(this.suspTrigger));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Division Susp Remarks
+		// Division Susp Remarks
 		try {
 			if (this.divisionSuspRemarks.isVisible()) {
 				aDivisionDetail.setDivSuspRemarks(this.divisionSuspRemarks.getValue());
@@ -578,20 +560,20 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Allow Promotions
+		// Allow Promotions
 		try {
 			aDivisionDetail.setActive(this.alwPromotion.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Active
+		// Active
 		try {
 			aDivisionDetail.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		//ENtity Code
+		// ENtity Code
 		try {
 			aDivisionDetail.setEntityCode(this.entityCode.getValidatedValue());
 			aDivisionDetail.setEntityDesc(this.entityCode.getDescription());
@@ -629,13 +611,13 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	private void doSetValidation() {
 		logger.debug("Entering");
 		doClearMessage();
-		//Division Code
+		// Division Code
 		if (!this.divisionCode.isReadonly()) {
 			this.divisionCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_DivisionDetailDialog_DivisionCode.value"),
 							PennantRegularExpressions.REGEX_ACCOUNT, true));
 		}
-		//Division Code Desc
+		// Division Code Desc
 		if (!this.divisionCodeDesc.isReadonly()) {
 			this.divisionCodeDesc.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_DivisionDetailDialog_DivisionCodeDesc.value"),
@@ -696,49 +678,18 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		getDivisionDetailListCtrl().search();
 	}
 
-	/**
-	 * Deletes a DivisionDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final DivisionDetail aDivisionDetail = new DivisionDetail();
 		BeanUtils.copyProperties(getDivisionDetail(), aDivisionDetail);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_DivisionDetailDialog_DivisionCode.value") + " : "
+		String keyReference = Labels.getLabel("label_DivisionDetailDialog_DivisionCode.value") + " : "
 				+ aDivisionDetail.getDivisionCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aDivisionDetail.getRecordType())) {
-				aDivisionDetail.setVersion(aDivisionDetail.getVersion() + 1);
-				aDivisionDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()) {
-					aDivisionDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aDivisionDetail.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aDivisionDetail.getNextTaskId(),
-							aDivisionDetail);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		doDelete(keyReference, aDivisionDetail);
 
-			try {
-				if (doProcess(aDivisionDetail, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -824,11 +775,9 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -881,10 +830,8 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

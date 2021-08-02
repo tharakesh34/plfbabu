@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PartnerBankDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  09-03-2017    														*
- *                                                                  						*
- * Modified Date    :  09-03-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PartnerBankDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 09-03-2017 * *
+ * Modified Date : 09-03-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 09-03-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 09-03-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.partnerbank.partnerbank;
@@ -94,6 +76,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionStaticListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -163,7 +146,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 
 	private transient PartnerBankService partnerBankService;
 	private transient BankDetailService bankDetailService;
-	//protected int							accNoLength;
+	// protected int accNoLength;
 
 	private static List<ValueLabel> downloadTypesList = PennantStaticListUtil.getDownloadTypeList();
 	private static List<Property> dataEngineConfigNameList = PennantAppUtil.getDibursementConfigs();
@@ -187,8 +170,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_PartnerBankDialog(Event event) throws Exception {
@@ -236,7 +218,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.partnerBankCode.setMaxlength(8);
 		this.partnerBankName.setMaxlength(50);
 		this.fileName.setMaxlength(30);
@@ -312,8 +294,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) {
@@ -323,8 +304,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		doEdit();
@@ -333,8 +313,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		MessageUtil.showHelpWindow(event, super.window);
@@ -343,8 +322,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) {
 		doDelete();
@@ -353,8 +331,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		doCancel();
@@ -363,8 +340,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -524,133 +500,133 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		List<PartnerBranchModes> partnerBranchModesList = new ArrayList<PartnerBranchModes>();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Partner Bank Code
+		// Partner Bank Code
 		try {
 
 			aPartnerBank.setPartnerBankCode(this.partnerBankCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Partner Bank Name
+		// Partner Bank Name
 		try {
 			aPartnerBank.setPartnerBankName(this.partnerBankName.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Bank Code
+		// Bank Code
 		try {
 			aPartnerBank.setBankCode(this.bankCode.getValidatedValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Bank Branch Code
+		// Bank Branch Code
 		try {
 			aPartnerBank.setBankBranchCode(this.bankBranchCode.getValidatedValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Branch MICR Code
+		// Branch MICR Code
 		try {
 			aPartnerBank.setBranchMICRCode(this.branchMICRCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Branch IFSC Code
+		// Branch IFSC Code
 		try {
 			aPartnerBank.setBranchIFSCCode(this.branchIFSCCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Branch City
+		// Branch City
 		try {
 			aPartnerBank.setBranchCity(this.branchCity.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Utility Code
+		// Utility Code
 		try {
 			aPartnerBank.setUtilityCode(this.utilityCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Account No
+		// Account No
 		try {
 			aPartnerBank.setAccountNo(this.accountNo.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		//Account Type
+		// Account Type
 		try {
 			aPartnerBank.setAcType(this.acType.getValidatedValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		//Required File Download
+		// Required File Download
 		try {
 			aPartnerBank.setAlwFileDownload(this.reqFileDownload.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		// Allowed Disbursement 
+		// Allowed Disbursement
 		try {
 			aPartnerBank.setAlwDisb(this.alwDisburment.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		//Allowed Payments
+		// Allowed Payments
 		try {
 			aPartnerBank.setAlwPayment(this.alwPayments.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		//Allowed Receipts
+		// Allowed Receipts
 		try {
 			aPartnerBank.setAlwReceipt(this.alwReceipts.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		//In Favor Length
+		// In Favor Length
 		try {
 			aPartnerBank.setInFavourLength(this.inFavourLength.intValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		//Host GL Code
+		// Host GL Code
 		try {
 			aPartnerBank.setHostGLCode(this.sapGLCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		//Profit Centre
+		// Profit Centre
 		try {
 			aPartnerBank.setProfitCenterID(this.profitCenterID.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		//Cross Centre
+		// Cross Centre
 		try {
 			aPartnerBank.setCostCenterID(this.costCenterID.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		//Active
+		// Active
 		try {
 			aPartnerBank.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		//File Name
+		// File Name
 		try {
 			if (this.fileName.isVisible()) {
 				aPartnerBank.setFileName(this.fileName.getValue());
@@ -659,7 +635,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			wve.add(we);
 		}
 
-		//Entity
+		// Entity
 		try {
 			aPartnerBank.setEntity(this.entity.getValidatedValue());
 		} catch (WrongValueException we) {
@@ -729,13 +705,13 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Sponsor Bank Code
+		// Sponsor Bank Code
 		try {
 			aPartnerBank.setSponsorBankCode(this.sponsorBankCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Client Code
+		// Client Code
 		try {
 			aPartnerBank.setClientCode(this.clientCode.getValue());
 		} catch (WrongValueException we) {
@@ -777,8 +753,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param aPartnerBank
-	 *            The entity that need to be render.
+	 * @param aPartnerBank The entity that need to be render.
 	 */
 	public void doShowDialog(PartnerBank aPartnerBank) {
 		logger.debug("Entering");
@@ -841,50 +816,50 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 
 		doClearMessage();
 
-		//Partner Bank Code
+		// Partner Bank Code
 		if (!this.partnerBankCode.isReadonly()) {
 			this.partnerBankCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_PartnerBankCode.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
-		//Partner Bank name
+		// Partner Bank name
 		if (!this.partnerBankName.isReadonly()) {
 			this.partnerBankName.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_PartnerBankName.value"),
 							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
-		//Bank Code
+		// Bank Code
 		if (!this.bankCode.isReadonly()) {
 			this.bankCode.setConstraint(new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_BankCode.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
-		//Bank Branch Code
+		// Bank Branch Code
 		if (!this.bankBranchCode.isReadonly()) {
 			this.bankBranchCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_BankBranchCode.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
-		//Branch MICR Code
+		// Branch MICR Code
 		if (!this.branchMICRCode.isReadonly()) {
 			this.branchMICRCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_BranchMICRCode.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM, false));
 		}
-		//Branch IFSC Code
+		// Branch IFSC Code
 		if (!this.branchIFSCCode.isReadonly()) {
 			this.branchIFSCCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_BranchIFSCCode.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM, false));
 		}
-		//Branch City
+		// Branch City
 		if (!this.branchCity.isReadonly()) {
 			this.branchCity.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_BranchCity.value"), null, false));
 		}
 
-		//Account No
+		// Account No
 		if (!this.accountNo.isReadonly()) {
 			/*
 			 * this.accountNo.setConstraint(new PTStringValidator(Labels
@@ -896,51 +871,51 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 							PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true));
 		}
 
-		//Disbursement
+		// Disbursement
 		if (!this.btnSearchModeDisbursment.isDisabled()) {
 			this.modeDisbursment.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_PartnerBankDialog_ModeDisbursment.value"), null, true));
 		}
 
-		//Receipts
+		// Receipts
 		if (!this.btnSearchModeReceipts.isDisabled()) {
 			this.modeReceipts.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_ModeReceipts.value"), null, true));
 		}
 
-		//Payments
+		// Payments
 		if (!this.btnSearchModePayments.isDisabled()) {
 			this.modePayments.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_ModePayments.value"), null, true));
 		}
 
-		//Account Type Code
+		// Account Type Code
 		if (!this.acType.isReadonly()) {
 			this.acType.setConstraint(new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_GLCode.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
-		//Host GL Code
+		// Host GL Code
 		if (!this.sapGLCode.isReadonly()) {
 			this.sapGLCode
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_SAPGLCode.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM, false));
 		}
 
-		//Profit Centre
+		// Profit Centre
 		if (!this.profitCenterID.isDisabled()) {
 			this.profitCenterID
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_ProfitCenter.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM_FSLASH_SPACE, false));
 		}
 
-		//Profit Centre
+		// Profit Centre
 		if (!this.costCenterID.isReadonly()) {
 			this.costCenterID
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_CostCenter.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM_FSLASH_SPACE, false));
 		}
-		//Profit Centre
+		// Profit Centre
 		if (!this.inFavourLength.isReadonly()) {
 			this.inFavourLength.setConstraint(new PTNumberValidator(
 					Labels.getLabel("label_PartnerBankDialog_FavourLength.value"), false, false, 99));
@@ -951,14 +926,14 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 					Labels.getLabel("label_PartnerBankDialog_AlwBankBranchCode.value"), null, true));
 		}
 
-		//Branch IFSC Code
+		// Branch IFSC Code
 		if (this.fileName.isVisible() && !this.fileName.isReadonly() && this.alwDisburment.isChecked()
 				|| this.alwPayments.isChecked() && !this.reqFileDownload.isChecked()) {
 			this.fileName.setConstraint(new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_FileName.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM_UNDERSCORE, !this.reqFileDownload.isChecked()));
 		}
 
-		//Entity
+		// Entity
 		if (!this.entity.isReadonly()) {
 			this.entity.setConstraint(new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_Entity.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM, true));
@@ -1048,49 +1023,17 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Deletes a Academic entity from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final PartnerBank aPartnerBank = new PartnerBank();
 		BeanUtils.copyProperties(this.partnerBank, aPartnerBank);
-		String tranType = PennantConstants.TRAN_WF;
-
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_PartnerBankDialog_PartnerBankCode.value") + " : "
+		String keyReference = Labels.getLabel("label_PartnerBankDialog_PartnerBankCode.value") + " : "
 				+ aPartnerBank.getPartnerBankCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aPartnerBank.getRecordType()).equals("")) {
-				aPartnerBank.setVersion(aPartnerBank.getVersion() + 1);
-				aPartnerBank.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()) {
-					aPartnerBank.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aPartnerBank.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aPartnerBank.getNextTaskId(),
-							aPartnerBank);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		doDelete(keyReference, aPartnerBank);
 
-			try {
-				if (doProcess(aPartnerBank, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onFulfill$bankCode(Event event) {
@@ -1187,9 +1130,9 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 
 		this.bankCode.setReadonly(isReadOnly("PartnerBankDialog_BankCode"));
 		this.bankBranchCode.setReadonly(isReadOnly("PartnerBankDialog_BankBranchCode"));
-		this.branchMICRCode.setReadonly(true);//"PartnerBankDialog_BranchMICRCode"
-		this.branchIFSCCode.setReadonly(true);//"PartnerBankDialog_BranchIFSCCode"
-		this.branchCity.setReadonly(true);//"PartnerBankDialog_BranchCity"
+		this.branchMICRCode.setReadonly(true);// "PartnerBankDialog_BranchMICRCode"
+		this.branchIFSCCode.setReadonly(true);// "PartnerBankDialog_BranchIFSCCode"
+		this.branchCity.setReadonly(true);// "PartnerBankDialog_BranchCity"
 		this.utilityCode.setReadonly(isReadOnly("PartnerBankDialog_UtilityCode"));
 		this.accountNo.setReadonly(isReadOnly("PartnerBankDialog_AccountNo"));
 		this.acType.setReadonly(isReadOnly("PartnerBankDialog_AccType"));
@@ -1368,7 +1311,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		try {
 
 			if (doProcess(aPartnerBank, tranType)) {
-				//doWriteBeanToComponents(aPartnerBank);
+				// doWriteBeanToComponents(aPartnerBank);
 				refreshList();
 				closeDialog();
 			}
@@ -1402,11 +1345,9 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1493,10 +1434,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */
@@ -1587,8 +1526,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.partnerBank);

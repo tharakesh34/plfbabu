@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ErrorDetailDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2016    														*
- *                                                                  						*
- * Modified Date    :  05-05-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ErrorDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2016 * *
+ * Modified Date : 05-05-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.webui.errordetail.errordetail;
 
@@ -77,6 +59,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -317,8 +300,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -327,8 +309,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -427,7 +408,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 		if (!enqModule) {
 			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_ErrorDetailDialog_btnNew"));
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_ErrorDetailDialog_btnEdit"));
-			this.btnDelete.setVisible(false);//getUserWorkspace().isAllowed("button_ErrorDetailDialog_btnDelete")
+			this.btnDelete.setVisible(false);// getUserWorkspace().isAllowed("button_ErrorDetailDialog_btnDelete")
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_ErrorDetailDialog_btnSave"));
 		}
 
@@ -439,7 +420,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.errorCode.setMaxlength(10);
 		this.errorLanguage.setMaxlength(2);
 		this.errorMessage.setMaxlength(100);
@@ -456,8 +437,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aErrorDetail
-	 *            ErrorDetail
+	 * @param aErrorDetail ErrorDetail
 	 */
 	public void doWriteBeanToComponents(ErrorDetail aErrorDetail) {
 		logger.debug("Entering");
@@ -482,19 +462,19 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Error Code
+		// Error Code
 		try {
 			aErrorDetail.setCode(this.errorCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Error Language
+		// Error Language
 		try {
 			aErrorDetail.setLanguage(this.errorLanguage.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Error Severity
+		// Error Severity
 		try {
 			String strErrorSeverity = null;
 			if (this.errorSeverity.getSelectedItem() != null) {
@@ -508,13 +488,13 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Error Message
+		// Error Message
 		try {
 			aErrorDetail.setMessage(this.errorMessage.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Error Extended Message
+		// Error Extended Message
 		try {
 			aErrorDetail.setExtendedMessage(this.errorExtendedMessage.getValue());
 		} catch (WrongValueException we) {
@@ -540,29 +520,29 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
-		//Error Code
+		// Error Code
 		if (!this.errorCode.isReadonly()) {
 			this.errorCode
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_ErrorDetailDialog_ErrorCode.value"),
 							PennantRegularExpressions.REGEX_NUMERIC, true));
 		}
-		//Error Language
+		// Error Language
 		if (!this.errorLanguage.isReadonly()) {
 			this.errorLanguage
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_ErrorDetailDialog_ErrorLanguage.value"),
 							PennantRegularExpressions.REGEX_NAME, true));
 		}
-		//Error Severity
+		// Error Severity
 		if (!this.errorSeverity.isDisabled()) {
 			this.errorSeverity.setConstraint(new PTListValidator(
 					Labels.getLabel("label_ErrorDetailDialog_ErrorSeverity.value"), listErrorSeverity, true));
 		}
-		//Error Message
+		// Error Message
 		if (!this.errorMessage.isReadonly()) {
 			this.errorMessage.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_ErrorDetailDialog_ErrorMessage.value"), null, true));
 		}
-		//Error Extended Message
+		// Error Extended Message
 		if (!this.errorExtendedMessage.isReadonly()) {
 			this.errorExtendedMessage.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_ErrorDetailDialog_ErrorExtendedMessage.value"),
@@ -620,48 +600,15 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 		getErrorDetailListCtrl().search();
 	}
 
-	/**
-	 * Deletes a ErrorDetail object from database.<br>
-	 * 
-	 * @throws Exception
-	 */
 	private void doDelete() throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final ErrorDetail aErrorDetail = new ErrorDetail();
 		BeanUtils.copyProperties(getErrorDetail(), aErrorDetail);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aErrorDetail.getCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aErrorDetail.getRecordType())) {
-				aErrorDetail.setVersion(aErrorDetail.getVersion() + 1);
-				aErrorDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(aErrorDetail.getCode(), aErrorDetail);
 
-				if (isWorkFlowEnabled()) {
-					aErrorDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aErrorDetail.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aErrorDetail.getNextTaskId(),
-							aErrorDetail);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aErrorDetail, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -734,7 +681,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 		try {
 
 			if (doProcess(aErrorDetail, tranType)) {
-				//doWriteBeanToComponents(aErrorDetail);
+				// doWriteBeanToComponents(aErrorDetail);
 				refreshList();
 				closeDialog();
 			}
@@ -748,11 +695,9 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -806,10 +751,8 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

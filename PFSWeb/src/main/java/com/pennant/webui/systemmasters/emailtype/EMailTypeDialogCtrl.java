@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  EMailTypeDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : EMailTypeDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * * Modified
+ * Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.systemmasters.emailtype;
@@ -72,6 +54,7 @@ import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -272,8 +255,7 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -297,8 +279,7 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aEMailType
-	 *            EMailType
+	 * @param aEMailType EMailType
 	 */
 	public void doWriteBeanToComponents(EMailType aEMailType) {
 		logger.debug("Entering");
@@ -479,47 +460,18 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a EMailType object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final EMailType aEMailType = new EMailType();
 		BeanUtils.copyProperties(getEMailType(), aEMailType);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_EMailTypeDialog_EmailTypeCode.value") + " : " + aEMailType.getEmailTypeCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aEMailType.getRecordType())) {
-				aEMailType.setVersion(aEMailType.getVersion() + 1);
-				aEMailType.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		String keyReference = Labels.getLabel("label_EMailTypeDialog_EmailTypeCode.value") + " : "
+				+ aEMailType.getEmailTypeCode();
 
-				if (isWorkFlowEnabled()) {
-					aEMailType.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		doDelete(keyReference, aEMailType);
 
-			try {
-				if (doProcess(aEMailType, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -654,11 +606,9 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aEMailType
-	 *            (EMailType)
+	 * @param aEMailType (EMailType)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType   (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -746,11 +696,9 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -828,10 +776,8 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 	/**
 	 * Get Audit Header Details
 	 * 
-	 * @param aEMailType
-	 *            (EMailType)
-	 * @param tranType
-	 *            (String)
+	 * @param aEMailType (EMailType)
+	 * @param tranType   (String)
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(EMailType aEMailType, String tranType) {
@@ -843,8 +789,7 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -862,8 +807,7 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

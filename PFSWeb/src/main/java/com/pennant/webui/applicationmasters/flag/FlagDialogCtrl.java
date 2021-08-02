@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FlagDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-07-2015    														*
- *                                                                  						*
- * Modified Date    :  14-07-2015    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FlagDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-07-2015 * * Modified Date
+ * : 14-07-2015 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-07-2015       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-07-2015 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.applicationmasters.flag;
 
 import java.sql.Timestamp;
@@ -71,6 +53,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -247,8 +230,7 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -257,8 +239,7 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -339,7 +320,7 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 		this.active.setDisabled(isReadOnly("FlagsDialog_Active"));
 		if (getFlag().isNewRecord()
 				|| StringUtils.equals(getFlag().getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
-			//this.active.setDisabled(true);
+			// this.active.setDisabled(true);
 		}
 
 		if (isWorkFlowEnabled()) {
@@ -405,7 +386,7 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.flagCode.setMaxlength(6);
 		this.flagDesc.setMaxlength(50);
 
@@ -436,8 +417,7 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFlag
-	 *            Flag
+	 * @param aFlag Flag
 	 */
 	public void doWriteBeanToComponents(Flag aFlag) {
 		logger.debug("Entering");
@@ -460,19 +440,19 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Code
+		// Code
 		try {
 			aFlag.setFlagCode(this.flagCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Description
+		// Description
 		try {
 			aFlag.setFlagDesc(this.flagDesc.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Active
+		// Active
 		try {
 			aFlag.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
@@ -498,12 +478,12 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
-		//Code
+		// Code
 		if (!this.flagCode.isReadonly()) {
 			this.flagCode.setConstraint(new PTStringValidator(Labels.getLabel("label_FlagDialog_FlagCode.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 		}
-		//Description
+		// Description
 		if (!this.flagDesc.isReadonly()) {
 			this.flagDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_FlagDialog_FlagDesc.value"),
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
@@ -554,47 +534,15 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 		getFlagListCtrl().search();
 	}
 
-	/**
-	 * Deletes a Flag object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final Flag aFlag = new Flag();
 		BeanUtils.copyProperties(getFlag(), aFlag);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_FlagCode") + ":" + aFlag.getFlagCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aFlag.getRecordType())) {
-				aFlag.setVersion(aFlag.getVersion() + 1);
-				aFlag.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(Labels.getLabel("label_FlagCode") + ":" + aFlag.getFlagCode(), aFlag);
 
-				if (isWorkFlowEnabled()) {
-					aFlag.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aFlag.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aFlag.getNextTaskId(), aFlag);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aFlag, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -663,7 +611,7 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 		try {
 
 			if (doProcess(aFlag, tranType)) {
-				//doWriteBeanToComponents(aFlag);
+				// doWriteBeanToComponents(aFlag);
 				refreshList();
 				closeDialog();
 			}
@@ -677,11 +625,9 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -734,10 +680,8 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

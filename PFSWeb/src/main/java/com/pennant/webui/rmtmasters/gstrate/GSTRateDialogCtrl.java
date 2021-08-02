@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  GSTRateDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  20-05-2019    														*
- *                                                                  						*
- * Modified Date    :  20-05-2019    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : GSTRateDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 20-05-2019 * * Modified
+ * Date : 20-05-2019 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 20-05-2019       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 20-05-2019 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.rmtmasters.gstrate;
 
 import java.math.BigDecimal;
@@ -145,8 +127,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_GSTRateDialog(Event event) throws Exception {
@@ -230,8 +211,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -243,8 +223,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -255,8 +234,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -267,8 +245,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -279,8 +256,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -291,8 +267,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -303,8 +278,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -383,19 +357,19 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//From State
+		// From State
 		try {
 			aGSTRate.setFromState(this.fromState.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//To State
+		// To State
 		try {
 			aGSTRate.setToState(this.toState.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Tax Type
+		// Tax Type
 		try {
 			String strTaxType = null;
 			if (this.taxType.getSelectedItem() != null) {
@@ -410,7 +384,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Calc Type
+		// Calc Type
 		try {
 			String strCalcType = null;
 			if (this.calcType.getSelectedItem() != null) {
@@ -425,7 +399,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Amount
+		// Amount
 		try {
 			if (this.amount.getActualValue() != null) {
 				aGSTRate.setAmount(PennantApplicationUtil.unFormateAmount(this.amount.getActualValue(),
@@ -436,7 +410,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Percentage
+		// Percentage
 		try {
 			if (this.percentage.getValue() != null) {
 				aGSTRate.setPercentage(this.percentage.getValue());
@@ -444,7 +418,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Calc On
+		// Calc On
 		try {
 			String strCalcOn = null;
 			if (this.calcOn.getSelectedItem() != null) {
@@ -459,7 +433,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Active
+		// Active
 		try {
 			aGSTRate.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
@@ -543,8 +517,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param gSTRate
-	 *            The entity that need to be render.
+	 * @param gSTRate The entity that need to be render.
 	 */
 	public void doShowDialog(GSTRate gSTRate) {
 		logger.debug(Literal.ENTERING);
@@ -672,46 +645,13 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a GSTRate object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		final GSTRate aGSTRate = new GSTRate();
 		BeanUtils.copyProperties(this.gSTRate, aGSTRate);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aGSTRate.getId();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aGSTRate.getRecordType()).equals("")) {
-				aGSTRate.setVersion(aGSTRate.getVersion() + 1);
-				aGSTRate.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aGSTRate.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aGSTRate.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aGSTRate.getNextTaskId(), aGSTRate);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aGSTRate, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(String.valueOf(aGSTRate.getId()), aGSTRate);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -852,11 +792,9 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -943,10 +881,8 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

@@ -106,6 +106,7 @@ import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -1314,43 +1315,15 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		deAllocateAuthorities("FacilityDetailDialog");
 	}
 
-	/**
-	 * Deletes a Facility object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final Facility aFacility = new Facility();
 		BeanUtils.copyProperties(getFacility(), aFacility);
-		String tranType = PennantConstants.TRAN_WF;
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aFacility.getCAFReference();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aFacility.getRecordType())) {
-				aFacility.setVersion(aFacility.getVersion() + 1);
-				aFacility.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (isWorkFlowEnabled()) {
-					aFacility.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aFacility.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aFacility.getNextTaskId(), aFacility);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (doProcess(aFacility, tranType)) {
-					refreshList();
-					deAllocateChildWindowRights();
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+
+		doDelete(aFacility.getCAFReference(), aFacility);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

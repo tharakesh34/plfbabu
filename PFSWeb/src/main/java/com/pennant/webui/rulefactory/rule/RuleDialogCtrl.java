@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  *********************************************************************************************
- *                                 FILE HEADER                                               *
+ * FILE HEADER *
  *********************************************************************************************
  *
- * FileName    		:  RuleDialogCtrl.java                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES              			
- *                                                                  
- * Creation Date    :  03-06-2011    
- *                                                                  
- * Modified Date    :  03-06-2011    
- *                                                                  
- * Description 		:                                             
- *                                                                                          
+ * FileName : RuleDialogCtrl.java
+ * 
+ * Author : PENNANT TECHONOLOGIES
+ * 
+ * Creation Date : 03-06-2011
+ * 
+ * Modified Date : 03-06-2011
+ * 
+ * Description :
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-06-2011       Pennant	                 0.1                                         	* 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-06-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.rulefactory.rule;
@@ -51,7 +42,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -94,6 +84,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -158,7 +149,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	private transient PagedListService pagedListService;
 
 	private transient boolean validationOn;
-	private String ruleModuleName; // FIXME This field is being maintained only for the Rights and Labels in i3-label.properties
+	private String ruleModuleName; // FIXME This field is being maintained only for the Rights and Labels in
+									// i3-label.properties
 
 	/**
 	 * default constructor.<br>
@@ -318,8 +310,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 
 	public void onClick$btnClose(Event event) {
@@ -493,7 +484,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 
 		case RuleConstants.MODULE_SCORES:
 			this.label_seqOrder.setValue(Labels.getLabel("label_RuleDialog_metricSeqOrder.value"));
-			//this.row_SeqOrder.setVisible(true);
+			// this.row_SeqOrder.setVisible(true);
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
 			break;
 
@@ -501,7 +492,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 			this.row_DeviationType.setVisible(true);
 			this.label_DeviationType.setVisible(false);
 			this.hbox_DeviationType.setVisible(false);
-			//this.rule.setReturnType(RuleConstants.RETURNTYPE_STRING);
+			// this.rule.setReturnType(RuleConstants.RETURNTYPE_STRING);
 			break;
 
 		case RuleConstants.MODULE_LMTLINE:
@@ -540,7 +531,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 			this.row_DeviationType.setVisible(true);
 			this.label_DeviationType.setVisible(false);
 			this.hbox_DeviationType.setVisible(false);
-			//this.rule.setReturnType(RuleConstants.RETURNTYPE_STRING);
+			// this.rule.setReturnType(RuleConstants.RETURNTYPE_STRING);
 			break;
 		case RuleConstants.MODULE_DUEDATERULE:
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_INTEGER);
@@ -668,8 +659,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aRule
-	 *            (Rule)
+	 * @param aRule (Rule)
 	 */
 	public void doWriteBeanToComponents(Rule aRule) {
 		logger.debug("Entering");
@@ -1086,47 +1076,17 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		}
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a Rule object from database.<br>
-	 * 
-	 * @throws Exception
-	 */
 	private void doDelete() throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final Rule aRule = new Rule();
 		BeanUtils.copyProperties(this.rule, aRule);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_RuleDialog_ruleCode.value") + " : " + aRule.getRuleCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aRule.getRecordType())) {
-				aRule.setVersion(aRule.getVersion() + 1);
-				aRule.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		String keyReference = Labels.getLabel("label_RuleDialog_ruleCode.value") + " : " + aRule.getRuleCode();
 
-				if (isWorkFlowEnabled()) {
-					aRule.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		doDelete(keyReference, aRule);
 
-			try {
-				if (doProcess(aRule, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1324,11 +1284,9 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	/**
 	 * This Method used for setting all workFlow details from userWorkSpace and setting audit details to auditHeader
 	 * 
-	 * @param aRule
-	 *            (Rule)
+	 * @param aRule    (Rule)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType (String)
 	 * 
 	 * @return boolean
 	 * @throws Exception
@@ -1418,11 +1376,9 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	 * This Method used for calling the all Database operations from the service by passing the auditHeader and
 	 * operationRefs(Method) as String
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * @throws Exception
@@ -1498,10 +1454,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	/**
 	 * Get Audit Header Details
 	 * 
-	 * @param aRule
-	 *            (Rule)
-	 * @param tranType
-	 *            (String)
+	 * @param aRule    (Rule)
+	 * @param tranType (String)
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(Rule aRule, String tranType) {
@@ -1525,8 +1479,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

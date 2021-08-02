@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ReportConfigurationDialogCtrl.java                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ReportConfigurationDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * *
+ * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.reports.reportconfiguration;
@@ -52,7 +34,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -94,6 +75,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -168,16 +150,17 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	private transient ReportConfigurationService reportConfigurationService;
 	private transient PagedListService pagedListService;
 
-	//Service Details list
+	// Service Details list
 	protected Button btnNew_ReportFilterFields;
 	protected Button btnPreviewReport;
 	protected Paging pagingReportFilterFieldsList;
 	protected Listbox listBoxReportFilterFields;
-	//protected Listbox    listBoxReportAdditionalConditions;
+	// protected Listbox listBoxReportAdditionalConditions;
 	private List<ReportFilterFields> reportFilterFieldsList = new ArrayList<ReportFilterFields>();
-	//private List<ReportAdditionalConditions> reportAdditionalConditionsList=new ArrayList<ReportAdditionalConditions>();
+	// private List<ReportAdditionalConditions> reportAdditionalConditionsList=new
+	// ArrayList<ReportAdditionalConditions>();
 	private PagedListWrapper<ReportFilterFields> reportFilterFieldsPagedListWrapper;
-	//private PagedListWrapper<ReportAdditionalConditions> reportAdditionalConditionsPagedListWrapper;
+	// private PagedListWrapper<ReportAdditionalConditions> reportAdditionalConditionsPagedListWrapper;
 	private List<ValueLabel> dataSourceNamesList = PennantStaticListUtil.getDataSourceNames();
 
 	/**
@@ -271,7 +254,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering ");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.reportName.setMaxlength(100);
 		this.reportHeading.setMaxlength(1000);
 		this.reportJasperName.setMaxlength(100);
@@ -379,8 +362,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -428,8 +410,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aReportConfiguration
-	 *            reportConfiguration
+	 * @param aReportConfiguration reportConfiguration
 	 */
 	public void doWriteBeanToComponents(ReportConfiguration aReportConfiguration) {
 		logger.debug("Entering ");
@@ -691,42 +672,17 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
+
 		final ReportConfiguration aReportConfiguration = new ReportConfiguration();
 		BeanUtils.copyProperties(getReportConfiguration(), aReportConfiguration);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_ReportConfigurationDialog_ReportName.value") + " : "
+		String keyReference = Labels.getLabel("label_ReportConfigurationDialog_ReportName.value") + " : "
 				+ aReportConfiguration.getReportName();
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aReportConfiguration.getRecordType())) {
-				aReportConfiguration.setVersion(aReportConfiguration.getVersion() + 1);
-				aReportConfiguration.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(keyReference, aReportConfiguration);
 
-				if (isWorkFlowEnabled()) {
-					aReportConfiguration.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aReportConfiguration, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
-
-		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -796,7 +752,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		setComponentAccessType("ReportConfigurationDialog_showTempLibrary", tempReadOnly, this.showTempLibrary,
 				this.space_ShowTempLibrary, this.label_ReportConfigurationDialog_ShowTempLibrary,
 				this.hlayout_ShowTempLibrary, this.row_One);
-		//setRowInvisible(this.row_One,this.hlayout_PromptRequired, this.hlayout_ShowTempLibrary);
+		// setRowInvisible(this.row_One,this.hlayout_PromptRequired, this.hlayout_ShowTempLibrary);
 		setComponentAccessType("ReportConfigurationDialog_reportJasperName", tempReadOnly, this.reportJasperName,
 				this.space_ReportJasperName, this.label_ReportConfigurationDialog_ReportJasperName,
 				this.hlayout_ReportJasperName, null);
@@ -817,7 +773,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		setComponentAccessType("ReportConfigurationDialog_WhereCondition", tempReadOnly, this.whereCondition,
 				this.space_WhereCondition, this.label_ReportConfigurationDialog_WhereCondition,
 				this.hlayout_WhereCondition, this.row_Four);
-		//setRowInvisible(this.row_Three,this.hlayout_PromptRequired, this.hlayout_AlwMultiFormat);
+		// setRowInvisible(this.row_Three,this.hlayout_PromptRequired, this.hlayout_AlwMultiFormat);
 		this.btnPreviewReport.setDisabled(false);
 		this.btnNew_ReportFilterFields.setDisabled(true);
 		if (isWorkFlowEnabled()) {
@@ -910,11 +866,9 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aReportConfiguration
-	 *            (ReportConfiguration)
+	 * @param aReportConfiguration (ReportConfiguration)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType             (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -998,11 +952,9 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1115,21 +1067,22 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 			 * @param event
 			 * @throws Exception
 			 *//*
-			 * public void onClick$btnNew_AdditionalConditions(Event event) throws Exception { logger.debug("Entering "
-			 * + event.toString());
-			 * 
-			 * ReportAdditionalConditions reportAdditionalConditions = new ReportAdditionalConditions();
-			 * reportAdditionalConditions.setNewRecord(true); reportAdditionalConditions.setWorkflowId(0); Map<String,
-			 * Object> map = new HashMap<String, Object>(); map.put("reportConfigurationDialogCtrl", this);
-			 * map.put("reportAdditionalConditions", reportAdditionalConditions); map.put("reportConfiguration",
-			 * getReportConfiguration()); map.put("newRecord", "true"); map.put("roleCode", getRole());
-			 * 
-			 * try { Executions.createComponents(
-			 * "/WEB-INF/pages/Reports/ReportConfiguration/ReportAdditionalConditionsDialog.zul", null, map); } catch
-			 * (Exception e) { MessageUtil.showError(e);
-			 * 
-			 * } logger.debug("Leaving " + event.toString()); }
-			 */
+				 * public void onClick$btnNew_AdditionalConditions(Event event) throws Exception {
+				 * logger.debug("Entering " + event.toString());
+				 * 
+				 * ReportAdditionalConditions reportAdditionalConditions = new ReportAdditionalConditions();
+				 * reportAdditionalConditions.setNewRecord(true); reportAdditionalConditions.setWorkflowId(0);
+				 * Map<String, Object> map = new HashMap<String, Object>(); map.put("reportConfigurationDialogCtrl",
+				 * this); map.put("reportAdditionalConditions", reportAdditionalConditions);
+				 * map.put("reportConfiguration", getReportConfiguration()); map.put("newRecord", "true");
+				 * map.put("roleCode", getRole());
+				 * 
+				 * try { Executions.createComponents(
+				 * "/WEB-INF/pages/Reports/ReportConfiguration/ReportAdditionalConditionsDialog.zul", null, map); }
+				 * catch (Exception e) { MessageUtil.showError(e);
+				 * 
+				 * } logger.debug("Leaving " + event.toString()); }
+				 */
 
 	/**
 	 * When user double clicks "ReportFilterFields"
@@ -1296,8 +1249,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	/**
 	 * Display Message in Error Box
 	 *
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -1314,8 +1266,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DashboardConfigurationDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-06-2011    														*
- *                                                                  						*
- * Modified Date    :  14-06-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DashboardConfigurationDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-06-2011
+ * * * Modified Date : 14-06-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-06-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-06-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.dashboard.dashboardconfiguration;
@@ -90,6 +72,7 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.dashboard.DashboardCreate;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -143,7 +126,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	private DashboardConfiguration dashboardConfiguration; // overHanded per parameter
 	private transient DashboardConfigurationListCtrl dashboardConfigurationListCtrl; // overHanded per parameter
 
-	//Used to create the new DashBoard
+	// Used to create the new DashBoard
 	private DashboardCreate dashboardCreate;
 
 	private transient boolean validationOn;
@@ -367,8 +350,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -389,7 +371,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	// ++++++++++++++++++custom component events +++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-	//Generate the chart based on the query and display it in chartSimulator.zul
+	// Generate the chart based on the query and display it in chartSimulator.zul
 	public void onClick$btnValidate(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering" + event.toString());
 		doSetValidation();
@@ -408,8 +390,8 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 			// to avoid id issue onclick simulate button
 			chartDetail.setChartId(aDashboardConfiguration.getDashboardCode() + "simulate");
 			chartDetail.setStrXML(chartStrXML);
-			chartDetail.setChartHeight("450px");//85%-450px
-			chartDetail.setChartWidth("512px");//85%-512px
+			chartDetail.setChartHeight("450px");// 85%-450px
+			chartDetail.setChartWidth("512px");// 85%-512px
 			chartDetail.setiFrameHeight("100%");
 			chartDetail.setiFrameWidth("100%");
 			chartDetail.setChartType(chartUtil.getChartType(aDashboardConfiguration));
@@ -454,8 +436,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aDashboardDetail
-	 *            DashboardDetail
+	 * @param aDashboardDetail DashboardDetail
 	 */
 	public void doWriteBeanToComponents(DashboardConfiguration aDashboardConfiguration) {
 		logger.debug("Entering");
@@ -717,24 +698,24 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	private void doSetValidation() {
 		logger.debug("Entering");
 		setValidationOn(true);
-		//Code
+		// Code
 		if (!this.dashboardCode.isReadonly()) {
 			this.dashboardCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_DashboardConfigurationDialog_DashboardCode.value"),
 							PennantRegularExpressions.REGEX_ALPHA_CODE, true));
 		}
-		//Description
+		// Description
 		if (!this.dashboardDesc.isReadonly()) {
 			this.dashboardDesc.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_DashboardConfigurationDialog_DashboardDesc.value"),
 							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-		//Type
+		// Type
 		if (!this.dashboardType.isDisabled()) {
 			this.dashboardType.setConstraint(new StaticListValidator(listDashboardType,
 					Labels.getLabel("label_DashboardConfigurationDialog_DashboardType.value")));
 		}
-		//Caption
+		// Caption
 		if (!this.dashboardCaption.isReadonly()) {
 			this.dashboardCaption.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_DashboardConfigurationDialog_Caption.value"),
@@ -784,45 +765,15 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		getDashboardConfigurationListCtrl().search();
 	}
 
-	/**
-	 * Deletes a DashboardDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final DashboardConfiguration aDashboardConfiguration = new DashboardConfiguration();
 		BeanUtils.copyProperties(getDashboardConfiguration(), aDashboardConfiguration);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aDashboardConfiguration.getDashboardCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aDashboardConfiguration.getRecordType())) {
-				aDashboardConfiguration.setVersion(aDashboardConfiguration.getVersion() + 1);
-				aDashboardConfiguration.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(aDashboardConfiguration.getDashboardCode(), aDashboardConfiguration);
 
-				if (isWorkFlowEnabled()) {
-					aDashboardConfiguration.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aDashboardConfiguration, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -991,7 +942,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
-			//Upgraded to ZK-6.5.1.1 Added casting to String 	
+			// Upgraded to ZK-6.5.1.1 Added casting to String
 			aDashboardConfiguration.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
@@ -1135,10 +1086,8 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	 * 
 	 * Get Audit Header Details
 	 * 
-	 * @param aDashboardDetail
-	 *            (DashboardDetail)
-	 * @param tranType
-	 *            (String)
+	 * @param aDashboardDetail (DashboardDetail)
+	 * @param tranType         (String)
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(DashboardConfiguration aDashboardConfiguration, String tranType) {
@@ -1151,8 +1100,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -1165,7 +1113,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		return String.valueOf(this.dashboardConfiguration.getDashboardCode());
 	}
 
-	//	--------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------------
 
 	public String getLabelAndValues(DashboardConfiguration dashboardConfiguration, ChartUtil chartUtil)
 			throws DataAccessException {

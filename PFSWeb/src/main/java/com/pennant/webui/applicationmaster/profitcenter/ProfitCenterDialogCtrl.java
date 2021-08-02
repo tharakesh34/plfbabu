@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ProfitCenterDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  22-04-2017    														*
- *                                                                  						*
- * Modified Date    :  22-04-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ProfitCenterDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 22-04-2017 * *
+ * Modified Date : 22-04-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 22-04-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 22-04-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.applicationmaster.profitcenter;
 
 import java.sql.Timestamp;
@@ -114,8 +96,7 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_ProfitCenterDialog(Event event) throws Exception {
@@ -192,8 +173,7 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -205,8 +185,7 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -217,8 +196,7 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -229,8 +207,7 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -241,8 +218,7 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -253,8 +229,7 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -265,8 +240,7 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -330,19 +304,19 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Profit Center Code
+		// Profit Center Code
 		try {
 			aProfitCenter.setProfitCenterCode(this.profitCenterCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Profit Center Description
+		// Profit Center Description
 		try {
 			aProfitCenter.setProfitCenterDesc(this.profitCenterDesc.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Active
+		// Active
 		try {
 			aProfitCenter.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
@@ -366,8 +340,7 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param profitCenter
-	 *            The entity that need to be render.
+	 * @param profitCenter The entity that need to be render.
 	 */
 	public void doShowDialog(ProfitCenter profitCenter) {
 		logger.debug(Literal.LEAVING);
@@ -443,10 +416,10 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter> {
 	private void doSetLOVValidation() {
 		logger.debug(Literal.LEAVING);
 
-		//Profit Center ID
-		//Profit Center Code
-		//Profit Center Description
-		//Active
+		// Profit Center ID
+		// Profit Center Code
+		// Profit Center Description
+		// Active
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -471,49 +444,14 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a ProfitCenter object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		final ProfitCenter aProfitCenter = new ProfitCenter();
 		BeanUtils.copyProperties(this.profitCenter, aProfitCenter);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_ProfitCenterDialog_ProfitCenterCode.value") + " : "
-				+ aProfitCenter.getProfitCenterCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aProfitCenter.getRecordType()).equals("")) {
-				aProfitCenter.setVersion(aProfitCenter.getVersion() + 1);
-				aProfitCenter.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aProfitCenter.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aProfitCenter.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aProfitCenter.getNextTaskId(),
-							aProfitCenter);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aProfitCenter, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
+		doDelete(Labels.getLabel("label_ProfitCenterDialog_ProfitCenterCode.value") + " : "
+				+ aProfitCenter.getProfitCenterCode(), aProfitCenter);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -637,11 +575,9 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -728,10 +664,8 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

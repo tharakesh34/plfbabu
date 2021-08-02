@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PSLDetailDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  20-06-2018    														*
- *                                                                  						*
- * Modified Date    :  20-06-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PSLDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 20-06-2018 * * Modified
+ * Date : 20-06-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 20-06-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 20-06-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.finance.psldetails;
 
 import java.math.BigDecimal;
@@ -147,8 +129,8 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 	private transient PSLDetailService pSLDetailService;
 
 	private List<ValueLabel> listLandHolding = PennantStaticListUtil.getYesNo();
-	//private List<ValueLabel> listLandArea=PennantStaticListUtil.getYesNo();
-	//private List<ValueLabel> listSector=PennantStaticListUtil.getYesNo();
+	// private List<ValueLabel> listLandArea=PennantStaticListUtil.getYesNo();
+	// private List<ValueLabel> listSector=PennantStaticListUtil.getYesNo();
 	private List<ValueLabel> categoryList = PennantAppUtil.getPslCategoryList();
 	private List<ValueLabel> landAreaList = PennantStaticListUtil.getLandAreaList();
 	private List<ValueLabel> subCategoryList = PennantStaticListUtil.getSubCategoryList();
@@ -187,8 +169,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
@@ -533,7 +514,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 
 				}
 			} else {
-				//PSD 127735
+				// PSD 127735
 				fillComboBox(this.subCategory, "MI", subSectorList, "HF");
 				this.subCategory.setDisabled(false);
 			}
@@ -664,10 +645,10 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 		 * "SubCategoryCode","Code","Description"});
 		 */
 
-		//this.subCategory.setModuleName("PSLPurpose");
-		//this.subCategory.setValueColumn("Code");
-		//this.subCategory.setDescColumn("Description");
-		//this.subCategory.setValidateColumns(new String[] {"purposeCode", "Code","Description"});
+		// this.subCategory.setModuleName("PSLPurpose");
+		// this.subCategory.setValueColumn("Code");
+		// this.subCategory.setDescColumn("Description");
+		// this.subCategory.setValidateColumns(new String[] {"purposeCode", "Code","Description"});
 
 		setStatusDetails();
 
@@ -696,8 +677,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -709,20 +689,18 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
-		//doEdit();
+		// doEdit();
 		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -733,8 +711,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -745,8 +722,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -757,8 +733,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -769,8 +744,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -810,7 +784,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 	public void doWriteBeanToComponents(PSLDetail aPSLDetail) {
 		logger.debug(Literal.ENTERING);
 
-		//this.finReference.setValue(aPSLDetail.getFinReference());
+		// this.finReference.setValue(aPSLDetail.getFinReference());
 		this.categoryCode.setValue(aPSLDetail.getCategoryCode());
 		fillComboBox(this.categoryCode, aPSLDetail.getCategoryCode(), categoryList, "");
 		setValuesForCategory(aPSLDetail.getCategoryCode());
@@ -1036,8 +1010,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param pSLDetail
-	 *            The entity that need to be render.
+	 * @param pSLDetail The entity that need to be render.
 	 */
 	public void doShowDialog(PSLDetail pSLDetail) {
 		logger.debug(Literal.LEAVING);
@@ -1216,46 +1189,13 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a PSLDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		final PSLDetail aPSLDetail = new PSLDetail();
 		BeanUtils.copyProperties(this.pSLDetail, aPSLDetail);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aPSLDetail.getFinReference();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aPSLDetail.getRecordType()).equals("")) {
-				aPSLDetail.setVersion(aPSLDetail.getVersion() + 1);
-				aPSLDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aPSLDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aPSLDetail.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aPSLDetail.getNextTaskId(), aPSLDetail);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aPSLDetail, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(aPSLDetail.getFinReference(), aPSLDetail);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1305,7 +1245,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 	public void doReadOnly() {
 		logger.debug(Literal.LEAVING);
 
-		//readOnlyComponent(true, this.finReference);
+		// readOnlyComponent(true, this.finReference);
 		readOnlyComponent(true, this.categoryCode);
 		readOnlyComponent(true, this.weakerSection);
 		readOnlyComponent(true, this.landHolding);
@@ -1335,7 +1275,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 		logger.debug("Entering");
 		this.finReference.setValue("");
 		this.categoryCode.setValue("");
-		//this.categoryCode.setDescription("");
+		// this.categoryCode.setDescription("");
 		this.weakerSection.setValue("");
 		this.weakerSection.setDescription("");
 		this.landHolding.setSelectedIndex(0);
@@ -1343,7 +1283,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 		this.sector.setSelectedIndex(0);
 		this.amount.setValue("");
 		this.subCategory.setValue("");
-		//this.subCategory.setDescription("");
+		// this.subCategory.setDescription("");
 		this.purpose.setValue("");
 		this.purpose.setDescription("");
 		this.endUse.setValue("");
@@ -1403,11 +1343,9 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1494,10 +1432,8 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

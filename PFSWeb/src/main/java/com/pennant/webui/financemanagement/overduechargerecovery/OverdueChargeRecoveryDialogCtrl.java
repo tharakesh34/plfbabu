@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  OverdueChargeRecoveryDialogCtrl.java                                 * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  11-05-2012    														*
- *                                                                  						*
- * Modified Date    :  11-05-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : OverdueChargeRecoveryDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 11-05-2012 *
+ * * Modified Date : 11-05-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 11-05-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 11-05-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -81,7 +63,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-//-//import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
+// -//import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.service.PagedListService;
@@ -96,6 +78,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -265,7 +248,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 
 		int format = CurrencyUtil.getFormat(getOverdueChargeRecovery().getFinCcy());
 
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.finReference.setMaxlength(20);
 		this.finSchdDate.setFormat(PennantConstants.dateFormat);
 		this.finStartDate.setFormat(PennantConstants.dateFormat);
@@ -417,8 +400,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		if (this.isInquiry) {
@@ -447,24 +429,23 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aOverdueChargeRecovery
-	 *            OverdueChargeRecovery
+	 * @param aOverdueChargeRecovery OverdueChargeRecovery
 	 */
 	public void doWriteBeanToComponents(OverdueChargeRecovery aOverdueChargeRecovery) {
 		logger.debug("Entering");
 
 		int format = CurrencyUtil.getFormat(aOverdueChargeRecovery.getFinCcy());
-		//Basic Details
+		// Basic Details
 		this.finReference.setValue(aOverdueChargeRecovery.getFinReference());
 		this.finStartDate.setValue(aOverdueChargeRecovery.getLovDescFinStartDate());
 		this.finMaturityDate.setValue(aOverdueChargeRecovery.getLovDescMaturityDate());
 		this.finAmt.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescFinAmount(), format));
 		this.curFinAmt.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescCurFinAmt(), format));
-		this.curSchPriDue.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescCurSchPriDue(), //value1
+		this.curSchPriDue.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescCurSchPriDue(), // value1
 				format));
-		this.curSchPftDue.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescCurSchPftDue(), //value2
+		this.curSchPftDue.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescCurSchPftDue(), // value2
 				format));
-		this.totOvrDueChrg.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescTotOvrDueChrg(), //value3
+		this.totOvrDueChrg.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescTotOvrDueChrg(), // value3
 				format));
 		this.totOvrDueChrgWaived
 				.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescTotOvrDueChrgWaived(), format));
@@ -477,11 +458,11 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		this.totOvrDueChrgBal.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getLovDescCurSchPriDue()
 				.subtract(aOverdueChargeRecovery.getLovDescCurSchPftDue())
 				.subtract(aOverdueChargeRecovery.getLovDescTotOvrDueChrg()), format));
-		//Overdue Recovery Details
+		// Overdue Recovery Details
 		this.finSchdDate.setValue(aOverdueChargeRecovery.getFinODSchdDate());
 		this.finODDate.setValue(aOverdueChargeRecovery.getMovementDate());
-		//	this.finODCRuleCode.setValue(aOverdueChargeRecovery.getFinODCRuleCode());
-		//	this.finODCCustCtg.setValue(aOverdueChargeRecovery.getFinODCCustCtg());
+		// this.finODCRuleCode.setValue(aOverdueChargeRecovery.getFinODCRuleCode());
+		// this.finODCCustCtg.setValue(aOverdueChargeRecovery.getFinODCCustCtg());
 		fillComboBox(this.cbFinODFor, aOverdueChargeRecovery.getFinODFor(), finOdForList, "");
 		this.finODTot.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getFinCurODAmt(), format));
 		this.finODPri.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getFinCurODPri(), format));
@@ -496,16 +477,16 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		 */
 		this.finODCPenalty.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getPenalty(), format));
 
-		//this.finODCAlwWaiver.setChecked(aOverdueChargeRecovery.isFinODCAlwWaiver());
+		// this.finODCAlwWaiver.setChecked(aOverdueChargeRecovery.isFinODCAlwWaiver());
 		this.finODCMaxWaiver.setValue(aOverdueChargeRecovery.getMaxWaiver());
 		this.finODCWaived.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getWaivedAmt(), format));
 		/*
 		 * if(aOverdueChargeRecovery.isFinODCAlwWaiver()) { this.oDCWaivedRow.setVisible(true);
 		 * this.oDCAlwWaiverRow.setVisible(true); }else {
 		 */
-		this.oDCWaivedRow.setVisible(true);//false
-		this.oDCAlwWaiverRow.setVisible(true);//false
-		//	}
+		this.oDCWaivedRow.setVisible(true);// false
+		this.oDCAlwWaiverRow.setVisible(true);// false
+		// }
 		if (this.isInquiry) {
 			this.finODCWaived.setReadonly(true);
 		}
@@ -516,7 +497,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		 * format));
 		 */
 		this.finODCPaid.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getFinODCPaid(), format));
-		//FinODCCPenalty - FinODCPaid - FinODCWaived
+		// FinODCCPenalty - FinODCPaid - FinODCWaived
 		/*
 		 * this.balChrgRecovery.setValue(PennantAppUtil.formateAmount(aOverdueChargeRecovery.getFinODCPenalty().
 		 * subtract(aOverdueChargeRecovery.getFinODCPaid()).subtract( aOverdueChargeRecovery.getFinODCWaiverPaid()),
@@ -526,7 +507,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 				.subtract(aOverdueChargeRecovery.getFinODCPaid()).subtract(aOverdueChargeRecovery.getWaivedAmt()),
 				format));
 
-		//Extra fields 
+		// Extra fields
 		/*
 		 * this.finBrnm.setValue(aOverdueChargeRecovery.getFinBranch());
 		 * this.finType.setValue(aOverdueChargeRecovery.getFinType());
@@ -545,7 +526,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		 */
 		if ("R".equals(aOverdueChargeRecovery.getFinODCRecoverySts()) && !this.isInquiry
 				&& aOverdueChargeRecovery.getPenaltyBal().compareTo(BigDecimal.ZERO) > 0) {
-			//if(aOverdueChargeRecovery.getFinODCRecoverySts().equals("R")&& !this.isInquiry) { 
+			// if(aOverdueChargeRecovery.getFinODCRecoverySts().equals("R")&& !this.isInquiry) {
 			this.btnRecoverNow.setVisible(true);
 		}
 		logger.debug("Leaving");
@@ -649,7 +630,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//(FinODCPenalty - FinODCWaived) * FinODCPLShare/100
+		// (FinODCPenalty - FinODCWaived) * FinODCPLShare/100
 		/*
 		 * try { aOverdueChargeRecovery.setFinODCPLPenalty(PennantAppUtil.unFormateAmount(
 		 * this.finODCPLPenalty.getValue(), format)); }catch (WrongValueException we ) { wve.add(we); }
@@ -714,7 +695,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 				doEdit();
 			} else {
 				this.btnCtrl.setInitEdit();
-				//Set delete button invisible
+				// Set delete button invisible
 				btnDelete.setVisible(false);
 				if (!this.isInquiry) {
 					btnSave.setVisible(true);
@@ -776,50 +757,15 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		logger.debug("Leaving");
 	}
 
-	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	// +++++++++++++++++++++++++ crud operations +++++++++++++++++++++++
-	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-	/**
-	 * Deletes a OverdueChargeRecovery object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final OverdueChargeRecovery aOverdueChargeRecovery = new OverdueChargeRecovery();
 		BeanUtils.copyProperties(getOverdueChargeRecovery(), aOverdueChargeRecovery);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aOverdueChargeRecovery.getFinReference();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aOverdueChargeRecovery.getRecordType())) {
-				aOverdueChargeRecovery.setVersion(aOverdueChargeRecovery.getVersion() + 1);
-				aOverdueChargeRecovery.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(aOverdueChargeRecovery.getFinReference(), aOverdueChargeRecovery);
 
-				if (isWorkFlowEnabled()) {
-					aOverdueChargeRecovery.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aOverdueChargeRecovery, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -837,16 +783,16 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		}
 
 		readOnlyComponent(true, this.finSchdDate);
-		//readOnlyComponent(isReadOnly("OverdueChargeRecoveryDialog_finSchdDate"), this.finSchdDate);
+		// readOnlyComponent(isReadOnly("OverdueChargeRecoveryDialog_finSchdDate"), this.finSchdDate);
 		this.finSchdDate.setButtonVisible(false);
 		readOnlyComponent(true, this.cbFinODFor);
-		//readOnlyComponent(isReadOnly("OverdueChargeRecoveryDialog_finODFor"), this.cbFinODFor);
+		// readOnlyComponent(isReadOnly("OverdueChargeRecoveryDialog_finODFor"), this.cbFinODFor);
 		readOnlyComponent(isReadOnly("OverdueChargeRecoveryDialog_finBrnm"), this.finBrnm);
 		readOnlyComponent(isReadOnly("OverdueChargeRecoveryDialog_finType"), this.finType);
 		readOnlyComponent(isReadOnly("OverdueChargeRecoveryDialog_finCustId"), this.finCustId);
 		readOnlyComponent(isReadOnly("OverdueChargeRecoveryDialog_finCcy"), this.finCcy);
 		readOnlyComponent(true, this.finODDate);
-		//readOnlyComponent(isReadOnly("OverdueChargeRecoveryDialog_finODDate"), this.finODDate);
+		// readOnlyComponent(isReadOnly("OverdueChargeRecoveryDialog_finODDate"), this.finODDate);
 		this.finODDate.setButtonVisible(false);
 		readOnlyComponent(true, this.finODPri);
 		readOnlyComponent(true, this.finODPft);
@@ -1077,7 +1023,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
-			//Upgraded to ZK-6.5.1.1 Added casting to String 	
+			// Upgraded to ZK-6.5.1.1 Added casting to String
 			aOverdueChargeRecovery.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
@@ -1355,7 +1301,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 			String chargeType = getOverdueChargeRecovery().getPenaltyType();
 			long linkedTranId = Long.MIN_VALUE;
 			String finDivision = getFinanceTypeService().getFinanceTypeByFinType(financeMain.getFinType())
-					.getFinDivision();//getFinanceTypeService().getFinanceType().getFinDivision();
+					.getFinDivision();// getFinanceTypeService().getFinanceType().getFinDivision();
 
 			List<Object> postingData = getRecoveryPostingsUtil().oDRPostingProcess(financeMain, dateValueDate, SchdDate,
 					finODFor, movementDate, penalty, prvPenaltyPaid, waiverAmt, chargeType, linkedTranId, finDivision);

@@ -115,8 +115,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param builderCompany
-	 *            The entity that need to be render.
+	 * @param builderCompany The entity that need to be render.
 	 */
 	public void doShowDialog(ProductGroup productGroup) {
 		logger.debug(Literal.LEAVING);
@@ -173,8 +172,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -241,8 +239,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -334,8 +331,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -402,8 +398,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -421,48 +416,13 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a BuilderGroup object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		final ProductGroup aProductGroup = new ProductGroup();
 		BeanUtils.copyProperties(this.productGroup, aProductGroup);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aProductGroup.getModelId();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aProductGroup.getRecordType()).equals("")) {
-				aProductGroup.setVersion(aProductGroup.getVersion() + 1);
-				aProductGroup.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aProductGroup.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aProductGroup.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aProductGroup.getNextTaskId(),
-							aProductGroup);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aProductGroup, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
+		doDelete(String.valueOf(aProductGroup.getModelId()), aProductGroup);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -596,11 +556,9 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -687,10 +645,8 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */
@@ -766,8 +722,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);

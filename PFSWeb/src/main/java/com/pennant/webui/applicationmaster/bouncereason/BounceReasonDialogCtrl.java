@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  BounceReasonDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  22-04-2017    														*
- *                                                                  						*
- * Modified Date    :  22-04-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : BounceReasonDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 22-04-2017 * *
+ * Modified Date : 22-04-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 22-04-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 22-04-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.applicationmaster.bouncereason;
 
 import java.sql.Timestamp;
@@ -132,8 +114,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_BounceReasonDialog(Event event) throws Exception {
@@ -220,8 +201,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -233,8 +213,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -245,8 +224,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -257,8 +235,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -269,8 +246,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -281,8 +257,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -293,8 +268,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -366,13 +340,13 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Bounce Code
+		// Bounce Code
 		try {
 			aBounceReason.setBounceCode(this.bounceCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Reason Type
+		// Reason Type
 		try {
 			String strReasonType = null;
 			if (this.reasonType.getSelectedItem() != null) {
@@ -387,7 +361,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Category
+		// Category
 		try {
 			String strCategory = null;
 			if (this.category.getSelectedItem() != null) {
@@ -402,13 +376,13 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Reason
+		// Reason
 		try {
 			aBounceReason.setReason(this.reason.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Action
+		// Action
 		try {
 			String strAction = null;
 			if (this.action.getSelectedItem() != null) {
@@ -423,7 +397,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Fee ID
+		// Fee ID
 		try {
 			this.ruleID.getValidatedValue();
 			Rule rule = (Rule) this.ruleID.getObject();
@@ -440,7 +414,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Active
+		// Active
 		try {
 			aBounceReason.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
@@ -464,8 +438,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param bounceReason
-	 *            The entity that need to be render.
+	 * @param bounceReason The entity that need to be render.
 	 */
 	public void doShowDialog(BounceReason bounceReason) {
 		logger.debug(Literal.LEAVING);
@@ -562,15 +535,15 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 	private void doSetLOVValidation() {
 		logger.debug(Literal.LEAVING);
 
-		//Bounce ID
-		//Bounce Code
-		//Reason Type
-		//Category
-		//Reason
-		//Action
-		//Fee ID
-		//Return ID
-		//Active
+		// Bounce ID
+		// Bounce Code
+		// Reason Type
+		// Category
+		// Reason
+		// Action
+		// Fee ID
+		// Return ID
+		// Active
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -595,48 +568,14 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a BounceReason object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.LEAVING);
 
 		final BounceReason aBounceReason = new BounceReason();
 		BeanUtils.copyProperties(this.bounceReason, aBounceReason);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_BounceReasonDialog_BounceCode.value") + " : " + aBounceReason.getBounceCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aBounceReason.getRecordType()).equals("")) {
-				aBounceReason.setVersion(aBounceReason.getVersion() + 1);
-				aBounceReason.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aBounceReason.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aBounceReason.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aBounceReason.getNextTaskId(),
-							aBounceReason);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aBounceReason, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
+		doDelete(Labels.getLabel("label_BounceReasonDialog_BounceCode.value") + " : " + aBounceReason.getBounceCode(),
+				aBounceReason);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -776,11 +715,9 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -867,10 +804,8 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

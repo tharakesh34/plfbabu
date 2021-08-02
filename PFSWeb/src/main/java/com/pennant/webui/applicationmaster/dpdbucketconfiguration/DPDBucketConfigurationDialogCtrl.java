@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DPDBucketConfigurationDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-04-2017    														*
- *                                                                  						*
- * Modified Date    :  21-04-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DPDBucketConfigurationDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-04-2017
+ * * * Modified Date : 21-04-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-04-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-04-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.applicationmaster.dpdbucketconfiguration;
@@ -118,8 +100,7 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_DPDBucketConfigurationDialog(Event event) throws Exception {
@@ -207,8 +188,7 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		doSave();
@@ -217,8 +197,7 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		doEdit();
@@ -227,8 +206,7 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		MessageUtil.showHelpWindow(event, super.window);
@@ -237,8 +215,7 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) {
 		doDelete();
@@ -247,8 +224,7 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		doCancel();
@@ -257,8 +233,7 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -267,8 +242,7 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.dPDBucketConfiguration);
@@ -336,14 +310,14 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Product Code
+		// Product Code
 		try {
 			aDPDBucketConfiguration.setProductCode(this.productCode.getValidatedValue());
 			aDPDBucketConfiguration.setProductCodeName(this.productCode.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Bucket ID
+		// Bucket ID
 		try {
 			this.bucketID.getValidatedValue();
 			DPDBucket dPDBucket = (DPDBucket) this.bucketID.getObject();
@@ -353,13 +327,13 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Due Days
+		// Due Days
 		try {
 			aDPDBucketConfiguration.setDueDays(this.dueDays.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Suspend Profit
+		// Suspend Profit
 		try {
 			aDPDBucketConfiguration.setSuspendProfit(this.suspendProfit.isChecked());
 		} catch (WrongValueException we) {
@@ -383,8 +357,7 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param dPDBucketConfiguration
-	 *            The entity that need to be render.
+	 * @param dPDBucketConfiguration The entity that need to be render.
 	 */
 	public void doShowDialog(DPDBucketConfiguration dPDBucketConfiguration) {
 		logger.debug(Literal.LEAVING);
@@ -466,11 +439,11 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 	private void doSetLOVValidation() {
 		logger.debug(Literal.LEAVING);
 
-		//Config ID
-		//Product Code
-		//Bucket ID
-		//Due Days
-		//Suspend Profit
+		// Config ID
+		// Product Code
+		// Bucket ID
+		// Due Days
+		// Suspend Profit
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -502,49 +475,14 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 	 * this.bucketID.setAttribute("BucketID", details.getBucketID()); } } logger.debug("Leaving" + event.toString()); }
 	 */
 
-	/**
-	 * Deletes a DPDBucketConfiguration object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		final DPDBucketConfiguration aDPDBucketConfiguration = new DPDBucketConfiguration();
 		BeanUtils.copyProperties(this.dPDBucketConfiguration, aDPDBucketConfiguration);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_DPDBucketConfigurationDialog_ProductCode.value") + " : "
-				+ aDPDBucketConfiguration.getProductCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aDPDBucketConfiguration.getRecordType()).equals("")) {
-				aDPDBucketConfiguration.setVersion(aDPDBucketConfiguration.getVersion() + 1);
-				aDPDBucketConfiguration.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aDPDBucketConfiguration.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aDPDBucketConfiguration.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aDPDBucketConfiguration.getNextTaskId(),
-							aDPDBucketConfiguration);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aDPDBucketConfiguration, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
+		doDelete(Labels.getLabel("label_DPDBucketConfigurationDialog_ProductCode.value") + " : "
+				+ aDPDBucketConfiguration.getProductCode(), aDPDBucketConfiguration);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -674,11 +612,9 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -765,10 +701,8 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

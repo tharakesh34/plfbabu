@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LegalExpensesDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  19-04-2016    														*
- *                                                                  						*
- * Modified Date    :  19-04-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LegalExpensesDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 19-04-2016 * *
+ * Modified Date : 19-04-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 19-04-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 19-04-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.expenses.legalexpenses;
 
 import java.math.BigDecimal;
@@ -97,6 +79,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -334,8 +317,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -344,8 +326,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -423,10 +404,10 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 		this.transactionType.setDisabled(isReadOnly("LegalExpensesDialog_TransactionType"));
 		this.bookingDate.setDisabled(isReadOnly("LegalExpensesDialog_BookingDate"));
 		this.expAmount.setReadonly(isReadOnly("LegalExpensesDialog_Amount"));
-		//this.recoveredAmount.setReadonly(isReadOnly("LegalExpensesDialog_RecoveredAmount"));
-		//this.amountdue.setReadonly(isReadOnly("LegalExpensesDialog_Amountdue"));
+		// this.recoveredAmount.setReadonly(isReadOnly("LegalExpensesDialog_RecoveredAmount"));
+		// this.amountdue.setReadonly(isReadOnly("LegalExpensesDialog_Amountdue"));
 		this.isRecoverdFromMOPA.setDisabled(isReadOnly("LegalExpensesDialog_IsRecoverdFromMOPA"));
-		//this.totalCharges.setReadonly(isReadOnly("LegalExpensesDialog_TotalCharges"));
+		// this.totalCharges.setReadonly(isReadOnly("LegalExpensesDialog_TotalCharges"));
 		this.remarks.setReadonly(isReadOnly("LegalExpensesDialog_Remarks"));
 
 		logger.debug("Leaving");
@@ -523,19 +504,19 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 			 * @throws InterruptedException
 			 * @throws InterfaceException
 			 *//*
-			 * public void onValueChange$finAmount(Event event){ logger.debug("Entering");
-			 * if(this.recoveredAmount.getActualValue().compareTo(BigDecimal.ZERO)==1){
-			 * 
-			 * 
-			 * 
-			 * }
-			 * 
-			 * logger.debug("Leaving"); }
-			 * 
-			 * /** Writes the bean data to the components.<br>
-			 * 
-			 * @param aLegalExpenses LegalExpenses
-			 */
+				 * public void onValueChange$finAmount(Event event){ logger.debug("Entering");
+				 * if(this.recoveredAmount.getActualValue().compareTo(BigDecimal.ZERO)==1){
+				 * 
+				 * 
+				 * 
+				 * }
+				 * 
+				 * logger.debug("Leaving"); }
+				 * 
+				 * /** Writes the bean data to the components.<br>
+				 * 
+				 * @param aLegalExpenses LegalExpenses
+				 */
 	public void doWriteBeanToComponents(LegalExpenses aLegalExpenses) {
 		logger.debug("Entering");
 		BigDecimal recAmount;
@@ -543,7 +524,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 		this.expReference.setValue(aLegalExpenses.getExpReference());
 		fillComboBox(this.transactionType, aLegalExpenses.getTransactionType(), listTransactionType, "");
 		this.customerId.setValue(aLegalExpenses.getCustomerId());
-		//set visibility of exp reference
+		// set visibility of exp reference
 		setExpreferenceVisibile(aLegalExpenses);
 		this.expAmount.setValue(
 				PennantApplicationUtil.formateAmount(aLegalExpenses.getAmount(), PennantConstants.defaultCCYDecPos));
@@ -638,13 +619,13 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Customer Id
+		// Customer Id
 		try {
 			aLegalExpenses.setCustomerId(this.customerId.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Booking Date
+		// Booking Date
 		try {
 			if (this.bookingDate.getValue() != null) {
 				aLegalExpenses.setBookingDate(this.bookingDate.getValue());
@@ -652,7 +633,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Amount
+		// Amount
 		try {
 			if (this.expAmount.getValidateValue() != null) {
 				aLegalExpenses
@@ -665,7 +646,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Fin Reference
+		// Fin Reference
 		try {
 			if (this.finReference.getValue() != null) {
 				aLegalExpenses.setFinReference(this.finReference.getValue());
@@ -673,7 +654,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Transaction Type
+		// Transaction Type
 		try {
 			String strTransactionType = null;
 			if (this.transactionType.getSelectedItem() != null) {
@@ -687,13 +668,13 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Remarks
+		// Remarks
 		try {
 			aLegalExpenses.setRemarks(this.remarks.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Recovered Amount
+		// Recovered Amount
 		try {
 			if (this.recoveredAmount.getValue() != null) {
 				aLegalExpenses.setRecoveredAmount(PennantApplicationUtil
@@ -702,7 +683,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Amountdue
+		// Amountdue
 		try {
 			if (this.amountdue.getValue() != null) {
 				aLegalExpenses.setAmountdue(PennantApplicationUtil.unFormateAmount(this.amountdue.getValue(),
@@ -711,13 +692,13 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Is Recoverd From M O P A
+		// Is Recoverd From M O P A
 		try {
 			aLegalExpenses.setIsRecoverdFromMOPA(this.isRecoverdFromMOPA.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Total Charges
+		// Total Charges
 		try {
 			if (this.totalCharges.getValue() != null) {
 				aLegalExpenses.setTotalCharges(PennantApplicationUtil.unFormateAmount(this.totalCharges.getValue(),
@@ -746,7 +727,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
-		//Customer Id
+		// Customer Id
 		if (!this.customerId.isReadonly()) {
 			this.customerId
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_LegalExpensesDialog_CustomerId.value"),
@@ -764,19 +745,19 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 							false));
 		}
 
-		//Amount
+		// Amount
 		if (!this.expAmount.isReadonly()) {
 			this.expAmount
 					.setConstraint(new PTDecimalValidator(Labels.getLabel("label_LegalExpensesDialog_Amount.value"),
 							PennantConstants.defaultCCYDecPos, true, false));
 		}
-		//Fin Reference
+		// Fin Reference
 		if (!this.finReference.isReadonly()) {
 			this.finReference.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_LegalExpensesDialog_FinReference.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
-		//Transaction Type
+		// Transaction Type
 		if (this.transactionType.isReadonly()) {
 			this.transactionType.setConstraint(new StaticListValidator(listTransactionType,
 					Labels.getLabel("label_LegalExpensesDialog_TransactionType.value")));
@@ -786,19 +767,19 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 		 * PTStringValidator(Labels.getLabel("label_LegalExpensesDialog_Remarks.value"),PennantRegularExpressions.
 		 * REGEX_NAME,true)); }
 		 */
-		//Recovered Amount
+		// Recovered Amount
 		/*
 		 * if (!this.recoveredAmount.isReadonly()){ this.recoveredAmount.setConstraint(new
 		 * PTDecimalValidator(Labels.getLabel("label_LegalExpensesDialog_RecoveredAmount.value"),PennantConstants.
 		 * defaultCCYDecPos,true,false,0)); }
 		 */
-		//Amountdue
+		// Amountdue
 		/*
 		 * if (!this.amountdue.isReadonly()){ this.amountdue.setConstraint(new
 		 * PTDecimalValidator(Labels.getLabel("label_LegalExpensesDialog_Amountdue.value"),PennantConstants.
 		 * defaultCCYDecPos,true,false,0)); }
 		 */
-		//Total Charges
+		// Total Charges
 		/*
 		 * if (!this.totalCharges.isReadonly()){ this.totalCharges.setConstraint(new
 		 * PTDecimalValidator(Labels.getLabel("label_LegalExpensesDialog_TotalCharges.value"),PennantConstants.
@@ -864,48 +845,15 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 		getLegalExpensesListCtrl().search();
 	}
 
-	/**
-	 * Deletes a LegalExpenses object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final LegalExpenses aLegalExpenses = new LegalExpenses();
 		BeanUtils.copyProperties(getLegalExpenses(), aLegalExpenses);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aLegalExpenses.getExpReference();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aLegalExpenses.getRecordType())) {
-				aLegalExpenses.setVersion(aLegalExpenses.getVersion() + 1);
-				aLegalExpenses.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(aLegalExpenses.getExpReference(), aLegalExpenses);
 
-				if (isWorkFlowEnabled()) {
-					aLegalExpenses.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aLegalExpenses.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aLegalExpenses.getNextTaskId(),
-							aLegalExpenses);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aLegalExpenses, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -983,7 +931,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 		try {
 
 			if (doProcess(aLegalExpenses, tranType)) {
-				//doWriteBeanToComponents(aLegalExpenses);
+				// doWriteBeanToComponents(aLegalExpenses);
 				refreshList();
 				closeDialog();
 			}
@@ -997,11 +945,9 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1054,10 +1000,8 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

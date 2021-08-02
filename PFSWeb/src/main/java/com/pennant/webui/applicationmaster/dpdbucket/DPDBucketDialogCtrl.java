@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DPDBucketDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-04-2017    														*
- *                                                                  						*
- * Modified Date    :  21-04-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DPDBucketDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-04-2017 * * Modified
+ * Date : 21-04-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-04-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-04-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.applicationmaster.dpdbucket;
@@ -113,8 +95,7 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_DPDBucketDialog(Event event) throws Exception {
@@ -190,8 +171,7 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		doSave();
@@ -200,8 +180,7 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		doEdit();
@@ -210,8 +189,7 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		MessageUtil.showHelpWindow(event, super.window);
@@ -220,8 +198,7 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) {
 		doDelete();
@@ -230,8 +207,7 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		doCancel();
@@ -240,8 +216,7 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -250,8 +225,7 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.dPDBucket);
@@ -312,19 +286,19 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Bucket Code
+		// Bucket Code
 		try {
 			aDPDBucket.setBucketCode(this.bucketCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Bucket Description
+		// Bucket Description
 		try {
 			aDPDBucket.setBucketDesc(this.bucketDesc.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Active
+		// Active
 		try {
 			aDPDBucket.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
@@ -348,8 +322,7 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param dPDBucket
-	 *            The entity that need to be render.
+	 * @param dPDBucket The entity that need to be render.
 	 */
 	public void doShowDialog(DPDBucket dPDBucket) {
 		logger.debug(Literal.LEAVING);
@@ -426,10 +399,10 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 	private void doSetLOVValidation() {
 		logger.debug(Literal.LEAVING);
 
-		//Bucket ID
-		//Bucket Code
-		//Bucket Description
-		//Active
+		// Bucket ID
+		// Bucket Code
+		// Bucket Description
+		// Active
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -454,47 +427,14 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a DPDBucket object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		final DPDBucket aDPDBucket = new DPDBucket();
 		BeanUtils.copyProperties(getdPDBucket(), aDPDBucket);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_DPDBucketDialog_BucketCode.value") + " : " + aDPDBucket.getBucketCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aDPDBucket.getRecordType()).equals("")) {
-				aDPDBucket.setVersion(aDPDBucket.getVersion() + 1);
-				aDPDBucket.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aDPDBucket.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aDPDBucket.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aDPDBucket.getNextTaskId(), aDPDBucket);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aDPDBucket, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
+		doDelete(Labels.getLabel("label_DPDBucketDialog_BucketCode.value") + " : " + aDPDBucket.getBucketCode(),
+				aDPDBucket);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -618,11 +558,9 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -709,10 +647,8 @@ public class DPDBucketDialogCtrl extends GFCBaseCtrl<DPDBucket> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

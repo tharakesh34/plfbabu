@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CommitmentDialogCtrl.java                                            * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  25-03-2013    														*
- *                                                                  						*
- * Modified Date    :  25-03-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CommitmentDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 25-03-2013 * * Modified
+ * Date : 25-03-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 25-03-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 25-03-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.commitment.commitment;
@@ -60,7 +42,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -341,7 +322,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	protected Checkbox collateralRequired;
 	protected Datebox cmtEndDate;
 
-	//Commitment Posting Details list headers
+	// Commitment Posting Details list headers
 	protected Listheader listheader_Posting_LinkedTranId;
 	protected Listheader listheader_Posting_DebitOrCredit;
 	protected Listheader listheader_Posting_EntryDesc;
@@ -350,7 +331,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	protected Listheader listheader_Posting_AccountNo;
 	protected Listheader listheader_Posting_Amount;
 
-	// Commitment Rates Review				
+	// Commitment Rates Review
 	protected Button btnNew_CmtRate;
 	protected Listbox listBoxCmtRates;
 
@@ -360,7 +341,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	protected Tab tab_Customer;
 	protected Tab tab_CommitmentAdditionalDetails;
 
-	//Additional details
+	// Additional details
 	protected Combobox bnkAggrmt;
 	protected Combobox lmtCondition;
 	protected Textbox reference;
@@ -370,7 +351,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	protected Component checkListChildWindow;
 	protected Component collateralAssignmentWindow;
 
-	//Controllers
+	// Controllers
 	private transient CommitmentListCtrl commitmentListCtrl;
 	private transient CustomerDialogCtrl customerDialogCtrl;
 	private transient AgreementDetailDialogCtrl agreementDetailDialogCtrl;
@@ -378,10 +359,10 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	private transient CollateralHeaderDialogCtrl collateralHeaderDialogCtrl;
 	private transient DocumentDetailDialogCtrl documentDetailDialogCtrl;
 
-	//Bean
+	// Bean
 	private Commitment commitment;
 
-	// ServiceDAOs / Domain Classes				
+	// ServiceDAOs / Domain Classes
 	private transient CustomerDetailsService customerDetailsService;
 	private transient CommitmentService commitmentService;
 	private transient PagedListService pagedListService;
@@ -395,7 +376,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 	protected String selectMethodName = "onSelectTab";
 	private BigDecimal oldCmtAmount = BigDecimal.ZERO;
-	//private BigDecimal									oldCmtCharges			 = BigDecimal.ZERO;
+	// private BigDecimal oldCmtCharges = BigDecimal.ZERO;
 	private boolean maintain = false;
 	private boolean newMaintain = false;
 	private boolean proceed = true;
@@ -487,7 +468,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				maintain = true;
 				newMaintain = true;
 				oldCmtAmount = getCommitment().getCmtAmount();
-				//oldCmtCharges = getCommitment().getCmtCharges();
+				// oldCmtCharges = getCommitment().getCmtCharges();
 			}
 
 			// Currency
@@ -578,8 +559,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -588,8 +568,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -630,7 +609,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		logger.debug("Entering" + event.toString());
 
 		List<Filter> filterList = new ArrayList<>();
-		//filterList.add(new Filter("CustCoreBank", "", Filter.OP_NOT_EQUAL));
+		// filterList.add(new Filter("CustCoreBank", "", Filter.OP_NOT_EQUAL));
 
 		this.custCIF.clearErrorMessage();
 		Clients.clearWrongValue(this.btnSearchCustCIF);
@@ -673,7 +652,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Enquiry/CustomerSummary.zul",
 					window_CommitmentDialog, map);
 
-			//Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/FinCustomerDetailsEnq.zul", window_CommitmentDialog, map);
+			// Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/FinCustomerDetailsEnq.zul",
+			// window_CommitmentDialog, map);
 
 		} catch (Exception e) {
 			logger.error("Exception: Opening window", e);
@@ -691,7 +671,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		logger.debug("Entering");
 
 		List<Filter> filterList = new ArrayList<>();
-		//filterList.add(new Filter("CustCoreBank", "", Filter.OP_NOT_EQUAL));
+		// filterList.add(new Filter("CustCoreBank", "", Filter.OP_NOT_EQUAL));
 
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
@@ -744,8 +724,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		logger.debug("Entering");
 
 		CaluculateSummary();
-		//this.openAccount.setChecked(true);
-		//doCheckOpenAccount();
+		// this.openAccount.setChecked(true);
+		// doCheckOpenAccount();
 		this.custID.setValue(details.getCustID());
 		this.custCIF.setValue(details.getCustCIF());
 		this.cmtBranch.setValue(details.getCustDftBranch(), details.getLovDescCustDftBranchName());
@@ -759,7 +739,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			}
 		}
 
-		//Customer Data Fetching
+		// Customer Data Fetching
 		CustomerDetails customerDetails = fetchCustomerData(details.getCustCIF());
 		getCommitment().setCustomerDetails(customerDetails);
 
@@ -784,11 +764,14 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		// Fetching Commitment Check Lists Details
 		if (isWorkFlowEnabled()) {
-			setCommitment(getCommitmentService().getProcessEditorDetails(getCommitment(), getRole(),
-					FinServiceEvent.ORG));//TODO role or NextRole
+			setCommitment(
+					getCommitmentService().getProcessEditorDetails(getCommitment(), getRole(), FinServiceEvent.ORG));// TODO
+																														// role
+																														// or
+																														// NextRole
 		}
 
-		//Agreement Details Tab
+		// Agreement Details Tab
 		setAgreementDetailTab();
 
 		// Fill Check List Details based on Rule Execution if Rule Exist
@@ -797,7 +780,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		// Collateral Details Tab
 		appendCollateralAssignmentTab();
 
-		//Document Details
+		// Document Details
 		if (documentDetailDialogCtrl != null) {
 			documentDetailDialogCtrl.doFillDocumentDetails(getCommitment().getDocuments());
 		}
@@ -838,7 +821,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		// Get the data of Customer from Core Banking Customer
 		try {
 			Customer customer = null;
-			//check Customer Data in LOCAL PFF system
+			// check Customer Data in LOCAL PFF system
 			customer = getCustomerDetailsService().getCheckCustomerByCIF(cif);
 
 			if (customer != null) {
@@ -907,8 +890,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		this.cmtChargesAccount.setFormatter(details.getCcyEditField());
 
-		//this.openAccount.setChecked(true);
-		//doCheckOpenAccount();
+		// this.openAccount.setChecked(true);
+		// doCheckOpenAccount();
 
 		logger.debug("Leaving");
 	}
@@ -1101,7 +1084,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		logger.debug("Entering");
 
 		this.listBoxCommitmentPostings.setHeight(this.borderLayoutHeight - 175 + "px");
-		int divKycHeight = this.borderLayoutHeight - 80;//TODO
+		int divKycHeight = this.borderLayoutHeight - 80;// TODO
 		int borderlayoutHeights = divKycHeight / 2;
 		this.listBoxCmtRates.setHeight(borderlayoutHeights - 90 + "px");
 
@@ -1294,7 +1277,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		this.cmtCcy.setDescColumn("CcyDesc");
 		this.cmtCcy.setValidateColumns(new String[] { "CcyCode" });
 
-		//Limit Line
+		// Limit Line
 		this.limitLine.setMandatoryStyle(true);
 		this.limitLine.setMaxlength(8);
 		this.limitLine.setTextBoxWidth(120);
@@ -1306,7 +1289,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		if (limitDetails != null) {
 			this.limitLine.setFilters(getDefaultFilters(limitDetails.getLimitHeaderId()));
 		} else {
-			//this.limitLine.setFilters(getDefaultFilters(0));
+			// this.limitLine.setFilters(getDefaultFilters(0));
 		}
 
 		this.facilityRef.setMaxlength(20);
@@ -1372,8 +1355,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCommitment
-	 *            Commitment
+	 * @param aCommitment Commitment
 	 * @throws InterruptedException
 	 */
 	public void doWriteBeanToComponents(Commitment aCommitment) throws InterruptedException {
@@ -1406,7 +1388,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			this.custName.setValue(aCommitment.getCustShrtName());
 			this.cmtPromisedDate.setValue(aCommitment.getCmtPromisedDate());
 
-			//Commitment Currency
+			// Commitment Currency
 			this.cmtCcy.setValue(aCommitment.getCmtCcy());
 			if (StringUtils.isNotBlank(aCommitment.getCmtCcy())) {
 				this.cmtCcy.setDescription(CurrencyUtil.getCcyDesc(aCommitment.getCmtCcy()));
@@ -1466,7 +1448,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		// Changes Account
 		this.cmtChargesAccount.setValue(aCommitment.getChargesAccount());
 		if (StringUtils.isNotBlank(aCommitment.getChargesAccount())) {
-			//this.cmtChargesAccountName.setValue(PennantApplicationUtil.formatAccountNumber(aCommitment.getChargesAccount()));
+			// this.cmtChargesAccountName.setValue(PennantApplicationUtil.formatAccountNumber(aCommitment.getChargesAccount()));
 		}
 
 		// Changes
@@ -1489,7 +1471,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		if (!maintain) {
 			CaluculateSummary();
 			this.gbCommitmentSummary.setVisible(true);
-			//this.summaryCell.setValign("Top");
+			// this.summaryCell.setValign("Top");
 		} else {
 			this.gridSummary.setVisible(true);
 			this.cmtTotAmount
@@ -1500,18 +1482,18 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 					.setValue(PennantApplicationUtil.amountFormate(aCommitment.getCmtAvailable(), defaultCCYDecPos));
 		}
 
-		//Additional fields added
+		// Additional fields added
 		this.fillComboBox(bnkAggrmt, aCommitment.getBankingArrangement(), PennantStaticListUtil.getBankingArrangement(),
 				"");
-		//this.bnkAggrmt.setValue(aCommitment.getBankingArrangement());
+		// this.bnkAggrmt.setValue(aCommitment.getBankingArrangement());
 
 		this.fillComboBox(lmtCondition, aCommitment.getLimitCondition(), PennantStaticListUtil.getLimitCondition(), "");
-		//this.lmtCondition.setValue(aCommitment.getLimitCondition());
+		// this.lmtCondition.setValue(aCommitment.getLimitCondition());
 		this.reference.setValue(aCommitment.getExternalRef());
 		this.reference1.setValue(aCommitment.getExternalRef1());
 		this.tenor.setValue(aCommitment.getTenor());
 
-		//Customer Details Tab Addition 
+		// Customer Details Tab Addition
 		appendCustomerDetailTab(true);
 
 		// Commitment Flags
@@ -1523,16 +1505,16 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		// Collateral Detail Tab Addition
 		appendCollateralAssignmentTab();
 
-		//Agreements Detail Tab Addition
+		// Agreements Detail Tab Addition
 		appendAgreementsDetailTab(true);
 
-		//CheckList Details Tab Addition
+		// CheckList Details Tab Addition
 		appendCheckListDetailTab(aCommitment, true);
 
 		// Document Detail Tab Addition
 		appendDocumentDetailTab();
 
-		//Recommend & Comments Details Tab Addition
+		// Recommend & Comments Details Tab Addition
 		appendRecommendDetailTab(true);
 
 		this.recordStatus.setValue(aCommitment.getRecordStatus());
@@ -1660,7 +1642,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		// Commitment Amount
 		try {
 			if (maintain) {
-				//New Commitment amount cannot be less than Utilized Amount
+				// New Commitment amount cannot be less than Utilized Amount
 				if (this.cmtAmount.getValidateValue().compareTo(this.cmtUtilizedAmount.getValue()) < 0) {
 					/*
 					 * throw new WrongValueException(this.cmtAmount, Labels.getLabel("AMOUNT_NO_LESS", new String[] {
@@ -1696,7 +1678,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 			}
 
-			// Commitment Amount Validation with Available limit amount of the limit line assigned. 
+			// Commitment Amount Validation with Available limit amount of the limit line assigned.
 			if (limitDetails != null) {
 				BigDecimal limitAmt = PennantApplicationUtil.formateAmount(
 						limitDetails.getLimitSanctioned().subtract(limitDetails.getReservedLimit()), defaultCCYDecPos);
@@ -1792,8 +1774,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 					if (limitDetails != null && limitDetails.getExpiryDate() != null) {
 						if (limitDetails.getExpiryDate().before(this.cmtExpDate.getValue())) {
-							throw new WrongValueException(this.cmtExpDate, Labels.getLabel("DATE_ALLOWED_ON_BEFORE",
-									new String[] { Labels.getLabel("label_CommitmentDialog_CmtExpDate.value"),
+							throw new WrongValueException(this.cmtExpDate,
+									Labels.getLabel("DATE_ALLOWED_ON_BEFORE", new String[] {
+											Labels.getLabel("label_CommitmentDialog_CmtExpDate.value"),
 											Labels.getLabel("label_CommitmentDialog_LimitLineExpDate.value") }));
 						}
 
@@ -1843,8 +1826,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 					if (limitDetails != null && limitDetails.getExpiryDate() != null) {
 						if (limitDetails.getExpiryDate().before(this.cmtEndDate.getValue())) {
-							throw new WrongValueException(this.cmtEndDate, Labels.getLabel("DATE_ALLOWED_ON_BEFORE",
-									new String[] { Labels.getLabel("label_CommitmentDialog_CmtEndDate.value"),
+							throw new WrongValueException(this.cmtEndDate,
+									Labels.getLabel("DATE_ALLOWED_ON_BEFORE", new String[] {
+											Labels.getLabel("label_CommitmentDialog_CmtEndDate.value"),
 											Labels.getLabel("label_CommitmentDialog_LimitLineExpDate.value") }));
 						}
 
@@ -1887,7 +1871,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			wve.add(we);
 		}
 
-		//Commitment Available Months
+		// Commitment Available Months
 		try {
 			if (!this.cmtAvailableMonths.isReadonly() && !this.cmtAvailableMonths.isDisabled()) {
 				if (this.cmtExpDate.getValue() != null && (this.cmtExpDate.getValue().compareTo(appDate) > 0
@@ -1905,7 +1889,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			wve.add(we);
 		}
 
-		//Commitment Renewal Date
+		// Commitment Renewal Date
 		try {
 			aCommitment.setCmtRvwDate(this.cmtRvwDate.getValue());
 		} catch (WrongValueException we) {
@@ -1973,7 +1957,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		try {
 			aCommitment.setMultiBranch(this.multiBranch.isChecked());
 			if (wve.size() == 0) {
-				//aCommitment.setCmtUtilizedAmount(BigDecimal.ZERO);
+				// aCommitment.setCmtUtilizedAmount(BigDecimal.ZERO);
 				aCommitment.setCmtAvailable(aCommitment.getCmtAmount().subtract(aCommitment.getCmtUtilizedAmount()));
 			}
 
@@ -1981,11 +1965,12 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			wve.add(we);
 		}
 
-		//  Facility Reference
+		// Facility Reference
 		try {
 			aCommitment.setFacilityRefDesc(this.facilityRef.getDescription());
 			if (this.facilityRef.getValue().equals("")) {
-				//	wve.add(new WrongValueException(this.facilityRef, Labels.getLabel("FIELD_NO_INVALID", new String[] { Labels.getLabel("label_CommitmentDialog_FacilityRef.value") })));
+				// wve.add(new WrongValueException(this.facilityRef, Labels.getLabel("FIELD_NO_INVALID", new String[] {
+				// Labels.getLabel("label_CommitmentDialog_FacilityRef.value") })));
 			} else {
 				if (!this.facilityRef.isReadonly()) {
 					this.facilityRef.validateValue(false);
@@ -1996,7 +1981,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			wve.add(we);
 		}
 
-		//  Limit Line
+		// Limit Line
 		try {
 			Object object = this.limitLine.getAttribute("limitLineId");
 
@@ -2017,7 +2002,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			wve.add(we);
 		}
 
-		//Additional fields added
+		// Additional fields added
 		try {
 			aCommitment.setBankingArrangement(this.bnkAggrmt.getSelectedItem().getValue());
 		} catch (WrongValueException we) {
@@ -2044,7 +2029,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Commitment Rates
+		// Commitment Rates
 		Cloner cloner = new Cloner();
 		aCommitment.setCommitmentRateList(cloner.deepClone(this.commitmentRateDetailList));
 
@@ -2308,7 +2293,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	public void onCheck$openAccount(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 
-		//doCheckOpenAccount();
+		// doCheckOpenAccount();
 
 		logger.debug("Leaving" + event.toString());
 	}
@@ -2348,7 +2333,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				wve.add(we);
 			}
 
-			//Commitment Currency
+			// Commitment Currency
 			try {
 				if (StringUtils.isBlank(this.cmtCcy.getValidatedValue())) {
 					throw new WrongValueException(this.cmtCcy, Labels.getLabel("FIELD_IS_MAND",
@@ -2445,17 +2430,23 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		// CmtStart Date
 		if (!this.cmtStartDate.isReadonly() && !this.cmtStartDate.isDisabled()) {
-			//this.cmtStartDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CommitmentDialog_CmtStartDate.value"), false, null, appEndDate, true));
+			// this.cmtStartDate.setConstraint(new
+			// PTDateValidator(Labels.getLabel("label_CommitmentDialog_CmtStartDate.value"), false, null, appEndDate,
+			// true));
 		}
 
 		// CmtEndDate
 		if (!this.cmtEndDate.isReadonly() && !this.cmtEndDate.isDisabled()) {
-			//this.cmtEndDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CommitmentDialog_CmtStartDate.value"), false, null, appEndDate, true));
+			// this.cmtEndDate.setConstraint(new
+			// PTDateValidator(Labels.getLabel("label_CommitmentDialog_CmtStartDate.value"), false, null, appEndDate,
+			// true));
 		}
 
 		// CmtExp Date
 		if (!this.cmtExpDate.isReadonly() && !this.cmtExpDate.isDisabled()) {
-			//this.cmtExpDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CommitmentDialog_CmtExpDate.value"), false, null, appEndDate, true));
+			// this.cmtExpDate.setConstraint(new
+			// PTDateValidator(Labels.getLabel("label_CommitmentDialog_CmtExpDate.value"), false, null, appEndDate,
+			// true));
 		}
 
 		// CmtRvwDate
@@ -2563,7 +2554,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		this.cmtBranch.setConstraint("");
 		this.cmtCcy.setConstraint("");
 		this.cmtAccount.setConstraint("");
-		//this.cmtChargesAccountName.setConstraint("");
+		// this.cmtChargesAccountName.setConstraint("");
 		this.limitLine.setConstraint("");
 		this.facilityRef.setConstraint("");
 
@@ -2637,54 +2628,24 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Deletes a Commitment object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final Commitment aCommitment = new Commitment();
 		BeanUtils.copyProperties(getCommitment(), aCommitment);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_CommitmentDialog_CmtReference.value") + " : " + aCommitment.getCmtReference();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCommitment.getRecordType())) {
-				aCommitment.setVersion(aCommitment.getVersion() + 1);
-				aCommitment.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aCommitment.getCommitmentMovement().setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		String keyReference = Labels.getLabel("label_CommitmentDialog_CmtReference.value") + " : "
+				+ aCommitment.getCmtReference();
+		doDelete(keyReference, aCommitment);
 
-				if (isWorkFlowEnabled()) {
-					aCommitment.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aCommitment.getCommitmentMovement()
-							.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aCommitment.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aCommitment.getNextTaskId(),
-							aCommitment);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		logger.debug(Literal.LEAVING);
+	}
 
-			try {
-				if (doProcess(aCommitment, tranType)) {
-					refreshList();
-
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
+	protected void doDeleteChild(Commitment aCommitment) {
+		aCommitment.getCommitmentMovement().setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		if (isWorkFlowEnabled()) {
+			aCommitment.getCommitmentMovement().setRecordStatus(userAction.getSelectedItem().getValue().toString());
 		}
-
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -2711,7 +2672,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		this.cmtExpDate.setText("");
 		this.cmtCharges.setValue("");
 		this.cmtChargesAccount.setValue("");
-		//this.cmtChargesAccountName.setValue("");
+		// this.cmtChargesAccountName.setValue("");
 		this.cmtActiveStatus.setChecked(false);
 		this.cmtNonperformingStatus.setChecked(false);
 		this.cmtTitle.setValue("");
@@ -2774,7 +2735,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				aCommitment.setCmtFlagDetailList(null);
 			}
 
-			//Commitment CheckList Details Saving
+			// Commitment CheckList Details Saving
 			if (checkListChildWindow != null) {
 				boolean validationSuccess = doSave_CheckList(aCommitment, false);
 				if (!validationSuccess) {
@@ -2784,7 +2745,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				aCommitment.setCheckLists(null);
 			}
 
-			//Collateral Assignment Details
+			// Collateral Assignment Details
 			if (aCommitment.isCollateralRequired()) {
 				if (collateralHeaderDialogCtrl != null) {
 					aCommitment.setCollateralAssignmentList(collateralHeaderDialogCtrl.getCollateralAssignments());
@@ -2808,7 +2769,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				}
 			}
 
-			//Document Details Saving
+			// Document Details Saving
 			if (documentDetailDialogCtrl != null) {
 				aCommitment.setDocuments(documentDetailDialogCtrl.getDocumentDetailsList());
 			} else {
@@ -2845,7 +2806,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		// save it to database
 		try {
 			if (doProcess(aCommitment, tranType)) {
-				//Mail Alert Notification for Customer/Dealer/Provider...etc
+				// Mail Alert Notification for Customer/Dealer/Provider...etc
 				if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
 
 					Notification notification = new Notification();
@@ -2877,7 +2838,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				// List Detail Refreshment
 				refreshList();
 
-				//Customer Notification for Role Identification
+				// Customer Notification for Role Identification
 				if (StringUtils.isBlank(aCommitment.getNextTaskId())) {
 					aCommitment.setNextRoleCode("");
 				}
@@ -2886,7 +2847,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 						aCommitment.getRecordStatus());
 				Clients.showNotification(msg, "info", null, null, -1);
 
-				//Closing Dialog
+				// Closing Dialog
 				closeDialog();
 			}
 
@@ -2942,11 +2903,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -3011,10 +2970,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */
@@ -3264,7 +3221,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		Map<String, Object> dataMap = new HashMap<>();
 		Object result = "0";
 		try {
-			//Add fields and values
+			// Add fields and values
 			for (String filed : ruleObject.getDeclaredFieldsAndValue().keySet()) {
 				dataMap.put(filed, ruleObject.getDeclaredFieldsAndValue().get(filed));
 			}
@@ -3456,7 +3413,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		if (financeMains != null && financeMains.size() > 0) {
 			for (FinanceMain financeMain : financeMains) {
 				Listitem item = new Listitem();
-				//final FinanceMain wIFFinanceMain = (FinanceMain) data;
+				// final FinanceMain wIFFinanceMain = (FinanceMain) data;
 				Listcell lc;
 				lc = new Listcell(financeMain.getFinReference());
 				lc.setParent(item);
@@ -3821,7 +3778,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			if (flagMap.containsKey(flagCode)) {
 				// Do Nothing
 
-				//Removing from map to identify existing modifications
+				// Removing from map to identify existing modifications
 				boolean isDelete = false;
 				if (this.userAction.getSelectedItem() != null) {
 					if ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
@@ -3846,7 +3803,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			}
 		}
 
-		//Removing unavailable records from DB by using Work flow details
+		// Removing unavailable records from DB by using Work flow details
 		if (flagMap.size() > 0) {
 			for (FinFlagsDetail cmtFlagsDetail : cmtFlagsDetailList) {
 				if (flagMap.containsKey(cmtFlagsDetail.getFlagCode())) {
@@ -3893,7 +3850,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		map.put("commitmentDialogCtrl", this);
 		map.put("newRecord", "true");
 		map.put("roleCode", getRole());
-		//map.put("isFinanceProcess", isFinanceProcess);
+		// map.put("isFinanceProcess", isFinanceProcess);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Commitment/Commitment/CommitmentRateDialog.zul", null, map);
@@ -3933,7 +3890,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				map.put("commitmentDialogCtrl", this);
 				map.put("roleCode", getRole());
 				map.put("enqiryModule", enqiryModule);
-				//map.put("isFinanceProcess", isFinanceProcess);
+				// map.put("isFinanceProcess", isFinanceProcess);
 
 				try {
 					Executions.createComponents("/WEB-INF/pages/Commitment/Commitment/CommitmentRateDialog.zul", null,
@@ -3975,7 +3932,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 					lc = new Listcell("");
 					lc.setParent(item);
 					lc = new Listcell(
-							PennantApplicationUtil.formatRate(commitmentRate.getCmtActualRate().doubleValue(), 2));//PennantConstants.rateFormate // SATYA 
+							PennantApplicationUtil.formatRate(commitmentRate.getCmtActualRate().doubleValue(), 2));// PennantConstants.rateFormate
+																													// //
+																													// SATYA
 					lc.setParent(item);
 				}
 				lc = new Listcell(
@@ -3995,7 +3954,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	/**
 	 * 
 	 */
-	public void setAgreementDetailTab() {//TODO
+	public void setAgreementDetailTab() {// TODO
 		Tab tab = getTab(AssetConstants.UNIQUE_ID_AGREEMENT);
 		if (tab != null) {
 			if (!getCommitment().getAggrements().isEmpty()) {
@@ -4132,8 +4091,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			break;
 
 		case AssetConstants.UNIQUE_ID_CHECKLIST:
-			//this.doSetValidation(); //TODO
-			//this.doWriteComponentsToBean(getCommitment());
+			// this.doSetValidation(); //TODO
+			// this.doWriteComponentsToBean(getCommitment());
 
 			if (financeCheckListReferenceDialogCtrl != null) {
 				financeCheckListReferenceDialogCtrl.doSetLabels(getHeaderBasicDetails());

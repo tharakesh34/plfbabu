@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ProvinceDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ProvinceDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * * Modified
+ * Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.systemmasters.province;
@@ -318,8 +300,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -343,8 +324,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aProvince
-	 *            Province
+	 * @param aProvince Province
 	 */
 	public void doWriteBeanToComponents(Province aProvince) {
 		logger.debug("Entering");
@@ -550,8 +530,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onSelectTab(Event event) {
 		doSetValidation();
@@ -584,8 +563,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param taxdetail
-	 *            The entity that need to be passed to the dialog.
+	 * @param taxdetail The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(TaxDetail taxdetail) {
 		logger.debug(Literal.ENTERING);
@@ -738,46 +716,18 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		getProvinceListCtrl().search();
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a Province object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final Province aProvince = new Province();
 		BeanUtils.copyProperties(getProvince(), aProvince);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_ProvinceDialog_CPCountry.value") + " : " + aProvince.getCPCountry() + ","
-				+ Labels.getLabel("label_ProvinceDialog_CPProvince.value") + " : " + aProvince.getCPProvince();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aProvince.getRecordType())) {
-				aProvince.setVersion(aProvince.getVersion() + 1);
-				aProvince.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		String keyReference = Labels.getLabel("label_ProvinceDialog_CPCountry.value") + " : " + aProvince.getCPCountry()
+				+ "," + Labels.getLabel("label_ProvinceDialog_CPProvince.value") + " : " + aProvince.getCPProvince();
 
-				if (isWorkFlowEnabled()) {
-					aProvince.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		doDelete(keyReference, aProvince);
 
-			try {
-				if (doProcess(aProvince, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -980,11 +930,9 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aProvince
-	 *            (Province)
+	 * @param aProvince (Province)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType  (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1073,11 +1021,9 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1151,10 +1097,8 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	/**
 	 * Get Audit Header Details
 	 * 
-	 * @param aProvince
-	 *            (Province)
-	 * @param tranType
-	 *            (String)
+	 * @param aProvince (Province)
+	 * @param tranType  (String)
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(Province aProvince, String tranType) {
@@ -1166,8 +1110,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	/**
 	 * Display Message in Error Box
 	 *
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1185,8 +1128,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

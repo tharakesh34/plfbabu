@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ReportListDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  23-01-2012    														*
- *                                                                  						*
- * Modified Date    :  23-01-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ReportListDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 23-01-2012 * * Modified
+ * Date : 23-01-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 23-01-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-01-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.reports.reportlist;
@@ -82,6 +64,7 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -203,7 +186,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.code.setMaxlength(50);
 		this.reportHeading.setMaxlength(50);
 		this.moduleType.setMaxlength(50);
@@ -297,8 +280,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -321,8 +303,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aReportList
-	 *            ReportList
+	 * @param aReportList ReportList
 	 */
 	public void doWriteBeanToComponents(ReportList aReportList) {
 		logger.debug("Entering");
@@ -535,49 +516,17 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a ReportList object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final ReportList aReportList = new ReportList();
 		BeanUtils.copyProperties(getReportList(), aReportList);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_ReportListDialog_Code.value") + " : " + aReportList.getModule();
+		String keyReference = Labels.getLabel("label_ReportListDialog_Code.value") + " : " + aReportList.getModule();
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aReportList.getRecordType())) {
-				aReportList.setVersion(aReportList.getVersion() + 1);
-				aReportList.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(keyReference, aReportList);
 
-				if (isWorkFlowEnabled()) {
-					aReportList.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aReportList, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -738,11 +687,9 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aReportList
-	 *            (ReportList)
+	 * @param aReportList (ReportList)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType    (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -831,11 +778,9 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -940,10 +885,8 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	/**
 	 * Get Audit Header Details
 	 * 
-	 * @param aReportList
-	 *            (ReportList)
-	 * @param tranType
-	 *            (String)
+	 * @param aReportList (ReportList)
+	 * @param tranType    (String)
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(ReportList aReportList, String tranType) {
@@ -955,8 +898,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		AuditHeader auditHeader = new AuditHeader();
@@ -971,8 +913,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

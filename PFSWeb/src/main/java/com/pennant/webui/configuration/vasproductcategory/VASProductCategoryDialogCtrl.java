@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  VASProductCategoryDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  09-01-2017    														*
- *                                                                  						*
- * Modified Date    :  09-01-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : VASProductCategoryDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 09-01-2017 * *
+ * Modified Date : 09-01-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 09-01-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 09-01-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.configuration.vasproductcategory;
@@ -72,6 +54,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -268,8 +251,7 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -378,7 +360,7 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.productCtg.setMaxlength(8);
 		this.productCtgDesc.setMaxlength(50);
 
@@ -389,8 +371,7 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aVASProductCategory
-	 *            VASProductCategory
+	 * @param aVASProductCategory VASProductCategory
 	 */
 	public void doWriteBeanToComponents(VASProductCategory aVASProductCategory) {
 		logger.debug("Entering");
@@ -414,19 +395,19 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Product Ctg
+		// Product Ctg
 		try {
 			aVASProductCategory.setProductCtg(this.productCtg.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Product Ctg Desc
+		// Product Ctg Desc
 		try {
 			aVASProductCategory.setProductCtgDesc(this.productCtgDesc.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Active
+		// Active
 		try {
 			aVASProductCategory.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
@@ -452,13 +433,13 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
-		//Product Ctg
+		// Product Ctg
 		if (!this.productCtg.isReadonly()) {
 			this.productCtg.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_VASProductCategoryDialog_ProductCtg.value"),
 							PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
 		}
-		//Product Ctg Desc
+		// Product Ctg Desc
 		if (!this.productCtgDesc.isReadonly()) {
 			this.productCtgDesc.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_VASProductCategoryDialog_ProductCtgDesc.value"),
@@ -482,8 +463,8 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 	 */
 
 	private void doSetLOVValidation() {
-		//Product Ctg
-		//Product Ctg Desc
+		// Product Ctg
+		// Product Ctg Desc
 	}
 
 	/**
@@ -605,48 +586,15 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Deletes a VASProductCategory object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final VASProductCategory aVASProductCategory = new VASProductCategory();
 		BeanUtils.copyProperties(getVASProductCategory(), aVASProductCategory);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aVASProductCategory.getProductCtg();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aVASProductCategory.getRecordType()).equals("")) {
-				aVASProductCategory.setVersion(aVASProductCategory.getVersion() + 1);
-				aVASProductCategory.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(aVASProductCategory.getProductCtg(), aVASProductCategory);
 
-				if (isWorkFlowEnabled()) {
-					aVASProductCategory.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aVASProductCategory.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aVASProductCategory.getNextTaskId(),
-							aVASProductCategory);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aVASProductCategory, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -730,11 +678,9 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -787,10 +733,8 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

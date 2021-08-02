@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  BankBranchDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  17-10-2016    														*
- *                                                                  						*
- * Modified Date    :  17-10-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : BankBranchDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 17-10-2016 * * Modified
+ * Date : 17-10-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 17-10-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 17-10-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.bmtmasters.bankbranch;
@@ -77,6 +59,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -383,8 +366,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aBankBranch
-	 *            BankBranch
+	 * @param aBankBranch BankBranch
 	 */
 	public void doWriteBeanToComponents(BankBranch aBankBranch) {
 		logger.debug("Entering");
@@ -711,52 +693,16 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		logger.debug("Leaving");
 	}
 
-	// *****************************************************************
-	// ************************+ crud operations ***********************
-	// *****************************************************************
-
-	/**
-	 * Deletes a BankBranch object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final BankBranch aBankBranch = new BankBranch();
 		BeanUtils.copyProperties(getBankBranch(), aBankBranch);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_BankBranchDialog_BranchCode.value") + " : " + aBankBranch.getBranchCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aBankBranch.getRecordType()).equals("")) {
-				aBankBranch.setVersion(aBankBranch.getVersion() + 1);
-				aBankBranch.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(Labels.getLabel("label_BankBranchDialog_BranchCode.value") + " : " + aBankBranch.getBranchCode(),
+				aBankBranch);
 
-				if (isWorkFlowEnabled()) {
-					aBankBranch.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aBankBranch.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aBankBranch.getNextTaskId(),
-							aBankBranch);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aBankBranch, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -773,7 +719,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 			this.branchCode.setReadonly(true);
 			this.bankCode.setReadonly(true);
 			this.btnCancel.setVisible(true);
-			//this.parentBranch.setReadonly(true);
+			// this.parentBranch.setReadonly(true);
 		}
 		readOnlyComponent(isReadOnly("BankBranchDialog_BranchDesc"), this.branchDesc);
 		readOnlyComponent(isReadOnly("BankBranchDialog_City"), this.city);
@@ -936,11 +882,9 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1027,10 +971,8 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */
@@ -1159,8 +1101,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

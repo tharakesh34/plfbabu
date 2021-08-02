@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  BuilderGroupDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  17-05-2017    														*
- *                                                                  						*
- * Modified Date    :  17-05-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : BuilderGroupDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 17-05-2017 * *
+ * Modified Date : 17-05-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 17-05-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 17-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.systemmasters.buildergroup;
@@ -131,8 +113,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_BuilderGroupDialog(Event event) throws Exception {
@@ -262,8 +243,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -275,8 +255,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -287,8 +266,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -299,8 +277,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -311,8 +288,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -323,8 +299,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -335,8 +310,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -544,7 +518,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		} else {
 			this.segmentation.setDescription(aBuilderGroup.getSegmentationName());
 		}
-		//PE Developer Id
+		// PE Developer Id
 		this.peDeveloperId.setValue(aBuilderGroup.getPeDeveloperId());
 
 		if (!aBuilderGroup.isNewRecord()) {
@@ -573,17 +547,17 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 			this.pinCode.setValue(StringUtils.trimToEmpty(aBuilderGroup.getPoBox()),
 					StringUtils.trimToEmpty(aBuilderGroup.getAreaName()));
 		}
-		//Exposure Limit on Amount
+		// Exposure Limit on Amount
 		this.expLimitOnAmt.setValue(
 				PennantAppUtil.formateAmount(aBuilderGroup.getExpLmtOnAmt(), PennantConstants.defaultCCYDecPos));
 
-		//Exposure Limit on number of  Units
+		// Exposure Limit on number of Units
 		this.expLimitOnNoOfUnits.setValue((aBuilderGroup.getExpLmtOnNoOfUnits()));
 
-		//Current Exposure (Units)
+		// Current Exposure (Units)
 		this.currentExpUnits.setValue((aBuilderGroup.getCurrExpUnits()));
 
-		//Current Exposure (Amount )
+		// Current Exposure (Amount )
 		this.currentExpAmt.setValue(
 				PennantAppUtil.formateAmount(aBuilderGroup.getCurrExpAmt(), PennantConstants.defaultCCYDecPos));
 
@@ -623,25 +597,25 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Name
+		// Name
 		try {
 			aBuilderGroup.setName(this.name.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Segmentation
+		// Segmentation
 		try {
 			aBuilderGroup.setSegmentation(this.segmentation.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//PE Developer Id
+		// PE Developer Id
 		try {
 			aBuilderGroup.setPeDeveloperId(this.peDeveloperId.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//City
+		// City
 		try {
 			this.city.getValidatedValue();
 			aBuilderGroup.setCity(this.city.getValue());
@@ -649,14 +623,14 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 			wve.add(we);
 		}
 
-		//Province
+		// Province
 		try {
 			this.province.getValidatedValue();
 			aBuilderGroup.setProvince(this.province.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//POBox
+		// POBox
 		try {
 			this.pinCode.getValidatedValue();
 			Object obj = this.pinCode.getAttribute("pinCodeId");
@@ -669,26 +643,26 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Exposure Limit on Amount
+		// Exposure Limit on Amount
 		try {
 			aBuilderGroup.setExpLmtOnAmt(PennantAppUtil.unFormateAmount(this.expLimitOnAmt.getActualValue(),
 					PennantConstants.defaultCCYDecPos));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Exposure Limit On Number Of Units
+		// Exposure Limit On Number Of Units
 		try {
 			aBuilderGroup.setExpLmtOnNoOfUnits((this.expLimitOnNoOfUnits.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Current Exposure (Units)
+		// Current Exposure (Units)
 		try {
 			aBuilderGroup.setCurrExpUnits((this.currentExpUnits.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Exposure Limit On Number Of Units
+		// Exposure Limit On Number Of Units
 		try {
 			aBuilderGroup.setCurrExpAmt(PennantAppUtil.unFormateAmount(this.currentExpAmt.getActualValue(),
 					PennantConstants.defaultCCYDecPos));
@@ -713,8 +687,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param builderGroup
-	 *            The entity that need to be render.
+	 * @param builderGroup The entity that need to be render.
 	 */
 	public void doShowDialog(BuilderGroup builderGroup) {
 		logger.debug(Literal.LEAVING);
@@ -828,9 +801,9 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 	private void doSetLOVValidation() {
 		logger.debug(Literal.LEAVING);
 
-		//id
-		//Name
-		//Segmentation
+		// id
+		// Name
+		// Segmentation
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -855,48 +828,13 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a BuilderGroup object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		final BuilderGroup aBuilderGroup = new BuilderGroup();
 		BeanUtils.copyProperties(this.builderGroup, aBuilderGroup);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aBuilderGroup.getId();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aBuilderGroup.getRecordType()).equals("")) {
-				aBuilderGroup.setVersion(aBuilderGroup.getVersion() + 1);
-				aBuilderGroup.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aBuilderGroup.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aBuilderGroup.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aBuilderGroup.getNextTaskId(),
-							aBuilderGroup);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aBuilderGroup, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
+		doDelete(String.valueOf(aBuilderGroup.getId()), aBuilderGroup);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1025,11 +963,9 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1116,10 +1052,8 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

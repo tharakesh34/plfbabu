@@ -1,14 +1,13 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 package com.pennant.webui.verification.tv;
 
@@ -186,7 +185,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 
 	protected Button btnSearchCustomerDetails;
 
-	//One Pager Report
+	// One Pager Report
 	private Textbox documentName;
 	private Button btnUploadDoc;
 	protected Div docDiv;
@@ -214,8 +213,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_TechnicalVerificationDialog(Event event) throws Exception {
@@ -334,8 +332,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws ParseException
 	 */
 	public void onClick$btnSave(Event event) throws ParseException {
@@ -348,8 +345,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -360,8 +356,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -372,8 +367,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -384,8 +378,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -396,8 +389,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -408,8 +400,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -777,8 +768,9 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 				tv.getBefImage().setExtendedFieldRender(extendedFieldRender);
 			}
 			extendedFieldCtrl.setCcyFormat(2);
-			extendedFieldCtrl.setReadOnly(isReadOnly(
-					"TechnicalVerificationDialog_Recommendations"));/* "TechnicalVerificationDialog_TechVerificationExtFields" */
+			extendedFieldCtrl.setReadOnly(isReadOnly("TechnicalVerificationDialog_Recommendations"));/*
+																										 * "TechnicalVerificationDialog_TechVerificationExtFields"
+																										 */
 			extendedFieldCtrl.setWindow(this.window_TechnicalVerificationDialog);
 			extendedFieldCtrl.render();
 			this.verificationDetails
@@ -790,7 +782,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		logger.debug(Literal.LEAVING);
 	}
 
-	//One Pager Report Extended Fields.
+	// One Pager Report Extended Fields.
 	private void appendOnePagerReportExtDetails(TechnicalVerification tv) {
 		logger.debug(Literal.ENTERING);
 		try {
@@ -900,12 +892,13 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		BigDecimal valAmt = BigDecimal.ZERO;
 		// Extended Field validations
 		if (tv.getExtendedFieldHeader() != null) {
-			//to validate the TV post script, we need to pass collateral ED fields to resolve the script binding error's
+			// to validate the TV post script, we need to pass collateral ED fields to resolve the script binding
+			// error's
 			ExtendedFieldHeader extendedFieldHeader = extendedFieldCtrl.getExtendedFieldHeader(
 					CollateralConstants.MODULE_NAME, tv.getCollateralType(),
 					ExtendedFieldConstants.EXTENDEDTYPE_EXTENDEDFIELD);
 			Map<String, Object> map = prepareMap(extendedFieldHeader.getExtendedFieldDetails());
-			//along with collateral we need to pass TV field map for validation
+			// along with collateral we need to pass TV field map for validation
 			if (extendedFieldCtrl.getGenerator() != null) {
 				Map<String, Object> tvMap = extendedFieldCtrl.getGenerator()
 						.doSave(tv.getExtendedFieldHeader().getExtendedFieldDetails(), enqiryModule);
@@ -913,18 +906,18 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 					map.putAll(tvMap);
 				}
 			}
-			//Post Script validations for TV 
+			// Post Script validations for TV
 			if (!enqiryModule) {
 				if (StringUtils.trimToNull(extendedFieldHeader.getPostValidation()) != null) {
 					ScriptErrors postValidationErrors = scriptValidationService
 							.getPostValidationErrors(extendedFieldHeader.getPostValidation(), map);
-					//showing the error details on screen
+					// showing the error details on screen
 					extendedFieldCtrl.setExtendedFieldHeader(tv.getExtendedFieldHeader());
 					extendedFieldCtrl.showErrorDetails(postValidationErrors);
 				}
 			}
 
-			//After post script validations we need to save only TV ED fields
+			// After post script validations we need to save only TV ED fields
 			if (extendedFieldCtrl.getGenerator() != null) {
 				map.clear();
 				map = extendedFieldCtrl.getGenerator().doSave(tv.getExtendedFieldHeader().getExtendedFieldDetails(),
@@ -939,7 +932,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			}
 		}
 
-		//One Pager Report Extended fields Validation
+		// One Pager Report Extended fields Validation
 		if (tv.getOnePagerExtHeader() != null) {
 			tv.setOnePagerExtRender(onePagerExtendedFieldCtrl.save(true));
 			if (tv.getVerificationCategory() == VerificationCategory.ONEPAGER.getKey()) {
@@ -1083,8 +1076,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param technicalVerification
-	 *            The entity that need to be render.
+	 * @param technicalVerification The entity that need to be render.
 	 */
 	public void doShowDialog(TechnicalVerification technicalVerification) {
 		logger.debug(Literal.ENTERING);
@@ -1269,7 +1261,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		this.reason.setConstraint("");
 		this.summaryRemarks.setConstraint("");
 		this.valuationAmount.setConstraint("");
-		//this.documentName.setConstraint("");
+		// this.documentName.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1291,44 +1283,13 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a TechnicalVerification object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		final TechnicalVerification entity = new TechnicalVerification();
 		BeanUtils.copyProperties(this.technicalVerification, entity);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ entity.getKeyReference();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(entity.getRecordType()).equals("")) {
-				entity.setVersion(entity.getVersion() + 1);
-				entity.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					entity.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					entity.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), entity.getNextTaskId(), entity);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (doProcess(entity, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(entity.getKeyReference(), entity);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1466,11 +1427,9 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1635,10 +1594,8 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */

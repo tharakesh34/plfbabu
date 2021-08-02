@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  OtherBankFinanceTypeDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-04-2015    														*
- *                                                                  						*
- * Modified Date    :  03-04-2015    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : OtherBankFinanceTypeDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-04-2015 *
+ * * Modified Date : 03-04-2015 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-04-2015       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-04-2015 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.applicationmaster.otherbankfinancetype;
@@ -72,6 +54,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -277,8 +260,7 @@ public class OtherBankFinanceTypeDialogCtrl extends GFCBaseCtrl<OtherBankFinance
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -302,8 +284,7 @@ public class OtherBankFinanceTypeDialogCtrl extends GFCBaseCtrl<OtherBankFinance
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aOtherBankFinanceType
-	 *            OtherBankFinanceType
+	 * @param aOtherBankFinanceType OtherBankFinanceType
 	 */
 	public void doWriteBeanToComponents(OtherBankFinanceType aOtherBankFinanceType) {
 		logger.debug("Entering");
@@ -447,39 +428,15 @@ public class OtherBankFinanceTypeDialogCtrl extends GFCBaseCtrl<OtherBankFinance
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final OtherBankFinanceType aOtherBankFinanceType = new OtherBankFinanceType();
 		BeanUtils.copyProperties(getOtherBankFinanceType(), aOtherBankFinanceType);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_OtherBankFinanceTypeDialog_FinType.value") + " : "
-				+ aOtherBankFinanceType.getFinType();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aOtherBankFinanceType.getRecordType())) {
-				aOtherBankFinanceType.setVersion(aOtherBankFinanceType.getVersion() + 1);
-				aOtherBankFinanceType.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(Labels.getLabel("label_OtherBankFinanceTypeDialog_FinType.value") + " : "
+				+ aOtherBankFinanceType.getFinType(), aOtherBankFinanceType);
 
-				if (isWorkFlowEnabled()) {
-					aOtherBankFinanceType.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aOtherBankFinanceType, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

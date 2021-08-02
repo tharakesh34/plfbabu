@@ -3,45 +3,27 @@ package com.pennant.webui.financemanagement.insurance;
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  InsuranceSurrenderDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :     																	*
- *                                                                  						*
- * Modified Date    : 																		*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : InsuranceSurrenderDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : * * Modified
+ * Date : * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-09-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-09-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -160,8 +142,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_InsuranceSurrenderDialog(Event event) throws Exception {
@@ -234,8 +215,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
@@ -248,8 +228,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -260,8 +239,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -272,8 +250,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onClick$btnDelete(Event event) throws Exception {
@@ -285,8 +262,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -297,8 +273,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -309,8 +284,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -479,8 +453,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param vasRecording
-	 *            The entity that need to be render.
+	 * @param vasRecording The entity that need to be render.
 	 */
 	public void doShowDialog(VASRecording vasRecording) {
 		logger.debug(Literal.ENTERING);
@@ -518,8 +491,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.tabPostingDetails.setVisible(true);
 			this.tabPanelPostingDetails.setVisible(true);
 			this.tabPanelPostingDetails.setHeight(getListBoxHeight(7));
-			accountsetId = getAccountingSetDAO().getAccountingSetId(AccountingEvent.CANINS,
-					AccountingEvent.CANINS);
+			accountsetId = getAccountingSetDAO().getAccountingSetId(AccountingEvent.CANINS, AccountingEvent.CANINS);
 			final Map<String, Object> map = new HashMap<>();
 			map.put("insuranceDetails", vasRecording);
 			map.put("acSetID", accountsetId);
@@ -597,45 +569,13 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 	}
 
-	/**
-	 * Deletes a insuranceDetails object from database.<br>
-	 * 
-	 * @throws Exception
-	 */
 	private void doDelete() throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		final VASRecording aVasRecording = new VASRecording();
 		BeanUtils.copyProperties(this.vASRecording, aVasRecording);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aVasRecording.getPrimaryLinkRef();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aVasRecording.getRecordType()).equals("")) {
-				aVasRecording.setVersion(aVasRecording.getVersion() + 1);
-				aVasRecording.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aVasRecording.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aVasRecording.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aVasRecording.getNextTaskId(),
-							aVasRecording);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (doProcess(aVasRecording, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(aVasRecording.getPrimaryLinkRef(), aVasRecording);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -771,11 +711,9 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * @throws Exception
@@ -862,10 +800,8 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * @throws Exception
 	 * 
