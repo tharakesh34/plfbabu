@@ -11,6 +11,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.util.LinkedCaseInsensitiveMap;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.WrongValueException;
@@ -185,8 +186,8 @@ public class SqlViewResultCtrl extends GFCBaseCtrl<Query> {
 		valueList = new ArrayList();
 		int rowCount = 0;
 		for (int i = 0; i < resultList.size(); i++) {
-			LinkedHashMap map = new LinkedHashMap();
-			map = (LinkedHashMap) resultList.get(i);
+			LinkedCaseInsensitiveMap map = new LinkedCaseInsensitiveMap();
+			map = (LinkedCaseInsensitiveMap) resultList.get(i);
 			if (rowCount == 0) {
 				Set set = (Set) map.keySet();
 				keyList.addAll(set);
