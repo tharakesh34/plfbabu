@@ -1361,7 +1361,8 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			}
 		}
 
-		if ("VASM".equals(module) || module.equals("DSA") || "DSM".equals(module) || "MANF".equals(module)) {
+		if ("VASM".equals(module) || module.equals("DSA") || "DSM".equals(module) || "MANF".equals(module)
+				|| "SVDM".equals(module)) {
 			if (!this.panNumber.isReadonly()) {
 				this.panNumber.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_PANNumber.value"),
