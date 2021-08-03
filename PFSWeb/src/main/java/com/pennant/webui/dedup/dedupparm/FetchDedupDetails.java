@@ -190,7 +190,7 @@ public class FetchDedupDetails {
 
 		ShowDedupListBox details = null;
 		Object dataObject;
-		if (!loanDedup.isEmpty()) {
+		if (!loanDedup.isEmpty() && customer.isCustIsActive()) {
 			if (FinanceConstants.FIN_DIVISION_CORPORATE
 					.equals(aFinanceDetail.getFinScheduleData().getFinanceType().getFinDivision())) {
 
