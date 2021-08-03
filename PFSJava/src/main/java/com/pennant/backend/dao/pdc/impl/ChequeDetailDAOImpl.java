@@ -45,6 +45,7 @@ package com.pennant.backend.dao.pdc.impl;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -119,32 +120,69 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 
 	@Override
 	public List<ChequeDetail> getChequeDetailList(long headerID, String type) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" chequeDetailsID, headerID, bankBranchID, accountNo, chequeSerialNo, chequeDate, ");
-		sql.append(" eMIRefNo, amount, chequeCcy, status, active, documentName, documentRef, chequeType, ");
-		sql.append(" chequeStatus, accountType, accHolderName, ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ChequeDetailsID, HeaderID, BankBranchID, AccountNo, ChequeSerialNo, ChequeDate");
+		sql.append(", EMIRefNo, Amount, ChequeCcy, Status, Active, DocumentName, DocumentRef, ChequeType");
+		sql.append(", ChequeStatus, AccountType, AccHolderName");
 		if (type.equals("_View")) {
-			sql.append(" bankCode, branchCode, branchDesc, micr, ifsc, city, bankName, ");
+			sql.append(", BankCode, BranchCode, BranchDesc, Micr, Ifsc, City, BankName");
 		}
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From CHEQUEDETAIL");
 		sql.append(type);
-		sql.append(" Where headerID = :headerID");
+		sql.append(" Where HeaderID = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		ChequeDetail chequeDetail = new ChequeDetail();
-		chequeDetail.setHeaderID(headerID);
+		List<ChequeDetail> list = jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, headerID);
+		}, (rs, i) -> {
+			ChequeDetail cd = new ChequeDetail();
+			cd.setChequeDetailsID(rs.getLong("ChequeDetailsID"));
+			cd.setHeaderID(rs.getLong("HeaderID"));
+			cd.setBankBranchID(rs.getLong("BankBranchID"));
+			cd.setAccountNo(rs.getString("AccountNo"));
+			cd.setChequeSerialNo(rs.getInt("ChequeSerialNo"));
+			cd.setChequeDate(rs.getDate("ChequeDate"));
+			cd.seteMIRefNo(rs.getInt("EMIRefNo"));
+			cd.setAmount(rs.getBigDecimal("Amount"));
+			cd.setChequeCcy(rs.getString("ChequeCcy"));
+			cd.setStatus(rs.getString("Status"));
+			cd.setActive(rs.getBoolean("Active"));
+			cd.setDocumentName(rs.getString("DocumentName"));
+			cd.setDocumentRef(rs.getLong("DocumentRef"));
+			cd.setChequeType(rs.getString("ChequeType"));
+			cd.setChequeStatus(rs.getString("ChequeStatus"));
+			cd.setAccountType(rs.getString("AccountType"));
+			cd.setAccHolderName(rs.getString("AccHolderName"));
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(chequeDetail);
-		RowMapper<ChequeDetail> rowMapper = BeanPropertyRowMapper.newInstance(ChequeDetail.class);
-		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+			if (type.equals("_View")) {
+				cd.setBankCode(rs.getString("BankCode"));
+				cd.setBranchCode(rs.getString("BranchCode"));
+				cd.setBranchDesc(rs.getString("BranchDesc"));
+				cd.setMicr(rs.getString("Micr"));
+				cd.setIfsc(rs.getString("Ifsc"));
+				cd.setCity(rs.getString("City"));
+				cd.setBankName(rs.getString("BankName"));
+			}
 
+			cd.setVersion(rs.getInt("Version"));
+			cd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			cd.setLastMntBy(rs.getLong("LastMntBy"));
+			cd.setRecordStatus(rs.getString("RecordStatus"));
+			cd.setRoleCode(rs.getString("RoleCode"));
+			cd.setNextRoleCode(rs.getString("NextRoleCode"));
+			cd.setTaskId(rs.getString("TaskId"));
+			cd.setNextTaskId(rs.getString("NextTaskId"));
+			cd.setRecordType(rs.getString("RecordType"));
+			cd.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return cd;
+		});
+
+		return list.stream().sorted((l1, l2) -> Long.compare(l1.getChequeDetailsID(), l2.getChequeDetailsID()))
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -274,7 +312,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 			throw new DependencyFoundException(e);
 		}
 
-		// Check for the concurrency not required as the work-flow will be driven either by finance main (LOS) 
+		// Check for the concurrency not required as the work-flow will be driven either by finance main (LOS)
 		// or cheque header (LMS).
 		logger.debug(Literal.LEAVING);
 	}

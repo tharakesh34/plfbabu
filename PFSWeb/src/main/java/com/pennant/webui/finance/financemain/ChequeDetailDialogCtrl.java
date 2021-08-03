@@ -733,7 +733,6 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		if (chequeDetails != null && !chequeDetails.isEmpty()) {
 			ChequeDetail detail = chequeDetails.get(0);
 			this.accNumber.setValue(detail.getAccountNo());
-			this.amount.setValue(PennantApplicationUtil.formateAmount(detail.getAmount(), ccyEditField));
 			this.accHolderName.setValue(detail.getAccHolderName());
 			this.chequeSerialNo.setValue(detail.getChequeSerialNo());
 			this.bankBranchID.setValue(String.valueOf(detail.getBranchCode()));
@@ -755,15 +754,25 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		}
 
 		// Displaying the schedule amount by default while loading cheque header details
-		if (CollectionUtils.isNotEmpty(financeSchedules)) {
-			for (FinanceScheduleDetail scheduleDetail : financeSchedules) {
-				if (scheduleDetail.isRepayOnSchDate() || scheduleDetail.isPftOnSchDate()) {
-					BigDecimal repayAmount = scheduleDetail.getRepayAmount();
-					if (scheduleDetail.getTDSAmount() != null
-							&& scheduleDetail.getTDSAmount().compareTo(BigDecimal.ZERO) > 0) {
-						repayAmount = repayAmount.subtract(scheduleDetail.getTDSAmount());
+		if (fromLoan) {
+			if (CollectionUtils.isNotEmpty(financeSchedules)) {
+				for (FinanceScheduleDetail scheduleDetail : financeSchedules) {
+					if (scheduleDetail.isRepayOnSchDate() || scheduleDetail.isPftOnSchDate()) {
+						BigDecimal repayAmount = scheduleDetail.getRepayAmount();
+						if (scheduleDetail.getTDSAmount() != null
+								&& scheduleDetail.getTDSAmount().compareTo(BigDecimal.ZERO) > 0) {
+							repayAmount = repayAmount.subtract(scheduleDetail.getTDSAmount());
+						}
+						this.amount.setValue(PennantApplicationUtil.formateAmount(repayAmount, ccyEditField));
+						break;
 					}
-					this.amount.setValue(PennantApplicationUtil.formateAmount(repayAmount, ccyEditField));
+				}
+			}
+		} else {
+			// FIXME
+			for (ChequeDetail chequeDetail : chequeDetails) {
+				if (!PennantConstants.CHEQUESTATUS_REALISED.equals(chequeDetail.getChequeStatus())) {
+					this.amount.setValue(PennantApplicationUtil.formateAmount(chequeDetail.getAmount(), ccyEditField));
 					break;
 				}
 			}
