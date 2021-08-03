@@ -558,7 +558,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 						externalLiabilityDAO.save(customerExtLiability, "");
 						List<ExtLiabilityPaymentdetails> payments = customerExtLiability.getExtLiabilitiesPayments();
 						if (CollectionUtils.isNotEmpty(payments)) {
-							payments.forEach(l1 -> l1.setLiabilityId(l1.getId()));
+							payments.forEach(l1 -> l1.setLiabilityId(customerExtLiability.getId()));
 							customerExtLiabilityDAO.save(payments, "");
 						}
 					}
