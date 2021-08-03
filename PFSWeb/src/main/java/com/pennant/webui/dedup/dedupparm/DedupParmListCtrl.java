@@ -53,6 +53,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
@@ -63,6 +64,7 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.service.dedup.DedupParmService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.dedup.dedupparm.model.DedupParmListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -106,6 +108,8 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> {
 	protected Listbox sortOperator_queryModules;
 	protected Listbox sortOperator_querySubCode;
 	protected Listbox sortOperator_sQLQuery;
+
+	protected Label label_DedupParmSearch_CustCtgCode;
 
 	private transient DedupParmService dedupParmService;
 	private List<ValueLabel> listCustCtgCode = PennantAppUtil.getcustCtgCodeList();
@@ -157,7 +161,14 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> {
 		registerField("querySubCode", listheader_CustCtgCode, SortOrder.NONE, querySubCode, sortOperator_querySubCode,
 				Operators.STRING);
 		registerField("queryModule", queryModules, SortOrder.NONE, sortOperator_queryModules, Operators.STRING);
-		fillComboBox(this.querySubCode, "", this.collateralTypesList, "");
+		if (FinanceConstants.DEDUP_CUSTOMER.equals(this.queryModule.getValue())) {
+			this.label_DedupParmSearch_CustCtgCode.setValue(Labels.getLabel("label_DedupParmSearch_CustCtgCode.value"));
+			fillComboBox(this.querySubCode, "", this.listCustCtgCode, "");
+		} else {
+			this.label_DedupParmSearch_CustCtgCode
+					.setValue(Labels.getLabel("label_DedupParmSearch_CollateralTypeCode.value"));
+			fillComboBox(this.querySubCode, "", this.collateralTypesList, "");
+		}
 
 		// Render the page and display the data.
 		doRenderPage();
