@@ -76,7 +76,7 @@
 								</hbox>
 							</row>
 							<row>
-								<label id="label_ReporingTo" value="${c:l('label_ReportingManangerDialog_ReporingTo.value')}" />
+								<label id="label_ReportingTo" value="${c:l('label_ReportingManangerDialog_ReportingTo.value')}" />
 
 								<extendedcombobox id="reportingto" width="300px" />
 							</row>

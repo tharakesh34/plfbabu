@@ -690,7 +690,7 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 		}
 		if (!this.reportingto.isReadonly()) {
 			this.reportingto.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_ReportingManangerDialog_ReporingTo.value"), null, true));
+					Labels.getLabel("label_ReportingManangerDialog_ReportingTo.value"), null, true));
 		}
 		logger.debug(Literal.LEAVING);
 	}
