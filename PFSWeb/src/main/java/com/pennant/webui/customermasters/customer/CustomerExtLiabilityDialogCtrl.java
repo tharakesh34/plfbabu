@@ -923,11 +923,14 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			wve.add(we);
 		}
 		try {
-			aLiability.setMob(this.mob.intValue());
+			int mobVal = this.mob.intValue();
+			if (mobVal < 0) {
+				throw new WrongValueException(this.mob, "MOB value should be greaterthan 0");
+			}
+			aLiability.setMob(mobVal);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
