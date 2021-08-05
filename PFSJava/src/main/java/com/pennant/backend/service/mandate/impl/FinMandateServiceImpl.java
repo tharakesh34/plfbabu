@@ -372,7 +372,8 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 				}
 
 				if (mandate.getMaxLimit().compareTo(exposure) < 0) {
-					// auditDetail.setErrorDetail(90320);
+					auditDetail.setErrorDetail(ErrorUtil
+							.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "90320", null, null), ""));
 				}
 
 			}
