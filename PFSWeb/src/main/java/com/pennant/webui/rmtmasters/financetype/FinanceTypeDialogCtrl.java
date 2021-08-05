@@ -609,6 +609,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	// Disb based schedule
 	protected Checkbox instBasedSchd;
 	protected Row row_InstBasedSchd;
+	private boolean postEventReq = false;
 
 	/**
 	 * default constructor.<br>
@@ -6850,13 +6851,20 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	public void onClick$btnCopyTo(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
+
+		postEventReq = true;
 		doClose(this.btnSave.isVisible());
+		postEventReq = false;
 		logger.debug(Literal.LEAVING);
 	}
 
 	protected void doPostClose() {
-		Events.postEvent("onClick$button_FinanceTypeList_NewFinanceType", financeTypeListCtrl.window_FinanceTypeList,
-				getFinanceType());
+
+		if (postEventReq) {
+			Events.postEvent("onClick$button_FinanceTypeList_NewFinanceType",
+					financeTypeListCtrl.window_FinanceTypeList, getFinanceType());
+		}
+
 	}
 
 	// tasks # >>Start Advance EMI and DSF
