@@ -282,6 +282,10 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 				this.finType.setDescColumn("ProductDesc");
 				this.finType.setValidateColumns(new String[] { "ProductCode" });
 				this.row_finEvent.setVisible(true);
+				Filter[] filtersProductCode = new Filter[1];
+				filtersProductCode[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+				this.finType.setFilters(filtersProductCode);
+
 			} else if (this.moduleName.getSelectedItem().getValue().toString()
 					.equals(PennantConstants.WORFLOW_MODULE_FACILITY)) {
 				this.finType.setModuleName("CAFFacilityType");
