@@ -710,6 +710,9 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		this.vasType.setValueColumn("ProductType");
 		this.vasType.setDescColumn("ProductTypeDesc");
 		this.vasType.setValidateColumns(new String[] { "ProductType" });
+		Filter[] filtersVasType = new Filter[1];
+		filtersVasType[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+		this.vasType.setFilters(filtersVasType);
 
 		this.vasFee.setProperties(true, getCcyFormat());
 
