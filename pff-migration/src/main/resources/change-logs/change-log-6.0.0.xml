@@ -33575,7 +33575,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
-	<changeSet id="PSD#166668_Pre" author="gopal.p" dbms="postgresql">
+	<changeSet id="PSD#166668.1_Pre" author="gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'financemain_dataview');
@@ -33583,10 +33583,10 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#166668" author="gopal.p">
+	<changeSet id="PSD#166668.1" author="gopal.p">
 		<createView viewName="FINANCEMAIN_DATAVIEW" replaceIfExists="true"> 
 			<![CDATA[
-				SELECT T1.FINREFERENCE,
+					SELECT T1.FINREFERENCE,
 					T1.FINTYPE,
 					T2.CUSTCIF LOVDESCCUSTCIF,
 					T1.CUSTID,
@@ -33594,14 +33594,23 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 					T1.FINISACTIVE,
 					T1.MATURITYDATE,
 					T1.PRODUCTCATEGORY,
-					T1.WRITEOFFLOAN
+					T1.WRITEOFFLOAN,
+					T1.CALCOFSTEPS,
+					T1.STEPSAPPLIEDFOR,
+					T1.NOOFGRCSTEPS,
+					T1.SCHDVERSION,
+					T1.SUBVENTIONFROM,
+					T1.MANUFACTURERDEALERID,
+					T3.DEALERNAME MANUFACTURERDEALERNAME,
+					T3.CODE MANUFACTURERDEALERCODE
 				FROM FINANCEMAIN T1
 				JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+				LEFT JOIN AMTVEHICLEDEALER T3 ON T1.MANUFACTURERDEALERID = T3.DEALERID
 			]]>
 		</createView>
 	</changeSet>
 	
-	<changeSet id="PSD#166668_Post" author="gopal.p" dbms="postgresql">
+	<changeSet id="PSD#166668.1_Post" author="gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financemain_dataview');
