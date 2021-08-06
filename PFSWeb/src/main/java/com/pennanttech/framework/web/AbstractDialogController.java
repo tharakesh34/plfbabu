@@ -210,6 +210,7 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		if (!askConfirmation) {
 			closeDialog();
 			doPostClose();
+			return;
 		}
 
 		MessageUtil.confirm(
