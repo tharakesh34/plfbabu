@@ -811,6 +811,7 @@ public class ProjectUnitsDialogCtrl extends GFCBaseCtrl<ProjectUnits> {
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 					builderProjcetDialogCtrl.doRenderProjectUnits(this.projectUnitsList);
+					builderProjcetDialogCtrl.setProjectUnitsList(this.projectUnitsList);
 					closeDialog();
 				}
 			} catch (DataAccessException e) {
