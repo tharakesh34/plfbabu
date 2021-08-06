@@ -390,6 +390,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		this.fromdate.setValue(null);
 		this.toDate.setValue(null);
 		this.branches.setValue("");
+		this.entity.setErrorMessage("");
 		this.entity.setValue("");
 		this.entity.setDescColumn("");
 		this.emandateSource.setValue("");
