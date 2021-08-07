@@ -504,53 +504,32 @@ public class IRRFeeTypeDialogCtrl extends GFCBaseCtrl<IRRFeeType> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a IRRFeeType object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
-	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
-		final IRRFeeType aIRRFeeType = new IRRFeeType();
-		BeanUtils.copyProperties(getiRRFeeType(), aIRRFeeType);
-		String tranType = PennantConstants.TRAN_WF;
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ (aIRRFeeType.getFeeTypeCode());
-
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-
-			if (StringUtils.isBlank(aIRRFeeType.getRecordType())) {
-
-				aIRRFeeType.setVersion(aIRRFeeType.getVersion() + 1);
-				aIRRFeeType.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aIRRFeeType.setNewRecord(true);
-				if (isWorkFlowEnabled()) {
-					aIRRFeeType.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
+	protected boolean doCustomDelete(final IRRFeeType aIRRFeeType, String tranType) {
+		if (aIRRFeeType.isNewRecord()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newIRRFeeTypeDetailProcess(aIRRFeeType, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_IRRFeeTypeDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				if (getIrrCodeDialogCtrl() != null) {
+					getIrrCodeDialogCtrl().doFillIRRFeeTypeDetails(this.irrFeeTypesList);
 				}
-			}
-			try {
-				if (aIRRFeeType.isNewRecord()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newIRRFeeTypeDetailProcess(aIRRFeeType, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_IRRFeeTypeDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						if (getIrrCodeDialogCtrl() != null) {
-							getIrrCodeDialogCtrl().doFillIRRFeeTypeDetails(this.irrFeeTypesList);
-						}
-						closeDialog();
-					}
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
+				return true;
 			}
 		}
-		logger.debug("Leaving");
+
+		return false;
+	}
+
+	private void doDelete() throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+
+		final IRRFeeType aIRRFeeType = new IRRFeeType();
+		BeanUtils.copyProperties(getiRRFeeType(), aIRRFeeType);
+
+		doDelete(aIRRFeeType.getFeeTypeCode(), aIRRFeeType);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

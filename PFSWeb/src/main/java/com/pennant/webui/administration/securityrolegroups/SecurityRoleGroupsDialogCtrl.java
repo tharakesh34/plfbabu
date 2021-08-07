@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  SecurityRoleGroupsDialogCtrl.java														*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-07-2011															*
- *                                                                  
- * Modified Date    :  10-08-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : SecurityRoleGroupsDialogCtrl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-07-2011 *
+ * 
+ * Modified Date : 10-08-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- *  10-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.administration.securityrolegroups;
@@ -206,8 +197,7 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -706,10 +696,8 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
-	 * @param method
-	 *            (String)
+	 * @param auditHeader (AuditHeader)
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */
@@ -734,7 +722,7 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 				}
 				setOverideMap(auditHeader.getOverideMap());
 			}
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving ");

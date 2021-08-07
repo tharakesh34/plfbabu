@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CommitmentRateDialogCtrl.java                                        * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  22-12-2016    														*
- *                                                                  						*
- * Modified Date    :  22-12-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CommitmentRateDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 22-12-2016 * *
+ * Modified Date : 22-12-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 22-12-2016       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 22-12-2016 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.commitment.commitmentrate;
@@ -50,7 +32,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -85,6 +66,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.commitment.commitment.CommitmentDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -280,8 +262,7 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -290,8 +271,7 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -427,7 +407,7 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.cmtReference.setMaxlength(20);
 		this.cmtRvwFrq.setMandatoryStyle(true);
 
@@ -529,9 +509,10 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 				this.cmtBaseRate.getMarginComp());
 		readOnlyComponent(getUserWorkspace().isReadOnly("CommitmentRateDialog_CmtActualRate"), this.cmtActualRate);
 
-		//readOnlyComponent(getUserWorkspace().isReadOnly("CommitmentRateDialog_CmtReference"), this.cmtReference);
-		//this.cmtBaseRate.setSpecialReadonly(getUserWorkspace().isReadOnly("CommitmentRateDialog_CmtSpecialRate"));
-		//readOnlyComponent(getUserWorkspace().isReadOnly("CommitmentRateDialog_CmtCalculatedRate"), this.cmtCalculatedRate);
+		// readOnlyComponent(getUserWorkspace().isReadOnly("CommitmentRateDialog_CmtReference"), this.cmtReference);
+		// this.cmtBaseRate.setSpecialReadonly(getUserWorkspace().isReadOnly("CommitmentRateDialog_CmtSpecialRate"));
+		// readOnlyComponent(getUserWorkspace().isReadOnly("CommitmentRateDialog_CmtCalculatedRate"),
+		// this.cmtCalculatedRate);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -619,8 +600,7 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCommitmentRate
-	 *            CommitmentRate
+	 * @param aCommitmentRate CommitmentRate
 	 */
 	public void doWriteBeanToComponents(CommitmentRate aCommitmentRate) {
 		logger.debug("Entering");
@@ -633,11 +613,12 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 		this.cmtBaseRate.setBaseDescription(
 				aCommitmentRate.getCmtBaseRate() == null ? "" : aCommitmentRate.getCmtBaseRateName());
 
-		//Special Rate
-		//this.cmtBaseRate.setSpecialValue(aCommitmentRate.getCmtSpecialRate());
-		//this.cmtBaseRate.setSpecialDescription(aCommitmentRate.getCmtSpecialRate() == null ? "" : aCommitmentRate.getCmtSpecialRateName());
+		// Special Rate
+		// this.cmtBaseRate.setSpecialValue(aCommitmentRate.getCmtSpecialRate());
+		// this.cmtBaseRate.setSpecialDescription(aCommitmentRate.getCmtSpecialRate() == null ? "" :
+		// aCommitmentRate.getCmtSpecialRateName());
 
-		//Margin Rate
+		// Margin Rate
 		if (StringUtils.isBlank(aCommitmentRate.getCmtBaseRate())) {
 			this.cmtBaseRate.setMarginReadonly(true);
 			this.cmtBaseRate.setMarginValue(BigDecimal.ZERO);
@@ -648,8 +629,8 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 		this.cmtActualRate.setValue(aCommitmentRate.getCmtActualRate());
 		this.cmtCalculatedRate.setValue(aCommitmentRate.getCmtCalculatedRate());
 
-		//this.recordStatus.setValue(aCommitmentRate.getRecordStatus());
-		//this.recordType.setValue(PennantJavaUtil.getLabel(aCommitmentRate.getRecordType()));
+		// this.recordStatus.setValue(aCommitmentRate.getRecordStatus());
+		// this.recordType.setValue(PennantJavaUtil.getLabel(aCommitmentRate.getRecordType()));
 
 		logger.debug("Leaving");
 	}
@@ -664,7 +645,7 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Commitment Reference
+		// Commitment Reference
 		try {
 			aCommitmentRate.setCmtReference(this.cmtReference.getValue());
 		} catch (WrongValueException we) {
@@ -707,7 +688,7 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 			wve.add(we);
 		}
 
-		//Fields (Base Rate, Margin) and Actual Rate are mutually Exclusive Validation
+		// Fields (Base Rate, Margin) and Actual Rate are mutually Exclusive Validation
 		try {
 			if (this.cmtActualRate.getValue() != null && !this.cmtActualRate.isReadonly()) {
 				if ((this.cmtActualRate.getValue().intValue() > 0)
@@ -723,7 +704,7 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 			wve.add(we);
 		}
 
-		//Calculated Rate
+		// Calculated Rate
 		try {
 			if (!this.cmtBaseRate.isBaseReadonly() && StringUtils.isNotBlank(this.cmtBaseRate.getBaseValue())) {
 				calculateRate(this.cmtBaseRate.getBaseValue(), getCommitmentRate().getCmtCcy(),
@@ -738,7 +719,7 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 			logger.error("Exception: ", e);
 		}
 
-		// Margin Rate 
+		// Margin Rate
 		try {
 			if (StringUtils.isNotBlank(this.cmtBaseRate.getBaseValue())) {
 				aCommitmentRate.setCmtMargin(this.cmtBaseRate.getMarginValue());
@@ -749,7 +730,7 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 			wve.add(we);
 		}
 
-		//Actual Rate
+		// Actual Rate
 		try {
 			aCommitmentRate.setCmtActualRate(
 					this.cmtActualRate.getValue() == null ? BigDecimal.ZERO : this.cmtActualRate.getValue());
@@ -757,7 +738,7 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 			wve.add(we);
 		}
 
-		//Calculated Rate
+		// Calculated Rate
 		try {
 			if (StringUtils.isBlank(this.cmtBaseRate.getBaseValue())) {
 				aCommitmentRate.setCmtCalculatedRate(this.cmtActualRate.getValue());
@@ -787,7 +768,7 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 	private void doSetValidation() {
 		logger.debug("Entering");
 
-		//Base Rate //Margin
+		// Base Rate //Margin
 		if (!this.cmtBaseRate.isBaseReadonly()) {
 			this.cmtBaseRate.setBaseConstraint(new PTStringValidator(
 					Labels.getLabel("label_CommitmentRateDialog_CmtBaseRate.value"), null, false, true));
@@ -797,13 +778,13 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 					Labels.getLabel("label_CommitmentRateDialog_CmtBaseRate.value"), 9, false, true, -9999, 9999));
 		}
 
-		//Actual Rate
+		// Actual Rate
 		if (!this.cmtActualRate.isReadonly()) {
 			this.cmtActualRate.setConstraint(new PTDecimalValidator(
 					Labels.getLabel("label_CommitmentRateDialog_CmtActualRate.value"), 9, false, false, 0, 9999));
 		}
 
-		//Calculated Rate
+		// Calculated Rate
 		/*
 		 * if (!this.cmtCalculatedRate.isReadonly()){ this.cmtCalculatedRate.setConstraint(new
 		 * PTDecimalValidator(Labels.getLabel("label_CommitmentRateDialog_CmtCalculatedRate.value"), 9,
@@ -822,7 +803,7 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 		this.cmtBaseRate.setBaseConstraint("");
 		this.cmtBaseRate.setSpecialConstraint("");
 		this.cmtActualRate.setConstraint("");
-		//this.cmtCalculatedRate.setConstraint("");
+		// this.cmtCalculatedRate.setConstraint("");
 
 		logger.debug("Leaving");
 	}
@@ -835,7 +816,7 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 		logger.debug("Entering");
 
 		this.cmtActualRate.setErrorMessage("");
-		//this.cmtCalculatedRate.setErrorMessage("");
+		// this.cmtCalculatedRate.setErrorMessage("");
 
 		logger.debug("Leaving");
 	}
@@ -855,61 +836,33 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 		logger.debug("Leaving");
 	}
 
-	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	// +++++++++++++++++++++++++ crud operations +++++++++++++++++++++++
-	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	protected boolean doCustomDelete(final CommitmentRate aCommitmentRate, String tranType) {
+		if (isNewCommitment()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newCommitmentRateProcess(aCommitmentRate, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_CommitmentRateDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				if (getCommitmentDialogCtrl() != null) {
+					getCommitmentDialogCtrl().doFillCommitmentRateDetails(this.commitmentRateDetailList);
+				}
+				return true;
+			}
+		}
 
-	/**
-	 * Deletes a CommitmentRate object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final CommitmentRate aCommitmentRate = new CommitmentRate();
 		BeanUtils.copyProperties(getCommitmentRate(), aCommitmentRate);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_CmtRvwFrq") + " : " + aCommitmentRate.getCmtRvwFrq();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCommitmentRate.getRecordType())) {
-				aCommitmentRate.setVersion(aCommitmentRate.getVersion() + 1);
-				aCommitmentRate.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aCommitmentRate.setNewRecord(true);
+		final String keyReference = Labels.getLabel("label_CmtRvwFrq") + " : " + aCommitmentRate.getCmtRvwFrq();
+		doDelete(keyReference, aCommitmentRate);
 
-				if (isWorkFlowEnabled()) {
-					aCommitmentRate.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			} else if (StringUtils.trimToEmpty(aCommitmentRate.getRecordType()).equals(PennantConstants.RCD_UPD)) {
-				aCommitmentRate.setVersion(aCommitmentRate.getVersion() + 1);
-				aCommitmentRate.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			}
-
-			try {
-				if (isNewCommitment()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newCommitmentRateProcess(aCommitmentRate, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_CommitmentRateDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						if (getCommitmentDialogCtrl() != null) {
-							getCommitmentDialogCtrl().doFillCommitmentRateDetails(this.commitmentRateDetailList);
-						}
-						// send the data back to customer
-						closeDialog();
-					}
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

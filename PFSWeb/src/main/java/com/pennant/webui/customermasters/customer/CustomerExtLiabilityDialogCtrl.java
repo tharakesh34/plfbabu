@@ -1293,59 +1293,55 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a CustomerExtLiability object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final CustomerExtLiability aCustomerExtLiability = new CustomerExtLiability();
 		BeanUtils.copyProperties(getExternalLiability(), aCustomerExtLiability);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_CustomerExtLiabilityDialog_LiabilitySeq.value") + " : "
+		final String keyReference = Labels.getLabel("label_CustomerExtLiabilityDialog_LiabilitySeq.value") + " : "
 				+ aCustomerExtLiability.getSeqNo();
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCustomerExtLiability.getRecordType())) {
-				aCustomerExtLiability.setVersion(aCustomerExtLiability.getVersion() + 1);
-				aCustomerExtLiability.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (!isFinanceProcess && getCustomerDialogCtrl() != null
-						&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
-					aCustomerExtLiability.setNewRecord(true);
-				}
-				if (isWorkFlowEnabled()) {
-					aCustomerExtLiability.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		doDelete(keyReference, aCustomerExtLiability);
 
-			try {
+		logger.debug(Literal.LEAVING);
+	}
+
+	protected void onDoDelete(final CustomerExtLiability aCustomerExtLiability) {
+		String tranType = PennantConstants.TRAN_WF;
+
+		if (StringUtils.isBlank(aCustomerExtLiability.getRecordType())) {
+			aCustomerExtLiability.setVersion(aCustomerExtLiability.getVersion() + 1);
+			aCustomerExtLiability.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			if (!isFinanceProcess && getCustomerDialogCtrl() != null
+					&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
+				aCustomerExtLiability.setNewRecord(true);
+			}
+			if (isWorkFlowEnabled()) {
+				aCustomerExtLiability.setNewRecord(true);
+				tranType = PennantConstants.TRAN_WF;
+			} else {
 				tranType = PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader = newFinanceCustomerProcess(aCustomerExtLiability, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerExtLiabilityDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					if (getCustomerDialogCtrl() != null) {
-						getCustomerDialogCtrl().doFillCustomerExtLiabilityDetails(this.externalLiabilities);
-					} else if (getSamplingDialogCtrl() != null) {
-						getSamplingDialogCtrl().doFillCustomerExtLiabilityDetails(this.externalLiabilities);
-					}
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
 			}
 		}
-		logger.debug("Leaving");
+
+		try {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newFinanceCustomerProcess(aCustomerExtLiability, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_CustomerExtLiabilityDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				if (getCustomerDialogCtrl() != null) {
+					getCustomerDialogCtrl().doFillCustomerExtLiabilityDetails(this.externalLiabilities);
+				} else if (getSamplingDialogCtrl() != null) {
+					getSamplingDialogCtrl().doFillCustomerExtLiabilityDetails(this.externalLiabilities);
+				}
+				closeDialog();
+			}
+		} catch (DataAccessException e) {
+			MessageUtil.showError(e);
+		}
+
 	}
 
 	/**

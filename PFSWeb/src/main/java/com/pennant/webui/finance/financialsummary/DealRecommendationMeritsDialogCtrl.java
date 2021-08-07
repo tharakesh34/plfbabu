@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerPhoneNumberDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerPhoneNumberDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * *
+ * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financialsummary;
@@ -70,6 +52,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -227,7 +210,7 @@ public class DealRecommendationMeritsDialogCtrl extends GFCBaseCtrl<DealRecommen
 
 		this.btnNew.setVisible(true);
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_DealRecommendationMeritsDialog_btnEdit"));
-		//this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_DealRecommendationMeritsDialog_btnDelete"));
+		// this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_DealRecommendationMeritsDialog_btnDelete"));
 		this.btnDelete.setVisible(true);
 		this.btnSave.setVisible(true);
 		this.btnCancel.setVisible(false);
@@ -295,8 +278,7 @@ public class DealRecommendationMeritsDialogCtrl extends GFCBaseCtrl<DealRecommen
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -319,8 +301,7 @@ public class DealRecommendationMeritsDialogCtrl extends GFCBaseCtrl<DealRecommen
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCustomerPhoneNumber
-	 *            CustomerPhoneNumber
+	 * @param aCustomerPhoneNumber CustomerPhoneNumber
 	 */
 	public void doWriteBeanToComponents(DealRecommendationMerits dealRecommendationMerits) {
 		logger.debug("Entering");
@@ -422,69 +403,62 @@ public class DealRecommendationMeritsDialogCtrl extends GFCBaseCtrl<DealRecommen
 	 * protected void refreshList() { getFinancialSummaryDialogCtrl().search(); }
 	 */
 
-	// CRUD operations
-
-	/**
-	 * Deletes a CustomerPhoneNumber object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug("Entering");
 
 		final DealRecommendationMerits adealRecommendationMerits = new DealRecommendationMerits();
 		BeanUtils.copyProperties(getDealRecommendationMerits(), adealRecommendationMerits);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneTypeCode.value") + " : "
+		final String keyReference = Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneTypeCode.value") + " : "
 				+ adealRecommendationMerits.getId();
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(adealRecommendationMerits.getRecordType())) {
-				adealRecommendationMerits.setVersion(adealRecommendationMerits.getVersion() + 1);
-				adealRecommendationMerits.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (!isFinanceProcess && getDealRecommendationMerits() != null
-						&& getDealRecommendationMerits().isWorkflow()) {
-					adealRecommendationMerits.setNewRecord(true);
-				}
-				if (isWorkFlowEnabled()) {
-					adealRecommendationMerits.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			} else if (StringUtils.equals(adealRecommendationMerits.getRecordType(), PennantConstants.RCD_UPD)) {
+		doDelete(keyReference, adealRecommendationMerits);
+		logger.debug("Leaving");
+	}
+
+	protected void onDoDelete(final DealRecommendationMerits adealRecommendationMerits) {
+		String tranType = PennantConstants.TRAN_WF;
+		if (StringUtils.isBlank(adealRecommendationMerits.getRecordType())) {
+			adealRecommendationMerits.setVersion(adealRecommendationMerits.getVersion() + 1);
+			adealRecommendationMerits.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			if (!isFinanceProcess && getDealRecommendationMerits() != null
+					&& getDealRecommendationMerits().isWorkflow()) {
 				adealRecommendationMerits.setNewRecord(true);
 			}
+			if (isWorkFlowEnabled()) {
+				adealRecommendationMerits.setNewRecord(true);
+				tranType = PennantConstants.TRAN_WF;
+			} else {
+				tranType = PennantConstants.TRAN_DEL;
+			}
+		} else if (StringUtils.equals(adealRecommendationMerits.getRecordType(), PennantConstants.RCD_UPD)) {
+			adealRecommendationMerits.setNewRecord(true);
+		}
 
-			try {
+		try {
 
-				if (isNewDealRecommendationMerits()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newDealRecommendationMeritsProcess(dealRecommendationMerits, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_dealRecommendationMeritsDialog,
-							auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						getFinancialSummaryDialogCtrl()
-								.doFillDealRecommendationMeritsDetails(this.dealRecommendationMeritsList);
-						// true;
-						// send the data back to customer
-						closeDialog();
-					}
-
-				} else if (doProcess(adealRecommendationMerits, tranType)) {
-					/* refreshList(); */
+			if (isNewDealRecommendationMerits()) {
+				tranType = PennantConstants.TRAN_DEL;
+				AuditHeader auditHeader = newDealRecommendationMeritsProcess(dealRecommendationMerits, tranType);
+				auditHeader = ErrorControl.showErrorDetails(this.window_dealRecommendationMeritsDialog, auditHeader);
+				int retValue = auditHeader.getProcessStatus();
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+					getFinancialSummaryDialogCtrl()
+							.doFillDealRecommendationMeritsDetails(this.dealRecommendationMeritsList);
+					// true;
+					// send the data back to customer
 					closeDialog();
 				}
 
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
+			} else if (doProcess(adealRecommendationMerits, tranType)) {
+				/* refreshList(); */
+				closeDialog();
 			}
+
+		} catch (DataAccessException e) {
+			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+
 	}
 
 	/**
@@ -728,11 +702,9 @@ public class DealRecommendationMeritsDialogCtrl extends GFCBaseCtrl<DealRecommen
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aCustomerPhoneNumber
-	 *            (CustomerPhoneNumber)
+	 * @param aCustomerPhoneNumber (CustomerPhoneNumber)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType             (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -818,11 +790,9 @@ public class DealRecommendationMeritsDialogCtrl extends GFCBaseCtrl<DealRecommen
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -882,7 +852,7 @@ public class DealRecommendationMeritsDialogCtrl extends GFCBaseCtrl<DealRecommen
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -909,8 +879,7 @@ public class DealRecommendationMeritsDialogCtrl extends GFCBaseCtrl<DealRecommen
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -928,8 +897,7 @@ public class DealRecommendationMeritsDialogCtrl extends GFCBaseCtrl<DealRecommen
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

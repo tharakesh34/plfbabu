@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SuspenseDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-05-2012    														*
- *                                                                  						*
- * Modified Date    :  31-05-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SuspenseDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-05-2012 * * Modified
+ * Date : 31-05-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-05-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-05-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.suspense;
@@ -112,6 +94,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinanceBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -327,8 +310,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -337,8 +319,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aSuspense
-	 *            Suspense
+	 * @param aSuspense Suspense
 	 * @throws InterruptedException
 	 */
 	public void doWriteBeanToComponents(FinanceSuspHead aSuspHead) throws InterruptedException {
@@ -766,7 +747,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		WorkFlowDetails workFlowDetails = null;
 		if (StringUtils.isNotEmpty(moduleDefiner)) {
 			FinanceWorkFlow financeWorkflow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(finType,
-					moduleDefiner, PennantConstants.WORFLOW_MODULE_FINANCE);//TODO: Check Promotion case
+					moduleDefiner, PennantConstants.WORFLOW_MODULE_FINANCE);// TODO: Check Promotion case
 			if (financeWorkflow != null && financeWorkflow.getWorkFlowType() != null) {
 				workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkflow.getWorkFlowType());
 			}
@@ -851,8 +832,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		}
 
 		aFinanceDetail.setAccountingEventCode(eventCode);
-		aFinanceDetail.setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
+		aFinanceDetail.setModuleDefiner(StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 
 		// Document Details Saving
 		if (getDocumentDetailDialogCtrl() != null) {
@@ -1221,7 +1201,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 			}
 
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -1321,8 +1301,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	 */
 	public FinanceDetail onExecuteStageAccDetail()
 			throws InterruptedException, IllegalAccessException, InvocationTargetException {
-		getFinanceDetail().setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
+		getFinanceDetail().setModuleDefiner(StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 		return getFinanceDetail();
 	}
 
@@ -1356,7 +1335,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 
 			returnSetEntries = aeEvent.getReturnDataSet();
 		} else {
-			//FIXME : DataSet Removal to be worked on if it requires in future
+			// FIXME : DataSet Removal to be worked on if it requires in future
 		}
 
 		if (getAccountingDetailDialogCtrl() != null) {

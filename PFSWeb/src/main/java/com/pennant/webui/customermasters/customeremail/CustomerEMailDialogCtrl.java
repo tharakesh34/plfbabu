@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerEMailDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerEMailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * *
+ * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.customermasters.customeremail;
@@ -88,7 +70,9 @@ import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.customermasters.customer.CustomerViewDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -366,8 +350,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -390,8 +373,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCustomerEMail
-	 *            CustomerEMail
+	 * @param aCustomerEMail CustomerEMail
 	 */
 	public void doWriteBeanToComponents(CustomerEMail aCustomerEMail) {
 		logger.debug("Entering");
@@ -616,63 +598,56 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 		getCustomerEMailListCtrl().search();
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a CustomerEMail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final CustomerEMail aCustomerEMail = new CustomerEMail();
 		BeanUtils.copyProperties(getCustomerEMail(), aCustomerEMail);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_CustomerEMailDialog_CustEMailTypeCode.value") + " : "
+		final String keyReference = Labels.getLabel("label_CustomerEMailDialog_CustEMailTypeCode.value") + " : "
 				+ aCustomerEMail.getCustEMailTypeCode();
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCustomerEMail.getRecordType())) {
-				aCustomerEMail.setVersion(aCustomerEMail.getVersion() + 1);
-				aCustomerEMail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (!isFinanceProcess && getCustomerDialogCtrl() != null
-						&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
-					aCustomerEMail.setNewRecord(true);
-				}
-				if (isWorkFlowEnabled()) {
-					aCustomerEMail.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
+		doDelete(keyReference, aCustomerEMail);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	protected void onDoDelete(final CustomerEMail aCustomerEMail) {
+		String tranType = PennantConstants.TRAN_WF;
+
+		if (StringUtils.isBlank(aCustomerEMail.getRecordType())) {
+			aCustomerEMail.setVersion(aCustomerEMail.getVersion() + 1);
+			aCustomerEMail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			if (!isFinanceProcess && getCustomerDialogCtrl() != null
+					&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
+				aCustomerEMail.setNewRecord(true);
 			}
-
-			try {
-
-				if (isNewCustomer()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newCustomerEmailProcess(aCustomerEMail, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerEMailDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						getCustomerDialogCtrl().doFillCustomerEmailDetails(this.customerEmails);
-						// send the data back to customer
-						closeDialog();
-					}
-				} else if (doProcess(aCustomerEMail, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
+			if (isWorkFlowEnabled()) {
+				aCustomerEMail.setNewRecord(true);
+				tranType = PennantConstants.TRAN_WF;
+			} else {
+				tranType = PennantConstants.TRAN_DEL;
 			}
 		}
-		logger.debug("Leaving");
+
+		try {
+			if (isNewCustomer()) {
+				tranType = PennantConstants.TRAN_DEL;
+				AuditHeader auditHeader = newCustomerEmailProcess(aCustomerEMail, tranType);
+				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerEMailDialog, auditHeader);
+				int retValue = auditHeader.getProcessStatus();
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+					getCustomerDialogCtrl().doFillCustomerEmailDetails(this.customerEmails);
+					closeDialog();
+				}
+			} else if (doProcess(aCustomerEMail, tranType)) {
+				refreshList();
+				closeDialog();
+			}
+
+		} catch (DataAccessException e) {
+			MessageUtil.showError(e);
+		}
 	}
 
 	/**
@@ -909,8 +884,9 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 					}
 				}
 
-				if (aCustomerEMail.getCustEMailTypeCode().equals(customerEMail.getCustEMailTypeCode())) { // Both Current
-																												// and
+				if (aCustomerEMail.getCustEMailTypeCode().equals(customerEMail.getCustEMailTypeCode())) { // Both
+																											// Current
+																											// and
 																											// Existing
 																											// list
 																											// rating
@@ -967,11 +943,9 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aCustomerEMail
-	 *            (CustomerEMail)
+	 * @param aCustomerEMail (CustomerEMail)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1061,11 +1035,9 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1124,7 +1096,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -1215,8 +1187,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1234,8 +1205,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

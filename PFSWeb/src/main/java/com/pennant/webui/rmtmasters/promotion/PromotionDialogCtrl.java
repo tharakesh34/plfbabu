@@ -100,6 +100,7 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.rmtmasters.financetype.FinTypeAccountingListCtrl;
 import com.pennant.webui.rmtmasters.financetype.FinTypeFeesListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
@@ -2310,7 +2311,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 

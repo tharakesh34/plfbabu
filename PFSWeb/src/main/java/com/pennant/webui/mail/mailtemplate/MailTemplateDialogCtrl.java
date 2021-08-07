@@ -80,6 +80,7 @@ import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -1176,7 +1177,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceMaintenanceDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceMaintenanceDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
+ * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -79,6 +61,7 @@ import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
@@ -133,8 +116,10 @@ import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -533,8 +518,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -589,8 +573,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceMain
-	 *            financeMain
+	 * @param aFinanceMain financeMain
 	 * @throws ParseException
 	 * @throws InterruptedException
 	 * @throws InvocationTargetException
@@ -785,8 +768,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
-	 * @param aFinanceSchData
-	 *            (FinScheduleData)
+	 * @param aFinanceSchData (FinScheduleData)
 	 * @throws Exception
 	 */
 	public void doWriteComponentsToBean(FinanceDetail aFinanceDetail)
@@ -927,8 +909,9 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 												String.valueOf(label_FinanceMainDialog_FinAssetValue.getValue()) }));
 					}
 				}
-				aFinanceMain.setFinAssetValue(PennantAppUtil.unFormateAmount(this.finAssetValue.isReadonly()
-						? this.finAssetValue.getActualValue() : this.finAssetValue.getValidateValue(), format));
+				aFinanceMain.setFinAssetValue(PennantAppUtil
+						.unFormateAmount(this.finAssetValue.isReadonly() ? this.finAssetValue.getActualValue()
+								: this.finAssetValue.getValidateValue(), format));
 			}
 			// Validation on finAsset And fin Current Asset value based on field
 			// visibility
@@ -1011,8 +994,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	/**
 	 * Method to validate the data before generating the schedule
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 */
 	public boolean doValidation(AuditHeader auditHeader) throws InterruptedException {
 		return super.doValidation(auditHeader);
@@ -1196,8 +1178,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		showErrorDetails(wve, financeTypeDetailsTab);
 		wve = null;
 		doWriteComponentsToBean(getFinanceDetail());
-		getFinanceDetail().setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
+		getFinanceDetail().setModuleDefiner(StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 		logger.debug("Leaving");
 		return getFinanceDetail();
 	}
@@ -1802,80 +1783,82 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a financeMain object from database.<br>
-	 * 
-	 * @throws Exception
-	 */
 	private void doDelete() throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinanceDetail afinanceDetail = new FinanceDetail();
 		BeanUtils.copyProperties(getFinanceDetail(), afinanceDetail);
 
-		String tranType = PennantConstants.TRAN_WF;
-
 		FinanceMain afinanceMain = afinanceDetail.getFinScheduleData().getFinanceMain();
 		afinanceDetail.setUserAction(this.userAction.getSelectedItem().getLabel());
 
-		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ afinanceMain.getFinReference();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(afinanceMain.getRecordType())) {
-				afinanceMain.setVersion(afinanceMain.getVersion() + 1);
-				afinanceMain.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()) {
-					afinanceMain.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
+		MessageUtil.confirm(msg, evnt -> {
+
+			if (Messagebox.ON_YES.equals(evnt.getName())) {
+
+				onDoDelete(afinanceDetail, afinanceMain);
 			}
+		});
 
-			try {
-				afinanceDetail.getFinScheduleData().setFinanceMain(afinanceMain);
-				if (doProcess(afinanceDetail, tranType)) {
-					if (getFinanceMainListCtrl() != null) {
-						refreshList();
-					}
-					if (getFinanceSelectCtrl() != null) {
-						refreshMaintainList();
-					}
+		logger.debug(Literal.LEAVING);
+	}
 
-					// Mail Alert Notification for
-					// Customer/Dealer/Provider...etc
-					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
+	private void onDoDelete(FinanceDetail afinanceDetail, FinanceMain afinanceMain) throws Exception {
 
-						FinanceMain financeMain = afinanceDetail.getFinScheduleData().getFinanceMain();
-						Notification notification = new Notification();
-						notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
-						notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
-						notification.setModule("LOAN");
-						notification.setSubModule(moduleDefiner);
-						notification.setKeyReference(financeMain.getFinReference());
-						notification.setStage(financeMain.getRoleCode());
-						notification.setReceivedBy(getUserWorkspace().getUserId());
+		String tranType = PennantConstants.TRAN_WF;
+		if (StringUtils.isBlank(afinanceMain.getRecordType())) {
+			afinanceMain.setVersion(afinanceMain.getVersion() + 1);
+			afinanceMain.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-						try {
-							notificationService.sendNotifications(notification, afinanceDetail,
-									financeMain.getFinType(), afinanceDetail.getDocumentDetailsList());
-						} catch (Exception e) {
-							logger.debug(e);
-						}
-					}
-
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
+			if (isWorkFlowEnabled()) {
+				afinanceMain.setNewRecord(true);
+				tranType = PennantConstants.TRAN_WF;
+			} else {
+				tranType = PennantConstants.TRAN_DEL;
 			}
 		}
-		logger.debug("Leaving");
+
+		try {
+			afinanceDetail.getFinScheduleData().setFinanceMain(afinanceMain);
+			if (doProcess(afinanceDetail, tranType)) {
+				if (getFinanceMainListCtrl() != null) {
+					refreshList();
+				}
+				if (getFinanceSelectCtrl() != null) {
+					refreshMaintainList();
+				}
+
+				// Mail Alert Notification for
+				// Customer/Dealer/Provider...etc
+				if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
+
+					FinanceMain financeMain = afinanceDetail.getFinScheduleData().getFinanceMain();
+					Notification notification = new Notification();
+					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
+					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
+					notification.setModule("LOAN");
+					notification.setSubModule(moduleDefiner);
+					notification.setKeyReference(financeMain.getFinReference());
+					notification.setStage(financeMain.getRoleCode());
+					notification.setReceivedBy(getUserWorkspace().getUserId());
+
+					try {
+						notificationService.sendNotifications(notification, afinanceDetail, financeMain.getFinType(),
+								afinanceDetail.getDocumentDetailsList());
+					} catch (Exception e) {
+						logger.debug(e);
+					}
+				}
+
+				closeDialog();
+			}
+
+		} catch (DataAccessException e) {
+			MessageUtil.showError(e);
+		}
 	}
 
 	/**
@@ -2120,8 +2103,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT
 						.equals(getFinanceDetail().getFinScheduleData().getFinanceType().getFinLTVCheck())) {
-					utilizedAmt = utilizedAmt.add(aFinanceMain.getFinAssetValue())
-							.add(aFinanceMain.getFeeChargeAmt());
+					utilizedAmt = utilizedAmt.add(aFinanceMain.getFinAssetValue()).add(aFinanceMain.getFeeChargeAmt());
 				} else {
 					for (FinanceDisbursement curDisb : getFinanceDetail().getFinScheduleData()
 							.getDisbursementDetails()) {
@@ -2133,8 +2115,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 							continue;
 						}
 
-						utilizedAmt = utilizedAmt.add(curDisb.getDisbAmount())
-								.add(aFinanceMain.getFeeChargeAmt());
+						utilizedAmt = utilizedAmt.add(curDisb.getDisbAmount()).add(aFinanceMain.getFeeChargeAmt());
 					}
 					utilizedAmt = utilizedAmt.subtract(aFinanceMain.getDownPayment())
 							.subtract(aFinanceMain.getFinRepaymentAmount());
@@ -2381,19 +2362,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method for Processing Finance Detail Object for Database Operation
-	 * 
-	 * @param afinanceMain
-	 * @param tranType
-	 * @return
-	 * @throws InterruptedException
-	 * @throws IOException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 */
-	protected boolean doProcess(FinanceDetail aFinanceDetail, String tranType)
-			throws InterruptedException, IOException, IllegalAccessException, InvocationTargetException {
+	protected boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws Exception {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;
@@ -2554,16 +2523,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		return processCompleted;
 	}
 
-	/**
-	 * 
-	 * @param auditHeader
-	 * @param method
-	 * @return
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method)
-			throws IllegalAccessException, InvocationTargetException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws Exception {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -2623,9 +2583,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 			setOverideMap(auditHeader.getOverideMap());
 
-		} catch (InterruptedException e) {
-			logger.error("Exception: ", e);
-		} catch (InterfaceException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 
@@ -3028,8 +2986,9 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		int format = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		financeMain.setDownPayment(
 				PennantApplicationUtil.unFormateAmount(this.downPayBank.getActualValue() == null ? BigDecimal.ZERO
-						: this.downPayBank.getActualValue().add(this.downPaySupl.getActualValue() == null
-								? BigDecimal.ZERO : this.downPaySupl.getActualValue()),
+						: this.downPayBank.getActualValue()
+								.add(this.downPaySupl.getActualValue() == null ? BigDecimal.ZERO
+										: this.downPaySupl.getActualValue()),
 						format));
 		financeMain
 				.setFinAssetValue(PennantApplicationUtil.unFormateAmount(this.finAssetValue.getActualValue(), format));
@@ -3346,7 +3305,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// 5.For ECS registration not required
 
 		repaymethod = StringUtils.trimToEmpty(repaymethod);
-		//this change is to display co-applicant mandates along with primary customer 
+		// this change is to display co-applicant mandates along with primary customer
 		List<Long> custIds = new ArrayList<Long>(1);
 		custIds.add(custid);
 		if (ImplementationConstants.MANDATE_ALLOW_CO_APP && getFinanceDetail() != null) {

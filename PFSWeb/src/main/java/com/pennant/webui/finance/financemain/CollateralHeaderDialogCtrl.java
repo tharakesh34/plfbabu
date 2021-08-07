@@ -1,47 +1,29 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CollateralHeaderDialogCtrl.java                                      * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CollateralHeaderDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
+ * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 10-05-2019		Srinivasa Varma			 0.2		  Development Item 82              	* 
- *                                                                                          * 
- * 16-05-2019		Srinivasa Varma			 0.3		  Development Item 82 Corrections	* 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * 10-05-2019 Srinivasa Varma 0.2 Development Item 82 * * 16-05-2019 Srinivasa Varma 0.3
+ * Development Item 82 Corrections * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -84,6 +66,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.commitment.commitment.CommitmentDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.webui.verification.LVerificationCtrl;
 import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
@@ -138,7 +121,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	private String moduleName;
 	private long customerId;
 	private List<String> assignCollateralRef;
-	//### 10-05-2018 Start Development Item 82
+	// ### 10-05-2018 Start Development Item 82
 	private Map<String, Object> rules = new HashMap<>();
 
 	private FinanceDetail financeDetail;
@@ -154,7 +137,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		this.rules = rules;
 	}
 
-	//### 10-05-2018 End Development Item 82
+	// ### 10-05-2018 End Development Item 82
 	/**
 	 * default constructor.<br>
 	 */
@@ -362,19 +345,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * New Button & Double Click Events for Assigning Collateral List
-	 * 
-	 * @param event
-	 * @throws InterruptedException
-	 * @throws SecurityException
-	 * @throws IllegalArgumentException
-	 * @throws NoSuchMethodException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 */
-	public void onClick$btnNew_CollateralAssignment(Event event) throws InterruptedException, SecurityException,
-			IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+	public void onClick$btnNew_CollateralAssignment(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
 		// If Record is processing with Prospect Customer and not yet created in Application
@@ -400,19 +371,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
-	 * New Button & Double Click Events for Assigning Collateral List
-	 * 
-	 * @param event
-	 * @throws InterruptedException
-	 * @throws SecurityException
-	 * @throws IllegalArgumentException
-	 * @throws NoSuchMethodException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 */
-	public void onClick$btnNew_AssetType(Event event) throws InterruptedException, SecurityException,
-			IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+	public void onClick$btnNew_AssetType(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
 		ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
@@ -443,32 +402,23 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		logger.debug("Leaving" + event.toString());
 	}
 
-	private int getFormat() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-			NoSuchMethodException, SecurityException {
+	private int getFormat() throws AppException {
 		int ccyFormat = 0;
 		if (getFinanceMainDialogCtrl() != null && getFinanceMainDialogCtrl() instanceof CommitmentDialogCtrl) {
 			ccyFormat = 2;
 		} else if (getFinanceMainDialogCtrl() != null
 				&& !(getFinanceMainDialogCtrl() instanceof CommitmentDialogCtrl)) {
-			ccyFormat = (int) getFinanceMainDialogCtrl().getClass().getMethod("getCcyFormat")
-					.invoke(getFinanceMainDialogCtrl());
+			try {
+				ccyFormat = (int) getFinanceMainDialogCtrl().getClass().getMethod("getCcyFormat")
+						.invoke(getFinanceMainDialogCtrl());
+			} catch (Exception e) {
+				throw new AppException("CollateralHeaderDialogCtrl", e);
+			}
 		}
 		return ccyFormat;
 	}
 
-	/**
-	 * Method for Rendering saved dynamic objects into list
-	 * 
-	 * @param extendedFieldRenderList
-	 * @param assetType
-	 * @throws SecurityException
-	 * @throws NoSuchMethodException
-	 * @throws InvocationTargetException
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 */
-	public void doFillAssetDetails(List<ExtendedFieldRender> extendedFieldRenderList) throws IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	public void doFillAssetDetails(List<ExtendedFieldRender> extendedFieldRenderList) throws AppException {
 		logger.debug("Entering");
 
 		setExtendedFieldRenderList(extendedFieldRenderList);
@@ -577,32 +527,20 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
-	 * Method for Filling List box with the list rendering for Assignments
-	 * 
-	 * @param collateralAssignments
-	 * @throws SecurityException
-	 * @throws NoSuchMethodException
-	 * @throws InvocationTargetException
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 */
-	public void doFillCollateralDetails(List<CollateralAssignment> collateralAssignments, boolean fromAssignment)
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException,
-			SecurityException {
+	public void doFillCollateralDetails(List<CollateralAssignment> collateralAssignments, boolean fromAssignment) {
 		logger.debug("Entering");
 
-		//### 10-05-2018 Start Development Item 82
+		// ### 10-05-2018 Start Development Item 82
 		BigDecimal totalBankValuation = new BigDecimal(0);
 		BigDecimal balanceAssignedValue = new BigDecimal(0);
 		BigDecimal totalAssignedValue = new BigDecimal(0);
 
-		//### 10-05-2018 End Development Item 82
+		// ### 10-05-2018 End Development Item 82
 
-		//### 16-05-2018 Start Development Item 82
+		// ### 16-05-2018 Start Development Item 82
 		BigDecimal totalLtv = new BigDecimal(0);
 		int assignedCount = 0;
-		//### 16-05-2018 End Development Item 82
+		// ### 16-05-2018 End Development Item 82
 
 		int totCollateralCount = 0;
 		BigDecimal totAssignedColValue = BigDecimal.ZERO;
@@ -641,7 +579,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				listcell.setStyle("text-align:right;");
 				listitem.appendChild(listcell);
 
-				// Available Assignment value 
+				// Available Assignment value
 				BigDecimal totAssignedValue = collateralAssignment.getBankValuation()
 						.multiply(collateralAssignment.getTotAssignedPerc())
 						.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
@@ -682,7 +620,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				ComponentsCtrl.applyForward(listitem, "onDoubleClick=onCollateralAssignItemDoubleClicked");
 				this.listBoxCollateralAssignments.appendChild(listitem);
 
-				//### 16-05-2018 Start Development Item 82
+				// ### 16-05-2018 Start Development Item 82
 				if ((StringUtils.equals(collateralAssignment.getRecordType(), PennantConstants.RECORD_TYPE_DEL)
 						|| StringUtils.equals(collateralAssignment.getRecordType(),
 								PennantConstants.RECORD_TYPE_CAN))) {
@@ -702,7 +640,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 						totalLtv = totalLtv.add(collateralAssignment.getSpecialLTV());
 					}
 				}
-				//### 16-05-2018 End Development Item 82
+				// ### 16-05-2018 End Development Item 82
 			}
 		}
 
@@ -727,14 +665,14 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			this.availableCollateral.setStyle("color:Green;font-weight:bold;");
 		}
 
-		//### 10-05-2018 Start Development Item 82
+		// ### 10-05-2018 Start Development Item 82
 
 		rules.put("Collaterals_Total_Assigned", totalAssignedValue);
 		rules.put("Collaterals_Total_UN_Assigned", balanceAssignedValue);
 		rules.put("Collateral_Bank_Valuation", totalBankValuation);
 
-		//### 10-05-2018 End  Development Item 82
-		//### 16-05-2018 Development Item 82
+		// ### 10-05-2018 End Development Item 82
+		// ### 16-05-2018 Development Item 82
 		rules.put("Collateral_Average_LTV", totalLtv);
 
 		if (fromAssignment) {
@@ -861,17 +799,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		}
 	}
 
-	/**
-	 * Method for Re-Rendering Utilized amount details for Collateral Assignment Calculations
-	 * 
-	 * @throws SecurityException
-	 * @throws NoSuchMethodException
-	 * @throws InvocationTargetException
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 */
-	public void updateUtilizedAmount(BigDecimal utilizedAmt) throws IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException, NoSuchMethodException, SecurityException {
+	public void updateUtilizedAmount(BigDecimal utilizedAmt) throws Exception {
 		logger.debug("Entering");
 		this.utilizedAmount = utilizedAmt;
 		doFillCollateralDetails(getCollateralAssignments(), false);

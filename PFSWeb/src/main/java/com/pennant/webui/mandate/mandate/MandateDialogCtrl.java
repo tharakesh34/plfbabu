@@ -121,6 +121,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.interfacebajaj.MandateRegistrationListCtrl;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -2548,7 +2549,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		setOverideMap(auditHeader.getOverideMap());

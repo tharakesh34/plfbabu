@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  NPAProvisionHeaderDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  04-05-2020    														*
- *                                                                  						*
- * Modified Date    :  04-05-2020    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : NPAProvisionHeaderDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 04-05-2020 * *
+ * Modified Date : 04-05-2020 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 04-05-2020       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 04-05-2020 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.applicationmaster.npaprovisionheader;
 
 import java.math.BigDecimal;
@@ -89,6 +71,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -392,48 +375,14 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a NPAProvisionHeader object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
-	private void doDelete() throws InterruptedException {
+	private void doDelete() {
 		logger.debug(Literal.ENTERING);
 
 		final NPAProvisionHeader aNPAProvisionHeader = new NPAProvisionHeader();
 		BeanUtils.copyProperties(this.nPAProvisionHeader, aNPAProvisionHeader);
-		String tranType = PennantConstants.TRAN_WF;
-doDelete(aNPAProvisionHeader.getFinType() + " - " + aNPAProvisionHeader.getFinTypeName(), aNPAProvisionHeader);
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aNPAProvisionHeader.getFinType() + " - " + aNPAProvisionHeader.getFinTypeName();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			doClearProvisionDeatils(aNPAProvisionHeader);
-			if (StringUtils.trimToEmpty(aNPAProvisionHeader.getRecordType()).equals("")) {
-				aNPAProvisionHeader.setVersion(aNPAProvisionHeader.getVersion() + 1);
-				aNPAProvisionHeader.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()) {
-					aNPAProvisionHeader.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aNPAProvisionHeader.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aNPAProvisionHeader.getNextTaskId(),
-							aNPAProvisionHeader);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aNPAProvisionHeader, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doClearProvisionDeatils(aNPAProvisionHeader);
+		doDelete(aNPAProvisionHeader.getFinType() + " - " + aNPAProvisionHeader.getFinTypeName(), aNPAProvisionHeader);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -770,7 +719,7 @@ doDelete(aNPAProvisionHeader.getFinType() + " - " + aNPAProvisionHeader.getFinTy
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		setOverideMap(auditHeader.getOverideMap());

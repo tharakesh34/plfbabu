@@ -76,6 +76,7 @@ import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.delegationdeviation.DeviationConfigCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine.Flow;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -1238,7 +1239,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		setOverideMap(auditHeader.getOverideMap());

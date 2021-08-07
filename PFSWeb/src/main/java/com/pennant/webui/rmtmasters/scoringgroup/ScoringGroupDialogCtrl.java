@@ -59,6 +59,7 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listgroupfoot;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
@@ -84,6 +85,7 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.rmtmasters.scoringslab.model.ScoringSlabListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -1117,38 +1119,40 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 * @throws InterruptedException
 	 */
 	public void onChange$categoryType(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
+
+		String catType = this.categoryType.getSelectedItem().getValue().toString();
 
 		if ((this.listBoxRetailScoringMetrics.getItemCount() > 0) || (this.listBoxFinScoringMetrics.getItemCount() > 0)
 				|| (this.listBoxNFScoringMetrics.getItemCount() > 0)) {
-			if (MessageUtil.confirm("Do You want to modify Scoring Metric Details Data?") == MessageUtil.YES) {
-				this.listBoxRetailScoringMetrics.getItems().clear();
-				this.listBoxFinScoringMetrics.getItems().clear();
-				this.listBoxNFScoringMetrics.getItems().clear();
+			MessageUtil.confirm("Do You want to modify Scoring Metric Details Data?", evnt -> {
+				if (Messagebox.ON_YES.equals(evnt.getName())) {
+					this.listBoxRetailScoringMetrics.getItems().clear();
+					this.listBoxFinScoringMetrics.getItems().clear();
+					this.listBoxNFScoringMetrics.getItems().clear();
 
-				this.finScoreMetricTab.setVisible(false);
-				this.nonFinScoreMetricTab.setVisible(false);
-				this.retailScoreMetricTab.setVisible(false);
-				if (this.categoryType.getSelectedIndex() != 0) {
-					if (PennantConstants.PFF_CUSTCTG_CORP
-							.equals(this.categoryType.getSelectedItem().getValue().toString())
-							|| PennantConstants.PFF_CUSTCTG_SME
-									.equals(this.categoryType.getSelectedItem().getValue().toString())) {
-						this.finScoreMetricTab.setVisible(true);
-						this.nonFinScoreMetricTab.setVisible(true);
-					} else {
-						this.retailScoreMetricTab.setVisible(true);
+					this.finScoreMetricTab.setVisible(false);
+					this.nonFinScoreMetricTab.setVisible(false);
+					this.retailScoreMetricTab.setVisible(false);
+					if (this.categoryType.getSelectedIndex() != 0) {
+						if (PennantConstants.PFF_CUSTCTG_CORP.equals(catType)
+								|| PennantConstants.PFF_CUSTCTG_SME.equals(catType)) {
+							this.finScoreMetricTab.setVisible(true);
+							this.nonFinScoreMetricTab.setVisible(true);
+						} else {
+							this.retailScoreMetricTab.setVisible(true);
+						}
 					}
+
 				}
-			}
+			});
 		} else {
 			this.finScoreMetricTab.setVisible(false);
 			this.nonFinScoreMetricTab.setVisible(false);
 			this.retailScoreMetricTab.setVisible(false);
 			if (this.categoryType.getSelectedIndex() != 0) {
-				if (PennantConstants.PFF_CUSTCTG_CORP.equals(this.categoryType.getSelectedItem().getValue().toString())
-						|| PennantConstants.PFF_CUSTCTG_SME
-								.equals(this.categoryType.getSelectedItem().getValue().toString())) {
+				if (PennantConstants.PFF_CUSTCTG_CORP.equals(catType)
+						|| PennantConstants.PFF_CUSTCTG_SME.equals(catType)) {
 					this.finScoreMetricTab.setVisible(true);
 					this.nonFinScoreMetricTab.setVisible(true);
 				} else {
@@ -1157,7 +1161,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 			}
 		}
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	private void doDelete() throws InterruptedException {
@@ -1475,7 +1479,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 

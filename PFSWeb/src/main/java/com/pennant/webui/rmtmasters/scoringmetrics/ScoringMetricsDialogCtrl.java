@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ScoringMetricsDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-12-2011    														*
- *                                                                  						*
- * Modified Date    :  05-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ScoringMetricsDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-12-2011 * *
+ * Modified Date : 05-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.rmtmasters.scoringmetrics;
@@ -83,13 +65,14 @@ import com.pennant.webui.rmtmasters.scoringgroup.ScoringGroupDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/RulesFactory/ScoringMetrics/scoringMetricsDialog.zul file.
  */
-public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
+public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringMetrics> {
 	private static final long serialVersionUID = 6462101709968848897L;
 	private static final Logger logger = LogManager.getLogger(ScoringMetricsDialogCtrl.class);
 
@@ -215,7 +198,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.metricMaxPoints.setMaxlength(4);
 		this.metricTotPercentage.setMaxlength(10);
 
@@ -308,8 +291,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -333,8 +315,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aScoringMetrics
-	 *            ScoringMetrics
+	 * @param aScoringMetrics ScoringMetrics
 	 */
 	public void doWriteBeanToComponents(ScoringMetrics aScoringMetrics) {
 		logger.debug("Entering");
@@ -408,7 +389,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
-			//this.aScoringMetrics.focus();
+			// this.aScoringMetrics.focus();
 		} else {
 			this.btnCtrl.setInitEdit();
 			doReadOnly();
@@ -560,7 +541,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 				if (code.contains("'")) {
 					code = code.replace("'", "");
 				}
-				//System.out.println(Integer.parseInt(code.trim()));
+				// System.out.println(Integer.parseInt(code.trim()));
 				if (new BigDecimal(code.trim()).compareTo(max) > 0) {
 					max = new BigDecimal(code.trim());
 				}
@@ -606,56 +587,33 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
+	protected boolean doCustomDelete(final ScoringMetrics aScoringMetrics, String tranType) {
+		tranType = PennantConstants.TRAN_DEL;
+		AuditHeader auditHeader = newScoringMetricsProcess(aScoringMetrics, tranType);
+		auditHeader = ErrorControl.showErrorDetails(this.window_ScoringMetricsDialog, auditHeader);
+		int retValue = auditHeader.getProcessStatus();
+		if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 
-	/**
-	 * Deletes a ScoringMetrics object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+			getScoringGroupDialogCtrl().doFillScoringMetrics(doCalMetricPercentage(this.scoringMetricsList),
+					this.categoryValue);
+			this.window_ScoringMetricsDialog.onClose();
+		}
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final ScoringMetrics aScoringMetrics = new ScoringMetrics();
 		BeanUtils.copyProperties(getScoringMetrics(), aScoringMetrics);
-		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("listheader_ScoringMetricsCode.label") + ":"
+		final String keyReference = Labels.getLabel("listheader_ScoringMetricsCode.label") + ":"
 				+ aScoringMetrics.getLovDescScoringCode();
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aScoringMetrics.getRecordType())) {
-				aScoringMetrics.setVersion(aScoringMetrics.getVersion() + 1);
-				aScoringMetrics.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (isWorkFlowEnabled()) {
-					aScoringMetrics.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			} else if (StringUtils.trimToEmpty(aScoringMetrics.getRecordType()).equals(PennantConstants.RCD_UPD)) {
-				aScoringMetrics.setVersion(aScoringMetrics.getVersion() + 1);
-				aScoringMetrics.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			}
-			try {
-				tranType = PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader = newScoringMetricsProcess(aScoringMetrics, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.window_ScoringMetricsDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+		doDelete(keyReference, aScoringMetrics);
 
-					getScoringGroupDialogCtrl().doFillScoringMetrics(doCalMetricPercentage(this.scoringMetricsList),
-							this.categoryValue);
-					this.window_ScoringMetricsDialog.onClose();
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -821,7 +779,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	 */
 	public List<ScoringMetrics> doCalMetricPercentage(List<ScoringMetrics> scoringMetricsList) {
 		logger.debug("Entering ");
-		BigDecimal totMetricScoringPoints = BigDecimal.ZERO; //total metric points
+		BigDecimal totMetricScoringPoints = BigDecimal.ZERO; // total metric points
 		for (int i = 0; i < scoringMetricsList.size(); i++) {
 			if (!(scoringMetricsList.get(i).getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)
 					|| scoringMetricsList.get(i).getRecordType().equals(PennantConstants.RECORD_TYPE_CAN))) {
@@ -894,7 +852,8 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 			for (int i = 0; i < getOriginalScoringMetricsList().size(); i++) {
 				ScoringMetrics scoringMetrics = getOriginalScoringMetricsList().get(i);
 
-				if (aScoringMetrics.getScoringId() == scoringMetrics.getScoringId()) { // Both Current and Existing list metric code same
+				if (aScoringMetrics.getScoringId() == scoringMetrics.getScoringId()) { // Both Current and Existing list
+																						// metric code same
 
 					/* if same ScoringSlab added twice set error detail */
 					if (aScoringMetrics.isNewRecord()) {
@@ -961,8 +920,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -979,8 +937,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

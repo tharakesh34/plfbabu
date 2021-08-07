@@ -75,6 +75,7 @@ import com.pennant.webui.rmtmasters.productAsset.model.ProductAssetListModelItem
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -853,7 +854,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<Product> {
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 

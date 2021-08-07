@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ProvisionDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-05-2012    														*
- *                                                                  						*
- * Modified Date    :  31-05-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ProvisionDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-05-2012 * * Modified
+ * Date : 31-05-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-05-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-05-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.provision;
@@ -110,6 +92,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinanceBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.notification.Notification;
@@ -395,8 +378,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -423,8 +405,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aProvision
-	 *            Provision
+	 * @param aProvision Provision
 	 * @throws InterruptedException
 	 */
 	public void doWriteBeanToComponents(Provision aProvision) throws InterruptedException {
@@ -439,16 +420,16 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		this.custID.setValue(aProvision.getCustID());
 		this.lovDescCustCIF.setValue(aProvision.getCustCIF());
 		this.custShrtName.setValue(aProvision.getCustShrtName());
-		//this.useNFProv.setChecked(aProvision.isUseNFProv());
-		//this.autoReleaseNFP.setChecked(aProvision.isAutoReleaseNFP());
-		//this.principalDue.setValue(PennantAppUtil.formateAmount(aProvision.getPrincipalDue(), format));
-		//this.profitDue.setValue(PennantAppUtil.formateAmount(aProvision.getProfitDue(), format));
+		// this.useNFProv.setChecked(aProvision.isUseNFProv());
+		// this.autoReleaseNFP.setChecked(aProvision.isAutoReleaseNFP());
+		// this.principalDue.setValue(PennantAppUtil.formateAmount(aProvision.getPrincipalDue(), format));
+		// this.profitDue.setValue(PennantAppUtil.formateAmount(aProvision.getProfitDue(), format));
 		/*
 		 * this.dueTotal.setValue(
 		 * PennantAppUtil.formateAmount(aProvision.getPrincipalDue().add(aProvision.getProfitDue()), format));
 		 */
-		//this.nonFormulaProv.setValue(PennantAppUtil.formateAmount(aProvision.getNonFormulaProv(), format));
-		//this.calProvisionedAmt.setValue(PennantAppUtil.formateAmount(aProvision.getProvisionAmtCal(), format));
+		// this.nonFormulaProv.setValue(PennantAppUtil.formateAmount(aProvision.getNonFormulaProv(), format));
+		// this.calProvisionedAmt.setValue(PennantAppUtil.formateAmount(aProvision.getProvisionAmtCal(), format));
 		this.provisionedAmt.setValue(PennantAppUtil.formateAmount(aProvision.getProvisionedAmt(), format));
 
 		this.dueFromDate.setValue(aProvision.getDueFromDate());
@@ -545,17 +526,17 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 			wve.add(we);
 		}
 		try {
-			//aProvision.setLovDescCustShrtName(this.custShrtName.getValue());
+			// aProvision.setLovDescCustShrtName(this.custShrtName.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			//aProvision.setUseNFProv(this.useNFProv.isChecked());
+			// aProvision.setUseNFProv(this.useNFProv.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			//aProvision.setAutoReleaseNFP(this.autoReleaseNFP.isChecked());
+			// aProvision.setAutoReleaseNFP(this.autoReleaseNFP.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -572,7 +553,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 											String.valueOf(this.principalDue.getValue()) }));
 				}
 			}
-			//	aProvision.setNonFormulaProv(PennantAppUtil.unFormateAmount(this.nonFormulaProv.getValue(), format));
+			// aProvision.setNonFormulaProv(PennantAppUtil.unFormateAmount(this.nonFormulaProv.getValue(), format));
 
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -585,7 +566,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		 * (WrongValueException we) { wve.add(we); }
 		 */
 		try {
-			//	aProvision.setProvisionAmtCal(PennantAppUtil.formateAmount(this.calProvisionedAmt.getValue(), format));
+			// aProvision.setProvisionAmtCal(PennantAppUtil.formateAmount(this.calProvisionedAmt.getValue(), format));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -848,8 +829,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		}
 
 		aFinanceDetail.setAccountingEventCode(eventCode);
-		aFinanceDetail.setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
+		aFinanceDetail.setModuleDefiner(StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 
 		// Document Details Saving
 		if (getDocumentDetailDialogCtrl() != null) {
@@ -1217,7 +1197,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 			}
 
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -1293,7 +1273,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		WorkFlowDetails workFlowDetails = null;
 		if (StringUtils.isNotEmpty(moduleDefiner)) {
 			FinanceWorkFlow financeWorkflow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(finType,
-					moduleDefiner, PennantConstants.WORFLOW_MODULE_FINANCE);//TODO: Check Promotion case
+					moduleDefiner, PennantConstants.WORFLOW_MODULE_FINANCE);// TODO: Check Promotion case
 			if (financeWorkflow != null && financeWorkflow.getWorkFlowType() != null) {
 				workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkflow.getWorkFlowType());
 			}
@@ -1445,8 +1425,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	 */
 	public FinanceDetail onExecuteStageAccDetail()
 			throws InterruptedException, IllegalAccessException, InvocationTargetException {
-		getFinanceDetail().setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
+		getFinanceDetail().setModuleDefiner(StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 		return getFinanceDetail();
 	}
 

@@ -760,62 +760,34 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
+	protected boolean doCustomDelete(final FinTypeFees aFinTypeFees, String tranType) {
+		tranType = PennantConstants.TRAN_DEL;
+		AuditHeader auditHeader = newFinTypeFeesProcess(aFinTypeFees, tranType);
+		auditHeader = ErrorControl.showErrorDetails(this.window_FinTypeFeesDialog, auditHeader);
+		int retValue = auditHeader.getProcessStatus();
+		if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+			if (this.isOriginationFee) {
+				getFinTypeFeesListCtrl().doFillFinTypeFeesOrigination(this.finTypeFeesList);
+			} else {
+				getFinTypeFeesListCtrl().doFillFinTypeFeesServicing(this.finTypeFeesList);
+			}
+			return true;
+		}
+		return false;
+	}
 
-	/**
-	 * Deletes a FinTypeFees object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		final FinTypeFees aFinTypeFees = new FinTypeFees();
 		BeanUtils.copyProperties(getFinTypeFees(), aFinTypeFees);
-		String tranType = PennantConstants.TRAN_WF;
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_FinTypeFeesDialog_FeeType.value") + " : " + aFinTypeFees.getFeeTypeCode() + ","
-				+ Labels.getLabel("label_FinTypeFeesDialog_FinEvent.value") + " : " + aFinTypeFees.getFinEvent();
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+		final String keyReference = Labels.getLabel("label_FinTypeFeesDialog_FeeType.value") + " : "
+				+ aFinTypeFees.getFeeTypeCode() + "," + Labels.getLabel("label_FinTypeFeesDialog_FinEvent.value")
+				+ " : " + aFinTypeFees.getFinEvent();
 
-			/*
-			 * if(!finTypeFeesListCtrl.validateFeeAccounting(aFinTypeFees,false)){ return; }
-			 */
+		doDelete(keyReference, aFinTypeFees);
 
-			logger.debug("doDelete: Yes");
-			if (StringUtils.isBlank(aFinTypeFees.getRecordType())) {
-				aFinTypeFees.setVersion(aFinTypeFees.getVersion() + 1);
-				aFinTypeFees.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (isWorkFlowEnabled()) {
-					aFinTypeFees.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			} else if (StringUtils.trimToEmpty(aFinTypeFees.getRecordType()).equals(PennantConstants.RCD_UPD)) {
-				aFinTypeFees.setVersion(aFinTypeFees.getVersion() + 1);
-				aFinTypeFees.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			}
-			try {
-				tranType = PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader = newFinTypeFeesProcess(aFinTypeFees, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.window_FinTypeFeesDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					if (this.isOriginationFee) {
-						getFinTypeFeesListCtrl().doFillFinTypeFeesOrigination(this.finTypeFeesList);
-					} else {
-						getFinTypeFeesListCtrl().doFillFinTypeFeesServicing(this.finTypeFeesList);
-					}
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

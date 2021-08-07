@@ -104,6 +104,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsListCtrl;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -1097,7 +1098,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		setOverideMap(auditHeader.getOverideMap());

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DocumentDetailsDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DocumentDetailsDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * *
+ * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.facility.facility;
@@ -88,6 +70,7 @@ import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -337,8 +320,7 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -371,8 +353,7 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aDocumentDetails
-	 *            DocumentDetails
+	 * @param aDocumentDetails DocumentDetails
 	 */
 	public void doWriteBeanToComponents(DocumentDetails aDocumentDetails) {
 		logger.debug("Entering");
@@ -594,61 +575,37 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
+	protected boolean doCustomDelete(final DocumentDetails aDocumentDetails, String tranType) {
+		if (isNewDocument()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newDocumentProcess(aDocumentDetails, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_FinDocumentDetailDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				getFacilityDocumentDetailDialogCtrl().doFillDocumentDetails(this.documentDetailList);
 
-	/**
-	 * Deletes a DocumentDetails object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+				if (checkListDocTypeMap != null && checkListDocTypeMap.containsKey(aDocumentDetails.getDocCategory())) {
+					List<Listitem> list = checkListDocTypeMap.get(aDocumentDetails.getDocCategory());
+					for (int i = 0; i < list.size(); i++) {
+						list.get(i).setSelected(false);
+					}
+				}
+
+				return true;
+			}
+
+		}
+		return false;
+	}
+
 	private void doDelete(String doctype) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		final DocumentDetails aDocumentDetails = new DocumentDetails();
 		BeanUtils.copyProperties(getDocumentDetails(), aDocumentDetails);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aDocumentDetails.getDocName();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aDocumentDetails.getRecordType())) {
-				aDocumentDetails.setVersion(aDocumentDetails.getVersion() + 1);
-				aDocumentDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aDocumentDetails.setNewRecord(true);
+		doDelete(aDocumentDetails.getDocName(), aDocumentDetails);
 
-				if (isWorkFlowEnabled()) {
-					aDocumentDetails.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (isNewDocument()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newDocumentProcess(aDocumentDetails, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_FinDocumentDetailDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						getFacilityDocumentDetailDialogCtrl().doFillDocumentDetails(this.documentDetailList);
-
-						if (checkListDocTypeMap != null
-								&& checkListDocTypeMap.containsKey(aDocumentDetails.getDocCategory())) {
-							List<Listitem> list = checkListDocTypeMap.get(aDocumentDetails.getDocCategory());
-							for (int i = 0; i < list.size(); i++) {
-								list.get(i).setSelected(false);
-							}
-						}
-						closeDialog();
-					}
-
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -857,7 +814,7 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				DocumentDetails documentDetails = getFacilityDocumentDetailDialogCtrl().getDocumentDetailsList().get(i);
 
 				if (documentDetails.getDocCategory().equals(aDocumentDetails.getDocCategory())) { // Both
-																										// Current
+																									// Current
 																									// and
 																									// Existing
 																									// list
@@ -927,8 +884,7 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -945,8 +901,7 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

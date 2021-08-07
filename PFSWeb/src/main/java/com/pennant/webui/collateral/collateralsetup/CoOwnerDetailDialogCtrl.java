@@ -1,42 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CoOwnerDetailDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  10-09-2013    														*
- *                                                                  						*
- * Modified Date    :  10-09-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CoOwnerDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 10-09-2013 * *
+ * Modified Date : 10-09-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-09-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 11-05-2013       Sai Krishna              0.2          1. PSD - 126100                   * 
- *                                                        City not populated for existing   * 
- *                                                        customer                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-09-2013 Pennant 0.1 * * 11-05-2013 Sai Krishna 0.2 1. PSD - 126100 * City not populated for existing * customer *
+ * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.collateral.collateralsetup;
@@ -100,6 +83,7 @@ import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -235,7 +219,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 				primaryCustCif = (String) arguments.get("primaryCustCif");
 			}
 
-			//collateralSetupCtrl
+			// collateralSetupCtrl
 			if (arguments.containsKey("collateralSetupCtrl")) {
 				setCollateralSetupDialogCtrl((CollateralSetupDialogCtrl) arguments.get("collateralSetupCtrl"));
 				setNewCoOwnerDetails(true);
@@ -324,8 +308,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -334,8 +317,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -646,8 +628,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCoOwnerDetail
-	 *            CoOwnerDetail
+	 * @param aCoOwnerDetail CoOwnerDetail
 	 */
 	public void doWriteBeanToComponents(CoOwnerDetail aCoOwnerDetail) {
 		logger.debug("Entering");
@@ -688,7 +669,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 			this.coOwnerCIF.setValue(getCustData(aCoOwnerDetail.getCustomerId()));
 			dosetCustAddress(aCoOwnerDetail.getCustomerId());
 		}
-//		getcoOwnerIdNumber();
+		// getcoOwnerIdNumber();
 		addrCountryTemp = this.addrCountry.getValue();
 		Filter[] provinceFilters = new Filter[1];
 		provinceFilters[0] = new Filter("CPCountry", this.addrCountry.getValue(), Filter.OP_EQUAL);
@@ -705,8 +686,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -792,7 +772,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 			if (!this.bankCustomer.isChecked()) {
 				aCoOwnerDetail.setCoOwnerIDNumber(this.coOwnerIDNumber.getValue());
 			}
-//			getcoOwnerIdNumber();
+			// getcoOwnerIdNumber();
 			if (this.coOwnerIDType.getSelectedIndex() != 0) {
 				if (this.coOwnerIDType.getSelectedItem().getValue().toString().equals(PennantConstants.CPRCODE)) {
 					aCoOwnerDetail.setCoOwnerIDNumber(this.coOwnerIDNumber.getValue());
@@ -1292,55 +1272,37 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Deletes a CoOwnerDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
-	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
-		final CoOwnerDetail aCoOwnerDetail = new CoOwnerDetail();
-		BeanUtils.copyProperties(getCoOwnerDetail(), aCoOwnerDetail);
-		String tranType = PennantConstants.TRAN_WF;
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ (aCoOwnerDetail.isBankCustomer()
-						? Labels.getLabel("label_CoOwnerDetailDialog_CoOwnerCIF/ID.value") + " : "
-								+ this.coOwnerCIF.getValue()
-						: Labels.getLabel("label_CoOwnerDetailDialog_CoOwnerIDType.value") + " : "
-								+ aCoOwnerDetail.getCoOwnerIDType());
-
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCoOwnerDetail.getRecordType())) {
-				aCoOwnerDetail.setVersion(aCoOwnerDetail.getVersion() + 1);
-				aCoOwnerDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aCoOwnerDetail.setNewRecord(true);
-				if (isWorkFlowEnabled()) {
-					aCoOwnerDetail.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
+	protected boolean doCustomDelete(final CoOwnerDetail aCoOwnerDetail, String tranType) {
+		if (isNewCoOwnerDetails()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newCoOwnerDetailProcess(aCoOwnerDetail, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_CoOwnerDetailDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				if (getCollateralSetupDialogCtrl() != null) {
+					getCollateralSetupDialogCtrl().doFillCoOwnerDetails(this.coOwnerDetailList);
 				}
-			}
-			try {
-				if (isNewCoOwnerDetails()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newCoOwnerDetailProcess(aCoOwnerDetail, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_CoOwnerDetailDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						if (getCollateralSetupDialogCtrl() != null) {
-							getCollateralSetupDialogCtrl().doFillCoOwnerDetails(this.coOwnerDetailList);
-						}
-						closeDialog();
-					}
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
+				return true;
 			}
 		}
-		logger.debug("Leaving");
+
+		return false;
+	}
+
+	private void doDelete() throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+
+		final CoOwnerDetail aCoOwnerDetail = new CoOwnerDetail();
+		BeanUtils.copyProperties(getCoOwnerDetail(), aCoOwnerDetail);
+
+		final String keyReference = (aCoOwnerDetail.isBankCustomer()
+				? Labels.getLabel("label_CoOwnerDetailDialog_CoOwnerCIF/ID.value") + " : " + this.coOwnerCIF.getValue()
+				: Labels.getLabel("label_CoOwnerDetailDialog_CoOwnerIDType.value") + " : "
+						+ aCoOwnerDetail.getCoOwnerIDType());
+
+		doDelete(keyReference, aCoOwnerDetail);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1458,11 +1420,9 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1572,7 +1532,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	 */
 	public void onChange$coOwnerIDNumber(Event event) {
 		logger.debug("Entering" + event.toString());
-//		getcoOwnerIdNumber();
+		// getcoOwnerIdNumber();
 		logger.debug("Leaving" + event.toString());
 	}
 

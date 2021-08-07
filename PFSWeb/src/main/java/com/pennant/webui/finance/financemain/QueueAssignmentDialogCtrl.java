@@ -69,6 +69,7 @@ import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -690,7 +691,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignmentHeader
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		setOverideMap(auditHeader.getOverideMap());

@@ -49,6 +49,7 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Hlayout;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
@@ -80,6 +81,7 @@ import com.pennant.webui.dedup.dedupfields.BuilderUtilListbox;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -610,10 +612,12 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 				if (StringUtils.isNotEmpty(cb.getValue()) || StringUtils.isNotEmpty(tb.getValue())) {
 					final String msg = Labels.getLabel("RuleDialog_message_Data_Modified");
 
-					if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-						clearAndBuildTree(this.collateralType.getSelectedItem().getValue().toString());
-						this.sQLQuery.setValue("");
-					}
+					MessageUtil.confirm(msg, evnt -> {
+						if (Messagebox.ON_YES.equals(evnt.getName())) {
+							clearAndBuildTree(this.collateralType.getSelectedItem().getValue().toString());
+							this.sQLQuery.setValue("");
+						}
+					});
 				} else {
 					clearAndBuildTree(this.collateralType.getSelectedItem().getValue().toString());
 				}
@@ -654,11 +658,12 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 				}
 				if (StringUtils.isNotEmpty(cb.getValue()) || StringUtils.isNotEmpty(tb.getValue())) {
 					final String msg = Labels.getLabel("RuleDialog_message_Data_Modified");
-
-					if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-						clearAndBuildTree(this.custCtgCode.getSelectedItem().getValue().toString());
-						this.sQLQuery.setValue("");
-					}
+					MessageUtil.confirm(msg, evnt -> {
+						if (Messagebox.ON_YES.equals(evnt.getName())) {
+							clearAndBuildTree(this.custCtgCode.getSelectedItem().getValue().toString());
+							this.sQLQuery.setValue("");
+						}
+					});
 				} else {
 					clearAndBuildTree(this.custCtgCode.getSelectedItem().getValue().toString());
 				}
@@ -1860,7 +1865,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 

@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LegalApplicantDetailDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  16-06-2018    														*
- *                                                                  						*
- * Modified Date    :  16-06-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LegalApplicantDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 16-06-2018 *
+ * * Modified Date : 16-06-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 16-06-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 16-06-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.legal.legalapplicantdetail;
 
 import java.util.ArrayList;
@@ -134,8 +116,7 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_LegalApplicantDetailDialog(Event event) throws Exception {
@@ -239,8 +220,7 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
@@ -253,8 +233,7 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -265,8 +244,7 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -277,8 +255,7 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -289,8 +266,7 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -301,8 +277,7 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -313,8 +288,7 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -452,8 +426,7 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param legalApplicantDetail
-	 *            The entity that need to be render.
+	 * @param legalApplicantDetail The entity that need to be render.
 	 */
 	public void doShowDialog(LegalApplicantDetail legalApplicantDetail) {
 		logger.debug(Literal.LEAVING);
@@ -594,60 +567,37 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a LegalApplicantDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+	protected boolean doCustomDelete(final LegalApplicantDetail aLegalApplicantDetail, String tranType) {
+		if (isNewApplicantDetails()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = processDetails(aLegalApplicantDetail, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_LegalApplicantDetailDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				if (getLegalDetailDialogCtrl() != null) {
+					getLegalDetailDialogCtrl().doFillApplicantDetails(this.legalApplicantDetailsList);
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.LEAVING);
 
 		final LegalApplicantDetail aLegalApplicantDetail = new LegalApplicantDetail();
 		BeanUtils.copyProperties(this.legalApplicantDetail, aLegalApplicantDetail);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aLegalApplicantDetail.getPropertyOwnersName();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+		doDelete(aLegalApplicantDetail.getPropertyOwnersName(), aLegalApplicantDetail);
 
-			if (StringUtils.isBlank(aLegalApplicantDetail.getRecordType())) {
-				aLegalApplicantDetail.setVersion(aLegalApplicantDetail.getVersion() + 1);
-				aLegalApplicantDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aLegalApplicantDetail.setNewRecord(true);
-				if (isWorkFlowEnabled()) {
-					aLegalApplicantDetail.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (isNewApplicantDetails()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = processDetails(aLegalApplicantDetail, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_LegalApplicantDetailDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						if (getLegalDetailDialogCtrl() != null) {
-							getLegalDetailDialogCtrl().doFillApplicantDetails(this.legalApplicantDetailsList);
-						}
-						closeDialog();
-					}
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
-		}
 		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");

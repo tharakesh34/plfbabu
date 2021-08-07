@@ -94,6 +94,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.GlobalVariable;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -2105,7 +2106,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error(e);
 		}
 

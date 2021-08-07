@@ -126,6 +126,7 @@ import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListRe
 import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldRenderDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -2516,7 +2517,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");

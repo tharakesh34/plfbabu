@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerPhoneNumberDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerPhoneNumberDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * *
+ * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financialsummary;
@@ -71,6 +53,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.customermasters.customer.CustomerViewDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -301,8 +284,7 @@ public class RisksAndMitigantsDialogCtrl extends GFCBaseCtrl<RisksAndMitigants> 
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -325,8 +307,7 @@ public class RisksAndMitigantsDialogCtrl extends GFCBaseCtrl<RisksAndMitigants> 
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCustomerPhoneNumber
-	 *            CustomerPhoneNumber
+	 * @param aCustomerPhoneNumber CustomerPhoneNumber
 	 */
 	public void doWriteBeanToComponents(RisksAndMitigants risksAndMitigants) {
 		logger.debug("Entering");
@@ -437,63 +418,60 @@ public class RisksAndMitigantsDialogCtrl extends GFCBaseCtrl<RisksAndMitigants> 
 
 	// CRUD operations
 
-	/**
-	 * Deletes a CustomerPhoneNumber object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+	protected void onDoDelete(final RisksAndMitigants arisksAndMitigants) {
+
+		String tranType = PennantConstants.TRAN_WF;
+
+		if (StringUtils.isBlank(arisksAndMitigants.getRecordType())) {
+			arisksAndMitigants.setVersion(arisksAndMitigants.getVersion() + 1);
+			arisksAndMitigants.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			if (!isFinanceProcess && getRisksAndMitigants() != null && getRisksAndMitigants().isWorkflow()) {
+				arisksAndMitigants.setNewRecord(true);
+			}
+			if (isWorkFlowEnabled()) {
+				arisksAndMitigants.setNewRecord(true);
+				tranType = PennantConstants.TRAN_WF;
+			} else {
+				tranType = PennantConstants.TRAN_DEL;
+			}
+		} else if (StringUtils.equals(arisksAndMitigants.getRecordType(), PennantConstants.RCD_UPD)) {
+			arisksAndMitigants.setNewRecord(true);
+		}
+
+		try {
+			if (isNewRiskAndMitigaints()) {
+				tranType = PennantConstants.TRAN_DEL;
+				AuditHeader auditHeader = newRiskAndMitigantsProcess(risksAndMitigants, tranType);
+				auditHeader = ErrorControl.showErrorDetails(this.window_RisksAndMitigantsDialog, auditHeader);
+				int retValue = auditHeader.getProcessStatus();
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+					getFinancialSummaryDialogCtrl().doFillRisksAndMitigants(this.risksAndMitigant);
+					// true;
+					// send the data back to customer
+					closeDialog();
+				}
+
+			} else if (doProcess(arisksAndMitigants, tranType)) {
+				/* refreshList(); */
+				closeDialog();
+			}
+
+		} catch (DataAccessException e) {
+			MessageUtil.showError(e);
+		}
+	}
+
 	private void doDelete() throws InterruptedException {
 		logger.debug("Entering");
 
 		final RisksAndMitigants arisksAndMitigants = new RisksAndMitigants();
 		BeanUtils.copyProperties(getRisksAndMitigants(), arisksAndMitigants);
-		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneTypeCode.value") + " : "
+		final String keyReference = Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneTypeCode.value") + " : "
 				+ arisksAndMitigants.getId();
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(arisksAndMitigants.getRecordType())) {
-				arisksAndMitigants.setVersion(arisksAndMitigants.getVersion() + 1);
-				arisksAndMitigants.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (!isFinanceProcess && getRisksAndMitigants() != null && getRisksAndMitigants().isWorkflow()) {
-					arisksAndMitigants.setNewRecord(true);
-				}
-				if (isWorkFlowEnabled()) {
-					arisksAndMitigants.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			} else if (StringUtils.equals(arisksAndMitigants.getRecordType(), PennantConstants.RCD_UPD)) {
-				arisksAndMitigants.setNewRecord(true);
-			}
-
-			try {
-
-				if (isNewRiskAndMitigaints()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newRiskAndMitigantsProcess(risksAndMitigants, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_RisksAndMitigantsDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						getFinancialSummaryDialogCtrl().doFillRisksAndMitigants(this.risksAndMitigant);
-						// true;
-						// send the data back to customer
-						closeDialog();
-					}
-
-				} else if (doProcess(arisksAndMitigants, tranType)) {
-					/* refreshList(); */
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(keyReference, arisksAndMitigants);
 		logger.debug("Leaving");
 	}
 
@@ -736,11 +714,9 @@ public class RisksAndMitigantsDialogCtrl extends GFCBaseCtrl<RisksAndMitigants> 
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aCustomerPhoneNumber
-	 *            (CustomerPhoneNumber)
+	 * @param aCustomerPhoneNumber (CustomerPhoneNumber)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType             (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -826,11 +802,9 @@ public class RisksAndMitigantsDialogCtrl extends GFCBaseCtrl<RisksAndMitigants> 
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -846,7 +820,7 @@ public class RisksAndMitigantsDialogCtrl extends GFCBaseCtrl<RisksAndMitigants> 
 
 				if (StringUtils.isBlank(method)) {
 					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						//auditHeader = getRisksAndMitigantsService().delete(auditHeader);
+						// auditHeader = getRisksAndMitigantsService().delete(auditHeader);
 						deleteNotes = true;
 					} else {
 						auditHeader = getRisksAndMitigantsService().saveOrUpdate(auditHeader);
@@ -854,7 +828,7 @@ public class RisksAndMitigantsDialogCtrl extends GFCBaseCtrl<RisksAndMitigants> 
 
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						//auditHeader = getRisksAndMitigantsService().doApprove(auditHeader);
+						// auditHeader = getRisksAndMitigantsService().doApprove(auditHeader);
 						if (arisksAndMitigants.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
@@ -890,7 +864,7 @@ public class RisksAndMitigantsDialogCtrl extends GFCBaseCtrl<RisksAndMitigants> 
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -916,8 +890,7 @@ public class RisksAndMitigantsDialogCtrl extends GFCBaseCtrl<RisksAndMitigants> 
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -935,8 +908,7 @@ public class RisksAndMitigantsDialogCtrl extends GFCBaseCtrl<RisksAndMitigants> 
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

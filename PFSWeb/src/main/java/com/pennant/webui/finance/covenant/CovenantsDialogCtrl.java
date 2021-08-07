@@ -1,46 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CovenantsDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-08-2013    														*
- *                                                                  						*
- * Modified Date    :  14-08-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CovenantsDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-08-2013 * * Modified
+ * Date : 14-08-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-08-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 08-05-2018       Vinay					 0.2		As per mail from Raju ,				*
- * 													subject : Daily status call : 19 April  * 
- *                                                  added OTC field  with validation from   *
- *                                                 	Document Types master based on          *
- *                                                 	PDC and OTC is required or not.         * 
- *16-05-2018       Madhu                     0.3    added OTC/PDD functionality.            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-08-2013 Pennant 0.1 * * 08-05-2018 Vinay 0.2 As per mail from Raju , * subject : Daily status call : 19 April *
+ * added OTC field with validation from * Document Types master based on * PDC and OTC is required or not. * 16-05-2018
+ * Madhu 0.3 added OTC/PDD functionality. * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.covenant;
@@ -1241,59 +1222,30 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a FinCovenantTypeDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+	protected boolean doCustomDelete(final Covenant aCovenant, String tranType) {
+		if (isNewCustomer()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newFinCovenantTypeProcess(aCovenant, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.covenantDialogWindow, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				covenantsListCtrl.doFillCovenants(this.covenants);
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		final Covenant aCovenant = new Covenant();
 		BeanUtils.copyProperties(getCovenant(), aCovenant);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n"
-				+ Labels.getLabel("FinCovenantType_CovenantType") + " : " + aCovenant.getCovenantTypeCode();
+		final String keyReference = Labels.getLabel("FinCovenantType_CovenantType") + " : "
+				+ aCovenant.getCovenantTypeCode();
 
-		if (MessageUtil.confirm(msg) == MessageUtil.NO) {
-			return;
-		}
-
-		if (StringUtils.isBlank(aCovenant.getRecordType())) {
-			aCovenant.setVersion(aCovenant.getVersion() + 1);
-			aCovenant.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			aCovenant.setNewRecord(true);
-
-			if (isWorkFlowEnabled()) {
-				aCovenant.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-				aCovenant.setNewRecord(true);
-				tranType = PennantConstants.TRAN_WF;
-				getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aCovenant.getNextTaskId(), aCovenant);
-			} else {
-				tranType = PennantConstants.TRAN_DEL;
-			}
-		} else if (StringUtils.trimToEmpty(aCovenant.getRecordType()).equals(PennantConstants.RCD_UPD)) {
-			aCovenant.setVersion(aCovenant.getVersion() + 1);
-			aCovenant.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-		}
-
-		try {
-			if (isNewCustomer()) {
-				tranType = PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader = newFinCovenantTypeProcess(aCovenant, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.covenantDialogWindow, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					covenantsListCtrl.doFillCovenants(this.covenants);
-					closeDialog();
-				}
-			}
-
-		} catch (DataAccessException e) {
-			MessageUtil.showError(e);
-		}
+		doDelete(keyReference, aCovenant);
 
 		logger.debug(Literal.LEAVING);
 	}

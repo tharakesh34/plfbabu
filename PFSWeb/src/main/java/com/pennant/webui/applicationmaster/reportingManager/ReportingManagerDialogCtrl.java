@@ -36,6 +36,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.administration.securityuser.SecurityUserDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.DataType;
@@ -96,11 +97,9 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
-	 * @throws Exceptionif
-	 *             (isWorkFlowEnabled()) { this.userAction = setListRecordStatus(this.userAction);
-	 *             getUserWorkspace().allocateRoleAuthorities(getRole(), "CustomerAddresDialog"); }
+	 * @param event An event sent to the event handler of the component.
+	 * @throws Exceptionif (isWorkFlowEnabled()) { this.userAction = setListRecordStatus(this.userAction);
+	 *                     getUserWorkspace().allocateRoleAuthorities(getRole(), "CustomerAddresDialog"); }
 	 */
 	public void onCreate$window_ReportingManagerDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -219,8 +218,7 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
@@ -233,8 +231,7 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -245,8 +242,7 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -257,8 +253,7 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -269,8 +264,7 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -281,8 +275,7 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -293,8 +286,7 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -627,8 +619,7 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param reportingManager
-	 *            The entity that need to be render.
+	 * @param reportingManager The entity that need to be render.
 	 */
 	public void doShowDialog(ReportingManager reportingManager) {
 		logger.debug(Literal.LEAVING);
@@ -741,24 +732,21 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a ReportingManager object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		final ReportingManager aReportingManager = new ReportingManager();
 		BeanUtils.copyProperties(this.reportingManager, aReportingManager);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aReportingManager.getId();
-		if (MessageUtil.confirm(msg) != MessageUtil.YES) {
-			return;
-		}
+		final String keyReference = String.valueOf(aReportingManager.getId());
+
+		doDelete(keyReference, aReportingManager);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	protected void onDoDelete(final ReportingManager aReportingManager) {
+		String tranType = PennantConstants.TRAN_WF;
 
 		if (StringUtils.trimToEmpty(aReportingManager.getRecordType()).equals("")) {
 			aReportingManager.setVersion(aReportingManager.getVersion() + 1);
@@ -798,8 +786,6 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 		} catch (DataAccessException e) {
 			MessageUtil.showError(e);
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1045,11 +1031,9 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1137,10 +1121,8 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */
@@ -1204,7 +1186,7 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		setOverideMap(auditHeader.getOverideMap());

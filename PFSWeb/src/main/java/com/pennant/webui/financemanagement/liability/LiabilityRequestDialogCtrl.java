@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LiabilityRequestDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-12-2015    														*
- *                                                                  						*
- * Modified Date    :  31-12-2015    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LiabilityRequestDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-12-2015 * *
+ * Modified Date : 31-12-2015 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-12-2015       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-12-2015 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.liability;
@@ -118,6 +100,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -357,7 +340,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 					this.numberOfTerms_two.setValue(1);
 				}
 				this.row_stepFinance.setVisible(false);
-				//this.row_manualSteps.setVisible(false);
+				// this.row_manualSteps.setVisible(false);
 			}
 
 			setDialog(DialogType.EMBEDDED);
@@ -445,8 +428,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		}
 
 		aFinanceDetail.setAccountingEventCode(eventCode);
-		aFinanceDetail.setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
+		aFinanceDetail.setModuleDefiner(StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 
 		// Resetting Service Task ID's from Original State
 		aFinanceMain.setRoleCode(this.curRoleCode);
@@ -718,7 +700,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		liabilityRequest.setFinanceDetail(aFinanceDetail);
 		liabilityRequest.setUserDetails(aFinanceDetail.getUserDetails());
 
-		// Auto Generation of Agreements while submitting 
+		// Auto Generation of Agreements while submitting
 		generateAggrement(aFinanceDetail);
 
 		if (isWorkFlowEnabled()) {
@@ -904,7 +886,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 			aFinanceDetail.setDocumentDetailsList(new ArrayList<DocumentDetails>());
 		}
 
-		//aFinanceDetail.getDocumentDetailsList().addAll(agenDocList);
+		// aFinanceDetail.getDocumentDetailsList().addAll(agenDocList);
 
 		for (int i = 0; i < agenDocList.size(); i++) {
 			boolean rcdFound = false;
@@ -1083,7 +1065,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 			LiabilityRequest liabilityRequest = (LiabilityRequest) auditHeader.getAuditDetail().getModelData();
 			setNextUserId(liabilityRequest.getFinanceDetail().getFinScheduleData().getFinanceMain().getNextUserId());
 
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		} catch (DataAccessException e) {
 			throw e;
@@ -1099,8 +1081,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceMain
-	 *            financeMain
+	 * @param aFinanceMain financeMain
 	 * @throws ParseException
 	 * @throws InterruptedException
 	 * @throws InvocationTargetException
@@ -1780,7 +1761,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		WorkFlowDetails workFlowDetails = null;
 		if (StringUtils.isNotEmpty(moduleDefiner)) {
 			FinanceWorkFlow financeWorkflow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(finType,
-					moduleDefiner, PennantConstants.WORFLOW_MODULE_FINANCE);//TODO: Check Promotion case
+					moduleDefiner, PennantConstants.WORFLOW_MODULE_FINANCE);// TODO: Check Promotion case
 			if (financeWorkflow != null && financeWorkflow.getWorkFlowType() != null) {
 				workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkflow.getWorkFlowType());
 			}

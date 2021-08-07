@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerEmploymentDetailDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerEmploymentDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date :
+ * 26-05-2011 * * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.customermasters.customeremploymentdetail;
 
 import java.sql.Timestamp;
@@ -88,6 +70,7 @@ import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.customermasters.customer.CustomerViewDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -269,7 +252,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		doSetFieldProperties();
 		doShowDialog(getCustomerEmploymentDetail());
 
-		//Calling SelectCtrl For proper selection of Customer
+		// Calling SelectCtrl For proper selection of Customer
 		if (isNewRecord() && !isNewCustomer()) {
 			onload();
 		}
@@ -282,9 +265,9 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.custEmpName.setInputAllowed(false);
-		//this.custEmpName.setDisplayStyle(3);
+		// this.custEmpName.setDisplayStyle(3);
 		this.custEmpName.setMandatoryStyle(true);
 		this.custEmpName.setModuleName("EmployerDetail");
 		this.custEmpName.setValueColumn("EmpName");
@@ -406,8 +389,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -430,8 +412,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCustomerEmploymentDetail
-	 *            CustomerEmploymentDetail
+	 * @param aCustomerEmploymentDetail CustomerEmploymentDetail
 	 */
 	public void doWriteBeanToComponents(CustomerEmploymentDetail aCustomerEmploymentDetail) {
 		logger.debug("Entering");
@@ -467,7 +448,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 			this.custEmpDesg.setDescription(aCustomerEmploymentDetail.getLovDescCustEmpDesgName());
 			this.custEmpDept.setDescription(aCustomerEmploymentDetail.getLovDescCustEmpDeptName());
 			this.custEmpType.setDescription(aCustomerEmploymentDetail.getLovDescCustEmpTypeName());
-			//this.custEmpName.setDescription(aCustomerEmploymentDetail.getLovDesccustEmpName());
+			// this.custEmpName.setDescription(aCustomerEmploymentDetail.getLovDesccustEmpName());
 		}
 		this.recordStatus.setValue(aCustomerEmploymentDetail.getRecordStatus());
 
@@ -645,64 +626,64 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 			wve.add(we);
 		}
 
-		//		try {
-		//		    aCustomerEmploymentDetail.setCustEmpHNbr(this.custEmpHNbr.getValue());
-		//		}catch (WrongValueException we ) {
-		//			wve.add(we);
-		//		}
-		//		try {
-		//		    aCustomerEmploymentDetail.setCustEMpFlatNbr(this.custEMpFlatNbr.getValue());
-		//		}catch (WrongValueException we ) {
-		//			wve.add(we);
-		//		}
-		//		try {
-		//		    aCustomerEmploymentDetail.setCustEmpAddrStreet(this.custEmpAddrStreet.getValue());
-		//		}catch (WrongValueException we ) {
-		//			wve.add(we);
-		//		}
-		//		try {
-		//		    aCustomerEmploymentDetail.setCustEMpAddrLine1(this.custEMpAddrLine1.getValue());
-		//		}catch (WrongValueException we ) {
-		//			wve.add(we);
-		//		}
-		//		try {
-		//		    aCustomerEmploymentDetail.setCustEMpAddrLine2(this.custEMpAddrLine2.getValue());
-		//		}catch (WrongValueException we ) {
-		//			wve.add(we);
-		//		}
-		//		try {
-		//		    aCustomerEmploymentDetail.setCustEmpPOBox(this.custEmpPOBox.getValue());
-		//		}catch (WrongValueException we ) {
-		//			wve.add(we);
-		//		}
-		//		try {
-		//	 		aCustomerEmploymentDetail.setLovDescCustEmpAddrCityName(this.lovDescCustEmpAddrCityName.getValue());
-		//	 		aCustomerEmploymentDetail.setCustEmpAddrCity(this.custEmpAddrCity.getValue());	
-		//		}catch (WrongValueException we ) {
-		//			wve.add(we);
-		//		}
-		//		try {
-		//	 		aCustomerEmploymentDetail.setLovDescCustEmpAddrProvinceName(this.lovDescCustEmpAddrProvinceName.getValue());
-		//	 		aCustomerEmploymentDetail.setCustEmpAddrProvince(this.custEmpAddrProvince.getValue());	
-		//		}catch (WrongValueException we ) {
-		//			wve.add(we);
-		//		}
-		//		try {
-		//	 		aCustomerEmploymentDetail.setLovDescCustEmpAddrCountryName(this.lovDescCustEmpAddrCountryName.getValue());
-		//	 		aCustomerEmploymentDetail.setCustEmpAddrCountry(this.custEmpAddrCountry.getValue());	
-		//		}catch (WrongValueException we ) {
-		//			wve.add(we);
-		//		}
-		//		try {
-		//		    aCustomerEmploymentDetail.setCustEmpAddrZIP(this.custEmpAddrZIP.getValue());
-		//		}catch (WrongValueException we ) {
-		//			wve.add(we);
-		//		}
-		//		try {
-		//		    aCustomerEmploymentDetail.setCustEmpAddrPhone(this.custEmpAddrPhone.getValue());
-		//		}catch (WrongValueException we ) {
-		//			wve.add(we);
-		//		}
+		// try {
+		// aCustomerEmploymentDetail.setCustEmpHNbr(this.custEmpHNbr.getValue());
+		// }catch (WrongValueException we ) {
+		// wve.add(we);
+		// }
+		// try {
+		// aCustomerEmploymentDetail.setCustEMpFlatNbr(this.custEMpFlatNbr.getValue());
+		// }catch (WrongValueException we ) {
+		// wve.add(we);
+		// }
+		// try {
+		// aCustomerEmploymentDetail.setCustEmpAddrStreet(this.custEmpAddrStreet.getValue());
+		// }catch (WrongValueException we ) {
+		// wve.add(we);
+		// }
+		// try {
+		// aCustomerEmploymentDetail.setCustEMpAddrLine1(this.custEMpAddrLine1.getValue());
+		// }catch (WrongValueException we ) {
+		// wve.add(we);
+		// }
+		// try {
+		// aCustomerEmploymentDetail.setCustEMpAddrLine2(this.custEMpAddrLine2.getValue());
+		// }catch (WrongValueException we ) {
+		// wve.add(we);
+		// }
+		// try {
+		// aCustomerEmploymentDetail.setCustEmpPOBox(this.custEmpPOBox.getValue());
+		// }catch (WrongValueException we ) {
+		// wve.add(we);
+		// }
+		// try {
+		// aCustomerEmploymentDetail.setLovDescCustEmpAddrCityName(this.lovDescCustEmpAddrCityName.getValue());
+		// aCustomerEmploymentDetail.setCustEmpAddrCity(this.custEmpAddrCity.getValue());
+		// }catch (WrongValueException we ) {
+		// wve.add(we);
+		// }
+		// try {
+		// aCustomerEmploymentDetail.setLovDescCustEmpAddrProvinceName(this.lovDescCustEmpAddrProvinceName.getValue());
+		// aCustomerEmploymentDetail.setCustEmpAddrProvince(this.custEmpAddrProvince.getValue());
+		// }catch (WrongValueException we ) {
+		// wve.add(we);
+		// }
+		// try {
+		// aCustomerEmploymentDetail.setLovDescCustEmpAddrCountryName(this.lovDescCustEmpAddrCountryName.getValue());
+		// aCustomerEmploymentDetail.setCustEmpAddrCountry(this.custEmpAddrCountry.getValue());
+		// }catch (WrongValueException we ) {
+		// wve.add(we);
+		// }
+		// try {
+		// aCustomerEmploymentDetail.setCustEmpAddrZIP(this.custEmpAddrZIP.getValue());
+		// }catch (WrongValueException we ) {
+		// wve.add(we);
+		// }
+		// try {
+		// aCustomerEmploymentDetail.setCustEmpAddrPhone(this.custEmpAddrPhone.getValue());
+		// }catch (WrongValueException we ) {
+		// wve.add(we);
+		// }
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -899,63 +880,56 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		getCustomerEmploymentDetailListCtrl().search();
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a CustomerEmploymentDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final CustomerEmploymentDetail aCustomerEmploymentDetail = new CustomerEmploymentDetail();
 		BeanUtils.copyProperties(getCustomerEmploymentDetail(), aCustomerEmploymentDetail);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpName.value") + " : "
+		final String keyReference = Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpName.value") + " : "
 				+ aCustomerEmploymentDetail.getLovDesccustEmpName();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCustomerEmploymentDetail.getRecordType())) {
-				aCustomerEmploymentDetail.setVersion(aCustomerEmploymentDetail.getVersion() + 1);
-				aCustomerEmploymentDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (!isFinanceProcess && getCustomerDialogCtrl() != null
-						&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
-					aCustomerEmploymentDetail.setNewRecord(true);
-				}
-				if (isWorkFlowEnabled()) {
-					aCustomerEmploymentDetail.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
+
+		doDelete(keyReference, aCustomerEmploymentDetail);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	protected void onDoDelete(final CustomerEmploymentDetail aCustomerEmploymentDetail) {
+		String tranType = PennantConstants.TRAN_WF;
+		if (StringUtils.isBlank(aCustomerEmploymentDetail.getRecordType())) {
+			aCustomerEmploymentDetail.setVersion(aCustomerEmploymentDetail.getVersion() + 1);
+			aCustomerEmploymentDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			if (!isFinanceProcess && getCustomerDialogCtrl() != null
+					&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
+				aCustomerEmploymentDetail.setNewRecord(true);
 			}
-
-			try {
-				if (isNewCustomer()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newCusomerProcess(aCustomerEmploymentDetail, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerEmploymentDetailDialog,
-							auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						getCustomerDialogCtrl().doFillCustomerEmploymentDetail(this.customerEmploymentDetails);
-						// send the data back to customer
-						closeDialog();
-					}
-
-				} else if (doProcess(aCustomerEmploymentDetail, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
+			if (isWorkFlowEnabled()) {
+				aCustomerEmploymentDetail.setNewRecord(true);
+				tranType = PennantConstants.TRAN_WF;
+			} else {
+				tranType = PennantConstants.TRAN_DEL;
 			}
 		}
-		logger.debug("Leaving");
+
+		try {
+			if (isNewCustomer()) {
+				tranType = PennantConstants.TRAN_DEL;
+				AuditHeader auditHeader = newCusomerProcess(aCustomerEmploymentDetail, tranType);
+				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerEmploymentDetailDialog, auditHeader);
+				int retValue = auditHeader.getProcessStatus();
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+					getCustomerDialogCtrl().doFillCustomerEmploymentDetail(this.customerEmploymentDetails);
+					closeDialog();
+				}
+
+			} else if (doProcess(aCustomerEmploymentDetail, tranType)) {
+				refreshList();
+				closeDialog();
+			}
+		} catch (DataAccessException e) {
+			logger.error("Exception: ", e);
+			showMessage(e);
+		}
 	}
 
 	/**
@@ -1157,7 +1131,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 					getCustomerDialogCtrl().doFillCustomerEmploymentDetail(this.customerEmploymentDetails);
-					//true;
+					// true;
 					// send the data back to customer
 					closeDialog();
 
@@ -1195,7 +1169,10 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 				CustomerEmploymentDetail customerRating = getCustomerDialogCtrl().getCustomerEmploymentDetailList()
 						.get(i);
 				if (customerRating.getCustEmpName() != null && aCustomerRating.getCustEmpName() != null
-						&& customerRating.getCustEmpName().equals(aCustomerRating.getCustEmpName())) { // Both Current and Existing list rating same
+						&& customerRating.getCustEmpName().equals(aCustomerRating.getCustEmpName())) { // Both Current
+																										// and Existing
+																										// list rating
+																										// same
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
@@ -1246,11 +1223,9 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aCustomerEmploymentDetail
-	 *            (CustomerRating)
+	 * @param aCustomerEmploymentDetail (CustomerRating)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                  (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1340,11 +1315,9 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1405,7 +1378,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -1482,8 +1455,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -1500,8 +1472,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

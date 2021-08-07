@@ -56,7 +56,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> {
+public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldRender> {
 
 	private static final long serialVersionUID = -8108473227202001840L;
 	private static final Logger logger = LogManager.getLogger(ExtendedFieldCaptureDialogCtrl.class);
@@ -171,7 +171,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 			generator.setReadOnly(!isReadOnly);
 		}
 
-		//Pre-Validation Checking & Setting Defaults
+		// Pre-Validation Checking & Setting Defaults
 		Map<String, Object> fieldValuesMap = null;
 		if (getExtendedFieldRender().getMapValues() != null) {
 			fieldValuesMap = getExtendedFieldRender().getMapValues();
@@ -179,7 +179,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 
 		if (newRecord) {
 
-			//get pre-validation script if record is new
+			// get pre-validation script if record is new
 			String preValidationScript = getExtendedFieldRenderDialogCtrl().getPreValidationScript();
 			if (StringUtils.isNotEmpty(preValidationScript)) {
 				ScriptErrors defaults = getScriptValidationService().setPreValidationDefaults(preValidationScript,
@@ -217,7 +217,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 			generator.renderWindow(getExtendedFieldHeader(), newRecord);
 			// Height Calculation
 			int height = borderLayoutHeight - 100;
-			//this.window_ExtendedFieldCaptureDialog.setHeight(height + "px");
+			// this.window_ExtendedFieldCaptureDialog.setHeight(height + "px");
 
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -250,8 +250,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug("Entering");
@@ -259,63 +258,41 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Deletes a ExtendedFieldRender object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+	protected boolean doCustomDelete(final ExtendedFieldRender aExtendedFieldRender, String tranType) {
+		if (isNewExtendedField()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newIRRFeeTypeDetailProcess(aExtendedFieldRender, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_ExtendedFieldCaptureDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				if (getExtendedFieldRenderDialogCtrl() != null) {
+					getExtendedFieldRenderDialogCtrl().doFillExtendedFieldDetails(this.extendedList);
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		final ExtendedFieldRender aExtendedFieldRender = new ExtendedFieldRender();
 		BeanUtils.copyProperties(getExtendedFieldRender(), aExtendedFieldRender);
-		String tranType = PennantConstants.TRAN_WF;
-		// Show a confirm box
+
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> Seq No : "
 				+ (aExtendedFieldRender.getSeqNo());
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+		doDelete(String.valueOf(aExtendedFieldRender.getSeqNo()), aExtendedFieldRender);
 
-			if (StringUtils.isBlank(aExtendedFieldRender.getRecordType())) {
-
-				aExtendedFieldRender.setVersion(aExtendedFieldRender.getVersion() + 1);
-				aExtendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aExtendedFieldRender.setNewRecord(true);
-				if (isWorkFlowEnabled()) {
-					aExtendedFieldRender.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (isNewExtendedField()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newIRRFeeTypeDetailProcess(aExtendedFieldRender, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_ExtendedFieldCaptureDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						if (getExtendedFieldRenderDialogCtrl() != null) {
-							getExtendedFieldRenderDialogCtrl().doFillExtendedFieldDetails(this.extendedList);
-						}
-						closeDialog();
-					}
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -537,7 +514,8 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 				ExtendedFieldRender fieldRender = getExtendedFieldRenderDialogCtrl().getExtendedFieldRenderList()
 						.get(i);
 
-				if (fieldRender.getSeqNo() == aExetendedFieldRender.getSeqNo()) { // Both Current and Existing list Seqno same
+				if (fieldRender.getSeqNo() == aExetendedFieldRender.getSeqNo()) { // Both Current and Existing list
+																					// Seqno same
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
@@ -645,8 +623,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -728,8 +705,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());

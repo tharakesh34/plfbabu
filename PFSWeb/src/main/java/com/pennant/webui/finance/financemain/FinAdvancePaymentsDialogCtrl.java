@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinAdvancePaymentsDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-08-2013    														*
- *                                                                  						*
- * Modified Date    :  14-08-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinAdvancePaymentsDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-08-2013 * *
+ * Modified Date : 14-08-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-08-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-08-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -85,6 +67,7 @@ import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
@@ -209,8 +192,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	protected Textbox branch;
 	protected Textbox city;
 	protected Space contactNumber;
-	//protected Textbox							phoneCountryCode;
-	//protected Textbox							phoneAreaCode;
+	// protected Textbox phoneCountryCode;
+	// protected Textbox phoneAreaCode;
 	protected Textbox phoneNumber;
 	protected East eastDocument;
 
@@ -298,7 +281,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	private BankAccountValidation bankAccountValidations;
 	private String moduleDefiner = null;
 
-	//VAS FrontEnd Functionality
+	// VAS FrontEnd Functionality
 	protected Row row_DisbDate;
 	protected Row row_vasReference;
 	protected Combobox vasReference;
@@ -314,7 +297,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	private BuilderProjcetDAO builderProjcetDAO;
 	private BankBranchDAO bankBranchDAO;
 	protected CollateralAssignmentDAO collateralAssignmentDAO;
-    private boolean populateBenfiryDetails = false;
+	private boolean populateBenfiryDetails = false;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -384,7 +368,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				this.moduleType = (String) arguments.get("moduleType");
 			}
 
-			//moduleDefiner
+			// moduleDefiner
 			if (arguments.containsKey("moduleDefiner")) {
 				this.moduleDefiner = (String) arguments.get("moduleDefiner");
 			}
@@ -549,16 +533,19 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnReverse(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 
 		final String msg = Labels.getLabel("label_FinAdvancePaymentsDialog_Reverse_Status") + "\n"
 				+ Labels.getLabel("label_FinAdvancePaymentsDialog_PaymentSequence.value") + " : "
 				+ this.finAdvancePayments.getPaymentSeq();
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			doSave();
-		}
-		logger.debug("Leaving" + event.toString());
+		MessageUtil.confirm(msg, evnt -> {
+			if (Messagebox.ON_YES.equals(evnt.getName())) {
+				doSave();
+			}
+		});
+
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -586,8 +573,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -596,8 +582,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -707,14 +692,17 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.llDate.setDisabled(isReadOnly("FinAdvancePaymentsDialog_llDate"));
 		this.paymentType.setDisabled(isReadOnly("FinAdvancePaymentsDialog_paymentType"));
 		this.remarks.setReadonly(isReadOnly("FinAdvancePaymentsDialog_remarks"));
-		readOnlyComponent(isReadOnly("FinAdvancePaymentsDialog_holdDisbIsActive"), this.holdDisbursement); //TODO create right name
+		readOnlyComponent(isReadOnly("FinAdvancePaymentsDialog_holdDisbIsActive"), this.holdDisbursement); // TODO
+																											// create
+																											// right
+																											// name
 		this.transactionRef.setReadonly(true);
-		//2
+		// 2
 		this.bankBranchID.setReadonly(isReadOnly("FinAdvancePaymentsDialog_bankBranchID"));
 		this.beneficiaryAccNo.setReadonly(isReadOnly("FinAdvancePaymentsDialog_beneficiaryAccNo"));
 		this.beneficiaryName.setReadonly(isReadOnly("FinAdvancePaymentsDialog_beneficiaryName"));
 		this.phoneNumber.setReadonly(isReadOnly("FinAdvancePaymentsDialog_contactNumber"));
-		//3
+		// 3
 		this.bankCode.setReadonly(isReadOnly("FinAdvancePaymentsDialog_bankCode"));
 		this.liabilityHoldName.setReadonly(isReadOnly("FinAdvancePaymentsDialog_liabilityHoldName"));
 		this.llReferenceNo.setReadonly(isReadOnly("FinAdvancePaymentsDialog_llReferenceNo"));
@@ -730,18 +718,21 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.btnPennyDropResult.setVisible(!isReadOnly("button_FinAdvancePaymentsDialog_btnPennyDropResult"));
 		this.vasReference.setDisabled(isReadOnly("FinAdvancePaymentsDialog_vasReference"));
 
-		//Added Masking for  ReEnter Account Number field in Disbursement at Loan Approval stage
+		// Added Masking for ReEnter Account Number field in Disbursement at Loan Approval stage
 		if (SysParamUtil.isAllowed(SMTParameterConstants.DISB_ACCNO_MASKING)
 				&& (!isReadOnly("FinAdvancePaymentsDialog_ReEnterBeneficiaryAccNo") || StringUtils
 						.equals(this.finAdvancePayments.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED))) {
 			this.beneficiaryAccNo.setType("password");
 		}
 
-		//Added in QDP changes
+		// Added in QDP changes
 		if (finAdvancePayments.isNewRecord() || DisbursementConstants.STATUS_NEW.equals(finAdvancePayments.getStatus())
 				|| DisbursementConstants.STATUS_APPROVED.equals(finAdvancePayments.getStatus())
 				|| DisbursementConstants.STATUS_HOLD.equals(finAdvancePayments.getStatus())) {
-			readOnlyComponent(isReadOnly("FinAdvancePaymentsDialog_holdDisbIsActive"), this.holdDisbursement); //TODO create right name
+			readOnlyComponent(isReadOnly("FinAdvancePaymentsDialog_holdDisbIsActive"), this.holdDisbursement); // TODO
+																												// create
+																												// right
+																												// name
 		} else {
 			readOnlyComponent(true, this.holdDisbursement);
 		}
@@ -835,7 +826,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.paymentSequence.setReadonly(true);
 		this.liabilityHoldName.setMaxlength(200);
 		this.beneficiaryName.setMaxlength(100);
@@ -928,7 +919,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.minAccNoLength = this.bankdetail.getMinAccNoLength();
 		}
 		this.beneficiaryAccNo.setMaxlength(maxAccNoLength);
-		//Added Masking for  ReEnter Account Number field in Disbursement at Loan Approval stage
+		// Added Masking for ReEnter Account Number field in Disbursement at Loan Approval stage
 		if (SysParamUtil.isAllowed(SMTParameterConstants.DISB_ACCNO_MASKING)
 				&& !isReadOnly("FinAdvancePaymentsDialog_ReEnterBeneficiaryAccNo")) {
 			this.btnSave.setVisible(true);
@@ -958,64 +949,66 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	 * @throws InterruptedException
 	 */
 	private void doDisbCancel() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		final FinAdvancePayments aFinAdvancePayments = new FinAdvancePayments();
 		BeanUtils.copyProperties(this.finAdvancePayments, aFinAdvancePayments);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_cancel_this_record") + "\n"
 				+ Labels.getLabel("label_FinAdvancePaymentsDialog_PaymentSequence.value") + " : "
 				+ aFinAdvancePayments.getPaymentSeq();
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aFinAdvancePayments.getRecordType())) {
-				aFinAdvancePayments.setVersion(aFinAdvancePayments.getVersion() + 1);
-				aFinAdvancePayments.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		MessageUtil.confirm(msg, evnt -> {
+			if (Messagebox.ON_YES.equals(evnt.getName())) {
+				String tranType = PennantConstants.TRAN_WF;
+				if (StringUtils.isBlank(aFinAdvancePayments.getRecordType())) {
+					aFinAdvancePayments.setVersion(aFinAdvancePayments.getVersion() + 1);
+					aFinAdvancePayments.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()) {
-					aFinAdvancePayments.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aFinAdvancePayments.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aFinAdvancePayments.getNextTaskId(),
-							aFinAdvancePayments);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (isNewCustomer()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newFinAdvancePaymentsProcess(aFinAdvancePayments, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_FinAdvancePaymentsDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						if (!ImplementationConstants.VAS_INST_ON_DISB) {
-							getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails,
-									null);
-						} else {
-							getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails,
-									getPayOrderIssueDialogCtrl().payOrderIssueHeader.getvASRecordings());
-						}
-
-						closeDialog();
+					if (isWorkFlowEnabled()) {
+						aFinAdvancePayments.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+						aFinAdvancePayments.setNewRecord(true);
+						tranType = PennantConstants.TRAN_WF;
+						getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aFinAdvancePayments.getNextTaskId(),
+								aFinAdvancePayments);
+					} else {
+						tranType = PennantConstants.TRAN_DEL;
 					}
 				}
 
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
+				try {
+					if (isNewCustomer()) {
+						tranType = PennantConstants.TRAN_DEL;
+						AuditHeader auditHeader = newFinAdvancePaymentsProcess(aFinAdvancePayments, tranType);
+						auditHeader = ErrorControl.showErrorDetails(this.window_FinAdvancePaymentsDialog, auditHeader);
+						int retValue = auditHeader.getProcessStatus();
+						if (retValue == PennantConstants.porcessCONTINUE
+								|| retValue == PennantConstants.porcessOVERIDE) {
+							if (!ImplementationConstants.VAS_INST_ON_DISB) {
+								getPayOrderIssueDialogCtrl()
+										.doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails, null);
+							} else {
+								getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(
+										this.finAdvancePaymentsDetails,
+										getPayOrderIssueDialogCtrl().payOrderIssueHeader.getvASRecordings());
+							}
 
-		}
-		logger.debug("Leaving");
+							closeDialog();
+						}
+					}
+
+				} catch (DataAccessException e) {
+					MessageUtil.showError(e);
+				}
+			}
+		});
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinAdvancePayments
-	 *            FinAdvancePaymentsDetail
+	 * @param aFinAdvancePayments FinAdvancePaymentsDetail
 	 */
 	public void doWriteBeanToComponents(FinAdvancePayments aFinAdvnancePayments) {
 		logger.debug("Entering");
@@ -1033,8 +1026,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			list.add(DisbursementConstants.PAYMENT_DETAIL_VENDOR);
 		}
 
-		if (StringUtils.equalsIgnoreCase(moduleDefiner, FinServiceEvent.ADDDISB) && !StringUtils
-				.equalsIgnoreCase(aFinAdvnancePayments.getPaymentDetail(), FinServiceEvent.ADDDISB)) {
+		if (StringUtils.equalsIgnoreCase(moduleDefiner, FinServiceEvent.ADDDISB)
+				&& !StringUtils.equalsIgnoreCase(aFinAdvnancePayments.getPaymentDetail(), FinServiceEvent.ADDDISB)) {
 			list.add(DisbursementConstants.PAYMENT_DETAIL_VAS);
 		}
 
@@ -1076,7 +1069,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		fillComboBox(this.paymentType, aFinAdvnancePayments.getPaymentType(),
 				PennantStaticListUtil.getPaymentTypesWithIST(), excludeField);
 		this.remarks.setValue(aFinAdvnancePayments.getRemarks());
-		//banking
+		// banking
 		if (aFinAdvnancePayments.getBankBranchID() != Long.MIN_VALUE && aFinAdvnancePayments.getBankBranchID() != 0) {
 			this.bankBranchID.setAttribute("bankBranchID", aFinAdvnancePayments.getBankBranchID());
 			this.bankBranchID.setValue(StringUtils.trimToEmpty(aFinAdvnancePayments.getiFSC()));
@@ -1172,10 +1165,10 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.disbursementAddedAmount.setValue(formate(advancePayAmount));
 		this.netAmount.setValue(formate(disbAmount.subtract(advancePayAmount)));
 
-		//String finDisbursement ="";
+		// String finDisbursement ="";
 
 		this.phoneNumber.setValue(aFinAdvnancePayments.getPhoneNumber());
-		//other 
+		// other
 		this.bankCode.setAttribute("bankCode", aFinAdvnancePayments.getBankCode());
 		this.bankCode.setValue(StringUtils.trimToEmpty(aFinAdvnancePayments.getBankCode()),
 				StringUtils.trimToEmpty(aFinAdvnancePayments.getBankName()));
@@ -1185,7 +1178,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.printingLoc.setValue(aFinAdvnancePayments.getPrintingLoc());
 		this.printingLoc.setDescription(aFinAdvnancePayments.getPrintingLocDesc());
 		this.valueDate.setValue(aFinAdvnancePayments.getValueDate());
-		//unused
+		// unused
 		this.custContribution.setValue(formate(aFinAdvnancePayments.getCustContribution()));
 		this.sellerContribution.setValue(formate(aFinAdvnancePayments.getSellerContribution()));
 
@@ -1206,7 +1199,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 	private void setDisbDocument(FinAdvancePayments aFinAdvnancePayments) {
 		if (aFinAdvnancePayments.getDocImage() == null) {
-			///eastDocument
+			/// eastDocument
 			AMedia media = externalDocumentManager.getAMedia(documentDetails);
 			if (media != null) {
 				this.disbDoc.setContent(media);
@@ -1271,7 +1264,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			if (execuledApprove && isContainsInAppList(disbursement)) {
 				continue;
 			}
-			//cancelled disbursement should not be allowed to process
+			// cancelled disbursement should not be allowed to process
 			if (StringUtils.trimToEmpty(disbursement.getDisbStatus()).equals(FinanceConstants.DISB_STATUS_CANCEL)) {
 				continue;
 			}
@@ -1422,9 +1415,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 						this.reEnterBeneficiaryAccNo.getValue())) {
 					throw new WrongValueException(this.reEnterBeneficiaryAccNo,
 							Labels.getLabel("FIELD_NOT_MATCHED", new String[] {
-									Labels.getLabel("label_FinAdvancePaymentsDialog_BeneficiaryAccNo.value"), Labels
-											.getLabel(
-													"label_FinAdvancePaymentsDialog_ReEnterBeneficiaryAccNo.value") }));
+									Labels.getLabel("label_FinAdvancePaymentsDialog_BeneficiaryAccNo.value"),
+									Labels.getLabel("label_FinAdvancePaymentsDialog_ReEnterBeneficiaryAccNo.value") }));
 				}
 			}
 		} catch (WrongValueException we) {
@@ -1623,7 +1615,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//VAS Front End Functionality
+		// VAS Front End Functionality
 		if (DisbursementConstants.PAYMENT_DETAIL_VAS.equals(aFinAdvancePayments.getPaymentDetail())) {
 			try {
 				aFinAdvancePayments.setVasReference(getComboboxValue(this.vasReference));
@@ -1653,9 +1645,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 							.compareTo(aFinAdvancePayments.getAmtToBeReleased()) != 0) {
 						throw new WrongValueException(this.amtToBeReleased,
 								Labels.getLabel("NUMBER_EQUAL", new String[] {
-										Labels.getLabel("label_FinAdvancePaymentsDialog_AmtToBeReleased.value"), Labels
-												.getLabel(
-														"label_FinAdvancePaymentsDialog_VasReferenceAmount.value") }));
+										Labels.getLabel("label_FinAdvancePaymentsDialog_AmtToBeReleased.value"),
+										Labels.getLabel("label_FinAdvancePaymentsDialog_VasReferenceAmount.value") }));
 					}
 				}
 			} catch (WrongValueException we) {
@@ -1740,7 +1731,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				this.finAdvancePayments.setPartnerBankName(partnerBank.getPartnerBankName());
 				this.partnerBankID.setAttribute("partnerBankAc", partnerBank.getAccountNo());
 				this.partnerBankID.setAttribute("partnerBankAcType", partnerBank.getAccountType());
-				//Van Related Code Removed
+				// Van Related Code Removed
 			}
 		}
 
@@ -1916,74 +1907,49 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Deletes a FinAdvancePaymentsDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+	protected boolean doCustomDelete(final FinAdvancePayments aFinAdvancePayments, String tranType) {
+		if (isNewCustomer()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newFinAdvancePaymentsProcess(aFinAdvancePayments, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_FinAdvancePaymentsDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				if (this.moduleType.equals("LOAN")) {
+					getFinAdvancePaymentsListCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails,
+							vasRecordingList);
+				} else {
+					if (!ImplementationConstants.VAS_INST_ON_DISB) {
+						getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails,
+								null);
+					} else {
+						if (this.moduleType.equals("POISSUE")) {
+							getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails,
+									null);
+						} else {
+							getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails,
+									getPayOrderIssueDialogCtrl().payOrderIssueHeader.getvASRecordings());
+						}
+					}
+
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final FinAdvancePayments aFinAdvancePayments = new FinAdvancePayments();
 		BeanUtils.copyProperties(this.finAdvancePayments, aFinAdvancePayments);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n"
-				+ Labels.getLabel("label_FinAdvancePaymentsDialog_PaymentSequence.value") + " : "
+		final String keyReference = Labels.getLabel("label_FinAdvancePaymentsDialog_PaymentSequence.value") + " : "
 				+ aFinAdvancePayments.getPaymentSeq();
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aFinAdvancePayments.getRecordType())) {
-				aFinAdvancePayments.setVersion(aFinAdvancePayments.getVersion() + 1);
-				aFinAdvancePayments.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(keyReference, aFinAdvancePayments);
 
-				if (isWorkFlowEnabled()) {
-					aFinAdvancePayments.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aFinAdvancePayments.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aFinAdvancePayments.getNextTaskId(),
-							aFinAdvancePayments);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (isNewCustomer()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newFinAdvancePaymentsProcess(aFinAdvancePayments, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_FinAdvancePaymentsDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						if (this.moduleType.equals("LOAN")) {
-							getFinAdvancePaymentsListCtrl()
-									.doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails, vasRecordingList);
-						} else {
-							if (!ImplementationConstants.VAS_INST_ON_DISB) {
-								getPayOrderIssueDialogCtrl()
-										.doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails, null);
-							} else {
-								if (this.moduleType.equals("POISSUE")) {
-									getPayOrderIssueDialogCtrl()
-											.doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails, null);
-								} else {
-									getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(
-											this.finAdvancePaymentsDetails,
-											getPayOrderIssueDialogCtrl().payOrderIssueHeader.getvASRecordings());
-								}
-							}
-
-						}
-						closeDialog();
-					}
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2170,7 +2136,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			for (int i = 0; i < listAdvance.size(); i++) {
 				FinAdvancePayments loanDetail = listAdvance.get(i);
 
-				if (afinAdvancePayments.getPaymentSeq() == loanDetail.getPaymentSeq()) { // Both Current and Existing list rating same
+				if (afinAdvancePayments.getPaymentSeq() == loanDetail.getPaymentSeq()) { // Both Current and Existing
+																							// list rating same
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
@@ -2323,7 +2290,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		filters[1] = new Filter("Purpose", "D", Filter.OP_EQUAL);
 		filters[2] = new Filter("PaymentMode", dType, Filter.OP_EQUAL);
 		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
-		//filters[4] = new Filter("Entity",financeMain.getLovDescEntityCode(),Filter.OP_EQUAL);
+		// filters[4] = new Filter("Entity",financeMain.getLovDescEntityCode(),Filter.OP_EQUAL);
 		this.partnerBankID.setFilters(filters);
 		this.partnerBankID.setValue("");
 		this.partnerBankID.setDescription("");
@@ -2589,7 +2556,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		filters[1] = new Filter("Purpose", "D", Filter.OP_EQUAL);
 		filters[2] = new Filter("PaymentMode", payMode, Filter.OP_EQUAL);
 		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
-		//filters[4] = new Filter("EntityCode",financeMain.getLovDescEntityCode(),Filter.OP_EQUAL);
+		// filters[4] = new Filter("EntityCode",financeMain.getLovDescEntityCode(),Filter.OP_EQUAL);
 		this.partnerBankID.setFilters(filters);
 
 	}
@@ -2606,13 +2573,13 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		} else {
 			Map<String, Object> aruments = new HashMap<>();
 
-			//getting the customer cif's of applicant and coapp's for Customer CIF filter in Beneficiary Select
+			// getting the customer cif's of applicant and coapp's for Customer CIF filter in Beneficiary Select
 			aruments.put("custCIFs", getCustomerCIFs());
 
-			//passing primary cif to display in search window
+			// passing primary cif to display in search window
 			aruments.put("custCIF", custCIF);
 
-			//preparing filters to render only primary beneficiary while loading 
+			// preparing filters to render only primary beneficiary while loading
 			filter[0] = new Filter("CustCIF", custCIF, Filter.OP_EQUAL);
 			filter[1] = new Filter("BeneficiaryActive", 1, Filter.OP_EQUAL);
 
@@ -2835,7 +2802,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.row_vasReference.setVisible(true);
 			this.row_disbdetails.setVisible(false);
 			this.row_expensedetails.setVisible(false);
-			//this.vasReference.setDisabled(true);
+			// this.vasReference.setDisabled(true);
 			this.btnDelete.setVisible(false);
 		} else {
 			this.row_DisbDate.setVisible(true);
@@ -2868,7 +2835,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			}
 
 		}
-		//if the VAS Instruction is added initial and delete the vas later
+		// if the VAS Instruction is added initial and delete the vas later
 		if (StringUtils.isNotBlank(vasReference) && !PennantConstants.List_Select.equals(vasReference)
 				&& isDeletedVAS) {
 			vasReferences.add(new ValueLabel(vasReference, vasReference));
@@ -3107,9 +3074,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		ArrayList<String> custCIFs = new ArrayList<>(2);
 		CustomerDetails customerDetails = null;
 
-		//Inside loan queue
+		// Inside loan queue
 		if (getFinanceMainDialogCtrl() != null) {
-			//Get Primary Customer CIF
+			// Get Primary Customer CIF
 			FinanceMainBaseCtrl financeMainDialogCtrl = (FinanceMainBaseCtrl) getFinanceMainDialogCtrl();
 			CustomerDialogCtrl customerDialogCtrl = financeMainDialogCtrl.getCustomerDialogCtrl();
 
@@ -3117,23 +3084,23 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				customerDetails = customerDialogCtrl.getCustomerDetails();
 			}
 
-			//From Add Disbursement menu
+			// From Add Disbursement menu
 			FinanceDetail financeDetail = financeMainDialogCtrl.getFinanceDetail();
-			//From Add Disbursement menu
+			// From Add Disbursement menu
 			if (financeDetail != null) {
 				customerDetails = financeDetail.getCustomerDetails();
 			}
 
-			//Setting the Primary Customer CIF
+			// Setting the Primary Customer CIF
 			if (customerDetails != null) {
 				custCIF = customerDetails.getCustomer().getCustCIF();
 			}
 
-			//Co-applicant details from Add disbursement menu where co Applicants tab not available
+			// Co-applicant details from Add disbursement menu where co Applicants tab not available
 			List<JointAccountDetail> jointAccountDetailList = financeDetail.getJointAccountDetailList();
 			getCoAppList(custCIFs, jointAccountDetailList);
 
-			//Get Co-applicant CIF's in side the loan queue from Co Applicants tab
+			// Get Co-applicant CIF's in side the loan queue from Co Applicants tab
 			JointAccountDetailDialogCtrl financeJointAccountDetailDialogCtrl = financeMainDialogCtrl
 					.getJointAccountDetailDialogCtrl();
 			if (financeJointAccountDetailDialogCtrl != null) {
@@ -3142,15 +3109,15 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 					custCIFs.add(customer.getCustCIF());
 				}
 			}
-		} else if (payOrderIssueDialogCtrl != null) {//From Disbursement Instructions menu in loan management
+		} else if (payOrderIssueDialogCtrl != null) {// From Disbursement Instructions menu in loan management
 			PayOrderIssueHeader payOrderIssueHeader = payOrderIssueDialogCtrl.getPayOrderIssueHeader();
 			if (payOrderIssueHeader != null) {
-				//Primary CIF
+				// Primary CIF
 				custCIF = payOrderIssueHeader.getCustCIF();
 				getCoAppList(custCIFs, payOrderIssueHeader.getJointAccountDetails());
 			}
 		}
-		//Primary CIF
+		// Primary CIF
 		custCIFs.add(custCIF);
 		return custCIFs;
 	}

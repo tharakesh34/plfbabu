@@ -62,6 +62,7 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
 import org.zkoss.zul.Space;
@@ -111,6 +112,7 @@ import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.excecution.ProcessExecution;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.MediaUtil;
@@ -321,14 +323,17 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnCopyTo(Event event) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		if (MessageUtil.confirm(Labels.getLabel("conf.closeWindowWithoutSave")) == MessageUtil.YES) {
-			closeDialog();
-			Events.postEvent("onClick$button_VASConfigurationList_NewVASConfiguration",
-					vASConfigurationListCtrl.window_VASConfigurationList, this.vASConfiguration);
-		}
-		logger.debug("Leaving");
+		MessageUtil.confirm(Labels.getLabel("conf.closeWindowWithoutSave"), evnt -> {
+			if (Messagebox.ON_YES.equals(evnt.getName())) {
+				closeDialog();
+				Events.postEvent("onClick$button_VASConfigurationList_NewVASConfiguration",
+						vASConfigurationListCtrl.window_VASConfigurationList, this.vASConfiguration);
+			}
+		});
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -902,18 +907,19 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	 * @throws InterruptedException
 	 */
 	public void onUser$btnPreValidate(ForwardEvent event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		if (validate(event, false, false)) {
 			preScriptValidated = true;
-			// check if code mirror is empty or not
+
 			if (StringUtils.isNotEmpty(this.preValidation.getValue().trim())) {
-				if (MessageUtil.confirm("NO Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
-					// create a new window for input values
-					createSimulationWindow(variables, this.preValidation.getValue());
-				}
+				MessageUtil.confirm("NO Errors Found! Proceed With Simulation?", evnt -> {
+					if (Messagebox.ON_YES.equals(evnt.getName())) {
+						createSimulationWindow(variables, this.preValidation.getValue());
+					}
+				});
 			}
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -926,12 +932,13 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		logger.debug("Entering" + event.toString());
 		if (validate(event, true, false)) {
 			postScriptValidated = true;
-			// check if code mirror is empty or not
+
 			if (StringUtils.isNotEmpty(this.postValidation.getValue().trim())) {
-				if (MessageUtil.confirm("NO Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
-					// create a new window for input values
-					createSimulationWindow(variables, this.postValidation.getValue());
-				}
+				MessageUtil.confirm("NO Errors Found! Proceed With Simulation?", evnt -> {
+					if (Messagebox.ON_YES.equals(evnt.getName())) {
+						createSimulationWindow(variables, this.postValidation.getValue());
+					}
+				});
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -2001,7 +2008,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");

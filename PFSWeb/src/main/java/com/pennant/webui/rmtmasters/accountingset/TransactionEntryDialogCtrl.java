@@ -59,6 +59,7 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
@@ -819,55 +820,31 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a TransactionEntry object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
-	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
-		final TransactionEntry aTransactionEntry = new TransactionEntry();
-		BeanUtils.copyProperties(getTransactionEntry(), aTransactionEntry);
-		String tranType = PennantConstants.TRAN_WF;
-
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aTransactionEntry.getTransOrder() + ":" + aTransactionEntry.getTransDesc();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aTransactionEntry.getRecordType())) {
-				aTransactionEntry.setVersion(aTransactionEntry.getVersion() + 1);
-				aTransactionEntry.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aTransactionEntry.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			} else if (StringUtils.trimToEmpty(aTransactionEntry.getRecordType()).equals(PennantConstants.RCD_UPD)) {
-				aTransactionEntry.setVersion(aTransactionEntry.getVersion() + 1);
-				aTransactionEntry.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			}
-
-			try {
-				tranType = PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader = newTranEntryProcess(aTransactionEntry, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.window_TransactionEntryDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					getAccountingSetDialogCtrl().doFilllistbox(this.transactionEntryList);
-					window_TransactionEntryDialog.onClose();
-					getAccountingSetDialogCtrl().window_AccountingSetDialog.setVisible(true);
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
+	protected boolean doCustomDelete(final TransactionEntry aTransactionEntry, String tranType) {
+		tranType = PennantConstants.TRAN_DEL;
+		AuditHeader auditHeader = newTranEntryProcess(aTransactionEntry, tranType);
+		auditHeader = ErrorControl.showErrorDetails(this.window_TransactionEntryDialog, auditHeader);
+		int retValue = auditHeader.getProcessStatus();
+		if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+			getAccountingSetDialogCtrl().doFilllistbox(this.transactionEntryList);
+			// window_TransactionEntryDialog.onClose();
+			getAccountingSetDialogCtrl().window_AccountingSetDialog.setVisible(true);
+			return true;
 
 		}
-		logger.debug("Leaving");
+		return false;
+	}
+
+	private void doDelete() throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+		final TransactionEntry aTransactionEntry = new TransactionEntry();
+		BeanUtils.copyProperties(getTransactionEntry(), aTransactionEntry);
+
+		final String keyReference = aTransactionEntry.getTransOrder() + ":" + aTransactionEntry.getTransDesc();
+
+		doDelete(keyReference, aTransactionEntry);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1867,14 +1844,15 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	 * @throws InterruptedException
 	 */
 	public void onUser$btnValidate(ForwardEvent event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		if (validate(event)) {
-			if (MessageUtil.confirm("No Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
-				// create a new window for input values
-				createSimulationWindow(variables);
-			}
+			MessageUtil.confirm("No Errors Found! Proceed With Simulation?", evnt -> {
+				if (Messagebox.ON_YES.equals(evnt.getName())) {
+					createSimulationWindow(variables);
+				}
+			});
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SecurityOperationRolesDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  10-03-2014    														*
- *                                                                  						*
- * Modified Date    :  10-03-2014     														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SecurityOperationRolesDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 10-03-2014
+ * * * Modified Date : 10-03-2014 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-03-2014        Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-03-2014 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.administration.SecurityOperationRoles;
@@ -89,6 +71,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.pagging.PagedListWrapper;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -269,8 +252,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -432,8 +414,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aSecurityUser
-	 *            SecurityOperation
+	 * @param aSecurityUser SecurityOperation
 	 */
 	public void doWriteBeanToComponents(SecurityOperation aSecurityOperation) {
 
@@ -563,11 +544,9 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aSecurityOperation
-	 *            (SecurityOperation)
+	 * @param aSecurityOperation (SecurityOperation)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType           (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -659,11 +638,9 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -724,7 +701,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		setOverideMap(auditHeader.getOverideMap());
@@ -1184,8 +1161,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

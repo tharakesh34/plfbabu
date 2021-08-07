@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerDialogCtrl.java                                              * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2011    														*
- *                                                                  						*
- * Modified Date    :  27-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2011 * * Modified
+ * Date : 27-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 09-05-2018		Vinay					 0.2      Extended Details tab changes for 		*
- * 													  Customer Enquiry menu based on rights	* 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-05-2011 Pennant 0.1 * * 09-05-2018 Vinay 0.2 Extended Details tab changes for * Customer Enquiry menu based on
+ * rights * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.customermasters.customeremail;
@@ -93,7 +75,7 @@ public class CustomerEmailInlineEditCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	public void doRenderEmailsList(List<CustomerEMail> customerEMails, Listbox listbox, String custcif,
 			boolean isFinance) {
-		//render start
+		// render start
 		listbox.getItems().clear();
 		if (CollectionUtils.isNotEmpty(customerEMails)) {
 			for (CustomerEMail customerEMail : customerEMails) {
@@ -203,13 +185,6 @@ public class CustomerEmailInlineEditCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * This method will perform the delete operation
-	 * 
-	 * @param listbox
-	 * @param listitem
-	 * @param isFinanceProcess
-	 */
 	public void doDelete(Listbox listbox, Listitem listitem, boolean isFinanceProcess) {
 
 		if (listitem != null && listitem.getAttribute("data") != null) {
@@ -273,7 +248,7 @@ public class CustomerEmailInlineEditCtrl extends GFCBaseCtrl<CustomerDetails> {
 		custEmailType.setDescColumn("EmailTypeDesc");
 		custEmailType.setValidateColumns(new String[] { "EmailTypeCode" });
 		custEmailType.setValue(customerEMail.getCustEMailTypeCode(), customerEMail.getLovDescCustEMailTypeCode());
-		//Object data preparing
+		// Object data preparing
 		EMailType eMailType = new EMailType();
 		custEmailType.setObject(eMailType);
 		return custEmailType;
@@ -405,7 +380,7 @@ public class CustomerEmailInlineEditCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 				if (StringUtils.equals(aCustomerEMail.getCustEMailTypeCode(), customerEMail.getCustEMailTypeCode())) {
 
-					//checking data is updated or not
+					// checking data is updated or not
 					if (!aCustomerEMail.getCustEMail().equals(customerEMail.getCustEMail())
 							|| !aCustomerEMail.getCustEMailTypeCode().equals(customerEMail.getCustEMailTypeCode())
 							|| aCustomerEMail.getCustEMailPriority() != customerEMail.getCustEMailPriority()) {

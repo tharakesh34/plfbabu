@@ -569,61 +569,37 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a VASConfiguration object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 * @throws InterfaceException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 */
+	protected boolean doCustomDelete(final VASRecording aVASRecording, String tranType) {
+		if (isFinanceVas()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = processVasRecords(aVASRecording, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_VASRecordingDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				getFinVasRecordingDialogCtrl().doFillVasRecordings(this.vasRecordings);
+				removeFeesFromFeeList(aVASRecording.getVasReference());
+				processVasDisbInstructions();
+
+				closeDialog();
+			}
+		} else if (doProcess(aVASRecording, tranType)) {
+			refreshList();
+			closeDialog();
+		}
+
+		return false;
+	}
+
 	private void doDelete()
 			throws InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug(Literal.ENTERING);
 
 		final VASRecording aVASRecording = new VASRecording();
 		BeanUtils.copyProperties(getVASRecording(), aVASRecording);
-		String tranType = PennantConstants.TRAN_WF;
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_VASReference") + " : " + aVASRecording.getVasReference();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aVASRecording.getRecordType()).equals("")) {
-				aVASRecording.setVersion(aVASRecording.getVersion() + 1);
-				aVASRecording.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (isWorkFlowEnabled()) {
-					aVASRecording.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aVASRecording.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aVASRecording.getNextTaskId(),
-							aVASRecording);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (isFinanceVas()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = processVasRecords(aVASRecording, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_VASRecordingDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						getFinVasRecordingDialogCtrl().doFillVasRecordings(this.vasRecordings);
 
-						removeFeesFromFeeList(aVASRecording.getVasReference());
-						processVasDisbInstructions();
-						// send the data back to customer
-						closeDialog();
-					}
+		final String keyReference = Labels.getLabel("label_VASReference") + " : " + aVASRecording.getVasReference();
+		doDelete(keyReference, aVASRecording);
 
-				} else if (doProcess(aVASRecording, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1163,7 +1139,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug(Literal.LEAVING);

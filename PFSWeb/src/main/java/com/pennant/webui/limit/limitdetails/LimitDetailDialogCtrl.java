@@ -59,6 +59,7 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
@@ -393,41 +394,47 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements S
 	}
 
 	public void onFulfill$limitStructureCode(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Clients.clearWrongValue(this.limitStructureCode);
-		int conf = MessageUtil.YES;
 
-		if (getLimitHeader().getLimitStructureCode() != null && !getLimitHeader().getLimitStructureCode().isEmpty()) {
-			final String msg = Labels.getLabel("message.Question.Are_you_sure_to_Modify_this_record") + "\n\n --> "
-					+ getLimitHeader().getLimitStructureCode();
-			conf = MessageUtil.confirm(msg);
+		if (getLimitHeader().getLimitStructureCode() == null || getLimitHeader().getLimitStructureCode().isEmpty()) {
+			return;
 		}
-		if (conf == MessageUtil.YES) {
 
-			Object dataObject = limitStructureCode.getObject();
-			if (dataObject instanceof String) {
-				this.limitStructureCode.setValue(dataObject.toString());
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_Modify_this_record") + "\n\n --> "
+				+ getLimitHeader().getLimitStructureCode();
+		MessageUtil.confirm(msg, evnt -> {
+			if (Messagebox.ON_YES.equals(evnt.getName())) {
+				processLimitStructure();
+			} else {
+				this.limitStructureCode.setValue(getLimitHeader().getLimitStructureCode());
+			}
+		});
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void processLimitStructure() throws DatatypeConfigurationException {
+		Object dataObject = limitStructureCode.getObject();
+		if (dataObject instanceof String) {
+			this.limitStructureCode.setValue(dataObject.toString());
+			this.limitStructureCode.setDescription("");
+			getLimitHeader().setLimitStructureCode("");
+			doFillLimitDetailslistbox(new ArrayList<LimitDetails>());
+		} else {
+			LimitStructure details = (LimitStructure) dataObject;
+			if (details != null) {
+				this.limitStructureCode.setValue(details.getStructureCode());
+				this.limitStructureCode.setDescription(details.getStructureName());
+				getLimitHeader().setLimitStructureCode(details.getStructureCode());
+				doFillStructureDetails(details.getStructureCode());
+			} else {
+				// this.limitStructureCode.setValue("");
 				this.limitStructureCode.setDescription("");
 				getLimitHeader().setLimitStructureCode("");
 				doFillLimitDetailslistbox(new ArrayList<LimitDetails>());
-			} else {
-				LimitStructure details = (LimitStructure) dataObject;
-				if (details != null) {
-					this.limitStructureCode.setValue(details.getStructureCode());
-					this.limitStructureCode.setDescription(details.getStructureName());
-					getLimitHeader().setLimitStructureCode(details.getStructureCode());
-					doFillStructureDetails(details.getStructureCode());
-				} else {
-					// this.limitStructureCode.setValue("");
-					this.limitStructureCode.setDescription("");
-					getLimitHeader().setLimitStructureCode("");
-					doFillLimitDetailslistbox(new ArrayList<LimitDetails>());
-				}
 			}
-		} else {
-			this.limitStructureCode.setValue(getLimitHeader().getLimitStructureCode());
 		}
-		logger.debug("Leaving");
 	}
 
 	public void onClickExpirydate(ForwardEvent event) throws Exception {
@@ -1444,7 +1451,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements S
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		setOverideMap(auditHeader.getOverideMap());

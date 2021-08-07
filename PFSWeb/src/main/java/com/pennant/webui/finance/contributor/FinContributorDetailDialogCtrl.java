@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinContributorDetailDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinContributorDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 *
+ * * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.contributor;
@@ -94,6 +76,7 @@ import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.finance.financemain.ContributorDetailsDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -256,7 +239,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 
 		doShowDialog(getFinContributorDetail());
 
-		//Calling SelectCtrl For proper selection of Customer
+		// Calling SelectCtrl For proper selection of Customer
 		if (isNewRecord() && !isNewContributor()) {
 			onload();
 		}
@@ -271,7 +254,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 
 		this.contributorCIF.setMaxlength(6);
 		this.mudaribPerc.setScale(formatter);
@@ -398,8 +381,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -422,8 +404,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinContributorDetail
-	 *            FinContributorDetail
+	 * @param aFinContributorDetail FinContributorDetail
 	 */
 	public void doWriteBeanToComponents(FinContributorDetail aFinContributorDetail) {
 		logger.debug("Entering");
@@ -704,54 +685,33 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 		}
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a FinContributorDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
-	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
-		final FinContributorDetail aFinContributorDetail = new FinContributorDetail();
-		BeanUtils.copyProperties(getFinContributorDetail(), aFinContributorDetail);
-		String tranType = PennantConstants.TRAN_WF;
-
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_value",
-				new String[] { Labels.getLabel("Contributor") }) + "\n\n --> " + this.contributorCIF.getText();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aFinContributorDetail.getRecordType())) {
-				aFinContributorDetail.setVersion(aFinContributorDetail.getVersion() + 1);
-				aFinContributorDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aFinContributorDetail.setNewRecord(true);
-
-				if (isWorkFlowEnabled()) {
-					aFinContributorDetail.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (isNewContributor()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newCusomerProcess(aFinContributorDetail, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_FinContributorDetailDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						getContributorDetailsDialogCtrl().doFillFinContributorDetails(this.contributorDetails, true);
-						// send the data back to customer
-						closeDialog();
-					}
-
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
+	protected boolean doCustomDelete(final FinContributorDetail aFinContributorDetail, String tranType) {
+		if (isNewContributor()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newCusomerProcess(aFinContributorDetail, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_FinContributorDetailDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				getContributorDetailsDialogCtrl().doFillFinContributorDetails(this.contributorDetails, true);
+				return true;
 			}
 		}
-		logger.debug("Leaving");
+
+		return false;
+	}
+
+	private void doDelete() throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+
+		final FinContributorDetail aFinContributorDetail = new FinContributorDetail();
+		BeanUtils.copyProperties(getFinContributorDetail(), aFinContributorDetail);
+
+		final String keyReference = new String[] { Labels.getLabel("Contributor") } + "\n\n --> "
+				+ this.contributorCIF.getText();
+
+		doDelete(keyReference, aFinContributorDetail);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -936,7 +896,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 					getContributorDetailsDialogCtrl().doFillFinContributorDetails(this.contributorDetails, true);
-					//true;
+					// true;
 					// send the data back to customer
 					closeDialog();
 				}
@@ -969,7 +929,9 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 				FinContributorDetail finContributorDetail = getContributorDetailsDialogCtrl().getContributorsList()
 						.get(i);
 
-				if (finContributorDetail.getCustID() == aFinContributorDetail.getCustID()) { // Both Current and Existing list rating same
+				if (finContributorDetail.getCustID() == aFinContributorDetail.getCustID()) { // Both Current and
+																								// Existing list rating
+																								// same
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
@@ -1088,8 +1050,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -1106,8 +1067,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

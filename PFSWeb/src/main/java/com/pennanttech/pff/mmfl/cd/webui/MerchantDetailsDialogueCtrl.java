@@ -1005,7 +1005,7 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		setOverideMap(auditHeader.getOverideMap());

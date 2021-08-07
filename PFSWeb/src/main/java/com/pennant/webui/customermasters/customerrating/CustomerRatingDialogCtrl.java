@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerRatingDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerRatingDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * *
+ * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.customermasters.customerrating;
@@ -83,7 +65,9 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -217,7 +201,7 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 		doSetFieldProperties();
 		doShowDialog(getCustomerRating());
 
-		//Calling SelectCtrl For proper selection of Customer
+		// Calling SelectCtrl For proper selection of Customer
 		if (isNewRecord() && !isNewCustomer()) {
 			onload();
 		}
@@ -232,7 +216,7 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.custRatingType.setMaxlength(8);
 		this.custRatingType.setMandatoryStyle(true);
 		this.custRatingType.setTextBoxWidth(110);
@@ -346,8 +330,7 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -370,8 +353,7 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCustomerRating
-	 *            CustomerRating
+	 * @param aCustomerRating CustomerRating
 	 */
 	public void doWriteBeanToComponents(CustomerRating aCustomerRating) {
 		logger.debug("Entering");
@@ -562,7 +544,8 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 		this.custRatingType.setConstraint(new PTStringValidator(
 				Labels.getLabel("label_CustomerRatingDialog_CustRatingType.value"), null, true, true));
 
-		//		this.custRatingCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerRatingDialog_CustRatingCode.value"),null,true,true));
+		// this.custRatingCode.setConstraint(new
+		// PTStringValidator(Labels.getLabel("label_CustomerRatingDialog_CustRatingCode.value"),null,true,true));
 
 		logger.debug("Leaving");
 	}
@@ -608,49 +591,51 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 		logger.debug("Entering");
 		final CustomerRating aCustomerRating = new CustomerRating();
 		BeanUtils.copyProperties(getCustomerRating(), aCustomerRating);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_CustomerRatingDialog_CustRatingType.value") + " : "
+		final String keyReference = Labels.getLabel("label_CustomerRatingDialog_CustRatingType.value") + " : "
 				+ aCustomerRating.getCustRatingType();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCustomerRating.getRecordType())) {
-				aCustomerRating.setVersion(aCustomerRating.getVersion() + 1);
-				aCustomerRating.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (getCustomerDialogCtrl() != null
-						&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
-					aCustomerRating.setNewRecord(true);
-				}
-				if (isWorkFlowEnabled()) {
-					aCustomerRating.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (isNewCustomer()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newCusomerProcess(aCustomerRating, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerRatingDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						getCustomerDialogCtrl().doFillCustomerRatings(this.customerRatings);
-						// send the data back to customer
-						closeDialog();
-					}
 
-				} else if (doProcess(aCustomerRating, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
+		doDelete(keyReference, aCustomerRating);
+
+		logger.debug("Leaving");
+	}
+
+	protected void onDoDelete(final CustomerRating aCustomerRating) {
+		String tranType = PennantConstants.TRAN_WF;
+		if (StringUtils.isBlank(aCustomerRating.getRecordType())) {
+			aCustomerRating.setVersion(aCustomerRating.getVersion() + 1);
+			aCustomerRating.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			if (getCustomerDialogCtrl() != null
+					&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
+				aCustomerRating.setNewRecord(true);
+			}
+			if (isWorkFlowEnabled()) {
+				aCustomerRating.setNewRecord(true);
+				tranType = PennantConstants.TRAN_WF;
+			} else {
+				tranType = PennantConstants.TRAN_DEL;
 			}
 		}
-		logger.debug("Leaving");
+		try {
+			if (isNewCustomer()) {
+				tranType = PennantConstants.TRAN_DEL;
+				AuditHeader auditHeader = newCusomerProcess(aCustomerRating, tranType);
+				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerRatingDialog, auditHeader);
+				int retValue = auditHeader.getProcessStatus();
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+					getCustomerDialogCtrl().doFillCustomerRatings(this.customerRatings);
+					// send the data back to customer
+					closeDialog();
+				}
+
+			} else if (doProcess(aCustomerRating, tranType)) {
+				refreshList();
+				closeDialog();
+			}
+		} catch (DataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+			showMessage(e);
+		}
 	}
 
 	/**
@@ -831,7 +816,7 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 					getCustomerDialogCtrl().doFillCustomerRatings(this.customerRatings);
-					//true;
+					// true;
 					// send the data back to customer
 					closeDialog();
 
@@ -867,7 +852,10 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 			for (int i = 0; i < getCustomerDialogCtrl().getRatingsList().size(); i++) {
 				CustomerRating customerRating = getCustomerDialogCtrl().getRatingsList().get(i);
 
-				if (customerRating.getCustRatingType().equals(aCustomerRating.getCustRatingType())) { // Both Current and Existing list rating same
+				if (customerRating.getCustRatingType().equals(aCustomerRating.getCustRatingType())) { // Both Current
+																										// and Existing
+																										// list rating
+																										// same
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
@@ -918,11 +906,9 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aCustomerRating
-	 *            (CustomerRating)
+	 * @param aCustomerRating (CustomerRating)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType        (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1007,11 +993,9 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1073,7 +1057,7 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -1172,8 +1156,7 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -1190,8 +1173,7 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

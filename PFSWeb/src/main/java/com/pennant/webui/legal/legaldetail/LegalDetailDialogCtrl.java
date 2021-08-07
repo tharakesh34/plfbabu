@@ -105,6 +105,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.finance.financemain.FinCovenantTypeListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.engine.workflow.Operation;
 import com.pennanttech.pennapps.core.engine.workflow.ProcessUtil;
 import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
@@ -1415,7 +1416,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		setOverideMap(auditHeader.getOverideMap());

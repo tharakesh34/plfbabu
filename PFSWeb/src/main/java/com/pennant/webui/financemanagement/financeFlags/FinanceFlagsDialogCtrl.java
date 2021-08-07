@@ -82,6 +82,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -722,7 +723,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		setOverideMap(auditHeader.getOverideMap());

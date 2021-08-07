@@ -128,6 +128,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionStaticListBox;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -5052,7 +5053,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug(Literal.LEAVING);

@@ -60,6 +60,7 @@ import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -884,7 +885,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 

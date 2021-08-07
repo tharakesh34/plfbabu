@@ -72,6 +72,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.financemanagement.ocr.OCRMaintenanceListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -93,7 +94,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_FinOCRDialog;
-	//OCR Definition Fields
+	// OCR Definition Fields
 	protected Listbox listBoxFinOCRSteps;
 	protected Div ocrStepsDiv;
 	protected Button btnNew_FinOCRStep;
@@ -103,7 +104,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	protected Combobox ocrType;
 	protected CurrencyBox totalDemand;
 	protected CurrencyBox totalReceivable;
-	//OCR capture Fields
+	// OCR capture Fields
 	protected Textbox loanReference;
 	protected CurrencyBox ocrCprTotReceivble;
 	protected CurrencyBox ocrTotalDemand;
@@ -137,7 +138,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	private FinOCRHeaderService finOCRHeaderService;
 	@Autowired
 	private SearchProcessor searchProcessor;
-	//Fin OCR Capture list
+	// Fin OCR Capture list
 	private List<FinOCRCapture> finOCRCaptureList = new ArrayList<FinOCRCapture>();
 	private int ccyFormatter = 0;
 
@@ -217,7 +218,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 				allowedRoles = (String) arguments.get("allowedRoles");
 			}
 
-			//moduleName
+			// moduleName
 			if (arguments.containsKey("moduleName")) {
 				this.moduleName = (String) arguments.get("moduleName");
 			}
@@ -256,8 +257,8 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 							.getApprovedFinOCRHeaderByRef(financeMain.getParentRef(), TableType.VIEW.getSuffix());
 					ocrHeader = ocrHeaderService.getOCRHeaderByOCRId(finOCRHeader.getOcrID(),
 							TableType.AVIEW.getSuffix());
-					if (getFinanceDetail() != null && StringUtils.equals(getFinanceDetail().getModuleDefiner(),
-							FinServiceEvent.ORG)) {
+					if (getFinanceDetail() != null
+							&& StringUtils.equals(getFinanceDetail().getModuleDefiner(), FinServiceEvent.ORG)) {
 						setFinOCRHeader(copyOCRHeaderProperties(ocrHeader, finOCRHeader));
 					}
 					if (getFinanceDetail().getFinOCRHeader() != null
@@ -332,7 +333,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		this.ocrID.setModuleName("OCRHeader");
 		this.ocrID.setValueColumn("OcrID");
 		this.ocrID.setValidateColumns(new String[] { "OcrID" });
-		//Filters for OCR Id as per the loan type
+		// Filters for OCR Id as per the loan type
 		if (financeType != null && !StringUtils.isEmpty(financeType.getAllowedOCRS())) {
 			List<String> detailsList = Arrays.asList(financeType.getAllowedOCRS().split(","));
 			this.ocrID.setFilters(new Filter[] { new Filter("OcrID", detailsList, Filter.OP_IN) });
@@ -466,8 +467,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.finOCRHeader);
@@ -499,7 +499,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 			this.listBoxFinOCRSteps.setVisible(false);
 		}
 
-		//FinOCRStep Details
+		// FinOCRStep Details
 		doFillFinOCRStepDetails(finOCRHeader.getOcrDetailList());
 		financeDetail.setFinOCRHeader(finOCRHeader);
 		for (FinOCRCapture finOCRCapture : finOCRHeader.getFinOCRCapturesList()) {
@@ -507,7 +507,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 				finOCRCapture.setDocImage(finOCRHeaderService.getDocumentManImage(finOCRCapture.getDocumentRef()));
 			}
 		}
-		//FinOCRStep Details
+		// FinOCRStep Details
 		doFillFinOCRCaptureDetails(finOCRHeader.getFinOCRCapturesList());
 		if (!isFinanceProcess) {
 			this.recordStatus.setValue(finOCRHeader.getRecordStatus());
@@ -524,7 +524,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 			readOnlyComponent(true, this.ocrType);
 			readOnlyComponent(true, this.totalDemand);
 			readOnlyComponent(true, this.totalReceivable);
-			//readOnlyComponent(true, this.splitApplicable);
+			// readOnlyComponent(true, this.splitApplicable);
 			this.btnNew_FinOCRCapture.setVisible(false);
 
 		}
@@ -539,7 +539,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 			readOnlyComponent(true, this.ocrType);
 			readOnlyComponent(true, this.totalDemand);
 			readOnlyComponent(true, this.totalReceivable);
-			//readOnlyComponent(true, this.splitApplicable);
+			// readOnlyComponent(true, this.splitApplicable);
 		}
 
 	}
@@ -669,8 +669,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		doSave();
@@ -877,7 +876,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 			}
 
 			setOverideMap(aAuditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -968,7 +967,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		totalOcrPaid = this.tdTotalReceivable.getActualValue();
 
 		if (StringUtils.isNotEmpty(financeMain.getParentRef())) {
-			//Parent total demand amount
+			// Parent total demand amount
 			FinOCRHeader finOCRHeader = finOCRHeaderService.getApprovedFinOCRHeaderByRef(financeMain.getParentRef(),
 					TableType.VIEW.getSuffix());
 			if (finOCRHeader != null) {
@@ -996,7 +995,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 			return false;
 		}
 
-		//rule for segmentations
+		// rule for segmentations
 		if (StringUtils.equals(this.ocrType.getSelectedItem().getValue(), PennantConstants.SEGMENTED_VALUE)) {
 			BigDecimal cumCustSum = BigDecimal.ZERO;
 
@@ -1031,12 +1030,12 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 			}
 		}
 
-		//validation 
+		// validation
 		BigDecimal amountTobepaid = getCurrentTranchAmount(totalDemandAmt, custPortion);
 		BigDecimal financieContribution = totalDemandAmt.subtract(amountTobepaid);
 
 		if (StringUtils.equals(this.ocrType.getSelectedItem().getValue(), PennantConstants.PRORATA_VALUE)) {
-			//Rule 1
+			// Rule 1
 			if (totalOcrPaid.compareTo(amountTobepaid) < 0) {
 				String msg = Labels.getLabel("OCR_NOT_SUFFICIENT_MSG");
 				if (MessageUtil.confirm(msg) == MessageUtil.NO) {
@@ -1049,7 +1048,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 				}
 			}
 
-			//rule 2
+			// rule 2
 			if (disbAmount.add(totalOcrPaid).compareTo(totalDemandAmt) > 0) {
 				String msg = Labels.getLabel("OCR_DISB_AMOUNT_CUM_VALIDATION_MSG");
 				if (MessageUtil.confirm(msg) == MessageUtil.NO) {
@@ -1082,7 +1081,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		List<FinAdvancePayments> finAdvancePayments = financeDetail.getAdvancePaymentsList();
 		BigDecimal finAmount = BigDecimal.ZERO;
 		List<FinanceMain> fmlist = null;
-		//Current Loan disbursment amount
+		// Current Loan disbursment amount
 		if (CollectionUtils.isNotEmpty(finAdvancePayments)) {
 			for (FinAdvancePayments disb : finAdvancePayments) {
 				String status = disb.getStatus();
@@ -1208,7 +1207,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		BigDecimal rem = BigDecimal.ZERO;
 		boolean custr = false;
 		boolean finc = false;
-		//BigDecimal disbAmount = getDisbAmount(financeDetail);
+		// BigDecimal disbAmount = getDisbAmount(financeDetail);
 		for (FinOCRDetail finOCRDetail : aFinOCRHeader.getOcrDetailList()) {
 			if (finOCRDetail.getCustomerContribution().compareTo(BigDecimal.ZERO) != 0) {
 				BigDecimal cust = getCurrentTranchAmount(ocrtotalDemand, finOCRDetail.getCustomerContribution());
@@ -1332,11 +1331,11 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 			wve.add(we);
 		}
 
-		//aFinOCRHeader.setSplitApplicable(this.splitApplicable.isChecked());
-		//Fin OCR Step Details
+		// aFinOCRHeader.setSplitApplicable(this.splitApplicable.isChecked());
+		// Fin OCR Step Details
 		aFinOCRHeader.setOcrDetailList(getFinOCRDetailList());
 
-		//Fin OCR Capture Details
+		// Fin OCR Capture Details
 		aFinOCRHeader.setFinOCRCapturesList(getFinOCRCaptureList());
 		logger.debug(Literal.LEAVING);
 		return wve;
@@ -1433,13 +1432,13 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 			newFinOCRHeader.setOcrID(ocrHeader.getOcrID());
 			newFinOCRHeader.setOcrDescription(ocrHeader.getOcrDescription());
 			newFinOCRHeader.setCustomerPortion(ocrHeader.getCustomerPortion());
-			//finOCRHeader.setSplitApplicable(ocrHeader.isSplitApplicable());
+			// finOCRHeader.setSplitApplicable(ocrHeader.isSplitApplicable());
 			if (StringUtils.isBlank(newFinOCRHeader.getRecordType())) {
 				newFinOCRHeader.setVersion(newFinOCRHeader.getVersion() + 1);
 				newFinOCRHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			}
 
-			//setting the work flow values for 
+			// setting the work flow values for
 			if (StringUtils.isNotEmpty(parentRef) && finOCRHeader != null) {
 				List<FinOCRDetail> finOCRDetails = finOCRHeader.getOcrDetailList();
 				if (CollectionUtils.isNotEmpty(finOCRDetails)) {
@@ -1491,7 +1490,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	 */
 	public void onValueChange$totalDemand(Event event) throws Exception {
 		logger.trace(Literal.ENTERING);
-		//this.totalReceivable.setValue((totalDemand.getValue()*customerPortion.getValue())/100);
+		// this.totalReceivable.setValue((totalDemand.getValue()*customerPortion.getValue())/100);
 		this.totalReceivable
 				.setValue(getCurrentTranchAmount(this.totalDemand.getValidateValue(), this.customerPortion.getValue()));
 		logger.trace(Literal.LEAVING);
@@ -1506,7 +1505,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	 */
 	public void onFulfill$totalDemand(Event event) throws Exception {
 		logger.trace(Literal.ENTERING);
-		//this.totalReceivable.setValue((totalDemand.getValue()*customerPortion.getValue())/100);
+		// this.totalReceivable.setValue((totalDemand.getValue()*customerPortion.getValue())/100);
 		this.totalReceivable
 				.setValue(getCurrentTranchAmount(this.totalDemand.getActualValue(), this.customerPortion.getValue()));
 		logger.trace(Literal.LEAVING);
@@ -1523,7 +1522,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		FinOCRHeader finOCRHeader = new FinOCRHeader();
 		if (ocrHeader != null) {
 			setFinOCRHeader(finOCRHeader);
-			//render the Master OCR details in loan queue
+			// render the Master OCR details in loan queue
 			ocrHeader = ocrHeaderService.getApprovedOCRHeader(ocrHeader.getHeaderID());
 			setFinOCRHeader(copyOCRHeaderProperties(ocrHeader, null));
 			doWriteBeanToComponents(getFinOCRHeader());
@@ -1552,7 +1551,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 
 				lc = new Listcell(String.valueOf(detail.getStepSequence()));
 				lc.setParent(item);
-				//skipping the cancel and DELETE records
+				// skipping the cancel and DELETE records
 				if (!PennantConstants.RCD_DEL.equalsIgnoreCase(detail.getRecordType())
 						&& !PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(detail.getRecordType())) {
 					totalCust = totalCust.add(detail.getCustomerContribution());
@@ -1586,7 +1585,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 				}
 				this.listBoxFinOCRSteps.appendChild(item);
 			}
-			//group total
+			// group total
 			if (listBoxFinOCRSteps != null && listBoxFinOCRSteps.getItems().size() > 0) {
 				Listitem item = new Listitem();
 				Listcell lc = new Listcell(Labels.getLabel("listheader_AdvancePayments_GrandTotal.label"));
@@ -1675,7 +1674,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		} else {
 			if (doCheckOCRStepsDeleted()) {
 				MessageUtil.showError(Labels.getLabel("label_FinOCRDialog_error"));
-				//this condition is for switching segmented to prorata 
+				// this condition is for switching segmented to prorata
 				fillComboBox(this.ocrType, PennantConstants.SEGMENTED_VALUE, applicableList, "");
 				return;
 			}
@@ -1687,7 +1686,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	private boolean doCheckOCRStepsDeleted() {
 		if (!CollectionUtils.isEmpty(getFinOCRDetailList())) {
 			for (FinOCRDetail finOCRDetail : getFinOCRDetailList()) {
-				//skipping the cancel and DELETE records
+				// skipping the cancel and DELETE records
 				if (!PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(finOCRDetail.getRecordType())
 						&& !PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(finOCRDetail.getRecordType())) {
 					return true;
@@ -1766,7 +1765,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	public void onClick$btnNew_FinOCRStep(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING + event.toString());
 		Clients.clearWrongValue(this.btnNew_FinOCRStep);
-		//with out selecting ocr header 
+		// with out selecting ocr header
 		if (StringUtils.isEmpty(this.finOCRHeader.getOcrID())) {
 			doWriteComponentsToBean(this.finOCRHeader);
 		}
@@ -1810,8 +1809,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -1911,10 +1909,10 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 				Listitem item = new Listitem();
 				Listcell lc;
 
-				lc = new Listcell(String.valueOf(detail.getDisbSeq()));//1
+				lc = new Listcell(String.valueOf(detail.getDisbSeq()));// 1
 				lc.setParent(item);
 
-				lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getDemandAmount(), ccyFormatter));//2
+				lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getDemandAmount(), ccyFormatter));// 2
 				lc.setParent(item);
 				ocrTotalDemand = ocrTotalDemand.add(detail.getDemandAmount());
 				lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getPaidAmount(), ccyFormatter));
@@ -1957,7 +1955,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 				if (CollectionUtils.isNotEmpty(childFinanceMainList)) {
 					ocrAmountCalculationForSegemnt(ocrTotalDemand, ocrTotalpaid, financeMain, childFinanceMainList);
 				} else {
-					//this.ocrCprTotReceivble.setValue(getCumCustSum(financeDetail, formate(ocrTotalDemand)));
+					// this.ocrCprTotReceivble.setValue(getCumCustSum(financeDetail, formate(ocrTotalDemand)));
 					consumer.accept(finOCRCaptureList);
 				}
 			}
@@ -1966,7 +1964,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		} else {
 			ocrTotReceiveble = ocrTotReceiveble
 					.add(getCurrentTranchAmount(ocrTotalDemand, financeDetail.getFinOCRHeader().getCustomerPortion()));
-			//this.ocrCprTotReceivble.setValue(formate(ocrTotReceiveble));
+			// this.ocrCprTotReceivble.setValue(formate(ocrTotReceiveble));
 
 			if (financeMain != null && StringUtils.isNotEmpty(financeMain.getParentRef())) {
 				List<FinanceMain> parentFinanceMainList = getFinanceMainObject(financeMain.getParentRef());
@@ -2081,7 +2079,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		cumfincsum = cumfincsum.subtract(parentfinancierpaid);
 		parentfinancierpaid = parentfinancierpaid.add(cumfincsum);
 
-		//this.ocrCprTotReceivble.setValue(cumcustsum);
+		// this.ocrCprTotReceivble.setValue(cumcustsum);
 		this.tdTotalDemand.setValue(parentfinancierpaid.add(parentocrpaid));
 		this.tdTotalReceivable.setValue(tdOCRPaid);
 	}

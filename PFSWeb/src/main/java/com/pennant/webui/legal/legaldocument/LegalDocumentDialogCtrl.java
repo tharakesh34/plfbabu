@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LegalDocumentDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  18-06-2018    														*
- *                                                                  						*
- * Modified Date    :  18-06-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LegalDocumentDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 18-06-2018 * *
+ * Modified Date : 18-06-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 18-06-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 18-06-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.legal.legaldocument;
 
 import java.io.ByteArrayInputStream;
@@ -1029,52 +1011,29 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Deletes a LegalDocument object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+	protected boolean doCustomDelete(final LegalDocument aLegalDocument, String tranType) {
+		if (isNewDocumentDetails()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = processDetails(aLegalDocument, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_LegalDocumentDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				if (getLegalDetailDialogCtrl() != null) {
+					getLegalDetailDialogCtrl().doFillDocumentDetails(this.legalDocumentDetailsList);
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.LEAVING);
 
 		final LegalDocument aLegalDocument = new LegalDocument();
 		BeanUtils.copyProperties(this.legalDocument, aLegalDocument);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aLegalDocument.getDocumentNo();
-
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aLegalDocument.getRecordType())) {
-				aLegalDocument.setVersion(aLegalDocument.getVersion() + 1);
-				aLegalDocument.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aLegalDocument.setNewRecord(true);
-				if (isWorkFlowEnabled()) {
-					aLegalDocument.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (isNewDocumentDetails()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = processDetails(aLegalDocument, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_LegalDocumentDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						if (getLegalDetailDialogCtrl() != null) {
-							getLegalDetailDialogCtrl().doFillDocumentDetails(this.legalDocumentDetailsList);
-						}
-						closeDialog();
-					}
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
-		}
+		doDelete(aLegalDocument.getDocumentNo(), aLegalDocument);
 		logger.debug(Literal.LEAVING);
 	}
 

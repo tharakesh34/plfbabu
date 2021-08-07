@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright hvaer, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright hvaer, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  QDEFinanceMainDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : QDEFinanceMainDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
+ * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -74,6 +56,7 @@ import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -114,8 +97,10 @@ import com.pennant.webui.dedup.dedupparm.FetchFinCustomerDedupDetails;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -460,8 +445,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -488,8 +472,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceMain
-	 *            financeMain
+	 * @param aFinanceMain financeMain
 	 * @throws ParseException
 	 * @throws InterruptedException
 	 * @throws InvocationTargetException
@@ -628,8 +611,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
-	 * @param aFinanceSchData
-	 *            (FinScheduleData)
+	 * @param aFinanceSchData (FinScheduleData)
 	 * @throws Exception
 	 */
 	public void doWriteComponentsToBean(FinanceDetail detail, boolean increasePhoneVersion)
@@ -1234,12 +1216,10 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinanceDetail afinanceDetail = new FinanceDetail();
 		BeanUtils.copyProperties(getFinanceDetail(), afinanceDetail);
-
-		String tranType = PennantConstants.TRAN_WF;
 
 		FinanceMain afinanceMain = afinanceDetail.getFinScheduleData().getFinanceMain();
 		afinanceDetail.setUserAction(this.userAction.getSelectedItem().getLabel());
@@ -1247,36 +1227,42 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ afinanceMain.getFinReference();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(afinanceMain.getRecordType())) {
-				afinanceMain.setVersion(afinanceMain.getVersion() + 1);
-				afinanceMain.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()) {
-					afinanceMain.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		MessageUtil.confirm(msg, evnt -> {
+			String tranType = PennantConstants.TRAN_WF;
+			if (Messagebox.ON_YES.equals(evnt.getName())) {
+				if (StringUtils.isBlank(afinanceMain.getRecordType())) {
+					afinanceMain.setVersion(afinanceMain.getVersion() + 1);
+					afinanceMain.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-			try {
-				afinanceDetail.getFinScheduleData().setFinanceMain(afinanceMain);
-				if (doProcess(afinanceDetail, tranType)) {
-					if (getFinanceMainListCtrl() != null) {
-						refreshList();
+					if (isWorkFlowEnabled()) {
+						afinanceMain.setNewRecord(true);
+						tranType = PennantConstants.TRAN_WF;
+					} else {
+						tranType = PennantConstants.TRAN_DEL;
 					}
-					if (getFinanceSelectCtrl() != null) {
-						refreshMaintainList();
-					}
-					closeDialog();
 				}
 
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
+				try {
+					afinanceDetail.getFinScheduleData().setFinanceMain(afinanceMain);
+					if (doProcess(afinanceDetail, tranType)) {
+						if (getFinanceMainListCtrl() != null) {
+							refreshList();
+						}
+						if (getFinanceSelectCtrl() != null) {
+							refreshMaintainList();
+						}
+						closeDialog();
+					}
+
+				} catch (DataAccessException e) {
+					MessageUtil.showError(e);
+				}
+
 			}
-		}
-		logger.debug("Leaving");
+		});
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1284,10 +1270,10 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 */
 	public void doEdit() {
 		logger.debug("Entering");
-		//		if (getFinanceDetail().getFinScheduleData().getFinanceMain().isNewRecord()) {
-		//			this.finReference.setReadonly(false);
-		//		} else {
-		//		}
+		// if (getFinanceDetail().getFinScheduleData().getFinanceMain().isNewRecord()) {
+		// this.finReference.setReadonly(false);
+		// } else {
+		// }
 		this.finReference.setReadonly(true);
 		this.finAmount.setDisabled(isReadOnly("QDEFinanceMainDialog_finAmount"));
 		this.numberOfTerms.setReadonly(isReadOnly("QDEFinanceMainDialog_numberOfTerms"));
@@ -1981,9 +1967,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			setOverideMap(auditHeader.getOverideMap());
 			setNextUserId(((FinanceMain) auditHeader.getAuditDetail().getModelData()).getNextUserId());
 
-		} catch (InterruptedException e) {
-			logger.error("Exception: ", e);
-		} catch (InterfaceException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		} catch (DataAccessException e) {
 			throw e;
@@ -2079,7 +2063,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public void onFulfill$commitmentRef(Event event) throws InterruptedException, InterfaceException {
 		logger.debug("Entering " + event.toString());
 
-		//fetch Limit Details from ACP Interface
+		// fetch Limit Details from ACP Interface
 		/*
 		 * LimitDetail limitDetail =
 		 * getLimitCheckDetails().getLimitDetails(this.finLimitRef.getValue(),this.finBranch.getValue());
@@ -2345,7 +2329,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @param event
 	 */
 	public void onFulfill$finBranch(Event event) {
-		
+
 	}
 
 	/**

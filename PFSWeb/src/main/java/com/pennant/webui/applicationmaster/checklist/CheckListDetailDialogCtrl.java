@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CheckListDetailDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-12-2011    														*
- *                                                                  						*
- * Modified Date    :  12-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CheckListDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-12-2011 * *
+ * Modified Date : 12-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.applicationmaster.checklist;
@@ -51,7 +33,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -76,6 +57,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -212,7 +194,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.ansDesc.setMaxlength(100);
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -309,8 +291,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -371,8 +352,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCheckListDetail
-	 *            CheckListDetail
+	 * @param aCheckListDetail CheckListDetail
 	 */
 	public void doWriteBeanToComponents(CheckListDetail aCheckListDetail) {
 		logger.debug("Entering");
@@ -414,7 +394,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 		}
 		try {
 			aCheckListDetail.setAnsCond("Condition");
-			//aCheckListDetail.setAnsCond(this.ansCond.getValue());
+			// aCheckListDetail.setAnsCond(this.ansCond.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -563,54 +543,31 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
+	protected boolean doCustomDelete(final CheckListDetail checkListDetail, String tranType) {
+		tranType = PennantConstants.TRAN_DEL;
+		AuditHeader auditHeader = newChkListDetailProcess(checkListDetail, tranType);
+		auditHeader = ErrorControl.showErrorDetails(this.window_CheckListDetailDialog, auditHeader);
+		int retValue = auditHeader.getProcessStatus();
+		if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+			getCheckListDialogCtrl().doFillCheckListDetailsList(this.chkListDetailList);
 
-	/**
-	 * Deletes a CheckListDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+			this.window_CheckListDetailDialog.onClose();
+		}
+
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final CheckListDetail checkListDetail = new CheckListDetail();
 		BeanUtils.copyProperties(getCheckListDetail(), checkListDetail);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ checkListDetail.getAnsDesc();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(checkListDetail.getRecordType())) {
-				checkListDetail.setVersion(checkListDetail.getVersion() + 1);
-				checkListDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		final String keyReference = checkListDetail.getAnsDesc();
 
-				if (isWorkFlowEnabled()) {
-					checkListDetail.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			} else if (StringUtils.trimToEmpty(checkListDetail.getRecordType()).equals(PennantConstants.RCD_UPD)) {
-				checkListDetail.setVersion(checkListDetail.getVersion() + 1);
-				checkListDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			}
+		doDelete(keyReference, checkListDetail);
 
-			try {
-				tranType = PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader = newChkListDetailProcess(checkListDetail, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.window_CheckListDetailDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					getCheckListDialogCtrl().doFillCheckListDetailsList(this.chkListDetailList);
-
-					this.window_CheckListDetailDialog.onClose();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -781,21 +738,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * This method added the CheckListdetail object into chkListDetailList by setting RecordType according to tranType
-	 * <p>
-	 * eg: if(tranType==PennantConstants.TRAN_DEL){ aCheckListDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL); }
-	 * </p>
-	 * 
-	 * @param aCheckListDetail
-	 *            (CheckListDetail)
-	 * @param tranType
-	 *            (String)
-	 * @return auditHeader (AuditHeader)
-	 * @throws InterruptedException
-	 */
-	private AuditHeader newChkListDetailProcess(CheckListDetail aCheckListDetail, String tranType)
-			throws InterruptedException {
+	private AuditHeader newChkListDetailProcess(CheckListDetail aCheckListDetail, String tranType) {
 		logger.debug("Entering ");
 		boolean recordAdded = false;
 
@@ -888,8 +831,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -905,8 +847,7 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

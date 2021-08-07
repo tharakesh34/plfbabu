@@ -98,6 +98,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -1277,7 +1278,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");

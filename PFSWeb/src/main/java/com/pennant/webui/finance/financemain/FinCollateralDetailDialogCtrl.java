@@ -33,7 +33,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -48,6 +47,7 @@ import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -70,6 +70,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -639,18 +640,26 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
+	protected boolean doCustomDelete(final FinCollaterals aFinCollaterals, String tranType) {
+		if (isNewFinCollateral()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newCollateralProcess(aFinCollaterals, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_FinCollateralDetailDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				getFinCollateralHeaderDialogCtrl().doFillCollateralDetails(this.finCollateralList);
+				return true;
+			}
+		}
 
-	/**
-	 * Deletes a FinCollaterals object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final FinCollaterals aFinCollaterals = new FinCollaterals();
 		BeanUtils.copyProperties(getFinCollateral(), aFinCollaterals);
-		String tranType = PennantConstants.TRAN_WF;
 
 		String repayMthd = StringUtils.trimToEmpty(this.collateralType.getSelectedItem().getValue().toString());
 		String fieldName = "";
@@ -659,39 +668,10 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 		} else if (StringUtils.equals(FinanceConstants.COLLATERAL_SECURITYCHEQUE, repayMthd)) {
 			fieldName = Labels.getLabel("label_FinCollateralDetailDialog_PDCReference.value");
 		}
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ fieldName + " : " + aFinCollaterals.getReference();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aFinCollaterals.getRecordType())) {
-				aFinCollaterals.setVersion(aFinCollaterals.getVersion() + 1);
-				aFinCollaterals.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aFinCollaterals.setNewRecord(true);
+		final String keyReference = fieldName + " : " + aFinCollaterals.getReference();
+		doDelete(keyReference, aFinCollaterals);
 
-				if (isWorkFlowEnabled()) {
-					aFinCollaterals.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (isNewFinCollateral()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newCollateralProcess(aFinCollaterals, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_FinCollateralDetailDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						getFinCollateralHeaderDialogCtrl().doFillCollateralDetails(this.finCollateralList);
-						closeDialog();
-					}
-
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -889,7 +869,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	 * @throws InterruptedException
 	 */
 	private void doRevalidateChequeRange() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		doClearMessage();
 		boolean dataChanged = false;
@@ -901,15 +881,18 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 			dataChanged = true;
 		}
 		if (dataChanged) {
-			if (MessageUtil.confirm(Labels.getLabel("CHEQUE_REVALIDATE")) == MessageUtil.YES) {
-				this.pdcStatus.setValue("");
-				return;
-			} else {
-				this.firstChequeNbr.setValue(this.oldVar_firstChequeNbr);
-				this.lastChequeNbr.setValue(this.oldVar_lastChequeNbr);
-			}
+			MessageUtil.confirm(Labels.getLabel("CHEQUE_REVALIDATE"), evnt -> {
+				if (Messagebox.ON_YES.equals(evnt.getName())) {
+					this.pdcStatus.setValue("");
+					return;
+				} else {
+					this.firstChequeNbr.setValue(this.oldVar_firstChequeNbr);
+					this.lastChequeNbr.setValue(this.oldVar_lastChequeNbr);
+				}
+			});
+
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private AuditHeader newCollateralProcess(FinCollaterals aFinCollaterals, String tranType) {

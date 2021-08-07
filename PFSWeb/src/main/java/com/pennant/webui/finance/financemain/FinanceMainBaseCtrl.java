@@ -111,6 +111,7 @@ import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Longbox;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
 import org.zkoss.zul.Space;
@@ -3054,9 +3055,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.trace(Literal.LEAVING);
 	}
 
-	public void onSelectTab(ForwardEvent event)
-			throws IllegalAccessException, InvocationTargetException, InterruptedException, ParseException,
-			WrongValueException, IllegalArgumentException, NoSuchMethodException, SecurityException {
+	public void onSelectTab(ForwardEvent event) throws Exception {
 		Tab tab = (Tab) event.getOrigin().getTarget();
 		logger.debug(tab.getId() + " --> " + Literal.ENTERING);
 		String module = getIDbyTab(tab.getId());
@@ -11099,22 +11098,24 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (manualSchedule.isChecked() && getManualScheduleDetailDialogCtrl() != null) {
 			final String msg = "Schedule will be recreated would you like to proceed";
 
-			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-				if (getManualScheduleDetailDialogCtrl() != null) {
-					getManualScheduleDetailDialogCtrl().doPrepareSchdData(getFinanceDetail().getFinScheduleData(),
-							false);
-					appendScheduleDetailTab(false, false);
+			MessageUtil.confirm(msg, evnt -> {
+				if (Messagebox.ON_YES.equals(evnt.getName())) {
+					if (getManualScheduleDetailDialogCtrl() != null) {
+						getManualScheduleDetailDialogCtrl().doPrepareSchdData(getFinanceDetail().getFinScheduleData(),
+								false);
+						appendScheduleDetailTab(false, false);
+					}
+				} else {
+					fillComboBox(this.cbGrcSchdMthd, cbGrcSchddemethod, PennantStaticListUtil.getScheduleMethods(),
+							",EQUAL,PRI_PFT,PRI,POSINT,");
+					return;
 				}
-
-			} else {
-				fillComboBox(this.cbGrcSchdMthd, cbGrcSchddemethod, PennantStaticListUtil.getScheduleMethods(),
-						",EQUAL,PRI_PFT,PRI,POSINT,");
-				return;
-			}
+			});
 		}
 
 		cbGrcSchddemethod = getComboboxValue(this.cbGrcSchdMthd);
 		onChangeGrcSchdMthd();
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -11141,25 +11142,26 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (manualSchedule.isChecked() && getManualScheduleDetailDialogCtrl() != null) {
 			final String msg = "Schedule will be recreated would you like to proceed";
 
-			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-				if (!this.stepFinance.isChecked()) {
-					this.repayRateBasis.setDisabled(isReadOnly("FinanceMainDialog_repayRateBasis"));
-				}
+			MessageUtil.confirm(msg, evnt -> {
+				if (Messagebox.ON_YES.equals(evnt.getName())) {
+					if (!this.stepFinance.isChecked()) {
+						this.repayRateBasis.setDisabled(isReadOnly("FinanceMainDialog_repayRateBasis"));
+					}
 
-				if (getManualScheduleDetailDialogCtrl() != null) {
-					getManualScheduleDetailDialogCtrl().doPrepareSchdData(getFinanceDetail().getFinScheduleData(),
-							false);
-					appendScheduleDetailTab(false, false);
+					if (getManualScheduleDetailDialogCtrl() != null) {
+						getManualScheduleDetailDialogCtrl().doPrepareSchdData(getFinanceDetail().getFinScheduleData(),
+								false);
+						appendScheduleDetailTab(false, false);
+					}
+				} else {
+					if (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
+							getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory())) {
+						fillComboBox(this.cbScheduleMethod, cbSchddemethod, PennantStaticListUtil.getScheduleMethods(),
+								",NO_PAY,GRCNDPAY,PFTCAP,");
+						return;
+					}
 				}
-
-			} else {
-				if (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
-						getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory())) {
-					fillComboBox(this.cbScheduleMethod, cbSchddemethod, PennantStaticListUtil.getScheduleMethods(),
-							",NO_PAY,GRCNDPAY,PFTCAP,");
-					return;
-				}
-			}
+			});
 		}
 		cbSchddemethod = getComboboxValue(this.cbScheduleMethod);
 		logger.debug(Literal.LEAVING + event.toString());

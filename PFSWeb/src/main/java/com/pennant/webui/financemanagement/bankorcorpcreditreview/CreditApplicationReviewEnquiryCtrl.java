@@ -104,6 +104,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -556,8 +557,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCreditReviewDetails
-	 *            (FinCreditReviewDetails)
+	 * @param aCreditReviewDetails (FinCreditReviewDetails)
 	 * @throws Exception
 	 */
 
@@ -565,9 +565,11 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		logger.debug("Entering");
 		this.custID.setValue(aCreditReviewDetails.getCustomerId());
 		this.custCIF.setValue(aCreditReviewDetails.getLovDescCustCIF() != null
-				? StringUtils.trimToEmpty(aCreditReviewDetails.getLovDescCustCIF()) : "");
+				? StringUtils.trimToEmpty(aCreditReviewDetails.getLovDescCustCIF())
+				: "");
 		this.custCIF.setTooltiptext(aCreditReviewDetails.getLovDescCustCIF() != null
-				? StringUtils.trimToEmpty(aCreditReviewDetails.getLovDescCustCIF()) : "");
+				? StringUtils.trimToEmpty(aCreditReviewDetails.getLovDescCustCIF())
+				: "");
 		this.custShrtName.setValue(aCreditReviewDetails.getLovDescCustShrtName());
 		this.bankName.setValue(aCreditReviewDetails.getBankName());
 		this.auditedDate.setValue(aCreditReviewDetails.getAuditedDate());
@@ -898,11 +900,9 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -970,7 +970,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 
@@ -987,8 +987,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1885,8 +1884,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

@@ -2629,54 +2629,49 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Deletes a Commitment object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final Commitment aCommitment = new Commitment();
 		BeanUtils.copyProperties(getCommitment(), aCommitment);
+
+		final String keyReference = Labels.getLabel("label_CommitmentDialog_CmtReference.value") + " : "
+				+ aCommitment.getCmtReference();
+
+		doDelete(keyReference, aCommitment);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	protected void onDoDelete(final Commitment aCommitment) {
 		String tranType = PennantConstants.TRAN_WF;
+		if (StringUtils.isBlank(aCommitment.getRecordType())) {
+			aCommitment.setVersion(aCommitment.getVersion() + 1);
+			aCommitment.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			aCommitment.getCommitmentMovement().setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_CommitmentDialog_CmtReference.value") + " : " + aCommitment.getCmtReference();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCommitment.getRecordType())) {
-				aCommitment.setVersion(aCommitment.getVersion() + 1);
-				aCommitment.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aCommitment.getCommitmentMovement().setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aCommitment.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aCommitment.getCommitmentMovement()
-							.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aCommitment.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aCommitment.getNextTaskId(),
-							aCommitment);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
+			if (isWorkFlowEnabled()) {
+				aCommitment.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+				aCommitment.getCommitmentMovement().setRecordStatus(userAction.getSelectedItem().getValue().toString());
+				aCommitment.setNewRecord(true);
+				tranType = PennantConstants.TRAN_WF;
+				getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aCommitment.getNextTaskId(), aCommitment);
+			} else {
+				tranType = PennantConstants.TRAN_DEL;
 			}
-
-			try {
-				if (doProcess(aCommitment, tranType)) {
-					refreshList();
-
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
 		}
 
-		logger.debug("Leaving");
+		try {
+			if (doProcess(aCommitment, tranType)) {
+				refreshList();
+
+				closeDialog();
+			}
+
+		} catch (DataAccessException e) {
+			MessageUtil.showError(e);
+		}
+
 	}
 
 	/**
@@ -2998,15 +2993,6 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		return processCompleted;
 	}
 
-	/**
-	 * Get the result after processing DataBase Operations
-	 * 
-	 * @param AuditHeader auditHeader
-	 * @param method      (String)
-	 * @return boolean
-	 * 
-	 */
-
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
@@ -3074,7 +3060,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		setOverideMap(auditHeader.getOverideMap());

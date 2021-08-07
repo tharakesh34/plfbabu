@@ -61,6 +61,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -1343,7 +1344,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 			setOverideMap(aAuditHeader.getOverideMap());
 
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 

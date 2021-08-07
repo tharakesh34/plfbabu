@@ -237,8 +237,7 @@ public class OCRDetailDialogCtrl extends GFCBaseCtrl<OCRDetail> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -285,7 +284,7 @@ public class OCRDetailDialogCtrl extends GFCBaseCtrl<OCRDetail> {
 		logger.debug(Literal.ENTERING);
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		//Step Sequence
+		// Step Sequence
 		try {
 			aOCRDetail.setStepSequence(this.stepSequence.getValue());
 		} catch (WrongValueException we) {
@@ -398,7 +397,7 @@ public class OCRDetailDialogCtrl extends GFCBaseCtrl<OCRDetail> {
 		} else {
 			this.financerContribution.setConstraint("");
 		}
-		//Applicable On
+		// Applicable On
 		if (!this.contributor.isDisabled() && this.label_OCRDetailDialog_Contributor.isVisible()) {
 			this.contributor.setConstraint(new StaticListValidator(ocrContributorList,
 					Labels.getLabel("label_OCRDetailDialog_Contributor.value")));
@@ -432,52 +431,29 @@ public class OCRDetailDialogCtrl extends GFCBaseCtrl<OCRDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	// CRUD operations
+	protected boolean doCustomDelete(final OCRDetail aOCRDetail, String tranType) {
+		tranType = PennantConstants.TRAN_DEL;
+		AuditHeader auditHeader = newOCRDetailProcess(aOCRDetail, tranType);
+		auditHeader = ErrorControl.showErrorDetails(this.window_OCRDetailDialog, auditHeader);
+		int retValue = auditHeader.getProcessStatus();
+		if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+			if (getOcrHeaderDialogCtrl() != null) {
+				getOcrHeaderDialogCtrl().doFillOCRDetails(this.ocrDetailList);
+			}
+			return true;
+		}
+		return false;
+	}
 
-	/**
-	 * Deletes a OCRDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		final OCRDetail aOCRDetail = new OCRDetail();
 		BeanUtils.copyProperties(getOcrDetail(), aOCRDetail);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_OCRDetailDialog_StepSequence.value") + " : " + aOCRDetail.getStepSequence();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aOCRDetail.getRecordType())) {
-				aOCRDetail.setVersion(aOCRDetail.getVersion() + 1);
-				aOCRDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (getOcrHeaderDialogCtrl() != null) {
-					aOCRDetail.setNewRecord(true);
-				}
-				if (isWorkFlowEnabled()) {
-					aOCRDetail.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		final String keyReference = Labels.getLabel("label_OCRDetailDialog_StepSequence.value") + " : "
+				+ aOCRDetail.getStepSequence();
 
-			try {
-				tranType = PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader = newOCRDetailProcess(aOCRDetail, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.window_OCRDetailDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					if (getOcrHeaderDialogCtrl() != null) {
-						getOcrHeaderDialogCtrl().doFillOCRDetails(this.ocrDetailList);
-					}
-					closeDialog();
-				}
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(keyReference, aOCRDetail);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -588,11 +564,9 @@ public class OCRDetailDialogCtrl extends GFCBaseCtrl<OCRDetail> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -664,8 +638,7 @@ public class OCRDetailDialogCtrl extends GFCBaseCtrl<OCRDetail> {
 	/**
 	 * Display Message in Error Box
 	 *
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug(Literal.ENTERING);
@@ -682,8 +655,7 @@ public class OCRDetailDialogCtrl extends GFCBaseCtrl<OCRDetail> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -791,9 +763,9 @@ public class OCRDetailDialogCtrl extends GFCBaseCtrl<OCRDetail> {
 		String message = "Total ";
 		String[] valueParm = new String[2];
 
-		// Header contribution splitting 
+		// Header contribution splitting
 		if (ocrHeader != null) {
-			//100 – value entered at header section against field "Customer Portion (%)".
+			// 100 – value entered at header section against field "Customer Portion (%)".
 			financerPortion = new BigDecimal(100).subtract(getOcrHeader().getCustomerPortion());
 			customerPortion = getOcrHeader().getCustomerPortion();
 		}

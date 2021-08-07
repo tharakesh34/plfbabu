@@ -9,7 +9,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -74,8 +73,7 @@ public class FinOCRStepDialogCtrl extends GFCBaseCtrl<FinOCRDetail> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$windowFinOCRStepDialog(Event event) throws Exception {
@@ -168,8 +166,7 @@ public class FinOCRStepDialogCtrl extends GFCBaseCtrl<FinOCRDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -181,8 +178,7 @@ public class FinOCRStepDialogCtrl extends GFCBaseCtrl<FinOCRDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -193,8 +189,7 @@ public class FinOCRStepDialogCtrl extends GFCBaseCtrl<FinOCRDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -205,8 +200,7 @@ public class FinOCRStepDialogCtrl extends GFCBaseCtrl<FinOCRDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -217,8 +211,7 @@ public class FinOCRStepDialogCtrl extends GFCBaseCtrl<FinOCRDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -229,8 +222,7 @@ public class FinOCRStepDialogCtrl extends GFCBaseCtrl<FinOCRDetail> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -241,8 +233,7 @@ public class FinOCRStepDialogCtrl extends GFCBaseCtrl<FinOCRDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -290,19 +281,19 @@ public class FinOCRStepDialogCtrl extends GFCBaseCtrl<FinOCRDetail> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Step Seq
+		// Step Seq
 		try {
 			aFinOCRDetail.setStepSequence(this.stepSequence.intValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Customer Contribution
+		// Customer Contribution
 		try {
 			aFinOCRDetail.setCustomerContribution(this.customerContribution.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//FinancerContribution
+		// FinancerContribution
 		try {
 			aFinOCRDetail.setFinancerContribution(this.financerContribution.getValue());
 		} catch (WrongValueException we) {
@@ -336,8 +327,7 @@ public class FinOCRStepDialogCtrl extends GFCBaseCtrl<FinOCRDetail> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param aFinOCRDetail
-	 *            The entity that need to be render.
+	 * @param aFinOCRDetail The entity that need to be render.
 	 */
 	public void doShowDialog(FinOCRDetail aFinOCRDetail) {
 		logger.debug(Literal.ENTERING);
@@ -416,47 +406,26 @@ public class FinOCRStepDialogCtrl extends GFCBaseCtrl<FinOCRDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a FinOCRDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+	protected boolean doCustomDelete(final FinOCRDetail aFinOCRDetail, String tranType) {
+		tranType = PennantConstants.TRAN_DEL;
+		AuditHeader auditHeader = processFinOCRStepDetails(aFinOCRDetail, tranType);
+		auditHeader = ErrorControl.showErrorDetails(this.windowFinOCRStepDialog, auditHeader);
+		int retValue = auditHeader.getProcessStatus();
+		if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+			finOCRDialogCtrl.doFillFinOCRStepDetails(this.finOCRDetailsList);
+			return true;
+		}
+
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		final FinOCRDetail aFinOCRDetail = new FinOCRDetail();
 		BeanUtils.copyProperties(this.finOCRDetail, aFinOCRDetail);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aFinOCRDetail.getStepSequence();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aFinOCRDetail.getRecordType())) {
-				aFinOCRDetail.setVersion(aFinOCRDetail.getVersion() + 1);
-				aFinOCRDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aFinOCRDetail.setNewRecord(true);
-				if (isWorkFlowEnabled()) {
-					aFinOCRDetail.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				tranType = PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader = processFinOCRStepDetails(aFinOCRDetail, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.windowFinOCRStepDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					finOCRDialogCtrl.doFillFinOCRStepDetails(this.finOCRDetailsList);
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(String.valueOf(aFinOCRDetail.getStepSequence()), aFinOCRDetail);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -634,9 +603,9 @@ public class FinOCRStepDialogCtrl extends GFCBaseCtrl<FinOCRDetail> {
 		String message = "Total ";
 		String[] valueParm = new String[2];
 
-		// Header contribution splitting 
+		// Header contribution splitting
 		if (getFinOCRHeader() != null) {
-			//100 – value entered at header section against field "Customer Portion (%)".
+			// 100 – value entered at header section against field "Customer Portion (%)".
 			financerPortion = new BigDecimal(100).subtract(getFinOCRHeader().getCustomerPortion());
 			customerPortion = getFinOCRHeader().getCustomerPortion();
 		}

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerBalanceSheetDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  07-12-2011    														*
- *                                                                  						*
- * Modified Date    :  07-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerBalanceSheetDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 07-12-2011 *
+ * * Modified Date : 07-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 07-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 07-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.customermasters.customerbalancesheet;
@@ -85,7 +67,9 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -220,7 +204,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 		doSetFieldProperties();
 		doShowDialog(getCustomerBalanceSheet());
 
-		//Calling SelectCtrl For proper selection of Customer
+		// Calling SelectCtrl For proper selection of Customer
 		if (isNewRecord() && !isNewCustomer()) {
 			onload();
 		}
@@ -233,7 +217,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.totalAssets.setMaxlength(18);
 		this.totalAssets.setFormat(PennantApplicationUtil.getAmountFormate(0));
 		this.totalAssets.setScale(0);
@@ -353,8 +337,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -387,8 +370,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCustomerBalanceSheet
-	 *            CustomerBalanceSheet
+	 * @param aCustomerBalanceSheet CustomerBalanceSheet
 	 */
 	public void doWriteBeanToComponents(CustomerBalanceSheet aCustomerBalanceSheet) {
 		logger.debug("Entering");
@@ -666,56 +648,36 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 		getCustomerBalanceSheetListCtrl().search();
 	}
 
-	// CRUD operations
+	protected boolean doCustomDelete(final CustomerBalanceSheet aCustomerBalanceSheet, String tranType) {
+		if (isNewCustomer()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newCusomerProcess(aCustomerBalanceSheet, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_CustomerBalanceSheetDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				// getCustomerDialogCtrl().doFillCustomerBalanceSheet(this.balanceSheetDetails);
+				// send the data back to customer
+				closeDialog();
+				return false;
+			}
+		} else if (doProcess(aCustomerBalanceSheet, tranType)) {
+			refreshList();
+			closeDialog();
+			return false;
+		}
 
-	/**
-	 * Deletes a CustomerBalanceSheet object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final CustomerBalanceSheet aCustomerBalanceSheet = new CustomerBalanceSheet();
 		BeanUtils.copyProperties(getCustomerBalanceSheet(), aCustomerBalanceSheet);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aCustomerBalanceSheet.getCustId();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCustomerBalanceSheet.getRecordType())) {
-				aCustomerBalanceSheet.setVersion(aCustomerBalanceSheet.getVersion() + 1);
-				aCustomerBalanceSheet.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(String.valueOf(aCustomerBalanceSheet.getCustId()), aCustomerBalanceSheet);
 
-				if (isWorkFlowEnabled()) {
-					aCustomerBalanceSheet.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (isNewCustomer()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newCusomerProcess(aCustomerBalanceSheet, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerBalanceSheetDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						//	getCustomerDialogCtrl().doFillCustomerBalanceSheet(this.balanceSheetDetails);
-						// send the data back to customer
-						closeDialog();
-					}
-				} else if (doProcess(aCustomerBalanceSheet, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -901,8 +863,8 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerBalanceSheetDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					//getCustomerDialogCtrl().doFillCustomerBalanceSheet(this.balanceSheetDetails);
-					//true;
+					// getCustomerDialogCtrl().doFillCustomerBalanceSheet(this.balanceSheetDetails);
+					// true;
 					// send the data back to customer
 					closeDialog();
 
@@ -926,11 +888,9 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aCustomerBalanceSheet
-	 *            (CustomerBalanceSheet)
+	 * @param aCustomerBalanceSheet (CustomerBalanceSheet)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType              (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1020,10 +980,8 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
-	 * @param method
-	 *            (String)
+	 * @param auditHeader (AuditHeader)
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */
@@ -1088,7 +1046,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("return Value:" + processCompleted);
@@ -1173,8 +1131,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	/**
 	 * Display Message in Error Box s
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -1191,8 +1148,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

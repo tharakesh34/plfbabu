@@ -66,6 +66,7 @@ import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -1416,7 +1417,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 			}
 
 			setOverideMap(aAuditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");

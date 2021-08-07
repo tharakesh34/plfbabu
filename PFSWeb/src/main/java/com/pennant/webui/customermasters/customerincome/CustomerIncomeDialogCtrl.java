@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerIncomeDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerIncomeDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * *
+ * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.customermasters.customerincome;
@@ -95,6 +77,7 @@ import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.customermasters.customer.CustomerViewDialogCtrl;
 import com.pennant.webui.sampling.SamplingDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -305,7 +288,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		doSetFieldProperties();
 		doShowDialog(getCustomerIncome());
 
-		//Calling SelectCtrl For proper selection of Customer
+		// Calling SelectCtrl For proper selection of Customer
 		if (isNewRecord() && !isNewCustomer()) {
 			onload();
 		}
@@ -355,7 +338,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		//getUserWorkspace().allocateAuthorities("CustomerIncomeDialog",userRole);
+		// getUserWorkspace().allocateAuthorities("CustomerIncomeDialog",userRole);
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CustomerIncomeDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CustomerIncomeDialog_btnEdit"));
@@ -416,8 +399,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -450,8 +432,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCustomerIncome
-	 *            CustomerIncome
+	 * @param aCustomerIncome CustomerIncome
 	 */
 	public void doWriteBeanToComponents(CustomerIncome aCustomerIncome) {
 		logger.debug("Entering");
@@ -525,12 +506,12 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		}
 
 		aCustomerIncome.setJointCust(this.jointCust.isChecked());
-		//		try {
-		//			aCustomerIncome.setLovDescCustIncomeCountryName(this.lovDescCustIncomeCountryName.getValue());
-		//			aCustomerIncome.setCustIncomeCountry(this.custIncomeCountry.getValue());
-		//		} catch (WrongValueException we) {
-		//			wve.add(we);
-		//		}
+		// try {
+		// aCustomerIncome.setLovDescCustIncomeCountryName(this.lovDescCustIncomeCountryName.getValue());
+		// aCustomerIncome.setCustIncomeCountry(this.custIncomeCountry.getValue());
+		// } catch (WrongValueException we) {
+		// wve.add(we);
+		// }
 
 		try {
 			aCustomerIncome.setInputSource(inputSource);
@@ -735,63 +716,59 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		getCustomerIncomeListCtrl().search();
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a CustomerIncome object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final CustomerIncome aCustomerIncome = new CustomerIncome();
 		BeanUtils.copyProperties(getCustomerIncome(), aCustomerIncome);
+
+		final String keyReference = Labels.getLabel("label_CustomerIncomeDialog_CustIncomeType.value") + " : "
+				+ aCustomerIncome.getIncomeType();
+
+		doDelete(keyReference, aCustomerIncome);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	protected void onDoDelete(final CustomerIncome aCustomerIncome) {
 		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_CustomerIncomeDialog_CustIncomeType.value") + " : "
-				+ aCustomerIncome.getIncomeType();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCustomerIncome.getRecordType())) {
-				aCustomerIncome.setVersion(aCustomerIncome.getVersion() + 1);
-				aCustomerIncome.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (!isFinanceProcess && getCustomerDialogCtrl() != null
-						&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
-					aCustomerIncome.setNewRecord(true);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-				/*
-				 * if (isWorkFlowEnabled()) { aCustomerIncome.setNewRecord(true); tranType = PennantConstants.TRAN_WF; }
-				 * else { tranType = PennantConstants.TRAN_DEL; }
-				 */ }
+		if (StringUtils.isBlank(aCustomerIncome.getRecordType())) {
+			aCustomerIncome.setVersion(aCustomerIncome.getVersion() + 1);
+			aCustomerIncome.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			if (!isFinanceProcess && getCustomerDialogCtrl() != null
+					&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
+				aCustomerIncome.setNewRecord(true);
+			} else {
+				tranType = PennantConstants.TRAN_DEL;
+			}
+			/*
+			 * if (isWorkFlowEnabled()) { aCustomerIncome.setNewRecord(true); tranType = PennantConstants.TRAN_WF; }
+			 * else { tranType = PennantConstants.TRAN_DEL; }
+			 */ }
 
-			try {
-				if (isNewCustomer()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newCustomerProcess(aCustomerIncome, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerIncomeDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						if (getCustomerDialogCtrl() != null) {
-							getCustomerDialogCtrl().doFillCustomerIncome(this.customerIncomes);
-						} else if (getSamplingDialogCtrl() != null) {
-							getSamplingDialogCtrl().doFillCustomerIncome(this.customerIncomes);
-						}
-						closeDialog();
+		try {
+			if (isNewCustomer()) {
+				tranType = PennantConstants.TRAN_DEL;
+				AuditHeader auditHeader = newCustomerProcess(aCustomerIncome, tranType);
+				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerIncomeDialog, auditHeader);
+				int retValue = auditHeader.getProcessStatus();
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+					if (getCustomerDialogCtrl() != null) {
+						getCustomerDialogCtrl().doFillCustomerIncome(this.customerIncomes);
+					} else if (getSamplingDialogCtrl() != null) {
+						getSamplingDialogCtrl().doFillCustomerIncome(this.customerIncomes);
 					}
-				} else if (doProcess(aCustomerIncome, tranType)) {
-					refreshList();
 					closeDialog();
 				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
+			} else if (doProcess(aCustomerIncome, tranType)) {
+				refreshList();
+				closeDialog();
 			}
+		} catch (DataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+			showMessage(e);
 		}
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -1043,7 +1020,13 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 						&& (aCustomerIncome.getIncomeType().equals(customerIncome.getIncomeType()))
 						&& (aCustomerIncome.getCategory().equals(customerIncome.getCategory()))
 						&& (aCustomerIncome.isJointCust() == customerIncome.isJointCust())
-						&& (aCustomerIncome.getIncomeExpense().equals(customerIncome.getIncomeExpense()))) { // Both Current and Existing list rating same
+						&& (aCustomerIncome.getIncomeExpense().equals(customerIncome.getIncomeExpense()))) { // Both
+																												// Current
+																												// and
+																												// Existing
+																												// list
+																												// rating
+																												// same
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
@@ -1097,11 +1080,9 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aCustomerIncome
-	 *            (CustomerIncome)
+	 * @param aCustomerIncome (CustomerIncome)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType        (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1192,11 +1173,9 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1258,7 +1237,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -1370,8 +1349,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -1388,8 +1366,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

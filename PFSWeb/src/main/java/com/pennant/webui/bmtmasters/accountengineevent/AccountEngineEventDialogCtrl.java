@@ -707,7 +707,7 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");

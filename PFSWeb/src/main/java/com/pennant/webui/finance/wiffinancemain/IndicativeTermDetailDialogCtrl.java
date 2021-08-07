@@ -1481,7 +1481,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("return Value:" + processCompleted);

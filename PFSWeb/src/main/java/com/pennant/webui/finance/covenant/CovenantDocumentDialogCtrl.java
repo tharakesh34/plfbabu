@@ -1,42 +1,24 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CovenantDocumentDialogCtrl.java                                        * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  20-12-2017    														*
- *                                                                  						*
- * Modified Date    :  			    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CovenantDocumentDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 20-12-2017 * *
+ * Modified Date : * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 20-12-2017       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 20-12-2017 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.covenant;
@@ -724,55 +706,30 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	// CRUD operations
+	protected boolean doCustomDelete(final CovenantDocument aCovenantDocument, String tranType) {
+		tranType = PennantConstants.TRAN_DEL;
+		AuditHeader auditHeader = newCovenantDocumentProcess(aCovenantDocument, tranType);
+		auditHeader = ErrorControl.showErrorDetails(this.window_CovenantDocumentDialog, auditHeader);
+		int retValue = auditHeader.getProcessStatus();
+		if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+			covenantsDialogCtrl.doFillCovenantDocument(this.covenantDocuments);
+			return true;
+		}
 
-	/**
-	 * Deletes a FinTypeExpense object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
+
 		final CovenantDocument aCovenantDocument = new CovenantDocument();
 		BeanUtils.copyProperties(getCovenantDocument(), aCovenantDocument);
-		String tranType = PennantConstants.TRAN_WF;
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_CovenantDocumentDialog_ConvDocType.value") + " : "
+
+		final String keyReference = Labels.getLabel("label_CovenantDocumentDialog_ConvDocType.value") + " : "
 				+ aCovenantDocument.getCovenantType();
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+		doDelete(keyReference, aCovenantDocument);
 
-			logger.debug("doDelete: Yes");
-			if (StringUtils.isBlank(aCovenantDocument.getRecordType())) {
-				aCovenantDocument.setVersion(aCovenantDocument.getVersion() + 1);
-				aCovenantDocument.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (isWorkFlowEnabled()) {
-					aCovenantDocument.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			} else if (StringUtils.trimToEmpty(aCovenantDocument.getRecordType()).equals(PennantConstants.RCD_UPD)) {
-				aCovenantDocument.setVersion(aCovenantDocument.getVersion() + 1);
-				aCovenantDocument.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			}
-			try {
-				tranType = PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader = newCovenantDocumentProcess(aCovenantDocument, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.window_CovenantDocumentDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-
-					covenantsDialogCtrl.doFillCovenantDocument(this.covenantDocuments);
-
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				logger.error(Literal.EXCEPTION, e);
-				showMessage(e);
-			}
-		}
 		logger.debug(Literal.LEAVING);
 	}
 

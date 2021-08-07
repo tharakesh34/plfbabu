@@ -35,6 +35,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -279,9 +280,11 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 
 		// save the data
 		String msg = Labels.getLabel("label_FileUpload_Save_Confirmation");
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			doSave();
-		}
+		MessageUtil.confirm(msg, evnt -> {
+			if (Messagebox.ON_YES.equals(evnt.getName())) {
+				doSave();
+			}
+		});
 	}
 
 	private void prepareCustomerExtLiabilityData(CustomerExtLiability ce, String cellValue, int i) {

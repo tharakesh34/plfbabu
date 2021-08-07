@@ -61,6 +61,7 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.North;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
@@ -106,6 +107,7 @@ import com.pennant.webui.pdc.chequeheader.ChequeHeaderListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -664,7 +666,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		setOverideMap(auditHeader.getOverideMap());
@@ -2230,55 +2232,60 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 	public void onClickDeleteButton(ForwardEvent event) {
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record");
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			@SuppressWarnings("unchecked")
-			List<Object> list = (List<Object>) event.getData();
-			ChequeDetail chequeDetail = (ChequeDetail) list.get(0);
-			Object[] rvddata = (Object[]) list.get(2);
-			Listitem listitem = (Listitem) rvddata[0];
 
-			List<Listcell> listCells = listitem.getChildren();
-			Listcell statusLC = listCells.get(8);
-			Combobox chequeStatus = (Combobox) statusLC.getFirstChild();
-			fillComboBox(chequeStatus, PennantConstants.CHEQUESTATUS_CANCELLED, chequeStatusList, "");
-			chequeDetail.setStatus(PennantConstants.CHEQUESTATUS_CANCELLED);
+		MessageUtil.confirm(msg, evnt -> {
+			if (Messagebox.ON_YES.equals(evnt.getName())) {
+				@SuppressWarnings("unchecked")
+				List<Object> list = (List<Object>) event.getData();
+				ChequeDetail chequeDetail = (ChequeDetail) list.get(0);
+				Object[] rvddata = (Object[]) list.get(2);
+				Listitem listitem = (Listitem) rvddata[0];
 
-			if (chequeDetail != null && !chequeDetail.isNewRecord()) {
-				chequeDetail.setActive(false);
-				chequeDetail.setRecordStatus(PennantConstants.RCD_STATUS_CANCELLED);
+				List<Listcell> listCells = listitem.getChildren();
+				Listcell statusLC = listCells.get(8);
+				Combobox chequeStatus = (Combobox) statusLC.getFirstChild();
+				fillComboBox(chequeStatus, PennantConstants.CHEQUESTATUS_CANCELLED, chequeStatusList, "");
 				chequeDetail.setStatus(PennantConstants.CHEQUESTATUS_CANCELLED);
-				if (fromLoan) {
-					chequeDetail.setRecordType(PennantConstants.RCD_DEL);
-				} else {
-					if (StringUtils.equals(chequeDetail.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+
+				if (chequeDetail != null && !chequeDetail.isNewRecord()) {
+					chequeDetail.setActive(false);
+					chequeDetail.setRecordStatus(PennantConstants.RCD_STATUS_CANCELLED);
+					chequeDetail.setStatus(PennantConstants.CHEQUESTATUS_CANCELLED);
+					if (fromLoan) {
 						chequeDetail.setRecordType(PennantConstants.RCD_DEL);
-					} else if (!StringUtils.equals(chequeDetail.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
-						chequeDetail.setRecordType(PennantConstants.RCD_UPD);
+					} else {
+						if (StringUtils.equals(chequeDetail.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+							chequeDetail.setRecordType(PennantConstants.RCD_DEL);
+						} else if (!StringUtils.equals(chequeDetail.getRecordType(),
+								PennantConstants.RECORD_TYPE_UPD)) {
+							chequeDetail.setRecordType(PennantConstants.RCD_UPD);
+						}
 					}
 				}
-			}
 
-			if (chequeDetail.isNewRecord()
-					&& !StringUtils.equals(chequeDetail.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
-				removeFromList(chequeDetail);
-				this.listBoxChequeDetail.removeItemAt(listitem.getIndex());
-			} else {
-				Listcell accTypeLc = listCells.get(2);
-				Combobox accType = (Combobox) accTypeLc.getFirstChild();
-				readOnlyComponent(true, accType);
-				Listcell emiReferenceLc = listCells.get(6);
-				Combobox emiReference = (Combobox) emiReferenceLc.getFirstChild();
-				readOnlyComponent(true, emiReference);
-				Listcell delButtonLc = listCells.get(9);
-				Button deleteButton = (Button) delButtonLc.getFirstChild();
-				readOnlyComponent(true, deleteButton);
-				Listcell uploadButtonLc = listCells.get(10);
-				Button uploadButton = (Button) uploadButtonLc.getFirstChild();
-				readOnlyComponent(true, uploadButton);
+				if (chequeDetail.isNewRecord()
+						&& !StringUtils.equals(chequeDetail.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
+					removeFromList(chequeDetail);
+					this.listBoxChequeDetail.removeItemAt(listitem.getIndex());
+				} else {
+					Listcell accTypeLc = listCells.get(2);
+					Combobox accType = (Combobox) accTypeLc.getFirstChild();
+					readOnlyComponent(true, accType);
+					Listcell emiReferenceLc = listCells.get(6);
+					Combobox emiReference = (Combobox) emiReferenceLc.getFirstChild();
+					readOnlyComponent(true, emiReference);
+					Listcell delButtonLc = listCells.get(9);
+					Button deleteButton = (Button) delButtonLc.getFirstChild();
+					readOnlyComponent(true, deleteButton);
+					Listcell uploadButtonLc = listCells.get(10);
+					Button uploadButton = (Button) uploadButtonLc.getFirstChild();
+					readOnlyComponent(true, uploadButton);
+				}
+				dosetCalculatedTotals(listBoxChequeDetail);
+				onFulfill$EmiAmount(event);
+
 			}
-			dosetCalculatedTotals(listBoxChequeDetail);
-			onFulfill$EmiAmount(event);
-		}
+		});
 	}
 
 	private void removeFromList(ChequeDetail chequeDetail) {

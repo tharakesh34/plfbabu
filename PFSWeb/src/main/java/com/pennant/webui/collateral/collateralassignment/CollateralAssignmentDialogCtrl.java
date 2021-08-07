@@ -54,6 +54,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -141,7 +142,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 				setFinanceDetail((FinanceDetail) arguments.get("financeDetail"));
 			}
 
-			//collateralSetupCtrl
+			// collateralSetupCtrl
 			if (arguments.containsKey("collateralHeaderDialogCtrl")) {
 				setCollateralHeaderDialogCtrl((CollateralHeaderDialogCtrl) arguments.get("collateralHeaderDialogCtrl"));
 				if (arguments.containsKey("newRecord")) {
@@ -199,19 +200,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
-	 * when the "save" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws InterruptedException
-	 * @throws SecurityException
-	 * @throws NoSuchMethodException
-	 * @throws InvocationTargetException
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 */
-	public void onClick$btnSave(Event event) throws InterruptedException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -244,8 +233,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -254,8 +242,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -285,7 +272,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 					new String[] { Labels.getLabel("label_CollateralAssignmentDetailDialog_CollateralRef.value") }));
 		}
 		try {
-			//Collateral Details
+			// Collateral Details
 			Map<String, Object> map = new HashMap<String, Object>();
 			CollateralSetup collateralSetup = getCollateralSetup(this.collateralRef.getValue());
 			if (collateralSetup == null) {
@@ -562,8 +549,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aGuarantorDetail
-	 *            GuarantorDetail
+	 * @param aGuarantorDetail GuarantorDetail
 	 */
 	public void doWriteBeanToComponents(CollateralAssignment collateralAssignment) {
 		logger.debug("Entering");
@@ -613,8 +599,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -927,11 +912,11 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 			}
 			utilizedAmt = utilizedAmt.subtract(assignedVal);
 			BigDecimal reqAssignPerc = BigDecimal.ZERO;
-			//If loan amount is higher than Collateral amount
+			// If loan amount is higher than Collateral amount
 			if (utilizedAmt.compareTo(collateralSetup.getBankValuation()) > 0) {
 				reqAssignPerc = BigDecimal.valueOf(100);
 			} else {
-				//If loan amount is lesser than Collateral amount
+				// If loan amount is lesser than Collateral amount
 				reqAssignPerc = utilizedAmt.multiply(new BigDecimal(100)).divide(collateralSetup.getBankValuation(), 2,
 						RoundingMode.UP);
 			}
@@ -958,7 +943,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 			formatter = CurrencyUtil.getFormat(getCollateralAssignment().getCollateralCcy());
 		}
 
-		// Available Assignment value 
+		// Available Assignment value
 		BigDecimal assignValuePerc = this.assignValuePerc.getValue();
 		if (assignValuePerc == null) {
 			assignValuePerc = BigDecimal.ZERO;
@@ -989,56 +974,31 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Deletes a GuarantorDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 * @throws SecurityException
-	 * @throws NoSuchMethodException
-	 * @throws InvocationTargetException
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 */
+	protected boolean doCustomDelete(final CollateralAssignment collateralAssignment, String tranType) {
+		tranType = PennantConstants.TRAN_DEL;
+		AuditHeader auditHeader = newAssignmentDetailProcess(collateralAssignment, tranType);
+		auditHeader = ErrorControl.showErrorDetails(this.window_CollateralAssignmentDetailDialog, auditHeader);
+		int retValue = auditHeader.getProcessStatus();
+		if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+			if (getCollateralHeaderDialogCtrl() != null) {
+				getCollateralHeaderDialogCtrl().doFillCollateralDetails(this.collateralAssignments, true);
+			}
+			return true;
+		}
+
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException, IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException, NoSuchMethodException, SecurityException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final CollateralAssignment collateralAssignment = new CollateralAssignment();
 		BeanUtils.copyProperties(getCollateralAssignment(), collateralAssignment);
-		String tranType = PennantConstants.TRAN_WF;
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ (collateralAssignment.getCollateralRef());
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(collateralAssignment.getRecordType())) {
-				collateralAssignment.setVersion(collateralAssignment.getVersion() + 1);
-				collateralAssignment.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				collateralAssignment.setNewRecord(true);
+		doDelete(collateralAssignment.getCollateralRef(), collateralAssignment);
 
-				if (isWorkFlowEnabled()) {
-					collateralAssignment.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				tranType = PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader = newAssignmentDetailProcess(collateralAssignment, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.window_CollateralAssignmentDetailDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					if (getCollateralHeaderDialogCtrl() != null) {
-						getCollateralHeaderDialogCtrl().doFillCollateralDetails(this.collateralAssignments, true);
-					}
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1051,18 +1011,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws InterruptedException
-	 * @throws SecurityException
-	 * @throws NoSuchMethodException
-	 * @throws InvocationTargetException
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 */
-	public void doSave() throws InterruptedException, IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException, NoSuchMethodException, SecurityException {
+	public void doSave() throws Exception {
 		logger.debug("Entering");
 
 		final CollateralAssignment aCollateralAssignment = new CollateralAssignment();
@@ -1122,11 +1071,9 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1149,7 +1096,13 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 				CollateralAssignment collateralAssignment = getCollateralHeaderDialogCtrl().getCollateralAssignments()
 						.get(i);
 
-				if (collateralAssignment.getCollateralRef().equals(aCollateralAssignment.getCollateralRef())) { // Both Current and Existing list Reference same
+				if (collateralAssignment.getCollateralRef().equals(aCollateralAssignment.getCollateralRef())) { // Both
+																												// Current
+																												// and
+																												// Existing
+																												// list
+																												// Reference
+																												// same
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
@@ -1196,7 +1149,8 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		return auditHeader;
 	}
 
-	//Getting the approved collateral setup values from search object and adding the newly created collateral setup list
+	// Getting the approved collateral setup values from search object and adding the newly created collateral setup
+	// list
 	private void setCollateralTypeList(List<CollateralSetup> collateralSetupList) {
 
 		StringBuilder whereClause = getWhereClause();
@@ -1213,7 +1167,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		if (CollectionUtils.isNotEmpty(collateralSetupList)) {
 			collateralSetupSearchList.addAll(collateralSetupList);
 		}
-		//Setting null if collateralSetupSearchList is empty to throw the validation for collateralRef
+		// Setting null if collateralSetupSearchList is empty to throw the validation for collateralRef
 		if (CollectionUtils.isEmpty(collateralSetupSearchList)) {
 			collateralSetupSearchList = null;
 		}
@@ -1241,7 +1195,8 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 				whereClause.append(
 						" OR (CollateralRef IN (Select CollateralRef from CollateralThirdParty WHERE CustomerId =");
 				whereClause.append(customerId).append(")) ) ");
-				// Adding Where Condition to Filter Not Collateral References which are not allowed to Multi Assignment in Loans
+				// Adding Where Condition to Filter Not Collateral References which are not allowed to Multi Assignment
+				// in Loans
 				whereClause.append(" AND (((MultiLoanAssignment = 0 and CollateralRef NOT IN (");
 				whereClause.append(
 						" Select CollateralRef From CollateralAssignment union Select CollateralRef From CollateralAssignment_Temp)) ");

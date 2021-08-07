@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  TaxDetailDialogCtrl.java                                             * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-06-2017    														*
- *                                                                  						*
- * Modified Date    :  14-06-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : TaxDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-06-2017 * * Modified
+ * Date : 14-06-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-06-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-06-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.applicationmaster.taxdetail;
 
 import java.sql.Timestamp;
@@ -79,6 +61,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.systemmasters.province.ProvinceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -151,8 +134,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_TaxDetailDialog(Event event) throws Exception {
@@ -298,8 +280,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
@@ -565,8 +546,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -579,8 +559,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -593,8 +572,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -607,8 +585,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -621,8 +598,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -635,8 +611,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -894,8 +869,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param taxDetail
-	 *            The entity that need to be render.
+	 * @param taxDetail The entity that need to be render.
 	 */
 	public void doShowDialog(TaxDetail taxDetail) {
 		logger.debug(Literal.LEAVING);
@@ -1074,75 +1048,67 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a TaxDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		final TaxDetail aTaxDetail = new TaxDetail();
 		BeanUtils.copyProperties(this.taxDetail, aTaxDetail);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		String msg = "";
 		if (fromProvince) {
-			msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record");
+			doDelete("", aTaxDetail);
 		} else {
-			msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-					+ aTaxDetail.getId();
-		}
-
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (fromProvince) {
-				aTaxDetail.setVersion(aTaxDetail.getVersion() + 1);
-
-				if (StringUtils.isBlank(aTaxDetail.getRecordType())) {
-					aTaxDetail.setNewRecord(true);
-				}
-
-				tranType = PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader = newTaxDetailProcess(aTaxDetail, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.window_TaxDetailDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					getProvinceDialogCtrl().doFillGSTINMappingDetails(this.listTaxDetails);
-					// send the data back to customer
-					closeDialog();
-				}
-			} else {
-				try {
-					if (StringUtils.isBlank(aTaxDetail.getRecordType())) {
-
-						aTaxDetail.setVersion(aTaxDetail.getVersion() + 1);
-						aTaxDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-						if (isWorkFlowEnabled()) {
-							aTaxDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-							aTaxDetail.setNewRecord(true);
-							tranType = PennantConstants.TRAN_WF;
-							getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aTaxDetail.getNextTaskId(),
-									aTaxDetail);
-						} else {
-							tranType = PennantConstants.TRAN_DEL;
-						}
-					} else if (PennantConstants.RCD_UPD.equals(aTaxDetail.getRecordType())) {
-						aTaxDetail.setVersion(aTaxDetail.getVersion() + 1);
-						aTaxDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					}
-					if (doProcess(aTaxDetail, tranType)) {
-						refreshList();
-						closeDialog();
-					}
-				} catch (DataAccessException e) {
-					MessageUtil.showError(e);
-				}
-			}
+			doDelete(String.valueOf(aTaxDetail.getId()), aTaxDetail);
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	protected void onDoDelete(final TaxDetail aTaxDetail) {
+		String tranType = PennantConstants.TRAN_WF;
+		if (fromProvince) {
+			aTaxDetail.setVersion(aTaxDetail.getVersion() + 1);
+
+			if (StringUtils.isBlank(aTaxDetail.getRecordType())) {
+				aTaxDetail.setNewRecord(true);
+			}
+
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newTaxDetailProcess(aTaxDetail, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_TaxDetailDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				getProvinceDialogCtrl().doFillGSTINMappingDetails(this.listTaxDetails);
+				// send the data back to customer
+				closeDialog();
+			}
+		} else {
+			try {
+				if (StringUtils.isBlank(aTaxDetail.getRecordType())) {
+
+					aTaxDetail.setVersion(aTaxDetail.getVersion() + 1);
+					aTaxDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+
+					if (isWorkFlowEnabled()) {
+						aTaxDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+						aTaxDetail.setNewRecord(true);
+						tranType = PennantConstants.TRAN_WF;
+						getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aTaxDetail.getNextTaskId(),
+								aTaxDetail);
+					} else {
+						tranType = PennantConstants.TRAN_DEL;
+					}
+				} else if (PennantConstants.RCD_UPD.equals(aTaxDetail.getRecordType())) {
+					aTaxDetail.setVersion(aTaxDetail.getVersion() + 1);
+					aTaxDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				}
+				if (doProcess(aTaxDetail, tranType)) {
+					refreshList();
+					closeDialog();
+				}
+			} catch (DataAccessException e) {
+				MessageUtil.showError(e);
+			}
+		}
 	}
 
 	/**
@@ -1373,12 +1339,12 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 
 				if (aTaxDetail.getStateCode().equals(taxDetail.getStateCode())
 						&& aTaxDetail.getEntityCode().equals(taxDetail.getEntityCode())) { // Both
-																																						// Current
-																																							// and
-																																							// Existing
-																																							// list
-																																							// addresses
-																																							// same
+																							// Current
+																							// and
+																							// Existing
+																							// list
+																							// addresses
+																							// same
 
 					if (aTaxDetail.isNewRecord() && !PennantConstants.TRAN_DEL.equals(tranType)) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
@@ -1449,11 +1415,9 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1540,10 +1504,8 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */
@@ -1607,7 +1569,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		setOverideMap(auditHeader.getOverideMap());

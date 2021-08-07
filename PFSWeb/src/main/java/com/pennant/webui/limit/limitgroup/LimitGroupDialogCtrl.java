@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LimitGroupDialogCtrl.java                                            * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-03-2016    														*
- *                                                                  						*
- * Modified Date    :  31-03-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LimitGroupDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-03-2016 * * Modified
+ * Date : 31-03-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-03-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-03-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.limit.limitgroup;
@@ -70,6 +52,7 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
@@ -99,6 +82,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennant.webui.util.pagging.PagedListWrapper;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -312,8 +296,7 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -322,8 +305,7 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.limitGroup);
@@ -440,8 +422,7 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 	/**
 	 * To add row
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -455,8 +436,7 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 	/**
 	 * To add row
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -611,8 +591,7 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aLimitGroup
-	 *            LimitGroup
+	 * @param aLimitGroup LimitGroup
 	 */
 	public void doWriteBeanToComponents(LimitGroup aLimitGroup) {
 		logger.debug("Entering");
@@ -678,7 +657,7 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Limit Category
+		// Limit Category
 		if (isInstitutionType)
 			aLimitGroup.setLimitCategory(LimitConstants.LIMIT_CATEGORY_BANK);
 		else
@@ -1013,7 +992,7 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 						|| !(StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, limitGroupItems.getRecordType())),
 						delete);
 			}
-			//readOnlyComponent(!getUserWorkspace().isAllowed("button_LimitGroupDialog_NewLimitGroupItem"), delete);
+			// readOnlyComponent(!getUserWorkspace().isAllowed("button_LimitGroupDialog_NewLimitGroupItem"), delete);
 
 			if (limitGroupItems.getKey() == 0) {
 				key += 1;
@@ -1195,33 +1174,34 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 	}
 
 	public void onClickRemove(ForwardEvent event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
+
 		Button limitGroup = (Button) event.getOrigin().getTarget();
-		LimitGroupLines limitGroupItems = (LimitGroupLines) limitGroup.getParent().getParent().getAttribute("Data");
+		LimitGroupLines limitGroups = (LimitGroupLines) limitGroup.getParent().getParent().getAttribute("Data");
 
 		String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record");
-		if (limitGroupItems.getLimitLine() != null)
-			msg = msg + "\n\n --> " + (limitGroupItems.getLimitLine() == null ? limitGroupItems.getGroupCode()
-					: limitGroupItems.getLimitLine());
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (limitGroupItems.getRecordStatus() != null && limitGroupItems.getRecordType() != null
-					&& limitGroupItems.getRecordType().equals("")) {
-				boolean flag = getLimitGroupService().isLineUsingInUtilization(limitGroupItems.getLimitLines());
-				/*
-				 * boolean flag = getLimitGroupService().validationCheck( getLimitGroup().getGroupCode());
-				 */
-				if (flag) {
-					clearChild(limitGroupItems);
+		if (limitGroups.getLimitLine() != null)
+			msg = msg + "\n\n --> "
+					+ (limitGroups.getLimitLine() == null ? limitGroups.getGroupCode() : limitGroups.getLimitLine());
+
+		MessageUtil.confirm(msg, evnt -> {
+			if (Messagebox.ON_YES.equals(evnt.getName())) {
+				if (limitGroups.getRecordStatus() != null && limitGroups.getRecordType() != null
+						&& limitGroups.getRecordType().equals("")) {
+					if (limitGroupService.isLineUsingInUtilization(limitGroups.getLimitLines())) {
+						clearChild(limitGroups);
+					} else {
+						MessageUtil.showError(
+								Labels.getLabel("LIMIT_FIELD_MODIFY", new String[] { this.limitGroup.getGroupCode() }));
+						return;
+					}
 				} else {
-					MessageUtil.showError(
-							Labels.getLabel("LIMIT_FIELD_MODIFY", new String[] { getLimitGroup().getGroupCode() }));
-					return;
+					clearChild(limitGroups);
 				}
-			} else {
-				clearChild(limitGroupItems);
 			}
-		}
-		logger.debug("Leaving" + event.toString());
+		});
+
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	private void clearChild(LimitGroupLines limitGroupItems) {
@@ -1303,61 +1283,47 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 	// ************************+ crud operations ***********************
 	// *****************************************************************
 
-	/**
-	 * Closes the dialog window. <br>
-	 * <br>
-	 * Before closing we check if there are unsaved changes in <br>
-	 * the components and ask the user if saving the modifications. <br>
-	 * 
-	 * @throws InterruptedException
-	 * 
-	 */
+	protected void onDoDelete(final LimitGroup aLimitGroup) {
+		String tranType = PennantConstants.TRAN_WF;
+		boolean flag = getLimitGroupService().validationCheck(aLimitGroup.getGroupCode());
+		if (flag) {
+			if (StringUtils.isBlank(aLimitGroup.getRecordType())) {
+				aLimitGroup.setVersion(aLimitGroup.getVersion() + 1);
+				aLimitGroup.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-	/**
-	 * Deletes a LimitGroup object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+				if (isWorkFlowEnabled()) {
+					aLimitGroup.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+					aLimitGroup.setNewRecord(true);
+					tranType = PennantConstants.TRAN_WF;
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aLimitGroup.getNextTaskId(),
+							aLimitGroup);
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
+				}
+			}
+			try {
+				if (doProcess(aLimitGroup, tranType)) {
+					refreshList();
+					closeDialog();
+				}
+			} catch (DataAccessException e) {
+				MessageUtil.showError(e);
+			}
+		} else {
+			MessageUtil
+					.showError(Labels.getLabel("LIMIT_FIELD_DELETE", new String[] { getLimitGroup().getGroupCode() }));
+			return;
+		}
+	}
+
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		final LimitGroup aLimitGroup = new LimitGroup();
 		BeanUtils.copyProperties(getLimitGroup(), aLimitGroup);
-		String tranType = PennantConstants.TRAN_WF;
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aLimitGroup.getGroupCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			boolean flag = getLimitGroupService().validationCheck(aLimitGroup.getGroupCode());
-			if (flag) {
-				if (StringUtils.isBlank(aLimitGroup.getRecordType())) {
-					aLimitGroup.setVersion(aLimitGroup.getVersion() + 1);
-					aLimitGroup.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-					if (isWorkFlowEnabled()) {
-						aLimitGroup.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-						aLimitGroup.setNewRecord(true);
-						tranType = PennantConstants.TRAN_WF;
-						getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aLimitGroup.getNextTaskId(),
-								aLimitGroup);
-					} else {
-						tranType = PennantConstants.TRAN_DEL;
-					}
-				}
-				try {
-					if (doProcess(aLimitGroup, tranType)) {
-						refreshList();
-						closeDialog();
-					}
-				} catch (DataAccessException e) {
-					MessageUtil.showError(e);
-				}
-			} else {
-				MessageUtil.showError(
-						Labels.getLabel("LIMIT_FIELD_DELETE", new String[] { getLimitGroup().getGroupCode() }));
-				return;
-			}
-		}
-		logger.debug("Leaving");
+		doDelete(aLimitGroup.getGroupCode(), aLimitGroup);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1438,11 +1404,9 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1493,10 +1457,8 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */
@@ -1546,7 +1508,7 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		setOverideMap(auditHeader.getOverideMap());

@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  AMZBatchAdminCtrl.java												*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  13-10-2018															*
- *                                                                  
- * Modified Date    :  13-10-2018															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : AMZBatchAdminCtrl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 13-10-2018 *
+ * 
+ * Modified Date : 13-10-2018 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 13-10-2018       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 13-10-2018 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.batch.admin;
@@ -71,6 +62,7 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
@@ -314,41 +306,43 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 			msg = Labels.getLabel("labe_reStart_job");
 		}
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			AMZBatchAdmin.getInstance();
-			estimatedTime.setValue(AMZBatchMonitor.getEstimateTime());
-			timer.start();
+		MessageUtil.confirm(msg, evnt -> {
+			if (Messagebox.ON_YES.equals(evnt.getName())) {
 
-			this.btnStartJob.setDisabled(true);
-			AMZBatchMonitor.jobExecutionId = 0;
-			AMZBatchMonitor.avgTime = 0;
-			this.processMap.clear();
+				AMZBatchAdmin.getInstance();
+				estimatedTime.setValue(AMZBatchMonitor.getEstimateTime());
+				timer.start();
 
-			if ("Start".equals(this.btnStartJob.getLabel())) {
-				args[0] = strAMZMonth;
-				AMZBatchAdmin.setArgs(args);
-				AMZBatchAdmin.setRunType("START");
-				resetPanels();
-			} else {
-				args[0] = this.jobExecution.getJobParameters().getString(AmortizationConstants.AMZ_JOB_PARAM);
-				AMZBatchAdmin.setArgs(args);
-				AMZBatchAdmin.setRunType("RE-START");
+				this.btnStartJob.setDisabled(true);
+				AMZBatchMonitor.jobExecutionId = 0;
+				AMZBatchMonitor.avgTime = 0;
+				this.processMap.clear();
+
+				if ("Start".equals(this.btnStartJob.getLabel())) {
+					args[0] = strAMZMonth;
+					AMZBatchAdmin.setArgs(args);
+					AMZBatchAdmin.setRunType("START");
+					resetPanels();
+				} else {
+					args[0] = this.jobExecution.getJobParameters().getString(AmortizationConstants.AMZ_JOB_PARAM);
+					AMZBatchAdmin.setArgs(args);
+					AMZBatchAdmin.setRunType("RE-START");
+				}
+
+				try {
+
+					Thread thread = new Thread(new AMZJob());
+					thread.start();
+					Thread.sleep(1000);
+
+				} catch (Exception e) {
+					timer.stop();
+					MessageUtil.showError(e);
+				}
+
+				Events.postEvent("onCreate", this.window_AMZBatchAdmin, event);
 			}
-
-			try {
-
-				Thread thread = new Thread(new AMZJob());
-				thread.start();
-				Thread.sleep(1000);
-
-			} catch (Exception e) {
-				timer.stop();
-				MessageUtil.showError(e);
-			}
-		}
-
-		// Event for Recreation Of Window
-		Events.postEvent("onCreate", this.window_AMZBatchAdmin, event);
+		});
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -359,22 +353,23 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 		AMZBatchAdmin.getInstance();
 		String msg = Labels.getLabel("labe_terminate_job");
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+		MessageUtil.confirm(msg, evnt -> {
+			if (Messagebox.ON_YES.equals(evnt.getName())) {
+				try {
+					args[0] = this.jobExecution.getJobParameters().getString(AmortizationConstants.AMZ_JOB_PARAM);
+					resetPanels();
+					AMZBatchAdmin.setArgs(args);
+					AMZBatchAdmin.resetStaleJob(this.jobExecution);
+					AMZBatchMonitor.jobExecutionId = 0;
+					AMZBatchMonitor.avgTime = 0;
+					Events.postEvent("onCreate", this.window_AMZBatchAdmin, event);
 
-			try {
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
 
-				args[0] = this.jobExecution.getJobParameters().getString(AmortizationConstants.AMZ_JOB_PARAM);
-				resetPanels();
-				AMZBatchAdmin.setArgs(args);
-				AMZBatchAdmin.resetStaleJob(this.jobExecution);
-				AMZBatchMonitor.jobExecutionId = 0;
-				AMZBatchMonitor.avgTime = 0;
-				Events.postEvent("onCreate", this.window_AMZBatchAdmin, event);
-
-			} catch (Exception e) {
-				MessageUtil.showError(e);
 			}
-		}
+		});
 
 		logger.debug(Literal.LEAVING);
 	}

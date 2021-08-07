@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ExtendedFieldDetailDialogCtrl.java                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  28-12-2011    														*
- *                                                                  						*
- * Modified Date    :  28-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ExtendedFieldDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 28-12-2011 * *
+ * Modified Date : 28-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 28-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 08-05-2019		Srinivasa Varma			 0.2		  Development Iteam 81              *  
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 28-12-2011 Pennant 0.1 * * 08-05-2019 Srinivasa Varma 0.2 Development Iteam 81 * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.solutionfactory.extendedfielddetail;
@@ -73,6 +55,7 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
@@ -1346,18 +1329,32 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
+	protected boolean doCustomDelete(final ExtendedFieldDetail aExtendedFieldDetail, String tranType) {
+		if (isNewFieldDetail()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newFieldProcess(aExtendedFieldDetail, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_ExtendedFieldDetailDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				if (getExtendedFieldDialogCtrl() != null) {
+					getExtendedFieldDialogCtrl().doFillFieldsList(this.extendedFieldDetails);
+				} else if (getTechnicalValuationDialogCtrl() != null) {
+					getTechnicalValuationDialogCtrl().doFillFieldsList(this.extendedFieldDetails);
+				}
+				closeDialog();
+			}
 
-	/**
-	 * Deletes a ExtendedFieldDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+		} else if (doProcess(aExtendedFieldDetail, tranType)) {
+			refreshList();
+			closeDialog();
+		}
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		final ExtendedFieldDetail aExtendedFieldDetail = new ExtendedFieldDetail();
 		BeanUtils.copyProperties(getExtendedFieldDetail(), aExtendedFieldDetail);
-		String tranType = PennantConstants.TRAN_WF;
 
 		// story #699 Allow Additional filters for extended combobox.
 		String filterMessage = existsAdditionalFilters(aExtendedFieldDetail.getFilters(), aExtendedFieldDetail);
@@ -1366,58 +1363,11 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			return;
 		}
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_ExtendedFieldDetailDialog_FieldName.value") + " : "
+		final String keyReference = Labels.getLabel("label_ExtendedFieldDetailDialog_FieldName.value") + " : "
 				+ aExtendedFieldDetail.getFieldName();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if ((!aExtendedFieldDetail.isInputElement() && !isGroupContainChilds(aExtendedFieldDetail.getFieldName())
-					|| aExtendedFieldDetail.isInputElement())) {
-				if (StringUtils.isBlank(aExtendedFieldDetail.getRecordType())) {
-					aExtendedFieldDetail.setVersion(aExtendedFieldDetail.getVersion() + 1);
-					aExtendedFieldDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					aExtendedFieldDetail.setNewRecord(true);
+		doDelete(keyReference, aExtendedFieldDetail);
 
-					if (isWorkFlowEnabled()) {
-						aExtendedFieldDetail.setNewRecord(true);
-						tranType = PennantConstants.TRAN_WF;
-					} else {
-						tranType = PennantConstants.TRAN_DEL;
-					}
-				}
-				try {
-					if (isNewFieldDetail()) {
-						tranType = PennantConstants.TRAN_DEL;
-						AuditHeader auditHeader = newFieldProcess(aExtendedFieldDetail, tranType);
-						auditHeader = ErrorControl.showErrorDetails(this.window_ExtendedFieldDetailDialog, auditHeader);
-						int retValue = auditHeader.getProcessStatus();
-						if (retValue == PennantConstants.porcessCONTINUE
-								|| retValue == PennantConstants.porcessOVERIDE) {
-							if (getExtendedFieldDialogCtrl() != null) {
-								getExtendedFieldDialogCtrl().doFillFieldsList(this.extendedFieldDetails);
-							} else if (getTechnicalValuationDialogCtrl() != null) {
-								getTechnicalValuationDialogCtrl().doFillFieldsList(this.extendedFieldDetails);
-							}
-							closeDialog();
-						}
-
-					} else if (doProcess(aExtendedFieldDetail, tranType)) {
-						refreshList();
-						closeDialog();
-					}
-				} catch (DataAccessException e) {
-					logger.error("Exception: ", e);
-					showMessage(e);
-				}
-			} else {
-				final String errMsg = Labels.getLabel("message.error.unable_to_delete_childs_are_avaliable")
-						+ "\n\n --> " + Labels.getLabel("label_ExtendedFieldDetailDialog_FieldName.value") + " : "
-						+ aExtendedFieldDetail.getFieldName();
-				MessageUtil.showError(errMsg);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1868,7 +1818,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		setOverideMap(auditHeader.getOverideMap());
@@ -2628,19 +2578,18 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 
 		Button delete = (Button) event.getOrigin().getTarget();
 
-		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_row");
-		if (MessageUtil.confirm(msg) == MessageUtil.NO) {
-			logger.debug(Literal.LEAVING);
-			return;
-		}
 
-		int seqNo = Integer.parseInt(delete.getId().replaceAll("Delete_", ""));
-		Listitem curListItem = (Listitem) listBoxAddtionalFilters.getFellowIfAny("listitem_" + seqNo);
+		MessageUtil.confirm(msg, evnt -> {
+			if (Messagebox.ON_YES.equals(evnt.getName())) {
+				int seqNo = Integer.parseInt(delete.getId().replaceAll("Delete_", ""));
+				Listitem curListItem = (Listitem) listBoxAddtionalFilters.getFellowIfAny("listitem_" + seqNo);
 
-		// Delete the item from listbox
-		curListItem.detach();
-		this.listBoxAddtionalFilters.setHeight(((listBoxAddtionalFilters.getItemCount() + 2) * 28) + "px");
+				curListItem.detach();
+				this.listBoxAddtionalFilters.setHeight(((listBoxAddtionalFilters.getItemCount() + 2) * 28) + "px");
+			}
+		});
+
 		logger.debug(Literal.LEAVING);
 	}
 

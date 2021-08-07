@@ -16,6 +16,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zhtml.Messagebox;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
@@ -428,7 +429,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			msg = Labels.getLabel("labe_reStart_job");
 		}
 
-		//Auto-Approval if it is in Progress.
+		// Auto-Approval if it is in Progress.
 		String status = null;
 
 		if (QDP == null) {
@@ -442,7 +443,6 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		}
 
 		if (ImplementationConstants.ALLOW_EOD_INTERVAL_VALIDATION) {
-
 			if (this.jobExecution != null && StringUtils.equals(this.jobExecution.getExitStatus().getExitCode(),
 					FlowExecutionStatus.COMPLETED.toString())) {
 				int eODTimeInterval = SysParamUtil.getValueAsInt(SMTParameterConstants.EOD_INTERVAL_TIME);
@@ -470,70 +470,73 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			}
 		}
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			PFSBatchAdmin.startedBy = getUserWorkspace().getLoggedInUser().getUserName();
+		MessageUtil.confirm(msg, evnt -> {
+			if (Messagebox.ON_YES.equals(evnt.getName())) {
+				PFSBatchAdmin.startedBy = getUserWorkspace().getLoggedInUser().getUserName();
 
-			closeOtherTabs();
-			PFSBatchAdmin.getInstance();
-			estimatedTime.setValue(BatchMonitor.getEstimateTime());
-			timer.start();
+				closeOtherTabs();
+				PFSBatchAdmin.getInstance();
+				estimatedTime.setValue(BatchMonitor.getEstimateTime());
+				timer.start();
 
-			this.btnStartJob.setDisabled(true);
-			BatchMonitor.jobExecutionId = 0;
-			BatchMonitor.avgTime = 0;
-			//	this.processMap.clear();
+				this.btnStartJob.setDisabled(true);
+				BatchMonitor.jobExecutionId = 0;
+				BatchMonitor.avgTime = 0;
 
-			if ("Start".equals(this.btnStartJob.getLabel())) {
-				args[0] = DateUtility.formatToShortDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT));
-				PFSBatchAdmin.setArgs(args);
-				PFSBatchAdmin.setRunType("START");
-				resetPanels();
-			} else {
-				args[0] = this.jobExecution.getJobParameters().getString("Date");
-				PFSBatchAdmin.setArgs(args);
-				PFSBatchAdmin.setRunType("RE-START");
+				if ("Start".equals(this.btnStartJob.getLabel())) {
+					args[0] = DateUtil.formatToShortDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT));
+					PFSBatchAdmin.setArgs(args);
+					PFSBatchAdmin.setRunType("START");
+					resetPanels();
+				} else {
+					args[0] = this.jobExecution.getJobParameters().getString("Date");
+					PFSBatchAdmin.setArgs(args);
+					PFSBatchAdmin.setRunType("RE-START");
+				}
+
+				try {
+					Thread thread = new Thread(new EODJob());
+					thread.start();
+					Thread.sleep(1000);
+					collectionProcess = true;
+					isInitialise = false;
+				} catch (Exception e) {
+					timer.stop();
+					MessageUtil.showError(e);
+				}
+
+				Events.postEvent("onCreate", this.window_BatchAdmin, event);
+			} else if (Messagebox.ON_NO.equals(evnt.getName())) {
+				collectionProcess = false;
+				Events.postEvent("onCreate", this.window_BatchAdmin, event);
 			}
-
-			try {
-
-				Thread thread = new Thread(new EODJob());
-				thread.start();
-				Thread.sleep(1000);
-				collectionProcess = true;
-				isInitialise = false;
-
-			} catch (Exception e) {
-				timer.stop();
-				MessageUtil.showError(e);
-			}
-		} else {
-			collectionProcess = false;
-		}
-
-		// Event for Recreation Of Window
-		Events.postEvent("onCreate", this.window_BatchAdmin, event);
+		});
 
 		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnStaleJob(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
+
 		PFSBatchAdmin.getInstance();
 		String msg = Labels.getLabel("labe_terminate_job");
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			try {
-				args[0] = this.jobExecution.getJobParameters().getString("Date");
-				resetPanels();
-				PFSBatchAdmin.setArgs(args);
-				PFSBatchAdmin.resetStaleJob(this.jobExecution);
-				BatchMonitor.jobExecutionId = 0;
-				BatchMonitor.avgTime = 0;
-				Events.postEvent("onCreate", this.window_BatchAdmin, event);
-			} catch (Exception e) {
-				MessageUtil.showError(e);
+		MessageUtil.confirm(msg, evnt -> {
+			if (Messagebox.ON_YES.equals(evnt.getName())) {
+				try {
+					args[0] = this.jobExecution.getJobParameters().getString("Date");
+					resetPanels();
+					PFSBatchAdmin.setArgs(args);
+					PFSBatchAdmin.resetStaleJob(this.jobExecution);
+					BatchMonitor.jobExecutionId = 0;
+					BatchMonitor.avgTime = 0;
+					Events.postEvent("onCreate", this.window_BatchAdmin, event);
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
 			}
-		}
+		});
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -595,8 +598,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	/**
 	 * This method render the Defined Executions for which value date matched with Current value date
 	 * 
-	 * @param ExecutionStatus
-	 *            (status)
+	 * @param ExecutionStatus (status)
 	 */
 	private void renderPanels(String stepName, DataEngineStatus status) {
 		Step processName = null;
@@ -832,7 +834,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			appendRow(Step.institutionLimitUpdate.name(), StepUtil.INSTITUTION_LIMITS_UPDATE.getName());
 		}
 
-		//appendRow(Step.limitsUpdate.name(), StepUtil.CUSTOMER_LIMITS_UPDATE.getName());
+		// appendRow(Step.limitsUpdate.name(), StepUtil.CUSTOMER_LIMITS_UPDATE.getName());
 
 		appendRow(Step.datesUpdate.name(), StepUtil.DATES_UPDATE.getName());
 		appendRow(Step.snapShotPreparation.name(), StepUtil.SNAPSHOT_PREPARATION.getName());

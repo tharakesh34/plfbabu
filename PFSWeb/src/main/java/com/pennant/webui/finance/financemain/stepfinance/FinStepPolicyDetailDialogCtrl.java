@@ -318,8 +318,7 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -342,8 +341,7 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinStepPolicy
-	 *            CustomerEmploymentDetail
+	 * @param aFinStepPolicy CustomerEmploymentDetail
 	 */
 	public void doWriteBeanToComponents(FinanceStepPolicyDetail aFinStepPolicy) {
 		logger.debug("Entering");
@@ -627,61 +625,35 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
-	// CRUD operations
+	protected boolean doCustomDelete(final FinanceStepPolicyDetail aFinStepPolicy, String tranType) {
+		if (isNewFinStep()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newFinStepPolicyProcess(aFinStepPolicy, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_FinStepPolicyDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				if (aFinStepPolicy.getStepSpecifier().equals(PennantConstants.STEP_SPECIFIER_GRACE)) {
+					stepDetailDialogCtrl.doFillStepDetaisForGrace(this.finStepPolicyDetails);
+				} else {
+					stepDetailDialogCtrl.doFillStepDetais(this.finStepPolicyDetails);
+				}
+				stepDetailDialogCtrl.setDataChanged(true);
+				return true;
+			}
+		}
 
-	/**
-	 * Deletes a CustomerEmploymentDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final FinanceStepPolicyDetail aFinStepPolicy = new FinanceStepPolicyDetail();
 		BeanUtils.copyProperties(getFinanceStepPolicyDetail(), aFinStepPolicy);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aFinStepPolicy.getStepNo();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aFinStepPolicy.getRecordType())) {
-				aFinStepPolicy.setVersion(aFinStepPolicy.getVersion() + 1);
-				aFinStepPolicy.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (getStepDetailDialogCtrl() != null && getStepDetailDialogCtrl().getFinanceDetail()
-						.getFinScheduleData().getFinanceMain().isWorkflow()) {
-					aFinStepPolicy.setNewRecord(true);
-				}
-				if (isWorkFlowEnabled()) {
-					aFinStepPolicy.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		doDelete(String.valueOf(aFinStepPolicy.getStepNo()), aFinStepPolicy);
 
-			try {
-				if (isNewFinStep()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newFinStepPolicyProcess(aFinStepPolicy, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_FinStepPolicyDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						if (aFinStepPolicy.getStepSpecifier().equals(PennantConstants.STEP_SPECIFIER_GRACE)) {
-							stepDetailDialogCtrl.doFillStepDetaisForGrace(this.finStepPolicyDetails);
-						} else {
-							stepDetailDialogCtrl.doFillStepDetais(this.finStepPolicyDetails);
-						}
-						stepDetailDialogCtrl.setDataChanged(true);
-						closeDialog();
-					}
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -906,7 +878,12 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 						.get(i);
 
 				if (financeStepPolicyDetail.getStepNo() == aFinanceStepPolicyDetail.getStepNo() && StringUtils.equals(
-						financeStepPolicyDetail.getStepSpecifier(), aFinanceStepPolicyDetail.getStepSpecifier())) { // Both Current and Existing list Steps
+						financeStepPolicyDetail.getStepSpecifier(), aFinanceStepPolicyDetail.getStepSpecifier())) { // Both
+																													// Current
+																													// and
+																													// Existing
+																													// list
+																													// Steps
 					// same
 
 					if (isNewRecord()) {
@@ -972,8 +949,7 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -990,8 +966,7 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

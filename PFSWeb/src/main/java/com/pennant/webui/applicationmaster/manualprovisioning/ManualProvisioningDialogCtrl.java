@@ -55,6 +55,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -135,8 +136,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_ManualProvisioningDialog(Event event) throws Exception {
@@ -292,8 +292,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		doSave();
@@ -302,8 +301,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		doEdit();
@@ -312,8 +310,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		MessageUtil.showHelpWindow(event, super.window);
@@ -322,8 +319,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		doCancel();
@@ -332,8 +328,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -374,7 +369,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		if (colVal != null && colVal.compareTo(BigDecimal.ZERO) > 0) {
 			setSecured(true);
 		}
-		//Loan Summary
+		// Loan Summary
 		this.finReference.setValue(provision.getFinReference());
 		this.customer.setValue(provision.getCustCIF() + "-" + provision.getCustShrtName());
 		this.finType.setValue(provision.getFinType());
@@ -386,7 +381,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		this.totalOverdue.setValue(PennantApplicationUtil.formateAmount(totAmt, format));
 		this.dPD.setValue(fpd.getCurODDays());
 
-		//Current NPA Provision Summary
+		// Current NPA Provision Summary
 		BigDecimal regProvAmount = BigDecimal.ZERO;
 		BigDecimal intProvAmount = BigDecimal.ZERO;
 		BigDecimal regInsProvAmount = BigDecimal.ZERO;
@@ -429,7 +424,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			this.currManualProvision.setChecked(provision.getOldProvision().isManualProvision());
 		}
 
-		//New Provision 
+		// New Provision
 		List<ProvisionAmount> provisionAmounts = provision.getProvisionAmounts();
 		regProvAmount = BigDecimal.ZERO;
 		intProvAmount = BigDecimal.ZERO;
@@ -596,8 +591,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param aAcademic
-	 *            The entity that need to be render.
+	 * @param aAcademic The entity that need to be render.
 	 */
 	public void doShowDialog(Provision provision) {
 		logger.debug(Literal.ENTERING);
@@ -972,7 +966,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 				}
 			}
 
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		setOverideMap(aAuditHeader.getOverideMap());
@@ -1087,8 +1081,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.provision);

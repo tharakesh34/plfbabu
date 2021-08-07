@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  MandateListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  18-10-2016    														*
- *                                                                  						*
- * Modified Date    :  18-10-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : MandateListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 18-10-2016 * * Modified Date
+ * : 18-10-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 18-10-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 18-10-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -77,6 +59,7 @@ import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Longbox;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Tab;
@@ -211,8 +194,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_MandateRegistrationList(Event event) {
 		// Set the page level components.
@@ -489,8 +471,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_MandateList_MandateSearch(Event event) {
 		this.mandateIdMap.clear();
@@ -654,8 +635,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -699,8 +679,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 
 	public void onMandateItemDoubleClicked(ForwardEvent event) {
@@ -737,8 +716,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param mandate
-	 *            The entity that need to be passed to the dialog.
+	 * @param mandate The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(Mandate mandate) {
 		logger.debug("Entering");
@@ -783,13 +761,17 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 			return;
 		}
 
-		// Show a confirm box
 		String msg = "You have selected " + this.mandateIdMap.size() + " Mandate(s) out of "
 				+ this.pagingMandateList.getTotalSize() + ".\nDo you want to continue?";
-		int conf = MessageUtil.confirm(msg);
-		if (conf == MessageUtil.NO) {
-			return;
-		}
+
+		MessageUtil.confirm(msg, evnt -> {
+			if (Messagebox.ON_YES.equals(evnt.getName())) {
+				download(mandateIdList);
+			}
+		});
+	}
+
+	private void download(List<Long> mandateIdList) {
 		try {
 			btnDownload.setDisabled(true);
 			LoggedInUser loggedInUser = getUserWorkspace().getLoggedInUser();

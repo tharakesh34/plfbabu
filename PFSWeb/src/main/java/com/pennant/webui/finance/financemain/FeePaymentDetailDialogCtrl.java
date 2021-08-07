@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FeePaymentDetailDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-08-2013    														*
- *                                                                  						*
- * Modified Date    :  14-08-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FeePaymentDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-08-2013 * *
+ * Modified Date : 14-08-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-08-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-08-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -79,6 +61,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -288,8 +271,7 @@ public class FeePaymentDetailDialogCtrl extends GFCBaseCtrl<FeePaymentDetail> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -298,8 +280,7 @@ public class FeePaymentDetailDialogCtrl extends GFCBaseCtrl<FeePaymentDetail> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -440,7 +421,7 @@ public class FeePaymentDetailDialogCtrl extends GFCBaseCtrl<FeePaymentDetail> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 
 		this.paymentAmount.setMandatory(true);
 		this.paymentAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
@@ -471,8 +452,7 @@ public class FeePaymentDetailDialogCtrl extends GFCBaseCtrl<FeePaymentDetail> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFeePaymentDetail
-	 *            FeePaymentDetailDetail
+	 * @param aFeePaymentDetail FeePaymentDetailDetail
 	 */
 	public void doWriteBeanToComponents(FeePaymentDetail aFinAdvnancePayments) {
 		logger.debug("Entering");
@@ -516,8 +496,9 @@ public class FeePaymentDetailDialogCtrl extends GFCBaseCtrl<FeePaymentDetail> {
 		}
 
 		try {
-			aFeePaymentDetail.setPaymentAmount(PennantAppUtil.unFormateAmount(this.paymentAmount.isReadonly()
-					? this.paymentAmount.getActualValue() : this.paymentAmount.getValidateValue(), ccyFormatter));
+			aFeePaymentDetail.setPaymentAmount(
+					PennantAppUtil.unFormateAmount(this.paymentAmount.isReadonly() ? this.paymentAmount.getActualValue()
+							: this.paymentAmount.getValidateValue(), ccyFormatter));
 
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -607,55 +588,32 @@ public class FeePaymentDetailDialogCtrl extends GFCBaseCtrl<FeePaymentDetail> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Deletes a FeePaymentDetailDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+	protected boolean doCustomDelete(final FeePaymentDetail aFeePaymentDetail, String tranType) {
+		if (isNewCustomer()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newFeePaymentDetailProcess(aFeePaymentDetail, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_FeePaymentDetailDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				getFinFeeDetailListCtrl().doFillFeePaymentDetails(this.feePaymentDetailDetails, true);
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final FeePaymentDetail aFeePaymentDetail = new FeePaymentDetail();
 		BeanUtils.copyProperties(getFeePaymentDetail(), aFeePaymentDetail);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n"
-				+ Labels.getLabel("label_FeePaymentDetailDialog_PaymentSequence.value") + " : "
+		final String keyReference = Labels.getLabel("label_FeePaymentDetailDialog_PaymentSequence.value") + " : "
 				+ aFeePaymentDetail.getPaymentReference();
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aFeePaymentDetail.getRecordType())) {
-				aFeePaymentDetail.setVersion(aFeePaymentDetail.getVersion() + 1);
-				aFeePaymentDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(keyReference, aFeePaymentDetail);
 
-				if (isWorkFlowEnabled()) {
-					aFeePaymentDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aFeePaymentDetail.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aFeePaymentDetail.getNextTaskId(),
-							aFeePaymentDetail);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (isNewCustomer()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newFeePaymentDetailProcess(aFeePaymentDetail, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_FeePaymentDetailDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						getFinFeeDetailListCtrl().doFillFeePaymentDetails(this.feePaymentDetailDetails, true);
-						closeDialog();
-					}
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -783,7 +741,13 @@ public class FeePaymentDetailDialogCtrl extends GFCBaseCtrl<FeePaymentDetail> {
 			for (int i = 0; i < listPayments.size(); i++) {
 				FeePaymentDetail loanDetail = listPayments.get(i);
 
-				if (StringUtils.equals(afeePaymentDetail.getPaymentReference(), loanDetail.getPaymentReference())) { // Both Current and Existing list rating same
+				if (StringUtils.equals(afeePaymentDetail.getPaymentReference(), loanDetail.getPaymentReference())) { // Both
+																														// Current
+																														// and
+																														// Existing
+																														// list
+																														// rating
+																														// same
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(

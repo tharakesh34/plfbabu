@@ -1,42 +1,24 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinTypeExpenseDialogCtrl.java                                        * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  20-12-2017    														*
- *                                                                  						*
- * Modified Date    :  			    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinTypeExpenseDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 20-12-2017 * *
+ * Modified Date : * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 20-12-2017       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 20-12-2017 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.rmtmasters.financetype;
@@ -79,6 +61,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -153,7 +136,7 @@ public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
 				BeanUtils.copyProperties(this.finTypeExpense, befImage);
 				this.finTypeExpense.setBefImage(befImage);
 				setFinTypeExpense(this.finTypeExpense);
-				//this.isOriginationFee = this.finTypeExpense.isOriginationFee();
+				// this.isOriginationFee = this.finTypeExpense.isOriginationFee();
 			} else {
 				setFinTypeExpense(null);
 			}
@@ -306,8 +289,7 @@ public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -330,8 +312,7 @@ public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinTypeExpense
-	 *            FinTypeExpense
+	 * @param aFinTypeExpense FinTypeExpense
 	 */
 	public void doWriteBeanToComponents(FinTypeExpense aFinTypeExpense) {
 		logger.debug("Entering");
@@ -379,7 +360,7 @@ public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
 		logger.debug("Entering");
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		//Expense Type Code
+		// Expense Type Code
 		try {
 			this.expenseType.getValidatedValue();
 			String expenseTypeId = String.valueOf(this.expenseType.getAttribute("expenseTypeID"));
@@ -389,7 +370,7 @@ public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Calculation Type
+		// Calculation Type
 		try {
 			if ("#".equals(getComboboxValue(this.calculationType))) {
 				throw new WrongValueException(this.calculationType, Labels.getLabel("STATIC_INVALID",
@@ -399,7 +380,7 @@ public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Calculation On
+		// Calculation On
 		try {
 			if (this.row_CalculationOn.isVisible() && "#".equals(getComboboxValue(this.calculationOn))) {
 				throw new WrongValueException(this.calculationOn, Labels.getLabel("STATIC_INVALID",
@@ -409,7 +390,7 @@ public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Amount
+		// Amount
 		try {
 			aFinTypeExpense.setAmount(PennantAppUtil.unFormateAmount(
 					this.amount.isReadonly() ? this.amount.getActualValue() : this.amount.getValidateValue(),
@@ -418,7 +399,7 @@ public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Percentage
+		// Percentage
 		try {
 			if (this.percentage.isVisible()) {
 				BigDecimal percentageValue = this.percentage.getValue();
@@ -439,14 +420,14 @@ public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Amortization Required Flag
+		// Amortization Required Flag
 		aFinTypeExpense.setAmortReq(this.amortReq.isChecked());
 
-		//GST Applicable Flag
+		// GST Applicable Flag
 
 		aFinTypeExpense.setTaxApplicable(this.taxApplicable.isChecked());
 
-		//Active
+		// Active
 		aFinTypeExpense.setActive(this.active.isChecked());
 
 		doRemoveValidation();
@@ -525,59 +506,31 @@ public class FinTypeExpenseDialogCtrl extends GFCBaseCtrl<FinTypeExpense> {
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
+	protected boolean doCustomDelete(final FinTypeExpense aFinTypeExpense, String tranType) {
+		tranType = PennantConstants.TRAN_DEL;
+		AuditHeader auditHeader = newFinTypeExpenseProcess(aFinTypeExpense, tranType);
+		auditHeader = ErrorControl.showErrorDetails(this.window_FinTypeExpenseDialog, auditHeader);
+		int retValue = auditHeader.getProcessStatus();
+		if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 
-	/**
-	 * Deletes a FinTypeExpense object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+			getFinTypeExpenseListCtrl().doFillFinTypeExpenseType(this.finTypeExpenseList);
+
+			return true;
+		}
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		final FinTypeExpense aFinTypeExpense = new FinTypeExpense();
 		BeanUtils.copyProperties(getFinTypeExpense(), aFinTypeExpense);
-		String tranType = PennantConstants.TRAN_WF;
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_FinTypeExpenseDialog_ExpenseTypeCode.value") + " : "
+
+		final String keyReference = Labels.getLabel("label_FinTypeExpenseDialog_ExpenseTypeCode.value") + " : "
 				+ aFinTypeExpense.getExpenseTypeCode();
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			/*
-			 * if(!FinTypeExpenseListCtrl.validateFeeAccounting(aFinTypeFees,false) ){ return; }
-			 */
+		doDelete(keyReference, aFinTypeExpense);
 
-			logger.debug("doDelete: Yes");
-			if (StringUtils.isBlank(aFinTypeExpense.getRecordType())) {
-				aFinTypeExpense.setVersion(aFinTypeExpense.getVersion() + 1);
-				aFinTypeExpense.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (isWorkFlowEnabled()) {
-					aFinTypeExpense.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			} else if (StringUtils.trimToEmpty(aFinTypeExpense.getRecordType()).equals(PennantConstants.RCD_UPD)) {
-				aFinTypeExpense.setVersion(aFinTypeExpense.getVersion() + 1);
-				aFinTypeExpense.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			}
-			try {
-				tranType = PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader = newFinTypeExpenseProcess(aFinTypeExpense, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.window_FinTypeExpenseDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-
-					getFinTypeExpenseListCtrl().doFillFinTypeExpenseType(this.finTypeExpenseList);
-
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

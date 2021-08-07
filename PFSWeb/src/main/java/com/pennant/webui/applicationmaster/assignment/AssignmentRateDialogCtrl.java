@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -79,8 +78,7 @@ public class AssignmentRateDialogCtrl extends GFCBaseCtrl<AssignmentRate> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 
@@ -412,50 +410,34 @@ public class AssignmentRateDialogCtrl extends GFCBaseCtrl<AssignmentRate> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	protected boolean doCustomDelete(final AssignmentRate aAssignmentRate, String tranType) {
+		if (isNewAssignment()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newAssignmentRateProcess(aAssignmentRate, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_AssignmentRateDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				if (getAssignmentDialogCtrl() != null) {
+					getAssignmentDialogCtrl().doFillAssignmentRateDetailsList(this.assignmentRateDetailList);
+				}
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		final AssignmentRate aAssignmentRate = new AssignmentRate();
 		BeanUtils.copyProperties(getAssignmentRate(), aAssignmentRate);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_AssignmentRateDialog_EffectiveDate.value") + " : "
+		String keyReference = Labels.getLabel("label_AssignmentRateDialog_EffectiveDate.value") + " : "
 				+ aAssignmentRate.getEffectiveDate();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aAssignmentRate.getRecordType())) {
-				aAssignmentRate.setVersion(aAssignmentRate.getVersion() + 1);
-				aAssignmentRate.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aAssignmentRate.setNewRecord(true);
 
-				if (isWorkFlowEnabled()) {
-					aAssignmentRate.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			} else if (StringUtils.trimToEmpty(aAssignmentRate.getRecordType()).equals(PennantConstants.RCD_UPD)) {
-				aAssignmentRate.setVersion(aAssignmentRate.getVersion() + 1);
-				aAssignmentRate.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			}
-			try {
-				if (isNewAssignment()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newAssignmentRateProcess(aAssignmentRate, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_AssignmentRateDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						if (getAssignmentDialogCtrl() != null) {
-							getAssignmentDialogCtrl().doFillAssignmentRateDetailsList(this.assignmentRateDetailList);
-						}
-						closeDialog();
-					}
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(keyReference, aAssignmentRate);
+
 		logger.debug(Literal.LEAVING);
 	}
 

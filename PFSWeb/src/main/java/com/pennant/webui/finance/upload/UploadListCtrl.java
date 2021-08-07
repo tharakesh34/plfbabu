@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  UploadListCtrl.java                                                  * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  04-10-2018    														*
- *                                                                  						*
- * Modified Date    :  04-10-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : UploadListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 04-10-2018 * * Modified Date
+ * : 04-10-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 04-10-2018       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 04-10-2018 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.upload;
@@ -91,6 +73,7 @@ import com.pennant.webui.finance.upload.model.UploadListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -177,7 +160,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	protected void doAddFilters() {
 		super.doAddFilters();
 		Filter[] filters = new Filter[1];
-	
+
 		switch (this.module) {
 		case JvPostingConstants.MISCELLANEOUSPOSTING_MAKER:
 			filters = new Filter[1];
@@ -216,8 +199,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_UploadList(Event event) {
 		// Set the page level components.
@@ -280,7 +262,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 			this.entity.setMandatoryStyle(true);
 		}
 
-		//TODO verify this code
+		// TODO verify this code
 		if (UploadConstants.MODULE_MANUAL_ADVISE.equals(this.module)) {
 			this.label_UploadList_TransactionDate.setVisible(true);
 			this.sortOperator_TransactionDate.setVisible(true);
@@ -303,8 +285,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_UploadList_SearchDialog(Event event) {
 		if (JvPostingConstants.MISCELLANEOUSPOSTING_APPROVER.equals(this.module)) {
@@ -349,8 +330,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doRemoveValidation();
@@ -361,8 +341,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_UploadList_New(Event event) {
 		logger.debug("Entering");
@@ -385,8 +364,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onUploadItemDoubleClicked(Event event) {
 		logger.debug("Entering");
@@ -457,8 +435,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param uploadHeader
-	 *            The entity that need to be passed to the dialog.
+	 * @param uploadHeader The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(UploadHeader uploadHeader) {
 		logger.debug("Entering");
@@ -514,7 +491,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 
 		for (Listitem listitem : this.listBoxUpload.getSelectedItems()) {
 			UploadHeader uploadHeader = (UploadHeader) listitem.getAttribute("data");
-			//Check Authority
+			// Check Authority
 			if (doCheckAuthority(uploadHeader)) {
 				authorityUploadIDList.add(uploadHeader.getUploadId());
 			}
@@ -526,13 +503,13 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 			uploadHeaderList.add(uploadHeader);
 		}
 
-		//if the file is not downloaded at least one time after maker
+		// if the file is not downloaded at least one time after maker
 		if (CollectionUtils.isNotEmpty(downloadUploadIDList)) {
 			MessageUtil.showError(
 					"Upload id's:" + downloadUploadIDList + " is not download, please download atleast one time");
 			return false;
 		}
-		//Check Authority
+		// Check Authority
 		if (CollectionUtils.isNotEmpty(authorityUploadIDList)) {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 			return false;
@@ -554,8 +531,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 				List<String> finEvents = uploadHeaderService.getFinEventByFinRef(ma.getFinReference(), "_Temp");
 
 				if (CollectionUtils.isNotEmpty(finEvents)) {
-					if (finEvents.contains(FinServiceEvent.ADDDISB)
-							|| finEvents.contains(FinServiceEvent.RATECHG)
+					if (finEvents.contains(FinServiceEvent.ADDDISB) || finEvents.contains(FinServiceEvent.RATECHG)
 							|| finEvents.contains(FinServiceEvent.EARLYRPY)) {
 						reason = Labels.getLabel("LOAN_SERVICE_PROCESS");
 						rejectSts = true;
@@ -659,11 +635,9 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aUploadHeader
-	 *            (UploadHeader)
+	 * @param aUploadHeader (UploadHeader)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -750,7 +724,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 
 			setOverideMap(aAuditHeader.getOverideMap());
 
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
@@ -851,8 +825,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -861,8 +834,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

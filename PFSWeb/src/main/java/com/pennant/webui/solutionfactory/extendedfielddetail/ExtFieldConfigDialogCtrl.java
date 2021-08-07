@@ -54,6 +54,7 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
@@ -81,6 +82,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -425,12 +427,12 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		Clients.clearWrongValue(this.preValidation);
 		if (validate(event, false, false)) {
 			preScriptValidated = true;
-			// check if code mirror is empty or not
 			if (StringUtils.isNotEmpty(this.preValidation.getValue().trim())) {
-				if (MessageUtil.confirm("NO Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
-					// create a new window for input values
-					createSimulationWindow(variables, this.preValidation.getValue());
-				}
+				MessageUtil.confirm("NO Errors Found! Proceed With Simulation?", evnt -> {
+					if (Messagebox.ON_YES.equals(evnt.getName())) {
+						createSimulationWindow(variables, this.preValidation.getValue());
+					}
+				});
 			}
 		}
 		logger.debug(Literal.LEAVING + event.toString());
@@ -447,12 +449,12 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 		Clients.clearWrongValue(this.postValidation);
 		if (validate(event, true, false)) {
 			postScriptValidated = true;
-			// check if code mirror is empty or not
 			if (StringUtils.isNotEmpty(this.postValidation.getValue().trim())) {
-				if (MessageUtil.confirm("NO Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
-					// create a new window for input values
-					createSimulationWindow(variables, this.postValidation.getValue());
-				}
+				MessageUtil.confirm("NO Errors Found! Proceed With Simulation?", evnt -> {
+					if (Messagebox.ON_YES.equals(evnt.getName())) {
+						createSimulationWindow(variables, this.postValidation.getValue());
+					}
+				});
 			}
 		}
 		logger.debug(Literal.LEAVING + event.toString());
@@ -1388,7 +1390,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 			}
 
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug(Literal.LEAVING);

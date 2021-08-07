@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerDocumentDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerDocumentDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * *
+ * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.customermasters.customerdocument;
@@ -122,6 +104,7 @@ import com.pennant.webui.financemanagement.bankorcorpcreditreview.CreditApplicat
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -592,8 +575,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCustomerDocument
-	 *            CustomerDocument
+	 * @param aCustomerDocument CustomerDocument
 	 */
 	public void doWriteBeanToComponents(CustomerDocument aCustomerDocument) {
 		logger.debug(Literal.ENTERING);
@@ -709,7 +691,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 						aCustomerDocument.getCustDocImage());
 			}
 
-			//If the document come from DMS then extension not available in DocName then format is null.
+			// If the document come from DMS then extension not available in DocName then format is null.
 			if (amedia != null && amedia.getFormat() == null) {
 				amedia = new AMedia(aCustomerDocument.getCustDocName(), aCustomerDocument.getCustDocType(), null,
 						aCustomerDocument.getCustDocImage());
@@ -1110,80 +1092,71 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 
 	}
 
-	/**
-	 * Deletes a CustomerDocument object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		final CustomerDocument aCustomerDocument = new CustomerDocument();
 		BeanUtils.copyProperties(getCustomerDocument(), aCustomerDocument);
-		String tranType = PennantConstants.TRAN_WF;
 
-		if (isFinanceProcess
-				&& StringUtils.equals(MasterDefUtil.getDocCode(DocType.PAN), aCustomerDocument.getCustDocCategory())) {
+		if (isFinanceProcess && MasterDefUtil.getDocCode(DocType.PAN).equals(aCustomerDocument.getCustDocCategory())) {
 			MessageUtil.showError("Document with PAN Number Can't be deleted!!!");
 		} else {
-
-			// Show a confirm box
-			final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-					+ Labels.getLabel("label_CustomerDocumentDialog_CustDocType.value") + " : "
+			final String keyReference = Labels.getLabel("label_CustomerDocumentDialog_CustDocType.value") + " : "
 					+ aCustomerDocument.getCustDocCategory();
 
-			int conf = MessageUtil.confirm(msg);
-
-			if (conf == MessageUtil.YES && this.creditApplicationReviewDialogCtrl == null) {
-				logger.debug("doDelete: Yes");
-
-				if (StringUtils.isBlank(aCustomerDocument.getRecordType())) {
-					aCustomerDocument.setVersion(aCustomerDocument.getVersion() + 1);
-					aCustomerDocument.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					if (!isFinanceProcess && getCustomerDialogCtrl() != null
-							&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
-						aCustomerDocument.setNewRecord(true);
-					}
-					if (isWorkFlowEnabled()) {
-						aCustomerDocument.setNewRecord(true);
-						tranType = PennantConstants.TRAN_WF;
-					} else {
-						tranType = PennantConstants.TRAN_DEL;
-					}
-				}
-
-				try {
-					if (isNewCustomer()) {
-						tranType = PennantConstants.TRAN_DEL;
-						AuditHeader auditHeader = newFinanceCustomerProcess(aCustomerDocument, tranType);
-						auditHeader = ErrorControl.showErrorDetails(this.window_CustomerDocumentDialog, auditHeader);
-						int retValue = auditHeader.getProcessStatus();
-						if (retValue == PennantConstants.porcessCONTINUE
-								|| retValue == PennantConstants.porcessOVERIDE) {
-							getCustomerDialogCtrl().doFillDocumentDetails(this.customerDocuments);
-							if (isFinanceProcess) {
-								processChecklistDocuments(aCustomerDocument, false);
-							}
-
-							closeDialog();
-						}
-					} else if (doProcess(aCustomerDocument, tranType)) {
-						refreshList();
-						closeDialog();
-					}
-
-				} catch (DataAccessException e) {
-					MessageUtil.showError(e);
-				}
-			} else if (conf == MessageUtil.YES && this.creditApplicationReviewDialogCtrl != null) {
-				this.creditApplicationReviewDialogCtrl.custDocList.remove(aCustomerDocument);
-				this.creditApplicationReviewDialogCtrl.customerDocumentList.remove(aCustomerDocument);
-				getCreditApplicationRevDialog();
-				closeDialog();
-			}
+			doDelete(keyReference, aCustomerDocument);
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	protected void onDoDelete(final CustomerDocument aCustomerDocument) {
+		String tranType = PennantConstants.TRAN_WF;
+		if (this.creditApplicationReviewDialogCtrl == null) {
+			if (StringUtils.isBlank(aCustomerDocument.getRecordType())) {
+				aCustomerDocument.setVersion(aCustomerDocument.getVersion() + 1);
+				aCustomerDocument.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				if (!isFinanceProcess && getCustomerDialogCtrl() != null
+						&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
+					aCustomerDocument.setNewRecord(true);
+				}
+				if (isWorkFlowEnabled()) {
+					aCustomerDocument.setNewRecord(true);
+					tranType = PennantConstants.TRAN_WF;
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
+				}
+			}
+
+			try {
+				if (isNewCustomer()) {
+					tranType = PennantConstants.TRAN_DEL;
+					AuditHeader auditHeader = newFinanceCustomerProcess(aCustomerDocument, tranType);
+					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerDocumentDialog, auditHeader);
+					int retValue = auditHeader.getProcessStatus();
+					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+						getCustomerDialogCtrl().doFillDocumentDetails(this.customerDocuments);
+						if (isFinanceProcess) {
+							processChecklistDocuments(aCustomerDocument, false);
+						}
+
+						closeDialog();
+					}
+				} else if (doProcess(aCustomerDocument, tranType)) {
+					refreshList();
+					closeDialog();
+				}
+
+			} catch (DataAccessException e) {
+				MessageUtil.showError(e);
+			}
+
+		} else {
+			this.creditApplicationReviewDialogCtrl.custDocList.remove(aCustomerDocument);
+			this.creditApplicationReviewDialogCtrl.customerDocumentList.remove(aCustomerDocument);
+			getCreditApplicationRevDialog();
+			closeDialog();
+		}
 	}
 
 	/**
@@ -1746,7 +1719,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				DocumentDetails documentDetails = documentDetailslist.get(i);
 
 				if (documentDetails.getDocCategory().equals(aDocumentDetails.getDocCategory())) { // Both
-																										// Current
+																									// Current
 																									// and
 																									// Existing
 																									// list
@@ -1815,7 +1788,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				CustomerDocument customerDocument = getCustomerDialogCtrl().getCustomerDocumentDetailList().get(i);
 
 				if (customerDocument.getCustDocCategory().equals(aCustomerDocument.getCustDocCategory())) { // Both
-																												// Current
+																											// Current
 																											// and
 																											// Existing
 																											// list
@@ -1871,11 +1844,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aCustomerDocument
-	 *            (CustomerDocument)
+	 * @param aCustomerDocument (CustomerDocument)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType          (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1964,11 +1935,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -2032,7 +2001,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
@@ -2317,8 +2286,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -2336,8 +2304,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

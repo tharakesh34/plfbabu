@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DisbursementRegistrationListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  19-04-2017    														*
- *                                                                  						*
- * Modified Date    :  19-04-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DisbursementRegistrationListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 19-04-2017
+ * * * Modified Date : 19-04-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 19-04-2017       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 19-04-2017 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -75,6 +57,7 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
@@ -746,13 +729,17 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			MessageUtil.showError(Labels.getLabel("MandateDataList_NoEmpty"));
 			return;
 		}
-		// Show a confirm box
 		String msg = "You have selected " + this.disbursementMap.size() + " Disbursement(s) out of "
 				+ getFinAdvancePaymentsList().size() + ".\n Do you want to continue?";
-		int conf = MessageUtil.confirm(msg);
-		if (conf == MessageUtil.NO) {
-			return;
-		}
+
+		MessageUtil.confirm(msg, evnt -> {
+			if (Messagebox.ON_YES.equals(evnt.getName())) {
+				prepareRequest(disbushmentList);
+			}
+		});
+	}
+
+	private void prepareRequest(List<FinAdvancePayments> disbushmentList) {
 		try {
 			btnDownload.setDisabled(true);
 			button_Search.setDisabled(true);

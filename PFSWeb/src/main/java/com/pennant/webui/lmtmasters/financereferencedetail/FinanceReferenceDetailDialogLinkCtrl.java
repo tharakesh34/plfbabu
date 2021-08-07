@@ -90,6 +90,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine.Flow;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -850,37 +851,29 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a FinanceReferenceDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final FinanceReferenceDetail aFinanceReferenceDetail = new FinanceReferenceDetail();
 		BeanUtils.copyProperties(getFinanceReferenceDetail(), aFinanceReferenceDetail);
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ this.label_FinanceReferenceDetailDialog_FinRefId.getValue() + " : "
-				+ aFinanceReferenceDetail.getLovDescRefDesc();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			aFinanceReferenceDetail.setRecordType(PennantConstants.RCD_DEL);
-			try {
-				// Process Delete
-				deleteFinRrefDetails(aFinanceReferenceDetail);
-				// Close window
-				this.window_FinanceReferenceDetailDialogLink.onClose();
-				// Set parent window visible
-				getFinanceReferenceDetailDialogCtrl().window_FinanceReferenceDetailDialog.setVisible(true);
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
 
+		final String keyReference = this.label_FinanceReferenceDetailDialog_FinRefId.getValue() + " : "
+				+ aFinanceReferenceDetail.getLovDescRefDesc();
+
+		doDelete(keyReference, aFinanceReferenceDetail);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	protected void onDoDelete(final FinanceReferenceDetail aFinanceReferenceDetail) {
+		aFinanceReferenceDetail.setRecordType(PennantConstants.RCD_DEL);
+		try {
+			deleteFinRrefDetails(aFinanceReferenceDetail);
+			this.window_FinanceReferenceDetailDialogLink.onClose();
+			getFinanceReferenceDetailDialogCtrl().window_FinanceReferenceDetailDialog.setVisible(true);
+		} catch (DataAccessException e) {
+			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
 	}
 
 	/**

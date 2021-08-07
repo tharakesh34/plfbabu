@@ -80,6 +80,7 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.North;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.South;
@@ -3331,53 +3332,54 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		getCustomerListCtrl().search();
 	}
 
-	/**
-	 * Deletes a Customer object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 * @throws CustomerNotFoundException
-	 */
 	private void doDelete() throws InterruptedException, InterfaceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		Cloner cloner = new Cloner();
 		CustomerDetails aCustomerDetails = new CustomerDetails();
 		aCustomerDetails = cloner.deepClone(getCustomerDetails());
+		Customer aCustomer = aCustomerDetails.getCustomer();
+
+		final String keyReference = Labels.getLabel("label_CustomerDialog_CustCIF.value") + " : "
+				+ aCustomer.getCustCIF();
+
+		doDelete(keyReference, aCustomerDetails);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	protected void onDoDelete(CustomerDetails aCustomerDetails) {
 		String tranType = PennantConstants.TRAN_WF;
 		Customer aCustomer = aCustomerDetails.getCustomer();
 		CustEmployeeDetail custEmployeeDetail = aCustomerDetails.getCustEmployeeDetail();
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_CustomerDialog_CustCIF.value") + " : " + aCustomer.getCustCIF();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCustomer.getRecordType())) {
-				aCustomer.setVersion(aCustomer.getVersion() + 1);
-				aCustomer.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				custEmployeeDetail.setVersion(custEmployeeDetail.getVersion() + 1);
-				custEmployeeDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (isWorkFlowEnabled()) {
-					aCustomer.setNewRecord(true);
-					custEmployeeDetail.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			if (!isRetailCustomer || ImplementationConstants.ALLOW_MULTIPLE_EMPLOYMENTS) {
-				aCustomerDetails.setCustEmployeeDetail(null);
-			}
-			try {
-				aCustomerDetails.setCustomer(aCustomer);
-				if (doProcess(aCustomerDetails, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-				logger.debug(" Calling doDelete method completed Successfully ");
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
+		if (StringUtils.isBlank(aCustomer.getRecordType())) {
+			aCustomer.setVersion(aCustomer.getVersion() + 1);
+			aCustomer.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			custEmployeeDetail.setVersion(custEmployeeDetail.getVersion() + 1);
+			custEmployeeDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			if (isWorkFlowEnabled()) {
+				aCustomer.setNewRecord(true);
+				custEmployeeDetail.setNewRecord(true);
+				tranType = PennantConstants.TRAN_WF;
+			} else {
+				tranType = PennantConstants.TRAN_DEL;
 			}
 		}
-		logger.debug("Leaving");
+		if (!isRetailCustomer || ImplementationConstants.ALLOW_MULTIPLE_EMPLOYMENTS) {
+			aCustomerDetails.setCustEmployeeDetail(null);
+		}
+		try {
+			aCustomerDetails.setCustomer(aCustomer);
+			if (doProcess(aCustomerDetails, tranType)) {
+				refreshList();
+				closeDialog();
+			}
+			logger.debug(" Calling doDelete method completed Successfully ");
+		} catch (DataAccessException e) {
+			MessageUtil.showError(e);
+		}
+
 	}
 
 	/**
@@ -3694,15 +3696,18 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					final String msg = Labels.getLabel("Cibil.Already_Processed") + "\n\n --> "
 							+ Labels.getLabel("label_CustomerDialog_CustCIF.value") + " : "
 							+ customerDetails.getCustomer().getCustCIF();
-					if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+					final FinanceMain fm = main;
+					MessageUtil.confirm(msg, evnt -> {
+						if (Messagebox.ON_YES.equals(evnt.getName())) {
+							if (custCreditInformation != null) {
+								customerDetails = custCreditInformation.procesCreditEnquiry(customerDetails, fm, true);
+							} else {
+								customerDetails = creditInformation.procesCreditEnquiry(customerDetails, fm, true);
+							}
+							extendedFieldCtrl.setValues(customerDetails.getExtendedFieldRender().getMapValues());
 
-						if (custCreditInformation != null) {
-							customerDetails = custCreditInformation.procesCreditEnquiry(customerDetails, main, true);
-						} else {
-							customerDetails = creditInformation.procesCreditEnquiry(customerDetails, main, true);
 						}
-						extendedFieldCtrl.setValues(customerDetails.getExtendedFieldRender().getMapValues());
-					}
+					});
 				} else {
 					MessageUtil.showMessage(Labels.getLabel("Cibil_ReInit_Meg.value") + " "
 							+ SysParamUtil.getValueAsInt("CIBIL_REINTI_DAYS") + " days.");
@@ -4259,8 +4264,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		aCustomer.setNextRoleCode(nextRoleCode);
 	}
 
-	protected boolean doProcess(CustomerDetails aCustomerDetails, String tranType)
-			throws InterfaceException, InterruptedException {
+	protected boolean doProcess(CustomerDetails aCustomerDetails, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
@@ -4430,8 +4434,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		return processCompleted;
 	}
 
-	private boolean doSaveProcess(AuditHeader auditHeader, String method)
-			throws InterfaceException, InterruptedException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;

@@ -1536,7 +1536,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 			setOverideMap(aAuditHeader.getOverideMap());
 
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 

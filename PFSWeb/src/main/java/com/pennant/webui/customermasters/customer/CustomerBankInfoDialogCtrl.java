@@ -1,44 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerBankInfoDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerBankInfoDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * *
+ * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 18-04-2018       Vinay                    0.2          As per Profectus document added 
- * 														  some fields                       * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * 18-04-2018 Vinay 0.2 As per Profectus document added some fields * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.customermasters.customer;
@@ -92,6 +73,7 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
 import org.zkoss.zul.Space;
@@ -204,7 +186,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	protected Datebox accountOpeningDate;
 	protected Textbox phoneNumber; // autowired
 
-	//BHFL
+	// BHFL
 	protected Button button_CustomerBankInfoDialog_btnAccBehaviour;
 	protected Toolbar toolBar_AccBehaviour;
 	protected Listbox listBoxAccBehaviour;
@@ -453,7 +435,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		}
 		this.accountNumber.setMaxlength(maxAccNoLength);
 
-		//###_0.2
+		// ###_0.2
 		this.creditTranAmt.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 		this.creditTranAmt.setScale(finFormatter);
 
@@ -1086,14 +1068,14 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 					if (bankInfoDetail == null) {
 						continue;
 					}
-					//getting Interest
+					// getting Interest
 					Hbox hbox = (Hbox) getComponent(listItem, "interest");
 					CurrencyBox interestValue = (CurrencyBox) hbox.getLastChild();
 					Clients.clearWrongValue(interestValue);
 					if (interestValue.getValidateValue() != null) {
 						interestSum = interestSum.add(interestValue.getValidateValue());
 					}
-					//getting TRF
+					// getting TRF
 					Hbox trf = (Hbox) getComponent(listItem, "trf");
 					CurrencyBox trfValue = (CurrencyBox) trf.getLastChild();
 					Clients.clearWrongValue(trfValue);
@@ -1101,7 +1083,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 						trfSum = trfSum.add(trfValue.getValidateValue());
 					}
 
-					//Total EMI
+					// Total EMI
 					Hbox emi = (Hbox) getComponent(listItem, "totalEmi");
 					CurrencyBox emiComp = (CurrencyBox) emi.getLastChild();
 					Clients.clearWrongValue(emiComp);
@@ -1109,7 +1091,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 						totalEmi = totalEmi.add(emiComp.getValidateValue());
 					}
 
-					//Total Salary
+					// Total Salary
 					Hbox salary = (Hbox) getComponent(listItem, "totalSalary");
 					CurrencyBox salaryComp = (CurrencyBox) salary.getLastChild();
 					Clients.clearWrongValue(salaryComp);
@@ -1117,7 +1099,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 						totalSalary = totalSalary.add(salaryComp.getValidateValue());
 					}
 
-					//EMI Bounce No
+					// EMI Bounce No
 					Hbox emiBounce = (Hbox) getComponent(listItem, "emiBounce");
 					Intbox emiBounceComp = (Intbox) emiBounce.getLastChild();
 					Clients.clearWrongValue(emiBounceComp);
@@ -1225,26 +1207,26 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			listcell = new Listcell(String.valueOf(odCCSum));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
-			//Interest
+			// Interest
 			listcell = new Listcell(String.valueOf(interestSum));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
-			//TRF
+			// TRF
 			listcell = new Listcell(String.valueOf(trfSum));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
 
-			//Total EMI
+			// Total EMI
 			listcell = new Listcell(String.valueOf(totalEmi));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
 
-			//Total Salary
+			// Total Salary
 			listcell = new Listcell(String.valueOf(totalSalary));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
 
-			//EMI Bounces
+			// EMI Bounces
 			listcell = new Listcell(String.valueOf(emiBounceNo));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
@@ -1254,7 +1236,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 			this.listBoxAccBehaviour.appendChild(item);
 
-			//Average
+			// Average
 			item = new Listitem();
 			item.setId("item_Avg");
 			listcell = new Listcell(Labels.getLabel("label_CustomerBankInfoDialog_Average.value"));
@@ -1325,30 +1307,30 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			listcell = new Listcell(PennantApplicationUtil.amountFormate(odCCAvg, PennantConstants.defaultCCYDecPos));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
-			//Interest
+			// Interest
 			listcell = new Listcell(String
 					.valueOf(PennantApplicationUtil.amountFormate(interestAvg, PennantConstants.defaultCCYDecPos)));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
-			//TRF
+			// TRF
 			listcell = new Listcell(
 					String.valueOf(PennantApplicationUtil.amountFormate(trfAvg, PennantConstants.defaultCCYDecPos)));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
 
-			//Total EMI
+			// Total EMI
 			listcell = new Listcell(String
 					.valueOf(PennantApplicationUtil.amountFormate(totalEmiAvg, PennantConstants.defaultCCYDecPos)));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
 
-			//Total Salary
+			// Total Salary
 			listcell = new Listcell(String
 					.valueOf(PennantApplicationUtil.amountFormate(totalSalaryAvg, PennantConstants.defaultCCYDecPos)));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
 
-			//EMI Bounces
+			// EMI Bounces
 			listcell = new Listcell(String.valueOf(emiBounceAvg));
 
 			listcell.setStyle("text-align:right;font-weight:bold");
@@ -1372,7 +1354,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		Hbox hbox;
 		Space space;
 		boolean isReadOnly = isReadOnly("CustomerBankInfoDialog_AccountType");
-		//for customer 360 it should be readonly
+		// for customer 360 it should be readonly
 		if (isCustomer360) {
 			isReadOnly = true;
 		}
@@ -1386,7 +1368,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		} else {
 			readOnlyComponent(true, monthYear);
 		}
-		monthYear.setReadonly(true); //Intentionally we put as read-only here
+		monthYear.setReadonly(true); // Intentionally we put as read-only here
 		monthYear.setValue(bankInfoDetail.getMonthYear());
 		listCell.setId("monthYear".concat(String.valueOf(bankInfoDetail.getKeyValue())));
 		hbox = new Hbox();
@@ -1428,7 +1410,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 				balCount++;
 				row = new Row();
-				//Day
+				// Day
 				label = new Label();
 
 				if (j == 1) {
@@ -1445,7 +1427,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				space = new Space();
 				space.setSpacing("2px");
 				space.setSclass("mandatory");
-				//Balance
+				// Balance
 				box = new CurrencyBox();
 				if (this.accountType.getValue() != null && (StringUtils.equals(this.accountType.getValue(), "CC")
 						|| StringUtils.equals(this.accountType.getValue(), "OD"))) {
@@ -1781,7 +1763,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		listCell.appendChild(hbox);
 		listCell.setParent(listItem);
 
-		//Total EMI or Loan
+		// Total EMI or Loan
 		listCell = new Listcell();
 		hbox = new Hbox();
 		space = new Space();
@@ -1799,7 +1781,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		listCell.appendChild(hbox);
 		listCell.setParent(listItem);
 
-		//Total Salary
+		// Total Salary
 		listCell = new Listcell();
 		hbox = new Hbox();
 		space = new Space();
@@ -1817,7 +1799,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		listCell.appendChild(hbox);
 		listCell.setParent(listItem);
 
-		//EMI Out Bounces
+		// EMI Out Bounces
 		listCell = new Listcell();
 		hbox = new Hbox();
 		space = new Space();
@@ -1846,7 +1828,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		listCell.setParent(listItem);
 
 		listItem.setAttribute("data", bankInfoDetail);
-		//for customer 360 it should be disable
+		// for customer 360 it should be disable
 		listItem.setDisabled(isCustomer360);
 		this.listBoxAccBehaviour.appendChild(listItem);
 	}
@@ -1997,8 +1979,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -2019,8 +2000,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param bankInfo
-	 *            CustomerBankInfo
+	 * @param bankInfo CustomerBankInfo
 	 */
 	public void doWriteBeanToComponents(CustomerBankInfo bankInfo) {
 		logger.debug("Entering");
@@ -2129,7 +2109,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 		try {
 			aCustomerBankInfo.setLovDescBankName(this.bankName.getDescription());
-			aCustomerBankInfo.setBankName(this.bankName.getValidatedValue());//FIXME: change it to name and increase the size in db
+			aCustomerBankInfo.setBankName(this.bankName.getValidatedValue());// FIXME: change it to name and increase
+																				// the size in db
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -2460,34 +2441,34 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				} catch (WrongValueException we) {
 					wve.add(we);
 				}
-				//Interest
+				// Interest
 				try {
 					getCompValuetoBean(listitem, "interest");
 				} catch (WrongValueException we) {
 					wve.add(we);
 				}
-				//TRF
+				// TRF
 				try {
 					getCompValuetoBean(listitem, "trf");
 				} catch (WrongValueException we) {
 					wve.add(we);
 				}
 
-				//totalEmi
+				// totalEmi
 				try {
 					getCompValuetoBean(listitem, "totalEmi");
 				} catch (WrongValueException we) {
 					wve.add(we);
 				}
 
-				//totalSalary
+				// totalSalary
 				try {
 					getCompValuetoBean(listitem, "totalSalary");
 				} catch (WrongValueException we) {
 					wve.add(we);
 				}
 
-				//emiBounce
+				// emiBounce
 				try {
 					getCompValuetoBean(listitem, "emiBounce");
 				} catch (WrongValueException we) {
@@ -3002,7 +2983,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 							 * try { Integer.parseInt(StringUtils.trim(day)); } catch (NumberFormatException e) {
 							 * logger.error(Literal.EXCEPTION, e); continue; }
 							 */
-							//Label day = (Label) listcell.getFellowIfAny("day"+i);
+							// Label day = (Label) listcell.getFellowIfAny("day"+i);
 							i++;
 							CurrencyBox balanceValue = (CurrencyBox) listcell.getFellowIfAny("balance_currency"
 									.concat(String.valueOf(bankInfoDetail.getKeyValue())).concat(String.valueOf(i)));
@@ -3441,57 +3422,52 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a CustomerBankInfo object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final CustomerBankInfo aCustomerBankInfo = new CustomerBankInfo();
 		BeanUtils.copyProperties(getCustomerBankInfo(), aCustomerBankInfo);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_CustomerBankInfoDialog_BankName.value") + " : "
+		final String keyReference = Labels.getLabel("label_CustomerBankInfoDialog_BankName.value") + " : "
 				+ aCustomerBankInfo.getBankName() + ","
 				+ Labels.getLabel("label_CustomerBankInfoDialog_AccountNumber.value") + " : "
 				+ aCustomerBankInfo.getAccountNumber();
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCustomerBankInfo.getRecordType())) {
-				aCustomerBankInfo.setVersion(aCustomerBankInfo.getVersion() + 1);
-				aCustomerBankInfo.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (!isFinanceProcess && getCustomerDialogCtrl() != null
-						&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
-					aCustomerBankInfo.setNewRecord(true);
-				}
-				if (isWorkFlowEnabled()) {
-					aCustomerBankInfo.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		doDelete(keyReference, aCustomerBankInfo);
 
-			try {
+		logger.debug(Literal.LEAVING);
+	}
+
+	protected void onDoDelete(final CustomerBankInfo aCustomerBankInfo) {
+		String tranType = PennantConstants.TRAN_WF;
+
+		if (StringUtils.isBlank(aCustomerBankInfo.getRecordType())) {
+			aCustomerBankInfo.setVersion(aCustomerBankInfo.getVersion() + 1);
+			aCustomerBankInfo.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			if (!isFinanceProcess && getCustomerDialogCtrl() != null
+					&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
+				aCustomerBankInfo.setNewRecord(true);
+			}
+			if (isWorkFlowEnabled()) {
+				aCustomerBankInfo.setNewRecord(true);
+				tranType = PennantConstants.TRAN_WF;
+			} else {
 				tranType = PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader = newFinanceCustomerProcess(aCustomerBankInfo, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerBankInfoDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					getCustomerDialogCtrl().doFillCustomerBankInfoDetails(this.CustomerBankInfoList);
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
 			}
 		}
-		logger.debug("Leaving");
+
+		try {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newFinanceCustomerProcess(aCustomerBankInfo, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_CustomerBankInfoDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				getCustomerDialogCtrl().doFillCustomerBankInfoDetails(this.CustomerBankInfoList);
+				closeDialog();
+			}
+		} catch (DataAccessException e) {
+			MessageUtil.showError(e);
+		}
 	}
 
 	/**
@@ -3895,8 +3871,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -3913,8 +3888,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -3935,7 +3909,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			this.toolBar_AccBehaviour.setVisible(true);
 			this.listBoxAccBehaviour.setVisible(true);
 			this.button_CustomerBankInfoDialog_btnAccBehaviour
-					.setVisible(!isReadOnly("CustomerBankInfoDialog_EodBalAvg")); //FIXME
+					.setVisible(!isReadOnly("CustomerBankInfoDialog_EodBalAvg")); // FIXME
 			if (isCustomer360) {
 				this.button_CustomerBankInfoDialog_btnAccBehaviour.setVisible(false);
 				btnSearchPRCustid.setDisabled(true);
@@ -4282,7 +4256,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 					}
 				}
 			} else if (StringUtils.equals(perfiosHeader.getStatusCode(), "S")
-					&& StringUtils.equals(perfiosHeader.getProcessStage(), "G")) { // Report generated but not downloaded.
+					&& StringUtils.equals(perfiosHeader.getProcessStage(), "G")) { // Report generated but not
+																					// downloaded.
 
 				perfiosHeader = customerDetailsService
 						.processPerfiosDocumentAndBankInfoDetails(perfiosHeader.getTransactionId());
@@ -4297,7 +4272,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 					MessageUtil.showMessage(perfiosHeader.getStatusDesc());
 				}
 			} else if ("E".equals(perfiosHeader.getStatusCode())) {
-				MessageUtil.showMessage("Received Error from Perfios " + StringUtils.trimToEmpty(perfiosHeader.getStatusDesc()));
+				MessageUtil.showMessage(
+						"Received Error from Perfios " + StringUtils.trimToEmpty(perfiosHeader.getStatusDesc()));
 			} else {
 				MessageUtil.showMessage("Perfios Report not yet generated.");
 			}

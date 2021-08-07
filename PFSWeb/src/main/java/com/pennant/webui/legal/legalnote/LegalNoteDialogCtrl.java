@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LegalNoteDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  19-06-2018    														*
- *                                                                  						*
- * Modified Date    :  19-06-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LegalNoteDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 19-06-2018 * * Modified
+ * Date : 19-06-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 19-06-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 19-06-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.legal.legalnote;
 
 import java.util.ArrayList;
@@ -118,8 +100,7 @@ public class LegalNoteDialogCtrl extends GFCBaseCtrl<LegalNote> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_LegalNoteDialog(Event event) throws Exception {
@@ -198,8 +179,7 @@ public class LegalNoteDialogCtrl extends GFCBaseCtrl<LegalNote> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
@@ -212,8 +192,7 @@ public class LegalNoteDialogCtrl extends GFCBaseCtrl<LegalNote> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -224,8 +203,7 @@ public class LegalNoteDialogCtrl extends GFCBaseCtrl<LegalNote> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -236,8 +214,7 @@ public class LegalNoteDialogCtrl extends GFCBaseCtrl<LegalNote> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -248,8 +225,7 @@ public class LegalNoteDialogCtrl extends GFCBaseCtrl<LegalNote> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -260,8 +236,7 @@ public class LegalNoteDialogCtrl extends GFCBaseCtrl<LegalNote> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -272,8 +247,7 @@ public class LegalNoteDialogCtrl extends GFCBaseCtrl<LegalNote> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -344,8 +318,7 @@ public class LegalNoteDialogCtrl extends GFCBaseCtrl<LegalNote> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param legalNote
-	 *            The entity that need to be render.
+	 * @param legalNote The entity that need to be render.
 	 */
 	public void doShowDialog(LegalNote legalNote) {
 		logger.debug(Literal.LEAVING);
@@ -423,51 +396,30 @@ public class LegalNoteDialogCtrl extends GFCBaseCtrl<LegalNote> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a LegalNote object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+	protected boolean doCustomDelete(final LegalNote aLegalNote, String tranType) {
+		if (isNewLegalNotes()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = processDetails(aLegalNote, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_LegalNoteDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				if (getLegalDetailDialogCtrl() != null) {
+					getLegalDetailDialogCtrl().doFillLegalNotesDetails(this.legalNotesList);
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.LEAVING);
 
 		final LegalNote aLegalNote = new LegalNote();
 		BeanUtils.copyProperties(this.legalNote, aLegalNote);
-		String tranType = PennantConstants.TRAN_WF;
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aLegalNote.getLegalNoteId();
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aLegalNote.getRecordType())) {
-				aLegalNote.setVersion(aLegalNote.getVersion() + 1);
-				aLegalNote.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aLegalNote.setNewRecord(true);
-				if (isWorkFlowEnabled()) {
-					aLegalNote.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (isNewLegalNotes()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = processDetails(aLegalNote, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_LegalNoteDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						if (getLegalDetailDialogCtrl() != null) {
-							getLegalDetailDialogCtrl().doFillLegalNotesDetails(this.legalNotesList);
-						}
-						closeDialog();
-					}
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
-		}
+		doDelete(String.valueOf(aLegalNote.getLegalNoteId()), aLegalNote);
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -621,8 +573,7 @@ public class LegalNoteDialogCtrl extends GFCBaseCtrl<LegalNote> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");

@@ -691,7 +691,7 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 			}
 
 			setOverideMap(aAuditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");

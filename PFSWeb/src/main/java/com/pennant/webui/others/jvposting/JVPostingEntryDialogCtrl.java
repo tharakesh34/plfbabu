@@ -33,7 +33,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -78,6 +77,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -1237,59 +1237,30 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Deletes a JVPostingEntry object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+	protected boolean doCustomDelete(final JVPostingEntry aJVPostingEntry, String tranType) {
+		tranType = PennantConstants.TRAN_DEL;
+		aJVPostingEntry.setDeletedFlag(true);
+		AuditHeader auditHeader = newEntryProcess(aJVPostingEntry, tranType, false);
+		auditHeader = ErrorControl.showErrorDetails(this.window_JVPostingEntryDialog, auditHeader);
+		int retValue = auditHeader.getProcessStatus();
+		if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+			getJVPostingDialogCtrl().doFillJVPostingEntryDetails(this.jvPostingEntryList);
+			getJVPostingDialogCtrl().setProceed(false);
+			return true;
+		}
+
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final JVPostingEntry aJVPostingEntry = new JVPostingEntry();
 		BeanUtils.copyProperties(getJVPostingEntry(), aJVPostingEntry);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record");
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aJVPostingEntry.getRecordType())) {
-				aJVPostingEntry.setVersion(aJVPostingEntry.getVersion() + 1);
-				aJVPostingEntry.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete("", aJVPostingEntry);
 
-				if (isWorkFlowEnabled()) {
-					aJVPostingEntry.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					aJVPostingEntry.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aJVPostingEntry.getNextTaskId(),
-							aJVPostingEntry);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			} else if (StringUtils.trimToEmpty(aJVPostingEntry.getRecordType()).equals(PennantConstants.RCD_UPD)) {
-				aJVPostingEntry.setVersion(aJVPostingEntry.getVersion() + 1);
-				aJVPostingEntry.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			}
-
-			try {
-				tranType = PennantConstants.TRAN_DEL;
-				aJVPostingEntry.setDeletedFlag(true);
-				AuditHeader auditHeader = newEntryProcess(aJVPostingEntry, tranType, false);
-				auditHeader = ErrorControl.showErrorDetails(this.window_JVPostingEntryDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					getJVPostingDialogCtrl().doFillJVPostingEntryDetails(this.jvPostingEntryList);
-					// send the data back to main screen
-					getJVPostingDialogCtrl().setProceed(false);
-					// Updating batch Details
-					// doUpdateBatchDetails(aJVPostingEntry, true);
-					// getJVPostingDialogCtrl().doUpdateBatchDetails(getjVPosting());
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

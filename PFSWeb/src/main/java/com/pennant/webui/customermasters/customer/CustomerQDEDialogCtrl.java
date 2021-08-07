@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerQDEDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2011    														*
- *                                                                  						*
- * Modified Date    :  27-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerQDEDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2011 * *
+ * Modified Date : 27-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.customermasters.customer;
@@ -89,6 +71,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -113,7 +96,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Textbox custTypeCode;
 	protected Textbox custParentCountry;
 
-	//Retail Customer Details
+	// Retail Customer Details
 	protected Textbox custFName;
 	protected Textbox custMName;
 	protected Textbox custLName;
@@ -122,23 +105,23 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Textbox custVisaNum;
 	protected Textbox custTradeLicenceNum;
 
-	//Row(s) declaration visibility depend on selection of Customer Category 
+	// Row(s) declaration visibility depend on selection of Customer Category
 	protected Row row_retailCustomerNames;
 	protected Row row_corpCustomerTL;
 	protected Row row_retailCustomerPPT;
 
-	//Set Fields are mandatory or not
+	// Set Fields are mandatory or not
 	protected Space space_CustCoreBank;
 	protected Hbox hbox_visaNum;
 
-	//Label(s) declarations of fields
+	// Label(s) declarations of fields
 	protected Label label_CustomerDialog_CustOrgName;
 	protected Label label_CustomerDialog_CustLName;
 	protected Label label_CustomerDialog_CustDOB;
 	protected Label label_CustomerDialog_CustDateOfIncorporation;
 	protected Label label_CustomerDialog_CustVisaNum;
 
-	//LOV field declarations
+	// LOV field declarations
 	protected Textbox lovDescCustCtgCodeName;
 	protected Button btnSearchCustCtgCode;
 	protected Textbox lovDescCustTypeCodeName;
@@ -313,7 +296,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.btnCancel.setVisible(false);
 		}
 
-		this.custCIF.setReadonly(true);//isReadOnly("CustomerDialog_custCIF")
+		this.custCIF.setReadonly(true);// isReadOnly("CustomerDialog_custCIF")
 		if ("CIF".equals(SysParamUtil.getValueAsString("CB_CID"))) {
 			this.custCoreBank.setReadonly(true);
 			this.space_CustCoreBank.setSclass("");
@@ -377,7 +360,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		aCustomer = aCustomerDetails.getCustomer();
 		aCustomer.setCustomerQDE(aCustomerDetails.getCustomer().getCustomerQDE());
 
-		//Create new CIF By Using Core Banking System
+		// Create new CIF By Using Core Banking System
 		if (this.financeDetail != null && StringUtils.isBlank(aCustomer.getCustCIF())) {
 			aCustomer.setLovDescCustCtgType(custCtgType);
 			String custCIF = getCustomerInterfaceService().generateNewCIF("B", aCustomer,
@@ -503,10 +486,8 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	/**
 	 * Method to process the entered details
 	 * 
-	 * @param aCustoemrDetails
-	 *            (CustomerDetails)
-	 * @param tranType
-	 *            (String)
+	 * @param aCustoemrDetails (CustomerDetails)
+	 * @param tranType         (String)
 	 * 
 	 * @return boolean
 	 * @throws CustomerNotFoundException
@@ -597,10 +578,8 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	/**
 	 * Method to do save process
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
-	 * @param method
-	 *            (String)
+	 * @param auditHeader (AuditHeader)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * @throws CustomerNotFoundException
@@ -646,7 +625,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -677,8 +656,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -771,8 +749,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCustomer
-	 *            Customer
+	 * @param aCustomer Customer
 	 */
 	public void doWriteBeanToComponents(CustomerDetails aCustomerDetails) {
 		logger.debug("Entering");
@@ -789,8 +766,9 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custTradeLicenceNum.setValue(aCustomer.getCustTradeLicenceNum());
 		this.custVisaNum.setValue(aCustomer.getCustVisaNum());
 		this.custPassportNo.setValue(aCustomer.getCustVisaNum());
-		this.custParentCountry.setValue(aCustomer.getCustParentCountry() == null
-				? SysParamUtil.getValueAsString("APP_DFT_COUNTRY") : aCustomer.getCustParentCountry());
+		this.custParentCountry
+				.setValue(aCustomer.getCustParentCountry() == null ? SysParamUtil.getValueAsString("APP_DFT_COUNTRY")
+						: aCustomer.getCustParentCountry());
 
 		if (aCustomerDetails.isNewRecord()) {
 			this.lovDescCustCtgCodeName.setValue("");
@@ -1057,7 +1035,8 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 				String arr[] = SysParamUtil.getValueAsString("NONEED_VISA_COUNTRIES").split(",");
 				for (int i = 0; i < arr.length; i++) {
-					if (arr[i].equals(this.custParentCountry.getValue())) { //If selected country is in list of visa not needed countries make visa invisble.
+					if (arr[i].equals(this.custParentCountry.getValue())) { // If selected country is in list of visa
+																			// not needed countries make visa invisble.
 						this.label_CustomerDialog_CustVisaNum.setVisible(false);
 						this.hbox_visaNum.setVisible(false);
 					}
@@ -1070,10 +1049,8 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	/**
 	 * Method to get audit header
 	 * 
-	 * @param aCustomerDetails
-	 *            (CustomerDetails)
-	 * @param tranType
-	 *            (String)
+	 * @param aCustomerDetails (CustomerDetails)
+	 * @param tranType         (String)
 	 * 
 	 * @return AuditHeader
 	 */

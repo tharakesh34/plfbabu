@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DirectorDetailDialogCtrl.java                                        * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  01-12-2011    														*
- *                                                                  						*
- * Modified Date    :  01-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DirectorDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 01-12-2011 * *
+ * Modified Date : 01-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 01-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 01-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.customermasters.directordetail;
@@ -100,7 +82,9 @@ import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.customermasters.customer.CustomerViewDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -152,7 +136,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	protected Checkbox shareholderCustomer; // autowired
 	protected Label label_DirectorDetailDialog_ShareholderCif; // autowired
 	protected Space space_ShareHolderCif; // autowired
-	protected Longbox shareHolderCustID; // autowired 
+	protected Longbox shareHolderCustID; // autowired
 	protected Textbox shareHolderCustCIF; // autowired
 	protected Button btnSearchPRShareHolderCustid;
 	protected Label shareHolderCustShrtName;
@@ -313,7 +297,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		doSetFieldProperties();
 		doShowDialog(getDirectorDetail());
 
-		//Calling SelectCtrl For proper selection of Customer
+		// Calling SelectCtrl For proper selection of Customer
 		/*
 		 * if(isNewRecord() & !isNewCustomer()){ onload(); }
 		 */
@@ -334,7 +318,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.custID.setMaxlength(19);
 		this.shareHolderCustID.setMaxlength(19);
 		this.firstName.setMaxlength(50);
@@ -489,8 +473,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -513,8 +496,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aDirectorDetail
-	 *            DirectorDetail
+	 * @param aDirectorDetail DirectorDetail
 	 */
 	public void doWriteBeanToComponents(DirectorDetail aDirectorDetail) {
 		logger.debug("Entering");
@@ -1000,7 +982,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 
 		if (!this.idType.isReadonly()) {
 
-			//TODO:Need To move HardCoded values into constants.
+			// TODO:Need To move HardCoded values into constants.
 			String value = this.idType.getValue();
 			if (StringUtils.isNotBlank(value)) {
 				String masterDocType = customerDocumentService.getDocTypeByMasterDefByCode("DOC_TYPE", value);
@@ -1115,66 +1097,62 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		getDirectorDetailListCtrl().search();
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a DirectorDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		final DirectorDetail aDirectorDetail = new DirectorDetail();
 		BeanUtils.copyProperties(getDirectorDetail(), aDirectorDetail);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
 		String name = "";
 		if (StringUtils.isNotBlank(aDirectorDetail.getShortName())) {
 			name = aDirectorDetail.getShortName();
 		} else {
 			name = aDirectorDetail.getFirstName() + "  " + aDirectorDetail.getLastName();
 		}
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_DirectorDetailDialog_ShortName.value") + " : " + name;
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aDirectorDetail.getRecordType())) {
-				aDirectorDetail.setVersion(aDirectorDetail.getVersion() + 1);
-				aDirectorDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (!isFinanceProcess && getCustomerDialogCtrl() != null
-						&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
-					aDirectorDetail.setNewRecord(true);
-				}
-				if (isWorkFlowEnabled()) {
-					aDirectorDetail.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
+
+		final String keyReference = Labels.getLabel("label_DirectorDetailDialog_ShortName.value") + " : " + name;
+
+		doDelete(keyReference, aDirectorDetail);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	protected void onDoDelete(final DirectorDetail aDirectorDetail) {
+		String tranType = PennantConstants.TRAN_WF;
+
+		if (StringUtils.isBlank(aDirectorDetail.getRecordType())) {
+			aDirectorDetail.setVersion(aDirectorDetail.getVersion() + 1);
+			aDirectorDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			if (!isFinanceProcess && getCustomerDialogCtrl() != null
+					&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
+				aDirectorDetail.setNewRecord(true);
 			}
-
-			try {
-				if (isNewCustomer()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newDirectorProcess(aDirectorDetail, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_DirectorDetailDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						getCustomerDialogCtrl().doFillCustomerDirectory(this.directorDetailList);
-						// send the data back to customer
-						closeDialog();
-					}
-
-				} else if (doProcess(aDirectorDetail, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
+			if (isWorkFlowEnabled()) {
+				aDirectorDetail.setNewRecord(true);
+				tranType = PennantConstants.TRAN_WF;
+			} else {
+				tranType = PennantConstants.TRAN_DEL;
 			}
 		}
-		logger.debug("Leaving");
+
+		try {
+			if (isNewCustomer()) {
+				tranType = PennantConstants.TRAN_DEL;
+				AuditHeader auditHeader = newDirectorProcess(aDirectorDetail, tranType);
+				auditHeader = ErrorControl.showErrorDetails(this.window_DirectorDetailDialog, auditHeader);
+				int retValue = auditHeader.getProcessStatus();
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+					getCustomerDialogCtrl().doFillCustomerDirectory(this.directorDetailList);
+					closeDialog();
+				}
+
+			} else if (doProcess(aDirectorDetail, tranType)) {
+				refreshList();
+				closeDialog();
+			}
+		} catch (DataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+			showMessage(e);
+		}
 	}
 
 	/**
@@ -1187,10 +1165,10 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 			if (isNewCustomer()) {
 				this.btnCancel.setVisible(false);
 				this.btnSearchPRCustid.setVisible(false);
-				//this.btnSearchPRShareHolderCustid.setVisible(false);
+				// this.btnSearchPRShareHolderCustid.setVisible(false);
 			} else {
 				this.btnSearchPRCustid.setVisible(true);
-				//this.btnSearchPRShareHolderCustid.setVisible(true);
+				// this.btnSearchPRShareHolderCustid.setVisible(true);
 			}
 			this.custSalutationCode.setDisabled(true);
 
@@ -1258,7 +1236,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		logger.debug("Leaving");
 	}
 
-	//Check Rights for Each Component
+	// Check Rights for Each Component
 	public boolean isReadOnly(String componentName) {
 		boolean isCustomerWorkflow = false;
 		if (getCustomerDialogCtrl() != null) {
@@ -1529,11 +1507,9 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aDirectorDetail
-	 *            (DirectorDetail)
+	 * @param aDirectorDetail (DirectorDetail)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType        (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1623,11 +1599,9 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1693,7 +1667,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("return Value:" + processCompleted);
@@ -1863,10 +1837,11 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 			throws InterruptedException {
 		logger.debug("Entering");
 		final Customer aCustomer = (Customer) nCustomer;
-		//PSD # 156134 commented the below code because main applicant details are overriding with share holder details.
-		//this.custID.setValue(aCustomer.getCustID());
-		//this.custCIF.setValue(aCustomer.getCustCIF().trim());
-		//this.custShrtName.setValue(aCustomer.getCustShrtName());
+		// PSD # 156134 commented the below code because main applicant details are overriding with share holder
+		// details.
+		// this.custID.setValue(aCustomer.getCustID());
+		// this.custCIF.setValue(aCustomer.getCustCIF().trim());
+		// this.custShrtName.setValue(aCustomer.getCustShrtName());
 		if (this.shareholderCustomer.isChecked()) {
 			this.shareHolderCustID.setValue(aCustomer.getCustID());
 			this.shareHolderCustCIF.setValue(aCustomer.getCustCIF().trim());
@@ -2015,8 +1990,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -2033,8 +2007,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

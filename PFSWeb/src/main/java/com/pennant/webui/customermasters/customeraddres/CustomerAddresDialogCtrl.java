@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerAddresDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerAddresDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * *
+ * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.customermasters.customeraddres;
@@ -93,6 +75,7 @@ import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.customermasters.customer.CustomerViewDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.DataType;
@@ -463,8 +446,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -487,8 +469,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCustomerAddres
-	 *            CustomerAddres
+	 * @param aCustomerAddres CustomerAddres
 	 */
 	public void doWriteBeanToComponents(CustomerAddres aCustomerAddres) {
 		logger.debug("Entering");
@@ -997,61 +978,57 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		getCustomerAddresListCtrl().search();
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a CustomerAddres object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final CustomerAddres aCustomerAddres = new CustomerAddres();
 		BeanUtils.copyProperties(getCustomerAddres(), aCustomerAddres);
+
+		final String keyReference = "Address Type :" + aCustomerAddres.getCustAddrType();
+
+		doDelete(keyReference, aCustomerAddres);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	protected void onDoDelete(final CustomerAddres aCustomerAddres) {
 		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record")
-				+ "\n\n --> Address Type :" + aCustomerAddres.getCustAddrType();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCustomerAddres.getRecordType())) {
-				aCustomerAddres.setVersion(aCustomerAddres.getVersion() + 1);
-				aCustomerAddres.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (!isFinanceProcess && getCustomerDialogCtrl() != null
-						&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
-					aCustomerAddres.setNewRecord(true);
-				}
-				if (isWorkFlowEnabled()) {
-					aCustomerAddres.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			} else if (StringUtils.equals(aCustomerAddres.getRecordType(), PennantConstants.RCD_UPD)) {
+		if (StringUtils.isBlank(aCustomerAddres.getRecordType())) {
+			aCustomerAddres.setVersion(aCustomerAddres.getVersion() + 1);
+			aCustomerAddres.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			if (!isFinanceProcess && getCustomerDialogCtrl() != null
+					&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
 				aCustomerAddres.setNewRecord(true);
 			}
+			if (isWorkFlowEnabled()) {
+				aCustomerAddres.setNewRecord(true);
+				tranType = PennantConstants.TRAN_WF;
+			} else {
+				tranType = PennantConstants.TRAN_DEL;
+			}
+		} else if (StringUtils.equals(aCustomerAddres.getRecordType(), PennantConstants.RCD_UPD)) {
+			aCustomerAddres.setNewRecord(true);
+		}
 
-			try {
-				if (isNewCustomer()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newFinanceCustomerProcess(aCustomerAddres, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerAddresDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						getCustomerDialogCtrl().doFillCustomerAddressDetails(this.customerAddress);
-						closeDialog();
-					}
-				} else if (doProcess(aCustomerAddres, tranType)) {
-					refreshList();
+		try {
+			if (isNewCustomer()) {
+				tranType = PennantConstants.TRAN_DEL;
+				AuditHeader auditHeader = newFinanceCustomerProcess(aCustomerAddres, tranType);
+				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerAddresDialog, auditHeader);
+				int retValue = auditHeader.getProcessStatus();
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+					getCustomerDialogCtrl().doFillCustomerAddressDetails(this.customerAddress);
 					closeDialog();
 				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
+			} else if (doProcess(aCustomerAddres, tranType)) {
+				refreshList();
+				closeDialog();
 			}
+		} catch (DataAccessException e) {
+			logger.error("Exception: ", e);
+			showMessage(e);
 		}
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -1339,7 +1316,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 				}
 
 				if (aCustomerAddres.getCustAddrType().equals(customerAddres.getCustAddrType())) { // Both Current and
-																										// Existing list
+																									// Existing list
 																									// addresses same
 
 					if (isNewRecord()) {
@@ -1392,11 +1369,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aCustomerAddres
-	 *            (CustomerAddres)
+	 * @param aCustomerAddres (CustomerAddres)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType        (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1486,11 +1461,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1556,7 +1529,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -1872,8 +1845,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -1890,8 +1862,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

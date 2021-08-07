@@ -1,46 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinCovenantTypeDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-08-2013    														*
- *                                                                  						*
- * Modified Date    :  14-08-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinCovenantTypeDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-08-2013 * *
+ * Modified Date : 14-08-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-08-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 08-05-2018       Vinay					 0.2		As per mail from Raju ,				*
- * 													subject : Daily status call : 19 April  * 
- *                                                  added OTC field  with validation from   *
- *                                                 	Document Types master based on          *
- *                                                 	PDC and OTC is required or not.         * 
- *16-05-2018       Madhu                     0.3    added OTC/PDD functionality.            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-08-2013 Pennant 0.1 * * 08-05-2018 Vinay 0.2 As per mail from Raju , * subject : Daily status call : 19 April *
+ * added OTC field with validation from * Document Types master based on * PDC and OTC is required or not. * 16-05-2018
+ * Madhu 0.3 added OTC/PDD functionality. * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -91,6 +72,7 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
@@ -341,8 +323,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -351,8 +332,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -609,8 +589,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinCovenantType
-	 *            FinCovenantTypeDetail
+	 * @param aFinCovenantType FinCovenantTypeDetail
 	 */
 	public void doWriteBeanToComponents(FinCovenantType aFinAdvnancePayments) {
 		logger.debug("Entering");
@@ -758,7 +737,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 				throw new WrongValueException(this.receivableDate, Labels.getLabel("DATE_PAST",
 						new String[] { Labels.getLabel("label_FinCovenantTypeDialog_RecvbleDate.value") }));
 			}
-			//08-06-2018 changed acceptable min date to app date in servicing.
+			// 08-06-2018 changed acceptable min date to app date in servicing.
 			if (StringUtils.equals(moduleDefiner, "")) {
 				maxCovreceiveDate = DateUtility.addDays(DateUtility.getAppDate(),
 						+SysParamUtil.getValueAsInt("FUTUREDAYS_COV_RECEIVED_DATE"));
@@ -826,66 +805,37 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Deletes a FinCovenantTypeDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+	protected boolean doCustomDelete(final FinCovenantType aFinCovenantType, String tranType) {
+		if (isNewCustomer()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newFinCovenantTypeProcess(aFinCovenantType, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_FinCovenantTypeDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				if (moduleDefiner.equals(FinServiceEvent.COVENANTS)) {
+					getFinCovenantMaintanceDialogCtrl().doFillFinCovenantTypeDetails(this.finCovenantTypesDetails);
+				} else {
+					getFinCovenantTypeListCtrl().doFillFinCovenantTypeDetails(this.finCovenantTypesDetails);
+				}
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final FinCovenantType aFinCovenantType = new FinCovenantType();
 		BeanUtils.copyProperties(getFinCovenantType(), aFinCovenantType);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n"
-				+ Labels.getLabel("FinCovenantType_CovenantType") + " : " + aFinCovenantType.getCovenantType();
+		final String keyReference = Labels.getLabel("FinCovenantType_CovenantType") + " : "
+				+ aFinCovenantType.getCovenantType();
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aFinCovenantType.getRecordType())) {
-				aFinCovenantType.setVersion(aFinCovenantType.getVersion() + 1);
-				aFinCovenantType.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aFinCovenantType.setNewRecord(true);
+		doDelete(keyReference, aFinCovenantType);
 
-				if (isWorkFlowEnabled()) {
-					aFinCovenantType.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aFinCovenantType.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aFinCovenantType.getNextTaskId(),
-							aFinCovenantType);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			} else if (StringUtils.trimToEmpty(aFinCovenantType.getRecordType()).equals(PennantConstants.RCD_UPD)) {
-				aFinCovenantType.setVersion(aFinCovenantType.getVersion() + 1);
-				aFinCovenantType.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			}
-
-			try {
-				if (isNewCustomer()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newFinCovenantTypeProcess(aFinCovenantType, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_FinCovenantTypeDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-
-						if (moduleDefiner.equals(FinServiceEvent.COVENANTS)) {
-							getFinCovenantMaintanceDialogCtrl()
-									.doFillFinCovenantTypeDetails(this.finCovenantTypesDetails);
-						} else {
-							getFinCovenantTypeListCtrl().doFillFinCovenantTypeDetails(this.finCovenantTypesDetails);
-						}
-						closeDialog();
-					}
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1270,7 +1220,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	 */
 	private void validateDocumentExistance(DocumentType dcoType) {
 		logger.debug("Entering");
-		//validate the document selected exists with the customer/Finance
+		// validate the document selected exists with the customer/Finance
 		boolean isDocNotfound = false;
 		if (!isNotFinanceProcess && getFinancedetail().getCustomerDetails() != null
 				&& !CollectionUtils.isEmpty(getFinancedetail().getCustomerDetails().getCustomerDocumentsList())) {

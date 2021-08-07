@@ -1,42 +1,24 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
  * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinFeeDetailListCtrl.java                                            * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-08-2013    														*
- *                                                                  						*
- * Modified Date    :  14-08-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinFeeDetailListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-08-2013 * * Modified
+ * Date : 14-08-2013 * * Description : * *
  ********************************************************************************************
  * Date Author Version Comments *
  ********************************************************************************************
- * 14-08-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-08-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -82,6 +64,7 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
 
@@ -1132,11 +1115,16 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			}
 
 			// if we have any Difference between calculated fee amount and actual fee amount
-			if (feeChanges && MessageUtil.confirm(
-					"Difference between calculated fee amount and actual fee amount. Do you want to proceed?") == MessageUtil.NO) {
-				ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-				wve.add(new WrongValueException("Difference between calculated fee amount and actual fee amount."));
-				showErrorDetails(wve);
+			if (feeChanges) {
+				final String msg = "Difference between calculated fee amount and actual fee amount. Do you want to proceed?";
+				MessageUtil.confirm(msg, evnt -> {
+					if (Messagebox.ON_NO.equals(evnt.getName())) {
+						ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+						wve.add(new WrongValueException(
+								"Difference between calculated fee amount and actual fee amount."));
+						showErrorDetails(wve);
+					}
+				});
 			}
 
 			aFinScheduleData.setFinFeeDetailList(finFeeDetailList);
@@ -1669,9 +1657,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 			for (FinFeeDetail finFeeDetail : finFeeDetails) {
 
-				if (!finFeeDetail.isRcdVisible()
-						|| (AccountingEvent.VAS_FEE.equals(finFeeDetail.getFinEvent())
-								&& PennantConstants.RECORD_TYPE_CAN.equals(finFeeDetail.getRecordType()))) {
+				if (!finFeeDetail.isRcdVisible() || (AccountingEvent.VAS_FEE.equals(finFeeDetail.getFinEvent())
+						&& PennantConstants.RECORD_TYPE_CAN.equals(finFeeDetail.getRecordType()))) {
 					continue;
 				}
 

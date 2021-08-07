@@ -1,6 +1,5 @@
 package com.pennant.webui.assettype.assettypeassignment;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -47,10 +46,10 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.CollateralHeaderDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 
-public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> {
+public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldRender> {
 
 	private static final long serialVersionUID = 4558487274958745612L;
 	private static final Logger logger = LogManager.getLogger(AssetTypeAssignmentDialogCtrl.class);
@@ -341,45 +340,13 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
-	 * when the "save" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws ParseException
-	 * @throws IOException
-	 * @throws ScriptException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws NoSuchFieldException
-	 */
-	public void onClick$btnSave(Event event)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException, ParseException,
-			ScriptException, IOException, NoSuchMethodException, NoSuchFieldException, SecurityException {
+	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws InterruptedException
-	 * @throws ParseException
-	 * @throws IOException
-	 * @throws ScriptException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws NoSuchFieldException
-	 * @throws IllegalAccessException
-	 * @throws IllegalArgumentException
-	 * @throws InvocationTargetException
-	 */
-	public void doSave() throws InterruptedException, ParseException, ScriptException, IOException,
-			NoSuchMethodException, NoSuchFieldException, SecurityException, IllegalArgumentException,
-			IllegalAccessException, InvocationTargetException {
+	public void doSave() throws Exception {
 		logger.debug("Entering");
 
 		try {
@@ -493,7 +460,8 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 			for (int i = 0; i < getCollateralHeaderDialogCtrl().getExtendedFieldRenderList().size(); i++) {
 				ExtendedFieldRender fieldRender = getCollateralHeaderDialogCtrl().getExtendedFieldRenderList().get(i);
 
-				if (fieldRender.getSeqNo() == aExetendedFieldRender.getSeqNo()) { // Both Current and Existing list Seqno same
+				if (fieldRender.getSeqNo() == aExetendedFieldRender.getSeqNo()) { // Both Current and Existing list
+																					// Seqno same
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
@@ -596,63 +564,39 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
-	 * Deletes a GuarantorDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 * @throws SecurityException
-	 * @throws NoSuchMethodException
-	 * @throws InvocationTargetException
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 */
+	protected boolean doCustomDelete(final ExtendedFieldRender extendedFieldRender, String tranType) {
+		tranType = PennantConstants.TRAN_DEL;
+		AuditHeader auditHeader = newFieldProcess(extendedFieldRender, tranType);
+		auditHeader = ErrorControl.showErrorDetails(this.window_AssetTypeAssignmentDialog, auditHeader);
+		int retValue = auditHeader.getProcessStatus();
+		if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+			if (getCollateralHeaderDialogCtrl() != null) {
+				getCollateralHeaderDialogCtrl().doFillAssetDetails(this.extendedList);
+			}
+			return true;
+		}
+
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException, IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException, NoSuchMethodException, SecurityException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
 		BeanUtils.copyProperties(getExtendedFieldRender(), extendedFieldRender);
-		String tranType = PennantConstants.TRAN_WF;
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ (extendedFieldRender.getSeqNo());
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(extendedFieldRender.getRecordType())) {
-				extendedFieldRender.setVersion(extendedFieldRender.getVersion() + 1);
-				extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				extendedFieldRender.setNewRecord(true);
+		final String keyReference = String.valueOf(extendedFieldRender.getSeqNo());
 
-				if (isWorkFlowEnabled()) {
-					extendedFieldRender.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				tranType = PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader = newFieldProcess(extendedFieldRender, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.window_AssetTypeAssignmentDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					if (getCollateralHeaderDialogCtrl() != null) {
-						getCollateralHeaderDialogCtrl().doFillAssetDetails(this.extendedList);
-					}
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
-		}
-		logger.debug("Leaving");
+		doDelete(keyReference, extendedFieldRender);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -708,8 +652,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());

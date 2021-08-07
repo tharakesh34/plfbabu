@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ReportFilterFieldsDialogCtrl.java                                    * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ReportFilterFieldsDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * *
+ * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.reports.reportconfiguration;
@@ -95,6 +77,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -235,24 +218,8 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	private Map<String, String> filterMap = new HashMap<>();
 
 	public enum FIELDTYPE {
-		TXT,
-		DATE,
-		TIME,
-		DATETIME,
-		STATICLIST,
-		DYNAMICLIST,
-		LOVSEARCH,
-		DECIMAL,
-		INTRANGE,
-		DECIMALRANGE,
-		NUMBER,
-		CHECKBOX,
-		MULTISELANDLIST,
-		MULTISELINLIST,
-		DATERANGE,
-		DATETIMERANGE,
-		TIMERANGE,
-		STATICVALUE
+		TXT, DATE, TIME, DATETIME, STATICLIST, DYNAMICLIST, LOVSEARCH, DECIMAL, INTRANGE, DECIMALRANGE, NUMBER,
+		CHECKBOX, MULTISELANDLIST, MULTISELINLIST, DATERANGE, DATETIMERANGE, TIMERANGE, STATICVALUE
 	};
 
 	/**
@@ -488,8 +455,7 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -522,8 +488,7 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aReportFilterFields
-	 *            reportFilterFields
+	 * @param aReportFilterFields reportFilterFields
 	 * @throws Exception
 	 */
 	public void doWriteBeanToComponents(ReportFilterFields aReportFilterFields) throws Exception {
@@ -942,49 +907,27 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
+	protected boolean doCustomDelete(final ReportFilterFields aReportFilterFields, String tranType) {
+		tranType = PennantConstants.TRAN_DEL;
+		AuditHeader auditHeader = newReportFilterFieldsListProcess(aReportFilterFields, tranType);
+		auditHeader = ErrorControl.showErrorDetails(this.window_ReportFilterFieldsDialog, auditHeader);
+		int retValue = auditHeader.getProcessStatus();
+		if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+			this.reportConfigurationDialogCtrl.doFillReportFilterFieldsList(reportFilterFieldsList);
+			// this.window_ReportFilterFieldsDialog.onClose();
+			return true;
+		}
+		return false;
+	}
 
-	/**
-	 * Deletes a ReportFilterFields object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		final ReportFilterFields aReportFilterFields = new ReportFilterFields();
 		BeanUtils.copyProperties(getReportFilterFields(), aReportFilterFields);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aReportFilterFields.getFieldName();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aReportFilterFields.getRecordType())) {
-				aReportFilterFields.setVersion(aReportFilterFields.getVersion() + 1);
-				aReportFilterFields.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(aReportFilterFields.getFieldName(), aReportFilterFields);
 
-				if (isWorkFlowEnabled()) {
-					aReportFilterFields.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				tranType = PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader = newReportFilterFieldsListProcess(aReportFilterFields, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.window_ReportFilterFieldsDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					this.reportConfigurationDialogCtrl.doFillReportFilterFieldsList(reportFilterFieldsList);
-					this.window_ReportFilterFieldsDialog.onClose();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	boolean enable;
@@ -1242,10 +1185,8 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	 * aReportFilterFields.setRecordType(PennantConstants.RECORD_TYPE_DEL); }
 	 * </p>
 	 * 
-	 * @param aReportFilterFields
-	 *            (ReportFilterFields)
-	 * @param tranType
-	 *            (String)doSave
+	 * @param aReportFilterFields (ReportFilterFields)
+	 * @param tranType            (String)doSave
 	 * @return auditHeader (AuditHeader)
 	 */
 	private AuditHeader newReportFilterFieldsListProcess(ReportFilterFields aReportFilterFields, String tranType) {
@@ -1612,8 +1553,7 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -1630,8 +1570,7 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

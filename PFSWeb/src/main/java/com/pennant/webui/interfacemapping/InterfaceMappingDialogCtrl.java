@@ -64,6 +64,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.bajaj.process.collections.model.CollectionConstants;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -557,65 +558,60 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
+	protected void onDoDelete(final InterfaceMapping entity) {
 
-	/**
-	 * Deletes a interfaceMapping object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
-	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
-
-		final InterfaceMapping entity = new InterfaceMapping();
-		BeanUtils.copyProperties(getInterfaceMapping(), entity);
 		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_InterfaceMappingDialog_InterfaceName.value") + " : "
-				+ interfaceMapping.getInterfaceName();
+		if (StringUtils.isBlank(interfaceMapping.getRecordType())) {
+			interfaceMapping.setVersion(interfaceMapping.getVersion() + 1);
+			interfaceMapping.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+			if (isWorkFlowEnabled()) {
+				interfaceMapping.setNewRecord(true);
+				tranType = PennantConstants.TRAN_WF;
 
-			if (StringUtils.isBlank(interfaceMapping.getRecordType())) {
-				interfaceMapping.setVersion(interfaceMapping.getVersion() + 1);
-				interfaceMapping.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				if (interfaceMapping.getMasterMappingList() != null
+						&& !interfaceMapping.getMasterMappingList().isEmpty()) {
 
-				if (isWorkFlowEnabled()) {
-					interfaceMapping.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
+					for (int i = 0; i < interfaceMapping.getMasterMappingList().size(); i++) {
+						MasterMapping masterMapping = interfaceMapping.getMasterMappingList().get(i);
 
-					if (interfaceMapping.getMasterMappingList() != null
-							&& !interfaceMapping.getMasterMappingList().isEmpty()) {
-
-						for (int i = 0; i < interfaceMapping.getMasterMappingList().size(); i++) {
-							MasterMapping masterMapping = interfaceMapping.getMasterMappingList().get(i);
-
-							if (StringUtils.isBlank(masterMapping.getInterfaceValue())) {
-								interfaceMapping.getMasterMappingList().remove(i);
-								i = 0;
-							}
+						if (StringUtils.isBlank(masterMapping.getInterfaceValue())) {
+							interfaceMapping.getMasterMappingList().remove(i);
+							i = 0;
 						}
 					}
-
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(interfaceMapping, tranType)) {
-					refreshList();
-					closeDialog();
 				}
 
-			} catch (Exception e) {
-				MessageUtil.showError(e);
+			} else {
+				tranType = PennantConstants.TRAN_DEL;
 			}
 		}
 
-		logger.debug("Leaving");
+		try {
+			if (doProcess(interfaceMapping, tranType)) {
+				refreshList();
+				closeDialog();
+			}
+
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
+	}
+
+	private void doDelete() throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+
+		final InterfaceMapping entity = new InterfaceMapping();
+		BeanUtils.copyProperties(getInterfaceMapping(), entity);
+
+		final String keyReference = Labels.getLabel("label_InterfaceMappingDialog_InterfaceName.value") + " : "
+				+ interfaceMapping.getInterfaceName();
+
+		doDelete(keyReference, entity);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -935,7 +931,7 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 

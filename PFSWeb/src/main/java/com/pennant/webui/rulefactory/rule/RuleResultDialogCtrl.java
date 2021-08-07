@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FeeTierDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  16-09-2011    														*
- *                                                                  						*
- * Modified Date    :  16-09-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FeeTierDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 16-09-2011 * * Modified
+ * Date : 16-09-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 16-09-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 16-09-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.rulefactory.rule;
@@ -64,6 +46,7 @@ import org.zkoss.zul.Column;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -244,8 +227,7 @@ public class RuleResultDialogCtrl extends GFCBaseCtrl<JavaScriptBuilder> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -377,10 +359,12 @@ public class RuleResultDialogCtrl extends GFCBaseCtrl<JavaScriptBuilder> {
 				createSimulationWindow(fieldList);
 			} else {
 				if (errors.size() != 0) {
-					if (MessageUtil.confirm(errors.size()
-							+ PennantJavaUtil.getLabel("message_ErrorCount_CodeMirror")) == MessageUtil.YES) {
-						Events.postEvent("onUser$errors", window_RuleResultDialog, errors);
-					}
+					MessageUtil.confirm(errors.size() + PennantJavaUtil.getLabel("message_ErrorCount_CodeMirror"),
+							evnt -> {
+								if (Messagebox.ON_YES.equals(evnt.getName())) {
+									Events.postEvent("onUser$errors", window_RuleResultDialog, errors);
+								}
+							});
 				} else {
 					if (isSaveRecord) {
 						doSave();

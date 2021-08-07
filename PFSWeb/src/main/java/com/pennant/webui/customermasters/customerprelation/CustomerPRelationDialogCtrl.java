@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerPRelationDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerPRelationDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * *
+ * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.customermasters.customerprelation;
@@ -93,7 +75,9 @@ import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -270,7 +254,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 		doShowDialog(getCustomerPRelation());
 		this.pRCustPRSNo.setReadonly(true);
 
-		//Calling SelectCtrl For proper selection of Customer
+		// Calling SelectCtrl For proper selection of Customer
 		if (isNewRecord() && !isNewCustomer()) {
 			onload();
 		}
@@ -282,7 +266,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.pRCustPRSNo.setMaxlength(10);
 		this.pRRelationCode.setMaxlength(8);
 		this.pRFName.setMaxlength(50);
@@ -406,8 +390,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -459,8 +442,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCustomerPRelation
-	 *            CustomerPRelation
+	 * @param aCustomerPRelation CustomerPRelation
 	 */
 	public void doWriteBeanToComponents(CustomerPRelation aCustomerPRelation) {
 		logger.debug("Entering");
@@ -833,10 +815,16 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 					new PTEmailValidator(Labels.getLabel("label_CustomerPRelationDialog_PRMail.value"), false));
 		}
 		if (StringUtils.isNotEmpty(this.pRRelationCustID.getValue())) {
-			this.pRRelationCustID.setConstraint(new PTStringValidator(Labels.getLabel("FIELD_ALLOWED_CHARS",
-					new String[] { Labels.getLabel("label_CustomerPRelationDialog_PRRelationCustID.value"),
-							SysParamUtil.getValueAsString("CIF_CHAR"), SysParamUtil.getValueAsString("CIF_LENGTH") }),
-					this.CUSTCIF_REGEX));
+			this.pRRelationCustID
+					.setConstraint(
+							new PTStringValidator(
+									Labels.getLabel("FIELD_ALLOWED_CHARS",
+											new String[] {
+													Labels.getLabel(
+															"label_CustomerPRelationDialog_PRRelationCustID.value"),
+													SysParamUtil.getValueAsString("CIF_CHAR"),
+													SysParamUtil.getValueAsString("CIF_LENGTH") }),
+									this.CUSTCIF_REGEX));
 		}
 		logger.debug("Leaving");
 	}
@@ -943,57 +931,35 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 		getCustomerPRelationListCtrl().search();
 	}
 
-	// CRUD operations
+	protected boolean doCustomDelete(final CustomerPRelation aCustomerPRelation, String tranType) {
+		if (isNewCustomer()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newCustomerProcess(aCustomerPRelation, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_CustomerPRelationDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				// getCustomerDialogCtrl().doFillCustomerPRelations(this.customerPRelations);
+				closeDialog();
+				return false;
+			}
+		} else if (doProcess(aCustomerPRelation, tranType)) {
+			refreshList();
+			closeDialog();
+			return false;
+		}
 
-	/**
-	 * Deletes a CustomerPRelation object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final CustomerPRelation aCustomerPRelation = new CustomerPRelation();
 		BeanUtils.copyProperties(getCustomerPRelation(), aCustomerPRelation);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aCustomerPRelation.getPRCustID();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCustomerPRelation.getRecordType())) {
-				aCustomerPRelation.setVersion(aCustomerPRelation.getVersion() + 1);
-				aCustomerPRelation.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aCustomerPRelation.setNewRecord(true);
+		doDelete(String.valueOf(aCustomerPRelation.getPRCustID()), aCustomerPRelation);
 
-				if (isWorkFlowEnabled()) {
-					aCustomerPRelation.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (isNewCustomer()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newCustomerProcess(aCustomerPRelation, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerPRelationDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						//getCustomerDialogCtrl().doFillCustomerPRelations(this.customerPRelations);
-						// send the data back to customer
-						closeDialog();
-					}
-				} else if (doProcess(aCustomerPRelation, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1234,7 +1200,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerPRelationDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					//getCustomerDialogCtrl().doFillCustomerPRelations(this.customerPRelations);
+					// getCustomerDialogCtrl().doFillCustomerPRelations(this.customerPRelations);
 					// send the data back to customer
 					closeDialog();
 				}
@@ -1257,11 +1223,9 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aCustomerPRelation
-	 *            (CustomerPRelation)
+	 * @param aCustomerPRelation (CustomerPRelation)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType           (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1347,11 +1311,9 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1410,7 +1372,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -1597,8 +1559,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -1615,8 +1576,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

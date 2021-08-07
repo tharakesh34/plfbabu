@@ -1,42 +1,24 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  StepPolicyDetailDialogCtrl.java                                      * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  04-12-2013    														*
- *                                                                  						*
- * Modified Date    :  04-12-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : StepPolicyDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 04-12-2013 * *
+ * Modified Date : 04-12-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 04-12-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 04-12-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.solutionfactory.steppolicy;
@@ -51,7 +33,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -74,6 +55,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -91,7 +73,7 @@ public class StepPolicyDetailDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 
 	protected Textbox policyCode; // autowired
 	protected Textbox policyDesc; // autowired
-	//	protected Intbox noOfSteps;              // autowired
+	// protected Intbox noOfSteps; // autowired
 	protected Intbox stepNumber; // autowired
 	protected Decimalbox tenorSplitPerc; // autowired
 	protected Decimalbox rateMargin; // autowired
@@ -286,8 +268,7 @@ public class StepPolicyDetailDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -310,8 +291,7 @@ public class StepPolicyDetailDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aStepPolicyDetail
-	 *            StepPolicyDetail
+	 * @param aStepPolicyDetail StepPolicyDetail
 	 */
 	public void doWriteBeanToComponents(StepPolicyDetail aStepPolicyDetail) {
 		logger.debug("Entering");
@@ -465,50 +445,30 @@ public class StepPolicyDetailDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
+	protected boolean doCustomDelete(final StepPolicyDetail aStepPolicyDetail, String tranType) {
+		tranType = PennantConstants.TRAN_DEL;
+		AuditHeader auditHeader = newCustAccTypesProcess(aStepPolicyDetail, tranType);
+		auditHeader = ErrorControl.showErrorDetails(this.window_StepPolicyDetailDialog, auditHeader);
+		int retValue = auditHeader.getProcessStatus();
+		if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+			getStepPolicyDialogCtrl().doFillStepPolicyDetails(this.stepPolicyDetailList);
+			return true;
+		}
+		return false;
+	}
 
-	/**
-	 * Deletes a StepPolicyDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final StepPolicyDetail aStepPolicyDetail = new StepPolicyDetail();
 		BeanUtils.copyProperties(getStepPolicyDetail(), aStepPolicyDetail);
-		String tranType = PennantConstants.TRAN_WF;
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_StepPolicyDetailDialog_StepNumber.value") + " : "
+
+		final String keyReference = Labels.getLabel("label_StepPolicyDetailDialog_StepNumber.value") + " : "
 				+ aStepPolicyDetail.getStepNumber();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aStepPolicyDetail.getRecordType())) {
-				aStepPolicyDetail.setVersion(aStepPolicyDetail.getVersion() + 1);
-				aStepPolicyDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (isWorkFlowEnabled()) {
-					aStepPolicyDetail.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			} else if (PennantConstants.RCD_UPD.equals(aStepPolicyDetail.getRecordType())) {
-				aStepPolicyDetail.setVersion(aStepPolicyDetail.getVersion() + 1);
-				aStepPolicyDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			}
-			try {
-				tranType = PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader = newCustAccTypesProcess(aStepPolicyDetail, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.window_StepPolicyDetailDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					getStepPolicyDialogCtrl().doFillStepPolicyDetails(this.stepPolicyDetailList);
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug("Leaving");
+
+		doDelete(keyReference, aStepPolicyDetail);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -554,7 +514,7 @@ public class StepPolicyDetailDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		logger.debug("Entering");
 		this.policyCode.setReadonly(true);
 		this.policyDesc.setReadonly(true);
-		//this.noOfSteps.setDisabled(true);
+		// this.noOfSteps.setDisabled(true);
 		this.stepNumber.setReadonly(true);
 		this.tenorSplitPerc.setDisabled(true);
 		this.rateMargin.setDisabled(true);
@@ -580,7 +540,7 @@ public class StepPolicyDetailDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		// remove validation, if there are a save before
 		this.policyCode.setValue("");
 		this.policyDesc.setValue("");
-		//	this.noOfSteps.setValue(0);
+		// this.noOfSteps.setValue(0);
 		this.stepNumber.setValue(0);
 		this.tenorSplitPerc.setValue("");
 		this.rateMargin.setValue("");

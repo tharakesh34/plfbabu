@@ -60,6 +60,7 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
@@ -465,10 +466,9 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			preScriptValidated = true;
 			// check if code mirror is empty or not
 			if (StringUtils.isNotEmpty(this.preValidation.getValue().trim())) {
-				if (MessageUtil.confirm("NO Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
-					// create a new window for input values
+				MessageUtil.confirm("NO Errors Found! Proceed With Simulation?", evnt -> {
 					createSimulationWindow(variables, this.preValidation.getValue());
-				}
+				});
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -485,12 +485,12 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		Clients.clearWrongValue(this.postValidation);
 		if (validate(event, true, false)) {
 			postScriptValidated = true;
-			// check if code mirror is empty or not
 			if (StringUtils.isNotEmpty(this.postValidation.getValue().trim())) {
-				if (MessageUtil.confirm("NO Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
-					// create a new window for input values
-					createSimulationWindow(variables, this.postValidation.getValue());
-				}
+				MessageUtil.confirm("NO Errors Found! Proceed With Simulation?", evnt -> {
+					if (Messagebox.ON_YES.equals(evnt.getName())) {
+						createSimulationWindow(variables, this.postValidation.getValue());
+					}
+				});
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -763,14 +763,18 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnCopyTo(Event event) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		if (MessageUtil.confirm(Labels.getLabel("conf.closeWindowWithoutSave")) == MessageUtil.YES) {
-			closeDialog();
-			Events.postEvent("onClick$button_CollateralStructureList_NewCollateralStructure",
-					collateralStructureListCtrl.window_CollateralStructureList, this.collateralStructure);
-		}
-		logger.debug("Leaving");
+		MessageUtil.confirm(Labels.getLabel("conf.closeWindowWithoutSave"), evnt -> {
+			if (Messagebox.ON_YES.equals(evnt.getName())) {
+				closeDialog();
+				Events.postEvent("onClick$button_CollateralStructureList_NewCollateralStructure",
+						collateralStructureListCtrl.window_CollateralStructureList, this.collateralStructure);
+
+			}
+		});
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1820,7 +1824,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			}
 
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");

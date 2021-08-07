@@ -1,44 +1,24 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  GuarantorDetailDialogCtrl.java                                       * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  10-09-2013    														*
- *                                                                  						*
- * Modified Date    :  10-09-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : GuarantorDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 10-09-2013 * *
+ * Modified Date : 10-09-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-09-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 10-09-2013       Pennant	                 0.2		 PSD 127030 formating Value  		*  
- *                                                       For Aadhar Number                  * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-09-2013 Pennant 0.1 * * 10-09-2013 Pennant 0.2 PSD 127030 formating Value * For Aadhar Number * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.guarantordetail;
@@ -113,6 +93,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -166,8 +147,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	protected Hlayout hlayout_MobileNo;
 	protected Space space_MobileNo;
 	protected Textbox mobileNo;
-	//protected Textbox 		phoneCountryCode; 				
-	//protected Textbox 		phoneAreaCode; 		
+	// protected Textbox phoneCountryCode;
+	// protected Textbox phoneAreaCode;
 	protected Row row4;
 	protected Label label_EmailId;
 	protected Hlayout hlayout_EmailId;
@@ -462,8 +443,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -472,8 +452,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -832,7 +811,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.row5.setVisible(true);
 			this.row4.setVisible(false);
 			this.row6.setVisible(true);
-			//this.btnSearchGuarantorCIF.setVisible(false);
+			// this.btnSearchGuarantorCIF.setVisible(false);
 		} else {
 			this.gb_GurantorsPrimaryExposure.setVisible(false);
 			this.gb_GurantorsSecoundaryExposure.setVisible(false);
@@ -841,7 +820,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.row5.setVisible(true);
 			this.row4.setVisible(true);
 			this.row6.setVisible(false);
-			//this.btnSearchGuarantorCIF.setVisible(true);
+			// this.btnSearchGuarantorCIF.setVisible(true);
 			this.emailId.setValue("");
 			this.mobileNo.setValue("");
 			this.guarantorCIF.setValue("");
@@ -966,8 +945,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aGuarantorDetail
-	 *            GuarantorDetail
+	 * @param aGuarantorDetail GuarantorDetail
 	 */
 	public void doWriteBeanToComponents(GuarantorDetail aGuarantorDetail) {
 		logger.debug("Entering");
@@ -1396,8 +1374,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -1493,7 +1470,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			}
 			if (this.guarantorIDType.getSelectedIndex() != 0) {
 				if (this.guarantorIDType.getSelectedItem().getValue().toString().equals(PennantConstants.CPRCODE)) {
-					// ### 10-05-2018 - Development PSD  127030
+					// ### 10-05-2018 - Development PSD 127030
 					aGuarantorDetail.setGuarantorIDNumber(this.guarantorIDNumber.getValue());
 				}
 			}
@@ -1975,7 +1952,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.space_EmailId.setSclass(PennantConstants.mandateSclass);
 			this.space_Name.setSclass(PennantConstants.mandateSclass);
 			this.space_MobileNo.setSclass(PennantConstants.mandateSclass);
-			//this.space_GuarantorProof.setSclass(PennantConstants.mandateSclass);
+			// this.space_GuarantorProof.setSclass(PennantConstants.mandateSclass);
 
 			this.addrHNbr.setReadonly(isReadOnly("GuarantorDetailDialog_addrHNbr"));
 			this.flatNbr.setReadonly(isReadOnly("GuarantorDetailDialog_flatNbr"));
@@ -2004,12 +1981,12 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		if (!isNewRecord()) {
 			readOnlyExposureFields(true);
 			this.guarantorCIF.setReadonly(true);
-			//this.guarantorCIFName.setReadonly(true);
+			// this.guarantorCIFName.setReadonly(true);
 			this.guarantorIDNumber.setReadonly(true);
 			this.guarantorIDType.setDisabled(true);
 			this.guarantorProofName.setReadonly(true);
-			//this.mobileNo.setReadonly(true);
-			//this.emailId.setReadonly(true);
+			// this.mobileNo.setReadonly(true);
+			// this.emailId.setReadonly(true);
 		} else {
 			readOnlyExposureFields(false);
 		}
@@ -2071,53 +2048,34 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		}
 	}
 
-	/**
-	 * Deletes a GuarantorDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
-	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
-		final GuarantorDetail aGuarantorDetail = new GuarantorDetail();
-		BeanUtils.copyProperties(getGuarantorDetail(), aGuarantorDetail);
-		String tranType = PennantConstants.TRAN_WF;
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ (aGuarantorDetail.isBankCustomer()
-						? Labels.getLabel("label_GuarantorDetailDialog_GuarantorCIF/ID.value") + " : "
-								+ aGuarantorDetail.getGuarantorCIF()
-						: Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDType.value") + " : "
-								+ aGuarantorDetail.getGuarantorIDType());
-
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aGuarantorDetail.getRecordType())) {
-				aGuarantorDetail.setVersion(aGuarantorDetail.getVersion() + 1);
-				aGuarantorDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aGuarantorDetail.setNewRecord(true);
-				if (isWorkFlowEnabled()) {
-					aGuarantorDetail.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (isNewGuarantor()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newGuarantorDetailProcess(aGuarantorDetail, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_GuarantorDetailDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						getFinanceMainDialogCtrl().doFillGurantorsDetails(this.guarantorDetailDetailList);
-						closeDialog();
-					}
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
+	protected boolean doCustomDelete(final GuarantorDetail aGuarantorDetail, String tranType) {
+		if (isNewGuarantor()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newGuarantorDetailProcess(aGuarantorDetail, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_GuarantorDetailDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				getFinanceMainDialogCtrl().doFillGurantorsDetails(this.guarantorDetailDetailList);
+				return true;
 			}
 		}
-		logger.debug("Leaving");
+		return false;
+	}
+
+	private void doDelete() throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+		final GuarantorDetail aGuarantorDetail = new GuarantorDetail();
+		BeanUtils.copyProperties(getGuarantorDetail(), aGuarantorDetail);
+
+		final String keyReference = (aGuarantorDetail.isBankCustomer()
+				? Labels.getLabel("label_GuarantorDetailDialog_GuarantorCIF/ID.value") + " : "
+						+ aGuarantorDetail.getGuarantorCIF()
+				: Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDType.value") + " : "
+						+ aGuarantorDetail.getGuarantorIDType());
+
+		doDelete(keyReference, aGuarantorDetail);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2233,11 +2191,9 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -2381,7 +2337,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		logger.debug("Entering");
 		if (this.guarantorIDType.getSelectedIndex() != 0) {
 			if (this.guarantorIDType.getSelectedItem().getValue().toString().equals(PennantConstants.CPRCODE)) {
-				// ### 10-05-2018 - Start- Development PSD  127030
+				// ### 10-05-2018 - Start- Development PSD 127030
 				this.guarantorIDNumber.setValue(this.guarantorIDNumber.getValue());
 			} else {
 				this.guarantorIDNumber.setValue(this.guarantorIDNumber.getValue());

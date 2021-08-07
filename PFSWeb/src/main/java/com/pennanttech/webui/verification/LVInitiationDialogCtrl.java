@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LVInitiationDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-04-2018    														*
- *                                                                  						*
- * Modified Date    :  26-04-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LVInitiationDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-04-2018 * *
+ * Modified Date : 26-04-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2018       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2018 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennanttech.webui.verification;
@@ -99,6 +81,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -133,7 +116,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	protected Listbox listBoxCustomerDocuments;
 	protected Textbox remarks;
 
-	//Initiation components
+	// Initiation components
 	protected ExtendedCombobox collateral;
 	protected ExtendedCombobox agency;
 	protected Row collateralRow;
@@ -142,7 +125,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	protected Row customerRow;
 	protected Row verificationRow;
 
-	//Waiver components
+	// Waiver components
 	protected ExtendedCombobox reason;
 	protected Row reasonRow;
 	protected Combobox verificationCategory;
@@ -339,7 +322,8 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	// Getting the approved collateral setup values from search object and adding the newly created collateral setup list
+	// Getting the approved collateral setup values from search object and adding the newly created collateral setup
+	// list
 	public void setCollateralTypeList(List<CollateralAssignment> collateralAsssignments,
 			List<CollateralSetup> collateralSetupList) {
 
@@ -457,8 +441,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -479,8 +462,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aVerification
-	 *            CustomerPhoneNumber
+	 * @param aVerification CustomerPhoneNumber
 	 */
 	public void doWriteBeanToComponents(Verification aVerification) {
 		logger.debug(Literal.ENTERING);
@@ -559,7 +541,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		List<LVDocument> oldDocuments = legalVerificationService.getLVDocuments(verification.getKeyReference());
 		oldDocumentRefIds = getOldDocumentRefIds(oldDocuments);
 
-		//Find changed collateral document and added it as new Document
+		// Find changed collateral document and added it as new Document
 		if (collateralRef != null) {
 			for (LVDocument newDoc : documents) {
 				for (LVDocument oldDoc : oldDocuments) {
@@ -577,7 +559,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 
-		//get saved collateral documents ids.
+		// get saved collateral documents ids.
 		for (LVDocument lvDocument : oldDocuments) {
 			idList.add(String.valueOf(lvDocument.getDocumentId()));
 		}
@@ -597,7 +579,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 				}
 			}
 
-			//invisible the saved collateral documents
+			// invisible the saved collateral documents
 			if (idList.contains(reference) && !checkedDocuments.contains(reference)
 					&& !changedDocuments.values().contains(reference)) {
 				continue;
@@ -667,7 +649,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//collateral Type
+		// collateral Type
 		try {
 			if (StringUtils.isNotBlank(this.collateral.getValue())) {
 				Object object = this.collateral.getObject();
@@ -699,7 +681,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			wve.add(we);
 		}
 		if (initiation) {
-			//agency
+			// agency
 			try {
 				if (StringUtils.isNotBlank(this.agency.getValue())) {
 					Object object = this.agency.getAttribute("agency");
@@ -713,7 +695,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 				wve.add(we);
 			}
 		} else {
-			//Reason
+			// Reason
 			try {
 				if (StringUtils.isNotBlank(this.reason.getValue())) {
 					Object object = this.reason.getObject();
@@ -731,14 +713,14 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 
-		//Remarks
+		// Remarks
 		try {
 			aVerification.setRemarks(this.remarks.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		//DocumentIds
+		// DocumentIds
 		setLVDocuments();
 
 		doRemoveValidation();
@@ -763,7 +745,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 				this.verification.getLvDocuments().add(docIdBox.getValue());
 			}
 		}
-		//Removed mandatory validation for collateral document
+		// Removed mandatory validation for collateral document
 		/*
 		 * if (this.verification.getLvDocuments().isEmpty()) { throw new WrongValueException(listBoxCollateralDocuments,
 		 * Labels.getLabel("ATLEAST_ONE", new String[] { "Collateral Document" })); }
@@ -1110,11 +1092,9 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aVerification
-	 *            (CustomerAddres)
+	 * @param aVerification (CustomerAddres)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1203,11 +1183,9 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1277,7 +1255,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -1360,8 +1338,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1379,8 +1356,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinTypePartnerBankDialogCtrl.java                                    * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  24-04-2017    														*
- *                                                                  						*
- * Modified Date    :  24-04-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinTypePartnerBankDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 24-04-2017 * *
+ * Modified Date : 24-04-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 24-04-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 24-04-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.rmtmasters.financetype;
 
 import java.util.ArrayList;
@@ -138,8 +120,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_FinTypePartnerBankDialog(Event event) throws Exception {
@@ -226,8 +207,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
@@ -241,8 +221,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -255,8 +234,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -269,8 +247,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -283,8 +260,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -297,8 +273,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -311,8 +286,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -463,8 +437,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param finTypePartnerBank
-	 *            The entity that need to be render.
+	 * @param finTypePartnerBank The entity that need to be render.
 	 */
 	public void doShowDialog(FinTypePartnerBank finTypePartnerBank) {
 		logger.debug(Literal.LEAVING);
@@ -554,52 +527,25 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a FinTypePartnerBank object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+	protected boolean doCustomDelete(final FinTypePartnerBank aFinTypePartnerBank, String tranType) {
+		tranType = PennantConstants.TRAN_DEL;
+		AuditHeader auditHeader = newFinTypePartnerBankEntryProcess(aFinTypePartnerBank, tranType);
+		auditHeader = ErrorControl.showErrorDetails(this.window_FinTypePartnerBankDialog, auditHeader);
+		int retValue = auditHeader.getProcessStatus();
+		if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+			getFinTypePartnerBankListCtrl().doFillFinTypePartnerBanks(this.finTypePartnerBankList);
+			return true;
+		}
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.LEAVING);
 
 		final FinTypePartnerBank aFinTypePartnerBank = new FinTypePartnerBank();
 		BeanUtils.copyProperties(this.finTypePartnerBank, aFinTypePartnerBank);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aFinTypePartnerBank.getPartnerBankCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aFinTypePartnerBank.getRecordType())) {
-				aFinTypePartnerBank.setVersion(aFinTypePartnerBank.getVersion() + 1);
-				aFinTypePartnerBank.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-
-				if (isWorkFlowEnabled()) {
-					aFinTypePartnerBank.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-
-			} else if (StringUtils.trimToEmpty(aFinTypePartnerBank.getRecordType()).equals(PennantConstants.RCD_UPD)) {
-				aFinTypePartnerBank.setVersion(aFinTypePartnerBank.getVersion() + 1);
-				aFinTypePartnerBank.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			}
-
-			try {
-				tranType = PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader = newFinTypePartnerBankEntryProcess(aFinTypePartnerBank, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.window_FinTypePartnerBankDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					getFinTypePartnerBankListCtrl().doFillFinTypePartnerBanks(this.finTypePartnerBankList);
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
-		}
+		doDelete(aFinTypePartnerBank.getPartnerBankCode(), aFinTypePartnerBank);
 
 		logger.debug(Literal.LEAVING);
 	}

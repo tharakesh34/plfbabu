@@ -53,6 +53,7 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
@@ -74,6 +75,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -273,12 +275,12 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 		logger.debug("Entering" + event.toString());
 		if (validate(event, false, false)) {
 			preScriptValidated = true;
-			// check if code mirror is empty or not
 			if (StringUtils.isNotEmpty(this.preValidation.getValue().trim())) {
-				if (MessageUtil.confirm("NO Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
-					// create a new window for input values
-					createSimulationWindow(variables, this.preValidation.getValue());
-				}
+				MessageUtil.confirm("NO Errors Found! Proceed With Simulation?", evnt -> {
+					if (Messagebox.ON_YES.equals(evnt.getName())) {
+						createSimulationWindow(variables, this.preValidation.getValue());
+					}
+				});
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -294,12 +296,12 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 		logger.debug("Entering" + event.toString());
 		if (validate(event, true, false)) {
 			postScriptValidated = true;
-			// check if code mirror is empty or not
 			if (StringUtils.isNotEmpty(this.postValidation.getValue().trim())) {
-				if (MessageUtil.confirm("NO Errors Found! Proceed With Simulation?") == MessageUtil.YES) {
-					// create a new window for input values
-					createSimulationWindow(variables, this.postValidation.getValue());
-				}
+				MessageUtil.confirm("NO Errors Found! Proceed With Simulation?", evnt -> {
+					if (Messagebox.ON_YES.equals(evnt.getName())) {
+						createSimulationWindow(variables, this.postValidation.getValue());
+					}
+				});
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -471,21 +473,18 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 		doEdit();
 	}
 
-	/**
-	 * Method for On click action on Copy button to make Duplicate record with existing Data
-	 * 
-	 * @param event
-	 * @throws InterruptedException
-	 */
 	public void onClick$btnCopyTo(Event event) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		if (MessageUtil.confirm(Labels.getLabel("conf.closeWindowWithoutSave")) == MessageUtil.YES) {
-			closeAssetWindow();
-			Events.postEvent("onClick$button_AssetTypeList_NewAssetType", assetTypeListCtrl.window_AssetTypeList,
-					this.assetConfigurationType);
-		}
-		logger.debug("Leaving");
+		MessageUtil.confirm(Labels.getLabel("conf.closeWindowWithoutSave"), evnt -> {
+			if (Messagebox.ON_YES.equals(evnt.getName())) {
+				closeAssetWindow();
+				Events.postEvent("onClick$button_AssetTypeList_NewAssetType", assetTypeListCtrl.window_AssetTypeList,
+						this.assetConfigurationType);
+			}
+		});
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1232,7 +1231,7 @@ public class AssetTypeDialogCtrl extends GFCBaseCtrl<AssetType> {
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");

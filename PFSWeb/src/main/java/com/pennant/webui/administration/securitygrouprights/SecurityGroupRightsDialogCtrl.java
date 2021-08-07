@@ -40,6 +40,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.administration.securityuserroles.model.SecurityGroupRightModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -176,8 +177,7 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -220,16 +220,16 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 
 		if (this.listbox_UnAssignedRights.getSelectedCount() != 0) {
 
-			Listitem li = new Listitem(); //To read List Item
-			Set seletedSet = new HashSet(); //To get Selected Items
+			Listitem li = new Listitem(); // To read List Item
+			Set seletedSet = new HashSet(); // To get Selected Items
 			seletedSet = this.listbox_UnAssignedRights.getSelectedItems();
-			List list = new ArrayList(seletedSet); //Converting Set to ArrayList to Make Concurrent operations	
+			List list = new ArrayList(seletedSet); // Converting Set to ArrayList to Make Concurrent operations
 			Iterator iterator = list.iterator();
 			while (iterator.hasNext()) {
 				li = (Listitem) iterator.next();
 				final SecurityRight aSecRight = (SecurityRight) li.getAttribute("data");
 				Listcell slecteditem = new Listcell();
-				List selectedRowValues = new ArrayList(); //TO get each row Details
+				List selectedRowValues = new ArrayList(); // TO get each row Details
 				selectedRowValues = li.getChildren();
 				slecteditem = (Listcell) selectedRowValues.get(0);
 				tempUnAsgnRightsMap.remove(String.valueOf(aSecRight.getRightID()));
@@ -252,17 +252,17 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 		logger.debug(event.toString());
 
 		if (this.listbox_AssignedRights.getSelectedCount() != 0) {
-			// To Remove Selected item from the List Box 
-			Listitem li = new Listitem(); //To read List Item
-			Set seletedSet = new HashSet(); //To get Selected Items
+			// To Remove Selected item from the List Box
+			Listitem li = new Listitem(); // To read List Item
+			Set seletedSet = new HashSet(); // To get Selected Items
 			seletedSet = this.listbox_AssignedRights.getSelectedItems();
-			List list = new ArrayList(seletedSet); //Converting Set to ArrayList to Make Concurrent operations	
+			List list = new ArrayList(seletedSet); // Converting Set to ArrayList to Make Concurrent operations
 			Iterator iterator = list.iterator();
 			while (iterator.hasNext()) {
 				li = (Listitem) iterator.next();
 				final SecurityRight aSecRight = (SecurityRight) li.getAttribute("data");
 				Listcell slecteditem = new Listcell();
-				List selectedRowValues = new ArrayList(); //TO get each row Details
+				List selectedRowValues = new ArrayList(); // TO get each row Details
 				selectedRowValues = li.getChildren();
 				slecteditem = (Listcell) selectedRowValues.get(0);
 				tempUnAsgnRightsMap.put(String.valueOf(aSecRight.getRightID()), aSecRight);
@@ -286,18 +286,18 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 		logger.debug(event.toString());
 		this.listbox_AssignedRights.selectAll();
 		if (this.listbox_AssignedRights.getSelectedCount() != 0) {
-			//////// To Remove Selected item from the List Box 
-			Listitem li = new Listitem();//To read List Item
-			Set seletedSet = new HashSet();//To get Selected Items
+			//////// To Remove Selected item from the List Box
+			Listitem li = new Listitem();// To read List Item
+			Set seletedSet = new HashSet();// To get Selected Items
 			seletedSet = this.listbox_AssignedRights.getSelectedItems();
-			List list = new ArrayList(seletedSet); //Converting Set to ArrayList to Make Concurrent operations	
+			List list = new ArrayList(seletedSet); // Converting Set to ArrayList to Make Concurrent operations
 			java.util.Iterator it = list.iterator();
 			while (it.hasNext()) {
 				li = (Listitem) it.next();
 				final SecurityRight aSecRight = (SecurityRight) li.getAttribute("data");
 				System.out.println(li.getLabel());
 				Listcell slecteditem = new Listcell();
-				List selectedRowValues = new ArrayList();//TO get each row Details
+				List selectedRowValues = new ArrayList();// TO get each row Details
 				selectedRowValues = li.getChildren();
 				slecteditem = (Listcell) selectedRowValues.get(0);
 				tempUnAsgnRightsMap.put(String.valueOf(aSecRight.getRightID()), aSecRight);
@@ -423,7 +423,7 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 
 		selectedMap = new HashMap<Long, SecurityGroupRights>();
 		deletedMap = new HashMap<Long, SecurityGroupRights>();
-		//for insert
+		// for insert
 		for (Object rightId : getNewAssignedMap().keySet()) {
 			if (!getOldAssignedMap().containsKey(rightId)) {
 
@@ -443,7 +443,7 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 				selectedMap.put(Long.valueOf(getNewAssignedMap().get(rightId).getRightID()), aSecGroupRights);
 			}
 		}
-		//for Delete
+		// for Delete
 		for (Object rightId : getOldAssignedMap().keySet()) {
 			if (!getNewAssignedMap().containsKey(rightId)) {
 
@@ -493,11 +493,9 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -522,7 +520,7 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 				}
 				setOverideMap(auditHeader.getOverideMap());
 			}
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		return processCompleted;
@@ -577,7 +575,7 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 	 * @param securityRight
 	 */
 	private void doFillListbox(Listbox listbox, String value1, SecurityRight securityRight) {
-		Listitem item = new Listitem(); //To Create List item
+		Listitem item = new Listitem(); // To Create List item
 		Listcell lc;
 		lc = new Listcell();
 		lc.setLabel(value1);

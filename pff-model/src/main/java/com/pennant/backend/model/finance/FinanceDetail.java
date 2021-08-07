@@ -11,35 +11,19 @@
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceDetail.java	                                                * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  22-03-2011    														*
- *                                                                  						*
- * Modified Date    :  22-03-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceDetail.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 22-03-2011 * * Modified Date :
+ * 22-03-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 22-03-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 22-03-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -110,7 +94,7 @@ import com.pennanttech.pff.model.external.interfacedetails.InterfaceServiceDetai
 		"finOCRHeader", "returnStatus", "receiptProcessingAmt", "returnStatus" })
 @XmlRootElement(name = "finance")
 @XmlAccessorType(XmlAccessType.NONE)
-public class FinanceDetail implements java.io.Serializable {
+public class FinanceDetail implements Serializable {
 	private static final long serialVersionUID = 3947699402597772444L;
 
 	@XmlElement
@@ -1522,8 +1506,7 @@ public class FinanceDetail implements java.io.Serializable {
 	}
 
 	/**
-	 * @param tempCollateralAssignmentList
-	 *            the tempCollateralAssignmentList to set
+	 * @param tempCollateralAssignmentList the tempCollateralAssignmentList to set
 	 */
 	public void setTempCollateralAssignmentList(List<CollateralAssignment> tempCollateralAssignmentList) {
 		this.tempCollateralAssignmentList = tempCollateralAssignmentList;

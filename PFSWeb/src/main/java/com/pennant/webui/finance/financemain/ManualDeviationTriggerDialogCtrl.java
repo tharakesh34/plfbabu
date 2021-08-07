@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinAdvancePaymentsDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-08-2013    														*
- *                                                                  						*
- * Modified Date    :  14-08-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinAdvancePaymentsDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-08-2013 * *
+ * Modified Date : 14-08-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-08-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-08-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -225,14 +207,14 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 				this.userAction = setListRecordStatus(this.userAction);
 			}
 
-			//getUserWorkspace().allocateAuthorities("FinAdvancePaymentsDialog", getRole());
+			// getUserWorkspace().allocateAuthorities("FinAdvancePaymentsDialog", getRole());
 
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 
 			// set Field Properties
 			doSetFieldProperties();
-			// ### 06-05-2018  story #361(Tuleap server) Manual Deviations
+			// ### 06-05-2018 story #361(Tuleap server) Manual Deviations
 			setDelegatorRoles(financeDeviations.getSeverity());
 			doShowDialog(this.financeDeviations);
 		} catch (Exception e) {
@@ -302,8 +284,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -312,8 +293,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -366,7 +346,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 			}
 			// ### 01-05-2018 - End
 		}
-		//### 09-06-2018 - set the maxLength of remarks Textbox.
+		// ### 09-06-2018 - set the maxLength of remarks Textbox.
 		this.remarks.setMaxlength(500);
 		this.mitigants.setMaxlength(1000);
 
@@ -440,7 +420,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 			return false;
 		}
 	}
-	// ### 06-05-2018 - End 
+	// ### 06-05-2018 - End
 
 	/**
 	 * Set the components for edit mode. <br>
@@ -493,11 +473,11 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	private void doCheckRights() {
 		logger.debug("Entering");
 		if (!enqModule) {
-			//			this.btnNew.setVisible(true);
-			//			this.btnEdit.setVisible(true);
-			//			this.btnDelete.setVisible(true);
+			// this.btnNew.setVisible(true);
+			// this.btnEdit.setVisible(true);
+			// this.btnDelete.setVisible(true);
 			this.btnSave.setVisible(true);
-			//### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
+			// ### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
 			readOnlyComponent(true, delegationRole);
 			readOnlyComponent(true, status);
 			row_ApprovelStatus.setVisible(false);
@@ -517,7 +497,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.deviationCode.setProperties("ProductDeviation", "DeviationCode", "DeviationDesc", true, 1, 155);
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("ProductCode", prodCode, Filter.OP_EQUAL);
@@ -546,8 +526,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinAdvancePayments
-	 *            FinAdvancePaymentsDetail
+	 * @param aFinAdvancePayments FinAdvancePaymentsDetail
 	 */
 	public void doWriteBeanToComponents(FinanceDeviations aFinanceDeviations) {
 		// ### 06-05-2018 - Start - story #361(Tuleap server) Manual Deviations
@@ -609,7 +588,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 		}
 
 		try {
-			//### 05-05-2018- Start- story #361(tuleap server) Manual Deviations
+			// ### 05-05-2018- Start- story #361(tuleap server) Manual Deviations
 
 			if (SysParamUtil.isAllowed(SMTParameterConstants.MANUAL_DEVIATIONS_TRIGGERING_FOR_SAMEROLE)) {
 
@@ -619,14 +598,14 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 							"Select either approval status or change approval authority.");
 				}
 			}
-			//### 05-05-2018- End- story #361(tuleap server) Manual Deviations
+			// ### 05-05-2018- End- story #361(tuleap server) Manual Deviations
 
 			aFinanceDeviations.setDelegationRole(this.delegationRole.getSelectedItem().getValue());
 
 		} catch (WrongValueException e) {
 			wve.add(e);
 		}
-		//### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
+		// ### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
 		if (this.status.isVisible()) {
 			try {
 				String status = this.status.getSelectedItem().getValue();
@@ -664,7 +643,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
-		//### 05-05-2018- Start- story #361(tuleap server) Manual Deviations
+		// ### 05-05-2018- Start- story #361(tuleap server) Manual Deviations
 
 		logger.debug(Literal.ENTERING);
 
@@ -682,7 +661,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 		}
 
 		logger.debug(Literal.LEAVING);
-		//### 05-05-2018- End- story #361(tuleap server) Manual Deviations
+		// ### 05-05-2018- End- story #361(tuleap server) Manual Deviations
 
 	}
 
@@ -690,7 +669,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	 * Remove the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
-		//### 05-05-2018- Start- story #361(tuleap server) Manual Deviations
+		// ### 05-05-2018- Start- story #361(tuleap server) Manual Deviations
 
 		logger.debug(Literal.ENTERING);
 
@@ -698,7 +677,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 		delegationRole.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
-		//### 05-05-2018- End- story #361(tuleap server) Manual Deviations
+		// ### 05-05-2018- End- story #361(tuleap server) Manual Deviations
 
 	}
 
@@ -708,7 +687,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 
 	@Override
 	protected void doClearMessage() {
-		//### 05-05-2018- Start- story #361(tuleap server) Manual Deviations
+		// ### 05-05-2018- Start- story #361(tuleap server) Manual Deviations
 
 		logger.debug(Literal.ENTERING);
 
@@ -717,60 +696,37 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 		status.setErrorMessage("");
 
 		logger.debug(Literal.LEAVING);
-		//### 05-05-2018- End- story #361(tuleap server) Manual Deviations
+		// ### 05-05-2018- End- story #361(tuleap server) Manual Deviations
 
 	}
 
-	/**
-	 * Deletes a FinAdvancePaymentsDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+	protected boolean doCustomDelete(final FinanceDeviations aFinAdvancePayments, String tranType) {
+
+		if (isNewCustomer()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newFinAdvancePaymentsProcess(aFinAdvancePayments, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_ManualDeviationTrigger, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				getDeviationDetailDialogCtrl().doFillManualDeviations(this.financeDeviationsList);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		final FinanceDeviations aFinAdvancePayments = new FinanceDeviations();
 		BeanUtils.copyProperties(this.financeDeviations, aFinAdvancePayments);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n"
-				+ Labels.getLabel("label_ManualDeviationTriggerDialog_deviationCode.value") + " : "
+		final String keyReference = Labels.getLabel("label_ManualDeviationTriggerDialog_deviationCode.value") + " : "
 				+ aFinAdvancePayments.getDeviationCode() + " - " + aFinAdvancePayments.getDeviationCodeDesc();
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aFinAdvancePayments.getRecordType())) {
-				aFinAdvancePayments.setVersion(aFinAdvancePayments.getVersion() + 1);
-				aFinAdvancePayments.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(keyReference, aFinAdvancePayments);
 
-				if (isWorkFlowEnabled()) {
-					aFinAdvancePayments.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aFinAdvancePayments.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aFinAdvancePayments.getNextTaskId(),
-							aFinAdvancePayments);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (isNewCustomer()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newFinAdvancePaymentsProcess(aFinAdvancePayments, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_ManualDeviationTrigger, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						getDeviationDetailDialogCtrl().doFillManualDeviations(this.financeDeviationsList);
-						closeDialog();
-					}
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -900,7 +856,13 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 		if (listAdvance != null && listAdvance.size() > 0) {
 			for (int i = 0; i < listAdvance.size(); i++) {
 				FinanceDeviations loanFinDev = listAdvance.get(i);
-				if (StringUtils.equals(aFinanceDeviations.getDeviationCode(), loanFinDev.getDeviationCode())) { // Both Current and Existing list rating same
+				if (StringUtils.equals(aFinanceDeviations.getDeviationCode(), loanFinDev.getDeviationCode())) { // Both
+																												// Current
+																												// and
+																												// Existing
+																												// list
+																												// rating
+																												// same
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(

@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinCreditRevSubCategoryDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  13-11-2013    														*
- *                                                                  						*
- * Modified Date    :  13-11-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinCreditRevSubCategoryDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 13-11-2013
+ * * * Modified Date : 13-11-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 13-11-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 13-11-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.customermasters.fincreditrevsubcategory;
 
 import java.sql.Timestamp;
@@ -54,7 +36,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.codemirror.Codemirror;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
@@ -100,6 +81,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.financemanagement.bankorcorpcreditreview.CreditApplicationReviewDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -118,10 +100,10 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 	protected Window window_RuleResultDialog;
 	protected Textbox subCategoryCode;
 	protected Textbox subCategoryDesc;
-	//protected Combobox subCategoryItemType; 
+	// protected Combobox subCategoryItemType;
 	protected Textbox itemRule;
 	protected Checkbox isCreditCCY;
-	//protected Combobox mainSubCategoryCode; 
+	// protected Combobox mainSubCategoryCode;
 	protected Intbox calcSeque;
 	protected Checkbox format;
 	protected Checkbox percentCategory;
@@ -182,8 +164,8 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 	// not auto wired vars
 	private List<FinCreditRevCategory> listOfFinCreditRevCategory = null;
 	private Set<FinCreditRevSubCategory> finCreditRevSubCategoryList = new HashSet<FinCreditRevSubCategory>();
-	//private List<FinCreditRevSubCategory> objectFieldList;
-	//private List<ValueLabel> listMainSubCategoryCodes;
+	// private List<FinCreditRevSubCategory> objectFieldList;
+	// private List<ValueLabel> listMainSubCategoryCodes;
 	private FinCreditRevSubCategory finCreditRevSubCategory; // overhanded per param
 	private transient FinCreditRevSubCategoryListCtrl finCreditRevSubCategoryListCtrl; // overhanded per param
 	private transient CreditApplicationReviewDialogCtrl creditApplicationReviewDialogCtrl;
@@ -284,7 +266,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 			if (arguments.containsKey("creditApplicationReviewDialogCtrl")) {
 				setCreditApplicationReviewDialogCtrl(
 						(CreditApplicationReviewDialogCtrl) arguments.get("creditApplicationReviewDialogCtrl"));
-				//this.window_FinCreditRevSubCategoryDialog.doModal();
+				// this.window_FinCreditRevSubCategoryDialog.doModal();
 			} else {
 				setCreditApplicationReviewDialogCtrl(null);
 			}
@@ -339,7 +321,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.subCategoryCode.setMaxlength(20);
 		this.subCategoryDesc.setMaxlength(200);
 		this.itemRule.setMaxlength(300);
@@ -489,8 +471,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -513,17 +494,16 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinCreditRevSubCategory
-	 *            FinCreditRevSubCategory
+	 * @param aFinCreditRevSubCategory FinCreditRevSubCategory
 	 */
 	public void doWriteBeanToComponents(FinCreditRevSubCategory aFinCreditRevSubCategory) {
 		logger.debug("Entering");
 		this.subCategoryCode.setValue(aFinCreditRevSubCategory.getSubCategoryCode());
-		//fillComboBox(this.categoryId, String.valueOf(aFinCreditRevSubCategory.getCategoryId()), listCategoryId, "");
-		//this.categoryId.setValue(PennantApplicationUtil.getlabelDesc(aFinCreditRevSubCategory.getCategoryId(),listCategoryId));
+		// fillComboBox(this.categoryId, String.valueOf(aFinCreditRevSubCategory.getCategoryId()), listCategoryId, "");
+		// this.categoryId.setValue(PennantApplicationUtil.getlabelDesc(aFinCreditRevSubCategory.getCategoryId(),listCategoryId));
 		this.subCategoryDesc.setValue(aFinCreditRevSubCategory.getSubCategoryDesc());
-		//this.subCategoryItemType.setValue(aFinCreditRevSubCategory.getSubCategoryCode());
-		//this.subCategoryItemType.setValue(aFinCreditRevSubCategory.getSubCategoryItemType());
+		// this.subCategoryItemType.setValue(aFinCreditRevSubCategory.getSubCategoryCode());
+		// this.subCategoryItemType.setValue(aFinCreditRevSubCategory.getSubCategoryItemType());
 		this.itemRule.setValue(aFinCreditRevSubCategory.getItemRule());
 
 		if (StringUtils.isNotEmpty(aFinCreditRevSubCategory.getItemsToCal())
@@ -539,7 +519,8 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 		}
 
 		this.isCreditCCY.setChecked(aFinCreditRevSubCategory.isIsCreditCCY());
-		//this.mainSubCategoryCode.setValue(aFinCreditRevSubCategory.getMainSubCategoryCode() != null ? aFinCreditRevSubCategory.getMainSubCategoryCode() : "");
+		// this.mainSubCategoryCode.setValue(aFinCreditRevSubCategory.getMainSubCategoryCode() != null ?
+		// aFinCreditRevSubCategory.getMainSubCategoryCode() : "");
 		this.calcSeque.setValue(Integer.parseInt(
 				aFinCreditRevSubCategory.getCalcSeque() != null ? aFinCreditRevSubCategory.getCalcSeque() : "0"));
 		this.format.setChecked(aFinCreditRevSubCategory.isFormat());
@@ -670,11 +651,11 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 		try {
 			// fill the components with the data
 			getTabsForBreakDown();
-			//getTabsForCalculated();
+			// getTabsForCalculated();
 			/*
 			 * this.gd_Calculation.setParent(tabpanelBreakDown); this.gd_Calculation.setParent(tabpanelCalculated);
 			 */
-			//fillComboBox(this.subCategoryItemType, "", subCategoryItemTypelist,"");
+			// fillComboBox(this.subCategoryItemType, "", subCategoryItemTypelist,"");
 			// fillComboBox(this.mainSubCategoryCode, "", listMainSubCategoryCodes,"");
 			doWriteBeanToComponents(aFinCreditRevSubCategory);
 			/*
@@ -719,13 +700,16 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 		}
 	}
 
-	// Getting Sub Category Tabs  
+	// Getting Sub Category Tabs
 	public void getTabsForBreakDown() throws Exception {
 		logger.debug("Entering");
 		int i = 0;
-		//this.tab_BalanceSheet.setHeight(Integer.parseInt(getBorderLayoutHeight().substring(0,getBorderLayoutHeight().indexOf("px"))) - 200 +"px");
-		//this.tab_IncomeStatement.setHeight(Integer.parseInt(getBorderLayoutHeight().substring(0,getBorderLayoutHeight().indexOf("px"))) - 200 +"px");
-		//this.tab_FinancialRatios.setHeight(Integer.parseInt(getBorderLayoutHeight().substring(0,getBorderLayoutHeight().indexOf("px"))) - 200 +"px");
+		// this.tab_BalanceSheet.setHeight(Integer.parseInt(getBorderLayoutHeight().substring(0,getBorderLayoutHeight().indexOf("px")))
+		// - 200 +"px");
+		// this.tab_IncomeStatement.setHeight(Integer.parseInt(getBorderLayoutHeight().substring(0,getBorderLayoutHeight().indexOf("px")))
+		// - 200 +"px");
+		// this.tab_FinancialRatios.setHeight(Integer.parseInt(getBorderLayoutHeight().substring(0,getBorderLayoutHeight().indexOf("px")))
+		// - 200 +"px");
 
 		this.gb_calculationDetails
 				.setHeight(Integer.parseInt(getBorderLayoutHeight().substring(0, getBorderLayoutHeight().indexOf("px")))
@@ -873,56 +857,28 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 		setValidationOn(false);
 		this.subCategoryCode.setConstraint("");
 		this.subCategoryDesc.setConstraint("");
-		//this.subCategoryItemType.setConstraint("");
-		//this.itemsToCal.setConstraint("");
+		// this.subCategoryItemType.setConstraint("");
+		// this.itemsToCal.setConstraint("");
 		this.itemRule.setConstraint("");
-		//this.mainSubCategoryCode.setConstraint("");
+		// this.mainSubCategoryCode.setConstraint("");
 		this.calcSeque.setConstraint("");
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a FinCreditRevSubCategory object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
-		final FinCreditRevSubCategory aFinCreditRevSubCategory = new FinCreditRevSubCategory();
-		BeanUtils.copyProperties(getFinCreditRevSubCategory(), aFinCreditRevSubCategory);
-		String tranType = PennantConstants.TRAN_WF;
+		logger.debug(Literal.ENTERING);
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aFinCreditRevSubCategory.getSubCategoryCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aFinCreditRevSubCategory.getRecordType())) {
-				aFinCreditRevSubCategory.setVersion(aFinCreditRevSubCategory.getVersion() + 1);
-				aFinCreditRevSubCategory.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		final FinCreditRevSubCategory fcrsc = new FinCreditRevSubCategory();
+		BeanUtils.copyProperties(getFinCreditRevSubCategory(), fcrsc);
 
-				if (isWorkFlowEnabled()) {
-					aFinCreditRevSubCategory.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		doDelete(fcrsc.getSubCategoryCode(), fcrsc);
 
-			try {
-				if (doProcess(aFinCreditRevSubCategory, tranType)) {
-					refreshList();
-					this.window_FinCreditRevSubCategoryDialog.onClose();
-					getCreditApplicationReviewDialogCtrl().window_CreditApplicationReviewDialog.setVisible(true);
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
+		logger.debug(Literal.LEAVING);
+	}
 
-		}
-		logger.debug("Leaving");
+	public void closeDialog() {
+		this.window_FinCreditRevSubCategoryDialog.onClose();
+		getCreditApplicationReviewDialogCtrl().window_CreditApplicationReviewDialog.setVisible(true);
 	}
 
 	/**
@@ -979,7 +935,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 		logger.debug("Entering");
 		this.subCategoryCode.setReadonly(true);
 		this.subCategoryDesc.setReadonly(true);
-		//this.subCategoryItemType.setReadonly(true);
+		// this.subCategoryItemType.setReadonly(true);
 		this.itemRule.setReadonly(true);
 		this.isCreditCCY.setDisabled(true);
 		// this.mainSubCategoryCode.setReadonly(true);
@@ -1010,7 +966,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 
 		this.subCategoryCode.setValue("");
 		this.subCategoryDesc.setValue("");
-		//this.subCategoryItemType.setValue("");
+		// this.subCategoryItemType.setValue("");
 		this.itemRule.setValue("");
 		this.isCreditCCY.setChecked(false);
 		// this.mainSubCategoryCode.setValue("");
@@ -1028,8 +984,8 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 	 */
 	public void doSave() throws InterruptedException {
 		logger.debug("Entering");
-		//final FinCreditRevSubCategory aFinCreditRevSubCategory = new FinCreditRevSubCategory();
-		//BeanUtils.copyProperties(getFinCreditRevSubCategory(), aFinCreditRevSubCategory);
+		// final FinCreditRevSubCategory aFinCreditRevSubCategory = new FinCreditRevSubCategory();
+		// BeanUtils.copyProperties(getFinCreditRevSubCategory(), aFinCreditRevSubCategory);
 
 		if (this.formula.getValue() != null) {
 
@@ -1228,7 +1184,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		setOverideMap(auditHeader.getOverideMap());
@@ -1320,10 +1276,10 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 		logger.debug("Entering");
 		this.subCategoryCode.setErrorMessage("");
 		this.subCategoryDesc.setErrorMessage("");
-		//this.subCategoryItemType.setErrorMessage("");
-		//this.itemsToCal.setErrorMessage("");
+		// this.subCategoryItemType.setErrorMessage("");
+		// this.itemsToCal.setErrorMessage("");
 		this.itemRule.setErrorMessage("");
-		//this.mainSubCategoryCode.setErrorMessage("");
+		// this.mainSubCategoryCode.setErrorMessage("");
 		this.calcSeque.setErrorMessage("");
 		logger.debug("Leaving");
 	}
@@ -1367,7 +1323,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 				event = ((ForwardEvent) event).getOrigin();
 			}
 			Object[] data = (Object[]) event.getData();
-			// Check clicking button is for Validation  or Simulation
+			// Check clicking button is for Validation or Simulation
 			if (validateFormula(data)) {
 				getvalidateButtonResult(data);
 			}
@@ -1385,7 +1341,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 				event = ((ForwardEvent) event).getOrigin();
 			}
 			Object[] data = (Object[]) event.getData();
-			// Check clicking button is for Validation  or Simulation
+			// Check clicking button is for Validation or Simulation
 			if (validateFormula(data)) {
 				getvalidateButtonResult(data);
 			}
@@ -1422,7 +1378,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 				if (conf == MessageUtil.YES) {
 					Events.postEvent("onUser$errors", window_RuleResultDialog, errors);
 				} else {
-					//do Nothing
+					// do Nothing
 				}
 			} else {
 				if (isSaveRecord) {

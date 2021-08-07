@@ -46,7 +46,7 @@ public class ProjectUnitsDialogCtrl extends GFCBaseCtrl<ProjectUnits> {
 	private static final Logger logger = LogManager.getLogger(ProjectUnitsDialogCtrl.class);
 
 	private static final long serialVersionUID = 1L;
-	//Project Units
+	// Project Units
 	protected Window windowProjectUnitsDialog;
 	protected Combobox unitType;
 	protected Textbox tower;
@@ -119,8 +119,7 @@ public class ProjectUnitsDialogCtrl extends GFCBaseCtrl<ProjectUnits> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$windowProjectUnitsDialog(Event event) throws Exception {
@@ -217,8 +216,7 @@ public class ProjectUnitsDialogCtrl extends GFCBaseCtrl<ProjectUnits> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -230,8 +228,7 @@ public class ProjectUnitsDialogCtrl extends GFCBaseCtrl<ProjectUnits> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -242,8 +239,7 @@ public class ProjectUnitsDialogCtrl extends GFCBaseCtrl<ProjectUnits> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -254,8 +250,7 @@ public class ProjectUnitsDialogCtrl extends GFCBaseCtrl<ProjectUnits> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -266,8 +261,7 @@ public class ProjectUnitsDialogCtrl extends GFCBaseCtrl<ProjectUnits> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -278,8 +272,7 @@ public class ProjectUnitsDialogCtrl extends GFCBaseCtrl<ProjectUnits> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -290,8 +283,7 @@ public class ProjectUnitsDialogCtrl extends GFCBaseCtrl<ProjectUnits> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -321,7 +313,7 @@ public class ProjectUnitsDialogCtrl extends GFCBaseCtrl<ProjectUnits> {
 	 */
 	public void doWriteBeanToComponents(ProjectUnits aProjectUnits) {
 		logger.debug(Literal.ENTERING);
-		//Project Units
+		// Project Units
 		fillComboBox(this.unitType, aProjectUnits.getUnitType(), unitTypesList, "");
 		if (StringUtils.equals(PennantConstants.FLAT, aProjectUnits.getUnitType())) {
 			this.space_tower.setVisible(true);
@@ -386,7 +378,7 @@ public class ProjectUnitsDialogCtrl extends GFCBaseCtrl<ProjectUnits> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Project Units
+		// Project Units
 		try {
 			String unitType = getComboboxValue(this.unitType);
 			if (this.unitType.getSelectedItem() != null) {
@@ -562,8 +554,7 @@ public class ProjectUnitsDialogCtrl extends GFCBaseCtrl<ProjectUnits> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param builderProjcet
-	 *            The entity that need to be render.
+	 * @param builderProjcet The entity that need to be render.
 	 */
 	public void doShowDialog(ProjectUnits projectUnits) {
 		logger.debug(Literal.ENTERING);
@@ -767,57 +758,32 @@ public class ProjectUnitsDialogCtrl extends GFCBaseCtrl<ProjectUnits> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a BuilderProjcet object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+	protected boolean doCustomDelete(final ProjectUnits aProjectUnits, String tranType) {
+		tranType = PennantConstants.TRAN_DEL;
+		AuditHeader auditHeader = processProjectUnits(aProjectUnits, tranType);
+		auditHeader = ErrorControl.showErrorDetails(this.windowProjectUnitsDialog, auditHeader);
+		int retValue = auditHeader.getProcessStatus();
+		if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+			builderProjcetDialogCtrl.doRenderProjectUnits(this.projectUnitsList);
+			builderProjcetDialogCtrl.setProjectUnitsList(this.projectUnitsList);
+			return true;
+		}
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
-		final ProjectUnits aProjectUnits = new ProjectUnits();
-		BeanUtils.copyProperties(this.projectUnits, aProjectUnits);
-		String tranType = PennantConstants.TRAN_WF;
-		String unitType = aProjectUnits.getUnitType();
-		String floorNumber = aProjectUnits.getFloorNumber();
-		String tower = aProjectUnits.getTower();
-		String unitNumber = aProjectUnits.getUnitNumber();
+		final ProjectUnits pu = new ProjectUnits();
+		BeanUtils.copyProperties(this.projectUnits, pu);
 
 		StringBuffer message = new StringBuffer();
-		message.append("Unit Type: " + unitType);
-		message.append(", Floor Number: " + floorNumber);
-		message.append(", Tower: " + tower);
-		message.append(", Unit Number: " + unitNumber);
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ message;
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aProjectUnits.getRecordType())) {
-				aProjectUnits.setVersion(aProjectUnits.getVersion() + 1);
-				aProjectUnits.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aProjectUnits.setNewRecord(true);
-				if (isWorkFlowEnabled()) {
-					aProjectUnits.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		message.append("Unit Type: ").append(pu.getUnitType());
+		message.append(", Floor Number: ").append(pu.getFloorNumber());
+		message.append(", Tower: ").append(pu.getTower());
+		message.append(", Unit Number: ").append(pu.getUnitNumber());
 
-			try {
-				tranType = PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader = processProjectUnits(aProjectUnits, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.windowProjectUnitsDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					builderProjcetDialogCtrl.doRenderProjectUnits(this.projectUnitsList);
-					builderProjcetDialogCtrl.setProjectUnitsList(this.projectUnitsList);
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(message.toString(), pu);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -987,7 +953,7 @@ public class ProjectUnitsDialogCtrl extends GFCBaseCtrl<ProjectUnits> {
 			}
 		} catch (final DataAccessException e) {
 			MessageUtil.showError(e);
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		logger.debug(Literal.LEAVING);

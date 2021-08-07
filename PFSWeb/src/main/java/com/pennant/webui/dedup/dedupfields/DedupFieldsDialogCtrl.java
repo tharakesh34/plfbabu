@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DedupFieldsDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  23-08-2011    														*
- *                                                                  						*
- * Modified Date    :  23-08-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DedupFieldsDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 23-08-2011 * *
+ * Modified Date : 23-08-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 23-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.dedup.dedupfields;
 
 import java.sql.Timestamp;
@@ -77,7 +59,9 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -180,7 +164,7 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.fieldName.setMaxlength(50);
 
 		if (isWorkFlowEnabled()) {
@@ -274,8 +258,7 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -298,8 +281,7 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aDedupFields
-	 *            DedupFields
+	 * @param aDedupFields DedupFields
 	 */
 	public void doWriteBeanToComponents(DedupFields aDedupFields) {
 		logger.debug("Entering");
@@ -419,63 +401,32 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a DedupFields object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	@SuppressWarnings("rawtypes")
+	protected boolean doCustomDelete(final DedupFields aDedupFields, String tranType) {
+		if (doProcess(aDedupFields, tranType)) {
+
+			final JdbcSearchObject<DedupFields> soDedupFields = getDedupFieldsListCtrl().getSearchObj();
+			getDedupFieldsListCtrl().getPagedListWrapper().setSearchObject(soDedupFields);
+
+			final ListModelList lml = (ListModelList) getDedupFieldsListCtrl().listBoxDedupFields.getListModel();
+
+			if (lml.indexOf(aDedupFields) == -1) {
+			} else {
+				lml.remove(lml.indexOf(aDedupFields));
+			}
+			closeDialog();
+		}
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
-		logger.debug("Enterring");
+		logger.debug(Literal.ENTERING);
 		final DedupFields aDedupFields = new DedupFields();
 		BeanUtils.copyProperties(getDedupFields(), aDedupFields);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aDedupFields.getFieldName();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aDedupFields.getRecordType())) {
-				aDedupFields.setVersion(aDedupFields.getVersion() + 1);
-				aDedupFields.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(aDedupFields.getFieldName(), aDedupFields);
 
-				if (isWorkFlowEnabled()) {
-					aDedupFields.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if (doProcess(aDedupFields, tranType)) {
-
-					final JdbcSearchObject<DedupFields> soDedupFields = getDedupFieldsListCtrl().getSearchObj();
-					// Set the ListModel
-					getDedupFieldsListCtrl().getPagedListWrapper().setSearchObject(soDedupFields);
-
-					// now synchronize the DedupFields listBox
-					final ListModelList lml = (ListModelList) getDedupFieldsListCtrl().listBoxDedupFields
-							.getListModel();
-
-					// Check if the DedupFields object is new or updated -1
-					// means that the obj is not in the list, so it's new ..
-					if (lml.indexOf(aDedupFields) == -1) {
-					} else {
-						lml.remove(lml.indexOf(aDedupFields));
-					}
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -746,7 +697,7 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 

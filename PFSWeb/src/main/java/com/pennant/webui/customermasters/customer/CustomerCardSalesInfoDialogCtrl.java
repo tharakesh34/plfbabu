@@ -31,6 +31,7 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Toolbar;
@@ -291,7 +292,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 		Hbox hbox;
 		Space space;
 
-		// Month 
+		// Month
 		listCell = new Listcell();
 		Datebox month = new Datebox();
 		month.setFormat(PennantConstants.monthYearFormat);
@@ -300,14 +301,14 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 		hbox = new Hbox();
 		space = new Space();
 		space.setSpacing("2px");
-		//space.setSclass("mandatory");
+		// space.setSclass("mandatory");
 		month.setWidth("100px");
 		hbox.appendChild(space);
 		hbox.appendChild(month);
 		listCell.appendChild(hbox);
 		listCell.setParent(listItem);
 
-		//Sale Amount
+		// Sale Amount
 		listCell = new Listcell();
 		hbox = new Hbox();
 		space = new Space();
@@ -325,7 +326,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 		listCell.appendChild(hbox);
 		listCell.setParent(listItem);
 
-		//No Of Settlements
+		// No Of Settlements
 		listCell = new Listcell();
 		hbox = new Hbox();
 		space = new Space();
@@ -333,7 +334,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 		Intbox noOfSettlements = new Intbox();
 		noOfSettlements.setMaxlength(4);
 		listCell.setId("NoOfSettlements".concat(String.valueOf(custCardMonthSales.getKeyValue())));
-		//space.setSclass("mandatory");
+		// space.setSclass("mandatory");
 		noOfSettlements.setValue(custCardMonthSales.getNoOfSettlements());
 		hbox.appendChild(space);
 		hbox.appendChild(noOfSettlements);
@@ -348,7 +349,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 		Intbox totalNoOfCredits = new Intbox();
 		totalNoOfCredits.setMaxlength(4);
 		listCell.setId("totalNoOfCredits".concat(String.valueOf(custCardMonthSales.getKeyValue())));
-		//space.setSclass("mandatory");
+		// space.setSclass("mandatory");
 		totalNoOfCredits.setValue(custCardMonthSales.getTotalNoOfCredits());
 		hbox.appendChild(space);
 		hbox.appendChild(totalNoOfCredits);
@@ -363,7 +364,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 		CurrencyBox totalCreditValue = new CurrencyBox();
 		totalCreditValue.setBalUnvisible(true);
 		listCell.setId("totalCreditValue".concat(String.valueOf(custCardMonthSales.getKeyValue())));
-		//space.setSclass("mandatory");
+		// space.setSclass("mandatory");
 		totalCreditValue.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		totalCreditValue.setScale(2);
 		totalCreditValue.setValue(PennantApplicationUtil.formateAmount(custCardMonthSales.getTotalCreditValue(), 2));
@@ -381,7 +382,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 		Intbox totalNoOfDebits = new Intbox();
 		totalNoOfDebits.setMaxlength(4);
 		listCell.setId("totalNoOfDebits".concat(String.valueOf(custCardMonthSales.getKeyValue())));
-		//space.setSclass("mandatory");
+		// space.setSclass("mandatory");
 		totalNoOfDebits.setValue(custCardMonthSales.getTotalNoOfDebits());
 		hbox.appendChild(space);
 		hbox.appendChild(totalNoOfDebits);
@@ -396,7 +397,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 		CurrencyBox totalDebitValue = new CurrencyBox();
 		totalDebitValue.setBalUnvisible(true);
 		listCell.setId("totalDebitValue".concat(String.valueOf(custCardMonthSales.getKeyValue())));
-		//space.setSclass("mandatory");
+		// space.setSclass("mandatory");
 		totalDebitValue.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		totalDebitValue.setScale(2);
 		totalDebitValue.setValue(PennantApplicationUtil.formateAmount(custCardMonthSales.getTotalDebitValue(), 2));
@@ -414,7 +415,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 		CurrencyBox bounceInWard = new CurrencyBox();
 		bounceInWard.setBalUnvisible(true);
 		listCell.setId("inwardBounce".concat(String.valueOf(custCardMonthSales.getKeyValue())));
-		//space.setSclass("mandatory");
+		// space.setSclass("mandatory");
 		bounceInWard.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		bounceInWard.setScale(2);
 		bounceInWard.setValue(PennantApplicationUtil.formateAmount(custCardMonthSales.getInwardBounce(), 2));
@@ -432,7 +433,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 		CurrencyBox outwardBounce = new CurrencyBox();
 		outwardBounce.setBalUnvisible(true);
 		listCell.setId("outwardBounce".concat(String.valueOf(custCardMonthSales.getKeyValue())));
-		//space.setSclass("mandatory");
+		// space.setSclass("mandatory");
 		outwardBounce.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		outwardBounce.setScale(2);
 		outwardBounce.setValue(PennantApplicationUtil.formateAmount(custCardMonthSales.getOutwardBounce(), 2));
@@ -528,8 +529,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -552,8 +552,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCustomerBankInfo
-	 *            CustomerBankInfo
+	 * @param aCustomerBankInfo CustomerBankInfo
 	 */
 	public void doWriteBeanToComponents(CustCardSales aCustCardSales) {
 		logger.debug(Literal.ENTERING);
@@ -1130,55 +1129,50 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 		logger.debug(Literal.LEAVING);
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a CustomerBankInfo object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		final CustCardSales aCustCardSales = new CustCardSales();
 		BeanUtils.copyProperties(getCustCardSales(), aCustCardSales);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_CustomerBankInfoDialog_BankName.value") + " : "
+		final String keyReference = Labels.getLabel("label_CustomerBankInfoDialog_BankName.value") + " : "
 				+ aCustCardSales.getMerchantId();
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCustCardSales.getRecordType())) {
-				aCustCardSales.setVersion(aCustCardSales.getVersion() + 1);
-				aCustCardSales.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (!isFinanceProcess && getCustomerDialogCtrl() != null
-						&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
-					aCustCardSales.setNewRecord(true);
-				}
-				if (isWorkFlowEnabled()) {
-					aCustCardSales.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+		doDelete(keyReference, aCustCardSales);
 
-			try {
+		logger.debug(Literal.LEAVING);
+	}
+
+	protected void onDoDelete(final CustCardSales aCustCardSales) {
+		String tranType = PennantConstants.TRAN_WF;
+
+		if (StringUtils.isBlank(aCustCardSales.getRecordType())) {
+			aCustCardSales.setVersion(aCustCardSales.getVersion() + 1);
+			aCustCardSales.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			if (!isFinanceProcess && getCustomerDialogCtrl() != null
+					&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
+				aCustCardSales.setNewRecord(true);
+			}
+			if (isWorkFlowEnabled()) {
+				aCustCardSales.setNewRecord(true);
+				tranType = PennantConstants.TRAN_WF;
+			} else {
 				tranType = PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader = newCustomerCardSaleProcess(aCustCardSales, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerCardSalesInfoDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					getCustomerDialogCtrl().doFillCustomerCardSalesInfoDetails(this.CustCardSalesList);
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
 			}
 		}
-		logger.debug(Literal.LEAVING);
+
+		try {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newCustomerCardSaleProcess(aCustCardSales, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_CustomerCardSalesInfoDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				getCustomerDialogCtrl().doFillCustomerCardSalesInfoDetails(this.CustCardSalesList);
+				closeDialog();
+			}
+		} catch (DataAccessException e) {
+			MessageUtil.showError(e);
+		}
 	}
 
 	/**
@@ -1479,8 +1473,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -1497,8 +1490,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

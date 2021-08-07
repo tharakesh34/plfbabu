@@ -1,42 +1,24 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CollateralDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  04-12-2013    														*
- *                                                                  						*
- * Modified Date    :  04-12-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CollateralDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 04-12-2013 * * Modified
+ * Date : 04-12-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 04-12-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 04-12-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.facility.facility;
@@ -76,6 +58,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -112,7 +95,7 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 	private List<Collateral> collateralsList;
 
-	private int ccyFormat = 2; //Need to set from bean
+	private int ccyFormat = 2; // Need to set from bean
 	private String userRole = "";
 
 	/**
@@ -304,8 +287,7 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -350,8 +332,7 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCollateral
-	 *            Collateral
+	 * @param aCollateral Collateral
 	 */
 	public void doWriteBeanToComponents(Collateral aCollateral) {
 		logger.debug("Entering");
@@ -545,50 +526,27 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
+	protected boolean doCustomDelete(final Collateral aCollateral, String tranType) {
+		tranType = PennantConstants.TRAN_DEL;
+		AuditHeader auditHeader = newFeeProcess(aCollateral, tranType);
+		auditHeader = ErrorControl.showErrorDetails(this.window_CollateralDialog, auditHeader);
+		int retValue = auditHeader.getProcessStatus();
+		if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+			getFacilityDialogCtrl().doFillCollaterals(this.collateralsList);
+			return true;
+		}
+		return false;
+	}
 
-	/**
-	 * Deletes a Collateral object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final Collateral aCollateral = new Collateral();
 		BeanUtils.copyProperties(getCollateral(), aCollateral);
-		String tranType = PennantConstants.TRAN_WF;
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aCollateral.getCAFReference();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aCollateral.getRecordType())) {
-				aCollateral.setVersion(aCollateral.getVersion() + 1);
-				aCollateral.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (isWorkFlowEnabled()) {
-					aCollateral.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			} else if (StringUtils.trimToEmpty(aCollateral.getRecordType()).equals(PennantConstants.RCD_UPD)) {
-				aCollateral.setVersion(aCollateral.getVersion() + 1);
-				aCollateral.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			}
-			try {
-				tranType = PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader = newFeeProcess(aCollateral, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.window_CollateralDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					getFacilityDialogCtrl().doFillCollaterals(this.collateralsList);
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
-		}
-		logger.debug("Leaving");
+
+		doDelete(aCollateral.getCAFReference(), aCollateral);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -603,7 +561,7 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 			this.reference.setReadonly(true);
 			this.cAFReference.setReadonly(true);
 		}
-		//readOnlyComponent(isReadOnly("CollateralDialog_reference"), this.reference);
+		// readOnlyComponent(isReadOnly("CollateralDialog_reference"), this.reference);
 		readOnlyComponent(isReadOnly("CollateralDialog_lastReview"), this.lastReview);
 		readOnlyComponent(isReadOnly("CollateralDialog_currency"), this.currency);
 		readOnlyComponent(isReadOnly("CollateralDialog_value"), this.value);

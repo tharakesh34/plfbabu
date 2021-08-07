@@ -43,6 +43,7 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -76,6 +77,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.framework.security.core.User;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.DataType;
@@ -1335,23 +1337,14 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 				return;
 			}
 
-			if (MessageUtil.confirm(Labels.getLabel("branch_update_postings_info")) != MessageUtil.YES) {
-				return;
-			}
+			String fTranType = tranType;
+			MessageUtil.confirm(Labels.getLabel("branch_update_postings_info"), evnt -> {
+				if (Messagebox.ON_YES.equals(evnt.getName())) {
+					doSave(aBranch, fTranType);
+				}
+			});
 		}
 
-		// save it to database
-		try {
-
-			if (doProcess(aBranch, tranType)) {
-				refreshList();
-				// Close the Existing Dialog
-				closeDialog();
-			}
-
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
 		logger.debug("Leaving");
 	}
 
@@ -1512,7 +1505,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");

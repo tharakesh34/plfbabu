@@ -43,6 +43,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -961,7 +962,7 @@ public class MiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 			setOverideMap(aAuditHeader.getOverideMap());
 
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 

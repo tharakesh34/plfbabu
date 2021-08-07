@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ScoringSlabDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-12-2011    														*
- *                                                                  						*
- * Modified Date    :  05-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ScoringSlabDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-12-2011 * *
+ * Modified Date : 05-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.rmtmasters.scoringslab;
@@ -72,6 +54,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.rmtmasters.scoringgroup.ScoringGroupDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -89,7 +72,7 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	protected Longbox aScoringSlab; // autoWired
 	protected Textbox creditWorthness; // autoWired
 
-	// not auto wired variables 
+	// not auto wired variables
 	private ScoringSlab scoringSlab; // over handed per parameters
 
 	private transient boolean validationOn;
@@ -176,7 +159,7 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.aScoringSlab.setMaxlength(4);
 		this.creditWorthness.setMaxlength(50);
 
@@ -269,8 +252,7 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -294,8 +276,7 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aScoringSlab
-	 *            ScoringSlab
+	 * @param aScoringSlab ScoringSlab
 	 */
 	public void doWriteBeanToComponents(ScoringSlab aScoringSlab) {
 		logger.debug("Entering");
@@ -422,52 +403,30 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
+	protected boolean doCustomDelete(final ScoringSlab aScoringSlab, String tranType) {
+		tranType = PennantConstants.TRAN_DEL;
+		AuditHeader auditHeader = newScoringSlabDetailProcess(aScoringSlab, tranType);
+		auditHeader = ErrorControl.showErrorDetails(this.window_ScoringSlabDialog, auditHeader);
+		int retValue = auditHeader.getProcessStatus();
+		if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+			getScoringGroupDialogCtrl().doFillScoringSlab(this.scoringSlabList);
+			this.window_ScoringSlabDialog.onClose();
+		}
+		return false;
+	}
 
-	/**
-	 * Deletes a ScoringSlab object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final ScoringSlab aScoringSlab = new ScoringSlab();
 		BeanUtils.copyProperties(getScoringSlab(), aScoringSlab);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_ScoringSlabDialog_ScoringSlab.value") + ":" + aScoringSlab.getScoringSlab();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aScoringSlab.getRecordType())) {
-				aScoringSlab.setVersion(aScoringSlab.getVersion() + 1);
-				aScoringSlab.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (isWorkFlowEnabled()) {
-					aScoringSlab.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			} else if (PennantConstants.RCD_UPD.equals(StringUtils.trimToEmpty(aScoringSlab.getRecordType()))) {
-				aScoringSlab.setVersion(aScoringSlab.getVersion() + 1);
-				aScoringSlab.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			}
-			try {
-				tranType = PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader = newScoringSlabDetailProcess(aScoringSlab, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.window_ScoringSlabDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					getScoringGroupDialogCtrl().doFillScoringSlab(this.scoringSlabList);
-					this.window_ScoringSlabDialog.onClose();
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
-		}
-		logger.debug("Leaving");
+		final String keyReference = Labels.getLabel("label_ScoringSlabDialog_ScoringSlab.value") + ":"
+				+ aScoringSlab.getScoringSlab();
+
+		doDelete(keyReference, aScoringSlab);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -614,10 +573,8 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	 * eg: if(tranType==PennantConstants.TRAN_DEL){ aScoringSlab.setRecordType(PennantConstants.RECORD_TYPE_DEL); }
 	 * </p>
 	 * 
-	 * @param aScoringSlab
-	 *            (EducationalExpense)
-	 * @param tranType
-	 *            (String)
+	 * @param aScoringSlab (EducationalExpense)
+	 * @param tranType     (String)
 	 * @return auditHeader (AuditHeader)
 	 */
 	private AuditHeader newScoringSlabDetailProcess(ScoringSlab aScoringSlab, String tranType) {
@@ -638,7 +595,8 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 			for (int i = 0; i < getScoringGroupDialogCtrl().getScoringSlabList().size(); i++) {
 				ScoringSlab scoringSlab = getScoringGroupDialogCtrl().getScoringSlabList().get(i);
 
-				if (aScoringSlab.getScoringSlab() == scoringSlab.getScoringSlab()) { // Both Current and Existing list slab same
+				if (aScoringSlab.getScoringSlab() == scoringSlab.getScoringSlab()) { // Both Current and Existing list
+																						// slab same
 					/* if same ScoringSlab added twice set error detail */
 					if (getScoringSlab().isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
@@ -721,8 +679,7 @@ public class ScoringSlabDialogCtrl extends GFCBaseCtrl<ScoringSlab> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

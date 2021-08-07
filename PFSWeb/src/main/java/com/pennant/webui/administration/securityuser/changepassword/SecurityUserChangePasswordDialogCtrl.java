@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SecurityUserChangePasswordCtrl                                       * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-06-2011    														*
- *                                                                  						*
- * Modified Date    :  21-10-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SecurityUserChangePasswordCtrl * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-06-2011 * *
+ * Modified Date : 21-10-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-10-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-10-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.administration.securityuser.changepassword;
@@ -119,8 +101,7 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	/**
 	 * Creating Dialog window
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * @throws Exception
 	 */
 	public void onCreate$win_SecurityUserChangePasswordDialog(Event event) throws Exception {
@@ -170,7 +151,7 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
 		doValidations();
-		doSave();//update password
+		doSave();// update password
 
 	}
 
@@ -216,7 +197,7 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 		int pwdMaxLenght = SysParamUtil.getValueAsInt("USR_PWD_MAX_LEN");
 		this.userName.setReadonly(true);
 		this.newPassword.setMaxlength(pwdMaxLenght);
-		//this.newPassword.addEventListener("onChanging", new OnChanging());
+		// this.newPassword.addEventListener("onChanging", new OnChanging());
 		this.newPassword.setAutofocus(true);
 		this.retypeNewPassword.setMaxlength(pwdMaxLenght);
 	}
@@ -246,7 +227,7 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 			wve.add(we);
 		}
 		try {
-			//checking for is password following defined criteria by calling changePasswordModel's validate() method
+			// checking for is password following defined criteria by calling changePasswordModel's validate() method
 			if ((changePasswordModel.checkPasswordCriteria(this.securityUser.getUsrLogin(),
 					AESCipherUtil.decrypt(this.newPassword1.getValue(), txtbox_randomKey.getValue()))
 					&& StringUtils.isNotBlank(
@@ -261,7 +242,7 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 		try {
 			if (StringUtils.isNotBlank(this.newPassword1.getValue())
 					&& StringUtils.isNotBlank(this.retypeNewPassword1.getValue())) {
-				//checking for is newPassword and retype password are same 
+				// checking for is newPassword and retype password are same
 				if (!this.newPassword1.getValue().equals(this.retypeNewPassword1.getValue())) {
 
 					throw new WrongValueException(this.retypeNewPassword,
@@ -322,11 +303,9 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -351,7 +330,7 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		return processCompleted;
@@ -403,7 +382,7 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 					splCharCount++;
 				}
 			}
-			splCharCount = pwd.length() - splCharCount;//get all special characters count
+			splCharCount = pwd.length() - splCharCount;// get all special characters count
 
 			/* if criteria not matched */
 			if (changePasswordModel.checkPasswordCriteria(StringUtils.trimToEmpty(getSecurityUser().getUsrLogin()),
@@ -445,8 +424,7 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	/**
 	 * This method displays passwordStatusMeter and label_PwdStatus
 	 * 
-	 * @param pwdstatusCode
-	 *            (int)
+	 * @param pwdstatusCode (int)
 	 */
 	public void showPasswordStatusMeter(int pwdstatusCode) {
 		switch (pwdstatusCode) {

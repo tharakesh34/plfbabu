@@ -20,6 +20,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Longbox;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -40,6 +41,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -116,7 +118,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 				this.cifFilters = (String[]) arguments.get("filter");
 			}
 
-			//collateralSetupCtrl
+			// collateralSetupCtrl
 			if (arguments.containsKey("collateralSetupCtrl")) {
 				setCollateralSetupDialogCtrl((CollateralSetupDialogCtrl) arguments.get("collateralSetupCtrl"));
 				setNewThirdParty(true);
@@ -206,8 +208,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -216,8 +217,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -250,7 +250,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 	private void doSearchSelection() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
 		List<Filter> filterList = new ArrayList<>();
-		//filterList.add(new Filter("CustCoreBank", "", Filter.OP_NOT_EQUAL));
+		// filterList.add(new Filter("CustCoreBank", "", Filter.OP_NOT_EQUAL));
 		for (int i = 0; i < cifFilters.length; i++) {
 			filterList.add(new Filter("CustCIF", cifFilters[i], Filter.OP_NOT_EQUAL));
 		}
@@ -452,8 +452,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aGuarantorDetail
-	 *            GuarantorDetail
+	 * @param aGuarantorDetail GuarantorDetail
 	 */
 	public void doWriteBeanToComponents(CollateralThirdParty collateralThirdParty) {
 		logger.debug("Entering");
@@ -468,8 +467,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -556,64 +554,59 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Deletes a GuarantorDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final CollateralThirdParty collateralThirdParty = new CollateralThirdParty();
 		BeanUtils.copyProperties(getCollateralThirdParty(), collateralThirdParty);
+
+		final String keyReference = collateralThirdParty.getCustCIF();
+
+		doDelete(keyReference, collateralThirdParty);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	protected void onDoDelete(final CollateralThirdParty thirdPartyCol) {
 		String tranType = PennantConstants.TRAN_WF;
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ (collateralThirdParty.getCustCIF());
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-
-			if (StringUtils.isBlank(collateralThirdParty.getRecordType())) {
-
-				if (collateralThirdParty.getCustomerId() > 0) {
-					boolean exist = this.collateralSetupService.isThirdPartyUsed(
-							collateralThirdParty.getCollateralRef(), collateralThirdParty.getCustomerId());
-
-					if (exist) {
-						MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("90338", null)));
-						return;
-					}
-				}
-
-				collateralThirdParty.setVersion(collateralThirdParty.getVersion() + 1);
-				collateralThirdParty.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				collateralThirdParty.setNewRecord(true);
-				if (isWorkFlowEnabled()) {
-					collateralThirdParty.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
+		if (StringUtils.isBlank(thirdPartyCol.getRecordType())) {
+			long custId = thirdPartyCol.getCustomerId();
+			if (custId > 0) {
+				if (this.collateralSetupService.isThirdPartyUsed(thirdPartyCol.getCollateralRef(), custId)) {
+					MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("90338", null)));
+					return;
 				}
 			}
-			try {
-				if (isNewThirdParty()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newThirdPartyDetailProcess(collateralThirdParty, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_CollateralThirdPartyDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						if (getCollateralSetupDialogCtrl() != null) {
-							getCollateralSetupDialogCtrl()
-									.doFillCollateralThirdPartyDetails(this.collateralThirdPartyList);
-						}
-						closeDialog();
-					}
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
+
+			thirdPartyCol.setVersion(thirdPartyCol.getVersion() + 1);
+			thirdPartyCol.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			thirdPartyCol.setNewRecord(true);
+			if (isWorkFlowEnabled()) {
+				thirdPartyCol.setNewRecord(true);
+				tranType = PennantConstants.TRAN_WF;
+			} else {
+				tranType = PennantConstants.TRAN_DEL;
 			}
 		}
-		logger.debug("Leaving");
+
+		try {
+			if (isNewThirdParty()) {
+				tranType = PennantConstants.TRAN_DEL;
+				AuditHeader auditHeader = newThirdPartyDetailProcess(thirdPartyCol, tranType);
+				auditHeader = ErrorControl.showErrorDetails(this.window_CollateralThirdPartyDialog, auditHeader);
+				int retValue = auditHeader.getProcessStatus();
+				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+					if (getCollateralSetupDialogCtrl() != null) {
+						getCollateralSetupDialogCtrl().doFillCollateralThirdPartyDetails(this.collateralThirdPartyList);
+					}
+					closeDialog();
+				}
+			}
+		} catch (DataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+			showMessage(e);
+		}
 	}
 
 	/**
@@ -734,11 +727,9 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 

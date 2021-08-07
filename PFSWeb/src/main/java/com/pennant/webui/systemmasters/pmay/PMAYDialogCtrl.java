@@ -78,6 +78,7 @@ import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -1733,7 +1734,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		setOverideMap(auditHeader.getOverideMap());

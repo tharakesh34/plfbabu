@@ -910,7 +910,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 			}
 
 			setOverideMap(aAuditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");

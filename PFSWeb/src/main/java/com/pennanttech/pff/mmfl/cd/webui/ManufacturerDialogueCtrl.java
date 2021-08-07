@@ -683,7 +683,7 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		setOverideMap(auditHeader.getOverideMap());

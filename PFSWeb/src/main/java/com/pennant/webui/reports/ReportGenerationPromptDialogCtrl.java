@@ -65,6 +65,7 @@ import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
@@ -1860,33 +1861,36 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 */
 
 	public void onClick$btnDeleteTemplate(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
-		// Show a confirm box
+		logger.debug(Literal.ENTERING + event.toString());
+
 		final String msg = Labels.getLabel("label_ReportGenerationDialgCtrl_Delete_Template") + "\n\n --> "
 				+ this.cbSelectTemplate.getSelectedItem().getLabel();
 
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			try {
-				boolean isRcdDeleted = getReportConfigurationService().deleteSearchTemplate(
-						reportConfiguration.getReportID(), getUserWorkspace().getLoggedInUser().getUserId(),
-						this.cbSelectTemplate.getSelectedItem().getLabel());
+		MessageUtil.confirm(msg, evnt -> {
+			if (Messagebox.ON_YES.equals(evnt.getName())) {
+				try {
+					boolean isRcdDeleted = getReportConfigurationService().deleteSearchTemplate(
+							reportConfiguration.getReportID(), getUserWorkspace().getLoggedInUser().getUserId(),
+							this.cbSelectTemplate.getSelectedItem().getLabel());
 
-				if (isRcdDeleted) {
-					this.cbSelectTemplate.getSelectedItem().detach();
-					this.cbSelectTemplate.setValue(Labels.getLabel("Combo.Select"));
-					this.btnDeleteTemplate.setDisabled(true);
-					doClearComponents();
-					Clients.showNotification(Labels.getLabel("label_DeleteSuccess"), "info", null, null, -1);
-				} else {
-					Clients.showNotification(Labels.getLabel("label_DeleteFail"), "warning", null, null, -1);
+					if (isRcdDeleted) {
+						this.cbSelectTemplate.getSelectedItem().detach();
+						this.cbSelectTemplate.setValue(Labels.getLabel("Combo.Select"));
+						this.btnDeleteTemplate.setDisabled(true);
+						doClearComponents();
+						Clients.showNotification(Labels.getLabel("label_DeleteSuccess"), "info", null, null, -1);
+					} else {
+						Clients.showNotification(Labels.getLabel("label_DeleteFail"), "warning", null, null, -1);
+					}
+				} catch (Exception e) {
+					logger.error(Literal.EXCEPTION, e);
+					showMessage(e);
 				}
-			} catch (Exception e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
 
-		}
-		logger.debug("Leaving" + event.toString());
+			}
+		});
+
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**

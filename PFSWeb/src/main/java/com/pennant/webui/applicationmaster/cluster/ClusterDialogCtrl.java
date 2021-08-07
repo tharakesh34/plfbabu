@@ -911,7 +911,7 @@ public class ClusterDialogCtrl extends GFCBaseCtrl<Cluster> {
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		setOverideMap(auditHeader.getOverideMap());

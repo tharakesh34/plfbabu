@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  RepayCancellationDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-12-2011    														*
- *                                                                  						*
- * Modified Date    :  14-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : RepayCancellationDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-12-2011 * *
+ * Modified Date : 14-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.cancellation;
@@ -61,6 +43,7 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
 
@@ -266,12 +249,13 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (isManualPostingReversal && !recSave) {
-
-			// Show a confirm box for Manual Reversals
 			final String msg = Labels.getLabel("message.Question.Are_you_sure_todo_Manual_Reversal_Postings") + "\n";
-			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-				doSave();
-			}
+
+			MessageUtil.confirm(msg, evnt -> {
+				if (Messagebox.ON_YES.equals(evnt.getName())) {
+					doSave();
+				}
+			});
 		} else {
 			doSave();
 		}
@@ -281,8 +265,7 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -291,8 +274,7 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aRepayCancellation
-	 *            (RepayCancellation)
+	 * @param aRepayCancellation (RepayCancellation)
 	 */
 	public void doWriteBeanToComponents(FinanceDetail financeDetail) {
 		logger.debug("Entering");
@@ -312,7 +294,7 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.rpyAmount.setValue(PennantAppUtil.amountFormate(repayList.get(0).getFinRpyAmount(), format));
 			doFilllistbox(repayList);
 
-			//Posting Details
+			// Posting Details
 			if (repayList.get(0).getLinkedTranId() != 0) {
 				doFillPostingdetails(repayList.get(0).getLinkedTranId());
 			} else {
@@ -427,7 +409,7 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// force validation, if on, than execute by component.getValue()
 		// fill the financeMain object with the components data
-		//doWriteComponentsToBean(aFinanceDetail.getFinScheduleData());
+		// doWriteComponentsToBean(aFinanceDetail.getFinScheduleData());
 
 		aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
@@ -466,7 +448,7 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					refreshMaintainList();
 				}
 
-				//Customer Notification for Role Identification
+				// Customer Notification for Role Identification
 				if (StringUtils.isBlank(aFinanceMain.getNextTaskId())) {
 					aFinanceMain.setNextRoleCode("");
 				}
@@ -475,10 +457,10 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						aFinanceMain.getRecordStatus());
 				Clients.showNotification(msg, "info", null, null, -1);
 
-				//Mail Alert Notification for User
+				// Mail Alert Notification for User
 				if (StringUtils.isNotBlank(aFinanceMain.getNextTaskId()) && !StringUtils
 						.trimToEmpty(aFinanceMain.getNextRoleCode()).equals(aFinanceMain.getRoleCode())) {
-					//getMailUtil().sendMail(1, PennantConstants.TEMPLATE_FOR_AE, aFinanceMain);
+					// getMailUtil().sendMail(1, PennantConstants.TEMPLATE_FOR_AE, aFinanceMain);
 				}
 
 				closeDialog();

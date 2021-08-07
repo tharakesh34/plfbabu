@@ -33,7 +33,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -58,6 +57,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.bmtmasters.product.ProductDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -489,47 +489,30 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 
 	}
 
+	protected boolean doCustomDelete(final ProductAsset aProductAsset, String tranType) {
+		tranType = PennantConstants.TRAN_DEL;
+		AuditHeader auditHeader = newProductProcess(aProductAsset, tranType);
+		auditHeader = ErrorControl.showErrorDetails(this.window_ProductAssetDialog, auditHeader);
+		int retValue = auditHeader.getProcessStatus();
+		if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+			getProductDialogCtrl().doFillProductAsset(this.productAssets);
+			return true;
+		}
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final ProductAsset aProductAsset = new ProductAsset();
 		BeanUtils.copyProperties(getProductAsset(), aProductAsset);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_ProductAssetDialog_AssetCode.value") + " : " + aProductAsset.getAssetCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aProductAsset.getRecordType())) {
-				aProductAsset.setVersion(aProductAsset.getVersion() + 1);
-				aProductAsset.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		final String keyReference = Labels.getLabel("label_ProductAssetDialog_AssetCode.value") + " : "
+				+ aProductAsset.getAssetCode();
 
-				if (isWorkFlowEnabled()) {
-					aProductAsset.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			} else if (StringUtils.trimToEmpty(aProductAsset.getRecordType()).equals(PennantConstants.RCD_UPD)) {
-				aProductAsset.setVersion(aProductAsset.getVersion() + 1);
-				aProductAsset.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			}
+		doDelete(keyReference, aProductAsset);
 
-			try {
-				tranType = PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader = newProductProcess(aProductAsset, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.window_ProductAssetDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					getProductDialogCtrl().doFillProductAsset(this.productAssets);
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-
-		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

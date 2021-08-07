@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FileDownloadListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-06-2013    														*
- *                                                                  						*
- * Modified Date    :  26-06-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FileDownloadListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-06-2013 * * Modified
+ * Date : 26-06-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-06-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-06-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -84,6 +66,7 @@ import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listgroupfoot;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
@@ -420,35 +403,21 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 			String entityCode = this.entityCode.getValue();
 
 			if (isTrailBalance) {
-
 				TrailBalanceEngine trialbal = new TrailBalanceEngine((DataSource) SpringUtil.getBean("dataSource"),
-						getUserWorkspace().getUserDetails().getUserId(), DateUtility.getAppDate(),
-						DateUtility.getAppDate(), this.fromdate.getValue(), this.toDate.getValue());
+						getUserWorkspace().getUserDetails().getUserId(), SysParamUtil.getAppDate(),
+						SysParamUtil.getAppDate(), this.fromdate.getValue(), this.toDate.getValue());
 
 				if (trialbal.isBatchExists(selectedDimention, entityCode)) {
-					int conf = MessageUtil.confirm(
-							"Trial balance already generated for the selected month.\n Do you want to continue?");
-
-					if (conf == MessageUtil.NO) {
-						return;
-					}
+					final String msg = "Trial balance already generated for the selected month.\n Do you want to continue?";
+					MessageUtil.confirm(msg, evnt -> {
+						if (Messagebox.ON_YES.equals(evnt.getName())) {
+							processThread(selectedDimention, trialbal);
+						}
+					});
+				} else {
+					processThread(selectedDimention, trialbal);
 				}
-
-				DataEngineStatus status = TrailBalanceEngine.EXTRACT_STATUS;
-				status.setStatus("I");
-
-				if (selectedDimention.equals(TrailBalanceEngine.Dimension.STATE.name())) {
-					trialbal.extractReport(TrailBalanceEngine.Dimension.STATE,
-							new String[] { this.entityCode.getValue(), this.entityCode.getDescription() },
-							this.stateCode.getValue());
-				} else if (selectedDimention.equals(TrailBalanceEngine.Dimension.CONSOLIDATE.name())) {
-					trialbal.extractReport(TrailBalanceEngine.Dimension.CONSOLIDATE,
-							new String[] { this.entityCode.getValue(), this.entityCode.getDescription() },
-							this.stateCode.getValue());
-				}
-
 			} else {
-
 				Date valueDate = null;
 				Date appDate = null;
 				String selectedMonth = months.getSelectedItem().getValue();
@@ -469,6 +438,21 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 
 		refresh();
 
+	}
+
+	private void processThread(String selectedDimention, TrailBalanceEngine trialbal) throws Exception {
+		DataEngineStatus status = TrailBalanceEngine.EXTRACT_STATUS;
+		status.setStatus("I");
+
+		if (selectedDimention.equals(TrailBalanceEngine.Dimension.STATE.name())) {
+			trialbal.extractReport(TrailBalanceEngine.Dimension.STATE,
+					new String[] { this.entityCode.getValue(), this.entityCode.getDescription() },
+					this.stateCode.getValue());
+		} else if (selectedDimention.equals(TrailBalanceEngine.Dimension.CONSOLIDATE.name())) {
+			trialbal.extractReport(TrailBalanceEngine.Dimension.CONSOLIDATE,
+					new String[] { this.entityCode.getValue(), this.entityCode.getDescription() },
+					this.stateCode.getValue());
+		}
 	}
 
 	/**

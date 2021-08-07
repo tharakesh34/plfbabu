@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FacilityReferenceDetailDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-11-2011    														*
- *                                                                  						*
- * Modified Date    :  26-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FacilityReferenceDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-11-2011
+ * * * Modified Date : 26-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.lmtmasters.facilityreferencedetail;
@@ -91,6 +73,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -350,8 +333,7 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -376,8 +358,7 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFacilityReferenceDetail
-	 *            FacilityReferenceDetail
+	 * @param aFacilityReferenceDetail FacilityReferenceDetail
 	 */
 	public void doWriteBeanToComponents(FacilityReferenceDetail aFacilityReferenceDetail) {
 		logger.debug("Entering");
@@ -645,35 +626,29 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 		logger.debug("Leaving");
 	}
 
-	// CRUD operations
-
-	/**
-	 * Deletes a FacilityReferenceDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+
 		final FacilityReferenceDetail aFacilityReferenceDetail = new FacilityReferenceDetail();
 		BeanUtils.copyProperties(getFacilityReferenceDetail(), aFacilityReferenceDetail);
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ this.label_FacilityReferenceDetailDialog_FinRefId.getValue() + " : "
-				+ aFacilityReferenceDetail.getLovDescRefDesc();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			aFacilityReferenceDetail.setRecordType(PennantConstants.RCD_DEL);
-			try {
-				// Process Delete
-				deleteFinRrefDetails(aFacilityReferenceDetail);
-				// Close window
-				this.window_FacilityReferenceDetailDialogLink.onClose();
-				// Set parent window visible
-				getFacilityReferenceDetailDialogCtrl().window_FacilityReferenceDetailDialog.setVisible(true);
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
 
+		final String keyReference = this.label_FacilityReferenceDetailDialog_FinRefId.getValue() + " : "
+				+ aFacilityReferenceDetail.getLovDescRefDesc();
+		doDelete(keyReference, aFacilityReferenceDetail);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	protected void onDoDelete(final FacilityReferenceDetail aFacilityReferenceDetail) {
+		aFacilityReferenceDetail.setRecordType(PennantConstants.RCD_DEL);
+		try {
+			deleteFinRrefDetails(aFacilityReferenceDetail);
+			this.window_FacilityReferenceDetailDialogLink.onClose();
+			getFacilityReferenceDetailDialogCtrl().window_FacilityReferenceDetailDialog.setVisible(true);
+		} catch (DataAccessException e) {
+			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+
 	}
 
 	/**

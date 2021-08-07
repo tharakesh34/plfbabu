@@ -35,15 +35,12 @@
  */
 package com.pennant.backend.service.finance.impl;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -290,23 +287,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		return financeDetail;
 	}
 
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table FinanceMain/FinanceMain_Temp by
-	 * using FinanceMainDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
-	 * by using FinanceMainDAO's update method 3) Audit the record in to AuditHeader and AdtFinanceMain by using
-	 * auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 * @throws AccountNotFoundException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws Exception {
 		logger.debug("Entering");
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate");
@@ -679,21 +661,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		return auditDetails;
 	}
 
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getFinanceMainDAO().delete with parameters financeMain,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 * @throws InterfaceException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 */
 	@Override
-	public AuditHeader doReject(AuditHeader auditHeader)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader doReject(AuditHeader auditHeader) throws Exception {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
@@ -818,26 +787,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		return auditHeader;
 	}
 
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getFinanceMainDAO().delete with
-	 * parameters financeMain,"" b) NEW Add new record in to main table by using getFinanceMainDAO().save with
-	 * parameters financeMain,"" c) EDIT Update record in the main table by using getFinanceMainDAO().update with
-	 * parameters financeMain,"" 3) Delete the record from the workFlow table by using getFinanceMainDAO().delete with
-	 * parameters financeMain,"_Temp" 4) Audit the record in to AuditHeader and AdtFinanceMain by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtFinanceMain by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 * @throws AccountNotFoundException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 */
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader doApprove(AuditHeader aAuditHeader) throws Exception {
 		logger.debug("Entering");
 
 		String tranType = "";

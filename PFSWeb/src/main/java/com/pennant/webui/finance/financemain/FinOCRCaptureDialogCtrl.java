@@ -13,7 +13,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -64,7 +63,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 	protected Window windowFinOCRCaptureDialog;
 	protected Textbox loanReference;
 	protected Intbox disbursementSequence;
-	//protected Textbox ocrRecCurTranche;
+	// protected Textbox ocrRecCurTranche;
 	protected CurrencyBox builderDemand;
 	protected CurrencyBox ocrPaid;
 	protected Datebox ocrReceiptDate;
@@ -105,8 +104,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
@@ -221,8 +219,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -234,8 +231,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -246,8 +242,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -258,8 +253,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -270,8 +264,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -282,8 +275,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -294,8 +286,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -372,7 +363,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 		if (financeDetail != null) {
 			int seq = getDisbursementSequence(afinOCRCapture);
 			if (financeDisbursement.size() == 1 && afinOCRCapture.isNewRecord()) {
-				//seq = financeDisbursement.get(0).getDisbSeq();
+				// seq = financeDisbursement.get(0).getDisbSeq();
 			}
 
 			this.disbursementSequence.setValue(seq);
@@ -439,7 +430,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 			if (execuledApprove && isContainsInAppList(disbursement)) {
 				continue;
 			}
-			//cancelled disbursement should not be allowed to process
+			// cancelled disbursement should not be allowed to process
 			if (StringUtils.trimToEmpty(disbursement.getDisbStatus()).equals(FinanceConstants.DISB_STATUS_CANCEL)) {
 				continue;
 			}
@@ -480,13 +471,13 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Loan Reference
+		// Loan Reference
 		try {
 			afinOCRCapture.setFinReference(this.loanReference.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Disbursement Seq
+		// Disbursement Seq
 		try {
 
 			afinOCRCapture.setDisbSeq(this.disbursementSequence.intValue());
@@ -494,7 +485,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 			wve.add(we);
 		}
 
-		//Builder Demand
+		// Builder Demand
 		try {
 			BigDecimal demand = this.builderDemand.getActualValue();
 			if (demand.compareTo(BigDecimal.ZERO) < 0) {
@@ -505,7 +496,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//OCR Paid
+		// OCR Paid
 		try {
 			BigDecimal ocrPaid = this.ocrPaid.getActualValue();
 			if (ocrPaid.compareTo(BigDecimal.ZERO) < 0) {
@@ -522,7 +513,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 			wve.add(we);
 		}
 
-		//This condition for either Builder demand or OCR Paid amount is mandatory
+		// This condition for either Builder demand or OCR Paid amount is mandatory
 		try {
 			BigDecimal ocrPaid = this.ocrPaid.getActualValue();
 			BigDecimal demand = this.builderDemand.getActualValue();
@@ -537,13 +528,13 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 			wve.add(we);
 		}
 
-		//Remarks
+		// Remarks
 		try {
 			afinOCRCapture.setRemarks(this.remarks.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Receipt Date
+		// Receipt Date
 		try {
 			if (DateUtility.compare(this.ocrReceiptDate.getValue(), appDate) > 0) {
 				throw new WrongValueException(this.ocrReceiptDate,
@@ -586,8 +577,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param afinOCRCapture
-	 *            The entity that need to be render.
+	 * @param afinOCRCapture The entity that need to be render.
 	 */
 	public void doShowDialog(FinOCRCapture afinOCRCapture) {
 		logger.debug(Literal.ENTERING);
@@ -666,47 +656,26 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a finOCRCapture object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+	protected boolean doCustomDelete(final FinOCRCapture afinOCRCapture, String tranType) {
+		tranType = PennantConstants.TRAN_DEL;
+		AuditHeader auditHeader = processFinOCRCaptureDetails(afinOCRCapture, tranType);
+		auditHeader = ErrorControl.showErrorDetails(this.windowFinOCRCaptureDialog, auditHeader);
+		int retValue = auditHeader.getProcessStatus();
+		if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+			finOCRDialogCtrl.doFillFinOCRCaptureDetails(this.finOCRCaptureList);
+			return true;
+		}
+
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		final FinOCRCapture afinOCRCapture = new FinOCRCapture();
 		BeanUtils.copyProperties(this.finOCRCapture, afinOCRCapture);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ afinOCRCapture.getDisbSeq();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(afinOCRCapture.getRecordType())) {
-				afinOCRCapture.setVersion(afinOCRCapture.getVersion() + 1);
-				afinOCRCapture.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				afinOCRCapture.setNewRecord(true);
-				if (isWorkFlowEnabled()) {
-					afinOCRCapture.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				tranType = PennantConstants.TRAN_DEL;
-				AuditHeader auditHeader = processFinOCRCaptureDetails(afinOCRCapture, tranType);
-				auditHeader = ErrorControl.showErrorDetails(this.windowFinOCRCaptureDialog, auditHeader);
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					finOCRDialogCtrl.doFillFinOCRCaptureDetails(this.finOCRCaptureList);
-					closeDialog();
-				}
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
-			}
-		}
+		doDelete(String.valueOf(afinOCRCapture.getDisbSeq()), afinOCRCapture);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -766,7 +735,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 	 */
 	public void doClear() {
 		logger.debug(Literal.ENTERING);
-		//this.disbursementSequence.setValue("");
+		// this.disbursementSequence.setValue("");
 		this.builderDemand.setValue("");
 		this.ocrPaid.setValue("");
 		this.remarks.setValue("");
@@ -838,7 +807,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 		boolean recordAdded = false;
 
 		AuditHeader auditHeader = getAuditHeader(afinOCRCapture, tranType);
-		//finOCRCaptureList = new ArrayList<FinOCRCapture>();
+		// finOCRCaptureList = new ArrayList<FinOCRCapture>();
 
 		if (CollectionUtils.isNotEmpty(getFinOCRDialogCtrl().getFinOCRCaptureList())) {
 			if (!PennantConstants.TRAN_DEL.equals(tranType)) {
@@ -937,7 +906,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 	}
 
 	private void setDisbursmentAmount() {
-		//TODO
+		// TODO
 		/*
 		 * Intbox item = this.disbursementSequence.getSelectedItem(); if (item != null && item.getValue() != null) {
 		 * FinanceDisbursement disbursement = (FinanceDisbursement) item.getAttribute("data"); if (disbursement != null)
@@ -951,7 +920,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 	public static BigDecimal getTotalByDisbursment(FinanceDisbursement financeDisbursement, FinanceMain main) {
 		BigDecimal totdisbAmt = BigDecimal.ZERO;
 
-		//check is first disbursement
+		// check is first disbursement
 		if (financeDisbursement.getDisbDate().getTime() == main.getFinStartDate().getTime()
 				&& financeDisbursement.getDisbSeq() == 1) {
 
@@ -982,8 +951,9 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 		}
 		List<FinOCRCapture> list = finOCRDialogCtrl.getFinOCRCaptureList();
 		if (!CollectionUtils.isEmpty(list)) {
-			Collections.sort(list, (ocrCapture1, ocrCapture2) -> ocrCapture1.getDisbSeq() > ocrCapture2.getDisbSeq()
-					? -1 : ocrCapture1.getDisbSeq() < ocrCapture2.getDisbSeq() ? 1 : 0);
+			Collections.sort(list,
+					(ocrCapture1, ocrCapture2) -> ocrCapture1.getDisbSeq() > ocrCapture2.getDisbSeq() ? -1
+							: ocrCapture1.getDisbSeq() < ocrCapture2.getDisbSeq() ? 1 : 0);
 			sequence = list.get(0).getDisbSeq() + 1;
 		}
 

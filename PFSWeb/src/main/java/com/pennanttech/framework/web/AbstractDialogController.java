@@ -523,7 +523,7 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		});
 	}
 
-	private void onDoDelete(T aEntity) {
+	protected void onDoDelete(T aEntity) {
 		AbstractWorkflowEntity entity = (AbstractWorkflowEntity) aEntity;
 		String tranType = PennantConstants.TRAN_WF;
 
@@ -531,7 +531,6 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 			entity.setVersion(entity.getVersion() + 1);
 			entity.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-			doDeleteChild(aEntity);
 			if (isWorkFlowEnabled()) {
 				/* FIXME THIS NEEDS TO BE CHECKED */
 				entity.setRecordStatus(userAction.getSelectedItem().getValue().toString());
@@ -548,7 +547,7 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		}
 
 		try {
-			if (doCustomDelete(aEntity)) {
+			if (doCustomDelete(aEntity, tranType)) {
 				if (doProcess(aEntity, tranType)) {
 					refreshList();
 					closeDialog();
@@ -559,7 +558,7 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		}
 	}
 
-	protected boolean doCustomDelete(T aEntity) {
+	protected boolean doCustomDelete(T aEntity, String tranType) {
 		return true;
 	}
 

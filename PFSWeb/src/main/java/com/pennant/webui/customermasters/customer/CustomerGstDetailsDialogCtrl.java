@@ -52,6 +52,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.gst.CustomerGSTListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -116,8 +117,7 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_customerGstDetailsDialog(Event event) throws Exception {
@@ -269,7 +269,7 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 			Cloner cloner = new Cloner();
 			CustomerGST detail = (CustomerGST) cloner.deepClone(acustomerGST);
 			List<CustomerGSTDetails> customerGSTDetails = detail.getCustomerGSTDetailslist();
-			//customerGSTDetails= customerGSTDetails.stream().distinct().collect(Collectors.toList()); 
+			// customerGSTDetails= customerGSTDetails.stream().distinct().collect(Collectors.toList());
 
 			for (int i = 0; i < customerGSTDetails.size(); i++) {
 				customerGSTDetails.get(i).setKeyValue(i + 1);
@@ -715,11 +715,9 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aCustomerAddres
-	 *            (CustomerAddres)
+	 * @param aCustomerAddres (CustomerAddres)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType        (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -809,11 +807,9 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -879,7 +875,7 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
@@ -1023,8 +1019,7 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -1118,8 +1113,7 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");

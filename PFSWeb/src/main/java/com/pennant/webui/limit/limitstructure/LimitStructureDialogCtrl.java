@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LimitStructureDialogCtrl.java                                        * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-03-2016    														*
- *                                                                  						*
- * Modified Date    :  31-03-2016    														*
- *                                                                                          *
- *                                                                  						*
- * Description 		:                                             							*
+ * * FileName : LimitStructureDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-03-2016 * *
+ * Modified Date : 31-03-2016 * * * Description : *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-03-2016       Pennant	                 0.1                                            * itemsListByrulecode
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-03-2016 Pennant 0.1 * itemsListByrulecode * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.limit.limitstructure;
@@ -98,6 +80,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -375,8 +358,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
@@ -386,8 +368,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		doEdit();
@@ -396,8 +377,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		MessageUtil.showHelpWindow(event, super.window);
@@ -406,8 +386,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
@@ -422,8 +401,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		doCancel();
@@ -432,8 +410,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -459,8 +436,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.limitStructure);
@@ -534,7 +510,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		limitStructureDetail.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 		limitStructureDetail.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 
-		//validateInsertingRow(limitStructureDetail);
+		// validateInsertingRow(limitStructureDetail);
 		key = key + 1;
 		limitStructureDetail.setItemPriority(key);
 		addHashMap.put(key, limitStructureDetail);
@@ -842,39 +818,42 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 	}
 
 	public void onClickRemove(ForwardEvent event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 
 		Button remove = (Button) event.getOrigin().getTarget();
 		LimitStructureDetail limitStructureDetails = (LimitStructureDetail) remove.getParent().getParent()
 				.getAttribute("Data");
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record");
-		int count = getLimitStructureService().limitStructureCheck(getLimitStructure().getStructureCode());
+
+		String structCode = limitStructure.getStructureCode();
+		int count = limitStructureService.limitStructureCheck(structCode);
+
 		if (count == 0 || limitStructureDetails.isNewRecord()) {
-			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-				logger.debug("doDelete: Yes");
-				if (!limitStructureDetails.isNewRecord()) {
-					if (limitStructureDetails.getRecordType() != null
-							&& StringUtils.trimToEmpty(limitStructureDetails.getRecordType()).isEmpty()) {
-						limitStructureDetails.setNewRecord(true);
-						limitStructureDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					} else if (StringUtils.equals(PennantConstants.RECORD_TYPE_NEW,
-							limitStructureDetails.getRecordType())) {
-						limitStructureDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-					} else {
-						limitStructureDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					}
-					deleteMap.put(limitStructureDetails.getItemPriority(), limitStructureDetails);
-					doClearChild(limitStructureDetails);
-				} else {
-					doClearChild(limitStructureDetails);
-				}
-			}
+			final String keyReference = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record");
+			doDelete(keyReference, limitStructure);
 		} else {
-			MessageUtil.showError(
-					Labels.getLabel("LIMIT_FIELD_MODIFY", new String[] { getLimitStructure().getStructureCode() }));
+			MessageUtil.showError(Labels.getLabel("LIMIT_FIELD_MODIFY", new String[] { structCode }));
 			return;
 		}
-		logger.debug("Leaving" + event.toString());
+
+		logger.debug(Literal.LEAVING + event.toString());
+	}
+
+	protected void onDoDelete(LimitStructureDetail limitStructureDetails) {
+		if (!limitStructureDetails.isNewRecord()) {
+			if (StringUtils.trimToEmpty(limitStructureDetails.getRecordType()).isEmpty()) {
+				limitStructureDetails.setNewRecord(true);
+				limitStructureDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			} else if (PennantConstants.RECORD_TYPE_NEW.equals(limitStructureDetails.getRecordType())) {
+				limitStructureDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+			} else {
+				limitStructureDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+			deleteMap.put(limitStructureDetails.getItemPriority(), limitStructureDetails);
+			doClearChild(limitStructureDetails);
+		} else {
+			doClearChild(limitStructureDetails);
+		}
+
 	}
 
 	private void doClearChild(LimitStructureDetail limitStructureDetails) {
@@ -1020,8 +999,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aLimitStructure
-	 *            LimitStructure
+	 * @param aLimitStructure LimitStructure
 	 */
 	public void doWriteBeanToComponents(LimitStructure aLimitStructure) {
 		logger.debug("Entering");
@@ -1120,7 +1098,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		//Limit Category
+		// Limit Category
 		if (isInstitutionType)
 			aLimitStructure.setLimitCategory(LimitConstants.LIMIT_CATEGORY_BANK);
 		else
@@ -1183,7 +1161,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 						.add(getUnclassifiedLimitStructureDetails(false, LimitConstants.LIMIT_ITEM_TOTAL));
 				tempLimitStructureDetailList
 						.add(getUnclassifiedLimitStructureDetails(true, LimitConstants.LIMIT_ITEM_UNCLSFD));
-				//	}
+				// }
 
 				aLimitStructure.setLimitStructureDetailItemsList(tempLimitStructureDetailList);
 			}
@@ -1389,50 +1367,46 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 	// ************************+ crud operations ***********************
 	// *****************************************************************
 
-	/**
-	 * Deletes a LimitStructure object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+	protected void onDoDelete(final LimitStructure aLimitStructure) {
+		String tranType = PennantConstants.TRAN_WF;
+		if (getLimitStructureService().limitStructureCheck(getLimitStructure().getStructureCode()) == 0) {
+			if (StringUtils.isBlank(aLimitStructure.getRecordType())) {
+				aLimitStructure.setVersion(aLimitStructure.getVersion() + 1);
+				aLimitStructure.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+
+				if (isWorkFlowEnabled()) {
+					aLimitStructure.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+					aLimitStructure.setNewRecord(true);
+					tranType = PennantConstants.TRAN_WF;
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aLimitStructure.getNextTaskId(),
+							aLimitStructure);
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
+				}
+			}
+			try {
+				if (doProcess(aLimitStructure, tranType)) {
+					refreshList();
+					closeDialog();
+				}
+			} catch (DataAccessException e) {
+				MessageUtil.showError(e);
+			}
+		} else {
+			MessageUtil.showError(
+					Labels.getLabel("LIMIT_FIELD_DELETE", new String[] { getLimitStructure().getStructureCode() }));
+			return;
+		}
+
+	}
+
 	private void doDelete() throws InterruptedException {
 		logger.debug("Entering");
 		final LimitStructure aLimitStructure = new LimitStructure();
 		BeanUtils.copyProperties(getLimitStructure(), aLimitStructure);
-		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aLimitStructure.getStructureCode();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (getLimitStructureService().limitStructureCheck(getLimitStructure().getStructureCode()) == 0) {
-				if (StringUtils.isBlank(aLimitStructure.getRecordType())) {
-					aLimitStructure.setVersion(aLimitStructure.getVersion() + 1);
-					aLimitStructure.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		doDelete(aLimitStructure.getStructureCode(), aLimitStructure);
 
-					if (isWorkFlowEnabled()) {
-						aLimitStructure.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-						aLimitStructure.setNewRecord(true);
-						tranType = PennantConstants.TRAN_WF;
-						getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aLimitStructure.getNextTaskId(),
-								aLimitStructure);
-					} else {
-						tranType = PennantConstants.TRAN_DEL;
-					}
-				}
-				try {
-					if (doProcess(aLimitStructure, tranType)) {
-						refreshList();
-						closeDialog();
-					}
-				} catch (DataAccessException e) {
-					MessageUtil.showError(e);
-				}
-			} else {
-				MessageUtil.showError(
-						Labels.getLabel("LIMIT_FIELD_DELETE", new String[] { getLimitStructure().getStructureCode() }));
-				return;
-			}
-		}
 		logger.debug("Leaving");
 	}
 
@@ -1549,11 +1523,9 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1606,10 +1578,8 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */
@@ -1663,7 +1633,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		setOverideMap(auditHeader.getOverideMap());

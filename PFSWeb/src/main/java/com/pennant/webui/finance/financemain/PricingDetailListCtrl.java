@@ -1,48 +1,35 @@
 /**
  * Copyright 2011 - Pennant Technologies
-* 
-* This file is part of Pennant Java Application Framework and related Products. 
-* All components/modules/functions/classes/logic in this software, unless 
-* otherwise stated, the property of Pennant Technologies. 
-* 
-* Copyright and other intellectual property laws protect these materials. 
-* Reproduction or retransmission of the materials, in whole or in part, in any manner, 
-* without the prior written consent of the copyright holder, is a violation of 
-* copyright law.
-*/
+ * 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
+ * 
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
+ */
 
 /**
  *******************************************************************************************************
- *                                 FILE HEADER                                              			*
+ * FILE HEADER *
  *******************************************************************************************************
  *
- * FileName    		:  PricingDetailListCtrl.java														*
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES															*
- *                                                                  
- * Creation Date    :  11-07-2011																		*
- *                                                                  
- * Modified Date    :  11-07-2018																		*
- *                                                                  
- * Description 		:												 									*
- *                                                                                          
+ * FileName : PricingDetailListCtrl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 11-07-2011 *
+ * 
+ * Modified Date : 11-07-2018 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************************
- * Date             Author                   Version      Comments                          			*
+ * Date Author Version Comments *
  ********************************************************************************************************
- * 11-07-2018       Pennant	                 0.1                                            			*
- *                                                                                          			* 
- * 11-07-2018       Satya	                 0.2          PSD - Ticket : 127846							*
- * 														  Changes related to Fees calculation for the 	*
- * 														  selection type DropLinePOS.			 		*
- * 																										* 
- *                                                                                          			* 
- *                                                                                          			* 
- *                                                                                          			* 
- *                                                                                          			* 
- *                                                                                          			* 
- *                                                                                   					*
- *                                                                                          			*
- *                                                                                          			* 
+ * 11-07-2018 Pennant 0.1 * * 11-07-2018 Satya 0.2 PSD - Ticket : 127846 * Changes related to Fees calculation for the *
+ * selection type DropLinePOS. * * * * * * * * * *
  ********************************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -85,6 +72,7 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
@@ -199,7 +187,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 	public static final String FEE_UNIQUEID_ACTUALAMOUNT = "ACTUALAMT";
 	public static final String FEE_UNIQUEID_WAIVEDAMOUNT = "WAIVEDAMT";
 
-	//GST Added
+	// GST Added
 	public static final String FEE_UNIQUEID_NET_ORIGINAL = "NETORIGINAL";
 	public static final String FEE_UNIQUEID_NET_GST = "NETGST";
 	public static final String FEE_UNIQUEID_NET_TOTALAMOUNT = "TOTALNET";
@@ -362,7 +350,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 				getFinanceDetail().setPricingDetail(detail);
 			}
 			FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-			//Bugfix: After loan split we have to display only parent loan amount as FinAssetValue
+			// Bugfix: After loan split we have to display only parent loan amount as FinAssetValue
 			if (financeMain.isLoanSplitted()) {
 				setFinAssetValue(financeMain.getFinAssetValue());
 			} else {
@@ -371,7 +359,8 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 			doSetFieldProperties();
 			doCheckRights();
 			doShowDialog(getFinanceDetail());
-			//configuredRole = StringUtils.trimToEmpty(SysParamUtil.getValueAsString(SMTParameterConstants.BRANCH_OPS_ROLE));
+			// configuredRole =
+			// StringUtils.trimToEmpty(SysParamUtil.getValueAsString(SMTParameterConstants.BRANCH_OPS_ROLE));
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 			logger.error("Exception: ", e);
@@ -508,7 +497,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 	private void showErrorDetails(ArrayList<WrongValueException> wve) {
 		logger.debug(Literal.ENTERING);
 
-		//doRemoveValidation();
+		// doRemoveValidation();
 
 		if (wve.size() > 0) {
 			logger.debug("Throwing occured Errors By using WrongValueException");
@@ -545,7 +534,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 		}
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		BigDecimal totalAmt = BigDecimal.ZERO;
-		//Bugfix: After loan split we have to display only parent loan amount as FinAssetValue
+		// Bugfix: After loan split we have to display only parent loan amount as FinAssetValue
 		if (financeMain.isLoanSplitted()) {
 			totalAmt = parentLoanAmt;
 		} else {
@@ -709,8 +698,8 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 					finMain.setRepayProfitRate(new BigDecimal(roi));
 
 					Intbox tenure = (Intbox) listitem.getFellowIfAny("Tenure_" + topup_label);
-					//Clients.clearWrongValue(tenure);
-					//tenure.clearErrorMessage();
+					// Clients.clearWrongValue(tenure);
+					// tenure.clearErrorMessage();
 					try {
 						if (!tenure.isReadonly() && tenure.intValue() <= 0) {
 							throw new WrongValueException(tenure,
@@ -730,7 +719,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 							finMain.setSwiftBranchCode(parentFinMain.getFinReference().substring(1, 4));
 							finMain.setFinReference(ReferenceGenerator.generateFinRef(finMain, topUpFinType));
 							finMain.setFinType(topUpFinType.getFinType());
-							//finMain.setFinId(0);
+							// finMain.setFinId(0);
 						}
 
 						if (!saveAction && !this.userAction.getSelectedItem().getLabel().contains("Resubmit")) {
@@ -857,14 +846,14 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 
 				for (Component child : listitem.getChildren()) {
 
-					//Actual Fee Box
+					// Actual Fee Box
 					if (child.getFirstChild() instanceof Decimalbox) {
 						Decimalbox calBox = (Decimalbox) child.getFirstChild();
-						//Prepare Fin Fee Details
+						// Prepare Fin Fee Details
 						prepareFinFeeDetail(finFeeDetail, calBox);
 					} else if (child.getFirstChild() instanceof Combobox) { // Fee Schedule Method Box
 						Combobox combobox = ((Combobox) child.getFirstChild());
-						//Prepare Fee Schedule method and fee Details
+						// Prepare Fee Schedule method and fee Details
 						prepareFeeScheduleMethod(wve, finFeeDetail, child, combobox);
 					}
 				}
@@ -874,7 +863,8 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 							.subtract(finFeeDetail.getWaivedAmount()).subtract(finFeeDetail.getPaidAmountOriginal()));
 				}
 
-				finFeeDetail.setDataModified(isDataMaintained(finFeeDetail, finFeeDetail.getBefImage())); //For Data Saving
+				finFeeDetail.setDataModified(isDataMaintained(finFeeDetail, finFeeDetail.getBefImage())); // For Data
+																											// Saving
 
 				boolean isNew = finFeeDetail.isNewRecord();
 				String tranType = "";
@@ -920,7 +910,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 				pricingDetail.getActualFinFeeDetails().add(finFeeDetail);
 
 			} else {
-				//Top up fees
+				// Top up fees
 				String tpCount = (String) listitem.getAttribute("TopUpCount_");
 				String numberOnly = tpCount.replaceAll("[^0-9]", "");
 				int topUpCount = Integer.valueOf(numberOnly);
@@ -936,15 +926,15 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 
 						if (child.getFirstChild() instanceof Decimalbox) {
 							Decimalbox calBox = (Decimalbox) child.getFirstChild();
-							//Prepare Fin Fee Details
+							// Prepare Fin Fee Details
 							prepareFinFeeDetail(childFinFeeDetail, calBox);
-							//For preparing Workflow Details
+							// For preparing Workflow Details
 							decimalBoxEnable = true;
 						} else if (child.getFirstChild() instanceof Combobox) {
 							Combobox combobox = ((Combobox) child.getFirstChild());
-							//Prepare Fee Schedule method and fee Details
+							// Prepare Fee Schedule method and fee Details
 							prepareFeeScheduleMethod(wve, childFinFeeDetail, child, combobox);
-							//For preparing Workflow Details
+							// For preparing Workflow Details
 							comboBoxEnable = true;
 						}
 
@@ -1396,7 +1386,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 			vasRecording = new VASRecording();
 			vasRecording.setProductCode(vasProduct.getVasProduct());
 			vasRecording.setFee(vasProduct.getVasFee());
-			//vasRecording.setFeePaymentMode(vasProduct.getFeePaymentMode());
+			// vasRecording.setFeePaymentMode(vasProduct.getFeePaymentMode());
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1773,7 +1763,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 
 		boolean readOnly = isReadonly();
 		int count = 0;
-		//this.listBoxVasDetail.getItems().clear();
+		// this.listBoxVasDetail.getItems().clear();
 		listBoxVasDetail.setVflex("max");
 
 		if (CollectionUtils.isNotEmpty(vasList)) {
@@ -1911,12 +1901,14 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 				MessageUtil.showMessage("There are no TopUps to split");
 				this.split.setChecked(false);
 			} else {
-				if (MessageUtil.YES == MessageUtil.confirm("Are you sure to split loans ?")) {
-					pricingDetail.setSplit(true);
-				} else {
-					this.split.setChecked(false);
-					pricingDetail.setSplit(false);
-				}
+				MessageUtil.confirm("Are you sure to split loans ?", evnt -> {
+					if (Messagebox.ON_YES.equals(evnt.getName())) {
+						pricingDetail.setSplit(true);
+					} else {
+						this.split.setChecked(false);
+						pricingDetail.setSplit(false);
+					}
+				});
 			}
 		} else {
 			pricingDetail.setSplit(false);
@@ -1953,7 +1945,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 				Listheader listHeader = new Listheader();
 				listHeader.setStyle("font-size: 12px");
 				listHeader.setHflex("min");
-				//listHeader.setWidth("25px");
+				// listHeader.setWidth("25px");
 
 				topup_label = "TopUp_" + topUpCount;
 
@@ -1995,7 +1987,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 				} else {
 					childLoanType.setValue(topUpFinType.getFinType());
 				}
-				//calBox.addForward("onFulfill", window_PricingDetailList, "onChangeTopUpLoanAmount", calBox);
+				// calBox.addForward("onFulfill", window_PricingDetailList, "onChangeTopUpLoanAmount", calBox);
 				childLoanType.setReadonly(readOnly);
 				lc = new Listcell();
 				lc.appendChild(childLoanType);
@@ -2019,7 +2011,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 					calBox.setValue(BigDecimal.ZERO);
 				}
 				calBox.setReadonly(readOnly);
-				//calBox.addForward("onFulfill", window_PricingDetailList, "onChangeTopUpLoanAmount", calBox);
+				// calBox.addForward("onFulfill", window_PricingDetailList, "onChangeTopUpLoanAmount", calBox);
 				lc = new Listcell();
 				lc.appendChild(calBox);
 				item.setAttribute("Basic" + topup_label, financeMain);
@@ -2442,7 +2434,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 		logger.debug(Literal.ENTERING);
 
 		doShowLoanTypeSelectionDialog();
-		//appendTopupLoan();
+		// appendTopupLoan();
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -2519,7 +2511,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 						.getAttribute("Vas_" + topUpLabe);
 				this.listBoxVasDetail.getItems().get(j).setDisabled(false);
 				if (!vasProducts.isNewRecord()) {
-					//vasProducts.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					// vasProducts.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
 			}
 		}
@@ -2532,7 +2524,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 						.getAttribute("Charge_" + topUpLabe);
 				this.listBoxChargesDetail.getItems().get(j).setDisabled(false);
 				if (!chanrges.isNewRecord()) {
-					//chanrges.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					// chanrges.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
 			}
 		}
@@ -2553,7 +2545,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 				readOnlyComponent(false, roi);
 				readOnlyComponent(false, tenure);
 				if (!loans.isNewRecord()) {
-					//loans.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					// loans.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
 			}
 		}

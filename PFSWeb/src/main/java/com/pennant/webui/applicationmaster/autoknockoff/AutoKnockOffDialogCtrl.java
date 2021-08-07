@@ -46,6 +46,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.MultiSelectionStaticListBox;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
@@ -749,53 +750,48 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a VoucherVendor object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
 		final AutoKnockOff aknockOff = new AutoKnockOff();
 		BeanUtils.copyProperties(getAutoKnockOff(), aknockOff);
+
+		doDelete(String.valueOf(aknockOff.getId()), aknockOff);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	protected void onDoDelete(final AutoKnockOff aknockOff) {
 		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aknockOff.getId();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aknockOff.getRecordType()).equals("")) {
-				aknockOff.setVersion(aknockOff.getVersion() + 1);
-				aknockOff.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				for (AutoKnockOffFeeMapping autoKnockOffFeeMapping : aknockOff.getMappingList()) {
-					autoKnockOffFeeMapping.setVersion(autoKnockOffFeeMapping.getVersion() + 1);
-					autoKnockOffFeeMapping.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					autoKnockOffFeeMapping.setNewRecord(true);
-				}
-
-				if (isWorkFlowEnabled()) {
-					aknockOff.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-					aknockOff.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aknockOff.getNextTaskId(), aknockOff);
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
+		if (StringUtils.trimToEmpty(aknockOff.getRecordType()).equals("")) {
+			aknockOff.setVersion(aknockOff.getVersion() + 1);
+			aknockOff.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			for (AutoKnockOffFeeMapping autoKnockOffFeeMapping : aknockOff.getMappingList()) {
+				autoKnockOffFeeMapping.setVersion(autoKnockOffFeeMapping.getVersion() + 1);
+				autoKnockOffFeeMapping.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				autoKnockOffFeeMapping.setNewRecord(true);
 			}
 
-			try {
-				if (doProcess(aknockOff, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (DataAccessException e) {
-				MessageUtil.showError(e);
+			if (isWorkFlowEnabled()) {
+				aknockOff.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+				aknockOff.setNewRecord(true);
+				tranType = PennantConstants.TRAN_WF;
+				getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aknockOff.getNextTaskId(), aknockOff);
+			} else {
+				tranType = PennantConstants.TRAN_DEL;
 			}
 		}
 
-		logger.debug(Literal.LEAVING);
+		try {
+			if (doProcess(aknockOff, tranType)) {
+				refreshList();
+				closeDialog();
+			}
+
+		} catch (DataAccessException e) {
+			MessageUtil.showError(e);
+		}
 	}
 
 	/**
@@ -1080,7 +1076,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		setOverideMap(auditHeader.getOverideMap());

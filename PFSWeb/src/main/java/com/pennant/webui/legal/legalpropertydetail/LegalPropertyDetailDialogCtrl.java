@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LegalPropertyDetailDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  16-06-2018    														*
- *                                                                  						*
- * Modified Date    :  16-06-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LegalPropertyDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 16-06-2018 * *
+ * Modified Date : 16-06-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 16-06-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 16-06-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.legal.legalpropertydetail;
 
 import java.math.BigDecimal;
@@ -160,8 +142,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_LegalPropertyDetailDialog(Event event) throws Exception {
@@ -258,8 +239,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -271,8 +251,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -283,8 +262,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -295,8 +273,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -307,8 +284,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -319,8 +295,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -331,8 +306,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -680,8 +654,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param legalPropertyDetail
-	 *            The entity that need to be render.
+	 * @param legalPropertyDetail The entity that need to be render.
 	 */
 	public void doShowDialog(LegalPropertyDetail legalPropertyDetail) {
 		logger.debug(Literal.LEAVING);
@@ -903,11 +876,22 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Deletes a LegalPropertyDetail object from database.<br>
-	 * 
-	 * @throws InterruptedException
-	 */
+	protected boolean doCustomDelete(final LegalPropertyDetail aLegalPropertyDetail, String tranType) {
+		if (isNewLegalPropertyDetails()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = processDetails(aLegalPropertyDetail, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_LegalPropertyDetailDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				if (getLegalDetailDialogCtrl() != null) {
+					getLegalDetailDialogCtrl().doFillPropertyDetails(this.legalPropertyDetailList);
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.LEAVING);
 
@@ -915,49 +899,16 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		BeanUtils.copyProperties(this.legalPropertyDetail, aLegalPropertyDetail);
 		String tranType = PennantConstants.TRAN_WF;
 
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aLegalPropertyDetail.getPropertyType();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-
-			if (StringUtils.isBlank(aLegalPropertyDetail.getRecordType())) {
-				aLegalPropertyDetail.setVersion(aLegalPropertyDetail.getVersion() + 1);
-				aLegalPropertyDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aLegalPropertyDetail.setNewRecord(true);
-				if (isWorkFlowEnabled()) {
-					aLegalPropertyDetail.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (isNewLegalPropertyDetails()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = processDetails(aLegalPropertyDetail, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_LegalPropertyDetailDialog, auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						if (getLegalDetailDialogCtrl() != null) {
-							getLegalDetailDialogCtrl().doFillPropertyDetails(this.legalPropertyDetailList);
-						}
-						closeDialog();
-					}
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
-			}
-		}
+		doDelete(aLegalPropertyDetail.getPropertyType(), aLegalPropertyDetail);
 
 		logger.debug(Literal.LEAVING);
+
 	}
 
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -974,11 +925,9 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1077,7 +1026,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_IsNOCobtainedfromLPA"), this.isNOCObtainedFromLPA);
 		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_IsAnyMortgagePending"), this.isAnyMortgagePending);
 
-		//Property Measurements
+		// Property Measurements
 		this.gb_PropertyMeasurementDetails
 				.setVisible(getUserWorkspace().isAllowed("LegalDocumentDialog_gb_PropertyMeasurementDetails"));
 		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_NorthSideEastByWest"), this.northSideEastByWest);
@@ -1266,7 +1215,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		} catch (final DataAccessException e) {
 			logger.error("Exception: ", e);
 			showMessage(e);
-		} catch (final InterruptedException e) {
+		} catch (final Exception e) {
 			logger.error("Exception: ", e);
 			showMessage(e);
 		}

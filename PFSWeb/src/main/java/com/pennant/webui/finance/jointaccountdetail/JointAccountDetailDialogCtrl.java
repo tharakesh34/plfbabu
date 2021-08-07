@@ -1565,44 +1565,29 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		logger.debug("Leaving");
 	}
 
-	private void doDelete() throws InterruptedException {
-		logger.debug("Entering");
-		final JointAccountDetail aJointAccountDetail = new JointAccountDetail();
-		BeanUtils.copyProperties(getJointAccountDetail(), aJointAccountDetail);
-		String tranType = PennantConstants.TRAN_WF;
-		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aJointAccountDetail.getCustCIF();
-		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aJointAccountDetail.getRecordType())) {
-				aJointAccountDetail.setVersion(aJointAccountDetail.getVersion() + 1);
-				aJointAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				aJointAccountDetail.setNewRecord(true);
-				if (isWorkFlowEnabled()) {
-					aJointAccountDetail.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
-			try {
-				if (isNewContributor()) {
-					tranType = PennantConstants.TRAN_DEL;
-					AuditHeader auditHeader = newJointAccountProcess(aJointAccountDetail, tranType);
-					auditHeader = ErrorControl.showErrorDetails(this.window_MasterJointAccountDetailDialog,
-							auditHeader);
-					int retValue = auditHeader.getProcessStatus();
-					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						getFinanceMainDialogCtrl().doFillJointDetails(this.jointAccountDetailList);
-						closeDialog();
-					}
-				}
-			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				showMessage(e);
+	protected boolean doCustomDelete(final JointAccountDetail aJointAccountDetail, String tranType) {
+		if (isNewContributor()) {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newJointAccountProcess(aJointAccountDetail, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_MasterJointAccountDetailDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				getFinanceMainDialogCtrl().doFillJointDetails(this.jointAccountDetailList);
+				return true;
 			}
 		}
-		logger.debug("Leaving");
+
+		return false;
+	}
+
+	private void doDelete() throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+		final JointAccountDetail aJointAccountDetail = new JointAccountDetail();
+		BeanUtils.copyProperties(getJointAccountDetail(), aJointAccountDetail);
+
+		doDelete(aJointAccountDetail.getCustCIF(), aJointAccountDetail);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

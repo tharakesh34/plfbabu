@@ -792,7 +792,7 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		setOverideMap(auditHeader.getOverideMap());

@@ -73,6 +73,7 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -1497,7 +1498,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 					auditHeader.setOverideMessage(null);
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
 		setOverideMap(auditHeader.getOverideMap());
