@@ -11944,6 +11944,25 @@
 	<!-- DB-Based Scheduler -->
 	<bean id="jobJmxClient" class="com.pennanttech.pennapps.core.job.monitor.JobJmxClient"/>
 	<bean id="jobDataAccess" class="com.pennanttech.pennapps.core.job.JobDataAccess" parent="basicDao" />
-	
+
+	<!-- Account Updater -->
+	<bean id="abstractAccountUpdaterDAO" class="com.pennanttech.pff.core.account.dao.AbstractAccountUpdaterDAO"
+		abstract="true">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="abstractAccountUpdater" class="com.pennanttech.pff.core.account.engine.AbstractAccountUpdater"
+		abstract="true" parent="abstractAccountUpdaterDAO" />
+	<bean id="accountUpdater" class="com.pennanttech.pff.core.account.engine.AccountUpdater"
+		parent="abstractAccountUpdater" />
+	<bean id="accountByFinReferrenceDAOImpl"
+		class="com.pennanttech.pff.core.account.dao.AccountByFinReferrenceDAOImpl" parent="abstractAccountUpdaterDAO" />
+	<bean id="accountDAOImpl" class="com.pennanttech.pff.core.account.dao.AccountDAOImpl"
+		parent="abstractAccountUpdaterDAO" />
+	<bean id="accountHistoryDetailDAOImpl" class="com.pennanttech.pff.core.account.dao.AccountHistoryDetailDAOImpl"
+		parent="abstractAccountUpdaterDAO" />
+	<bean id="accountHistoryDAOImpl" class="com.pennanttech.pff.core.account.dao.AccountHistoryDAOImpl"
+		parent="abstractAccountUpdaterDAO" />
+	<bean id="postingDAOImpl" class="com.pennanttech.pff.core.account.dao.PostingDAOImpl"
+		parent="abstractAccountUpdaterDAO" />
 </beans>
 

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#180.1" author="Pavan.E">
+		<createTable tableName="AdtMAIL_SERVERS">
+			<column name="AUDITID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AUDITDATE" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AUDITSEQ" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AUDITIMAGE" type="varchar(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Name" type="varchar(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="EmailId" type="varchar(200)" />
+			<column name="MailServer" type="varchar(20)" />
+			<column name="IP" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Port" type="varchar(6)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RequiredSSL" type="boolean" defaultValueBoolean="0" />
+			<column name="AccountType" type="char(5)" />
+			<column name="EncryptionType" type="char(5)" />
+			<column name="UserName" type="varchar(200)" />
+			<column name="Password" type="varchar(100)" />
+			<column name="Version" type="boolean" defaultValueBoolean="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMnton" type="datetime" />
+			<column name="RecordStatus" type="varchar(100)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#180.2" author="Pavan.E">
+		<createTable tableName="AdtJOB_DETAILS">
+			<column name="AUDITID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AUDITDATE" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AUDITSEQ" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AUDITIMAGE" type="varchar(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Key" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Trigger" type="varchar(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Cron_Expression" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Mode" type="number" />
+			<column name="Status" type="number" />
+			<column name="Enabled" type="boolean" />
+			<column name="Failure_Notification_Req" type="boolean" />
+			<column name="Host_Name" type="varchar(200)" />
+			<column name="Port" type="number" defaultValue="0"/>
+			<column name="Jmx_Port" type="number" defaultValue="0"/>
+			<column name="SMTP_Server" type="bigint" />
+			<column name="Notify_Emails" type="varchar(500)" />
+			<column name="Execution_log_Req" type="boolean" />
+			<column name="Execution_Retention_Days" type="number" />
+			<column name="Version" type="boolean" defaultValueBoolean="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMnton" type="datetime" />
+			<column name="RecordStatus" type="varchar(100)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	
+</databaseChangeLog>

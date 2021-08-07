@@ -5630,4 +5630,8 @@
 	<bean id="jobSettingsDialog" class="com.pennanttech.pennapps.web.job.JobSettingsCtrl" scope="prototype"/>
 	<bean id="jobExecutionList" class="com.pennanttech.pennapps.web.job.JobExecutionLoggingCtrl" scope="prototype"/>
 	
+	<!-- Account-Updater -->
+	<bean id="accountUpdaterCtrl" class="com.pennanttech.pff.core.account.page.AccountUpdaterCtrl" scope="prototype">
+		<property name="accountUpdater" ref="accountUpdater" />
+	</bean>
 </beans> 

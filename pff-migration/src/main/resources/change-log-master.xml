@@ -22,7 +22,9 @@
 	<include file="change-logs/change-log-5.14.0.xml" />
 	<include file="change-logs/change-log-5.15.0.xml" />
 	<include file="change-logs/change-log-6.0.0.xml" />
+	<include file="change-logs/change-log-account-updater.xml"/>
 	<include file="change-logs/change-log-islamic_code_removal.xml" />
+	<include file="change-logs/change-log-db-based-scheduler.xml" />
 	<include file="change-logs/change-log-security-seq-reseed.xml" />
 	<include file="change-logs/change-log-indexes.xml" />
 	<include file="change-logs/change-log-hl-missing-indexes.xml" />
