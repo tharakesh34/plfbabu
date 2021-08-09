@@ -1236,7 +1236,8 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		// getting the emi list between app date and loan start date
 		Date dtStartDate = com.pennant.app.util.DateUtility.addMonths(customerExtLiability.getFinDate(), -1);
 		Date dtEndDate = com.pennant.app.util.DateUtility.addMonths(dtStartDate, -6);
-		List<ExtLiabilityPaymentdetails> months = getFrequency(dtStartDate, dtEndDate);
+		List<ExtLiabilityPaymentdetails> months = getFrequency(dtStartDate, dtEndDate,
+				customerExtLiability.getExtLiabilitiesPayments());
 		return months;
 	}
 
@@ -1247,7 +1248,8 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 	 * @param endDate
 	 * @return
 	 */
-	private static List<ExtLiabilityPaymentdetails> getFrequency(final Date startDate, final Date endDate) {
+	private static List<ExtLiabilityPaymentdetails> getFrequency(final Date startDate, final Date endDate,
+			List<ExtLiabilityPaymentdetails> payments) {
 		List<ExtLiabilityPaymentdetails> list = new ArrayList<>();
 		if (startDate == null || endDate == null) {
 			return list;
@@ -1258,6 +1260,15 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 			ExtLiabilityPaymentdetails temp = new ExtLiabilityPaymentdetails();
 			String key = DateUtil.format(tempStartDate, DateFormat.LONG_MONTH);
 			temp.setEmiType(key);
+			for (ExtLiabilityPaymentdetails payment : payments) {
+				Date paymentDt = DateUtil.parse(payment.getEmiType(), DateFormat.LONG_DATE);
+				String pmtDt = DateUtil.format(paymentDt, DateFormat.LONG_MONTH);
+				if (key.equals(pmtDt)) {
+					temp.setEmiClearance(payment.getEmiClearance());
+					temp.setEmiClearedDay(payment.getEmiClearedDay());
+					break;
+				}
+			}
 			tempStartDate = DateUtil.addMonths(tempStartDate, -1);
 			list.add(temp);
 		}
