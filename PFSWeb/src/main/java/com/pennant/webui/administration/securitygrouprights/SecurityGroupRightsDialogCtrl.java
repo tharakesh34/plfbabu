@@ -529,10 +529,29 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 	// Helpers
 
 	private void doCancel() throws Exception {
-		tempUnAsgnRightsMap.clear();
-		newAssignedMap.clear();
-		unAssignedRights = tempUnAssignedRights;
-		doShowDialog();
+		getNewAssignedMap().clear();
+		doShowDialogPage(this.securityGroup);
+	}
+
+	private void doShowDialogPage(SecurityGroup securityGroup) {
+		logger.debug("Entering");
+
+		Map<String, Object> aruments = new HashMap<String, Object>();
+		aruments.put("securityGroup", securityGroup);
+		aruments.put("securityGroupRightsDialog", this);
+		aruments.put("newRecord", securityGroup.isNewRecord());
+		closeDialog();
+
+		try {
+
+			Executions.createComponents(
+					"/WEB-INF/pages/Administration/SecurityGroupRights" + "/SecurityGroupRightsDialog.zul", null,
+					aruments);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
+		logger.debug("Leaving");
 	}
 
 	/**
