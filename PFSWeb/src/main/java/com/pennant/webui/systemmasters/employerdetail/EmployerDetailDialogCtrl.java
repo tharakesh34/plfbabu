@@ -833,15 +833,39 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		}
 		// Emp Fax
 		try {
-			aEmployerDetail.setEmpFax(PennantApplicationUtil.formatPhoneNumber(this.empFaxCountryCode.getValue(),
-					this.empFaxAreaCode.getValue(), this.empFax.getValue()));
+			String empfax = null;
+			if (!empFaxCountryCode.getValue().isEmpty() && !empFaxAreaCode.getValue().isEmpty()
+					&& !empFax.getValue().isEmpty()) {
+				empfax = PennantApplicationUtil.formatPhoneNumber(this.empFaxCountryCode.getValue(),
+						this.empFaxAreaCode.getValue(), this.empFax.getValue());
+			}
+
+			if (empfax == null && (!(empFaxCountryCode.getValue().isEmpty() && empFaxAreaCode.getValue().isEmpty()
+					&& empFax.getValue().isEmpty()))) {
+				throw new WrongValueException(this.empFax, Labels.getLabel("FIELD_NOT_VALID",
+						new String[] { Labels.getLabel("label_EmployerDetailDialog_EmpFax.value") }));
+			}
+			
+			aEmployerDetail.setEmpFax(empfax);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		// Emp Telex No
 		try {
-			aEmployerDetail.setEmpTelexNo(PennantApplicationUtil.formatPhoneNumber(this.empTelexCountryCode.getValue(),
-					this.empTelexAreaCode.getValue(), this.empTelexNo.getValue()));
+			String TelexNo = null;
+			if (!empTelexCountryCode.getValue().isEmpty() && !empTelexAreaCode.getValue().isEmpty()
+					&& !empTelexNo.getValue().isEmpty()) {
+				TelexNo = PennantApplicationUtil.formatPhoneNumber(this.empTelexCountryCode.getValue(),
+						this.empTelexAreaCode.getValue(), this.empTelexNo.getValue());
+			}
+			if (TelexNo == null && (!(empTelexCountryCode.getValue().isEmpty() && empTelexAreaCode.getValue().isEmpty()
+					&& empTelexNo.getValue().isEmpty()))) {
+				throw new WrongValueException(this.empTelexNo, Labels.getLabel("FIELD_NOT_VALID",
+						new String[] { Labels.getLabel("label_EmployerDetailDialog_EmpTelexNo.value") }));
+			}
+
+			aEmployerDetail.setEmpTelexNo(TelexNo);
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
