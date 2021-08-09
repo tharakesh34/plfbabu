@@ -1278,7 +1278,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 
 		if (!this.dealerFax.isReadonly()) {
 			this.dealerFax.setConstraint(
-					new PTMobileNumberValidator(Labels.getLabel("label_VehicleDealerDialog_DealerFax.value"), false,
+					new PTMobileNumberValidator(Labels.getLabel("label_VehicleDealerDialog_DealerFax.value"), true,
 							PennantRegularExpressions.REGEX_FAX));
 		}
 
