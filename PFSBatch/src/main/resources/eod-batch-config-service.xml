@@ -614,6 +614,7 @@
 		<property name="mandateStatusDAO" ref="mandateStatusDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="dMSService" ref="dMSService" />
+		<property name="mandateCheckDigitDAO" ref="mandateCheckDigitDAO" />
 	</bean>
 
 	<bean id="abstractInterface" class="com.pennanttech.pff.external.AbstractInterface" abstract="true">
