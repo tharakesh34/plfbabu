@@ -2829,7 +2829,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		for (VASRecording vasRecording : vasRecordingList) {
 			String vasRef = vasRecording.getVasReference();
 			vasReferences.add(new ValueLabel(vasRef, vasRef));
-			vasAmountsMAP.put(vasRef, vasRecording.getFee().subtract(vasRecording.getPaidAmt()));
+			vasAmountsMAP.put(vasRef, vasRecording.getFee());
 			if (StringUtils.equals(vasRef, vasReference)) {
 				isDeletedVAS = false;
 			}
