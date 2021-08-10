@@ -2486,6 +2486,12 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					}
 				}
 			}
+
+			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,
+					false);
+			String finref = ((ReportSearchTemplate) filters.get(0)).getFieldValue();
+			processLinkedLoans(finref);
+
 			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
 					null, null);
 		} else if (StringUtils.equals(reportMenuCode, "menu_Item_WriteoffReport")) {
@@ -2497,14 +2503,6 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				whereCondition.append(" and FM.FINISACTIVE = " + 0 + " and FM.CLOSINGSTATUS = '"
 						+ FinanceConstants.CLOSE_STATUS_WRITEOFF + "'");
 			}
-			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
-					null, null);
-		} else if ("menu_Item_NoObjectionCertificate".equals(reportMenuCode)) {
-			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,
-					false);
-			String finref = ((ReportSearchTemplate) filters.get(0)).getFieldValue();
-			processLinkedLoans(finref);
-			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
 			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
 					null, null);
 		}
