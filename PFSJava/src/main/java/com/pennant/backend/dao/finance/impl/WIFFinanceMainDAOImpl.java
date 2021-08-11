@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  WIFFinanceMainDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : WIFFinanceMainDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
+ * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.finance.impl;
 
@@ -74,10 +56,8 @@ public class WIFFinanceMainDAOImpl extends BasicDao<FinanceMain> implements WIFF
 	/**
 	 * Fetch the Record What If Finance Main Detail details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return WIFFinanceMain
 	 */
 	@Override
@@ -85,7 +65,7 @@ public class WIFFinanceMainDAOImpl extends BasicDao<FinanceMain> implements WIFF
 		logger.debug("Entering");
 		FinanceMain wIFFinanceMain = new FinanceMain();
 
-		wIFFinanceMain.setId(id);
+		wIFFinanceMain.setFinReference(id);
 		StringBuilder selectSql = new StringBuilder(
 				"SELECT FinReference, NumberOfTerms, GrcPeriodEndDate, AllowGrcPeriod,");
 		selectSql.append(" GraceBaseRate, GraceSpecialRate, GrcPftRate, GrcPftFrq,NextGrcPftDate, AllowGrcPftRvw,");
@@ -129,10 +109,8 @@ public class WIFFinanceMainDAOImpl extends BasicDao<FinanceMain> implements WIFF
 	 * This method Deletes the Record from the WIFFinanceMain or WIFFinanceMain_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete What If Finance Main Detail by key FinReference
 	 * 
-	 * @param What
-	 *            If Finance Main Detail (wIFFinanceMain)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param What If Finance Main Detail (wIFFinanceMain)
+	 * @param type (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -164,10 +142,8 @@ public class WIFFinanceMainDAOImpl extends BasicDao<FinanceMain> implements WIFF
 	 *
 	 * save What If Finance Main Detail
 	 * 
-	 * @param What
-	 *            If Finance Main Detail (wIFFinanceMain)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param What If Finance Main Detail (wIFFinanceMain)
+	 * @param type (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -214,17 +190,15 @@ public class WIFFinanceMainDAOImpl extends BasicDao<FinanceMain> implements WIFF
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wIFFinanceMain);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
-		return wIFFinanceMain.getId();
+		return wIFFinanceMain.getFinReference();
 	}
 
 	/**
 	 * This method updates the Record WIFFinanceMain or WIFFinanceMain_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update What If Finance Main Detail by key FinReference and Version
 	 * 
-	 * @param What
-	 *            If Finance Main Detail (wIFFinanceMain)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param What If Finance Main Detail (wIFFinanceMain)
+	 * @param type (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  WIFFinanceMainServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : WIFFinanceMainServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
+ * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.finance.impl;
 
 import java.lang.reflect.InvocationTargetException;
@@ -91,8 +73,7 @@ public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> imple
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -106,8 +87,7 @@ public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> imple
 	}
 
 	/**
-	 * @param wIFFinanceMainDAO
-	 *            the wIFFinanceMainDAO to set
+	 * @param wIFFinanceMainDAO the wIFFinanceMainDAO to set
 	 */
 	public void setWIFFinanceMainDAO(WIFFinanceMainDAO wIFFinanceMainDAO) {
 		this.wIFFinanceMainDAO = wIFFinanceMainDAO;
@@ -121,8 +101,7 @@ public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> imple
 	}
 
 	/**
-	 * @param wIFFinanceScheduleDetailDAO
-	 *            the wIFFinanceScheduleDetailDAO to set
+	 * @param wIFFinanceScheduleDetailDAO the wIFFinanceScheduleDetailDAO to set
 	 */
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
@@ -136,8 +115,7 @@ public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> imple
 	}
 
 	/**
-	 * @param wIFFinanceDisbursementDAO
-	 *            the wIFFinanceDisbursementDAO to set
+	 * @param wIFFinanceDisbursementDAO the wIFFinanceDisbursementDAO to set
 	 */
 	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
 		this.financeDisbursementDAO = financeDisbursementDAO;
@@ -151,8 +129,7 @@ public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> imple
 	 * based on the module workFlow Configuration. by using WIFFinanceMainDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtWIFFinanceMain by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -178,7 +155,7 @@ public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> imple
 			getWIFFinanceMainDAO().update(wIFFinanceMain, tableType);
 		}
 
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		// getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 
@@ -190,8 +167,7 @@ public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> imple
 	 * WIFFinanceMain by using WIFFinanceMainDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtWIFFinanceMain by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -207,7 +183,7 @@ public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> imple
 		FinanceMain wIFFinanceMain = (FinanceMain) auditHeader.getAuditDetail().getModelData();
 		getWIFFinanceMainDAO().delete(wIFFinanceMain, "");
 
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		// getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -215,10 +191,8 @@ public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> imple
 	/**
 	 * getWIFFinanceMainById fetch the details by using WIFFinanceMainDAO's getWIFFinanceMainById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 
@@ -231,8 +205,7 @@ public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> imple
 	 * getApprovedWIFFinanceMainById fetch the details by using WIFFinanceMainDAO's getWIFFinanceMainById method . with
 	 * parameter id and type as blank. it fetches the approved records from the FinanceMain.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return FinanceMain
 	 */
 
@@ -251,8 +224,7 @@ public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> imple
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtWIFFinanceMain by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -315,8 +287,7 @@ public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> imple
 	 * workFlow table by using getWIFFinanceMainDAO().delete with parameters wIFFinanceMain,"_Temp" 3) Audit the record
 	 * in to AuditHeader and AdtWIFFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -345,8 +316,7 @@ public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> imple
 	 * for any mismatch conditions Fetch the error details from getWIFFinanceMainDAO().getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -367,28 +337,31 @@ public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> imple
 
 		FinanceMain tempWIFFinanceMain = null;
 		if (wIFFinanceMain.isWorkflow()) {
-			tempWIFFinanceMain = getWIFFinanceMainDAO().getWIFFinanceMainById(wIFFinanceMain.getId(), "_Temp");
+			tempWIFFinanceMain = getWIFFinanceMainDAO().getWIFFinanceMainById(wIFFinanceMain.getFinReference(),
+					"_Temp");
 		}
 
-		FinanceMain befWIFFinanceMain = getWIFFinanceMainDAO().getWIFFinanceMainById(wIFFinanceMain.getId(), "");
+		FinanceMain befWIFFinanceMain = getWIFFinanceMainDAO().getWIFFinanceMainById(wIFFinanceMain.getFinReference(),
+				"");
 
 		FinanceMain oldWIFFinanceMain = wIFFinanceMain.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
-		valueParm[0] = wIFFinanceMain.getId();
+		valueParm[0] = wIFFinanceMain.getFinReference();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
 		if (wIFFinanceMain.isNewRecord()) { // for New record or new record into work flow
 
-			if (!wIFFinanceMain.isWorkflow()) {// With out Work flow only new records  
-				if (befWIFFinanceMain != null) { // Record Already Exists in the table then error  
+			if (!wIFFinanceMain.isWorkflow()) {// With out Work flow only new records
+				if (befWIFFinanceMain != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (wIFFinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befWIFFinanceMain != null || tempWIFFinanceMain != null) { // if records already exists in the main table
+					if (befWIFFinanceMain != null || tempWIFFinanceMain != null) { // if records already exists in the
+																					// main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -423,7 +396,7 @@ public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> imple
 				}
 			} else {
 
-				if (tempWIFFinanceMain == null) { // if records not exists in the Work flow table 
+				if (tempWIFFinanceMain == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}

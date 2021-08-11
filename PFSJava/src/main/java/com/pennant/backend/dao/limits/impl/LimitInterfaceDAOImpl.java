@@ -219,20 +219,17 @@ public class LimitInterfaceDAOImpl extends SequenceDao<FinanceLimitProcess> impl
 		logger.debug("Entering");
 
 		FinanceMain financeMain = new FinanceMain();
-		financeMain.setId(dealID);
+		financeMain.setFinReference(dealID);
 		StringBuilder selectSql = new StringBuilder("select  *  FROM ");
 		/*
 		 * StringBuilder selectSql = new StringBuilder("select  FinReference, GrcPeriodEndDate, FinRepaymentAmount," );
-		 * selectSql.
-		 * append(" FinCommitmentRef, FinLimitRef," );
-		 * selectSql.
+		 * selectSql. append(" FinCommitmentRef, FinLimitRef," ); selectSql.
 		 * append(" FinCcy, FinBranch, CustId, FinAmount, FeeChargeAmt, DownPayment, DownPayBank, DownPaySupl, FinType, "
 		 * ); selectSql.
 		 * append(" FinStartDate,GraceTerms, NumberOfTerms, NextGrcPftDate, NextRepayDate, LastRepayPftDate, NextRepayPftDate, "
 		 * ); selectSql.append(" LastRepayRvwDate, NextRepayRvwDate, FinAssetValue, FinCurrAssetValue,FinRepayMethod, "
 		 * ); selectSql.append(" RecordType, Version, ProfitDaysBasis , FeeChargeAmt, FinStatus, FinStsReason," );
-		 * selectSql.append(" InitiateUser, BankName, AccountType, MaturityDate "
-		 * );
+		 * selectSql.append(" InitiateUser, BankName, AccountType, MaturityDate " );
 		 */
 		if (isRejectFinance) {
 			selectSql.append(" RejectFinancemain");

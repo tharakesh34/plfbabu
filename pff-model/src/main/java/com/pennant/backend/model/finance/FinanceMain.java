@@ -1519,19 +1519,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.lovDescAsmName = lovDescAsmName;
 	}
 
-	public FinanceMain(String finReference) {
-		super();
-		this.finReference = finReference;
-	}
-
-	public String getId() {
-		return finReference;
-	}
-
-	public void setId(String id) {
-		this.finReference = id;
-	}
-
 	public String getFinReference() {
 		return finReference;
 	}

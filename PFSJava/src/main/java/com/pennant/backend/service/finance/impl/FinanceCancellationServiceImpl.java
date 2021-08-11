@@ -1,41 +1,36 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  FinanceCancellationServiceImpl.java												*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : FinanceCancellationServiceImpl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
-
- * 13-06-2018       Siva					 0.2        Stage Accounting Modifications      * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 *
+ * 
+ * 13-06-2018 Siva 0.2 Stage Accounting Modifications * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.finance.impl;
@@ -205,8 +200,8 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		financeDetail
 				.setAdvancePaymentsList(finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(finReference, "_View"));
 
-		financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(finType,
-				AccountingEvent.CANCELFIN, "_AView", false, FinanceConstants.MODULEID_FINTYPE));
+		financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(finType, AccountingEvent.CANCELFIN,
+				"_AView", false, FinanceConstants.MODULEID_FINTYPE));
 
 		// Finance Fee Details
 		scheduleData.setFinFeeDetailList(getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView"));
@@ -877,14 +872,14 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 		FinanceMain tempFinanceMain = null;
 		if (financeMain.isWorkflow()) {
-			tempFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getId(), "_Temp", false);
+			tempFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getFinReference(), "_Temp", false);
 		}
-		FinanceMain befFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getId(), "", false);
+		FinanceMain befFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getFinReference(), "", false);
 		FinanceMain oldFinanceMain = financeMain.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
-		valueParm[0] = financeMain.getId();
+		valueParm[0] = financeMain.getFinReference();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
 		if (financeMain.isNewRecord()) { // for New record or new record into work flow

@@ -602,7 +602,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
-		return financeMain.getId();
+		return financeMain.getFinReference();
 	}
 
 	@Override
@@ -949,7 +949,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			throw new ConcurrencyException(e);
 		}
 
-		return fm.getId();
+		return fm.getFinReference();
 	}
 
 	@Override
@@ -1689,7 +1689,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
-		return financeMain.getId();
+		return financeMain.getFinReference();
 	}
 
 	/**
@@ -2010,7 +2010,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug("Entering");
 
 		FinanceMain financeMain = new FinanceMain();
-		financeMain.setId(reference);
+		financeMain.setFinReference(reference);
 		StringBuilder selectSql = new StringBuilder("select  *  FROM ");
 		if (isRejectFinance) {
 			selectSql.append(" RejectFinancemain");
@@ -5090,7 +5090,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug("Entering");
 
 		FinanceMain financeMain = new FinanceMain();
-		financeMain.setId(finReference);
+		financeMain.setFinReference(finReference);
 
 		StringBuilder selectSql = new StringBuilder("SELECT FinReference, FinType, Finccy ");
 		selectSql.append(" From FinanceMain");

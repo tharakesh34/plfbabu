@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceMainListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  15-11-2011    														*
- *                                                                  						*
- * Modified Date    :  15-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceMainListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 15-11-2011 * * Modified
+ * Date : 15-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 15-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 15-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -557,13 +539,13 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		doLoadWorkFlow(aFinanceMain.isWorkflow(), aFinanceMain.getWorkflowId(), aFinanceMain.getNextTaskId());
-		final FinanceDetail financeDetail = getFinanceDetailService().getOriginationFinance(aFinanceMain.getId(),
-				aFinanceMain.getNextRoleCode(), screenEvent, getRole());
+		final FinanceDetail financeDetail = getFinanceDetailService().getOriginationFinance(
+				aFinanceMain.getFinReference(), aFinanceMain.getNextRoleCode(), screenEvent, getRole());
 
 		if (financeDetail == null) {
 			String[] errParm = new String[1];
 			String[] valueParm = new String[1];
-			valueParm[0] = aFinanceMain.getId();
+			valueParm[0] = aFinanceMain.getFinReference();
 			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
 					new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
@@ -576,7 +558,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// Check whether the record was locked by any other user.
 		String userId = financeDetail.getFinScheduleData().getFinanceMain().getNextUserId();
 		if (StringUtils.isNotBlank(userId)) {
-			//Due to parallel workflow getting multiple userId's
+			// Due to parallel workflow getting multiple userId's
 			String[] userIds = StringUtils.split(userId, PennantConstants.DELIMITER_COMMA);
 			List<String> list = (userIds != null) ? Arrays.asList(userIds) : null;
 			if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("ALLOW_LOAN_APP_LOCK"))
@@ -601,7 +583,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		if (finReferenceProcess) {
 			String[] errParm = new String[1];
 			String[] valueParm = new String[1];
-			valueParm[0] = aFinanceMain.getId();
+			valueParm[0] = aFinanceMain.getFinReference();
 			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
 					new ErrorDetail(PennantConstants.KEY_FIELD, "41095", errParm, valueParm),
@@ -866,8 +848,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * Opens the detail view. <br>
 	 * Over handed some parameters in a map if needed. <br>
 	 * 
-	 * @param FinanceMain
-	 *            (aFinanceMain)
+	 * @param FinanceMain (aFinanceMain)
 	 * @throws Exception
 	 */
 	protected void showDetailView(FinanceDetail aFinanceDetail) throws Exception {
@@ -1044,21 +1025,18 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		this.searchObj.addFilter(new Filter("DeviationApproval", 0, Filter.OP_EQUAL));
 		if (FinServiceEvent.PREAPPROVAL.equals(this.requestSource)) {
-			this.searchObj.addFilter(
-					new Filter("FinPreApprovedRef", FinServiceEvent.PREAPPROVAL, Filter.OP_EQUAL));
+			this.searchObj.addFilter(new Filter("FinPreApprovedRef", FinServiceEvent.PREAPPROVAL, Filter.OP_EQUAL));
 		} else {
 
 			if (StringUtils.equals(FinanceConstants.PRODUCT_CD, productCode)) {
 				Filter[] filters = new Filter[2];
-				filters[0] = new Filter("FinPreApprovedRef", FinServiceEvent.PREAPPROVAL,
-						Filter.OP_NOT_EQUAL);
+				filters[0] = new Filter("FinPreApprovedRef", FinServiceEvent.PREAPPROVAL, Filter.OP_NOT_EQUAL);
 				filters[1] = new Filter("FinPreApprovedRef", FinServiceEvent.PREAPPROVAL, Filter.OP_NULL);
 				this.searchObj.addFilterOr(filters);
 				this.searchObj.addFilter(new Filter("ProductCategory", FinanceConstants.PRODUCT_CD, Filter.OP_EQUAL));
 			} else {
 				Filter[] filters = new Filter[2];
-				filters[0] = new Filter("FinPreApprovedRef", FinServiceEvent.PREAPPROVAL,
-						Filter.OP_NOT_EQUAL);
+				filters[0] = new Filter("FinPreApprovedRef", FinServiceEvent.PREAPPROVAL, Filter.OP_NOT_EQUAL);
 				filters[1] = new Filter("FinPreApprovedRef", FinServiceEvent.PREAPPROVAL, Filter.OP_NULL);
 				this.searchObj.addFilterOr(filters);
 				this.searchObj
@@ -1303,7 +1281,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Entering  " + event.toString());
 
 		if (this.oldVar_sortOperator_Branch == Filter.OP_IN || this.oldVar_sortOperator_Branch == Filter.OP_NOT_IN) {
-			//Calling MultiSelection ListBox From DB
+			// Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_FinanceMainList, "Branch",
 					this.branchCode.getValue(), new Filter[] {});
 			if (selectedValues != null) {

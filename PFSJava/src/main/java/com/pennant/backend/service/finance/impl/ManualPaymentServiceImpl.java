@@ -1153,14 +1153,14 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 		FinanceMain tempFinanceMain = null;
 		if (financeMain.isWorkflow()) {
-			tempFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getId(), "_Temp", false);
+			tempFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getFinReference(), "_Temp", false);
 		}
-		FinanceMain befFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getId(), "", false);
+		FinanceMain befFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getFinReference(), "", false);
 		FinanceMain oldFinanceMain = financeMain.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
-		valueParm[0] = financeMain.getId();
+		valueParm[0] = financeMain.getFinReference();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
 		if (financeMain.isNewRecord()) { // for New record or new record into work flow

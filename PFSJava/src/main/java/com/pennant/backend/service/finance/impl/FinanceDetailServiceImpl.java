@@ -7251,7 +7251,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
-		valueParm[0] = financeMain.getId();
+		valueParm[0] = financeMain.getFinReference();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + valueParm[0];
 
 		// Checking , if Customer is in EOD process or not. if Yes, not allowed
@@ -7360,7 +7360,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if ("doApprove".equals(method) && !PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())) {
-			auditDetail.setBefImage(getFinanceMainDAO().getFinanceMainById(financeMain.getId(), "", isWIF));
+			auditDetail.setBefImage(getFinanceMainDAO().getFinanceMainById(financeMain.getFinReference(), "", isWIF));
 		}
 		if (financeDetail.isTvApprovalTab()
 				&& !StringUtils.contains(financeMain.getRecordStatus(), (PennantConstants.RCD_STATUS_SAVED))

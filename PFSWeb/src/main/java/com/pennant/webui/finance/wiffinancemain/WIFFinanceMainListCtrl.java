@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  WIFFinanceMainListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : WIFFinanceMainListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
+ * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.wiffinancemain;
@@ -150,7 +132,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	private transient FinanceDetailService financeDetailService;
 
-	private Textbox loanType;//Field for Maintain Different Finance Product Types
+	private Textbox loanType;// Field for Maintain Different Finance Product Types
 	private boolean isFacilityWIF = false;
 
 	/**
@@ -304,15 +286,15 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceMain aWIFFinanceMain = (FinanceMain) item.getAttribute("data");
-			final FinanceDetail financeDetail = getFinanceDetailService().getWIFFinance(aWIFFinanceMain.getId(),
-					reqCustDetails, FinServiceEvent.ORG);
+			final FinanceDetail financeDetail = getFinanceDetailService()
+					.getWIFFinance(aWIFFinanceMain.getFinReference(), reqCustDetails, FinServiceEvent.ORG);
 			if (!isFacilityWIF) {
 				financeDetail.getFinScheduleData().getFinanceMain().setWorkflowId(0);
 			}
 			if (financeDetail == null) {
 				String[] errParm = new String[1];
 				String[] valueParm = new String[1];
-				valueParm[0] = aWIFFinanceMain.getId();
+				valueParm[0] = aWIFFinanceMain.getFinReference();
 				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
 				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
@@ -362,8 +344,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * Opens the detail view. <br>
 	 * Overhanded some params in a map if needed. <br>
 	 * 
-	 * @param WIFFinanceMain
-	 *            (aWIFFinanceMain)
+	 * @param WIFFinanceMain (aWIFFinanceMain)
 	 * @throws Exception
 	 */
 	private void showDetailView(FinanceDetail aFinanceDetail) throws Exception {
@@ -460,7 +441,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			this.recordType.setSelectedIndex(0);
 		}
 
-		//Clears all the filters
+		// Clears all the filters
 		this.searchObj.clearFilters();
 		addDivisionFilters();
 		this.pagingWIFFinanceMainList.setActivePage(0);
@@ -537,23 +518,23 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			this.searchObj.addTabelName("WIFFinanceMain_View");
 		}
 		addDivisionFilters();
-		//CustId
+		// CustId
 		if (StringUtils.isNotBlank(this.custID.getValue())) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_custID.getSelectedItem(), this.custID.getValue(),
 					"CustID");
 		}
-		//ScheduleMethod
+		// ScheduleMethod
 		if (StringUtils.isNotBlank(this.scheduleMethod.getValue())) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_scheduleMethod.getSelectedItem(),
 					this.scheduleMethod.getValue(), "ScheduleMethod");
 		}
 
-		//FinCcy
+		// FinCcy
 		if (StringUtils.isNotBlank(this.finCcy.getValue())) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_finCcy.getSelectedItem(), this.finCcy.getValue(),
 					"FinCcy");
 		}
-		//FinReference
+		// FinReference
 		if (StringUtils.isNotBlank(this.finReference.getValue())) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_finReference.getSelectedItem(),
 					this.finReference.getValue().trim(), "FinReference");
@@ -581,17 +562,17 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 				}
 			}
 		}
-		//ProfitDayBasis
+		// ProfitDayBasis
 		if (StringUtils.isNotBlank(this.profitDaysBasis.getValue())) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_profitDaysBasis.getSelectedItem(),
 					this.profitDaysBasis.getValue(), "ProfitDaysBasis");
 		}
-		//FinStartDate
+		// FinStartDate
 		if (this.finStartDate.getValue() != null) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_finStartDate.getSelectedItem(),
 					this.finStartDate.getValue(), "FinStartDate");
 		}
-		//FinIsActive
+		// FinIsActive
 		int intActive = 0;
 		if (this.finIsActive.isChecked()) {
 			intActive = 1;
@@ -648,7 +629,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Entering " + event.toString());
 
 		if (this.oldVar_sortOperator_finType == Filter.OP_IN || this.oldVar_sortOperator_finType == Filter.OP_NOT_IN) {
-			//Calling MultiSelection ListBox From DB
+			// Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_WIFFinanceMainList,
 					"FinanceType", this.finType.getValue(), new Filter[] {});
 			if (selectedValues != null) {

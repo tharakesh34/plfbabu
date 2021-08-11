@@ -101,13 +101,13 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 	public FinanceDetail getFinanceDetailById(String finReference, String type) {
 		logger.debug("Entering");
 
-		//Finance Details
+		// Finance Details
 		FinanceDetail financeDetail = new FinanceDetail();
 		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
 		scheduleData.setFinReference(finReference);
 		scheduleData.setFinanceMain(getFinanceMainDAO().getFinanceMainById(finReference, type, false));
 
-		//Repayment Details
+		// Repayment Details
 		scheduleData.setRepayDetails(getFinanceRepaymentsDAO().getFinRepayListByFinRef(finReference, true, ""));
 
 		logger.debug("Leaving");
@@ -122,8 +122,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 	 * by using FinanceMainDAO's update method 3) Audit the record in to AuditHeader and AdtFinanceMain by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -156,7 +155,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			financeMain.setRcdMaintainSts("");
 		}
 
-		//Repayments Postings Details Process Execution
+		// Repayments Postings Details Process Execution
 		if (!financeMain.isWorkflow()) {
 			String errorCode = processRepayCancellation(financeMain);
 			if (StringUtils.isNotBlank(errorCode)) {
@@ -165,7 +164,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 		} else {
 
 			// Finance Main Details Save And Update
-			//=======================================
+			// =======================================
 			if (financeMain.isNewRecord()) {
 				getFinanceMainDAO().save(financeMain, tableType, false);
 			} else {
@@ -190,8 +189,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 	 * workFlow table by using getFinanceMainDAO().delete with parameters financeMain,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -216,7 +214,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 				financeMain.getBefImage(), financeMain));
 		getAuditHeaderDAO().addAudit(auditHeader);
 
-		//Reset Finance Detail Object for Service Task Verifications
+		// Reset Finance Detail Object for Service Task Verifications
 		auditHeader.getAuditDetail().setModelData(financeDetail);
 
 		logger.debug("Leaving");
@@ -234,8 +232,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtFinanceMain by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -256,12 +253,12 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 
-		//Execute Accounting Details Process
-		//=======================================
+		// Execute Accounting Details Process
+		// =======================================
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
-		//Finance Repayment Cancellation Posting Process Execution
-		//=====================================
+		// Finance Repayment Cancellation Posting Process Execution
+		// =====================================
 		String errorCode = processRepayCancellation(financeMain);
 		if (StringUtils.isNotBlank(errorCode)) {
 			throw new InterfaceException("9999", errorCode);
@@ -284,7 +281,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 		// Adding audit as Insert/Update/deleted into main table
 		getAuditHeaderDAO().addAudit(auditHeader);
 
-		//Reset Finance Detail Object for Service Task Verifications
+		// Reset Finance Detail Object for Service Task Verifications
 		auditHeader.getAuditDetail().setModelData(financeDetail);
 
 		logger.debug("Leaving");
@@ -297,8 +294,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 	 * for any mismatch conditions Fetch the error details from getFinanceMainDAO().getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -336,14 +332,14 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 
 		FinanceMain tempFinanceMain = null;
 		if (financeMain.isWorkflow()) {
-			tempFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getId(), "_Temp", false);
+			tempFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getFinReference(), "_Temp", false);
 		}
-		FinanceMain befFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getId(), "", false);
+		FinanceMain befFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getFinReference(), "", false);
 		FinanceMain oldFinanceMain = financeMain.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
-		valueParm[0] = financeMain.getId();
+		valueParm[0] = financeMain.getFinReference();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
 		if (financeMain.isNewRecord()) { // for New record or new record into work flow
@@ -445,7 +441,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 
 		String finReference = financeMain.getFinReference();
 
-		//Fetch Repayments Details List based on Finance Reference
+		// Fetch Repayments Details List based on Finance Reference
 		Date curAppDate = DateUtility.getAppDate();
 		List<FinanceRepayments> repayList = getFinanceRepaymentsDAO().getFinRepayListByFinRef(finReference, true, "");
 		if (repayList != null && !repayList.isEmpty()) {
@@ -453,15 +449,15 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			FinanceRepayments repayment = repayList.get(0);
 			Date rpyValueDate = repayment.getFinValueDate();
 
-			//Fetch Log Entry Details Greater than this Repayments Entry , which are having Schedule Recalculation
-			//If Any Exist Case after this Repayments with Schedule Recalculation then Stop Process
-			//============================================
+			// Fetch Log Entry Details Greater than this Repayments Entry , which are having Schedule Recalculation
+			// If Any Exist Case after this Repayments with Schedule Recalculation then Stop Process
+			// ============================================
 			List<FinLogEntryDetail> list = getFinLogEntryDetailDAO().getFinLogEntryDetailList(finReference, 0);
 			if (list != null && !list.isEmpty()) {
 				return "Finance is Maintained after this Repayment done.";
 			}
 
-			//Fetch Repay header Details If Repayment Done from System
+			// Fetch Repay header Details If Repayment Done from System
 			FinRepayHeader repayHeader = getFinanceRepaymentsDAO().getFinRepayHeader(finReference,
 					repayment.getLinkedTranId(), "");
 			String finEventCode = "";
@@ -471,16 +467,17 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 				finEventCode = repayHeader.getFinEvent();
 			}
 
-			//Valid Check for Finance Reversal On Active Finance Or not with ValueDate CheckUp
+			// Valid Check for Finance Reversal On Active Finance Or not with ValueDate CheckUp
 			if (!financeMain.isFinIsActive()) {
 
-				//Not Allowed for Inactive Finances
+				// Not Allowed for Inactive Finances
 				return "Fiannce Cannot be Processed for Reversal of Payment. Finance is in InActive State.";
 			}
 
-			//Is Schedule Regenerated >>> Adjust Finance Details From Log Tables to Main Tables and remove data from Log Tables
-			//Otherwise Only Schedule Change with Repayments Amount
-			//============================================
+			// Is Schedule Regenerated >>> Adjust Finance Details From Log Tables to Main Tables and remove data from
+			// Log Tables
+			// Otherwise Only Schedule Change with Repayments Amount
+			// ============================================
 			FinLogEntryDetail detail = getFinLogEntryDetailDAO().getFinLogEntryDetail(0);
 			boolean isMigratedRepayment = false;
 			if (detail == null) {
@@ -497,18 +494,18 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 				isMigratedRepayment = true;
 			}
 
-			//Posting Reversal Case Program Calling in Equation
-			//============================================
+			// Posting Reversal Case Program Calling in Equation
+			// ============================================
 			long linkedTranId = 0;
 			if (!isMigratedRepayment) {
 				linkedTranId = repayment.getLinkedTranId();
 				getPostingsPreparationUtil().getReversalsByLinkedTranID(linkedTranId);
 			}
 
-			//Overdue Recovery Details Reset Back to Original State , If any penalties Paid On this Repayments Process
-			//============================================
+			// Overdue Recovery Details Reset Back to Original State , If any penalties Paid On this Repayments Process
+			// ============================================
 
-			//Calculate Total Penalty Amount Paid based on this Transaction 
+			// Calculate Total Penalty Amount Paid based on this Transaction
 			/*
 			 * BigDecimal totalPenaltyPaid = getPostingsDAO().getPostAmtByTranIdandEvent(finReference,
 			 * AccountEventConstants.ACCEVENT_LATEPAY , repayment.getLinkedTranId());
@@ -534,23 +531,23 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 
 			} else {
 
-				//Deletion of Finance Schedule Related Details From Main Table
+				// Deletion of Finance Schedule Related Details From Main Table
 				listDeletion(finReference, "", false, 0);
 
-				//Fetching Last Log Entry Finance Details
+				// Fetching Last Log Entry Finance Details
 				FinScheduleData scheduleData = getFinSchDataByFinRef(finReference, detail.getLogKey(), "_Log");
 				scheduleData.setFinanceMain(financeMain);
 
-				//Re-Insert Log Entry Data before Repayments Process Recalculations
+				// Re-Insert Log Entry Data before Repayments Process Recalculations
 				listSave(scheduleData, "", 0);
 
-				//Delete Data from Log Entry Tables After Inserting into Main Tables
+				// Delete Data from Log Entry Tables After Inserting into Main Tables
 				listDeletion(finReference, "_Log", false, detail.getLogKey());
 
 			}
 
-			//Finance Repayments Amount Updation if Principal Amount Exists
-			//============================================
+			// Finance Repayments Amount Updation if Principal Amount Exists
+			// ============================================
 			BigDecimal totalPriAmount = BigDecimal.ZERO;
 			for (FinanceRepayments repay : repayList) {
 				if (repay.getFinSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
@@ -558,8 +555,8 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 				}
 			}
 
-			//Check Current Finance Max Status For updation
-			//============================================
+			// Check Current Finance Max Status For updation
+			// ============================================
 			if (totalPriAmount.compareTo(BigDecimal.ZERO) > 0) {
 				boolean isStsChanged = false;
 				String curFinStatus = getCustomerStatusCodeDAO().getFinanceStatus(finReference, true);
@@ -575,7 +572,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 				financeMain.setWriteoffLoan(financeMain.isWriteoffLoan());
 				financeMainDAO.updateRepaymentAmount(financeMain);
 
-				//Finance Status Details insertion, if status modified then change to High Risk Level
+				// Finance Status Details insertion, if status modified then change to High Risk Level
 				if (isStsChanged) {
 					FinStatusDetail statusDetail = new FinStatusDetail();
 					statusDetail.setFinReference(financeMain.getFinReference());
@@ -609,34 +606,34 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			if (!isMigratedRepayment) {
 
 				// Update Log Entry Based on FinPostDate and Reference
-				//============================================
+				// ============================================
 				getFinLogEntryDetailDAO().updateLogEntryStatus(detail);
 
-				//Remove Repayments Terms based on Linked Transaction ID
-				//============================================
+				// Remove Repayments Terms based on Linked Transaction ID
+				// ============================================
 				getFinanceRepaymentsDAO().deleteRpyDetailbyLinkedTranId(repayment.getLinkedTranId(), finReference);
 
-				//Remove FinRepay Header Details
+				// Remove FinRepay Header Details
 				getFinanceRepaymentsDAO().deleteFinRepayHeaderByTranId(finReference, repayment.getLinkedTranId(), "");
 
-				//Remove Repayment Schedule Details 
+				// Remove Repayment Schedule Details
 				getFinanceRepaymentsDAO().deleteFinRepaySchListByTranId(finReference, repayment.getLinkedTranId(), "");
 
 			} else {
 
 				// Save Log Entry Based on FinPostDate and Reference
-				//============================================
+				// ============================================
 				detail.setReversalCompleted(true);
 				getFinLogEntryDetailDAO().save(detail);
 
-				//Remove Repayments Terms based on Linked Transaction ID
-				//============================================
+				// Remove Repayments Terms based on Linked Transaction ID
+				// ============================================
 				getFinanceRepaymentsDAO().deleteRpyDetailbyMaxPostDate(rpyValueDate, finReference);
 
 			}
 
-			//Finance Accrual Calculations
-			//============================================
+			// Finance Accrual Calculations
+			// ============================================
 			List<FinanceScheduleDetail> finSchedeuleDetails = getFinanceScheduleDetailDAO()
 					.getFinSchdDetailsForBatch(finReference);
 			FinanceProfitDetail profitDetail = getFinanceProfitDetailDAO().getFinProfitDetailsById(finReference);
@@ -644,7 +641,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			String worstSts = getCustomerStatusCodeDAO().getFinanceStatus(profitDetail.getFinReference(), false);
 			profitDetail.setFinWorstStatus(worstSts);
 
-			//Reset Back Repayments Details
+			// Reset Back Repayments Details
 			repayList = getFinanceRepaymentsDAO().getFinRepayListByFinRef(finReference, true, "");
 			if (repayList != null && !repayList.isEmpty()) {
 
@@ -689,7 +686,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 		schedule.setSchdPftPaid(schedule.getSchdPftPaid().subtract(repayment.getFinSchdPftPaid()));
 		schedule.setSchdPriPaid(schedule.getSchdPriPaid().subtract(repayment.getFinSchdPriPaid()));
 
-		//Fee Details
+		// Fee Details
 		schedule.setSchdFeePaid(schedule.getSchdFeePaid().subtract(repayment.getSchdFeePaid()));
 
 		// Finance Schedule Profit Balance Check
@@ -733,7 +730,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 		movement.setMovementDate(curBussDate);
 		movement.setMovementOrder(
 				getCommitmentMovementDAO().getMaxMovementOrderByRef(commitment.getCmtReference()) + 1);
-		movement.setMovementType("RR");//Repayment Reversal
+		movement.setMovementType("RR");// Repayment Reversal
 		movement.setMovementAmount(postAmount);
 		movement.setCmtAmount(commitment.getCmtAmount());
 		movement.setCmtUtilizedAmount(commitment.getCmtUtilizedAmount().add(postAmount));
@@ -762,10 +759,8 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 	/**
 	 * Method to get Schedule related data.
 	 * 
-	 * @param finReference
-	 *            (String)
-	 * @param isWIF
-	 *            (boolean)
+	 * @param finReference (String)
+	 * @param isWIF        (boolean)
 	 **/
 	private FinScheduleData getFinSchDataByFinRef(String finReference, long logKey, String type) {
 		logger.debug("Entering");
@@ -840,7 +835,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 		}
 		financeDisbursementDAO.saveList(finDetail.getDisbursementDetails(), tableType, false);
 
-		//Finance Repay Instruction Details
+		// Finance Repay Instruction Details
 		for (RepayInstruction ri : finDetail.getRepayInstructions()) {
 			ri.setFinReference(finReference);
 			ri.setLogKey(logKey);

@@ -265,8 +265,8 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// Getting FinanceDetail Data
-		final FinanceDetail financeDetail = financeDetailService.getServicingFinance(finMain.getId(), eventCode, null,
-				userRole);
+		final FinanceDetail financeDetail = financeDetailService.getServicingFinance(finMain.getFinReference(),
+				eventCode, null, userRole);
 		financeDetail.setModuleDefiner(moduleDefiner);
 
 		// TODO:Removing feed in Restructure event
@@ -288,7 +288,7 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
 			String[] errParm = new String[1];
 			String[] valueParm = new String[1];
-			valueParm[0] = fm.getId();
+			valueParm[0] = fm.getFinReference();
 			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
 			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
@@ -308,7 +308,7 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
 			String[] errParm = new String[1];
 			String[] valueParm = new String[1];
-			valueParm[0] = fm.getId();
+			valueParm[0] = fm.getFinReference();
 			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
 			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
