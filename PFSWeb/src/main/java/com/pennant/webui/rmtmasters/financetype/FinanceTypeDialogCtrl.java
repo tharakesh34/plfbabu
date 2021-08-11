@@ -1967,6 +1967,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			} else {
 				aFinanceType.setDownPayRule(Long.MIN_VALUE);
 			}
+			this.downPayRule.getValidatedValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

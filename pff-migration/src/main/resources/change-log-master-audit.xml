@@ -19,5 +19,5 @@
 	<include file="change-logs/change-log-5.15.0-audit.xml" />
 	<include file="change-logs/change-log-6.0.0-audit.xml" />
 	<include file="change-logs/change-log-islamic_code_removal-audit.xml" />
-	<include file="change-logs/change-log-finid-audit.xml" />
+	<include file="change-logs/change-log-db-based-scheduler-audit.xml" />
 </databaseChangeLog>

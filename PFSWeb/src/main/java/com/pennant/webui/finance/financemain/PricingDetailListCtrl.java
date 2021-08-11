@@ -1904,6 +1904,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 				MessageUtil.confirm("Are you sure to split loans ?", evnt -> {
 					if (Messagebox.ON_YES.equals(evnt.getName())) {
 						pricingDetail.setSplit(true);
+						pricingDetail.setNewRecord(true);
 					} else {
 						this.split.setChecked(false);
 						pricingDetail.setSplit(false);

@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="GopalaSwamy.M" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#180.1" author="GopalaSwamy.M">
+		<createTable tableName="JOB_DETAILS_TEMP">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Key" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Trigger" type="varchar(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Cron_Expression" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Mode" type="number" />
+			<column name="Status" type="number" />
+			<column name="Enabled" type="boolean" />
+			<column name="Failure_Notification_Req" type="boolean" />
+			<column name="Host_Name" type="varchar(200)" />
+			<column name="Port" type="number" defaultValue="0" />
+			<column name="Jmx_Port" type="number" defaultValue="0" />
+			<column name="SMTP_Server" type="bigint" />
+			<column name="Notify_Emails" type="varchar(500)" />
+			<column name="Execution_log_Req" type="boolean" />
+			<column name="Execution_Retention_Days" type="number" />
+			<column name="Version" type="boolean" defaultValueBoolean="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMnton" type="datetime" />
+			<column name="RecordStatus" type="varchar(100)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#180.1.2" author="GopalaSwamy.M">
+		<addPrimaryKey tableName="JOB_DETAILS_TEMP" columnNames="Id" constraintName="PK_JOB_DETAILS_TEMP_ID" />
+	</changeSet>
+
+	<changeSet id="ST#180.1.3" author="GopalaSwamy.M">
+		<addUniqueConstraint columnNames="Key" constraintName="UK_JOB_DETAILS_TEMP_KEY"
+			tableName="JOB_DETAILS_TEMP" />
+	</changeSet>
+
+	<changeSet id="ST#180.1.4" author="GopalaSwamy.M">
+		<addUniqueConstraint columnNames="Description" constraintName="UK_JOB_DETAILS_TEMP_DESC"
+			tableName="JOB_DETAILS_TEMP" />
+	</changeSet>
+
+	<changeSet id="ST#180.1.5" author="GopalaSwamy.M">
+		<addUniqueConstraint columnNames="Trigger" constraintName="UK_JOB_DETAILS_TEMP_TRIGGER"
+			tableName="JOB_DETAILS_TEMP" />
+	</changeSet>
+
+	<changeSet id="ST#180.2.1" author="GopalaSwamy.M">
+		<createTable tableName="JOB_DETAILS">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Key" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Trigger" type="varchar(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Cron_Expression" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Mode" type="number" />
+			<column name="Status" type="number" />
+			<column name="Enabled" type="boolean" />
+			<column name="Failure_Notification_Req" type="boolean" />
+			<column name="Host_Name" type="varchar(200)" />
+			<column name="Port" type="number" defaultValue="0" />
+			<column name="Jmx_Port" type="number" defaultValue="0" />
+			<column name="SMTP_Server" type="bigint" />
+			<column name="Notify_Emails" type="varchar(500)" />
+			<column name="Execution_log_Req" type="boolean" />
+			<column name="Execution_Retention_Days" type="number" />
+			<column name="Version" type="boolean" defaultValueBoolean="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMnton" type="datetime" />
+			<column name="RecordStatus" type="varchar(100)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#180.2.2" author="GopalaSwamy.M">
+		<addPrimaryKey tableName="JOB_DETAILS" columnNames="Id" constraintName="PK_JOB_DETAILS_ID" />
+	</changeSet>
+
+	<changeSet id="ST#180.2.3" author="GopalaSwamy.M">
+		<addUniqueConstraint columnNames="Key" constraintName="UK_JOB_DETAILS_KEY" tableName="JOB_DETAILS" />
+	</changeSet>
+
+	<changeSet id="ST#180.2.4" author="GopalaSwamy.M">
+		<addUniqueConstraint columnNames="Description" constraintName="UK_JOB_DETAILS_DESC"
+			tableName="JOB_DETAILS" />
+	</changeSet>
+
+	<changeSet id="ST#180.2.5" author="GopalaSwamy.M">
+		<addUniqueConstraint columnNames="Trigger" constraintName="UK_JOB_DETAILS_TRIGGER"
+			tableName="JOB_DETAILS" />
+	</changeSet>
+
+	<changeSet id="ST#180.3.1" author="Pavan.E">
+		<createTable tableName="MAIL_SERVERS_TEMP">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Name" type="varchar(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="EmailId" type="varchar(200)" />
+			<column name="MailServer" type="varchar(20)" />
+			<column name="IP" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Port" type="varchar(6)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RequiredSSL" type="boolean" defaultValueBoolean="0" />
+			<column name="AccountType" type="char(5)" />
+			<column name="EncryptionType" type="char(5)" />
+			<column name="UserName" type="varchar(200)" />
+			<column name="Password" type="varchar(100)" />
+			<column name="Version" type="boolean" defaultValueBoolean="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMnton" type="datetime" />
+			<column name="RecordStatus" type="varchar(100)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#180.3.2" author="Pavan.E">
+		<addPrimaryKey tableName="MAIL_SERVERS_TEMP" columnNames="Id" constraintName="PK_MAIL_SERVERS_TEMP_ID" />
+	</changeSet>
+
+	<changeSet id="ST#180.3.3" author="Pavan.E">
+		<addUniqueConstraint columnNames="NAME" constraintName="UK_MAIL_SERVERS_TEMP_NAME"
+			tableName="MAIL_SERVERS_TEMP" />
+	</changeSet>
+
+	<changeSet id="ST#180.4.1" author="Pavan.E">
+		<createTable tableName="MAIL_SERVERS">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Name" type="varchar(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="EmailId" type="varchar(200)" />
+			<column name="MailServer" type="varchar(20)" />
+			<column name="IP" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Port" type="varchar(6)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RequiredSSL" type="boolean" defaultValueBoolean="0" />
+			<column name="AccountType" type="char(5)" />
+			<column name="EncryptionType" type="char(5)" />
+			<column name="UserName" type="varchar(200)" />
+			<column name="Password" type="varchar(100)" />
+			<column name="Version" type="boolean" defaultValueBoolean="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMnton" type="datetime" />
+			<column name="RecordStatus" type="varchar(100)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#180.4.2" author="Pavan.E">
+		<addPrimaryKey tableName="MAIL_SERVERS" columnNames="Id" constraintName="PK_MAIL_SERVERS_ID" />
+	</changeSet>
+
+	<changeSet id="ST#180.4.3" author="Pavan.E">
+		<addUniqueConstraint columnNames="NAME" constraintName="UK_MAIL_SERVERS_NAME"
+			tableName="MAIL_SERVERS" />
+	</changeSet>
+
+	<changeSet id="ST#180.6" author="GopalaSwamy.M">
+		<addForeignKeyConstraint constraintName="FK_JOB_DETAILS_SMTPSERVER"
+			referencedTableName="MAIL_SERVERS" baseColumnNames="SMTP_Server" baseTableName="JOB_DETAILS"
+			referencedColumnNames="Id" />
+	</changeSet>
+
+
+	<changeSet id="ST#180.7" author="GopalaSwamy.M" dbms="mssql">
+		<sql>
+		<![CDATA[
+			Alter table JOB_DETAILS add constraint df_JOB_DTLS_ExecLog default 0 for Execution_log_Req;
+			Alter table JOB_DETAILS add constraint df_JOB_DTLS_Enable default 0 for Enabled;
+			Alter table JOB_DETAILS add constraint df_JOB_DTLS_FailNtf default 0 for Failure_Notification_Req;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#180.7" author="GopalaSwamy.M" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Execution_log_Req" tableName="JOB_DETAILS" defaultValue="0" />
+		<addDefaultValue columnName="Enabled" tableName="JOB_DETAILS" defaultValue="0" />
+		<addDefaultValue columnName="Failure_Notification_Req" tableName="JOB_DETAILS" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#180.8" author="GopalaSwamy.M">
+		<createIndex tableName="JOB_DETAILS" indexName="IDX_JOB_DETAILS" unique="true">
+			<column name="Key" type="varchar(100)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#180.9" author="GopalaSwamy.M">
+		<createTable tableName="JOB_EXECUTIONS">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="Job_Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Start_Time" type="datetime" />
+			<column name="End_Time" type="datetime" />
+			<column name="Total_Records" type="numeric" />
+			<column name="Processed_Records" type="numeric" />
+			<column name="Success_Records" type="numeric" />
+			<column name="Failed_Records" type="numeric" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#180.10" author="GopalaSwamy.M">
+		<addPrimaryKey tableName="JOB_EXECUTIONS" columnNames="Id" constraintName="PK_JOB_EXECUTIONS_ID" />
+	</changeSet>
+
+	<changeSet id="ST#180.11" author="GopalaSwamy.M">
+		<addForeignKeyConstraint constraintName="FK_JOB_EXECUTIONS_JOBID"
+			referencedTableName="JOB_DETAILS" baseColumnNames="Job_Id" baseTableName="JOB_EXECUTIONS" referencedColumnNames="Id" />
+	</changeSet>
+
+	<changeSet id="ST#180.12" author="GopalaSwamy.M">
+		<createIndex tableName="JOB_EXECUTIONS" indexName="IDX_JOB_EXECUTIONS">
+			<column name="Job_Id" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#180.13" author="GopalaSwamy.M">
+		<createTable tableName="JOB_DETAILS_EVENTS">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="Job_Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Mode" type="number">
+				<constraints nullable="false" />
+			</column>
+			<column name="Event_On" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Event_By" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Event_Reason" type="varchar(1000)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#180.14" author="GopalaSwamy.M">
+		<addPrimaryKey tableName="JOB_DETAILS_EVENTS" columnNames="Id" constraintName="PK_JOB_DETAILS_EVENTS_ID" />
+	</changeSet>
+
+	<changeSet id="ST#180.15" author="GopalaSwamy.M">
+		<addForeignKeyConstraint constraintName="FK_JOB_DETAILS_EVENTS_JOBID"
+			referencedTableName="JOB_DETAILS" baseColumnNames="Job_Id" baseTableName="JOB_DETAILS_EVENTS"
+			referencedColumnNames="Id" />
+	</changeSet>
+
+	<changeSet id="ST#180.16" author="GopalaSwamy.M">
+		<createIndex tableName="JOB_DETAILS_EVENTS" indexName="IDX_JOB_DETAILS_EVENTS">
+			<column name="Job_Id" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#180.17" author="GopalaSwamy.M">
+		<createSequence sequenceName="SEQ_MAIL_SERVERS" incrementBy="1" startValue="1" minValue="1"
+			maxValue="10000" />
+	</changeSet>
+
+	<changeSet id="ST#180.18" author="GopalaSwamy.M">
+		<createSequence sequenceName="SEQ_JOB_DETAILS" incrementBy="1" startValue="1" minValue="1"
+			maxValue="10000" />
+	</changeSet>
+
+	<changeSet id="ST#180.19" author="GopalaSwamy.M">
+		<addColumn tableName="JOB_DETAILS">
+			<column name="monitoring_Req" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#180.20" author="GopalaSwamy.M">
+		<sql>
+			<![CDATA[
+				delete from job_executions;
+				delete from JOB_DETAILS;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#180.20.1" author="GopalaSwamy.M">
+		<sql>
+			<![CDATA[
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('1', 	'ACCOUNT_UPDATER_JOB', 						'Account Updater',  												'ACCOUNT_UPDATER_JOB_TRIGGER', 						'0/5 * * 1/1 * ? *', 	1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('2', 	'NOTIFICATION_EMAIL_JOB', 					'Email Notification',  												'NOTIFICATION_EMAIL_JOB_TRIGGER', 					'0 0/2 * 1/1 * ? *', 	1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('3', 	'NOTIFICATION_SMS_JOB', 					'SMS Notification',  												'NOTIFICATION_SMS_JOB_TRIGGER', 					'0 0/2 * 1/1 * ? *', 	1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('4', 	'DISBURSEMENT_PROCESS_JOB', 				'Disbursement Process',  											'DISBURSEMENT_PROCESS_JOB_TRIGGER', 				'0 0/3 * 1/1 * ? *', 	1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('5', 	'GST_INVOICE_GENERATE_JOB', 				'GST Invoice Preparation', 											'GST_INVOICE_GENERATE_JOB_TRIGGER',					'0 0/5 * * * ?',		1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('6',	'SYS_NOTIFICATIONS_INVOKE_JOB',				'Invoking System Notifications',									'SYS_NOTIFICATIONS_INVOKE_JOB_TRIGGER',				'0 0 12 1/1 * ? *', 	1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('7',	'SYS_NOTIFICATIONS_PROCESS_JOB',			'Processing System Notifications',									'SYS_NOTIFICATIONS_PROCESS_JOB_TRIGGER',			'0 0/10 * 1/1 * ? *', 	1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('8',	'AUTO_RECPT_RESPONSE_JOB',					'Auto Receipt Response Job',										'AUTO_RECPT_RESPONSE_JOB_TRIGGER',					'0 0/15 * 1/1 * ? *', 	1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('9',	'COVENANT_ALERTS_JOB',						'Covenant Alerts Job',												'COVENANT_ALERTS_JOB_TRIGGER',						'0 * 4 ? * * *', 		1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('10',	'FIN_PUT_CALL_ALERTS_JOB',					'Fin Put Call Alerts',												'FIN_PUT_CALL_ALERTS_JOB_TRIGGER',					'0 * 4 ? * * *', 		1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('11',	'LMS_SERVICE_LOG_ALERTS_JOB',				'LMS Service Log Alerts',											'LMS_SERVICE_LOG_ALERTS_JOB_TRIGGER',				'0 0/59 * 1/1 * ? *', 	1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('12',	'USER_AUTO_LOCKING_JOB',					'User Auto Locking',												'USER_AUTO_LOCKING_JOB_TRIGGER',					'0 0 5 1/1 * ? *', 		1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('13',	'CASH_BACK_DBD_JOB',					'CashBack DBD Job',														'CASH_BACK_DBD_JOB_TRIGGER',						'0 0 5 1/1 * ? *', 		1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('14',	'DMS_JOB',									'File Based Document Management System',							'DMS_JOB_TRIGGER',									'0 0/1 * 1/1 * ? *', 	1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('15',	'DISBURSEMENT_AUTO_DOWNLOAD_JOB',			'Auto_Disbursement_Download Process',								'DISBURSEMENT_AUTO_DOWNLOAD_JOB_TRIGGER',			'0 0/5 * 1/1 * ? *', 	1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('16',	'DISBURSEMENT_AUTO_UPLOAD_JOB',				'Auto_Disbursement_Uplaod Process',									'DISBURSEMENT_AUTO_UPLOAD_JOB_TRIGGER',				'0 0/5 * 1/1 * ? *', 	1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('17',	'MANDATE_AUTO_DOWNLOAD_JOB',				'Mandate Auto Download',											'MANDATE_AUTO_DOWNLOAD_JOB_TRIGGER',				'0 0/5 * 1/1 * ? *', 	1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('18',	'MANDATE_AUTO_UPLOAD_JOB',					'Mandate Auto Upload',												'MANDATE_AUTO_UPLOAD_JOB_TRIGGER',					'0 0/5 * 1/1 * ? *', 	1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('19',	'MANDATE_AUTO_UPLOAD_ACK_JOB',				'Mandate Auto Upload of Acknowledgement',							'MANDATE_AUTO_UPLOAD_ACK_JOB_TRIGGER',				'0 0/5 * 1/1 * ? *', 	1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('20',	'PRESENTMENT_AUTO_EXTRACT_JOB',				'Presentment Auto Extract Job Enabled',								'PRESENTMENT_EXTRACT_JOB_TRIGGER',					'0 0/5 * 1/1 * ? *', 	1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('21',	'PRESENTMENT_NACH_AUTO_UPLOAD_JOB',			'Presentment NACH Auto Upload Job Enabled',							'PRESENTMENT_NACH_AUTO_UPLOAD_JOB_TRIGGER',			'0 0/5 * 1/1 * ? *', 	1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('22',	'PRESENTMENT_PDC_AUTO_UPLOAD_JOB',			'Presentment PDC Auto Upload Job Enabled',							'PRESENTMENT_PDC_AUTO_UPLOAD_JOB_ENABLED_TRIGGER',	'0 0/5 * 1/1 * ? *', 	1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('23',	'PORTAL_CUSTOMER_EXTRACT_JOB',				'Customer extract Job',												'PORTAL_CUSTOMER_EXTRACT_JOB_TRIGGER',				'0 0/15 * 1/1 * ? *', 	1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('24',	'AUTO_EOD_JOB',								'Auto Eod Job',														'AUTO_EOD_JOB_TRIGGER',								'0 0/3 * 1/1 * ? *', 	1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('25',	'EOD_REMINDER_JOB',							'EOD Reminder Job',													'EOD_REMINDER_JOB_TRIGGER',							'0 0/3 * 1/1 * ? *', 	1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('26',	'EOD_DELAY_JOB',							'EOD Delay Job',													'EOD_DELAY_JOB_TRIGGER',							'0 0/3 * 1/1 * ? *', 	1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+				INSERT INTO JOB_DETAILS (ID, KEY, DESCRIPTION, TRIGGER, CRON_EXPRESSION, MODE, STATUS, EXECUTION_LOG_REQ, ENABLED, FAILURE_NOTIFICATION_REQ, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_RETENTION_DAYS, MONITORING_REQ)  values ('27',	'MOB_AGENCY_RECEIPT_LIMIT_UPDATE_JOB',		'Updating Collection Agency Limit for Receipt Source Mobile',		'MOB_AGENCY_RECEIPT_LIMIT_UPDATE_JOB_TRIGGER',		'0 0/1 * 1/1 * ? *', 	1, 0, 1, 0, 0, NULL, NULL, 0, 1);
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="ST#180.20.2.1" author="GopalaSwamy.M">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="1">
+				SELECT COUNT(*) from SMTParameters where SysParmCode =
+				'DISBURSEMENT_PROCESS_JOB_FREQUENCY';
+			</sqlCheck>
+		</preConditions>
+		<sql>
+			<![CDATA[
+			   UPDATE JOB_DETAILS Set CRON_EXPRESSION = (select CASE WHEN coalesce(SysParmValue, 'NA') = 'NA' THEN '0 0/3 * 1/1 * ? *' ELSE SysParmValue END SysParmValue from SMTParameters where SysParmCode = 'DISBURSEMENT_PROCESS_JOB_FREQUENCY') where KEY = 'DISBURSEMENT_PROCESS_JOB';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#180.20.2.2" author="GopalaSwamy.M">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="1">
+				SELECT COUNT(*) from SMTParameters where SysParmCode =
+				'RECEIPT_RESPONSE_JOB_CORNEXP';
+			</sqlCheck>
+		</preConditions>
+		<sql>
+			<![CDATA[
+			   UPDATE JOB_DETAILS Set CRON_EXPRESSION = (select CASE WHEN coalesce(SysParmValue, 'NA') = 'NA' THEN '0 0/15 * 1/1 * ? *' ELSE SysParmValue END SysParmValue from SMTParameters where SysParmCode = 'RECEIPT_RESPONSE_JOB_CORNEXP') where KEY = 'AUTO_RECPT_RESPONSE_JOB';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#180.20.2.3" author="GopalaSwamy.M">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="1">
+				SELECT COUNT(*) from SMTParameters where SysParmCode =
+				'CD_CASHBACK_CRON_EXPRESSION';
+			</sqlCheck>
+		</preConditions>
+		<sql>
+			<![CDATA[
+			   UPDATE JOB_DETAILS Set CRON_EXPRESSION = (select CASE WHEN coalesce(SysParmValue, 'NA') = 'NA' THEN '0 0 5 1/1 * ? *' ELSE SysParmValue END SysParmValue from SMTParameters where SysParmCode = 'CD_CASHBACK_CRON_EXPRESSION') where KEY = 'REG_CASH_BACK_DBD_JOB';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#180.20.2.4" author="GopalaSwamy.M">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="1">
+				SELECT COUNT(*) from SMTParameters where SysParmCode =
+				'DISBURSEMENT_AUTO_DOWNLOAD_JOB_FREQUENCY';
+			</sqlCheck>
+		</preConditions>
+		<sql>
+			<![CDATA[
+			   UPDATE JOB_DETAILS Set CRON_EXPRESSION = (select CASE WHEN coalesce(SysParmValue, 'NA') = 'NA' THEN '0 0/5 * 1/1 * ? *' ELSE SysParmValue END SysParmValue from SMTParameters where SysParmCode = 'DISBURSEMENT_AUTO_DOWNLOAD_JOB_FREQUENCY') where KEY = 'DISBURSEMENT_AUTO_DOWNLOAD_JOB';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#180.20.2.5" author="GopalaSwamy.M">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="1">
+				SELECT COUNT(*) from SMTParameters where SysParmCode =
+				'DISBURSEMENT_AUTO_UPLOAD_JOB_FREQUENCY';
+			</sqlCheck>
+		</preConditions>
+		<sql>
+			<![CDATA[
+			   UPDATE JOB_DETAILS Set CRON_EXPRESSION = (select CASE WHEN coalesce(SysParmValue, 'NA') = 'NA' THEN '0 0/5 * 1/1 * ? *' ELSE SysParmValue END SysParmValue from SMTParameters where SysParmCode = 'DISBURSEMENT_AUTO_UPLOAD_JOB_FREQUENCY') where KEY = 'DISBURSEMENT_AUTO_UPLOAD_JOB';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#180.20.2.6" author="GopalaSwamy.M">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="1">
+				SELECT COUNT(*) from SMTParameters where SysParmCode =
+				'MANDATE_AUTO_DOWNLOAD_JOB_FREQUENCY';
+			</sqlCheck>
+		</preConditions>
+		<sql>
+			<![CDATA[
+			   UPDATE JOB_DETAILS Set CRON_EXPRESSION = (select CASE WHEN coalesce(SysParmValue, 'NA') = 'NA' THEN '0 0/5 * 1/1 * ? *' ELSE SysParmValue END SysParmValue from SMTParameters where SysParmCode = 'MANDATE_AUTO_DOWNLOAD_JOB_FREQUENCY') where KEY = 'MANDATE_AUTO_DOWNLOAD_JOB';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#180.20.2.7" author="GopalaSwamy.M">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="1">
+				SELECT COUNT(*) from SMTParameters where SysParmCode =
+				'MANDATE_AUTO_UPLOAD_JOB_FREQUENCY';
+			</sqlCheck>
+		</preConditions>
+		<sql>
+			<![CDATA[
+			   UPDATE JOB_DETAILS Set CRON_EXPRESSION = (select CASE WHEN coalesce(SysParmValue, 'NA') = 'NA' THEN '0 0/5 * 1/1 * ? *' ELSE SysParmValue END SysParmValue from SMTParameters where SysParmCode = 'MANDATE_AUTO_UPLOAD_JOB_FREQUENCY') where KEY = 'MANDATE_AUTO_UPLOAD_JOB';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#180.20.2.8" author="GopalaSwamy.M">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="1">
+				SELECT COUNT(*) from SMTParameters where SysParmCode =
+				'MANDATE_AUTO_UPLOAD_ACK_JOB_FREQUENCY';
+			</sqlCheck>
+		</preConditions>
+		<sql>
+			<![CDATA[
+			   UPDATE JOB_DETAILS Set CRON_EXPRESSION = (select CASE WHEN coalesce(SysParmValue, 'NA') = 'NA' THEN '0 0/5 * 1/1 * ? *' ELSE SysParmValue END SysParmValue from SMTParameters where SysParmCode = 'MANDATE_AUTO_UPLOAD_ACK_JOB_FREQUENCY') where KEY = 'MANDATE_AUTO_UPLOAD_ACK_JOB';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#180.20.2.9" author="GopalaSwamy.M">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="1">
+				SELECT COUNT(*) from SMTParameters where SysParmCode =
+				'PRESENTMENT_AUTO_EXTRACT_JOB_FREQUENCY';
+			</sqlCheck>
+		</preConditions>
+		<sql>
+			<![CDATA[
+			   UPDATE JOB_DETAILS Set CRON_EXPRESSION = (select CASE WHEN coalesce(SysParmValue, 'NA') = 'NA' THEN '0 0/5 * 1/1 * ? *' ELSE SysParmValue END SysParmValue from SMTParameters where SysParmCode = 'PRESENTMENT_AUTO_EXTRACT_JOB_FREQUENCY') where KEY = 'PRESENTMENT_AUTO_EXTRACT_JOB';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#180.20.2.10" author="GopalaSwamy.M">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="1">
+				SELECT COUNT(*) from SMTParameters where SysParmCode =
+				'PRESENTMENT_NACH_AUTO_UPLOAD_JOB_FREQUENCY';
+			</sqlCheck>
+		</preConditions>
+		<sql>
+			<![CDATA[
+			   UPDATE JOB_DETAILS Set CRON_EXPRESSION = (select CASE WHEN coalesce(SysParmValue, 'NA') = 'NA' THEN '0 0/5 * 1/1 * ? *' ELSE SysParmValue END SysParmValue from SMTParameters where SysParmCode = 'PRESENTMENT_NACH_AUTO_UPLOAD_JOB_FREQUENCY') where KEY = 'PRESENTMENT_NACH_AUTO_UPLOAD_JOB';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#180.20.2.11" author="GopalaSwamy.M">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="1">
+				SELECT COUNT(*) from SMTParameters where SysParmCode =
+				'PRESENTMENT_PDC_AUTO_UPLOAD_JOB_FREQUENCY';
+			</sqlCheck>
+		</preConditions>
+		<sql>
+			<![CDATA[
+			   UPDATE JOB_DETAILS Set CRON_EXPRESSION = (select CASE WHEN coalesce(SysParmValue, 'NA') = 'NA' THEN '0 0/5 * 1/1 * ? *' ELSE SysParmValue END SysParmValue from SMTParameters where SysParmCode = 'PRESENTMENT_PDC_AUTO_UPLOAD_JOB_FREQUENCY') where KEY = 'PRESENTMENT_PDC_AUTO_UPLOAD_JOB';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#180.20.3" author="GopalaSwamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'DISBURSEMENT_PROCESS_JOB_ENABLED') AS numeric) where KEY = 'DISBURSEMENT_PROCESS_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'IS_RECEIPT_RESPONSE_JOB_REQ') AS numeric) where KEY = 'AUTO_RECPT_RESPONSE_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'LMS_SERVICE_LOG_REQ') AS numeric) where KEY = 'LMS_SERVICE_LOG_ALERTS_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'CD_CASHBACK_JOB_REQUIRED') AS numeric) where KEY = 'REG_CASH_BACK_DBD_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'DISBURSEMENT_AUTO_DOWNLOAD_JOB_ENABLED') AS numeric) where KEY = 'DISBURSEMENT_AUTO_DOWNLOAD_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'DISBURSEMENT_AUTO_UPLOAD_JOB_ENABLED') AS numeric) where KEY = 'DISBURSEMENT_AUTO_UPLOAD_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'MANDATE_AUTO_DOWNLOAD_JOB_ENABLED') AS numeric) where KEY = 'MANDATE_AUTO_DOWNLOAD_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'MANDATE_AUTO_UPLOAD_JOB_ENABLED') AS numeric) where KEY = 'MANDATE_AUTO_UPLOAD_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'MANDATE_AUTO_UPLOAD_ACK_JOB_ENABLED') AS numeric) where KEY = 'MANDATE_AUTO_UPLOAD_ACK_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'PRESENTMENT_AUTO_EXTRACT_JOB_ENABLED') AS numeric) where KEY = 'PRESENTMENT_AUTO_EXTRACT_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'PRESENTMENT_NACH_AUTO_UPLOAD_JOB_ENABLED') AS numeric) where KEY = 'PRESENTMENT_NACH_AUTO_UPLOAD_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'PRESENTMENT_PDC_AUTO_UPLOAD_JOB_ENABLED') AS numeric) where KEY = 'PRESENTMENT_PDC_AUTO_UPLOAD_JOB';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#180.20.3" author="GopalaSwamy.M" dbms="mssql">
+		<sql>
+			<![CDATA[
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'DISBURSEMENT_PROCESS_JOB_ENABLED') AS INT) where KEY = 'DISBURSEMENT_PROCESS_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'IS_RECEIPT_RESPONSE_JOB_REQ') AS INT) where KEY = 'AUTO_RECPT_RESPONSE_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'LMS_SERVICE_LOG_REQ') AS INT) where KEY = 'LMS_SERVICE_LOG_ALERTS_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'CD_CASHBACK_JOB_REQUIRED') AS INT) where KEY = 'REG_CASH_BACK_DBD_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'DISBURSEMENT_AUTO_DOWNLOAD_JOB_ENABLED') AS INT) where KEY = 'DISBURSEMENT_AUTO_DOWNLOAD_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'DISBURSEMENT_AUTO_UPLOAD_JOB_ENABLED') AS INT) where KEY = 'DISBURSEMENT_AUTO_UPLOAD_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'MANDATE_AUTO_DOWNLOAD_JOB_ENABLED') AS INT) where KEY = 'MANDATE_AUTO_DOWNLOAD_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'MANDATE_AUTO_UPLOAD_JOB_ENABLED') AS INT) where KEY = 'MANDATE_AUTO_UPLOAD_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'MANDATE_AUTO_UPLOAD_ACK_JOB_ENABLED') AS INT) where KEY = 'MANDATE_AUTO_UPLOAD_ACK_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'PRESENTMENT_AUTO_EXTRACT_JOB_ENABLED') AS INT) where KEY = 'PRESENTMENT_AUTO_EXTRACT_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'PRESENTMENT_NACH_AUTO_UPLOAD_JOB_ENABLED') AS INT) where KEY = 'PRESENTMENT_NACH_AUTO_UPLOAD_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'PRESENTMENT_PDC_AUTO_UPLOAD_JOB_ENABLED') AS INT) where KEY = 'PRESENTMENT_PDC_AUTO_UPLOAD_JOB';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#180.20.3" author="GopalaSwamy.M" dbms="oracle">
+		<sql>
+			<![CDATA[
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'DISBURSEMENT_PROCESS_JOB_ENABLED') AS number) where KEY = 'DISBURSEMENT_PROCESS_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'IS_RECEIPT_RESPONSE_JOB_REQ') AS number) where KEY = 'AUTO_RECPT_RESPONSE_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'LMS_SERVICE_LOG_REQ') AS numeric) where KEY = 'LMS_SERVICE_LOG_ALERTS_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'CD_CASHBACK_JOB_REQUIRED') AS number) where KEY = 'REG_CASH_BACK_DBD_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'DISBURSEMENT_AUTO_DOWNLOAD_JOB_ENABLED') AS number) where KEY = 'DISBURSEMENT_AUTO_DOWNLOAD_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'DISBURSEMENT_AUTO_UPLOAD_JOB_ENABLED') AS number) where KEY = 'DISBURSEMENT_AUTO_UPLOAD_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'MANDATE_AUTO_DOWNLOAD_JOB_ENABLED') AS number) where KEY = 'MANDATE_AUTO_DOWNLOAD_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'MANDATE_AUTO_UPLOAD_JOB_ENABLED') AS number) where KEY = 'MANDATE_AUTO_UPLOAD_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'MANDATE_AUTO_UPLOAD_ACK_JOB_ENABLED') AS number) where KEY = 'MANDATE_AUTO_UPLOAD_ACK_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'PRESENTMENT_AUTO_EXTRACT_JOB_ENABLED') AS number) where KEY = 'PRESENTMENT_AUTO_EXTRACT_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'PRESENTMENT_NACH_AUTO_UPLOAD_JOB_ENABLED') AS number) where KEY = 'PRESENTMENT_NACH_AUTO_UPLOAD_JOB';
+			  	UPDATE JOB_DETAILS Set enabled = CAST((select CASE WHEN coalesce(SysParmValue, 'N') = 'Y' THEN '1' ELSE '0' END SysParmValue from SMTParameters where SysParmCode = 'PRESENTMENT_PDC_AUTO_UPLOAD_JOB_ENABLED') AS number) where KEY = 'PRESENTMENT_PDC_AUTO_UPLOAD_JOB';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#180.20.4" author="GopalaSwamy.M">
+		<sql>
+			<![CDATA[
+			  	delete from SMTParameters where SysParmCode = 'DISBURSEMENT_PROCESS_JOB_FREQUENCY';
+				delete from SMTParameters where SysParmCode = 'DISBURSEMENT_PROCESS_JOB_ENABLED';
+				delete from SMTParameters where SysParmCode = 'RECEIPT_RESPONSE_JOB_CORNEXP';
+				delete from SMTParameters where SysParmCode = 'IS_RECEIPT_RESPONSE_JOB_REQ';
+				delete from SMTParameters where SysParmCode = 'LMS_SERVICE_LOG_REQ';
+				delete from SMTParameters where SysParmCode = 'CD_CASHBACK_JOB_REQUIRED';
+				delete from SMTParameters where SysParmCode = 'CD_CASHBACK_CRON_EXPRESSION';
+				delete from SMTParameters where SysParmCode = 'DISBURSEMENT_AUTO_DOWNLOAD';
+				delete from SMTParameters where SysParmCode = 'DISBURSEMENT_AUTO_DOWNLOAD_JOB_ENABLED';
+				delete from SMTParameters where SysParmCode = 'DISBURSEMENT_AUTO_DOWNLOAD_JOB_FREQUENCY';
+				delete from SMTParameters where SysParmCode = 'DISBURSEMENT_AUTO_UPLOAD';
+				delete from SMTParameters where SysParmCode = 'DISBURSEMENT_AUTO_UPLOAD_JOB_ENABLED';
+				delete from SMTParameters where SysParmCode = 'DISBURSEMENT_AUTO_UPLOAD_JOB_FREQUENCY';
+				delete from SMTParameters where SysParmCode = 'MANDATE_AUTO_DOWNLOAD';
+				delete from SMTParameters where SysParmCode = 'MANDATE_AUTO_DOWNLOAD_JOB_ENABLED';
+				delete from SMTParameters where SysParmCode = 'MANDATE_AUTO_DOWNLOAD_JOB_FREQUENCY';
+				delete from SMTParameters where SysParmCode = 'MANDATE_AUTO_UPLOAD';
+				delete from SMTParameters where SysParmCode = 'MANDATE_AUTO_UPLOAD_JOB_ENABLED';
+				delete from SMTParameters where SysParmCode = 'MANDATE_AUTO_UPLOAD_JOB_FREQUENCY';
+				delete from SMTParameters where SysParmCode = 'MANDATE_AUTO_UPLOAD';
+				delete from SMTParameters where SysParmCode = 'MANDATE_AUTO_UPLOAD_ACK_JOB_ENABLED';
+				delete from SMTParameters where SysParmCode = 'MANDATE_AUTO_UPLOAD_ACK_JOB_FREQUENCY';
+				delete from SMTParameters where SysParmCode = 'PRESENTMENT_AUTO_DOWNLOAD';
+				delete from SMTParameters where SysParmCode = 'PRESENTMENT_AUTO_EXTRACT_JOB_ENABLED';
+				delete from SMTParameters where SysParmCode = 'PRESENTMENT_AUTO_EXTRACT_JOB_FREQUENCY';
+				delete from SMTParameters where SysParmCode = 'PRESENTMENT_AUTO_UPLOAD';
+				delete from SMTParameters where SysParmCode = 'PRESENTMENT_NACH_AUTO_UPLOAD_JOB_ENABLED';
+				delete from SMTParameters where SysParmCode = 'PRESENTMENT_NACH_AUTO_UPLOAD_JOB_FREQUENCY';
+				delete from SMTParameters where SysParmCode = 'PRESENTMENT_AUTO_UPLOAD';
+				delete from SMTParameters where SysParmCode = 'PRESENTMENT_PDC_AUTO_UPLOAD_JOB_ENABLED';
+				delete from SMTParameters where SysParmCode = 'PRESENTMENT_PDC_AUTO_UPLOAD_JOB_FREQUENCY';
+			  	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#180.21" author="GopalaSwamy.M">
+		<sql>
+			<![CDATA[
+			    DELETE FROM SECROLEGROUPS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'JOBS_MONITORING') and ROLEID = (SELECT ROLEID FROM SECROLES WHERE ROLECD='JOBS_MONITORING');
+			    DELETE FROM SECOPERATIONROLES WHERE ROLEID = (SELECT ROLEID FROM SECROLES WHERE RoleCd='JOBS_MONITORING');
+			    DELETE FROM SECROLES WHERE ROLECD = 'JOBS_MONITORING';
+			    DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_JobsMonitoring') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'JOBS_MONITORING');
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_JobsMonitoring';
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'JOBS_MONITORING';
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_JobsMonitoring', 'MENU', 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			    INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'JOBS_MONITORING', 'Group for Jobs Monitoring', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+			    INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'JOBS_MONITORING'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_JobsMonitoring'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			    INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'JOBS_MONITORING', 'Role for Menu Roles', null, 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			    INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGRPID)+1 From SECROLEGROUPS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='JOBS_MONITORING'), (SELECT ROLEID FROM SECROLES WHERE ROLECD='JOBS_MONITORING'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			
+			]]>
+		</sql>
+	</changeSet>
+
+</databaseChangeLog>

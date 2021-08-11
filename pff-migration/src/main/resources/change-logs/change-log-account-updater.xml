@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
@@ -38,17 +38,16 @@
 	<changeSet id="1" author="naga.g">
 		<dropView viewName="Accounts_view" />
 		<dropView viewName="Accounts_aview" />
-
-		<!-- <dropTable tableName="AccountsByReference" /> <dropTable tableName="AccountHistoryDetails" /> <dropTable tableName="AccountsHistory" 
-			/> -->
-		<dropTable tableName="Accounts" />
 	</changeSet>
 
+	<changeSet id="1.1" author="murthy.y">
+		<renameTable newTableName="Accounts_old" oldTableName="Accounts" />
+	</changeSet>
 
-	<changeSet id="2" author="naga.g">
+	<changeSet id="2_change" author="naga.g">
 		<createTable tableName="Accounts">
 			<column name="Id" type="bigint">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_accounts_id" />
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_accounts" />
 			</column>
 			<column name="AcNumber" type="varchar(50)">
 				<constraints nullable="false" />
@@ -72,12 +71,14 @@
 	</changeSet>
 
 	<changeSet id="2.1" author="naga.g">
-		<addUniqueConstraint columnNames="AcNumber" constraintName="uk_accounts_acnumber" tableName="Accounts" />
+		<addUniqueConstraint columnNames="AcNumber" constraintName="uk_accounts_acnumber"
+			tableName="Accounts" />
 	</changeSet>
 
 	<changeSet id="2.2" author="naga.g">
-		<addForeignKeyConstraint constraintName="fk_accounts_actype" referencedTableName="RMTAccountTypes"
-			baseColumnNames="AcType" baseTableName="Accounts" referencedColumnNames="AcType" />
+		<addForeignKeyConstraint constraintName="fk_accounts_actype"
+			referencedTableName="RMTAccountTypes" baseColumnNames="AcType" baseTableName="Accounts"
+			referencedColumnNames="AcType" />
 	</changeSet>
 
 	<changeSet id="2.3" author="naga.g" dbms="oracle postgresql">
@@ -119,13 +120,14 @@
 	</changeSet>
 
 	<changeSet id="3.1" author="naga.g">
-		<addUniqueConstraint columnNames="AccountId, PostDate" constraintName="uk_accounts_history_acid_pdate"
-			tableName="Accounts_History" />
+		<addUniqueConstraint columnNames="AccountId, PostDate"
+			constraintName="uk_accounts_history_acid_pdate" tableName="Accounts_History" />
 	</changeSet>
 
 	<changeSet id="3.2" author="naga.g">
-		<addForeignKeyConstraint constraintName="fk_accounts_history_accountId" referencedTableName="Accounts"
-			baseColumnNames="AccountId" baseTableName="Accounts_History" referencedColumnNames="Id" />
+		<addForeignKeyConstraint constraintName="fk_accounts_history_accountId"
+			referencedTableName="Accounts" baseColumnNames="AccountId" baseTableName="Accounts_History"
+			referencedColumnNames="Id" />
 	</changeSet>
 
 	<changeSet id="3.3" author="naga.g" dbms="oracle postgresql">
@@ -185,13 +187,14 @@
 	</changeSet>
 
 	<changeSet id="4.1" author="naga.g">
-		<addUniqueConstraint tableName="Accounts_History_Details" columnNames="AccountId, EntityCode, PostBranch, BranchProvince, PostDate"
-			constraintName="uk_ahd_achid_pd_ec_pb_bp" />
+		<addUniqueConstraint tableName="Accounts_History_Details"
+			columnNames="AccountId, EntityCode, PostBranch, BranchProvince, PostDate" constraintName="uk_ahd_achid_pd_ec_pb_bp" />
 	</changeSet>
 
 	<changeSet id="4.2" author="naga.g">
-		<addForeignKeyConstraint constraintName="fk_accounts_history_dtls_aid" referencedTableName="Accounts"
-			baseColumnNames="AccountId" baseTableName="Accounts_History_Details" referencedColumnNames="Id" />
+		<addForeignKeyConstraint constraintName="fk_accounts_history_dtls_aid"
+			referencedTableName="Accounts" baseColumnNames="AccountId" baseTableName="Accounts_History_Details"
+			referencedColumnNames="Id" />
 	</changeSet>
 
 	<changeSet id="4.4" author="naga.g" dbms="oracle postgresql">
@@ -257,8 +260,9 @@
 	</changeSet>
 
 	<changeSet id="5.2" author="naga.g">
-		<addForeignKeyConstraint constraintName="fk_accounts_by_ref_accountid" referencedTableName="Accounts"
-			baseColumnNames="AccountId" baseTableName="Accounts_By_FinReferences" referencedColumnNames="Id" />
+		<addForeignKeyConstraint constraintName="fk_accounts_by_ref_accountid"
+			referencedTableName="Accounts" baseColumnNames="AccountId" baseTableName="Accounts_By_FinReferences"
+			referencedColumnNames="Id" />
 	</changeSet>
 	<changeSet id="5.4" author="naga.g" dbms="oracle postgresql">
 		<addDefaultValue columnName="GLBalance" tableName="Accounts_By_FinReferences" defaultValue="0" />
@@ -328,11 +332,166 @@
 			<column name="LinkedTranId" />
 		</createIndex>
 	</changeSet>
-	
-	 <changeSet id="10" author="murthy.y">
+
+	<changeSet id="10" author="murthy.y">
 		<addColumn tableName="Postings_Stage">
 			<column name="PostDate" type="datetime" />
 		</addColumn>
 	</changeSet>
-</databaseChangeLog>
 
+	<changeSet id="11" author="naga.g">
+		<createTable tableName="Accounts_Work">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_accounts_work_id" />
+			</column>
+			<column name="AcNumber" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AcCcy" type="char(3)" />
+			<column name="AcType" type="varchar(15)" />
+			<column name="AcBranch" type="varchar(15)" />
+			<column name="AcBalance" type="decimal(18, 0)" />
+			<column name="AcOpenDate" type="datetime" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="11" author="murthy.y">
+		<dropColumn tableName="Postings_Stage" columnName="PostDate" />
+	</changeSet>
+
+	<changeSet id="12" author="sampath.d" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ACCOUNTS ALTER COLUMN ACCCY DROP NOT NULL;
+				ALTER TABLE ACCOUNTS ALTER COLUMN ACTYPE DROP NOT NULL;
+				ALTER TABLE ACCOUNTS ALTER COLUMN ACBRANCH DROP NOT NULL;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="12" author="sampath.d" dbms="oracle">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ACCOUNTS MODIFY ( ACCCY NULL);
+				ALTER TABLE ACCOUNTS MODIFY ( ACTYPE NULL);
+				ALTER TABLE ACCOUNTS MODIFY ( ACBRANCH NULL);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="12" author="sampath.d" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ACCOUNTS ALTER COLUMN ACCCY CHAR NULL
+				ALTER TABLE ACCOUNTS ALTER COLUMN ACTYPE VARCHAR NULL
+				ALTER TABLE ACCOUNTS ALTER COLUMN ACBRANCH VARCHAR NULL
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="13" author="murthy.y">
+		<createTable tableName="Account_updater">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_Account_updater" />
+			</column>
+			<column name="fromID" type="int" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="ToId" type="int" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="ProcessFlag" type="int" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="14" author="murthy.y">
+		<addColumn tableName="Postings">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="15" author="murthy.y">
+		<dropPrimaryKey tableName="Postings" />
+	</changeSet>
+
+	<changeSet id="16" author="murthy.y">
+		<addPrimaryKey tableName="Postings" columnNames="Id" constraintName="PK_Postings" />
+	</changeSet>
+
+	<changeSet id="17" author="murthy.y">
+		<createIndex tableName="Postings" indexName="IDX_POSTINGS_LTRANID_TORDER" unique="true">
+			<column name="LinkedTranId" type="bigint" />
+			<column name="TransOrder" type="int" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="19" author="murthy.y">
+		<dropTable tableName="Postings_Stage" />
+	</changeSet>
+
+	<changeSet id="20" author="murthy.y">
+		<sql>
+			<![CDATA[
+				DELETE FROM Accounts_By_FinReferences;
+				DELETE FROM Accounts_History_Details;
+				DELETE FROM Accounts_History;
+				DELETE FROM Accounts;
+				DELETE FROM Account_updater;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="20.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				INSERT INTO Account_updater (fromID, ToId, ProcessFlag) values(1, 1, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="20.2" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update Account_updater set fromID = (select Min(ID) from Postings), ToId = (select Max(ID) from Postings);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="21" author="murthy.y">
+		<dropForeignKeyConstraint baseTableName="Accounts_History"
+			constraintName="fk_accounts_history_accountId" />
+	</changeSet>
+
+	<changeSet id="21.1" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_accounts_history_accountId"
+			referencedTableName="Accounts" baseColumnNames="AccountId" baseTableName="Accounts_History"
+			referencedColumnNames="Id" />
+	</changeSet>
+
+	<changeSet id="22" author="murthy.y">
+		<dropForeignKeyConstraint baseTableName="Accounts_History_Details"
+			constraintName="fk_accounts_history_dtls_aid" />
+	</changeSet>
+
+	<changeSet id="22.1" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_accounts_history_dtls_aid"
+			referencedTableName="Accounts" baseColumnNames="AccountId" baseTableName="Accounts_History_Details"
+			referencedColumnNames="Id" />
+	</changeSet>
+
+	<changeSet id="23" author="murthy.y">
+		<dropForeignKeyConstraint baseTableName="Accounts_By_FinReferences"
+			constraintName="fk_accounts_by_ref_accountid" />
+	</changeSet>
+
+	<changeSet id="23.1" author="murthy.y">
+		<addForeignKeyConstraint constraintName="fk_accounts_by_ref_accountid"
+			referencedTableName="Accounts" baseColumnNames="AccountId" baseTableName="Accounts_By_FinReferences"
+			referencedColumnNames="Id" />
+	</changeSet>
+
+</databaseChangeLog>
