@@ -80,9 +80,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class FinanceMain extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -3026443763391506067L;
 
-	// ===========================================
-	// ==========Finance Basic Details============
-	// ===========================================
+	private long finID;
 	@XmlElement
 	private String finReference;
 
@@ -1030,6 +1028,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public FinanceMain copyEntity() {
 		FinanceMain entity = new FinanceMain();
+		entity.setFinID(this.finID);
 		entity.setFinReference(this.finReference);
 		entity.setLinkedFinRef(this.linkedFinRef);
 		entity.setInvestmentRef(this.investmentRef);
@@ -1509,6 +1508,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public FinanceMain() {
 		super();
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getLovDescAsmName() {
