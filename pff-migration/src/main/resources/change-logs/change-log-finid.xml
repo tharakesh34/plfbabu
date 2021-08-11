@@ -131,7 +131,6 @@
 			]]>
 		</sql>
 	</changeSet>
-
 	<changeSet id="4.3_Pre.0001" author="murthy.y">
 		<dropForeignKeyConstraint baseTableName="fincollaterals"
 			constraintName="fk_fincollaterals_finmain" />
@@ -288,15 +287,12 @@
 		<dropForeignKeyConstraint baseTableName="financepremiumdetail"
 			constraintName="fk_financepremiumdtl_finmain" />
 	</changeSet>
-
 	<changeSet id="4.3" author="murthy.y">
 		<dropPrimaryKey tableName="FinanceMain" />
 	</changeSet>
-
 	<changeSet id="4.4" author="murthy.y">
 		<dropPrimaryKey tableName="FinanceMain_Temp" />
 	</changeSet>
-
 	<changeSet id="4.5" author="murthy.y">
 		<addUniqueConstraint tableName="FinanceMain" columnNames="FinReference"
 			constraintName="UK_FM_FinReference" />
@@ -305,12 +301,21 @@
 		<addUniqueConstraint tableName="FinanceMain_Temp" columnNames="FinReference"
 			constraintName="UK_FMT_FinReference" />
 	</changeSet>
-
 	<changeSet id="4.7" author="murthy.y">
 		<addPrimaryKey tableName="FinanceMain" columnNames="FinID" constraintName="PK_FinanceMain" />
 	</changeSet>
 	<changeSet id="4.8" author="murthy.y">
 		<addPrimaryKey tableName="FinanceMain_Temp" columnNames="FinID" constraintName="PK_FinanceMain_Temp" />
+	</changeSet>
+	<changeSet id="4.9" author="murthy.y">
+		<createIndex tableName="FinanceMain" indexName="idx_financemain_fid_factive">
+			<column name="FinID" type="bigint" />
+			<column name="FinIsActive" type="boolean" />
+		</createIndex>
+		<createIndex tableName="FinanceMain" indexName="idx_financemain_t_fid_factive">
+			<column name="FinID" type="bigint" />
+			<column name="FinIsActive" type="boolean" />
+		</createIndex>
 	</changeSet>
 
 	<changeSet id="5" author="murthy.y">
