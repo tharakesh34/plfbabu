@@ -1,0 +1,1289 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="1" author="murthy.y">
+		<addColumn tableName="adtagreementfielddetails">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="1.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtagreementfielddetails set FinID = (select m.FinID from FINID_MAPPING m where adtagreementfielddetails.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="1.2" author="murthy.y">
+		<createIndex tableName="adtagreementfielddetails" indexName="idx_adtagreementfieldtl_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="2" author="murthy.y">
+		<addColumn tableName="adtadviseuploads">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="2.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtadviseuploads set FinID = (select m.FinID from FINID_MAPPING m where adtadviseuploads.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="2.2" author="murthy.y">
+		<createIndex tableName="adtadviseuploads" indexName="idx_adtadviseuploads_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="3" author="murthy.y">
+		<addColumn tableName="adtfinscheduledetails">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="3.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinscheduledetails set FinID = (select m.FinID from FINID_MAPPING m where adtfinscheduledetails.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="3.2" author="murthy.y">
+		<createIndex tableName="adtfinscheduledetails" indexName="idx_adtfinschedules_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="4" author="murthy.y">
+		<addColumn tableName="adtfindefermentheader">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="4.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfindefermentheader set FinID = (select m.FinID from FINID_MAPPING m where adtfindefermentheader.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="4.2" author="murthy.y">
+		<createIndex tableName="adtfindefermentheader" indexName="idx_adtfindefermenthdr_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="5" author="murthy.y">
+		<addColumn tableName="adtbulkprocessdetails">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="5.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtbulkprocessdetails set FinID = (select m.FinID from FINID_MAPPING m where adtbulkprocessdetails.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="5.2" author="murthy.y">
+		<createIndex tableName="adtbulkprocessdetails" indexName="idx_adtbulkprocessdtls_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="6" author="murthy.y">
+		<addColumn tableName="adtbulkratechangedetails">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="6.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtbulkratechangedetails set FinID = (select m.FinID from FINID_MAPPING m where adtbulkratechangedetails.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="6.2" author="murthy.y">
+		<createIndex tableName="adtbulkratechangedetails" indexName="idx_adtbulkratechngdtls_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="7" author="murthy.y">
+		<addColumn tableName="adtchequeheader">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="7.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtchequeheader set FinID = (select m.FinID from FINID_MAPPING m where adtchequeheader.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="7.2" author="murthy.y">
+		<createIndex tableName="adtchequeheader" indexName="idx_adtchequeheader_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="8" author="murthy.y">
+		<addColumn tableName="adtfinjointaccountdetails">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="8.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinjointaccountdetails set FinID = (select m.FinID from FINID_MAPPING m where adtfinjointaccountdetails.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="8.2" author="murthy.y">
+		<createIndex tableName="adtfinjointaccountdetails" indexName="idx_adtfnjointaccountdtl_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="9" author="murthy.y">
+		<addColumn tableName="adtmanualadvise">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="9.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtmanualadvise set FinID = (select m.FinID from FINID_MAPPING m where adtmanualadvise.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="9.2" author="murthy.y">
+		<createIndex tableName="adtmanualadvise" indexName="idx_adtmanualadvise_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="10" author="murthy.y">
+		<addColumn tableName="adtfinguarantorsdetails">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="10.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinguarantorsdetails set FinID = (select m.FinID from FINID_MAPPING m where adtfinguarantorsdetails.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="10.2" author="murthy.y">
+		<createIndex tableName="adtfinguarantorsdetails" indexName="idx_adtfinguarantorsdtl_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="11" author="murthy.y">
+		<addColumn tableName="adtcollateralsetup">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="11.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtcollateralsetup set FinID = (select m.FinID from FINID_MAPPING m where adtcollateralsetup.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="11.2" author="murthy.y">
+		<createIndex tableName="adtcollateralsetup" indexName="idx_adtcollateralsetup_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="12" author="murthy.y">
+		<addColumn tableName="adtcommitmentmovements">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="12.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtcommitmentmovements set FinID = (select m.FinID from FINID_MAPPING m where adtcommitmentmovements.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="12.2" author="murthy.y">
+		<createIndex tableName="adtcommitmentmovements" indexName="idx_adtcommitmentmnts_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="13" author="murthy.y">
+		<addColumn tableName="adtcustomerdedupdetail">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="13.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtcustomerdedupdetail set FinID = (select m.FinID from FINID_MAPPING m where adtcustomerdedupdetail.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="13.2" author="murthy.y">
+		<createIndex tableName="adtcustomerdedupdetail" indexName="idx_adtcustomrdedupdtl_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="14" author="murthy.y">
+		<addColumn tableName="adtfinancedeviations">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="14.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinancedeviations set FinID = (select m.FinID from FINID_MAPPING m where adtfinancedeviations.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="14.2" author="murthy.y">
+		<createIndex tableName="adtfinancedeviations" indexName="idx_adtfinancedeviations_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="15" author="murthy.y">
+		<addColumn tableName="adtpresentmentdetails">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="15.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtpresentmentdetails set FinID = (select m.FinID from FINID_MAPPING m where adtpresentmentdetails.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="15.2" author="murthy.y">
+		<createIndex tableName="adtpresentmentdetails" indexName="idx_adtpresentmentdtls_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="16" author="murthy.y">
+		<addColumn tableName="adtdue_diligences">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="16.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtdue_diligences set FinID = (select m.FinID from FINID_MAPPING m where adtdue_diligences.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="16.2" author="murthy.y">
+		<createIndex tableName="adtdue_diligences" indexName="idx_adtdue_diligences_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="17" author="murthy.y">
+		<addColumn tableName="adtfeewaiverheader">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="17.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfeewaiverheader set FinID = (select m.FinID from FINID_MAPPING m where adtfeewaiverheader.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="17.2" author="murthy.y">
+		<createIndex tableName="adtfeewaiverheader" indexName="idx_adtfeewaiverheader_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="18" author="murthy.y">
+		<addColumn tableName="adtfinancechecklistref">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="18.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinancechecklistref set FinID = (select m.FinID from FINID_MAPPING m where adtfinancechecklistref.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="18.2" author="murthy.y">
+		<createIndex tableName="adtfinancechecklistref" indexName="idx_adtfinanceclistref_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="19" author="murthy.y">
+		<addColumn tableName="adtfinanceeligibilitydetail">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="19.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinanceeligibilitydetail set FinID = (select m.FinID from FINID_MAPPING m where adtfinanceeligibilitydetail.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="19.2" author="murthy.y">
+		<createIndex tableName="adtfinanceeligibilitydetail" indexName="idx_adtfineligibilitydtl_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="20" author="murthy.y">
+		<addColumn tableName="adtfincontributordetail">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="20.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfincontributordetail set FinID = (select m.FinID from FINID_MAPPING m where adtfincontributordetail.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="20.2" author="murthy.y">
+		<createIndex tableName="adtfincontributordetail" indexName="idx_adtfincontributordtl_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="21" author="murthy.y">
+		<addColumn tableName="adtfincontractorastdtls">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="21.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfincontractorastdtls set FinID = (select m.FinID from FINID_MAPPING m where adtfincontractorastdtls.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="21.2" author="murthy.y">
+		<createIndex tableName="adtfincontractorastdtls" indexName="idx_adtcontractorastdtls_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="22" author="murthy.y">
+		<addColumn tableName="adtfincontributorheader">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="22.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfincontributorheader set FinID = (select m.FinID from FINID_MAPPING m where adtfincontributorheader.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="22.2" author="murthy.y">
+		<createIndex tableName="adtfincontributorheader" indexName="idx_adtfincontributorhdr_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="23" author="murthy.y">
+		<addColumn tableName="adtfindedupdetail">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="23.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfindedupdetail set FinID = (select m.FinID from FINID_MAPPING m where adtfindedupdetail.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="23.2" author="murthy.y">
+		<createIndex tableName="adtfindedupdetail" indexName="idx_adtfindedupdetail_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="24" author="murthy.y">
+		<addColumn tableName="adtfinflagsheader">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="24.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinflagsheader set FinID = (select m.FinID from FINID_MAPPING m where adtfinflagsheader.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="24.2" author="murthy.y">
+		<createIndex tableName="adtfinflagsheader" indexName="idx_adtfinflagsheader_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="25" author="murthy.y">
+		<addColumn tableName="adtfinrepayinstruction">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="25.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinrepayinstruction set FinID = (select m.FinID from FINID_MAPPING m where adtfinrepayinstruction.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="25.2" author="murthy.y">
+		<createIndex tableName="adtfinrepayinstruction" indexName="idx_adtfinrepayinstrion_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="26" author="murthy.y">
+		<addColumn tableName="adtfintaxdetail">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="26.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfintaxdetail set FinID = (select m.FinID from FINID_MAPPING m where adtfintaxdetail.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="26.2" author="murthy.y">
+		<createIndex tableName="adtfintaxdetail" indexName="idx_adtfintaxdetail_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="27" author="murthy.y">
+		<addColumn tableName="adtholddisbursement">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="27.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtholddisbursement set FinID = (select m.FinID from FINID_MAPPING m where adtholddisbursement.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="27.2" author="murthy.y">
+		<createIndex tableName="adtholddisbursement" indexName="idx_adtholddisbursement_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="28" author="murthy.y">
+		<addColumn tableName="adtlinkedfinances">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="28.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtlinkedfinances set FinID = (select m.FinID from FINID_MAPPING m where adtlinkedfinances.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="28.2" author="murthy.y">
+		<createIndex tableName="adtlinkedfinances" indexName="idx_adtlinkedfinances_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="29" author="murthy.y">
+		<addColumn tableName="adtlmtcommidityloanheader">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<!-- <changeSet id="29.1" author="murthy.y"> <sql> <![CDATA[ Update adtlmtcommidityloanheader set FinID = (select m.FinID 
+		from FINID_MAPPING m where adtlmtcommidityloanheader.FinReference = m.FinReference); ]]> </sql> </changeSet> -->
+	<changeSet id="29.2" author="murthy.y">
+		<createIndex tableName="adtlmtcommidityloanheader" indexName="idx_adtlmtcommiditylhdr_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="30" author="murthy.y">
+		<addColumn tableName="adtlowertaxdeduction">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="30.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtlowertaxdeduction set FinID = (select m.FinID from FINID_MAPPING m where adtlowertaxdeduction.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="30.2" author="murthy.y">
+		<createIndex tableName="adtlowertaxdeduction" indexName="idx_adtlowertaxdeduction_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="31" author="murthy.y">
+		<addColumn tableName="adtpsldetail">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="31.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtpsldetail set FinID = (select m.FinID from FINID_MAPPING m where adtpsldetail.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="31.2" author="murthy.y">
+		<createIndex tableName="adtpsldetail" indexName="idx_adtpsldetail_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="32" author="murthy.y">
+		<addColumn tableName="adtquerydetail">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="32.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtquerydetail set FinID = (select m.FinID from FINID_MAPPING m where adtquerydetail.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="32.2" author="murthy.y">
+		<createIndex tableName="adtquerydetail" indexName="idx_adtquerydetail_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="33" author="murthy.y">
+		<addColumn tableName="adtrestructure_details">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="33.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtrestructure_details set FinID = (select m.FinID from FINID_MAPPING m where adtrestructure_details.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="33.2" author="murthy.y">
+		<createIndex tableName="adtrestructure_details" indexName="idx_adtrestructure_dtls_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="34" author="murthy.y">
+		<addColumn tableName="adtsanction_conditions">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="34.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtsanction_conditions set FinID = (select m.FinID from FINID_MAPPING m where adtsanction_conditions.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="34.2" author="murthy.y">
+		<createIndex tableName="adtsanction_conditions" indexName="idx_adtsanction_condion_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="35" author="murthy.y">
+		<addColumn tableName="adtsubventiondetails">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="35.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtsubventiondetails set FinID = (select m.FinID from FINID_MAPPING m where adtsubventiondetails.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="35.2" author="murthy.y">
+		<createIndex tableName="adtsubventiondetails" indexName="idx_adtsubventiondetails_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="36" author="murthy.y">
+		<addColumn tableName="adtsubventionscheduledetail">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="36.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtsubventionscheduledetail set FinID = (select m.FinID from FINID_MAPPING m where adtsubventionscheduledetail.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="36.2" author="murthy.y">
+		<createIndex tableName="adtsubventionscheduledetail" indexName="idx_adtsubvenschedules_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="37" author="murthy.y">
+		<addColumn tableName="adtsynopsisdetails">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="37.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtsynopsisdetails set FinID = (select m.FinID from FINID_MAPPING m where adtsynopsisdetails.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="37.2" author="murthy.y">
+		<createIndex tableName="adtsynopsisdetails" indexName="idx_adtsynopsisdetails_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="38" author="murthy.y">
+		<addColumn tableName="adtvasmovementdetails">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="38.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtvasmovementdetails set FinID = (select m.FinID from FINID_MAPPING m where adtvasmovementdetails.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="38.2" author="murthy.y">
+		<createIndex tableName="adtvasmovementdetails" indexName="idx_adtvasmovementdtls_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="39" author="murthy.y">
+		<addColumn tableName="adtvasmovement">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="39.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtvasmovement set FinID = (select m.FinID from FINID_MAPPING m where adtvasmovement.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="39.2" author="murthy.y">
+		<createIndex tableName="adtvasmovement" indexName="idx_adtvasmovement_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="40" author="murthy.y">
+		<addColumn tableName="adtfinadvancepayments">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="40.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinadvancepayments set FinID = (select m.FinID from FINID_MAPPING m where adtfinadvancepayments.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="40.2" author="murthy.y">
+		<createIndex tableName="adtfinadvancepayments" indexName="idx_adtfnadvancepayments_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="41" author="murthy.y">
+		<addColumn tableName="adtfindisbursementdetails">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="41.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfindisbursementdetails set FinID = (select m.FinID from FINID_MAPPING m where adtfindisbursementdetails.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="41.2" author="murthy.y">
+		<createIndex tableName="adtfindisbursementdetails" indexName="idx_adtdisbursementdtls_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="42" author="murthy.y">
+		<addColumn tableName="adtfindefermentdetail">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="42.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfindefermentdetail set FinID = (select m.FinID from FINID_MAPPING m where adtfindefermentdetail.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="42.2" author="murthy.y">
+		<createIndex tableName="adtfindefermentdetail" indexName="idx_adtfindefermentdtls_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="43" author="murthy.y">
+		<addColumn tableName="adtfincollaterals">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="43.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfincollaterals set FinID = (select m.FinID from FINID_MAPPING m where adtfincollaterals.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="43.2" author="murthy.y">
+		<createIndex tableName="adtfincollaterals" indexName="idx_adtfincollaterals_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="44" author="murthy.y">
+		<addColumn tableName="adtfin_options">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="44.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfin_options set FinID = (select m.FinID from FINID_MAPPING m where adtfin_options.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="44.2" author="murthy.y">
+		<createIndex tableName="adtfin_options" indexName="idx_adtfin_options_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="45" author="murthy.y">
+		<addColumn tableName="adtfinsteppolicydetail">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="45.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinsteppolicydetail set FinID = (select m.FinID from FINID_MAPPING m where adtfinsteppolicydetail.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="45.2" author="murthy.y">
+		<createIndex tableName="adtfinsteppolicydetail" indexName="idx_adtfinsteppolicydtl_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="46" author="murthy.y">
+		<addColumn tableName="adtfinprovisions">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="46.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinprovisions set FinID = (select m.FinID from FINID_MAPPING m where adtfinprovisions.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="46.2" author="murthy.y">
+		<createIndex tableName="adtfinprovisions" indexName="idx_adtfinprovisions_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="47" author="murthy.y">
+		<addColumn tableName="adtlmtcommodityheader">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<!-- <changeSet id="47.1" author="murthy.y"> <sql> <![CDATA[ Update adtlmtcommodityheader set FinID = (select m.FinID from 
+		FINID_MAPPING m where adtlmtcommodityheader.FinReference = m.FinReference); ]]> </sql> </changeSet> -->
+	<changeSet id="47.2" author="murthy.y">
+		<createIndex tableName="adtlmtcommodityheader" indexName="idx_adtlmtcommodityhdr_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="48" author="murthy.y">
+		<addColumn tableName="adtpaymentheader">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="48.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtpaymentheader set FinID = (select m.FinID from FINID_MAPPING m where adtpaymentheader.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="48.2" author="murthy.y">
+		<createIndex tableName="adtpaymentheader" indexName="idx_adtpaymentheader_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="49" author="murthy.y">
+		<addColumn tableName="adtrecommendation_notes">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="49.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtrecommendation_notes set FinID = (select m.FinID from FINID_MAPPING m where adtrecommendation_notes.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="49.2" author="murthy.y">
+		<createIndex tableName="adtrecommendation_notes" indexName="idx_adtrecommendtion_nts_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="50" author="murthy.y">
+		<addColumn tableName="adtprovisions">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="50.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtprovisions set FinID = (select m.FinID from FINID_MAPPING m where adtprovisions.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="50.2" author="murthy.y">
+		<createIndex tableName="adtprovisions" indexName="idx_adtprovisions_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="51" author="murthy.y">
+		<addColumn tableName="adtlmtcommidityloandetail">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<!-- <changeSet id="51.1" author="murthy.y"> <sql> <![CDATA[ Update adtlmtcommidityloandetail set FinID = (select m.FinID 
+		from FINID_MAPPING m where adtlmtcommidityloandetail.FinReference = m.FinReference); ]]> </sql> </changeSet> -->
+	<changeSet id="51.2" author="murthy.y">
+		<createIndex tableName="adtlmtcommidityloandetail" indexName="idx_adtlmtcommidityldtl_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="52" author="murthy.y">
+		<addColumn tableName="adtcreditreviewdata">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="52.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtcreditreviewdata set FinID = (select m.FinID from FINID_MAPPING m where adtcreditreviewdata.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="52.2" author="murthy.y">
+		<createIndex tableName="adtcreditreviewdata" indexName="idx_adtcreditreviewdata_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="53" author="murthy.y">
+		<addColumn tableName="adtfinagreementdetail">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="53.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinagreementdetail set FinID = (select m.FinID from FINID_MAPPING m where adtfinagreementdetail.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="53.2" author="murthy.y">
+		<createIndex tableName="adtfinagreementdetail" indexName="idx_adtfinagreementdtl_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="54" author="murthy.y">
+		<addColumn tableName="adtfinancescoreheader">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="54.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinancescoreheader set FinID = (select m.FinID from FINID_MAPPING m where adtfinancescoreheader.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="54.2" author="murthy.y">
+		<createIndex tableName="adtfinancescoreheader" indexName="idx_adtfinancescorehdr_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="55" author="murthy.y">
+		<addColumn tableName="adtfinassetevaluation">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="55.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinassetevaluation set FinID = (select m.FinID from FINID_MAPPING m where adtfinassetevaluation.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="55.2" author="murthy.y">
+		<createIndex tableName="adtfinassetevaluation" indexName="idx_adtassetevaluation_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="56" author="murthy.y">
+		<addColumn tableName="adtfinblacklistdetail">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="56.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinblacklistdetail set FinID = (select m.FinID from FINID_MAPPING m where adtfinblacklistdetail.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="56.2" author="murthy.y">
+		<createIndex tableName="adtfinblacklistdetail" indexName="idx_adtfinblacklistdtl_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="57" author="murthy.y">
+		<addColumn tableName="adtfinchangecustomer">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="57.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinchangecustomer set FinID = (select m.FinID from FINID_MAPPING m where adtfinchangecustomer.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="57.2" author="murthy.y">
+		<createIndex tableName="adtfinchangecustomer" indexName="idx_adtfinchangecustomer_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="58" author="murthy.y">
+		<addColumn tableName="adtfincovenanttype">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="58.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfincovenanttype set FinID = (select m.FinID from FINID_MAPPING m where adtfincovenanttype.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="58.2" author="murthy.y">
+		<createIndex tableName="adtfincovenanttype" indexName="idx_adtfincovenanttype_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="59" author="murthy.y">
+		<addColumn tableName="adtfinfeerefundheader">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="59.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinfeerefundheader set FinID = (select m.FinID from FINID_MAPPING m where adtfinfeerefundheader.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="59.2" author="murthy.y">
+		<createIndex tableName="adtfinfeerefundheader" indexName="idx_adtfinfeerefundhdr_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="60" author="murthy.y">
+		<addColumn tableName="adtfinfeedetail">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="60.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinfeedetail set FinID = (select m.FinID from FINID_MAPPING m where adtfinfeedetail.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="60.2" author="murthy.y">
+		<createIndex tableName="adtfinfeedetail" indexName="idx_adtfinfeedetail_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="61" author="murthy.y">
+		<addColumn tableName="adtfinlegalexpenses">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="61.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinlegalexpenses set FinID = (select m.FinID from FINID_MAPPING m where adtfinlegalexpenses.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="61.2" author="murthy.y">
+		<createIndex tableName="adtfinlegalexpenses" indexName="idx_adtfinlegalexpenses_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="62" author="murthy.y">
+		<addColumn tableName="adtfinliabilityreq">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="62.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinliabilityreq set FinID = (select m.FinID from FINID_MAPPING m where adtfinliabilityreq.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="62.2" author="murthy.y">
+		<createIndex tableName="adtfinliabilityreq" indexName="idx_adtfinliabilityreq_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="63" author="murthy.y">
+		<addColumn tableName="adtfinmaintaininstructions">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="63.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinmaintaininstructions set FinID = (select m.FinID from FINID_MAPPING m where adtfinmaintaininstructions.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="63.2" author="murthy.y">
+		<createIndex tableName="adtfinmaintaininstructions" indexName="idx_adtfinmaintaininstrn_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="64" author="murthy.y">
+		<addColumn tableName="adtfinocrcapture">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="64.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinocrcapture set FinID = (select m.FinID from FINID_MAPPING m where adtfinocrcapture.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="64.2" author="murthy.y">
+		<createIndex tableName="adtfinocrcapture" indexName="idx_adtfinocrcapture_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="65" author="murthy.y">
+		<addColumn tableName="adtfinocrheader">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="65.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinocrheader set FinID = (select m.FinID from FINID_MAPPING m where adtfinocrheader.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="65.2" author="murthy.y">
+		<createIndex tableName="adtfinocrheader" indexName="idx_adtfinocrheader_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="66" author="murthy.y">
+		<addColumn tableName="adtfinwaiverheader">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="66.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinwaiverheader set FinID = (select m.FinID from FINID_MAPPING m where adtfinwaiverheader.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="66.2" author="murthy.y">
+		<createIndex tableName="adtfinwaiverheader" indexName="idx_adtfinwaiverheader_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="67" author="murthy.y">
+		<addColumn tableName="adtfinancemain">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="67.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtfinancemain set FinID = (select m.FinID from FINID_MAPPING m where adtfinancemain.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="67.2" author="murthy.y">
+		<createIndex tableName="adtfinancemain" indexName="idx_adtfinancemain_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="68" author="murthy.y">
+		<addColumn tableName="adtpayorderissueheader">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="68.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtpayorderissueheader set FinID = (select m.FinID from FINID_MAPPING m where adtpayorderissueheader.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="68.2" author="murthy.y">
+		<createIndex tableName="adtpayorderissueheader" indexName="idx_adtpayorderissuehdr_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="69" author="murthy.y">
+		<addColumn tableName="adtpmay">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="69.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtpmay set FinID = (select m.FinID from FINID_MAPPING m where adtpmay.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="69.2" author="murthy.y">
+		<createIndex tableName="adtpmay" indexName="idx_adtpmay_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="70" author="murthy.y">
+		<addColumn tableName="adtrestructure">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="70.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update adtrestructure set FinID = (select m.FinID from FINID_MAPPING m where adtrestructure.FinReference = m.FinReference);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="70.2" author="murthy.y">
+		<createIndex tableName="adtrestructure" indexName="idx_adtrestructure_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+
+
+</databaseChangeLog>
