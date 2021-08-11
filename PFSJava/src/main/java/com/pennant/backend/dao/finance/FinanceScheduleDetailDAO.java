@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  WIFFinanceScheduleDetailDAO.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : WIFFinanceScheduleDetailDAO.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
+ * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -56,7 +38,7 @@ import com.pennant.backend.model.finance.ScheduleMapDetails;
 
 public interface FinanceScheduleDetailDAO {
 
-	FinanceScheduleDetail getFinanceScheduleDetailById(String id, Date schdDate, String type, boolean isWIF);
+	FinanceScheduleDetail getFinanceScheduleDetailById(long finID, Date schdDate, String type, boolean isWIF);
 
 	void update(FinanceScheduleDetail financeScheduleDetail, String type, boolean isWIF);
 
@@ -64,9 +46,9 @@ public interface FinanceScheduleDetailDAO {
 
 	String save(FinanceScheduleDetail financeScheduleDetail, String type, boolean isWIF);
 
-	List<FinanceScheduleDetail> getFinScheduleDetails(String id, String type, boolean isWIF, long logKey);
+	List<FinanceScheduleDetail> getFinScheduleDetails(long finID, String type, boolean isWIF, long logKey);
 
-	List<FinanceScheduleDetail> getFinScheduleDetails(String id, String type, boolean isWIF);
+	List<FinanceScheduleDetail> getFinScheduleDetails(long finID, String type, boolean isWIF);
 
 	void delete(FinanceScheduleDetail financeScheduleDetail, String type, boolean isWIF);
 
@@ -108,7 +90,7 @@ public interface FinanceScheduleDetailDAO {
 
 	FinanceScheduleDetail getNextSchPayment(String finReference, Date curBussDate);
 
-	boolean getFinScheduleCountByDate(String finReference, Date fromDate, boolean isWIF);
+	boolean getFinScheduleCountByDate(long finID, Date fromDate, boolean isWIF);
 
 	List<FinanceScheduleDetail> getFinScheduleDetails(long Custid, boolean isActive);
 
@@ -118,7 +100,7 @@ public interface FinanceScheduleDetailDAO {
 
 	BigDecimal getOutStandingBalFromFees(String finReference);
 
-	List<FinanceScheduleDetail> getFinScheduleDetails(String finReference, String type, long logKey);
+	List<FinanceScheduleDetail> getFinScheduleDetails(long finID, String type, long logKey);
 
 	void updateTDS(List<FinanceScheduleDetail> schdList);
 
@@ -130,10 +112,10 @@ public interface FinanceScheduleDetailDAO {
 
 	FinanceScheduleDetail getPrvSchd(String finReference, Date curBussDate);
 
-	//Ticket id:124998(receipt upload)
+	// Ticket id:124998(receipt upload)
 	Date getPrevSchdDate(String finReference, Date appDate);
 
-	boolean isInstallSchd(String finReference, Date lastPrevDate); //## Ticket id:124998(receipt upload) 16/8/2018
+	boolean isInstallSchd(String finReference, Date lastPrevDate); // ## Ticket id:124998(receipt upload) 16/8/2018
 
 	void updateSchPaid(FinanceScheduleDetail curSchd);
 
@@ -147,7 +129,7 @@ public interface FinanceScheduleDetailDAO {
 
 	List<FinanceScheduleDetail> getDueSchedulesByFacilityRef(String finReference, Date valueDate);
 
-	List<FinanceScheduleDetail> getFinScheduleDetailsBySchPriPaid(String id, String type, boolean isWIF);
+	List<FinanceScheduleDetail> getFinScheduleDetailsBySchPriPaid(long finID, String type, boolean isWIF);
 
 	FinanceScheduleDetail getFinSchDetailOrderBySchDate(String selectQuery, String whereClause, String reference);
 

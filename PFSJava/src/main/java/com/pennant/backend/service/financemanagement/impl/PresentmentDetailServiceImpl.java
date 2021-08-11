@@ -512,23 +512,25 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		return financeDetail;
 	}
 
-	private void processReceipts(PresentmentDetail presentmentDetail, boolean isFullEMIPresent) throws Exception {
+	private void processReceipts(PresentmentDetail pd, boolean isFullEMIPresent) throws Exception {
 		FinReceiptData finReceiptData = new FinReceiptData();
 		FinReceiptHeader header = new FinReceiptHeader();
-		Date appDate = presentmentDetail.getAppDate();
+		Date appDate = pd.getAppDate();
 
 		long receiptId = finReceiptHeaderDAO.generatedReceiptID(header);
-		String finReference = presentmentDetail.getFinReference();
+
+		long finID = pd.getFinID();
+		String finReference = pd.getFinReference();
 
 		header.setReference(finReference);
-		header.setReceiptDate(presentmentDetail.getSchDate());
+		header.setReceiptDate(pd.getSchDate());
 		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 		header.setReceiptID(receiptId);
 		header.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		header.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
 		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
-		header.setReceiptAmount(presentmentDetail.getPresentmentAmt().add(presentmentDetail.getAdvanceAmt()));
+		header.setReceiptAmount(pd.getPresentmentAmt().add(pd.getAdvanceAmt()));
 		header.setEffectSchdMethod(PennantConstants.List_Select);
 		header.setReceiptMode(RepayConstants.PAYTYPE_PRESENTMENT);
 		header.setReceiptModeStatus(RepayConstants.PAYSTATUS_DEPOSITED);
@@ -541,18 +543,18 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 
 		FinReceiptDetail receiptDetail = new FinReceiptDetail();
 
-		if (presentmentDetail.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
+		if (pd.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
 			receiptDetail = new FinReceiptDetail();
 			receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 			receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
 			receiptDetail.setPaymentType(RepayConstants.PAYTYPE_PRESENTMENT);
-			receiptDetail.setPayAgainstID(presentmentDetail.getExcessID());
-			receiptDetail.setAmount(presentmentDetail.getPresentmentAmt());
-			receiptDetail.setDueAmount(presentmentDetail.getPresentmentAmt());
-			receiptDetail.setValueDate(presentmentDetail.getSchDate());
+			receiptDetail.setPayAgainstID(pd.getExcessID());
+			receiptDetail.setAmount(pd.getPresentmentAmt());
+			receiptDetail.setDueAmount(pd.getPresentmentAmt());
+			receiptDetail.setValueDate(pd.getSchDate());
 			receiptDetail.setReceivedDate(appDate);
-			receiptDetail.setPartnerBankAc(presentmentDetail.getAccountNo());
-			receiptDetail.setPartnerBankAcType(presentmentDetail.getAcType());
+			receiptDetail.setPartnerBankAc(pd.getAccountNo());
+			receiptDetail.setPartnerBankAcType(pd.getAcType());
 			receiptDetails.add(receiptDetail);
 		}
 
@@ -564,16 +566,16 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		finReceiptData.setSourceId("");
 		List<FinanceScheduleDetail> scheduleDetails = null;
 
-		FinanceMain fm = financeMainDAO.getFinanceMainById(finReference, "_AView", false);
+		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "_AView", false);
 		Customer customer = customerDAO.getCustomerForPresentment(fm.getCustID());
-		scheduleDetails = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false);
-		FinanceProfitDetail profitDetail = financeProfitDetailDAO.getFinProfitDetailsById(finReference);
+		scheduleDetails = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false);
+		FinanceProfitDetail profitDetail = financeProfitDetailDAO.getFinProfitDetailsById(finID);
 
 		repaymentProcessUtil.calcualteAndPayReceipt(fm, customer, scheduleDetails, null, profitDetail, header,
-				presentmentDetail.getSchDate(), appDate);
+				pd.getSchDate(), appDate);
 
-		if (presentmentDetail.getId() != Long.MIN_VALUE) {
-			presentmentDetailDAO.updateReceptId(presentmentDetail.getId(), header.getReceiptID());
+		if (pd.getId() != Long.MIN_VALUE) {
+			presentmentDetailDAO.updateReceptId(pd.getId(), header.getReceiptID());
 		}
 	}
 

@@ -638,18 +638,19 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 		String[] logFields = new String[1];
 		logFields[0] = statementRequest.getCif();
 		APIErrorHandlerService.logKeyFields(logFields);
-		FinanceMain financeMain = null;
+		FinanceMain fm = null;
 		Date fromDate = statementRequest.getFromDate();
 		String finReference = statementRequest.getFinReference();
 
+		Long finID = null;
 		if (StringUtils.isBlank(finReference)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "finReference";
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 			return response;
 		} else {
-			financeMain = financeMainDAO.getFinanceMainForPftCalc(finReference);
-			if (financeMain == null) {
+			fm = financeMainDAO.getFinanceMainForPftCalc(finReference);
+			if (fm == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finReference;
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
@@ -657,9 +658,10 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 			}
 		}
 
+		finID = fm.getFinID();
 		if (fromDate != null) {
-			if (DateUtil.compare(fromDate, financeMain.getFinStartDate()) < 0
-					|| DateUtil.compare(financeMain.getMaturityDate(), fromDate) < 0) {
+			if (DateUtil.compare(fromDate, fm.getFinStartDate()) < 0
+					|| DateUtil.compare(fm.getMaturityDate(), fromDate) < 0) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "FromDate";
 				valueParm[1] = "FinStartDate";
@@ -679,7 +681,7 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 			List<FinFeeDetail> fees = finScheduleData.getFeeDues();
 
-			List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getManualAdvisesByFinRef(finReference, "_View");
+			List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getManualAdvisesByFinRef(finID, "_View");
 			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finReference);
 			TaxAmountSplit taxSplit;
 			BigDecimal totalADgstAmt = BigDecimal.ZERO;
@@ -707,7 +709,7 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 				}
 			}
 
-			List<FinExcessAmount> excessAmounts = finExcessAmountDAO.getAllExcessAmountsByRef(finReference, "");
+			List<FinExcessAmount> excessAmounts = finExcessAmountDAO.getAllExcessAmountsByRef(finID, "");
 
 			ForeClosureLetter letter = new ForeClosureLetter();
 			if (excessAmounts != null) {
@@ -760,7 +762,7 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 		logger.debug(Literal.LEAVING);
 		return response;
 	}
-	
+
 	@Override
 	public FinStatementResponse getForeclosureStmtV1(FinStatementRequest statementRequest) throws ServiceException {
 		logger.debug(Literal.ENTERING);

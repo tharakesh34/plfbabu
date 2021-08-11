@@ -57,6 +57,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 
 	@XmlElement(name = "uniqueReference")
 	private String presentmentRef;
+	private long finID;
 	@XmlElement
 	private String finReference;
 	private String hostReference;
@@ -146,6 +147,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 		entity.setId(this.id);
 		entity.setHeaderId(this.headerId);
 		entity.setPresentmentRef(this.presentmentRef);
+		entity.setFinID(this.finID);
 		entity.setFinReference(this.finReference);
 		entity.setHostReference(this.hostReference);
 		entity.setSchDate(this.schDate);
@@ -274,6 +276,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 
 	public void setBatchReference(String batchReference) {
 		this.batchReference = batchReference;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

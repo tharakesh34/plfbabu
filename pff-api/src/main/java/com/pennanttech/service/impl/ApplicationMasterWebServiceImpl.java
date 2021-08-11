@@ -105,27 +105,32 @@ public class ApplicationMasterWebServiceImpl extends ExtendedTestClass
 	@Override
 	public ManualDeviationAuthorities getManualDeviationAuthorities(ManualDeviationAuthReq request)
 			throws ServiceException {
-
 		logger.debug(Literal.ENTERING);
 
+		String finReference = request.getFinReference();
+
+		logger.info("FinReference {}", finReference);
+
 		ManualDeviationAuthorities response = new ManualDeviationAuthorities();
-		FinanceMain financeMain = null;
 
 		List<ValueLabel> delegators = new ArrayList<>();
 		// Mandatory validation
-		if (StringUtils.isBlank(request.getFinReference())) {
+
+		if (StringUtils.isBlank(finReference)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "FinReference";
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 			return response;
 		}
-		financeMain = financeMainDAO.getFinanceMainById(request.getFinReference(), "_View", false);
-		if (financeMain == null) {
+
+		FinanceMain fm = financeMainDAO.getFinanceMainByRef(finReference, "_View", false);
+		if (fm == null) {
 			String[] valueParm = new String[1];
-			valueParm[0] = request.getFinReference();
+			valueParm[0] = finReference;
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
 			return response;
 		}
+
 		ManualDeviation manualDeviation = manualDeviationService.getManualDeviationByCode(request.getManDevcode(),
 				"_View");
 
@@ -136,8 +141,8 @@ public class ApplicationMasterWebServiceImpl extends ExtendedTestClass
 			return response;
 
 		} else {
-			String delegatorRoles = deviationHelper.getAuthorities(financeMain.getFinType(),
-					FinanceConstants.PROCEDT_LIMIT, "MDAAL" + manualDeviation.getSeverity());
+			String delegatorRoles = deviationHelper.getAuthorities(fm.getFinType(), FinanceConstants.PROCEDT_LIMIT,
+					"MDAAL" + manualDeviation.getSeverity());
 
 			if (StringUtils.isNotBlank(delegatorRoles)) {
 				String[] list = delegatorRoles.split(PennantConstants.DELIMITER_COMMA);

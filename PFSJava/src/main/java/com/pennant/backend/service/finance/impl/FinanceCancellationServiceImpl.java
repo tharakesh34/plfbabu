@@ -191,7 +191,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 				.setJointAccountDetailList(getJointAccountDetailService().getJoinAccountDetail(finReference, "_View"));
 
 		// Finance Overdue Penalty Rate Details
-		scheduleData.setFinODPenaltyRate(getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(finReference, type));
+		scheduleData.setFinODPenaltyRate(finODPenaltyRateDAO.getFinODPenaltyRateByRef(finReference, type));
 
 		// Document Details
 		financeDetail.setDocumentDetailsList(getDocumentDetailsDAO().getDocumentDetailsByRef(finReference,

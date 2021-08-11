@@ -87,23 +87,23 @@ public class RemoveTermsServiceImpl extends GenericService<FinServiceInstruction
 		boolean isWIF = finServiceInstruction.isWif();
 		String finReference = finServiceInstruction.getFinReference();
 
-		FinanceMain financeMain = financeMainDAO.getFinanceMainById(finReference, "", isWIF);
+		FinanceMain fm = financeMainDAO.getFinanceMainByRef(finReference, "", isWIF);
 
-		if (DateUtility.compare(finServiceInstruction.getFromDate(), DateUtility.getAppDate()) < 0) {
+		if (DateUtility.compare(finServiceInstruction.getFromDate(), SysParamUtil.getAppDate()) < 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "From date";
-			valueParm[1] = "application date:" + DateUtility.formatToLongDate(DateUtility.getAppDate());
+			valueParm[1] = "application date:" + DateUtility.formatToLongDate(SysParamUtil.getAppDate());
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30509", "", valueParm), lang));
 			return auditDetail;
 		}
 
 		// validate from date with finStart date and maturity date
-		if (finServiceInstruction.getFromDate().compareTo(financeMain.getFinStartDate()) < 0
-				|| finServiceInstruction.getFromDate().compareTo(financeMain.getMaturityDate()) >= 0) {
+		if (finServiceInstruction.getFromDate().compareTo(fm.getFinStartDate()) < 0
+				|| finServiceInstruction.getFromDate().compareTo(fm.getMaturityDate()) >= 0) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "From date";
-			valueParm[1] = "finance start date:" + DateUtility.formatToShortDate(financeMain.getFinStartDate());
-			valueParm[2] = "maturity date:" + DateUtility.formatToShortDate(financeMain.getMaturityDate());
+			valueParm[1] = "finance start date:" + DateUtility.formatToShortDate(fm.getFinStartDate());
+			valueParm[2] = "maturity date:" + DateUtility.formatToShortDate(fm.getMaturityDate());
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), lang));
 			return auditDetail;
 		}
@@ -136,7 +136,8 @@ public class RemoveTermsServiceImpl extends GenericService<FinServiceInstruction
 
 		boolean isValidFromDate = false;
 		boolean isValidRecalFromDate = false;
-		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", isWIF);
+		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(fm.getFinID(), "",
+				isWIF);
 		if (schedules != null) {
 			for (FinanceScheduleDetail schDetail : schedules) {
 				// FromDate

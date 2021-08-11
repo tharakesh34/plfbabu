@@ -15,6 +15,7 @@ import javax.xml.bind.annotation.XmlType;
 public class FinODPenaltyRate implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	private long finID;
 	private String finReference;
 	private Date finEffectDate;
 	@XmlElement
@@ -49,6 +50,7 @@ public class FinODPenaltyRate implements Serializable {
 
 	public FinODPenaltyRate copyEntity() {
 		FinODPenaltyRate entity = new FinODPenaltyRate();
+		entity.setFinID(this.finID);
 		entity.setFinReference(this.finReference);
 		entity.setFinEffectDate(this.finEffectDate);
 		entity.setApplyODPenalty(this.applyODPenalty);
@@ -72,6 +74,14 @@ public class FinODPenaltyRate implements Serializable {
 
 	public void setId(long id) {
 		this.logKey = id;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

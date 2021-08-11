@@ -1573,7 +1573,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("Schedule Change Method"); }
 		 */
 		// Step Loan not accepted FIXME
-		FinanceMain finMain = financeMainDAO.getFinanceMainById(finServiceInstruction.getFinReference(), "",
+		FinanceMain finMain = financeMainDAO.getFinanceMainByRef(finServiceInstruction.getFinReference(), "",
 				finServiceInstruction.isWif());
 		if (finMain.isStepFinance()) {
 			String[] valueParm = new String[2];
@@ -2382,23 +2382,23 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		List<ErrorDetail> errorDetails;
 		try {
-			FinanceMain financeMain = null;
+			FinanceMain fm = null;
 			String finReference = financeDetail.getFinReference();
 			ChequeHeader chequeHeader = financeDetail.getChequeHeader();
 
+			FinScheduleData schdData = financeDetail.getFinScheduleData();
 			if (finReference == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "FinReference";
 				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			} else {
-				financeMain = financeMainDAO.getFinanceMainById(finReference, "", false);
-				if (financeMain == null || !financeMain.isFinIsActive()
-						|| StringUtils.isNotEmpty(financeMain.getRcdMaintainSts())) {
+				fm = financeMainDAO.getFinanceMainByRef(finReference, "", false);
+				if (fm == null || !fm.isFinIsActive() || StringUtils.isNotEmpty(fm.getRcdMaintainSts())) {
 					String[] valueParm = new String[1];
 					valueParm[0] = finReference;
 					return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 				} else {
-					financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+					schdData.setFinanceMain(fm);
 				}
 				returnStatus = isWriteoffLoan(finReference);
 				if (returnStatus != null) {
@@ -2422,12 +2422,14 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				return returnStatus;
 			}
 
-			List<FinanceScheduleDetail> finScheduleDetails = financeScheduleDetailDAO
-					.getFinScheduleDetails(financeMain.getFinReference(), "", false);
-			financeDetail.getFinScheduleData().setFinanceScheduleDetails(finScheduleDetails);
-			FinScheduleData finSchdData = validateChequeDetails(financeDetail);
-			if (CollectionUtils.isNotEmpty(finSchdData.getErrorDetails())) {
-				for (ErrorDetail errorDetail : finSchdData.getErrorDetails()) {
+			List<FinanceScheduleDetail> schedules = null;
+			schedules = financeScheduleDetailDAO.getFinScheduleDetails(fm.getFinID(), "", false);
+			schdData.setFinanceScheduleDetails(schedules);
+
+			validateChequeDetails(financeDetail);
+
+			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
+				for (ErrorDetail errorDetail : schdData.getErrorDetails()) {
 					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 				}
 			}
@@ -2441,11 +2443,10 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		return returnStatus;
 	}
 
-	// cheque Validations for schedule
-	private FinScheduleData validateChequeDetails(FinanceDetail financeDetail) {
+	private void validateChequeDetails(FinanceDetail financeDetail) {
 		boolean date = true;
 		boolean amount = true;
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		FinScheduleData schdData = financeDetail.getFinScheduleData();
 		ChequeHeader chequeHeader = financeDetail.getChequeHeader();
 		List<ChequeDetail> chequeDetailsList = chequeHeader.getChequeDetailList();
 		for (ChequeDetail chequeDetail : chequeDetailsList) {
@@ -2462,9 +2463,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 							String[] valueParm = new String[2];
 							valueParm[0] = new SimpleDateFormat("yyyy-MM-dd").format(fsd.getSchDate());
 							valueParm[1] = String.valueOf(fsd.getRepayAmount() + "INR");
-							finScheduleData
-									.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
-							return finScheduleData;
+							schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
+							return;
 
 						} else {
 							break;
@@ -2478,15 +2478,15 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 					String[] valueParm = new String[2];
 					valueParm[0] = "Cheque Date";
 					valueParm[1] = "ScheduleDates";
-					finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
-					return finScheduleData;
+					schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
+					return;
 
 				}
 			}
 
 		}
 
-		return finScheduleData;
+		return;
 	}
 
 	@Override
@@ -2496,23 +2496,23 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		List<ErrorDetail> errorDetails;
 		String tableType = "_Temp";
 		try {
-			FinanceMain financeMain = null;
+			FinanceMain fm = null;
 			String finReference = financeDetail.getFinReference();
 			ChequeHeader chequeHeader = financeDetail.getChequeHeader();
 
+			FinScheduleData schdData = financeDetail.getFinScheduleData();
 			if (finReference == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "FinReference";
 				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			} else {
-				financeMain = financeMainDAO.getFinanceMainById(finReference, tableType, false);
-				if (financeMain == null || !financeMain.isFinIsActive()
-						|| StringUtils.isNotEmpty(financeMain.getRcdMaintainSts())) {
+				fm = financeMainDAO.getFinanceMainByRef(finReference, tableType, false);
+				if (fm == null || !fm.isFinIsActive() || StringUtils.isNotEmpty(fm.getRcdMaintainSts())) {
 					String[] valueParm = new String[1];
 					valueParm[0] = finReference;
 					return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 				} else {
-					financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+					schdData.setFinanceMain(fm);
 				}
 				returnStatus = isWriteoffLoan(finReference);
 				if (returnStatus != null) {
@@ -2535,12 +2535,12 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				return returnStatus;
 			}
 
-			List<FinanceScheduleDetail> finScheduleDetails = financeScheduleDetailDAO
-					.getFinScheduleDetails(financeMain.getFinReference(), tableType, false);
-			financeDetail.getFinScheduleData().setFinanceScheduleDetails(finScheduleDetails);
-			FinScheduleData finSchdData = validateChequeDetails(financeDetail);
-			if (CollectionUtils.isNotEmpty(finSchdData.getErrorDetails())) {
-				for (ErrorDetail errorDetail : finSchdData.getErrorDetails()) {
+			List<FinanceScheduleDetail> schedules = null;
+			schedules = financeScheduleDetailDAO.getFinScheduleDetails(fm.getFinID(), tableType, false);
+			schdData.setFinanceScheduleDetails(schedules);
+			validateChequeDetails(financeDetail);
+			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
+				for (ErrorDetail errorDetail : schdData.getErrorDetails()) {
 					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 				}
 			}
@@ -2560,7 +2560,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		List<ErrorDetail> errorDetails;
 		try {
-			FinanceMain financeMain = null;
+
 			String finReference = financeDetail.getFinReference();
 			ChequeHeader chequeHeader = financeDetail.getChequeHeader();
 
@@ -2589,15 +2589,16 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 			}
 
-			List<FinanceScheduleDetail> finScheduleDetails = financeScheduleDetailDAO
-					.getFinScheduleDetails(finReference, "", false);
-			financeDetail.getFinScheduleData().setFinanceScheduleDetails(finScheduleDetails);
-			financeDetail.getFinScheduleData()
-					.setFinanceMain(financeMainDAO.getFinanceMainById(finReference, "", false));
+			List<FinanceScheduleDetail> schedules = null;
+			FinanceMain fm = financeMainDAO.getFinanceMainByRef(finReference, "", false);
+			FinScheduleData schdData = financeDetail.getFinScheduleData();
+			schdData.setFinanceMain(fm);
+			schedules = financeScheduleDetailDAO.getFinScheduleDetails(fm.getFinID(), "", false);
+			schdData.setFinanceScheduleDetails(schedules);
 
-			FinScheduleData finSchdData = validateChequeDetails(financeDetail);
-			if (CollectionUtils.isNotEmpty(finSchdData.getErrorDetails())) {
-				for (ErrorDetail errorDetail : finSchdData.getErrorDetails()) {
+			validateChequeDetails(financeDetail);
+			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
+				for (ErrorDetail errorDetail : schdData.getErrorDetails()) {
 					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 				}
 			}
@@ -2638,14 +2639,16 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
 
-			List<FinanceScheduleDetail> finScheduleDetails = financeScheduleDetailDAO
-					.getFinScheduleDetails(finReference, tableType, false);
-			financeDetail.getFinScheduleData().setFinanceScheduleDetails(finScheduleDetails);
-			financeDetail.getFinScheduleData()
-					.setFinanceMain(financeMainDAO.getFinanceMainById(finReference, tableType, false));
-			FinScheduleData finSchdData = validateChequeDetails(financeDetail);
-			if (CollectionUtils.isNotEmpty(finSchdData.getErrorDetails())) {
-				for (ErrorDetail errorDetail : finSchdData.getErrorDetails()) {
+			List<FinanceScheduleDetail> schedules = null;
+			FinanceMain fm = financeMainDAO.getFinanceMainByRef(finReference, "", false);
+			FinScheduleData schdData = financeDetail.getFinScheduleData();
+			schdData.setFinanceMain(fm);
+			schedules = financeScheduleDetailDAO.getFinScheduleDetails(fm.getFinID(), "", false);
+			schdData.setFinanceScheduleDetails(schedules);
+
+			validateChequeDetails(financeDetail);
+			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
+				for (ErrorDetail errorDetail : schdData.getErrorDetails()) {
 					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 				}
 			}

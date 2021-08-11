@@ -57,6 +57,7 @@ public class ManualAdvise extends AbstractWorkflowEntity {
 	@XmlElement
 	private int adviseType;
 	private String adviseTypeName;
+	private long finID;
 	@XmlElement
 	private String finReference;
 	private long feeTypeID;
@@ -142,6 +143,7 @@ public class ManualAdvise extends AbstractWorkflowEntity {
 		entity.setAdviseID(this.adviseID);
 		entity.setAdviseType(this.adviseType);
 		entity.setAdviseTypeName(this.adviseTypeName);
+		entity.setFinID(this.finID);
 		entity.setFinReference(this.finReference);
 		entity.setFeeTypeID(this.feeTypeID);
 		entity.setFeeTypeDesc(this.feeTypeDesc);
@@ -257,6 +259,14 @@ public class ManualAdvise extends AbstractWorkflowEntity {
 
 	public void setAdviseTypeName(String adviseTypeName) {
 		this.adviseTypeName = adviseTypeName;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

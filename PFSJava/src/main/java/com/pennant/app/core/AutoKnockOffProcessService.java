@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  FinMaturityService.java												*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  24-12-2017															*
- *                                                                  
- * Modified Date    :  24-12-2017															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : FinMaturityService.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 24-12-2017 *
+ * 
+ * Modified Date : 24-12-2017 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 24-12-2017       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 24-12-2017 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.core;
@@ -109,7 +100,7 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 		header.setKnockOffType(RepayConstants.KNOCKOFF_TYPE_AUTO);
-		//header.setPayAgainstId(knockOffData.getPayableId());
+		// header.setPayAgainstId(knockOffData.getPayableId());
 		header.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		header.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
 		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
@@ -334,11 +325,11 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 
 		FinanceDetail financeDetail = new FinanceDetail();
 		receiptData.setFinanceDetail(financeDetail);
-		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
-		scheduleData.setFinReference(finReference);
+		FinScheduleData schdData = financeDetail.getFinScheduleData();
+		schdData.setFinReference(finReference);
 
 		// Finance Details from Main Table View
-		FinanceMain fm = financeMainDAO.getFinanceMainById(finReference, "_AView", false);
+		FinanceMain fm = financeMainDAO.getFinanceMainByRef(finReference, "_AView", false);
 
 		if (fm == null) {
 			logger.debug(Literal.LEAVING);
@@ -354,24 +345,25 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 			fm.setEntityDesc(entity.getEntityDesc());
 		}
 
-		scheduleData.setFinanceMain(fm);
+		schdData.setFinanceMain(fm);
 
 		// Finance Type Details from Table
 		FinanceType financeType = financeTypeDAO.getOrgFinanceTypeByID(fm.getFinType(), "_ORGView");
 
-		scheduleData.setFinanceType(financeType);
+		schdData.setFinanceType(financeType);
 
 		// Finance Schedule Details from Main table
-		scheduleData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false));
+		long finID = fm.getFinID();
+		schdData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false));
 
-		scheduleData.setFeeEvent(eventCode);
+		schdData.setFeeEvent(eventCode);
 
 		// Overdue Penalty Rates from main veiw
-		scheduleData.setFinODPenaltyRate(finODPenaltyRateDAO.getFinODPenaltyRateByRef(finReference, "_AView"));
+		schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "_AView"));
 
 		// Profit details from main table
-		FinanceProfitDetail profitDetail = profitDetailsDAO.getFinProfitDetailsById(finReference);
-		scheduleData.setFinPftDeatil(profitDetail);
+		FinanceProfitDetail profitDetail = profitDetailsDAO.getFinProfitDetailsById(finID);
+		schdData.setFinPftDeatil(profitDetail);
 
 		// Finance Customer Details from main view
 		if (fm.getCustID() != 0 && fm.getCustID() != Long.MIN_VALUE) {

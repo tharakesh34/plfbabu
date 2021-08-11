@@ -49,7 +49,7 @@ public interface FinExcessAmountDAO {
 
 	void updateUtiliseOnly(long excessID, BigDecimal amount);
 
-	List<FinExcessAmount> getAllExcessAmountsByRef(String finReference, String type);
+	List<FinExcessAmount> getAllExcessAmountsByRef(long finID, String type);
 
 	void updateUtilizedAndBalance(FinExcessAmount excessAmount);
 

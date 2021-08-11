@@ -78,6 +78,7 @@ import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
 import com.pennant.backend.model.finance.FinOCRHeader;
 import com.pennant.backend.model.finance.FinReceiptData;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -1991,170 +1992,167 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Leaving ");
 	}
 
-	/**
-	 * Method for Fetching Finance Cancellation Details
-	 * 
-	 * @param item
-	 * @throws Exception
-	 */
 	private void openFinanceCancellationDialog(Listitem item) throws Exception {
-		logger.debug("Entering ");
-		// get the selected FinanceMain object
+		logger.debug(Literal.ENTERING);
 
-		if (item != null) {
-			// CAST AND STORE THE SELECTED OBJECT
-			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+		if (item == null) {
+			return;
+		}
 
-			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getFinReference(),
-					"_View");
+		// CAST AND STORE THE SELECTED OBJECT
+		final FinanceMain fm = (FinanceMain) item.getAttribute("data");
 
-			// Check whether the user has authority to change/view the record.
-			String whereCond1 = " where FinReference=?";
+		long finID = fm.getFinID();
 
-			if (!doCheckAuthority(aFinanceMain, whereCond1, new Object[] { aFinanceMain.getFinReference() })) {
-				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
-				return;
+		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+
+		// Check whether the user has authority to change/view the record.
+		String whereCond1 = " where FinID = ?";
+
+		if (!doCheckAuthority(fm, whereCond1, new Object[] { fm.getFinReference() })) {
+			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+			return;
+		}
+
+		if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
+			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
+			return;
+		}
+
+		// Set Workflow Details
+		setWorkflowDetails(fm.getFinType(), StringUtils.isNotEmpty(fm.getLovDescFinProduct()));
+		if (workFlowDetails == null) {
+			MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+			return;
+		}
+
+		String userRole = fm.getNextRoleCode();
+		if (StringUtils.isEmpty(userRole)) {
+			userRole = workFlowDetails.getFirstTaskOwner();
+		}
+
+		final FinanceDetail fd = financeCancellationService.getFinanceDetailById(finID, "_View", userRole,
+				moduleDefiner);
+
+		// Role Code State Checking
+		FinScheduleData schdData = fd.getFinScheduleData();
+
+		String nextroleCode = schdData.getFinanceMain().getNextRoleCode();
+		if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
+			String[] errParm = new String[1];
+			String[] valueParm = new String[1];
+			valueParm[0] = fm.getFinReference();
+			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+
+			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+					getUserWorkspace().getUserLanguage());
+			MessageUtil.showError(errorDetails.getError());
+
+			Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
+			logger.debug("Leaving");
+			return;
+		}
+
+		// Schedule Date verification, As Installment date crossed or not
+		List<FinanceScheduleDetail> schdList = schdData.getFinanceScheduleDetails();
+		FinanceScheduleDetail bpiSchedule = null;
+
+		Date appDate = SysParamUtil.getAppDate();
+
+		for (int i = 1; i < schdList.size(); i++) {
+			FinanceScheduleDetail curSchd = schdList.get(i);
+			if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
+				bpiSchedule = curSchd;
+				continue;
 			}
 
-			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
-				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
-				return;
-			}
-
-			// Set Workflow Details
-			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
-			if (workFlowDetails == null) {
-				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
-				return;
-			}
-
-			String userRole = aFinanceMain.getNextRoleCode();
-			if (StringUtils.isEmpty(userRole)) {
-				userRole = workFlowDetails.getFirstTaskOwner();
-			}
-
-			final FinanceDetail financeDetail = getFinanceCancellationService()
-					.getFinanceDetailById(aFinanceMain.getFinReference(), "_View", userRole, moduleDefiner);
-
-			// Role Code State Checking
-			String nextroleCode = financeDetail.getFinScheduleData().getFinanceMain().getNextRoleCode();
-			if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
-				String[] errParm = new String[1];
-				String[] valueParm = new String[1];
-				valueParm[0] = aFinanceMain.getFinReference();
-				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
-
+			if (curSchd.getSchDate().compareTo(appDate) <= 0) {
 				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+						new ErrorDetail(PennantConstants.KEY_FIELD, "60407", null, null),
 						getUserWorkspace().getUserLanguage());
 				MessageUtil.showError(errorDetails.getError());
 
-				Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
 				logger.debug("Leaving");
 				return;
 			}
+		}
 
-			// Schedule Date verification, As Installment date crossed or not
-			List<FinanceScheduleDetail> schdList = financeDetail.getFinScheduleData().getFinanceScheduleDetails();
-			FinanceScheduleDetail bpiSchedule = null;
-			for (int i = 1; i < schdList.size(); i++) {
-				FinanceScheduleDetail curSchd = schdList.get(i);
-				if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
-					bpiSchedule = curSchd;
-					continue;
+		String maintainSts = "";
+		if (schdData.getFinanceMain() != null) {
+			maintainSts = StringUtils.trimToEmpty(schdData.getFinanceMain().getRcdMaintainSts());
+		}
+
+		// Check Repayments on Finance when it is not in Maintenance
+		if (StringUtils.isEmpty(maintainSts)) {
+			List<FinanceRepayments> listFinanceRepayments = new ArrayList<FinanceRepayments>();
+			listFinanceRepayments = financeDetailService.getFinanceRepaymentsByFinRef(finID, false);
+			if (listFinanceRepayments != null && listFinanceRepayments.size() > 0) {
+				boolean onlyBPIPayment = true;
+				for (FinanceRepayments financeRepayments : listFinanceRepayments) {
+					// check for the BPI payment
+					if (bpiSchedule != null) {
+						if (financeRepayments.getFinSchdDate().compareTo(bpiSchedule.getSchDate()) != 0) {
+							onlyBPIPayment = false;
+						}
+					} else {
+						onlyBPIPayment = false;
+					}
 				}
-
-				if (curSchd.getSchDate().compareTo(DateUtility.getAppDate()) <= 0) {
-
-					ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "60407", null, null),
-							getUserWorkspace().getUserLanguage());
-					MessageUtil.showError(errorDetails.getError());
-
-					logger.debug("Leaving");
+				if (!onlyBPIPayment) {
+					MessageUtil.showError("Repayments done on this Finance. Cannot Proceed Further");
 					return;
 				}
 			}
+		}
 
-			String maintainSts = "";
-			if (financeDetail.getFinScheduleData().getFinanceMain() != null) {
-				maintainSts = StringUtils
-						.trimToEmpty(financeDetail.getFinScheduleData().getFinanceMain().getRcdMaintainSts());
-			}
+		// If the disbursements are REALIZED or PAID, we are not allow to cancel the loan until unless those
+		// disbursements are REVERSED.
+		if (ImplementationConstants.DISB_REVERSAL_REQ_BEFORE_LOAN_CANCEL) {
+			List<FinAdvancePayments> advancePayments = financeCancellationService.getFinAdvancePaymentsByFinRef(finID);
 
-			// Check Repayments on Finance when it is not in Maintenance
-			if (StringUtils.isEmpty(maintainSts)) {
-				List<FinanceRepayments> listFinanceRepayments = new ArrayList<FinanceRepayments>();
-				listFinanceRepayments = getFinanceDetailService()
-						.getFinanceRepaymentsByFinRef(aFinanceMain.getFinReference(), false);
-				if (listFinanceRepayments != null && listFinanceRepayments.size() > 0) {
-					boolean onlyBPIPayment = true;
-					for (FinanceRepayments financeRepayments : listFinanceRepayments) {
-						// check for the BPI payment
-						if (bpiSchedule != null) {
-							if (financeRepayments.getFinSchdDate().compareTo(bpiSchedule.getSchDate()) != 0) {
-								onlyBPIPayment = false;
-							}
-						} else {
-							onlyBPIPayment = false;
-						}
-					}
-					if (!onlyBPIPayment) {
-						MessageUtil.showError("Repayments done on this Finance. Cannot Proceed Further");
+			if (CollectionUtils.isNotEmpty(advancePayments)) {
+				for (FinAdvancePayments payments : advancePayments) {
+					if (!(DisbursementConstants.STATUS_REVERSED.equals(payments.getStatus())
+							|| DisbursementConstants.STATUS_REJECTED.equals(payments.getStatus())
+							|| DisbursementConstants.STATUS_APPROVED.equals(payments.getStatus())
+							|| DisbursementConstants.STATUS_CANCEL.equals(payments.getStatus()))) {
+						MessageUtil.showError(Labels.getLabel("label_Finance_Cancel_Disbursement_Status_Reversed"));
 						return;
 					}
 				}
 			}
+		}
 
-			// If the disbursements are REALIZED or PAID, we are not allow to cancel the loan until unless those
-			// disbursements are REVERSED.
-			if (ImplementationConstants.DISB_REVERSAL_REQ_BEFORE_LOAN_CANCEL) {
-				List<FinAdvancePayments> advancePayments = getFinanceCancellationService()
-						.getFinAdvancePaymentsByFinRef(financeDetail.getFinScheduleData().getFinReference());
+		if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
+			String[] errParm = new String[1];
+			String[] valueParm = new String[1];
+			valueParm[0] = fm.getFinReference();
+			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-				if (CollectionUtils.isNotEmpty(advancePayments)) {
-					for (FinAdvancePayments payments : advancePayments) {
-						if (!(DisbursementConstants.STATUS_REVERSED.equals(payments.getStatus())
-								|| DisbursementConstants.STATUS_REJECTED.equals(payments.getStatus())
-								|| DisbursementConstants.STATUS_APPROVED.equals(payments.getStatus())
-								|| DisbursementConstants.STATUS_CANCEL.equals(payments.getStatus()))) {
-							MessageUtil.showError(Labels.getLabel("label_Finance_Cancel_Disbursement_Status_Reversed"));
-							return;
-						}
-					}
-				}
-			}
+			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+					getUserWorkspace().getUserLanguage());
+			MessageUtil.showError(errorDetails.getError());
+		} else {
 
-			if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
-				String[] errParm = new String[1];
-				String[] valueParm = new String[1];
-				valueParm[0] = aFinanceMain.getFinReference();
-				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+			if (isWorkFlowEnabled()) {
+				String whereCond = " AND FinID=" + finID + " AND version=" + fm.getVersion() + " ";
 
-				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
-						getUserWorkspace().getUserLanguage());
-				MessageUtil.showError(errorDetails.getError());
-			} else {
-
-				if (isWorkFlowEnabled()) {
-					String whereCond = " AND FinReference='" + aFinanceMain.getFinReference() + "' AND version="
-							+ aFinanceMain.getVersion() + " ";
-
-					boolean userAcces = validateUserAccess(workFlowDetails.getId(),
-							getUserWorkspace().getLoggedInUser().getUserId(), workflowCode, whereCond,
-							aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
-					if (userAcces) {
-						showCancellationDetailView(financeDetail);
-					} else {
-						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
-					}
+				boolean userAcces = validateUserAccess(workFlowDetails.getId(),
+						getUserWorkspace().getLoggedInUser().getUserId(), workflowCode, whereCond,
+						fm.getTaskId(), fm.getNextTaskId());
+				if (userAcces) {
+					showCancellationDetailView(fd);
 				} else {
-					showCancellationDetailView(financeDetail);
+					MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 				}
+			} else {
+				showCancellationDetailView(fd);
 			}
 		}
-		logger.debug("Leaving ");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

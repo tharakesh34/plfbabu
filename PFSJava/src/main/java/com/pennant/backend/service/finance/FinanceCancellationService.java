@@ -9,7 +9,7 @@ import com.pennant.backend.model.reason.details.ReasonHeader;
 
 public interface FinanceCancellationService {
 
-	FinanceDetail getFinanceDetailById(String finReference, String type, String userRole, String procEdtEvent);
+	FinanceDetail getFinanceDetailById(long finID, String type, String userRole, String procEdtEvent);
 
 	AuditHeader saveOrUpdate(AuditHeader aAuditHeader);
 

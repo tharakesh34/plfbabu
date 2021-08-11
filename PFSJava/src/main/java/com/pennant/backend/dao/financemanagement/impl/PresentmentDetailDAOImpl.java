@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PresentmentDetailDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  01-05-2017    														*
- *                                                                  						*
- * Modified Date    :  01-05-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PresentmentDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 01-05-2017 * *
+ * Modified Date : 01-05-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 01-05-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 01-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.financemanagement.impl;
@@ -1125,7 +1107,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	@Override
 	public List<PresentmentDetail> getPresentmentDetail(long presentmentId, boolean includeData) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" t.Id, t.PresentmentId, t.FinReference, t.SchDate, t.MandateId, t.SchAmtDue, t.SchPriDue");
+		sql.append(" t.Id, t.PresentmentId, t.FinID, t.SchDate, t.MandateId, t.SchAmtDue, t.SchPriDue");
 		sql.append(", t.SchPftDue, t.SchFeeDue, t.SchInsDue, t.SchPenaltyDue, t.AdvanceAmt, t.ExcessID");
 		sql.append(", t.AdviseAmt, t.PresentmentAmt, t.EmiNo, t.Status, t.PresentmentRef, t.EcsReturn");
 		sql.append(", t.ReceiptID, t.ExcludeReason, t.Version, t.LastMntOn, t.LastMntBy, t.RecordStatus");
@@ -1164,7 +1146,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 			pd.setId(rs.getLong("Id"));
 			pd.setHeaderId(rs.getLong("PresentmentId"));
-			pd.setFinReference(rs.getString("FinReference"));
+			pd.setFinID(rs.getLong("FinID"));
 			pd.setSchDate(rs.getTimestamp("SchDate"));
 			pd.setMandateId(rs.getLong("MandateId"));
 			pd.setSchAmtDue(rs.getBigDecimal("SchAmtDue"));

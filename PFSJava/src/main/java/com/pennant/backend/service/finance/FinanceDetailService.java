@@ -56,7 +56,6 @@ import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.TATDetail;
-import com.pennant.backend.model.reports.AvailFinance;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEEvent;
@@ -122,11 +121,9 @@ public interface FinanceDetailService {
 	FinanceDetail fetchFinCustDetails(FinanceDetail financeDetail, String ctgType, String finType, String userRole,
 			String procEdtEvent);
 
-	List<FinanceRepayments> getFinanceRepaymentsByFinRef(final String id, boolean isRpyCancelProc);
+	List<FinanceRepayments> getFinanceRepaymentsByFinRef(long finID, boolean isRpyCancelProc);
 
 	AuditHeader doCheckExceptions(AuditHeader auditHeader);
-
-	List<String> getFinanceReferenceList();
 
 	String getCustStatusByMinDueDays();
 
@@ -153,8 +150,6 @@ public interface FinanceDetailService {
 
 	boolean checkExistCustIsBlackListed(long custID);
 
-	List<AvailFinance> getFinanceDetailByCmtRef(String cmtRef, long custId);
-
 	BigDecimal getCustRepayBankTotal(long custId);
 
 	FinScheduleData getFinMaintainenceDetails(FinScheduleData finSchData);
@@ -168,10 +163,6 @@ public interface FinanceDetailService {
 	boolean updateFeeChargesByFinRefAndFeeCode(FeeRule feeRule, String tableType);
 
 	String getUserRoleCodeByRefernce(long userId, String reference, List<String> roleCodes);
-
-	void updateFinancePriority();
-
-	void updateFinApprovalStatus(String finReference, String approvalStatus);
 
 	String getNextRoleCodeByRef(String finReference);
 
@@ -277,7 +268,7 @@ public interface FinanceDetailService {
 
 	FinanceMain getFinanceMainForRateReport(String finReference, String type);
 
-	String getFinanceMainByRcdMaintenance(String reference, String type);
+	String getFinanceMainByRcdMaintenance(long finID, String type);
 
 	FinanceMain getRcdMaintenanceByRef(String reference, String type);
 

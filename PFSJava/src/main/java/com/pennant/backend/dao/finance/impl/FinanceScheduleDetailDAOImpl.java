@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceScheduleDetailDAOImpl.java                                    * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceScheduleDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * *
+ * Modified Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.finance.impl;
@@ -97,18 +79,17 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	@Override
-	public FinanceScheduleDetail getFinanceScheduleDetailById(final String id, final Date schdDate, String type,
+	public FinanceScheduleDetail getFinanceScheduleDetailById(final long finID, final Date schdDate, String type,
 			boolean isWIF) {
 
 		StringBuilder sql = getScheduleDetailQuery(type, isWIF);
-		sql.append(" Where FinReference = ? and SchDate = ?");
+		sql.append(" Where FinID = ? and SchDate = ?");
 		logger.debug(Literal.SQL + sql.toString());
 
 		RowMapper<FinanceScheduleDetail> rowMapper = new ScheduleDetailRowMapper(isWIF);
 
 		try {
-			return this.jdbcTemplate.getJdbcOperations().queryForObject(sql.toString(), new Object[] { id, schdDate },
-					rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, schdDate);
 		} catch (Exception e) {
 			logger.warn(Literal.EXCEPTION, e);
 		}
@@ -147,10 +128,8 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	 * This method Deletes the Record from the WIFFinScheduleDetails or WIFFinScheduleDetails_Temp. if Record not
 	 * deleted then throws DataAccessException with error 41003. delete Finance Schedule Detail by key FinReference
 	 * 
-	 * @param Finance
-	 *            Schedule Detail (wIFFinanceScheduleDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Schedule Detail (wIFFinanceScheduleDetail)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -190,10 +169,8 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	 * 
 	 * save Finance Schedule Detail
 	 * 
-	 * @param Finance
-	 *            Schedule Detail (wIFFinanceScheduleDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Schedule Detail (wIFFinanceScheduleDetail)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -215,8 +192,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		insertSql.append(" (FinReference, SchDate, SchSeq, PftOnSchDate,");
 		insertSql.append(" CpzOnSchDate, RepayOnSchDate, RvwOnSchDate, DisbOnSchDate,");
 		insertSql.append(" DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, MrgRate, ActRate, NoOfDays,");
-		insertSql
-				.append(" DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd, RepayAmount, ProfitBalance,");
+		insertSql.append(" DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd, RepayAmount, ProfitBalance,");
 		insertSql.append(" DisbAmount, DownPaymentAmount, CpzAmount, CpzBalance, OrgPft , OrgPri, OrgEndBal, ");
 		insertSql.append(" ClosingBalance, ProfitFraction, PrvRepayAmount, OrgPlanPft,");
 		insertSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid, Specifier,");
@@ -233,8 +209,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		insertSql.append(" :CpzOnSchDate, :RepayOnSchDate, :RvwOnSchDate, :DisbOnSchDate, ");
 		insertSql.append(
 				" :DownpaymentOnSchDate, :BalanceForPftCal, :BaseRate, :SplRate,:MrgRate, :ActRate, :NoOfDays,");
-		insertSql.append(
-				" :DayFactor, :ProfitCalc, :ProfitSchd, :PrincipalSchd, :RepayAmount, :ProfitBalance,");
+		insertSql.append(" :DayFactor, :ProfitCalc, :ProfitSchd, :PrincipalSchd, :RepayAmount, :ProfitBalance,");
 		insertSql.append(" :DisbAmount, :DownPaymentAmount, :CpzAmount, :CpzBalance, :OrgPft , :OrgPri, :OrgEndBal, ");
 		insertSql.append(" :ClosingBalance, :ProfitFraction, :PrvRepayAmount, :OrgPlanPft,");
 		insertSql.append(" :SchdPriPaid, :SchdPftPaid, :SchPriPaid, :SchPftPaid, :Specifier,");
@@ -253,7 +228,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wIFFinanceScheduleDetail);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
-		return wIFFinanceScheduleDetail.getId();
+		return wIFFinanceScheduleDetail.getFinReference();
 	}
 
 	public int saveList(List<FinanceScheduleDetail> financeScheduleDetail, String type, boolean isWIF) {
@@ -392,10 +367,8 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	 * This method updates the Record WIFFinScheduleDetails or WIFFinScheduleDetails_Temp. if Record not updated then
 	 * throws DataAccessException with error 41004. update Finance Schedule Detail by key FinReference and Version
 	 * 
-	 * @param Finance
-	 *            Schedule Detail (wIFFinanceScheduleDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Schedule Detail (wIFFinanceScheduleDetail)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -420,8 +393,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		updateSql.append(" DownpaymentOnSchDate = :DownpaymentOnSchDate,");
 		updateSql.append(
 				" BalanceForPftCal= :BalanceForPftCal, BaseRate= :BaseRate, SplRate= :SplRate,MrgRate =:MrgRate,");
-		updateSql.append(
-				" ActRate= :ActRate, NoOfDays= :NoOfDays, DayFactor =:DayFactor, ProfitCalc= :ProfitCalc,");
+		updateSql.append(" ActRate= :ActRate, NoOfDays= :NoOfDays, DayFactor =:DayFactor, ProfitCalc= :ProfitCalc,");
 		updateSql.append(" ProfitSchd= :ProfitSchd, PrincipalSchd= :PrincipalSchd, RepayAmount= :RepayAmount,");
 		updateSql.append(
 				" ProfitBalance=:ProfitBalance, DisbAmount= :DisbAmount, DownPaymentAmount= :DownPaymentAmount,");
@@ -432,8 +404,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		updateSql.append(" SchPftPaid= :SchPftPaid,Specifier= :Specifier,");
 		updateSql.append(" CalculatedRate =:CalculatedRate,FeeChargeAmt=:FeeChargeAmt,");
-		updateSql.append(
-				" FeeSchd=:FeeSchd , SchdFeePaid=:SchdFeePaid , SchdFeeOS=:SchdFeeOS , ");
+		updateSql.append(" FeeSchd=:FeeSchd , SchdFeePaid=:SchdFeePaid , SchdFeeOS=:SchdFeeOS , ");
 		updateSql.append(" TDSAmount=:TDSAmount, TDSPaid=:TDSPaid, PftDaysBasis=:PftDaysBasis, ");
 		if (!isWIF) {
 			updateSql.append(" RefundOrWaiver=:RefundOrWaiver, EarlyPaid =:EarlyPaid, EarlyPaidBal=:EarlyPaidBal ,");
@@ -577,25 +548,24 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	@Override
-	public List<FinanceScheduleDetail> getFinScheduleDetails(String id, String type, boolean isWIF) {
+	public List<FinanceScheduleDetail> getFinScheduleDetails(long finID, String type, boolean isWIF) {
 		StringBuilder sql = getScheduleDetailQuery(type, isWIF);
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		RowMapper<FinanceScheduleDetail> rowMapper = new ScheduleDetailRowMapper(isWIF);
-		List<FinanceScheduleDetail> finSchdDetails = null;
 
-		finSchdDetails = this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, id);
+		List<FinanceScheduleDetail> schedules = this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, finID);
 		}, rowMapper);
 
-		return ScheduleCalculator.sortSchdDetails(finSchdDetails);
+		return ScheduleCalculator.sortSchdDetails(schedules);
 	}
 
 	private StringBuilder getScheduleDetailQuery(String type, boolean isWIF) {
 		StringBuilder sql = new StringBuilder("select");
-		sql.append(" FinReference, SchDate, SchSeq, PftOnSchDate, CpzOnSchDate, RepayOnSchDate, RvwOnSchDate");
+		sql.append(" FinID, FinReference, SchDate, SchSeq, PftOnSchDate, CpzOnSchDate, RepayOnSchDate, RvwOnSchDate");
 		sql.append(", DisbOnSchDate, DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, MrgRate");
 		sql.append(", ActRate, NoOfDays, DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd");
 		sql.append(", RepayAmount, ProfitBalance, DisbAmount, DownPaymentAmount, CpzAmount, CpzBalance");
@@ -626,7 +596,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	@Override
 	public List<FinanceScheduleDetail> getFinScheduleDetails(long Custid, boolean isActive) {
 		StringBuilder sql = getScheduleDetailQuery("", false);
-		sql.append(" Where FinReference IN (Select FinReference from FinanceMain where CustID = ?");
+		sql.append(" Where FinID IN (Select FinID from FinanceMain where CustID = ?");
 
 		if (isActive) {
 			sql.append(" AND FinIsActive = ?");
@@ -654,9 +624,9 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	@Override
-	public List<FinanceScheduleDetail> getFinScheduleDetails(String id, String type, boolean isWIF, long logKey) {
+	public List<FinanceScheduleDetail> getFinScheduleDetails(long finID, String type, boolean isWIF, long logKey) {
 		StringBuilder sql = getScheduleDetailQuery(type, isWIF);
-		sql.append(" Where FinReference = ? and LogKey = ?");
+		sql.append(" Where FinID = ? and LogKey = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -666,7 +636,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 			return this.jdbcTemplate.getJdbcOperations().query(sql.toString(), new PreparedStatementSetter() {
 				@Override
 				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setString(1, id);
+					ps.setLong(1, finID);
 					ps.setLong(2, logKey);
 				}
 			}, rowMapper);
@@ -1085,8 +1055,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		StringBuilder selectSql = new StringBuilder(" Select FinReference, SchDate, SchSeq, PftOnSchDate,");
 		selectSql.append(" CpzOnSchDate, RepayOnSchDate, RvwOnSchDate, DisbOnSchDate,");
 		selectSql.append(" DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, MrgRate, ActRate, NoOfDays,");
-		selectSql
-				.append(" DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd, RepayAmount, ProfitBalance,");
+		selectSql.append(" DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd, RepayAmount, ProfitBalance,");
 		selectSql.append(
 				" DisbAmount, DownPaymentAmount, CpzAmount, CpzBalance, ClosingBalance, ProfitFraction, PrvRepayAmount, ");
 		selectSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid,Specifier, OrgPlanPft,");
@@ -1180,38 +1149,23 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		return financeScheduleDetail;
 	}
 
-	/**
-	 * Method for validate given date is valid schedule date or not.
-	 * 
-	 * @param finReference
-	 * @param fromDate
-	 * @param isWIF
-	 * @return boolean
-	 */
 	@Override
-	public boolean getFinScheduleCountByDate(String finReference, Date fromDate, boolean isWIF) {
-		logger.debug("Entering");
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("SchDate", fromDate);
-
-		StringBuilder selectSql = new StringBuilder(" Select COUNT(*) ");
+	public boolean getFinScheduleCountByDate(long finID, Date fromDate, boolean isWIF) {
+		StringBuilder selectSql = new StringBuilder("Select COUNT(*)");
 		if (!isWIF) {
 			selectSql.append(" From FinScheduleDetails");
 		} else {
 			selectSql.append(" From WIFFinScheduleDetails");
 		}
 
-		selectSql.append(" Where FinReference = :FinReference AND SchDate= :SchDate");
+		selectSql.append(" Where FinReference = ? and SchDate = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 
 		int recordCount = 0;
 		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			recordCount = this.jdbcOperations.queryForObject(selectSql.toString(), Integer.class, finID, fromDate);
 		} catch (EmptyResultDataAccessException e) {
-			logger.info(e);
 			recordCount = 0;
 		}
 
@@ -1219,7 +1173,6 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 			return false;
 		}
 
-		logger.debug("Leaving");
 		return true;
 	}
 
@@ -1370,9 +1323,9 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	@Override
-	public List<FinanceScheduleDetail> getFinScheduleDetails(String finReference, String type, long logKey) {
+	public List<FinanceScheduleDetail> getFinScheduleDetails(long finID, String type, long logKey) {
 		StringBuilder sql = getScheduleDetailQuery("", false);
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
 		if (logKey > 0) {
 			sql.append(" And LogKey = ?");
 		}
@@ -1387,7 +1340,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 			finSchdDetails = this.jdbcTemplate.getJdbcOperations().query(sql.toString(), new PreparedStatementSetter() {
 				@Override
 				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setString(1, finReference);
+					ps.setLong(1, finID);
 
 					if (logKey > 0) {
 						ps.setLong(2, logKey);
@@ -1540,10 +1493,8 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	/**
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -1598,6 +1549,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		public FinanceScheduleDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
 			FinanceScheduleDetail schd = new FinanceScheduleDetail();
 
+			schd.setFinID(rs.getLong("FinID"));
 			schd.setFinReference(rs.getString("FinReference"));
 			schd.setSchDate(rs.getTimestamp("SchDate"));
 			schd.setSchSeq(rs.getInt("SchSeq"));
@@ -1774,10 +1726,10 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	@Override
-	public List<FinanceScheduleDetail> getFinScheduleDetailsBySchPriPaid(String id, String type, boolean isWIF) {
+	public List<FinanceScheduleDetail> getFinScheduleDetailsBySchPriPaid(long finID, String type, boolean isWIF) {
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = getScheduleDetailQuery(type, isWIF);
-		sql.append(" Where FinReference = ? and SchdPriPaid > 0 order by SchDate asc");
+		sql.append(" Where FinID = ? and SchdPriPaid > 0 order by SchDate asc");
 		logger.debug(Literal.SQL + sql.toString());
 
 		RowMapper<FinanceScheduleDetail> rowMapper = new ScheduleDetailRowMapper(isWIF);
@@ -1786,7 +1738,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 			return this.jdbcTemplate.getJdbcOperations().query(sql.toString(), new PreparedStatementSetter() {
 				@Override
 				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setString(1, id);
+					ps.setLong(1, finID);
 				}
 			}, rowMapper);
 		} catch (Exception e) {

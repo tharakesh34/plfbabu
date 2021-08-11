@@ -83,13 +83,13 @@ public class ChangeProfitServiceImpl extends GenericService<FinServiceInstructio
 		boolean isWIF = finServiceInstruction.isWif();
 		String finReference = finServiceInstruction.getFinReference();
 
-		FinanceMain financeMain = financeMainDAO.getFinanceMainById(finReference, "", isWIF);
+		FinanceMain fm = financeMainDAO.getFinanceMainByRef(finReference, "", isWIF);
 
 		// validate from date
 		Date fromDate = finServiceInstruction.getFromDate();
 
 		// It should be valid schedule date
-		boolean isFromDateExists = financeScheduleDetailDAO.getFinScheduleCountByDate(finReference, fromDate, isWIF);
+		boolean isFromDateExists = financeScheduleDetailDAO.getFinScheduleCountByDate(fm.getFinID(), fromDate, isWIF);
 		if (!isFromDateExists) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
@@ -97,14 +97,14 @@ public class ChangeProfitServiceImpl extends GenericService<FinServiceInstructio
 		}
 
 		// It shouldn't be greater than or equals to maturity date
-		if (isFromDateExists && fromDate.compareTo(financeMain.getMaturityDate()) >= 0) {
+		if (isFromDateExists && fromDate.compareTo(fm.getMaturityDate()) >= 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = String.valueOf(fromDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91101", "", valueParm), lang));
 		}
 
 		// It shouldn't be past date when compare to appdate
-		if (isFromDateExists && fromDate.compareTo(DateUtility.getAppDate()) < 0) {
+		if (isFromDateExists && fromDate.compareTo(SysParamUtil.getAppDate()) < 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
@@ -114,7 +114,7 @@ public class ChangeProfitServiceImpl extends GenericService<FinServiceInstructio
 		Date toDate = finServiceInstruction.getToDate();
 
 		// ToDate should be valid schedule date
-		boolean isToDateExists = financeScheduleDetailDAO.getFinScheduleCountByDate(finReference, toDate, isWIF);
+		boolean isToDateExists = financeScheduleDetailDAO.getFinScheduleCountByDate(fm.getFinID(), toDate, isWIF);
 		if (!isToDateExists) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
@@ -122,7 +122,7 @@ public class ChangeProfitServiceImpl extends GenericService<FinServiceInstructio
 		}
 
 		// ToDate shouldn't be greater than maturity date
-		if (isToDateExists && fromDate.compareTo(financeMain.getMaturityDate()) > 0) {
+		if (isToDateExists && fromDate.compareTo(fm.getMaturityDate()) > 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = String.valueOf(fromDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91101", "", valueParm), lang));

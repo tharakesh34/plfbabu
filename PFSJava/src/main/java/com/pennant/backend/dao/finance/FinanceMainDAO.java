@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceMainDAO.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  15-11-2011    														*
- *                                                                  						*
- * Modified Date    :  15-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceMainDAO.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 15-11-2011 * * Modified Date
+ * : 15-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 15-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 15-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.finance;
@@ -47,8 +29,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.dao.DataAccessException;
-
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
@@ -56,55 +36,23 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceMainExtension;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.UserPendingCases;
-import com.pennant.backend.model.reports.AvailFinance;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.dms.model.DMSQueue;
 import com.pennanttech.pff.core.TableType;
 
 public interface FinanceMainDAO {
 	FinanceMain getFinanceMain(boolean isWIF);
 
-	FinanceMain getNewFinanceMain(boolean isWIF);
-
 	FinanceMain getFinanceMain(String id, String nextRoleCode, String type);
 
-	FinanceMain getFinanceMainById(String id, String type, boolean isWIF);
+	FinanceMain getFinanceMainByRef(String finReferece, String type, boolean isWIF);
 
-	/**
-	 * Saves the record. If required, this will generate the identity sequence number for the record before saving.
-	 * 
-	 * @param financeMain The model object that contains the parameters.
-	 * @param tableType   The type of the table.
-	 * @param wif         Whether the record is for what-if or the loan.
-	 * @return Identity sequence number as string or primary key code of the saved record.
-	 * @throws DataAccessException If there is any problem issuing the save.
-	 */
+	FinanceMain getFinanceMainById(long finID, String type, boolean isWIF);
+
 	String save(FinanceMain financeMain, TableType tableType, boolean wif);
 
-	/**
-	 * Updates the record.
-	 * 
-	 * @param financeMain The model object that contains the parameters.
-	 * @param tableType   The type of the table.
-	 * @param wif         Whether the record is for what-if or the loan.
-	 * @throws ConcurrencyException If failure due to concurrency.
-	 * @throws DataAccessException  If there is any problem issuing the update.
-	 */
 	void update(FinanceMain financeMain, TableType tableType, boolean wif);
 
-	/**
-	 * Deletes the record.
-	 * 
-	 * @param financeMain The model object that contains the parameters.
-	 * @param tableType   The type of the table.
-	 * @param wif         Whether the record is for what-if or the loan.
-	 * @param finalize    Specifies whether the record was finalized or not.
-	 * @throws DependencyFoundException If there are any dependencies for the record.
-	 * @throws ConcurrencyException     If failure due to concurrency.
-	 * @throws DataAccessException      If there is any problem issuing the delete.
-	 */
 	void delete(FinanceMain financeMain, TableType tableType, boolean wif, boolean finalize);
 
 	boolean isFinReferenceExists(String id, String type, boolean isWIF);
@@ -113,35 +61,21 @@ public interface FinanceMainDAO {
 
 	List<BigDecimal> getActualPftBal(String finReference, String type);
 
-	void updateRepaymentAmount(String finReference, BigDecimal finAmount, BigDecimal repaymentAmount, String finStatus,
-			String finStsReason, boolean isCancelProc, boolean pftFullyPaid);
-
 	List<FinanceEnquiry> getFinanceDetailsByCustId(long custId);
 
 	void updateCustCIF(long custID, String finReference);
 
 	void updateFinBlackListStatus(String finReference);
 
-	List<String> getFinanceReferenceList();
-
 	FinanceSummary getFinanceProfitDetails(String finRef);
 
 	Boolean saveRejectFinanceDetails(FinanceMain financeMain);
-
-	List<AvailFinance> getFinanceDetailByCmtRef(String cmtRef, long custId);
-
-	void updateFinanceERR(String finReference, Date lastRepayDate, Date lastRepayPftDate, BigDecimal effectiveRate,
-			String type);
 
 	FinanceMain getFinanceMainForBatch(String finReference);
 
 	FinanceMain getFinanceMainForPftCalc(String finReference);
 
 	FinanceMain getFinanceMainForRpyCancel(String id);
-
-	void updateFinancePriority();
-
-	void updateApprovalStatus(String finReference, String approvalStatus);
 
 	String getNextRoleCodeByRef(String finReference);
 
@@ -153,27 +87,17 @@ public interface FinanceMainDAO {
 
 	List<FinanceSummary> getFinExposureByCustId(long custId);
 
-	List<FinanceMain> getFinanceRefByValueDate(Date appDate, int days);
-
-	List<FinanceMain> getFinGraceDetails(Date grcEnd, int allowedDays);
-
 	List<FinanceMain> getFinanceRefByPriority();
 
 	void saveFinanceSnapshot(FinanceMain financeMain);
 
-	FinanceMain getFinanceMainByRef(String reference, String type, boolean isRejectFinance);
-
-	void updateRepaymentAmount(String finReference, BigDecimal repaymentAmount);
-
-	void updateStatus(String finReference, String status, String statusReason);
+	// FinanceMain getFinanceMainByRef(String reference, String type, boolean isRejectFinance); FIXME
 
 	String getApprovedRepayMethod(String finReference, String type);
 
 	void updateMaturity(String finReference, String closingStatus, boolean finIsActive, Date date);
 
 	List<String> getScheduleEffectModuleList(boolean schdChangeReq);
-
-	boolean updateSeqNumber(long oldNumber, long newNumber);
 
 	List<FinanceMain> getFinanceMainbyCustId(long id);
 
@@ -218,7 +142,7 @@ public interface FinanceMainDAO {
 
 	List<FinanceMain> getFinMainsForEODByCustId(long custId, boolean isActive);
 
-	FinanceMain getFinMainsForEODByFinRef(String finReference, boolean isActive);
+	FinanceMain getFinMainsForEODByFinRef(long finID, boolean isActive);
 
 	void updateFinanceInEOD(FinanceMain financeMain, List<String> updateFields, boolean rateRvw);
 
@@ -292,8 +216,6 @@ public interface FinanceMainDAO {
 	List<String> getFinanceMainbyCustId(long custId, String type);
 
 	String getFinanceTypeFinReference(String reference, String type);
-
-	void updateFinPftMaturity(String finReference, String closingStatus, boolean finIsActive);
 
 	void updateFinAssetValue(FinanceMain finMain);
 

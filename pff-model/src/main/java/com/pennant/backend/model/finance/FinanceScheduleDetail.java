@@ -49,6 +49,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
+	private long finID;
 	private String finReference = null;
 	private int schSeq = 0;
 	@XmlElement
@@ -163,13 +164,9 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 		super();
 	}
 
-	public FinanceScheduleDetail(String id) {
-		super();
-		this.setId(id);
-	}
-
 	public FinanceScheduleDetail copyEntity() {
 		FinanceScheduleDetail entity = new FinanceScheduleDetail();
+		entity.setFinID(this.finID);
 		entity.setFinReference(this.finReference);
 		entity.setSchSeq(this.schSeq);
 		entity.setSchDate(this.schDate);
@@ -258,16 +255,16 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 		return entity;
 	}
 
-	public String getId() {
-		return finReference;
+	public long getFinID() {
+		return finID;
 	}
 
-	public void setId(String id) {
-		this.finReference = id;
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
-		return getId();
+		return finReference;
 	}
 
 	public void setFinReference(String finReference) {

@@ -105,13 +105,13 @@ public class NotificationProcessImpl extends BasicDao<SystemNotifications> imple
 				int amtFormatter = 2;
 				String utrNumber = "";
 
-				FinanceMain financeMain = financeMainDAO.getFinanceMainById(finReference, "_AView", false);
-				financeMain.setUserDetails(new LoggedInUser());
+				FinanceMain fm = financeMainDAO.getFinanceMainByRef(finReference, "_AView", false);
+				fm.setUserDetails(new LoggedInUser());
 				financeDetail.setFinReference(finReference);
-				customerDetails.setCustID(financeMain.getCustID());
+				customerDetails.setCustID(fm.getCustID());
 				customerDetailsService.setCustomerBasicDetails(customerDetails);
 				financeDetail.setCustomerDetails(customerDetails);
-				amtFormatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
+				amtFormatter = CurrencyUtil.getFormat(fm.getFinCcy());
 
 				List<CustomerEMail> customerEmailList = customerDetails.getCustomerEMailList();
 				if (CollectionUtils.isNotEmpty(customerEmailList)) {
@@ -129,7 +129,7 @@ public class NotificationProcessImpl extends BasicDao<SystemNotifications> imple
 
 					finAdvancePayments.setPaymentId(paymentTransaction.getPaymentId());
 					finAdvancePayments = this.finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePayments, "");
-					sanctionAmount = (BigDecimal) financeMain.getFinAssetValue();
+					sanctionAmount = (BigDecimal) fm.getFinAssetValue();
 
 					if (finAdvancePayments != null) {
 						paymentTransaction.setFinAdvancePayments(finAdvancePayments);

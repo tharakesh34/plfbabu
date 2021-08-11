@@ -21,31 +21,23 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		super();
 	}
 
-	/**
-	 * Fetch the Record Finance Overdue Penalty details by key field
-	 * 
-	 * @param finReference
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return FinODPenaltyRate
-	 */
 	@Override
-	public FinODPenaltyRate getFinODPenaltyRateByRef(final String finReference, String type) {
+	public FinODPenaltyRate getFinODPenaltyRateByRef(long finID, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, FinEffectDate, ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays");
+		sql.append(" FinID, FinReference, FinEffectDate, ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays");
 		sql.append(", ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc, ODRuleCode");
 		sql.append(", ODMinCapAmount, ODTDSReq");
 		sql.append(" from FinODPenaltyRates");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				FinODPenaltyRate pr = new FinODPenaltyRate();
 
+				pr.setFinID(rs.getLong("FinID"));
 				pr.setFinReference(rs.getString("FinReference"));
 				pr.setFinEffectDate(rs.getTimestamp("FinEffectDate"));
 				pr.setApplyODPenalty(rs.getBoolean("ApplyODPenalty"));
@@ -63,8 +55,7 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 				return pr;
 			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record not found in FinODPenaltyRates{} for the specified finReference>> {}", finReference,
-					type);
+			logger.warn("Record not found in FinODPenaltyRates{} for the specified FinID >> {}", finID, type);
 		}
 
 		return null;

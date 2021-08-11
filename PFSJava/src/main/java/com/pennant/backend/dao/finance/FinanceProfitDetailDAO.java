@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceProfitDetailDAO.java											* 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  09-02-2012    														*
- *                                                                  						*
- * Modified Date    :  09-02-2012   													*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceProfitDetailDAO.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 09-02-2012 * *
+ * Modified Date : 09-02-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 09-02-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 09-02-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.finance;
 
@@ -56,7 +38,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
  */
 public interface FinanceProfitDetailDAO {
 
-	FinanceProfitDetail getFinProfitDetailsById(String finReference);
+	FinanceProfitDetail getFinProfitDetailsById(long finID);
 
 	void update(FinanceProfitDetail finProfitDetails, boolean isRpyProcess);
 
@@ -76,7 +58,7 @@ public interface FinanceProfitDetailDAO {
 
 	FinanceProfitDetail getProfitDetailForWriteOff(String finReference);
 
-	FinanceProfitDetail getPftDetailForEarlyStlReport(String finReference);
+	FinanceProfitDetail getPftDetailForEarlyStlReport(long finID);
 
 	void updateLatestRpyDetails(FinanceProfitDetail financeProfitDetail);
 
@@ -90,7 +72,7 @@ public interface FinanceProfitDetailDAO {
 
 	List<FinanceProfitDetail> getFinProfitDetailsByCustId(long custID, boolean isActive);
 
-	FinanceProfitDetail getFinProfitDetailsByFinRef(String finReference, boolean isActive);
+	FinanceProfitDetail getFinProfitDetailsByFinRef(long finID, boolean isActive);
 
 	void updateEOD(FinanceProfitDetail finProfitDetails, boolean posted, boolean monthend);
 
@@ -135,5 +117,5 @@ public interface FinanceProfitDetailDAO {
 
 	void updateClosingSts(String finReference, boolean writeoffLoan);
 
-	FinanceProfitDetail getFinProfitDetailsByFinRef(String finReference);
+	FinanceProfitDetail getFinProfitDetailsByFinRef(long finID);
 }

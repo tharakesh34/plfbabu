@@ -51,9 +51,9 @@ public class LoadFinanceData extends ServiceHelper {
 		logger.info("Total Finances >> {}", custFinMains.size());
 
 		for (FinanceMain fm : custFinMains) {
-			String finReference = fm.getFinReference();
+			long finID = fm.getFinID();
 
-			logger.info("Loading finance details for the FinReference >> {} started...", finReference);
+			logger.info("Loading finance details for the FinID >> {} started...", finID);
 
 			FinEODEvent finEODEvent = new FinEODEvent();
 
@@ -63,13 +63,12 @@ public class LoadFinanceData extends ServiceHelper {
 
 			finEODEvent.setFinType(getFinanceType(fm.getFinType()));
 
-			FinanceProfitDetail pfd = getFinPftDetailRef(finReference, custpftDet);
+			FinanceProfitDetail pfd = getFinPftDetailRef(finID, custpftDet);
 			pfd.setEventProperties(eventProperties);
 
 			finEODEvent.setFinProfitDetail(pfd);
 
-			List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "",
-					false);
+			List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false);
 			finEODEvent.setFinanceScheduleDetails(schedules);
 
 			List<FinanceScheduleDetail> orgFinSchdDetails = new ArrayList<>();
@@ -79,29 +78,29 @@ public class LoadFinanceData extends ServiceHelper {
 
 			finEODEvent.setOrgFinSchdDetails(orgFinSchdDetails);
 
-			finEODEvent.setFinExcessAmounts(finExcessAmountDAO.getAllExcessAmountsByRef(finReference, ""));
+			finEODEvent.setFinExcessAmounts(finExcessAmountDAO.getAllExcessAmountsByRef(finID, ""));
 
 			if (fm.isAllowSubvention()) {
-				finEODEvent.setSubventionDetail(subventionDetailDAO.getSubventionDetail(finReference, ""));
+				finEODEvent.setSubventionDetail(subventionDetailDAO.getSubventionDetail(finID, ""));
 			}
 
 			setEventFlags(custEODEvent, finEODEvent);
 			custEODEvent.getFinEODEvents().add(finEODEvent);
 
-			logger.info("Loading finance details for the FinReference >> {} completed.", finReference);
+			logger.info("Loading finance details for the FinID >> {} completed.", finID);
 		}
 
 		custpftDet.clear();
 		custFinMains.clear();
 	}
 
-	public CustEODEvent prepareInActiveFinEODEvents(CustEODEvent custEODEvent, String finReference) throws Exception {
+	public CustEODEvent prepareInActiveFinEODEvents(CustEODEvent custEODEvent, long finID) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		FinEODEvent finEODEvent = new FinEODEvent();
 
-		FinanceMain fm = financeMainDAO.getFinMainsForEODByFinRef(finReference, false);
-		FinanceProfitDetail pfd = financeProfitDetailDAO.getFinProfitDetailsByFinRef(finReference, false);
+		FinanceMain fm = financeMainDAO.getFinMainsForEODByFinRef(finID, false);
+		FinanceProfitDetail pfd = financeProfitDetailDAO.getFinProfitDetailsByFinRef(finID, false);
 
 		// FINANCE MAIN
 		finEODEvent.setFinanceMain(fm);
@@ -113,7 +112,7 @@ public class LoadFinanceData extends ServiceHelper {
 		finEODEvent.setFinProfitDetail(pfd);
 
 		// FINSCHDULE DETAILS
-		finEODEvent.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false));
+		finEODEvent.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false));
 
 		custEODEvent.getFinEODEvents().add(finEODEvent);
 
@@ -760,9 +759,9 @@ public class LoadFinanceData extends ServiceHelper {
 		}
 	}
 
-	private FinanceProfitDetail getFinPftDetailRef(String finReference, List<FinanceProfitDetail> list) {
+	private FinanceProfitDetail getFinPftDetailRef(long finID, List<FinanceProfitDetail> list) {
 		for (FinanceProfitDetail pfd : list) {
-			if (finReference.equals(pfd.getFinReference())) {
+			if (finID == pfd.getFinID()) {
 				return pfd;
 			}
 		}

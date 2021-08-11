@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceProfitDetailDAOImpl.java                                      * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  09-02-2012    														*
- *                                                                  						*
- * Modified Date    :  09-02-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceProfitDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 09-02-2012 * *
+ * Modified Date : 09-02-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 09-02-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 09-02-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.finance.impl;
@@ -93,7 +75,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	 * Method for get the FinanceProfitDetail Object by Key finReference
 	 */
 	@Override
-	public FinanceProfitDetail getFinProfitDetailsById(String finReference) {
+	public FinanceProfitDetail getFinProfitDetailsById(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, CustId, FinBranch, FinType, FinCcy, LastMdfDate, FinIsActive");
 		sql.append(", TotalpriSchd, TotalPftSchd, TotalPftCpz, TotalPftPaid, TotalPftBal, TotalPftPaidInAdv");
@@ -108,14 +90,15 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		sql.append(", PenaltyDue, GapIntAmz, GapIntAmzLbd, PrvMthGapIntAmz, PrvMthGapIntAmz, SvAmount");
 		sql.append(", CbAmount, NOAutoIncGrcEnd, FirstRepayDate, PrvMthAcr, WriteoffLoan");
 		sql.append(" from FinPftDetails");
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				FinanceProfitDetail fpd = new FinanceProfitDetail();
 
+				fpd.setFinID(rs.getLong("FinID"));
 				fpd.setFinReference(rs.getString("FinReference"));
 				fpd.setCustId(rs.getLong("CustId"));
 				fpd.setFinBranch(rs.getString("FinBranch"));
@@ -190,9 +173,9 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 				fpd.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 
 				return fpd;
-			});
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record not found in FinPftDetails table for the specified FinReference >> {}", finReference);
+			logger.warn("Record not found in FinPftDetails table for the specified FinID >> {}", finID);
 		}
 
 		return null;
@@ -229,7 +212,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 	private StringBuilder getProfitDetailQuery() {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, CustId, FinBranch, FinType, FinCcy, LastMdfDate, FinIsActive, TotalPftSchd");
+		sql.append(" FinID, FinReference, CustId, FinBranch, FinType, FinCcy, LastMdfDate, FinIsActive, TotalPftSchd");
 		sql.append(", TotalPftCpz, TotalPftPaid, TotalPftBal, TotalPftPaidInAdv, TotalPriPaid, TotalPriBal");
 		sql.append(", TdSchdPft, TdPftCpz, TdSchdPftPaid, TdSchdPftBal, PftAccrued, PftAccrueSusp");
 		sql.append(", PftAmz, PftAmzSusp, TdSchdPri, TdSchdPriPaid, TdSchdPriBal, AcrTillLBD, AmzTillLBD");
@@ -248,11 +231,11 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	 * Method for get the FinanceProfitDetail Object by Key finReference
 	 */
 	@Override
-	public FinanceProfitDetail getFinProfitDetailsByFinRef(String finReference, boolean isActive) {
+	public FinanceProfitDetail getFinProfitDetailsByFinRef(long finID, boolean isActive) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = getProfitDetailQuery();
-		sql.append(" where FinReference = ?");
+		sql.append(" where FinID = ?");
 
 		if (isActive) {
 			sql.append(" and FinIsActive = ?");
@@ -261,54 +244,53 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		logger.trace(Literal.SQL + sql.toString());
 
 		ProfitDetailRowMapper rowMapper = new ProfitDetailRowMapper();
-		return this.jdbcTemplate.getJdbcOperations().queryForObject(sql.toString(),
-				new Object[] { finReference, isActive }, rowMapper);
+		return this.jdbcTemplate.getJdbcOperations().queryForObject(sql.toString(), rowMapper, finID, isActive);
 	}
 
 	@Override
-	public FinanceProfitDetail getFinProfitDetailsByFinRef(String finReference) {
+	public FinanceProfitDetail getFinProfitDetailsByFinRef(long finID) {
 		StringBuilder sql = getProfitDetailQuery();
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		ProfitDetailRowMapper rowMapper = new ProfitDetailRowMapper();
-		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, rowMapper);
+		return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID);
 	}
 
 	/**
 	 * Method for get the FinanceProfitDetail Object by Key finReference
 	 */
 	@Override
-	public FinanceProfitDetail getPftDetailForEarlyStlReport(String finReference) {
+	public FinanceProfitDetail getPftDetailForEarlyStlReport(long finID) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, TotalPftPaid, TotalPftBal");
+		sql.append(" FinID, FinReference, TotalPftPaid, TotalPftBal");
 		sql.append(", TotalPriPaid, TotalPriBal, NOInst, NOPaidInst");
 		sql.append(" from FinPftDetails");
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
-					new RowMapper<FinanceProfitDetail>() {
-						@Override
-						public FinanceProfitDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-							FinanceProfitDetail fpd = new FinanceProfitDetail();
+			return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<FinanceProfitDetail>() {
+				@Override
+				public FinanceProfitDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinanceProfitDetail fpd = new FinanceProfitDetail();
 
-							fpd.setFinReference(rs.getString("FinReference"));
-							fpd.setTotalPftPaid(rs.getBigDecimal("TotalPftPaid"));
-							fpd.setTotalPftBal(rs.getBigDecimal("TotalPftBal"));
-							fpd.setTotalPriPaid(rs.getBigDecimal("TotalPriPaid"));
-							fpd.setTotalPriBal(rs.getBigDecimal("TotalPriBal"));
-							fpd.setNOInst(rs.getInt("NOInst"));
-							fpd.setNOPaidInst(rs.getInt("NOPaidInst"));
+					fpd.setFinID(rs.getLong("FinID"));
+					fpd.setFinReference(rs.getString("FinReference"));
+					fpd.setTotalPftPaid(rs.getBigDecimal("TotalPftPaid"));
+					fpd.setTotalPftBal(rs.getBigDecimal("TotalPftBal"));
+					fpd.setTotalPriPaid(rs.getBigDecimal("TotalPriPaid"));
+					fpd.setTotalPriBal(rs.getBigDecimal("TotalPriBal"));
+					fpd.setNOInst(rs.getInt("NOInst"));
+					fpd.setNOPaidInst(rs.getInt("NOPaidInst"));
 
-							return fpd;
-						}
-					});
+					return fpd;
+				}
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -1580,6 +1562,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		public FinanceProfitDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
 			FinanceProfitDetail pftd = new FinanceProfitDetail();
 
+			pftd.setFinID(rs.getLong("FinID"));
 			pftd.setFinReference(rs.getString("FinReference"));
 			pftd.setCustId(rs.getLong("CustId"));
 			pftd.setFinBranch(rs.getString("FinBranch"));

@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  WIFFinanceScheduleDetailServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : WIFFinanceScheduleDetailServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date :
+ * 12-11-2011 * * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.finance.impl;
 
 import java.util.ArrayList;
@@ -85,8 +67,7 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -100,8 +81,7 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 	}
 
 	/**
-	 * @param wIFFinanceScheduleDetailDAO
-	 *            the wIFFinanceScheduleDetailDAO to set
+	 * @param wIFFinanceScheduleDetailDAO the wIFFinanceScheduleDetailDAO to set
 	 */
 	public void setWIFFinanceScheduleDetailDAO(WIFFinanceScheduleDetailDAO wIFFinanceScheduleDetailDAO) {
 		this.wIFFinanceScheduleDetailDAO = wIFFinanceScheduleDetailDAO;
@@ -116,8 +96,7 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 	 * method 3) Audit the record in to AuditHeader and AdtWIFFinScheduleDetails by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -155,8 +134,7 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 	 * WIFFinScheduleDetails by using WIFFinanceScheduleDetailDAO's delete method with type as Blank 3) Audit the record
 	 * in to AuditHeader and AdtWIFFinScheduleDetails by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -182,10 +160,8 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 	 * getWIFFinanceScheduleDetailById fetch the details by using WIFFinanceScheduleDetailDAO's
 	 * getWIFFinanceScheduleDetailById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return WIFFinanceScheduleDetail
 	 */
 
@@ -199,8 +175,7 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 	 * getWIFFinanceScheduleDetailById method . with parameter id and type as blank. it fetches the approved records
 	 * from the WIFFinScheduleDetails.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return WIFFinanceScheduleDetail
 	 */
 
@@ -221,8 +196,7 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 	 * the record in to AuditHeader and AdtWIFFinScheduleDetails by using auditHeaderDAO.addAudit(auditHeader) based on
 	 * the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -281,8 +255,7 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 	 * 3) Audit the record in to AuditHeader and AdtWIFFinScheduleDetails by using auditHeaderDAO.addAudit(auditHeader)
 	 * for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -312,8 +285,7 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 	 * for any mismatch conditions Fetch the error details from getWIFFinanceScheduleDetailDAO().getErrorDetail with
 	 * Error ID and language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -335,28 +307,33 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 		FinanceScheduleDetail tempWIFFinanceScheduleDetail = null;
 		if (wIFFinanceScheduleDetail.isWorkflow()) {
 			tempWIFFinanceScheduleDetail = getWIFFinanceScheduleDetailDAO()
-					.getWIFFinanceScheduleDetailById(wIFFinanceScheduleDetail.getId(), "_Temp");
+					.getWIFFinanceScheduleDetailById(wIFFinanceScheduleDetail.getFinReference(), "_Temp");
 		}
 		FinanceScheduleDetail befWIFFinanceScheduleDetail = getWIFFinanceScheduleDetailDAO()
-				.getWIFFinanceScheduleDetailById(wIFFinanceScheduleDetail.getId(), "");
+				.getWIFFinanceScheduleDetailById(wIFFinanceScheduleDetail.getFinReference(), "");
 
 		FinanceScheduleDetail oldWIFFinanceScheduleDetail = wIFFinanceScheduleDetail.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
-		valueParm[0] = wIFFinanceScheduleDetail.getId();
+		valueParm[0] = wIFFinanceScheduleDetail.getFinReference();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
 		if (wIFFinanceScheduleDetail.isNewRecord()) { // for New record or new record into work flow
 
-			if (!wIFFinanceScheduleDetail.isWorkflow()) {// With out Work flow only new records  
-				if (befWIFFinanceScheduleDetail != null) { // Record Already Exists in the table then error  
+			if (!wIFFinanceScheduleDetail.isWorkflow()) {// With out Work flow only new records
+				if (befWIFFinanceScheduleDetail != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
-				if (wIFFinanceScheduleDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befWIFFinanceScheduleDetail != null || tempWIFFinanceScheduleDetail != null) { // if records already exists in the main table
+				if (wIFFinanceScheduleDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records
+																											// type is
+																											// new
+					if (befWIFFinanceScheduleDetail != null || tempWIFFinanceScheduleDetail != null) { // if records
+																										// already
+																										// exists in the
+																										// main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -391,7 +368,7 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 				}
 			} else {
 
-				if (tempWIFFinanceScheduleDetail == null) { // if records not exists in the Work flow table 
+				if (tempWIFFinanceScheduleDetail == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}

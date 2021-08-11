@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SubventionDetailDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-09-2018    														*
- *                                                                  						*
- * Modified Date    :  12-09-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SubventionDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-09-2018 * *
+ * Modified Date : 12-09-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-09-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-09-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.finance.impl;
 
 import java.math.BigDecimal;
@@ -78,7 +60,7 @@ public class SubventionDetailDAOImpl extends BasicDao<SubventionDetail> implemen
 	}
 
 	@Override
-	public SubventionDetail getSubventionDetail(String finReference, String type) {
+	public SubventionDetail getSubventionDetail(long finID, String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, Method, Type, Rate, PeriodRate, DiscountRate");
 		sql.append(", Tenure, StartDate, EndDate");
@@ -86,40 +68,39 @@ public class SubventionDetailDAOImpl extends BasicDao<SubventionDetail> implemen
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From SubventionDetails");
 		sql.append(StringUtils.trim(type));
-		sql.append(" Where finReference = ?");
+		sql.append(" Where FinID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
-					new RowMapper<SubventionDetail>() {
-						@Override
-						public SubventionDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-							SubventionDetail sd = new SubventionDetail();
+			return jdbcOperations.queryForObject(sql.toString(), new RowMapper<SubventionDetail>() {
+				@Override
+				public SubventionDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					SubventionDetail sd = new SubventionDetail();
 
-							sd.setFinReference(rs.getString("FinReference"));
-							sd.setMethod(rs.getString("Method"));
-							sd.setType(rs.getString("Type"));
-							sd.setRate(rs.getBigDecimal("Rate"));
-							sd.setPeriodRate(rs.getBigDecimal("PeriodRate"));
-							sd.setDiscountRate(rs.getBigDecimal("DiscountRate"));
-							sd.setTenure(rs.getInt("Tenure"));
-							sd.setStartDate(rs.getTimestamp("StartDate"));
-							sd.setEndDate(rs.getTimestamp("EndDate"));
-							sd.setVersion(rs.getInt("Version"));
-							sd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-							sd.setLastMntBy(rs.getLong("LastMntBy"));
-							sd.setRecordStatus(rs.getString("RecordStatus"));
-							sd.setRoleCode(rs.getString("RoleCode"));
-							sd.setNextRoleCode(rs.getString("NextRoleCode"));
-							sd.setTaskId(rs.getString("TaskId"));
-							sd.setNextTaskId(rs.getString("NextTaskId"));
-							sd.setRecordType(rs.getString("RecordType"));
-							sd.setWorkflowId(rs.getLong("WorkflowId"));
+					sd.setFinReference(rs.getString("FinReference"));
+					sd.setMethod(rs.getString("Method"));
+					sd.setType(rs.getString("Type"));
+					sd.setRate(rs.getBigDecimal("Rate"));
+					sd.setPeriodRate(rs.getBigDecimal("PeriodRate"));
+					sd.setDiscountRate(rs.getBigDecimal("DiscountRate"));
+					sd.setTenure(rs.getInt("Tenure"));
+					sd.setStartDate(rs.getTimestamp("StartDate"));
+					sd.setEndDate(rs.getTimestamp("EndDate"));
+					sd.setVersion(rs.getInt("Version"));
+					sd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					sd.setLastMntBy(rs.getLong("LastMntBy"));
+					sd.setRecordStatus(rs.getString("RecordStatus"));
+					sd.setRoleCode(rs.getString("RoleCode"));
+					sd.setNextRoleCode(rs.getString("NextRoleCode"));
+					sd.setTaskId(rs.getString("TaskId"));
+					sd.setNextTaskId(rs.getString("NextTaskId"));
+					sd.setRecordType(rs.getString("RecordType"));
+					sd.setWorkflowId(rs.getLong("WorkflowId"));
 
-							return sd;
-						}
-					});
+					return sd;
+				}
+			}, finID);
 
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
