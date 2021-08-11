@@ -983,6 +983,26 @@
 			<column name="FinID" type="bigint" />
 		</createIndex>
 	</changeSet>
+	<changeSet id="29.4" author="murthy.y">
+		<createIndex tableName="finscheduledetails" indexName="idx_finschedules_fid_schdate" unique="true">
+			<column name="FinID" type="bigint" />
+			<column name="SchDate" type="datetime" />
+		</createIndex>
+		<createIndex tableName="finscheduledetails_temp" indexName="idx_finschedules_t_fid_schdate" unique="true">
+			<column name="FinID" type="bigint" />
+			<column name="SchDate" type="datetime" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="29.5" author="murthy.y">
+		<createIndex tableName="finscheduledetails" indexName="idx_finschedules_fid_priPaid">
+			<column name="FinID" type="bigint" />
+			<column name="SchdPriPaid" type="decimal(18,0)" />
+		</createIndex>
+		<createIndex tableName="finscheduledetails_temp" indexName="idx_finschedules_t_fid_priPaid">
+			<column name="FinID" type="bigint" />
+			<column name="SchdPriPaid" type="decimal(18,0)" />
+		</createIndex>
+	</changeSet>
 
 	<changeSet id="30" author="murthy.y">
 		<addColumn tableName="finstatusdetail">
@@ -2979,6 +2999,25 @@
 			<column name="FinID" type="bigint" />
 		</createIndex>
 	</changeSet>
+	<changeSet id="111.4" author="murthy.y">
+		<createIndex tableName="finscheduledetails_log" indexName="idx_scheduleslg_fid_schdate" unique="true">
+			<column name="FinID" type="bigint" />
+			<column name="SchDate" type="datetime" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="111.5" author="murthy.y">
+		<createIndex tableName="finscheduledetails_log" indexName="idx_scheduleslg_fid_priPaid">
+			<column name="FinID" type="bigint" />
+			<column name="SchdPriPaid" type="decimal(18,0)" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="111.6" author="murthy.y">
+		<createIndex tableName="finscheduledetails_log" indexName="idx_scheduleslg_fid_lgKey">
+			<column name="FinID" type="bigint" />
+			<column name="LogKey" type="bigint" />
+		</createIndex>
+	</changeSet>
+
 
 	<changeSet id="112" author="murthy.y">
 		<addColumn tableName="finserviceinstruction">
@@ -4932,6 +4971,28 @@
 			<column name="FinID" type="bigint" />
 		</createIndex>
 	</changeSet>
+	<changeSet id="193.4" author="murthy.y">
+		<createIndex tableName="wiffinscheduledetails" indexName="idx_wifschedules_fid_schdate" unique="true">
+			<column name="FinID" type="bigint" />
+			<column name="SchDate" type="datetime" />
+		</createIndex>
+		<createIndex tableName="wiffinscheduledetails_temp" indexName="idx_wifschedules_t_fid_schdate"
+			unique="true">
+			<column name="FinID" type="bigint" />
+			<column name="SchDate" type="datetime" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="193.5" author="murthy.y">
+		<createIndex tableName="wiffinscheduledetails" indexName="idx_wifschedules_fid_priPaid">
+			<column name="FinID" type="bigint" />
+			<column name="SchdPriPaid" type="decimal(18,0)" />
+		</createIndex>
+		<createIndex tableName="wiffinscheduledetails_temp" indexName="idx_wifschedules_t_fid_priPaid">
+			<column name="FinID" type="bigint" />
+			<column name="SchdPriPaid" type="decimal(18,0)" />
+		</createIndex>
+	</changeSet>
+
 
 	<changeSet id="194" author="murthy.y">
 		<addColumn tableName="wiffinsteppolicydetail">
