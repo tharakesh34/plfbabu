@@ -11,6 +11,7 @@ import com.pennant.backend.model.eventproperties.EventProperties;
 public class FinanceProfitDetail implements Serializable {
 	private static final long serialVersionUID = 6601637251967752181L;
 
+	private long finID;
 	private String finReference;
 	private long custId = Long.MIN_VALUE;
 	private String finBranch;
@@ -23,29 +24,29 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal totalPftPaidInAdv = BigDecimal.ZERO;
 	private BigDecimal totalpriSchd = BigDecimal.ZERO;
 	private BigDecimal totalPriPaid = BigDecimal.ZERO;
-	private BigDecimal totalPriPaidInAdv = BigDecimal.ZERO; //New Field 
+	private BigDecimal totalPriPaidInAdv = BigDecimal.ZERO; // New Field
 	private BigDecimal totalPriBal = BigDecimal.ZERO;
-	//	Till date
+	// Till date
 	private BigDecimal tdSchdPft = BigDecimal.ZERO;
 	private BigDecimal tdPftCpz = BigDecimal.ZERO;
 	private BigDecimal tdSchdPftPaid = BigDecimal.ZERO;
 	private BigDecimal tdSchdPftBal = BigDecimal.ZERO;
 	private BigDecimal pftAmz = BigDecimal.ZERO;
-	private BigDecimal pftAmzNormal = BigDecimal.ZERO; //New Field 
-	private BigDecimal pftAmzPD = BigDecimal.ZERO; //New Field 
+	private BigDecimal pftAmzNormal = BigDecimal.ZERO; // New Field
+	private BigDecimal pftAmzPD = BigDecimal.ZERO; // New Field
 	private BigDecimal pftAmzSusp = BigDecimal.ZERO;
 	private BigDecimal tdSchdPri = BigDecimal.ZERO;
 	private BigDecimal tdSchdPriPaid = BigDecimal.ZERO;
 	private BigDecimal tdSchdPriBal = BigDecimal.ZERO;
-	//After posting
+	// After posting
 	private BigDecimal amzTillLBD = BigDecimal.ZERO;
 	private BigDecimal lpiTillLBD = BigDecimal.ZERO;
 	private BigDecimal gstLpiTillLBD = BigDecimal.ZERO;
 	private BigDecimal lppTillLBD = BigDecimal.ZERO;
 	private BigDecimal gstLppTillLBD = BigDecimal.ZERO;
-	private BigDecimal amzTillLBDNormal = BigDecimal.ZERO; //new
-	private BigDecimal amzTillLBDPD = BigDecimal.ZERO; //new
-	private BigDecimal amzTillLBDPIS = BigDecimal.ZERO; //new
+	private BigDecimal amzTillLBDNormal = BigDecimal.ZERO; // new
+	private BigDecimal amzTillLBDPD = BigDecimal.ZERO; // new
+	private BigDecimal amzTillLBDPIS = BigDecimal.ZERO; // new
 
 	// others
 	private String RepayFrq;
@@ -106,9 +107,9 @@ public class FinanceProfitDetail implements Serializable {
 	// Depreciation
 	private BigDecimal accumulatedDepPri = BigDecimal.ZERO;
 	private BigDecimal depreciatePri = BigDecimal.ZERO;
-	//others
-	//private BigDecimal disburse = BigDecimal.ZERO;
-	//private BigDecimal downpay = BigDecimal.ZERO;
+	// others
+	// private BigDecimal disburse = BigDecimal.ZERO;
+	// private BigDecimal downpay = BigDecimal.ZERO;
 
 	private BigDecimal acrTillLBD = BigDecimal.ZERO;
 	private BigDecimal EarnedPft = BigDecimal.ZERO;
@@ -116,7 +117,7 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal pftAccrued = BigDecimal.ZERO;
 	private BigDecimal pftAccrueSusp = BigDecimal.ZERO;
 
-	//New fields on 14APR17. If possible rearrange the fields to keep relevent fields together
+	// New fields on 14APR17. If possible rearrange the fields to keep relevent fields together
 	private int maxODDays = 0;
 	private boolean calPftOnPD = false;
 	private String pftOnPDMethod = "";
@@ -145,7 +146,7 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal payableAdviseResv = BigDecimal.ZERO;
 	private String productCategory;
 
-	//Newly Added Fields for SOA 
+	// Newly Added Fields for SOA
 	private BigDecimal futureRpyPri = BigDecimal.ZERO;
 	private BigDecimal futureRpyPft = BigDecimal.ZERO;
 	private BigDecimal totChargesPaid = BigDecimal.ZERO;
@@ -171,10 +172,10 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal lppAmount = BigDecimal.ZERO;
 	private BigDecimal gstLppAmount = BigDecimal.ZERO;
 
-	//Gold Loan Paid Status (For Report Purpose and avoid multiple queries)
+	// Gold Loan Paid Status (For Report Purpose and avoid multiple queries)
 	private String glPaymentSts;
 
-	//Subvention Details
+	// Subvention Details
 	private BigDecimal svnAcrTillLBD = BigDecimal.ZERO;
 	private BigDecimal svnPftAmount = BigDecimal.ZERO;
 	private boolean svnAcrCalReq = true;
@@ -182,7 +183,7 @@ public class FinanceProfitDetail implements Serializable {
 	// Number of Auto Increments Grace End
 	private int NOAutoIncGrcEnd = 0;
 
-	//Assignments (For Reporting purpose we are saving)
+	// Assignments (For Reporting purpose we are saving)
 	private BigDecimal assignBPI1 = BigDecimal.ZERO;
 	private BigDecimal assignBPI2 = BigDecimal.ZERO;
 
@@ -220,6 +221,7 @@ public class FinanceProfitDetail implements Serializable {
 
 	public FinanceProfitDetail copyEntity() {
 		FinanceProfitDetail entity = new FinanceProfitDetail();
+		entity.setFinID(this.finID);
 		entity.setFinReference(this.finReference);
 		entity.setCustId(this.custId);
 		entity.setFinBranch(this.finBranch);
@@ -393,9 +395,13 @@ public class FinanceProfitDetail implements Serializable {
 		return entity;
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
 
 	public String getFinReference() {
 		return finReference;
