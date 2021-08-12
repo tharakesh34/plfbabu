@@ -36,7 +36,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceMainExtension;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.UserPendingCases;
-import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennanttech.pennapps.dms.model.DMSQueue;
 import com.pennanttech.pff.core.TableType;
 
@@ -129,16 +128,7 @@ public interface FinanceMainDAO {
 
 	FinanceMain getDisbursmentFinMainById(String finReference, TableType tableType);
 
-	/**
-	 * Get the total maximum re-payment amount against the specified mandate excluding the finance.
-	 * 
-	 * @param mandateId    Mandate id for which the total maximum re-payment amount to be fetched.
-	 * @param finReference Finance reference that need to be excluded.
-	 * @return The total maximum re-payment amount against the specified mandate excluding the finance.
-	 */
 	BigDecimal getTotalMaxRepayAmount(long mandateId, String finReference);
-
-	void updateBucketStatus(String finReference, String status, int bucket, String statusReason);
 
 	List<FinanceMain> getFinMainsForEODByCustId(long custId, boolean isActive);
 
@@ -164,8 +154,6 @@ public interface FinanceMainDAO {
 
 	String getApplicationNoById(String finReference, String type);
 
-	List<String> getFinReferencesByCustID(long custID);
-
 	List<FinanceMain> getFinancesByExpenseType(String finType, Date finApprovalStartDate, Date finApprovalEndDate);
 
 	boolean isFinTypeExistsInFinanceMain(String finType, String string);
@@ -173,10 +161,6 @@ public interface FinanceMainDAO {
 	boolean isLoanPurposeExits(String purposeCode, String string);
 
 	String getEarlyPayMethodsByFinRefernce(String finReference);
-
-	FinanceMain getDMFinanceMainByRef(String finReference, String type);
-
-	List<String> getFinanceReferenceList(String type);
 
 	List<LoanPendingData> getCustomerODLoanDetails(long userID);
 
@@ -190,10 +174,6 @@ public interface FinanceMainDAO {
 
 	List<FinanceMain> getUnApprovedFinances();
 
-	long getPartnerBankIdByReference(String finReference, String paymentMode, String depositAc, String type,
-			String purpose, boolean wif);// ### 18-07-2018 Ticket ID :
-											// 124998,receipt upload
-
 	boolean isFinReferenceExitsWithEntity(String finReference, String type, String entity);// ###
 																							// 12-07-2018
 																							// Ticket
@@ -203,8 +183,6 @@ public interface FinanceMainDAO {
 
 	// ### 10-09-2018,Ticket id:124998
 	FinanceMain getEntityNEntityDesc(String finRefence, String type, boolean wif);
-
-	FinanceType getFinTypeDetailsByFinreferene(String finReference, String string, boolean b);
 
 	// ### 10-10-2018,Ticket id:124998
 	FinanceMain getClosingStatus(String finReference, TableType tempTab, boolean wif);

@@ -91,12 +91,13 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 			isCalSchedule = false;
 		}
 
-		//if (StringUtils.equals(finScheduleData.getFinanceMain().getRecalType(), CalculationConstants.RPYCHG_STEPINST)) {
+		// if (StringUtils.equals(finScheduleData.getFinanceMain().getRecalType(),
+		// CalculationConstants.RPYCHG_STEPINST)) {
 		if (StringUtils.isNotEmpty(moduleDefiner) && finScheduleData.getFinanceMain().isStepFinance()) {
 			finScheduleData.setStepPolicyDetails(getFinanceStepDetailDAO()
 					.getFinStepDetailListByFinRef(finScheduleData.getFinReference(), "", false));
 		}
-		//}
+		// }
 
 		FinScheduleData finSchData = null;
 		finSchData = ScheduleCalculator.changeRate(finScheduleData, finServiceInst.getBaseRate(),
@@ -132,13 +133,13 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 
 		if (finServiceInstructionDAO.isFinServiceInstExists(finReference, "_Temp")) {
 			String[] valueParm = new String[1];
-			valueParm[0] = finReference;//Some one else processed this record {finReference} 
+			valueParm[0] = finReference;// Some one else processed this record {finReference}
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41005", "", valueParm), lang));
 			return auditDetail;
 		}
 
 		Date appDate = SysParamUtil.getAppDate();
-		FinanceMain financeMain = financeMainDAO.getFinanceBasicDetailByRef(finReference, isWIF);
+		FinanceMain financeMain = financeMainDAO.getFinanceMainByRef(finReference, "", isWIF);
 
 		if (StringUtils.equals(UploadConstants.RATE_CHANGE_UPLOAD, finSrvInst.getReqFrom())) {
 			finSrvInst.setPftDaysBasis(financeMain.getProfitDaysBasis());

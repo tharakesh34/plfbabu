@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -73,7 +72,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceMainExtension;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.UserPendingCases;
-import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.eod.constants.EodConstants;
@@ -1854,167 +1852,123 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				int index = 1;
-				ps.setLong(index++, custId);
-			}
-		}, new RowMapper<FinanceMain>() {
-			@Override
-			public FinanceMain mapRow(ResultSet rs, int rowNum) throws SQLException {
-				FinanceMain fm = new FinanceMain();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, custId);
+		}, (rs, rowNum) -> {
+			FinanceMain fm = new FinanceMain();
 
-				fm.setFinID(rs.getLong("FinID"));
-				fm.setFinReference(rs.getString("FinReference"));
-				fm.setFinAmount(rs.getBigDecimal("FinAmount"));
-				fm.setFinType(rs.getString("FinType"));
-				fm.setFinCcy(rs.getString("FinCcy"));
-				fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
-				fm.setNumberOfTerms(rs.getInt("NumberOfTerms"));
-				fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
-				fm.setFinStatus(rs.getString("finStatus"));
-				fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
-				fm.setFirstRepay(rs.getBigDecimal("FirstRepay"));
-				fm.setLovDescFinProduct(rs.getString("lovDescFinProduct"));
-				fm.setClosingStatus(rs.getString("ClosingStatus"));
-				fm.setRecordStatus(rs.getString("RecordStatus"));
-				fm.setProductCategory(rs.getString("ProductCategory"));
-				fm.setFinBranch(rs.getString("FinBranch"));
-				fm.setFinApprovedDate(rs.getTimestamp("FinApprovedDate"));
-				fm.setFinIsActive(rs.getBoolean("FinIsActive"));
-				fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
+			fm.setFinID(rs.getLong("FinID"));
+			fm.setFinReference(rs.getString("FinReference"));
+			fm.setFinAmount(rs.getBigDecimal("FinAmount"));
+			fm.setFinType(rs.getString("FinType"));
+			fm.setFinCcy(rs.getString("FinCcy"));
+			fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
+			fm.setNumberOfTerms(rs.getInt("NumberOfTerms"));
+			fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
+			fm.setFinStatus(rs.getString("finStatus"));
+			fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
+			fm.setFirstRepay(rs.getBigDecimal("FirstRepay"));
+			fm.setLovDescFinProduct(rs.getString("lovDescFinProduct"));
+			fm.setClosingStatus(rs.getString("ClosingStatus"));
+			fm.setRecordStatus(rs.getString("RecordStatus"));
+			fm.setProductCategory(rs.getString("ProductCategory"));
+			fm.setFinBranch(rs.getString("FinBranch"));
+			fm.setFinApprovedDate(rs.getTimestamp("FinApprovedDate"));
+			fm.setFinIsActive(rs.getBoolean("FinIsActive"));
+			fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 
-				return fm;
-			}
+			return fm;
 		});
 	}
 
-	// TODO?>>
-	123456
-
 	@Override
 	public List<FinanceMain> getFinanceByCollateralRef(String collateralRef) {
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("CollateralRef", collateralRef);
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT fm.FinID, fm.FinReference, fm.FinAmount, fm.FinType, fm.FinCcy");
+		sql.append(", fm.ClosingStatus, fm.FinAssetValue, fm.NumberOfTerms, fm.MaturityDate, fm.Finstatus");
+		sql.append(", fm.FinStartDate, fm.FirstRepay, ft.FinCategory lovDescFinProduct");
+		sql.append(", ca.CollateralRef, fm.WriteoffLoan");
+		sql.append(" From FinanceMain fm");
+		sql.append(" INNER JOIN CollateralAssignment ca On CA.Reference = fm.FinReference");
+		sql.append(" INNER JOIN  RMTFinanceTypes ft ON ft.FinType = fm.FinType");
+		sql.append(" Where CollateralRef = ?");
 
-		StringBuilder selectSql = new StringBuilder(
-				"SELECT FM.FinReference, FM.FinAmount, FM.FinType, FM.FinCcy,FM.ClosingStatus,");
-		selectSql.append(
-				" FM.FinAssetValue, FM.NumberOfTerms, FM.MaturityDate, FM.Finstatus,FM.FinStartDate, FM.FirstRepay,");
-		selectSql.append(
-				" FT.FinCategory lovDescFinProduct, CA.CollateralRef, FM.WriteoffLoan From FinanceMain FM INNER JOIN ");
-		selectSql.append(" CollateralAssignment CA On FM.FinReference = CA.Reference INNER JOIN ");
-		selectSql.append(" RMTFinanceTypes FT ON FM.FinType = FT.FinType");
-		selectSql.append(" Where CollateralRef =:CollateralRef");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<FinanceMain> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
-		List<FinanceMain> financeMainList = new ArrayList<FinanceMain>();
-		try {
-			financeMainList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.error("Exception: ", dae);
-			return Collections.emptyList();
-		}
-		logger.debug("Leaving");
-		return financeMainList;
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, collateralRef);
+		}, (rs, rowNum) -> {
+			FinanceMain fm = new FinanceMain();
+			fm.setFinID(rs.getLong("FinID"));
+			fm.setFinReference(rs.getString("FinReference"));
+			fm.setFinAmount(rs.getBigDecimal("FinAmount"));
+			fm.setFinType(rs.getString("FinType"));
+			fm.setFinCcy(rs.getString("FinCcy"));
+			fm.setClosingStatus(rs.getString("ClosingStatus"));
+			fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
+			fm.setNumberOfTerms(rs.getInt("NumberOfTerms"));
+			fm.setMaturityDate(rs.getDate("MaturityDate"));
+			fm.setFinStatus(rs.getString("Finstatus"));
+			fm.setFinStartDate(rs.getDate("FinStartDate"));
+			fm.setFirstRepay(rs.getBigDecimal("FirstRepay"));
+			fm.setFinCategory(rs.getString("FinCategory"));
+			fm.setLovDescFinProduct(rs.getString("FinCategory"));
+			// fm.setCollateralRef(rs.getString("CollateralRef"));
+			fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
+
+			return fm;
+		});
 	}
 
-	/**
-	 * Method to get FinanceReferences by Given MandateId.
-	 * 
-	 * @param mandateId
-	 */
 	@Override
-	public List<String> getFinReferencesByMandateId(long mandateId) {
-		logger.debug("Entering");
+	public List<Long> getFinReferencesByMandateId(long mandateId) {
+		StringBuilder sql = new StringBuilder("Select FinID");
+		sql.append(" From FinanceMain");
+		sql.append(" Where MandateID = ?");
 
-		FinanceMain financeMain = new FinanceMain();
-		financeMain.setMandateID(mandateId);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder("SELECT FinReference ");
-		selectSql.append(" From FinanceMain");
-
-		selectSql.append(" Where MandateID =:MandateID");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		List<String> finReferencesList = new ArrayList<String>();
-		try {
-			finReferencesList = this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters, String.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.error("Exception: ", dae);
-			return Collections.emptyList();
-		}
-		logger.debug("Leaving");
-		return finReferencesList;
+		return this.jdbcOperations.queryForList(sql.toString(), Long.class, mandateId);
 	}
 
-	/**
-	 * Method to get FinanceReferences by Given custId.
-	 * 
-	 * @param custId
-	 * @param finActiveStatus
-	 */
 	@Override
-	public List<String> getFinReferencesByCustID(long custId, String finActiveStatus) {
-		logger.debug("Entering");
-
-		FinanceMain financeMain = new FinanceMain();
-		financeMain.setCustID(custId);
-		financeMain.setClosingStatus(finActiveStatus);
-
-		StringBuilder selectSql = new StringBuilder("SELECT FinReference ");
-		selectSql.append(" From FinanceMain");
-		selectSql.append(" Where CustID =:CustID AND");
+	public List<Long> getFinReferencesByCustID(long custId, String finActiveStatus) {
+		StringBuilder sql = new StringBuilder("SELECT FinID");
+		sql.append(" From FinanceMain");
+		sql.append(" Where CustID = ?");
 		if (StringUtils.isBlank(finActiveStatus)) {
-			selectSql.append(" ClosingStatus is null");
+			sql.append(" and ClosingStatus is null");
 		} else {
-			selectSql.append(" ClosingStatus =:ClosingStatus");
+			sql.append(" and ClosingStatus = ?");
 		}
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		List<String> finReferencesList = new ArrayList<String>();
-		try {
-			finReferencesList = this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters, String.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.error("Exception: ", dae);
-			return Collections.emptyList();
-		}
-		logger.debug("Leaving");
-		return finReferencesList;
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.queryForList(sql.toString(), Long.class, custId, finActiveStatus);
 	}
 
-	/***
-	 * Method to get the finassetValue for the comparison with teh current asset value in the odMaintenance
-	 */
 	@Override
-	public BigDecimal getFinAssetValue(String finReference) {
-		logger.debug("Entering");
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
+	public BigDecimal getFinAssetValue(long finID) {
+		StringBuilder sql = new StringBuilder("Select FinAssetValue");
+		sql.append(" From FinanceMain");
+		sql.append(" Where FinID = ?");
 
-		StringBuilder selectSql = new StringBuilder("SELECT FinAssetValue ");
-		selectSql.append(" From FinanceMain");
-		selectSql.append(" Where FinReference =:FinReference");
-		logger.debug("selectSql: " + selectSql.toString());
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID);
 	}
 
-	/***
-	 * Method to get the Loan branch against the Reference
-	 */
 	@Override
-	public String getFinBranch(String finReference) {
+	public String getFinBranch(long finID) {
 		StringBuilder sql = new StringBuilder("Select FinBranch");
 		sql.append(" From FinanceMain");
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, String.class);
+		return this.jdbcOperations.queryForObject(sql.toString(), String.class, finID);
 	}
 
 	@Override
@@ -2044,30 +1998,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public void updateBucketStatus(String finReference, String status, int bucket, String statusReason) {
-
-		logger.debug("Entering");
-
-		FinanceMain financeMain = new FinanceMain();
-		financeMain.setFinStatus(status);
-		financeMain.setFinStsReason(statusReason);
-		financeMain.setFinReference(finReference);
-		financeMain.setDueBucket(bucket);
-		StringBuilder updateSql = new StringBuilder("Update FinanceMain");
-		updateSql.append(" Set FinStatus = :FinStatus, FinStsReason = :FinStsReason, DueBucket=:DueBucket ");
-		updateSql.append(" Where FinReference =:FinReference");
-
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Method for get the Finance Details and FinanceShedule Details
-	 */
-	@Override
 	public List<FinanceMain> getFinMainsForEODByCustId(long custId, boolean isActive) {
 		StringBuilder sql = getFinSelectQueryForEod();
 		if (App.DATABASE == Database.SQL_SERVER) {
@@ -2092,22 +2022,20 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	}
 
-	/**
-	 * Method for get the Finance Details by Finance Reference
-	 */
 	@Override
 	public FinanceMain getFinMainsForEODByFinRef(long finID, boolean isActive) {
 		StringBuilder sql = getFinSelectQueryForEod();
 		sql.append(" where FinID = ? and FinIsActive = ?");
+
 		logger.trace(Literal.SQL + sql.toString());
 
+		FinRowMapperForEod rowMapper = new FinRowMapperForEod();
 		try {
-			FinRowMapperForEod rowMapper = new FinRowMapperForEod();
-
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, isActive);
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
+		} catch (EmptyResultDataAccessException e) {
+			//
 		}
+
 		return null;
 	}
 
@@ -2139,26 +2067,17 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(" ,TotalRepayAmt = :TotalRepayAmt, FinRepaymentAmount = :FinRepaymentAmount ");
 		}
 
-		sql.append(" Where FinReference =:FinReference");
+		sql.append(" Where FinReference = :FinID");
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 		this.jdbcTemplate.update(sql.toString(), beanParameters);
 	}
 
-	/**
-	 * Fetch the Record Finance Main Detail details by key field
-	 * 
-	 * @param id   (String)
-	 * @param type (String) ""/_Temp/_View
-	 * @return FinanceMain
-	 */
 	@Override
 	public List<FinanceMain> getBYCustIdForLimitRebuild(final long id, boolean orgination) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append("  FinReference, GrcPeriodEndDate, AllowGrcPeriod, GraceBaseRate, GraceSpecialRate");
+		sql.append("  FinID, FinReference, GrcPeriodEndDate, AllowGrcPeriod, GraceBaseRate, GraceSpecialRate");
 		sql.append(", GrcPftRate, GrcPftFrq, NextGrcPftDate, AllowGrcPftRvw, GrcPftRvwFrq, NextGrcPftRvwDate");
 		sql.append(", AllowGrcCpz, GrcCpzFrq, NextGrcCpzDate, RepayBaseRate, RepaySpecialRate, RepayProfitRate");
 		sql.append(", RepayFrq, NextRepayDate, RepayPftFrq, NextRepayPftDate, AllowRepayRvw, RepayRvwFrq");
@@ -2176,7 +2095,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount, TdsType, WriteoffLoan");
 
 		if (orgination) {
-			sql.append(" , 1 LimitValid  ");
+			sql.append(", 1 LimitValid");
 		}
 		sql.append(" FROM FinanceMain");
 		if (orgination) {
@@ -2193,268 +2112,172 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, id);
-				}
-			}, new RowMapper<FinanceMain>() {
-				@Override
-				public FinanceMain mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinanceMain fm = new FinanceMain();
-
-					fm.setFinReference(rs.getString("FinReference"));
-					fm.setGrcPeriodEndDate(rs.getTimestamp("GrcPeriodEndDate"));
-					fm.setAllowGrcPeriod(rs.getBoolean("AllowGrcPeriod"));
-					fm.setGraceBaseRate(rs.getString("GraceBaseRate"));
-					fm.setGraceSpecialRate(rs.getString("GraceSpecialRate"));
-					fm.setGrcPftRate(rs.getBigDecimal("GrcPftRate"));
-					fm.setGrcPftFrq(rs.getString("GrcPftFrq"));
-					fm.setNextGrcPftDate(rs.getTimestamp("NextGrcPftDate"));
-					fm.setAllowGrcPftRvw(rs.getBoolean("AllowGrcPftRvw"));
-					fm.setGrcPftRvwFrq(rs.getString("GrcPftRvwFrq"));
-					fm.setNextGrcPftRvwDate(rs.getTimestamp("NextGrcPftRvwDate"));
-					fm.setAllowGrcCpz(rs.getBoolean("AllowGrcCpz"));
-					fm.setGrcCpzFrq(rs.getString("GrcCpzFrq"));
-					fm.setNextGrcCpzDate(rs.getTimestamp("NextGrcCpzDate"));
-					fm.setRepayBaseRate(rs.getString("RepayBaseRate"));
-					fm.setRepaySpecialRate(rs.getString("RepaySpecialRate"));
-					fm.setRepayProfitRate(rs.getBigDecimal("RepayProfitRate"));
-					fm.setRepayFrq(rs.getString("RepayFrq"));
-					fm.setNextRepayDate(rs.getTimestamp("NextRepayDate"));
-					fm.setRepayPftFrq(rs.getString("RepayPftFrq"));
-					fm.setNextRepayPftDate(rs.getTimestamp("NextRepayPftDate"));
-					fm.setAllowRepayRvw(rs.getBoolean("AllowRepayRvw"));
-					fm.setRepayRvwFrq(rs.getString("RepayRvwFrq"));
-					fm.setNextRepayRvwDate(rs.getTimestamp("NextRepayRvwDate"));
-					fm.setAllowRepayCpz(rs.getBoolean("AllowRepayCpz"));
-					fm.setRepayCpzFrq(rs.getString("RepayCpzFrq"));
-					fm.setNextRepayCpzDate(rs.getTimestamp("NextRepayCpzDate"));
-					fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
-					fm.setCpzAtGraceEnd(rs.getBoolean("CpzAtGraceEnd"));
-					fm.setGrcRateBasis(rs.getString("GrcRateBasis"));
-					fm.setRepayRateBasis(rs.getString("RepayRateBasis"));
-					fm.setFinType(rs.getString("FinType"));
-					fm.setFinCcy(rs.getString("FinCcy"));
-					fm.setProfitDaysBasis(rs.getString("ProfitDaysBasis"));
-					fm.setFirstRepay(rs.getBigDecimal("FirstRepay"));
-					fm.setLastRepay(rs.getBigDecimal("LastRepay"));
-					fm.setScheduleMethod(rs.getString("ScheduleMethod"));
-					fm.setDownPayment(rs.getBigDecimal("DownPayment"));
-					fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
-					fm.setFinAmount(rs.getBigDecimal("FinAmount"));
-					fm.setCustID(rs.getLong("CustID"));
-					fm.setFinBranch(rs.getString("FinBranch"));
-					fm.setFinSourceID(rs.getString("FinSourceID"));
-					fm.setRecalType(rs.getString("RecalType"));
-					fm.setFinIsActive(rs.getBoolean("FinIsActive"));
-					fm.setLastRepayDate(rs.getTimestamp("LastRepayDate"));
-					fm.setLastRepayPftDate(rs.getTimestamp("LastRepayPftDate"));
-					fm.setLastRepayRvwDate(rs.getTimestamp("LastRepayRvwDate"));
-					fm.setLastRepayCpzDate(rs.getTimestamp("LastRepayCpzDate"));
-					fm.setAllowGrcRepay(rs.getBoolean("AllowGrcRepay"));
-					fm.setGrcSchdMthd(rs.getString("GrcSchdMthd"));
-					fm.setGrcMargin(rs.getBigDecimal("GrcMargin"));
-					fm.setRepayMargin(rs.getBigDecimal("RepayMargin"));
-					fm.setClosingStatus(rs.getString("ClosingStatus"));
-					fm.setFinRepayPftOnFrq(rs.getBoolean("FinRepayPftOnFrq"));
-					fm.setGrcProfitDaysBasis(rs.getString("GrcProfitDaysBasis"));
-					fm.setGrcMinRate(rs.getBigDecimal("GrcMinRate"));
-					fm.setGrcMaxRate(rs.getBigDecimal("GrcMaxRate"));
-					fm.setGrcMaxAmount(rs.getBigDecimal("GrcMaxAmount"));
-					fm.setRpyMinRate(rs.getBigDecimal("RpyMinRate"));
-					fm.setRpyMaxRate(rs.getBigDecimal("RpyMaxRate"));
-					fm.setManualSchedule(rs.getBoolean("ManualSchedule"));
-					fm.setCalRoundingMode(rs.getString("CalRoundingMode"));
-					fm.setRvwRateApplFor(rs.getString("RvwRateApplFor"));
-					fm.setSchCalOnRvw(rs.getString("SchCalOnRvw"));
-					fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
-					fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
-					fm.setPastduePftCalMthd(rs.getString("PastduePftCalMthd"));
-					fm.setDroppingMethod(rs.getString("DroppingMethod"));
-					fm.setRateChgAnyDay(rs.getBoolean("RateChgAnyDay"));
-					fm.setPastduePftMargin(rs.getBigDecimal("PastduePftMargin"));
-					fm.setFinRepayMethod(rs.getString("FinRepayMethod"));
-					fm.setMigratedFinance(rs.getBoolean("MigratedFinance"));
-					fm.setScheduleMaintained(rs.getBoolean("ScheduleMaintained"));
-					fm.setScheduleRegenerated(rs.getBoolean("ScheduleRegenerated"));
-					fm.setMandateID(rs.getLong("MandateID"));
-					fm.setFinStatus(rs.getString("FinStatus"));
-					fm.setFinStsReason(rs.getString("FinStsReason"));
-					fm.setPromotionCode(rs.getString("PromotionCode"));
-					fm.setFinCategory(rs.getString("FinCategory"));
-					fm.setProductCategory(rs.getString("ProductCategory"));
-					fm.setReAgeBucket(rs.getInt("ReAgeBucket"));
-					fm.setTDSApplicable(rs.getBoolean("TDSApplicable"));
-					fm.setSanBsdSchdle(rs.getBoolean("SanBsdSchdle"));
-					fm.setPromotionSeqId(rs.getLong("PromotionSeqId"));
-					fm.setSvAmount(rs.getBigDecimal("SvAmount"));
-					fm.setCbAmount(rs.getBigDecimal("CbAmount"));
-					fm.setTdsType(rs.getString("TdsType"));
-					if (orgination) {
-						fm.setLimitValid(rs.getBoolean("LimitValid"));
-					}
-					return fm;
-				}
-			});
-
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
-
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, id);
+		}, (rs, rowNum) -> {
+			FinanceMain fm = new FinanceMain();
+			fm.setFinID(rs.getLong("FinID"));
+			fm.setFinReference(rs.getString("FinReference"));
+			fm.setGrcPeriodEndDate(rs.getTimestamp("GrcPeriodEndDate"));
+			fm.setAllowGrcPeriod(rs.getBoolean("AllowGrcPeriod"));
+			fm.setGraceBaseRate(rs.getString("GraceBaseRate"));
+			fm.setGraceSpecialRate(rs.getString("GraceSpecialRate"));
+			fm.setGrcPftRate(rs.getBigDecimal("GrcPftRate"));
+			fm.setGrcPftFrq(rs.getString("GrcPftFrq"));
+			fm.setNextGrcPftDate(rs.getTimestamp("NextGrcPftDate"));
+			fm.setAllowGrcPftRvw(rs.getBoolean("AllowGrcPftRvw"));
+			fm.setGrcPftRvwFrq(rs.getString("GrcPftRvwFrq"));
+			fm.setNextGrcPftRvwDate(rs.getTimestamp("NextGrcPftRvwDate"));
+			fm.setAllowGrcCpz(rs.getBoolean("AllowGrcCpz"));
+			fm.setGrcCpzFrq(rs.getString("GrcCpzFrq"));
+			fm.setNextGrcCpzDate(rs.getTimestamp("NextGrcCpzDate"));
+			fm.setRepayBaseRate(rs.getString("RepayBaseRate"));
+			fm.setRepaySpecialRate(rs.getString("RepaySpecialRate"));
+			fm.setRepayProfitRate(rs.getBigDecimal("RepayProfitRate"));
+			fm.setRepayFrq(rs.getString("RepayFrq"));
+			fm.setNextRepayDate(rs.getTimestamp("NextRepayDate"));
+			fm.setRepayPftFrq(rs.getString("RepayPftFrq"));
+			fm.setNextRepayPftDate(rs.getTimestamp("NextRepayPftDate"));
+			fm.setAllowRepayRvw(rs.getBoolean("AllowRepayRvw"));
+			fm.setRepayRvwFrq(rs.getString("RepayRvwFrq"));
+			fm.setNextRepayRvwDate(rs.getTimestamp("NextRepayRvwDate"));
+			fm.setAllowRepayCpz(rs.getBoolean("AllowRepayCpz"));
+			fm.setRepayCpzFrq(rs.getString("RepayCpzFrq"));
+			fm.setNextRepayCpzDate(rs.getTimestamp("NextRepayCpzDate"));
+			fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
+			fm.setCpzAtGraceEnd(rs.getBoolean("CpzAtGraceEnd"));
+			fm.setGrcRateBasis(rs.getString("GrcRateBasis"));
+			fm.setRepayRateBasis(rs.getString("RepayRateBasis"));
+			fm.setFinType(rs.getString("FinType"));
+			fm.setFinCcy(rs.getString("FinCcy"));
+			fm.setProfitDaysBasis(rs.getString("ProfitDaysBasis"));
+			fm.setFirstRepay(rs.getBigDecimal("FirstRepay"));
+			fm.setLastRepay(rs.getBigDecimal("LastRepay"));
+			fm.setScheduleMethod(rs.getString("ScheduleMethod"));
+			fm.setDownPayment(rs.getBigDecimal("DownPayment"));
+			fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
+			fm.setFinAmount(rs.getBigDecimal("FinAmount"));
+			fm.setCustID(rs.getLong("CustID"));
+			fm.setFinBranch(rs.getString("FinBranch"));
+			fm.setFinSourceID(rs.getString("FinSourceID"));
+			fm.setRecalType(rs.getString("RecalType"));
+			fm.setFinIsActive(rs.getBoolean("FinIsActive"));
+			fm.setLastRepayDate(rs.getTimestamp("LastRepayDate"));
+			fm.setLastRepayPftDate(rs.getTimestamp("LastRepayPftDate"));
+			fm.setLastRepayRvwDate(rs.getTimestamp("LastRepayRvwDate"));
+			fm.setLastRepayCpzDate(rs.getTimestamp("LastRepayCpzDate"));
+			fm.setAllowGrcRepay(rs.getBoolean("AllowGrcRepay"));
+			fm.setGrcSchdMthd(rs.getString("GrcSchdMthd"));
+			fm.setGrcMargin(rs.getBigDecimal("GrcMargin"));
+			fm.setRepayMargin(rs.getBigDecimal("RepayMargin"));
+			fm.setClosingStatus(rs.getString("ClosingStatus"));
+			fm.setFinRepayPftOnFrq(rs.getBoolean("FinRepayPftOnFrq"));
+			fm.setGrcProfitDaysBasis(rs.getString("GrcProfitDaysBasis"));
+			fm.setGrcMinRate(rs.getBigDecimal("GrcMinRate"));
+			fm.setGrcMaxRate(rs.getBigDecimal("GrcMaxRate"));
+			fm.setGrcMaxAmount(rs.getBigDecimal("GrcMaxAmount"));
+			fm.setRpyMinRate(rs.getBigDecimal("RpyMinRate"));
+			fm.setRpyMaxRate(rs.getBigDecimal("RpyMaxRate"));
+			fm.setManualSchedule(rs.getBoolean("ManualSchedule"));
+			fm.setCalRoundingMode(rs.getString("CalRoundingMode"));
+			fm.setRvwRateApplFor(rs.getString("RvwRateApplFor"));
+			fm.setSchCalOnRvw(rs.getString("SchCalOnRvw"));
+			fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
+			fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
+			fm.setPastduePftCalMthd(rs.getString("PastduePftCalMthd"));
+			fm.setDroppingMethod(rs.getString("DroppingMethod"));
+			fm.setRateChgAnyDay(rs.getBoolean("RateChgAnyDay"));
+			fm.setPastduePftMargin(rs.getBigDecimal("PastduePftMargin"));
+			fm.setFinRepayMethod(rs.getString("FinRepayMethod"));
+			fm.setMigratedFinance(rs.getBoolean("MigratedFinance"));
+			fm.setScheduleMaintained(rs.getBoolean("ScheduleMaintained"));
+			fm.setScheduleRegenerated(rs.getBoolean("ScheduleRegenerated"));
+			fm.setMandateID(rs.getLong("MandateID"));
+			fm.setFinStatus(rs.getString("FinStatus"));
+			fm.setFinStsReason(rs.getString("FinStsReason"));
+			fm.setPromotionCode(rs.getString("PromotionCode"));
+			fm.setFinCategory(rs.getString("FinCategory"));
+			fm.setProductCategory(rs.getString("ProductCategory"));
+			fm.setReAgeBucket(rs.getInt("ReAgeBucket"));
+			fm.setTDSApplicable(rs.getBoolean("TDSApplicable"));
+			fm.setSanBsdSchdle(rs.getBoolean("SanBsdSchdle"));
+			fm.setPromotionSeqId(rs.getLong("PromotionSeqId"));
+			fm.setSvAmount(rs.getBigDecimal("SvAmount"));
+			fm.setCbAmount(rs.getBigDecimal("CbAmount"));
+			fm.setTdsType(rs.getString("TdsType"));
+			if (orgination) {
+				fm.setLimitValid(rs.getBoolean("LimitValid"));
+			}
+			return fm;
+		});
 	}
 
 	@Override
-	public FinanceMain getFinanceBasicDetailByRef(String finReference, boolean isWIF) {
-		logger.debug("Entering");
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-
-		StringBuilder selectSql = new StringBuilder(
-				"SELECT FM.FinReference, FM.MaturityDate,  FM.profitDaysBasis, FT.Ratechganyday, FM.ProductCategory ");
-
-		if (isWIF) {
-			selectSql.append(" From WIFFinanceMain FM");
-		} else {
-			selectSql.append(" From FinanceMain FM");
-		}
-		selectSql.append(" inner join RMTfinanceTypes FT on FM.FinType = FT.FinType ");
-		selectSql.append(" Where FinReference =:FinReference");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
-		RowMapper<FinanceMain> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
-		FinanceMain financeMain = null;
-		try {
-			financeMain = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			financeMain = null;
-		}
-		logger.debug("Leaving");
-		return financeMain;
-	}
-
-	/**
-	 * 
-	 * 
-	 */
-	@Override
-	public void updateFinMandateId(long mandateId, String finReference, String type) {
-		logger.debug("Entering");
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("MandateId", mandateId);
-
+	public void updateFinMandateId(long mandateId, long finID, String type) {
 		StringBuilder sql = new StringBuilder("Update FinanceMain");
 		sql.append(type);
-		sql.append(" set MandateId =:MandateId");
-		sql.append(" where FinReference =:FinReference");
-		logger.debug("updateSql: " + sql.toString());
+		sql.append(" set MandateId = ?");
+		sql.append(" where FinID = ?");
 
-		this.jdbcTemplate.update(sql.toString(), source);
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), mandateId, finID);
 
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method for fetch existing mandate id by reference.
-	 * 
-	 * @param finReference
-	 * @param type
-	 * @return mandateId
-	 */
 	@Override
-	public long getMandateIdByRef(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
+	public long getMandateIdByRef(long finID, String type) {
+		StringBuilder sql = new StringBuilder("SELECT MandateId From FinanceMain");
+		sql.append(type);
+		sql.append(" Where FinID = ?");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-
-		StringBuilder selectSql = new StringBuilder("SELECT MandateId From FinanceMain");
-		selectSql.append(type);
-		selectSql.append(" Where FinReference =:FinReference");
-
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		long mandateId = Long.MIN_VALUE;
 		try {
-			mandateId = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
+			mandateId = this.jdbcOperations.queryForObject(sql.toString(), Long.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
 			mandateId = Long.MIN_VALUE;
 		}
-		logger.debug(Literal.LEAVING);
 		return mandateId;
 	}
 
-	/**
-	 * Method for fetch total number of records i.e count
-	 * 
-	 * @param finReference
-	 */
 	@Override
 	public int getFinanceCountById(String finReference) {
-		logger.debug("Entering");
+		StringBuilder selectSql = new StringBuilder("SELECT Count(FinID)");
+		selectSql.append(" From FinanceMain");
+		selectSql.append(" Where FinReference = ?");
 
-		FinanceMain financeMain = new FinanceMain();
-		financeMain.setFinReference(finReference);
-
-		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) ");
-		selectSql.append(" From FinanceMain_AView");
-		selectSql.append(" Where FinReference =:FinReference");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+		logger.debug(Literal.SQL + selectSql.toString());
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			return this.jdbcOperations.queryForObject(selectSql.toString(), Integer.class, finReference);
 		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
 			return 0;
 		}
 	}
 
-	/**
-	 * Method for check Application number already Exists or not
-	 * 
-	 * @param applicationNo
-	 * @param finType
-	 */
 	@Override
 	public boolean isAppNoExists(String applicationNo, TableType tableType) {
-		logger.debug("Entering");
-
-		String selectSql = new String();
-		String whereClause = " ApplicationNo =:ApplicationNo AND FinIsActive = :FinIsActive";
+		String sql = new String();
+		String whereClause = " ApplicationNo = ? and FinIsActive = ?";
 		switch (tableType) {
 		case MAIN_TAB:
-			selectSql = QueryUtil.getCountQuery("FinanceMain", whereClause);
+			sql = QueryUtil.getCountQuery("FinanceMain", whereClause);
 			break;
 		case TEMP_TAB:
-			selectSql = QueryUtil.getCountQuery("FinanceMain_Temp", whereClause);
+			sql = QueryUtil.getCountQuery("FinanceMain_Temp", whereClause);
 			break;
 		default:
-			selectSql = QueryUtil.getCountQuery(new String[] { "FinanceMain_Temp", "FinanceMain" }, whereClause);
+			sql = QueryUtil.getCountQuery(new String[] { "FinanceMain_Temp", "FinanceMain" }, whereClause);
 			break;
 		}
 
-		logger.debug("selectSql: " + selectSql.toString());
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + selectSql);
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("ApplicationNo", applicationNo);
-		paramSource.addValue("FinIsActive", 1);
+		logger.debug(Literal.SQL + sql.toString());
 
-		Integer count = jdbcTemplate.queryForObject(selectSql, paramSource, Integer.class);
+		Integer count = jdbcOperations.queryForObject(sql, Integer.class, applicationNo, 1);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -2464,89 +2287,43 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public String getApplicationNoById(String finReference, String type) {
+	public String getApplicationNoById(long finID, String type) {
 		StringBuilder sql = new StringBuilder("Select ApplicationNo From FinanceMain");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL, sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, String.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("ApplicationNo not found in FinanceMain{} for the specified FinReference >> {}", type,
-					finReference);
+			logger.warn("ApplicationNo not found in FinanceMain{} for the specified FinID >> {}", type, finID);
 		}
 
 		return null;
 	}
 
-	/**
-	 * Method to get FinanceReferences by Given custId.
-	 * 
-	 * @param custId
-	 */
-	@Override
-	public List<String> getFinReferencesByCustID(long custID) {
-		logger.debug("Entering");
-
-		FinanceMain financeMain = new FinanceMain();
-		financeMain.setCustID(custID);
-		financeMain.setFinIsActive(true);
-
-		StringBuilder selectSql = new StringBuilder("SELECT FinReference ");
-		selectSql.append(" From FinanceMain");
-		selectSql.append(" Where CustID =:CustID AND FinIsActive = :FinIsActive");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		List<String> finReferencesList = new ArrayList<String>();
-		try {
-			finReferencesList = this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters, String.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.error("Exception: ", dae);
-			return Collections.emptyList();
-		}
-		logger.debug("Leaving");
-		return finReferencesList;
-	}
-
-	/**
-	 * Method for get total number of records from FinanceMain master table.<br>
-	 * 
-	 * @param divisionCode
-	 * 
-	 * @return Boolean
-	 */
 	@Override
 	public boolean isFinTypeExistsInFinanceMain(String finType, String type) {
-		logger.debug("Entering");
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT COUNT(*) FROM FINANCEMAIN");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" WHERE FINTYPE = ?");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FINTYPE", finType);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuffer selectSql = new StringBuffer();
-		selectSql.append("SELECT COUNT(*) FROM FINANCEMAIN");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" WHERE FINTYPE= :FINTYPE");
-
-		logger.debug("insertSql: " + selectSql.toString());
-		int recordCount = 0;
 		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finType) > 0;
 		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
-			recordCount = 0;
+			//
 		}
-		logger.debug("Leaving");
 
-		return recordCount > 0 ? true : false;
+		return false;
 	}
 
 	@Override
 	public List<FinanceMain> getFinancesByExpenseType(String finType, Date finApprovalStartDate,
 			Date finApprovalEndDate) {
-		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" fm.FinReference, fm.FinAssetValue, fm.FinCurrAssetValue, fm.FinCcy");
@@ -2556,255 +2333,134 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" WHERE  fm.FinType = ? And (ClosingStatus is null or ClosingStatus <> ?)");
 		sql.append(" And fm.FinApprovedDate >= ? And fm.FinApprovedDate <= ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finType);
-					ps.setString(index++, finType);
-					ps.setString(index++, "C");
-					ps.setDate(index++, JdbcUtil.getDate(finApprovalStartDate));
-					ps.setDate(index++, JdbcUtil.getDate(finApprovalEndDate));
-				}
-			}, new RowMapper<FinanceMain>() {
-				@Override
-				public FinanceMain mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinanceMain fm = new FinanceMain();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, finType);
+			ps.setString(index++, finType);
+			ps.setString(index++, "C");
+			ps.setDate(index++, JdbcUtil.getDate(finApprovalStartDate));
+			ps.setDate(index++, JdbcUtil.getDate(finApprovalEndDate));
+		}, (rs, rowNum) -> {
+			FinanceMain fm = new FinanceMain();
 
-					fm.setFinReference(rs.getString("FinReference"));
-					fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
-					fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
-					fm.setFinCcy(rs.getString("FinCcy"));
-					fm.setFinBranch(rs.getString("FinBranch"));
-					fm.setFinType(rs.getString("FinType"));
-					fm.setEntityCode(rs.getString("EntityCode"));
+			fm.setFinID(rs.getLong("FinID"));
+			fm.setFinReference(rs.getString("FinReference"));
+			fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
+			fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
+			fm.setFinCcy(rs.getString("FinCcy"));
+			fm.setFinBranch(rs.getString("FinBranch"));
+			fm.setFinType(rs.getString("FinType"));
+			fm.setEntityCode(rs.getString("EntityCode"));
 
-					return fm;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+			return fm;
+		});
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
 	}
 
-	/**
-	 * Method for get total number of records from FinanceMain master table.<br>
-	 * 
-	 * @param loanPurposeCode
-	 * 
-	 * @return Boolean
-	 */
 	@Override
 	public boolean isLoanPurposeExits(String loanPurposeCode, String type) {
-		logger.debug("Entering");
-
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("finpurpose", loanPurposeCode);
 
-		StringBuffer selectSql = new StringBuffer();
-		selectSql.append("SELECT COUNT(*) FROM FINANCEMAIN");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" WHERE finpurpose= :finpurpose");
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT COUNT(*) FROM FINANCEMAIN");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" WHERE Finpurpose= ?");
 
-		logger.debug("insertSql: " + selectSql.toString());
-		int recordCount = 0;
+		logger.debug(Literal.SQL + sql.toString());
 		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, loanPurposeCode) > 0;
 		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
-			recordCount = 0;
+			//
 		}
-		logger.debug("Leaving");
 
-		return recordCount > 0 ? true : false;
+		return false;
 	}
 
 	@Override
-	public String getEarlyPayMethodsByFinRefernce(String finReference) {
-		logger.debug("Entering");
-
-		String alwEarlyPayMethods = null;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
+	public String getEarlyPayMethodsByFinRefernce(long finID) {
 		StringBuilder sql = new StringBuilder("Select AlwEarlyPayMethods from RMTFinanceTypes");
-		sql.append(" Where FinType = (Select FinType from FinanceMain Where FinReference = :FinReference)");
-		logger.debug("selectSql: " + sql.toString());
+		sql.append(" Where FinType = (Select FinType from FinanceMain Where FinID = ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			alwEarlyPayMethods = this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			alwEarlyPayMethods = null;
-		}
-
-		logger.debug("Leaving");
-
-		return alwEarlyPayMethods;
-	}
-
-	@Override
-	public FinanceMain getDMFinanceMainByRef(String finReference, String type) {
-		// Copied getFinanceMainById and removed unwanted/calculated fields
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		StringBuilder selectSql = new StringBuilder("");
-		selectSql.append("SELECT FinReference,GraceTerms, NumberOfTerms, GrcPeriodEndDate, AllowGrcPeriod,");
-		selectSql.append(" GraceBaseRate, GraceSpecialRate, GrcPftRate, GrcPftFrq, AllowGrcPftRvw,");
-		selectSql.append(" GrcPftRvwFrq, AllowGrcCpz, GrcCpzFrq, RepayBaseRate,");
-		selectSql.append(" RepaySpecialRate, RepayProfitRate, RepayFrq, RepayPftFrq, ");
-		selectSql.append(" AllowRepayRvw,RepayRvwFrq, AllowRepayCpz, RepayCpzFrq, ");
-		selectSql.append(" MaturityDate, CpzAtGraceEnd, ReqRepayAmount, TotalProfit, ");
-		selectSql.append(" TotalCpz,TotalGrossPft,TotalGracePft,TotalGraceCpz,TotalGrossGrcPft, TotalRepayAmt,");
-		selectSql.append(" FinType, FinRemarks, FinCcy, ScheduleMethod,");
-		selectSql.append(" ProfitDaysBasis, FirstRepay, LastRepay,");
-		selectSql.append(" FinStartDate, FinAmount, FinRepaymentAmount, CustID, ");
-		selectSql.append(" FinBranch, FinSourceID, ");
-		selectSql.append(" RecalType, FinAssetValue, FinIsActive, ");
-		selectSql.append(" AllowGrcRepay, GrcSchdMthd,");
-		selectSql.append(" GrcMargin, RepayMargin, FinCurrAssetValue, FinContractDate,");
-		selectSql.append(" ClosingStatus, FinApprovedDate, ");
-		selectSql.append(" AnualizedPercRate,  FinRepayPftOnFrq , GrcProfitDaysBasis, ");
-		selectSql.append(" LinkedFinRef,");
-		selectSql.append(" RpyMinRate, RpyMaxRate, TDSApplicable, FeeChargeAmt, ");
-		selectSql.append(" AlwBPI, BpiTreatment, BpiAmount,");
-		selectSql.append(" CalRoundingMode, RoundingTarget, AlwMultiDisb,");
-		selectSql.append(" DeductFeeDisb, RvwRateApplFor, SchCalOnRvw, PastduePftCalMthd, ");
-		selectSql.append(" RateChgAnyDay, PastduePftMargin,  FinCategory, ProductCategory,");
-		selectSql.append(
-				" LastMntBy, LastMntOn, FinRepayMethod, ManualSchedule, ScheduleMaintained, ScheduleRegenerated, ");
-		selectSql.append(" JointAccount, JointCustId, MandateID, ");
-		selectSql.append(" LimitValid, OverrideLimit, FinPurpose, FinStatus, FinStsReason, InitiateUser, ");
-		selectSql.append(" AccountsOfficer, DsaCode,");
-		selectSql.append(" ReferralId, DmaCode, SalesDepartment, QuickDisb, ");
-		selectSql.append(" PromotionCode, ApplicationNo, SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount, TdsType");
-
-		// Fields Required based on source data
-		/*
-		 * //Planned EMI selectSql.
-		 * append(" PlanEMIHAlw, PlanEMIHMethod, PlanEMIHMaxPerYear, PlanEMIHMax, PlanEMIHLockPeriod, PlanEMICpz," );
-		 * 
-		 * //Unplanned EMI selectSql. append(" UnPlanEMIHLockPeriod , UnPlanEMICpz, MaxUnplannedEmi, ");
-		 * 
-		 * //Reage selectSql. append(" ReAgeCpz, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, " );
-		 * 
-		 * //Drolpline Loan selectSql. append("DroppingMethod, DroplineFrq,FirstDroplineDate,PftServicingODLimit, " );
-		 */
-
-		selectSql.append(" From FinanceMain");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
-		source.addValue("FinReference", finReference);
-
-		RowMapper<FinanceMain> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
-
-		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
 		}
 
 		return null;
-
-	}
-
-	@Override
-	public List<String> getFinanceReferenceList(String type) {
-		logger.debug("Entering");
-
-		StringBuilder selectSql = new StringBuilder("SELECT FinReference From FinanceMain");
-		selectSql.append(StringUtils.trimToEmpty(type));
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource("");
-		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters, String.class);
 	}
 
 	@Override
 	public List<LoanPendingData> getCustomerODLoanDetails(long userID) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("SELECT fm.FinID, FinReference, FM.CustID, CM.CustCIF CustCIF");
+		sql.append(", CM.CustShrtName CustShrtName, CD.CustDocTitle PANNumber, CP.PhoneNumber");
+		sql.append(" From FinanceMain_Temp FM");
+		sql.append(" left JOIN Customers CM ON CM.CustID = FM.CUSTID");
+		sql.append(" left join customerdocuments CD ON CD.CustID = CM.CUSTID AND CUSTDOCCATEGORY='PPAN'");
+		sql.append(" left join CustomerPhonenumbers CP ON CP.PhoneCustID = CM.CUSTID AND PhoneTypeCode='MOBILE'");
+		sql.append(" Where InitiateUser = ?");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder("SELECT FinReference, FM.CustID ,CM.CustCIF CustCIF,");
-		selectSql.append(" CM.CustShrtName CustShrtName,CD.CustDocTitle PANNumber,CP.PhoneNumber");
-		selectSql.append(" From FinanceMain_Temp FM left JOIN Customers CM ON CM.CustID = FM.CUSTID");
-		selectSql.append(" left join customerdocuments CD ON CD.CustID = CM.CUSTID AND CUSTDOCCATEGORY='PPAN'");
-		selectSql.append(
-				"left join CustomerPhonenumbers CP ON CP.PhoneCustID = CM.CUSTID AND PhoneTypeCode='MOBILE' Where InitiateUser=:InitiateUser");
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, userID);
+		}, (rs, rowNum) -> {
+			LoanPendingData pd = new LoanPendingData();
 
-		source.addValue("InitiateUser", userID);
-		RowMapper<LoanPendingData> typeRowMapper = BeanPropertyRowMapper.newInstance(LoanPendingData.class);
+			pd.setFinID(rs.getLong("FinID"));
+			pd.setFinReference(rs.getString("FinReference"));
+			pd.setCustID(rs.getLong("CustID"));
+			pd.setCustCIF(rs.getString("CustCIF"));
+			pd.setCustShrtName(rs.getString("CustShrtName"));
+			pd.setpANNumber(rs.getString("PANNumber"));
+			pd.setPhoneNumber(rs.getString("PhoneNumber"));
 
-		logger.debug("selectSql: " + selectSql.toString());
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			return pd;
+		});
 
 	}
 
 	public int getActiveCount(String finType, long custID) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("SELECT Count(FinID)");
+		sql.append(" From FinanceMain");
+		sql.append(" Where FinType = ? AND CUSTID = ? AND FinIsActive = ?");
 
-		FinanceMain financeMain = new FinanceMain();
-		financeMain.setFinType(finType);
-		financeMain.setCustID(custID);
-
-		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) ");
-
-		selectSql.append(" From FinanceMain");
-
-		selectSql.append(" Where FinType =:FinType AND CUSTID =:custID AND FinIsActive = 1");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finType, custID, 1);
 		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
-			return 0;
+			//
 		}
+
+		return 0;
 	}
 
 	@Override
 	public int getODLoanCount(String finType, long custID) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("SELECT Count(FinID)");
+		sql.append(" From FinanceMain");
+		sql.append(" Where FinType = ? AND CUSTID = ?");
 
-		FinanceMain financeMain = new FinanceMain();
-		financeMain.setFinType(finType);
-		financeMain.setCustID(custID);
-
-		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) ");
-
-		selectSql.append(" From FinanceMain");
-
-		selectSql.append(" Where FinType =:FinType  AND CUSTID =:custID");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finType, custID);
 		} catch (EmptyResultDataAccessException dae) {
-			logger.debug("Exception: ", dae);
-			return 0;
+			//
 		}
+
+		return 0;
 	}
 
 	@Override
 	public List<FinanceMain> getUnApprovedFinances() {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" fm.FinType, AutoRejectionDays, FinReference, FinStartDate");
+		sql.append(" fm.FinType, AutoRejectionDays, FinID, FinReference, FinStartDate");
 		sql.append(" From FinanceMain_Temp fm");
 		sql.append(" Inner join RMTFinanceTypes ft on ft.FinType = fm.FinType");
 		sql.append(" where ft.AutoRejectionDays > ? and fm.RecordType = ? and fm.FinIsActive = ?");
@@ -2823,6 +2479,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			fm.setFinType(rs.getString("FinType"));
 			fm.setAutoRejectionDays(rs.getInt("AutoRejectionDays"));
+			fm.setFinID(rs.getLong("FinID"));
 			fm.setFinReference(rs.getString("FinReference"));
 			fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
 
@@ -2832,48 +2489,34 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public void updateNextUserId(String finReference, String nextUserId) {
-		logger.debug(Literal.ENTERING);
+	public void updateNextUserId(long finID, String nextUserId) {
+		StringBuilder sql = new StringBuilder("Update FinanceMain_Temp");
+		sql.append(" set NextUserId = ?");
+		sql.append(" where FinID = ?");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("NextUserId", nextUserId);
-
-		StringBuilder sql = new StringBuilder("update FinanceMain_Temp");
-		sql.append(" set NextUserId = :NextUserId");
-		sql.append(" where FinReference = :FinReference");
 		logger.debug(Literal.SQL + sql.toString());
 
-		jdbcTemplate.update(sql.toString(), source);
+		jdbcOperations.update(sql.toString(), nextUserId, finID);
 
 		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public String getNextUserId(String finReference) {
-		logger.debug(Literal.ENTERING);
-		String nextUserId = null;
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-
+	public String getNextUserId(long finID) {
 		StringBuilder sql = new StringBuilder("select NextUserId from FinanceMain_Temp");
-		sql.append(" where FinReference = :FinReference");
+		sql.append(" where FinID = ?");
+
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			nextUserId = jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+			return jdbcOperations.queryForObject(sql.toString(), String.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return nextUserId;
+		return null;
 	}
 
-	public FinanceMain getEntityNEntityDesc(String finreference, String type, boolean wif) {
-		logger.debug(Literal.ENTERING);
-
+	public FinanceMain getEntityNEntityDesc(long finID, String type, boolean wif) {
 		StringBuilder sql = new StringBuilder("SELECT T4.ENTITYCODE, T4.ENTITYDESC From");
 		if (wif) {
 			sql.append(" WifFinanceMain");
@@ -2886,86 +2529,49 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" INNER JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE");
 		sql.append(" INNER JOIN SMTDIVISIONDETAIL T3 ON T2.FINDIVISION=T3.DIVISIONCODE");
 		sql.append(" INNER JOIN ENTITY T4 ON T4.ENTITYCODE = T3.ENTITYCODE");
+		sql.append(" Where FinID = ?");
 
-		sql.append(" Where FinReference = :FinReference");
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finreference);
 		try {
-			RowMapper<FinanceMain> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceMain fm = new FinanceMain();
+				return fm;
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
 	@Override
-	public FinanceType getFinTypeDetailsByFinreferene(String finReference, String type, boolean wif) {
-		logger.debug("Entering");
-
-		FinanceType financeType = new FinanceType();
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		StringBuilder sql = new StringBuilder(
-				"SELECT FT.DEVELOPERFINANCE,FT.FinTypeClassification,FT.FinScheduleOn,FT.AlwEarlyPayMethods From ");
-		if (wif) {
-			sql.append("WifFinanceMain FM");
-		} else {
-			sql.append("FinanceMain FM");
-		}
-		sql.append(" Inner Join RmTFinanceTypes FT on FM.FinType = FT.FinType");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = :FinReference");
-		logger.debug("selectSql: " + sql.toString());
-
-		RowMapper<FinanceType> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceType.class);
-		try {
-			financeType = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
-		} catch (DataAccessException e) {
-			logger.warn("Exception: ", e);
-			financeType = new FinanceType();
-		}
-
-		logger.debug("Leaving");
-		return financeType;
-
-	}
-
-	@Override
-	public FinanceMain getClosingStatus(String finReference, TableType tempTab, boolean wif) {
-
-		StringBuilder sql = new StringBuilder("SELECT closingstatus, WriteoffLoan From ");
+	public FinanceMain getClosingStatus(long finID, TableType tempTab, boolean wif) {
+		StringBuilder sql = new StringBuilder("SELECT closingstatus, WriteoffLoan From");
 		if (wif) {
 			sql.append("WifFinanceMain");
 		} else {
 			sql.append("FinanceMain");
 		}
 		sql.append(StringUtils.trimToEmpty(tempTab.getSuffix()));
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				FinanceMain fm = new FinanceMain();
 				fm.setClosingStatus(rs.getString("Closingstatus"));
 				fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 				return fm;
-			});
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record not found in FinanceMain or WifFinanceMain table for the specified FinReference >> {}",
-					finReference);
+			logger.warn("Record not found in FinanceMain or WifFinanceMain table for the specified FinID >> {}", finID);
 		}
 		return null;
 	}
 
 	@Override
-	public Date getClosedDateByFinRef(String finReference) {
-		logger.debug(Literal.ENTERING);
-
+	public Date getClosedDateByFinRef(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ClosedDate");
 		sql.append(" From FinanceMain");
@@ -2974,71 +2580,16 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, Date.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), Date.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
-	/**
-	 * //### 18-07-2018 Ticket ID : 124998,receipt upload
-	 */
 	@Override
-	public long getPartnerBankIdByReference(String finReference, String paymentMode, String fundingAc, String type,
-			String purpose, boolean wif) {
-		logger.debug("Entering");
-		long partnerBankId = 0;
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("Purpose", purpose);
-		source.addValue("PARTNERBANKCODE", fundingAc);
-		source.addValue("PAYMENTMODE", paymentMode);
-
-		StringBuilder sql = new StringBuilder("SELECT FP.PARTNERBANKID From ");
-		if (wif) {
-			sql.append("WifFinanceMain");
-		} else {
-			sql.append("FinanceMain");
-		}
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" FM ");
-
-		sql.append(" INNER JOIN FINTYPEPARTNERBANKS FP ON FP.FINTYPE =FM.FINTYPE ");
-		sql.append(" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID =FP.PARTNERBANKID ");
-
-		sql.append(" Where FM.FinReference = :FinReference");
-		sql.append(" and FP.PURPOSE = :Purpose");
-		sql.append(" and PB.PARTNERBANKCODE = :PARTNERBANKCODE");
-		sql.append(" and FP.PAYMENTMODE = :PAYMENTMODE");
-
-		logger.debug("selectSql: " + sql.toString());
-
-		try {
-			partnerBankId = this.jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
-		} catch (DataAccessException e) {
-			logger.warn("Exception: ", e);
-			partnerBankId = 0;
-		}
-
-		logger.debug("Leaving");
-		return partnerBankId;
-	}
-
-	/**
-	 * //### 12-07-2018 Ticket ID : 12499
-	 * 
-	 * check whether loan reference with entity code is present
-	 * 
-	 * @param finReference
-	 * @param type
-	 * @param entity
-	 */
-	@Override
-	public boolean isFinReferenceExitsWithEntity(String finReference, String type, String entity) {
+	public boolean isFinReferenceExitsWithEntity(long finID, String type, String entity) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" count(T4.EntityCode)");
 		sql.append(" From FinanceMain");
@@ -3047,218 +2598,175 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" Inner Join RMTFinanceTypes T2 ON T2.FinType = T1.FinType");
 		sql.append(" Inner Join SMTDivisionDetail T3 ON T3.DivisionCode = T2.FinDivision");
 		sql.append(" Inner Join Entity T4 on T4.Entitycode = T3.Entitycode");
-		sql.append(" Where T1.FinReference = ? and T4.EntityCode = ?");
+		sql.append(" Where T1.FinID = ? and T4.EntityCode = ?");
 
 		logger.trace(Literal.SQL + sql);
 
-		return jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, entity },
-				(rs, rowNum) -> rs.getLong(1)) > 0;
+		return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getLong(1), finID, entity) > 0;
 	}
 
-	/**
-	 * 
-	 * check whether loan reference is developer or not
-	 * 
-	 * @param finReference
-	 * @param type
-	 * @param wif
-	 */
 	@Override
-	public boolean isDeveloperFinance(String finReference, String type, boolean wif) {
-
-		logger.debug("Entering");
-
-		boolean isdeveloperFinance = false;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		StringBuilder sql = new StringBuilder("SELECT ft.DEVELOPERFINANCE From ");
+	public boolean isDeveloperFinance(long finID, String type, boolean wif) {
+		StringBuilder sql = new StringBuilder("SELECT ft.DEVELOPERFINANCE From");
 		if (wif) {
-			sql.append("WifFinanceMain FM");
+			sql.append(" WifFinanceMain FM");
 		} else {
-			sql.append("FinanceMain FM");
+			sql.append(" FinanceMain FM");
 		}
 		sql.append(" Inner Join RmTFinanceTypes FT on FM.FinType = FT.FinType");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = :FinReference");
-		logger.debug("selectSql: " + sql.toString());
+		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			isdeveloperFinance = this.jdbcTemplate.queryForObject(sql.toString(), source, Boolean.class);
+			this.jdbcOperations.queryForObject(sql.toString(), Boolean.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			isdeveloperFinance = false;
+			//
 		}
 
-		logger.debug("Leaving");
-		return isdeveloperFinance;
+		return false;
 
 	}
 
 	@Override
-	public FinanceMain getFinanceDetailsByFinRefence(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
-
-		FinanceMain financeMain = null;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-
+	public FinanceMain getFinanceDetailsByFinRefence(long finID, String type) {
 		StringBuilder sql = new StringBuilder("SELECT * From ");
 		sql.append("FinanceMain");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = :FinReference");
-		sql.append(" ORDER BY FinReference ASC,FinType ASC");
+		sql.append(" Where FinID = ?");
 		logger.debug(Literal.SQL + sql.toString());
 
 		RowMapper<FinanceMain> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
 		try {
-			financeMain = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			logger.log(Level.ERROR, e.getCause(), e);
+			return this.jdbcOperations.queryForObject(sql.toString(), typeRowMapper, finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
-
-		return financeMain;
+		return null;
 	}
 
 	@Override
-	public List<String> getFinanceMainbyCustId(long custId, String type) {
-
-		logger.debug("Entering");
-
-		FinanceMain financeMain = new FinanceMain();
-		financeMain.setCustID(custId);
-		financeMain.setFinIsActive(true);
-
-		StringBuilder selectSql = new StringBuilder("SELECT FinReference ");
+	public List<Long> getFinanceMainbyCustId(long custId, String type) {
+		StringBuilder selectSql = new StringBuilder("SELECT FinID");
 		selectSql.append(" From FinanceMain");
 		if (StringUtils.isNotBlank(type)) {
 			selectSql.append(type);
 		}
-		selectSql.append(" Where CustID =:CustID AND FinIsActive = :FinIsActive");
+		selectSql.append(" Where CustID = ? AND FinIsActive = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		List<String> finReferencesList = new ArrayList<String>();
-		try {
-			finReferencesList = this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters, String.class);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.error("Exception: ", dae);
-			return Collections.emptyList();
-		}
-		logger.debug("Leaving");
-		return finReferencesList;
+		logger.debug(Literal.SQL + selectSql.toString());
 
+		return this.jdbcOperations.queryForList(selectSql.toString(), Long.class, custId, 1);
 	}
 
 	@Override
-	public String getFinanceTypeFinReference(String finReference, String type) {
-
-		logger.debug("Entering");
-
-		String financeType = null;
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-
+	public String getFinanceTypeFinReference(long finID, String type) {
 		StringBuilder sql = new StringBuilder("SELECT FinType From ");
 		sql.append("FinanceMain");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = :FinReference");
+		sql.append(" Where FinID = ?");
 
-		logger.debug("selectSql: " + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			financeType = this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
-		} catch (DataAccessException e) {
-			logger.warn("Exception: ", e);
-			financeType = null;
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
 		}
 
-		logger.debug("Leaving");
-		return financeType;
+		return null;
 
 	}
 
 	@Override
-	public void updateFinAssetValue(FinanceMain finMain) {
+	public void updateFinAssetValue(FinanceMain fm) {
+		StringBuilder sql = new StringBuilder("Update FinanceMain");
+		sql.append(" Set LastMntBy = ?, LastMntOn = ?, FinAssetValue = ?");
+		sql.append(" Where FinID = ?");
 
-		StringBuilder sql = new StringBuilder("Update FinanceMain SET");
-		sql.append(" LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, FinAssetValue = :FinAssetValue ");
-		sql.append(" Where FinReference = :FinReference");
+		logger.debug(Literal.SQL + sql.toString());
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finMain);
+		jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		jdbcTemplate.update(sql.toString(), paramSource);
+			ps.setLong(index++, fm.getLastMntBy());
+			ps.setDate(index++, JdbcUtil.getDate(fm.getLastMntOn()));
+			ps.setBigDecimal(index++, fm.getFinAssetValue());
+			ps.setLong(index++, fm.getFinID());
+		});
 	}
 
 	@Override
-	public FinanceMain getFinanceForAssignments(String finReference) {
+	public FinanceMain getFinanceForAssignments(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference, FinStartDate, MaturityDate, FinCurrAssetValue, FinAssetValue, AlwFlexi");
+		sql.append(", FinType, FinIsActive, EntityCode, FinCcy, CustID, FinBranch, PromotionCode, PromotionSeqId");
+		sql.append(", SvAmount, CbAmount, AssignmentId");
+		sql.append(" From FinanceMain");
+		sql.append(" Where FinID = ?");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
-				" SELECT FinReference, FinStartDate, MaturityDate, FinCurrAssetValue, FinAssetValue, AlwFlexi, FinType, FinIsActive, EntityCode, FinCcy, CustID, FinBranch, PromotionCode, PromotionSeqId, SvAmount, CbAmount, AssignmentId");
-		selectSql.append(" From FinanceMain");
-		selectSql.append(" Where FinReference = :FinReference ");
-
-		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			RowMapper<FinanceMain> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceMain fm = new FinanceMain();
 
+				fm.setFinID(rs.getLong("FinID"));
+				fm.setFinReference(rs.getString("FinReference"));
+				fm.setFinStartDate(rs.getDate("FinStartDate"));
+				fm.setMaturityDate(rs.getDate("MaturityDate"));
+				fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
+				fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
+				fm.setAlwFlexi(rs.getBoolean("AlwFlexi"));
+				fm.setFinType(rs.getString("FinType"));
+				fm.setFinIsActive(rs.getBoolean("FinIsActive"));
+				fm.setEntityCode(rs.getString("EntityCode"));
+				fm.setFinCcy(rs.getString("FinCcy"));
+				fm.setCustID(rs.getLong("CustID"));
+				fm.setFinBranch(rs.getString("FinBranch"));
+				fm.setPromotionCode(rs.getString("PromotionCode"));
+				fm.setPromotionSeqId(rs.getLong("PromotionSeqId"));
+				fm.setSvAmount(rs.getBigDecimal("SvAmount"));
+				fm.setCbAmount(rs.getBigDecimal("CbAmount"));
+				fm.setAssignmentId(rs.getLong("AssignmentId"));
+
+				return fm;
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			//
 		}
 		return null;
 	}
 
 	@Override
 	public List<FinanceMain> getFinListForIncomeAMZ(Date curMonthStart) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, FinStartDate, FinApprovedDate, ClosingStatus, FinIsActive, ClosedDate");
+		sql.append(" FinID, FinReference, FinStartDate, FinApprovedDate, ClosingStatus, FinIsActive, ClosedDate");
 		sql.append(", WriteoffLoan from FinanceMain");
 		sql.append(" Where MaturityDate >= ?");
 		sql.append(" ORDER BY FinReference ");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setDate(index++, JdbcUtil.getDate(curMonthStart));
-				}
-			}, new RowMapper<FinanceMain>() {
-				@Override
-				public FinanceMain mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinanceMain fm = new FinanceMain();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setDate(index++, JdbcUtil.getDate(curMonthStart));
+		}, (rs, rowNum) -> {
+			FinanceMain fm = new FinanceMain();
 
-					fm.setFinReference(rs.getString("FinReference"));
-					fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
-					fm.setFinApprovedDate(rs.getTimestamp("FinApprovedDate"));
-					fm.setClosingStatus(rs.getString("ClosingStatus"));
-					fm.setFinIsActive(rs.getBoolean("FinIsActive"));
-					fm.setClosedDate(rs.getTimestamp("ClosedDate"));
-					fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
+			fm.setFinID(rs.getLong("FinID"));
+			fm.setFinReference(rs.getString("FinReference"));
+			fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
+			fm.setFinApprovedDate(rs.getTimestamp("FinApprovedDate"));
+			fm.setClosingStatus(rs.getString("ClosingStatus"));
+			fm.setFinIsActive(rs.getBoolean("FinIsActive"));
+			fm.setClosedDate(rs.getTimestamp("ClosedDate"));
+			fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 
-					return fm;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.ENTERING, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return fm;
+		});
 	}
 
 	@Override

@@ -10,12 +10,9 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 @XmlType(propOrder = { "finReference", "custID", "custCIF", "custShrtName", "pANNumber", "phoneNumber" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class LoanPendingData extends AbstractWorkflowEntity implements java.io.Serializable {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 7058074481411678596L;
 
+	private long finID;
 	@XmlElement
 	private String finReference;
 	@XmlElement
@@ -35,6 +32,14 @@ public class LoanPendingData extends AbstractWorkflowEntity implements java.io.S
 
 	public void setCustID(long custID) {
 		this.custID = custID;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

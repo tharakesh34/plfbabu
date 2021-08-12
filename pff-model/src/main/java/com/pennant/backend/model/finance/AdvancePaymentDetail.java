@@ -11,6 +11,8 @@ import java.util.Set;
  */
 public class AdvancePaymentDetail implements Serializable {
 	private static final long serialVersionUID = 1L;
+
+	private long finID;
 	private String finReference;
 	private long instructionUID = Long.MIN_VALUE;
 	private BigDecimal advInt = BigDecimal.ZERO;
@@ -27,9 +29,13 @@ public class AdvancePaymentDetail implements Serializable {
 		super();
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
 
 	public String getFinReference() {
 		return finReference;

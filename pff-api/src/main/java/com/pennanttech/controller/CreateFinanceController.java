@@ -2606,7 +2606,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				Mandate mandate = financeDetail.getMandate();
 				if (mandate != null) {
 					long mandateId = mandate.getMandateID();
-					List<String> financeRefeList = financeMainService.getFinReferencesByMandateId(mandateId);
+					List<Long> financeRefeList = financeMainService.getFinReferencesByMandateId(mandateId);
 					BigDecimal totEMIAmount = BigDecimal.ZERO;
 					for (String detail : financeRefeList) {
 						List<FinanceScheduleDetail> finSchduleList = financeScheduleDetailDAO
