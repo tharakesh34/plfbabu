@@ -6,16 +6,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.manualadviseupload.UploadManualAdviseDAO;
 import com.pennant.backend.model.finance.UploadManualAdvise;
 import com.pennant.backend.util.UploadConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -27,170 +23,190 @@ public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise> i
 	}
 
 	public List<UploadManualAdvise> getAdviseUploadsByUploadId(long uploadId, String type) {
-		logger.debug("Entering");
-		UploadManualAdvise uploadManualAdvise = new UploadManualAdvise();
-		uploadManualAdvise.setUploadId(uploadId);
-
-		StringBuilder selectSql = new StringBuilder("Select AdviseId, UploadId, FinReference, AdviseType,");
-		selectSql.append(" FeeTypeCode, ValueDate, AdviseAmount, Remarks, Status, Reason, RejectStage");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" AdviseId, UploadId, FinID, FinReference, AdviseType, FeeTypeCode");
+		sql.append(", ValueDate, AdviseAmount, Remarks, Status, Reason, RejectStage");
 		if (type.contains("View")) {
-			selectSql.append("FeeTypeId, ");
+			sql.append(", FeeTypeID");
 		}
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
-		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
-		selectSql.append(" FROM AdviseUploads");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where UploadId = :UploadId");
+		sql.append(" From AdviseUploads");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where UploadId = ?");
 
-		logger.debug("selectListSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(uploadManualAdvise);
-		RowMapper<UploadManualAdvise> typeRowMapper = BeanPropertyRowMapper.newInstance(UploadManualAdvise.class);
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcOperations.query(sql.toString(), (rs, i) -> {
+			UploadManualAdvise uma = new UploadManualAdvise();
+
+			uma.setAdviseId(rs.getLong("AdviseId"));
+			uma.setUploadId(rs.getLong("UploadId"));
+			uma.setFinID(rs.getLong("FinID"));
+			uma.setFinReference(rs.getString("FinReference"));
+			uma.setAdviseType(rs.getString("AdviseType"));
+			uma.setFeeTypeCode(rs.getString("FeeTypeCode"));
+			uma.setValueDate(rs.getTimestamp("ValueDate"));
+			uma.setAdviseAmount(rs.getBigDecimal("AdviseAmount"));
+			uma.setRemarks(rs.getString("Remarks"));
+			uma.setStatus(rs.getString("Status"));
+			uma.setReason(rs.getString("Reason"));
+			uma.setRejectStage(rs.getString("RejectStage"));
+			uma.setFeeTypeID(rs.getLong("FeeTypeID"));
+			uma.setVersion(rs.getInt("Version"));
+			uma.setLastMntBy(rs.getLong("LastMntBy"));
+			uma.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			uma.setRecordStatus(rs.getString("RecordStatus"));
+			uma.setRoleCode(rs.getString("RoleCode"));
+			uma.setNextRoleCode(rs.getString("NextRoleCode"));
+			uma.setTaskId(rs.getString("TaskId"));
+			uma.setNextTaskId(rs.getString("NextTaskId"));
+			uma.setRecordType(rs.getString("RecordType"));
+			uma.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return uma;
+		}, uploadId);
 	}
 
 	@Override
-	public String save(UploadManualAdvise uploadManualAdvise, String type) {
-		logger.debug("Entering ");
-
-		if (uploadManualAdvise.getAdviseId() == Long.MIN_VALUE) {
-			uploadManualAdvise.setAdviseId(getNextValue("SeqManualAdvise"));
-			logger.debug("get NextID:" + uploadManualAdvise.getAdviseId());
+	public void save(UploadManualAdvise uma, String type) {
+		if (uma.getAdviseId() == Long.MIN_VALUE) {
+			uma.setAdviseId(getNextValue("SeqManualAdvise"));
 		}
 
-		StringBuilder insertSql = new StringBuilder("Insert Into AdviseUploads");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(
-				" (AdviseId, UploadId, FinReference, AdviseType, FeeTypeCode, ValueDate, AdviseAmount, Remarks, Status, Reason,");
-		insertSql.append(
-				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType,");
-		insertSql.append(" WorkflowId, RejectStage, ManualAdviseId)");
-		insertSql.append(
-				" Values(:AdviseId, :UploadId, :FinReference, :AdviseType, :FeeTypeCode, :ValueDate, :AdviseAmount, :Remarks, :Status, :Reason,");
-		insertSql.append(
-				" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType,");
-		insertSql.append("  :WorkflowId, :RejectStage, :ManualAdviseId)");
+		StringBuilder sql = new StringBuilder("Insert Into AdviseUploads");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append("(AdviseId, UploadId, FinID, FinReference, AdviseType, FeeTypeCode, ValueDate, AdviseAmount");
+		sql.append(" , Remarks, Status, Reason, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId, RejectStage, ManualAdviseId)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(uploadManualAdvise);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		logger.debug("Leaving ");
+			ps.setLong(index++, JdbcUtil.setLong(uma.getAdviseId()));
+			ps.setLong(index++, JdbcUtil.setLong(uma.getUploadId()));
+			ps.setLong(index++, JdbcUtil.setLong(uma.getFinID()));
+			ps.setString(index++, uma.getFinReference());
+			ps.setString(index++, uma.getAdviseType());
+			ps.setString(index++, uma.getFeeTypeCode());
+			ps.setDate(index++, JdbcUtil.getDate(uma.getValueDate()));
+			ps.setBigDecimal(index++, uma.getAdviseAmount());
+			ps.setString(index++, uma.getRemarks());
+			ps.setString(index++, uma.getStatus());
+			ps.setString(index++, uma.getReason());
+			ps.setInt(index++, uma.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(uma.getLastMntBy()));
+			ps.setTimestamp(index++, uma.getLastMntOn());
+			ps.setString(index++, uma.getRecordStatus());
+			ps.setString(index++, uma.getRoleCode());
+			ps.setString(index++, uma.getNextRoleCode());
+			ps.setString(index++, uma.getTaskId());
+			ps.setString(index++, uma.getNextTaskId());
+			ps.setString(index++, uma.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(uma.getWorkflowId()));
+			ps.setString(index++, uma.getRejectStage());
+			ps.setLong(index++, JdbcUtil.setLong(uma.getManualAdviseId()));
+		});
 
-		return uploadManualAdvise.getFinReference();
 	}
 
 	@Override
-	public void update(UploadManualAdvise uploadManualAdvise, String type) {
-		int recordCount = 0;
-		logger.debug("Entering ");
-
-		StringBuilder updateSql = new StringBuilder("Update AdviseUploads");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(
-				" Set FinReference = :FinReference, AdviseType = :AdviseType, FeeTypeCode = :FeeTypeCode, ValueDate = :ValueDate,");
-		updateSql.append(" AdviseAmount = :AdviseAmount, Remarks = :Remarks, Status = :Status, Reason = :Reason,");
-		updateSql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RoleCode = :RoleCode,");
-		updateSql.append(" RecordStatus= :RecordStatus, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId,");
-		updateSql.append(" RejectStage = :RejectStage, ManualAdviseId = :ManualAdviseId");
-		updateSql.append(" Where UploadId = :UploadId AND AdviseId = :AdviseId");
+	public void update(UploadManualAdvise uma, String type) {
+		StringBuilder sql = new StringBuilder("Update AdviseUploads");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set");
+		sql.append(" FinID = ?, FinReference = ?, AdviseType = ?, FeeTypeCode = ?, ValueDate = ?, AdviseAmount = ?");
+		sql.append(", Remarks = ?, Status = ?, Reason = ?, Version = ?, LastMntBy = ?, LastMntOn = ?");
+		sql.append(", RoleCode = ?, RecordStatus = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
+		sql.append(", RecordType = ?, WorkflowId = ?, RejectStage = ?, ManualAdviseId = ?");
+		sql.append(" Where UploadId = ? and AdviseId = ?");
 
 		if (!type.endsWith("_Temp")) {
-			updateSql.append("  AND Version= :Version-1");
+			sql.append(" and Version = ? - 1");
 		}
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(uploadManualAdvise);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug(Literal.SQL + sql.toString());
+
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, uma.getFinID());
+			ps.setString(index++, uma.getFinReference());
+			ps.setString(index++, uma.getAdviseType());
+			ps.setString(index++, uma.getFeeTypeCode());
+			ps.setDate(index++, JdbcUtil.getDate(uma.getValueDate()));
+			ps.setBigDecimal(index++, uma.getAdviseAmount());
+			ps.setString(index++, uma.getRemarks());
+			ps.setString(index++, uma.getStatus());
+			ps.setString(index++, uma.getReason());
+			ps.setInt(index++, uma.getVersion());
+			ps.setLong(index++, uma.getLastMntBy());
+			ps.setTimestamp(index++, uma.getLastMntOn());
+			ps.setString(index++, uma.getRoleCode());
+			ps.setString(index++, uma.getRecordStatus());
+			ps.setString(index++, uma.getNextRoleCode());
+			ps.setString(index++, uma.getTaskId());
+			ps.setString(index++, uma.getNextTaskId());
+			ps.setString(index++, uma.getRecordType());
+			ps.setLong(index++, uma.getWorkflowId());
+			ps.setString(index++, uma.getRejectStage());
+			ps.setLong(index++, uma.getManualAdviseId());
+			ps.setString(index++, uma.getRecordType());
+			ps.setLong(index++, uma.getWorkflowId());
+			ps.setString(index++, uma.getRejectStage());
+			ps.setLong(index++, uma.getManualAdviseId());
+
+			ps.setLong(index++, uma.getUploadId());
+			ps.setLong(index++, uma.getAdviseId());
+
+			if (!type.endsWith("_Temp")) {
+				ps.setInt(index++, uma.getVersion());
+			}
+		});
 
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-
-		logger.debug("Leaving ");
 	}
 
 	@Override
 	public void deleteByUploadId(long uploadId, String type) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Delete From AdviseUploads");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where UploadId = ?");
 
-		UploadManualAdvise uploadManualAdvise = new UploadManualAdvise();
-		uploadManualAdvise.setUploadId(uploadId);
-		StringBuilder deleteSql = new StringBuilder("Delete From AdviseUploads");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where UploadId = :UploadId");
-		logger.debug("deleteSql: " + deleteSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(uploadManualAdvise);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				ps.setLong(1, uploadId);
+			});
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
+			//
 		}
-
-		logger.debug("Leaving");
 	}
 
 	@Override
-	public boolean getAdviseUploadsByFinReference(String finReference, long uploadId, String type) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
-
-		sql = new StringBuilder();
-		sql.append(" Select Count(FinReference) from AdviseUploads");
+	public boolean getAdviseUploadsByFinReference(long finID, long uploadId, String type) {
+		StringBuilder sql = new StringBuilder("Select Count(FinID)");
+		sql.append(" From AdviseUploads");
 		sql.append(type);
-		sql.append(" Where FinReference = :FinReference And Status = :Status");
+		sql.append(" Where FinID = ? and Status = ?");
+
+		Object[] args = new Object[] { finID, UploadConstants.UPLOAD_STATUS_SUCCESS };
+
 		if (uploadId > 0) {
-			sql.append(" And UploadId != :UploadId");
+			sql.append(" and UploadId != ?");
+			args = new Object[] { finID, UploadConstants.UPLOAD_STATUS_SUCCESS, uploadId };
 		}
-		logger.trace(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("Status", UploadConstants.UPLOAD_STATUS_SUCCESS);
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			if (this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
-				return true;
-			}
-		} catch (Exception e) {
-			logger.error(e);
-		} finally {
-			source = null;
-			sql = null;
-			logger.debug("Leaving");
-		}
-		return false;
+		return jdbcOperations.queryForObject(sql.toString(), Integer.class, args) > 0;
 	}
 
-	public List<UploadManualAdvise> getManualAdviseListByUploadId(long uploadId, String type) {
-		logger.debug("Entering");
-		UploadManualAdvise uploadManualAdvise = new UploadManualAdvise();
-		uploadManualAdvise.setUploadId(uploadId);
-
-		StringBuilder selectSql = new StringBuilder("Select AdviseId, UploadId, FinReference, AdviseType,");
-		selectSql.append(" FeeTypeCode, ValueDate, AdviseAmount, Remarks, Status, Reason, RejectStage,");
-		if (type.contains("View")) {
-			selectSql.append("FeeTypeId, ");
-		}
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
-		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-
-		selectSql.append(" FROM AdviseUploads");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where UploadId = :UploadId");
-
-		logger.debug("selectListSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(uploadManualAdvise);
-		RowMapper<UploadManualAdvise> typeRowMapper = BeanPropertyRowMapper.newInstance(UploadManualAdvise.class);
-
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
 }

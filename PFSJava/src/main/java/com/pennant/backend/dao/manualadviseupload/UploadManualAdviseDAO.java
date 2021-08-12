@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  RefundUploadDAO.java                                                 * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  08-10-2018    														*
- *                                                                  						*
- * Modified Date    :  08-10-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : RefundUploadDAO.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 08-10-2018 * * Modified Date
+ * : 08-10-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 08-10-2018       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 08-10-2018 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -57,12 +39,10 @@ public interface UploadManualAdviseDAO {
 
 	void update(UploadManualAdvise adviseupload, String type);
 
-	String save(UploadManualAdvise adviseupload, String type);
+	void save(UploadManualAdvise adviseupload, String type);
 
 	void deleteByUploadId(long uploadId, String type);
 
-	boolean getAdviseUploadsByFinReference(String finReference, long uploadId, String type);
-
-	List<UploadManualAdvise> getManualAdviseListByUploadId(long uploadId, String type);
+	boolean getAdviseUploadsByFinReference(long finID, long uploadId, String type);
 
 }

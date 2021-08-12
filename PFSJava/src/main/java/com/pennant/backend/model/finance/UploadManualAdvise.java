@@ -44,6 +44,7 @@ public class UploadManualAdvise extends AbstractWorkflowEntity {
 
 	private long adviseId = Long.MIN_VALUE;
 	private long uploadId = 0;
+	private long finID;
 	private String finReference;
 	private String adviseType;
 	private Long feeTypeID;
@@ -91,6 +92,14 @@ public class UploadManualAdvise extends AbstractWorkflowEntity {
 
 	public void setAdviseType(String adviseType) {
 		this.adviseType = adviseType;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
