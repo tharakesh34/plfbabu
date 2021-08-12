@@ -6,6 +6,7 @@ import java.util.Date;
 public class CashBackDetail {
 
 	private long Id;
+	private long finID;
 	private String finReference;
 	private String type;
 	private BigDecimal amount = BigDecimal.ZERO;
@@ -16,6 +17,14 @@ public class CashBackDetail {
 	private long promotionSeqId = 0;
 	private String feeTypeCode;
 	private String hostReference;
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
 
 	public String getFinReference() {
 		return finReference;

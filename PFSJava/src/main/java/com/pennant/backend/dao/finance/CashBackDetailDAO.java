@@ -10,7 +10,7 @@ public interface CashBackDetailDAO {
 
 	public List<CashBackDetail> getCashBackDetails();
 
-	public CashBackDetail getManualAdviseIdByFinReference(String finReference, String type);
+	public CashBackDetail getManualAdviseIdByFinReference(long finID, String type);
 
 	public int updateCashBackDetail(long adviseId);
 

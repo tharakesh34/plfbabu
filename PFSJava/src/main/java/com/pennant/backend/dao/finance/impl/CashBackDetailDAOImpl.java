@@ -1,135 +1,123 @@
 package com.pennant.backend.dao.finance.impl;
 
-import java.util.ArrayList;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.backend.dao.finance.CashBackDetailDAO;
 import com.pennant.backend.model.finance.CashBackDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CashBackDetailDAOImpl extends BasicDao<CashBackDetail> implements CashBackDetailDAO {
 
-	/**
-	 * This method insert new Records into CashBackDetail.
-	 * 
-	 * save CashBackDetail
-	 * 
-	 * @param CashBackDetail
-	 *            (cashBackDetail)
-	 * 
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	public void save(List<CashBackDetail> cashBackDetail) {
+	public void save(List<CashBackDetail> cbdList) {
+		StringBuilder sql = new StringBuilder("Insert Into CashBackDetails");
+		sql.append(" (FinID, FinReference, Type, AdviseId, Amount, Refunded)");
+		sql.append(" Values (?, ?, ?, ?, ?, ?)");
 
-		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder insertSql = new StringBuilder("Insert Into CashBackDetails");
-		insertSql.append(" (FinReference,Type, AdviseId, Amount, Refunded)");
+		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
-		insertSql.append(" Values(:FinReference, :Type, :AdviseId, :Amount, :Refunded)");
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				CashBackDetail cbd = cbdList.get(i);
 
-		logger.trace(Literal.SQL + insertSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(cashBackDetail.toArray());
-		try {
-			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.error("Exception", e);
-			throw e;
-		}
-		logger.debug(Literal.LEAVING);
+				int index = 1;
 
+				ps.setLong(index++, cbd.getFinID());
+				ps.setString(index++, cbd.getFinReference());
+				ps.setString(index++, cbd.getType());
+				ps.setLong(index++, cbd.getAdviseId());
+				ps.setBigDecimal(index++, cbd.getAmount());
+				ps.setBoolean(index++, cbd.isRefunded());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return cbdList.size();
+			}
+		});
 	}
 
 	@Override
 	public List<CashBackDetail> getCashBackDetails() {
-		logger.debug("Entering");
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Refunded", 0);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" fm.PromotionSeqId, fm.FinID, fm.FinReference, cb.Type, fm.FinStartDate, fm.MandateId");
+		sql.append(", cb.AdviseId, ft.FeeTypeCode, cb.Amount, fe.HostReference");
+		sql.append(" From CashBackDetails cb");
+		sql.append(" Inner Join FinanceMain fm on fm.FinID = cb.FinID");
+		sql.append(" Inner Join ManualAdvise ma on ma.AdviseId = cb.AdviseId");
+		sql.append(" Inner Join FeeTypes ft on ft.FeeTypeId = ma.FeeTypeId");
+		sql.append(" Inner Join FinanceMain_Extension fe on fe.FinID = Fm.FinID");
+		sql.append(" Where Refunded = ?");
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(
-				" Select FM.PromotionSeqID , CB.FinReference , CB.Type,FM.FinStartDate, FM.MandateID,CB.AdviseID, FT.FeeTypeCode, CB.Amount, FE.HOSTREFERENCE");
-		sql.append(" From CASHBACKDETAILS CB ");
-		sql.append(" INNER JOIN FinanceMain FM ON CB.FinReference=FM.FinReference ");
-		sql.append(" INNER JOIN ManualAdvise MA ON MA.AdviseID= CB.AdviseID ");
-		sql.append(" INNER JOIN FeeTypes FT ON FT.FeeTypeID= MA.FeeTypeID ");
-		sql.append(" INNER JOIN FINANCEMAIN_EXTENSION FE ON FM.FinReference = FE.FinReference ");
-		sql.append(" where Refunded=:Refunded ");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql: " + sql.toString());
-		List<CashBackDetail> cashBackDetailList = new ArrayList<CashBackDetail>();
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			CashBackDetail cbd = new CashBackDetail();
 
-		RowMapper<CashBackDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(CashBackDetail.class);
-		try {
-			cashBackDetailList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.debug(e);
-		}
+			cbd.setPromotionSeqId(rs.getLong("PromotionSeqId"));
+			cbd.setFinID(rs.getLong("FinID"));
+			cbd.setFinReference(rs.getString("FinReference"));
+			cbd.setType(rs.getString("Type"));
+			cbd.setFinStartDate(JdbcUtil.getDate(rs.getDate("FinStartDate")));
+			cbd.setMandateId(rs.getLong("MandateId"));
+			cbd.setAdviseId(rs.getLong("AdviseId"));
+			cbd.setFeeTypeCode(rs.getString("FeeTypeCode"));
+			cbd.setAmount(rs.getBigDecimal("Amount"));
+			cbd.setHostReference(rs.getString("HostReference"));
 
-		logger.debug("Leaving");
-		return cashBackDetailList;
+			return cbd;
+		}, 0);
+
 	}
 
 	@Override
-	public CashBackDetail getManualAdviseIdByFinReference(String finReference, String type) {
-		logger.debug("Entering");
+	public CashBackDetail getManualAdviseIdByFinReference(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" AdviseId, FinID, FinReference, Amount");
+		sql.append(" From CashBackDetails");
+		sql.append(" Where FinID = ? and Type = ? and Refunded = ?");
 
-		CashBackDetail cashBackDetail = new CashBackDetail();
-		cashBackDetail.setFinReference(finReference);
-		cashBackDetail.setType(type);
-		cashBackDetail.setRefunded(false);
-		StringBuilder selectSql = new StringBuilder("Select AdviseId,FinReference,Amount ");
-		selectSql.append(" From CashBackDetails");
-		selectSql.append(" Where FinReference =:FinReference AND Type =:Type AND Refunded =:Refunded");
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cashBackDetail);
-		logger.debug("Leaving");
-		RowMapper<CashBackDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(CashBackDetail.class);
+		logger.debug(Literal.SQL + sql.toString());
+
 		try {
-			cashBackDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				CashBackDetail cbd = new CashBackDetail();
+				cbd.setAdviseId(rs.getLong("AdviseId"));
+				cbd.setFinID(rs.getLong("FinID"));
+				cbd.setFinReference(rs.getString("FinReference"));
+				cbd.setAmount(rs.getBigDecimal("Amount"));
+				return cbd;
+			}, finID, type, 0);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			cashBackDetail = null;
+			//
 		}
-		logger.debug("Leaving");
-		return cashBackDetail;
 
+		return null;
 	}
 
 	@Override
 	public int updateCashBackDetail(long adviseId) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		CashBackDetail cashBackDetail = new CashBackDetail();
-		cashBackDetail.setAdviseId(adviseId);
-		cashBackDetail.setRefunded(true);
-		StringBuilder updateSql = new StringBuilder("Update ");
+		String sql = "Update CashBackDetails set Refunded = ? Where AdviseId = ?";
 
-		updateSql.append(" CashBackDetails set Refunded =:Refunded ");
-		updateSql.append(" Where AdviseId = :AdviseId");
+		logger.debug(Literal.SQL + sql);
 
-		logger.debug("updateSql: " + updateSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cashBackDetail);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		int recordCount = this.jdbcOperations.update(sql, ps -> {
+			ps.setInt(1, 1);
+			ps.setLong(2, adviseId);
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 		return recordCount;
 	}
 
