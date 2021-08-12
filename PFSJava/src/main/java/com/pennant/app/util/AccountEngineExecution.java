@@ -170,33 +170,6 @@ public class AccountEngineExecution implements Serializable {
 	}
 
 	/**
-	 * Method For execution of Provision Rule For Provision Calculated Amount
-	 * 
-	 * @param dataMap
-	 * @return
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 * @throws InterfaceException
-	 */
-	public BigDecimal getProvisionExecResults(Map<String, Object> dataMap)
-			throws IllegalAccessException, InvocationTargetException, InterfaceException {
-
-		doFilldataMap(dataMap);
-		setAmountCodes(dataMap, false);
-		BigDecimal provCalAmount = BigDecimal.ZERO;
-
-		String rule = ruleDAO.getAmountRule("PROV", RuleConstants.MODULE_PROVSN, RuleConstants.EVENT_PROVSN);
-
-		if (rule != null) {
-			Object result = RuleExecutionUtil.executeRule(rule, dataMap, (String) dataMap.get("fm_finCcy"),
-					RuleReturnType.DECIMAL);
-			provCalAmount = new BigDecimal(result == null ? "0" : result.toString());
-		}
-
-		return provCalAmount;
-	}
-
-	/**
 	 * Method for VasRecording posting Entries Execution
 	 * 
 	 * @throws InvocationTargetException
@@ -503,7 +476,7 @@ public class AccountEngineExecution implements Serializable {
 
 	}
 
-	private void doFilldataMap(Map<String, Object> dataMap) throws IllegalAccessException, InvocationTargetException {
+	private void doFilldataMap(Map<String, Object> dataMap) {
 		Customer customer = customerDAO.getCustomerForPostings((long) dataMap.get("fm_custID"));
 		if (customer != null) {
 			customer.getDeclaredFieldValues(dataMap);
@@ -548,32 +521,6 @@ public class AccountEngineExecution implements Serializable {
 		amount = (BigDecimal) RuleExecutionUtil.executeRule(amountRule, dataMap, finCcy, RuleReturnType.DECIMAL);
 
 		return amount == null ? BigDecimal.ZERO : amount;
-	}
-
-	private void setAmountCodes(Map<String, Object> dataMap, boolean isWIF) {
-
-		boolean finOverDueInPast = false;
-
-		if ((int) dataMap.get("ae_ODInst") > 0) {
-			finOverDueInPast = true;
-		}
-
-		BigDecimal actualTotalSchdProfit = BigDecimal.ZERO;
-		BigDecimal actualTotalCpzProfit = BigDecimal.ZERO;
-
-		if (!(boolean) dataMap.get("ae_newRecord") && !isWIF) {
-			List<BigDecimal> list = financeMainDAO.getActualPftBal((String) dataMap.get("fm_finReference"), "");
-			actualTotalSchdProfit = list.get(0);
-			actualTotalCpzProfit = list.get(1);
-		}
-
-		BigDecimal PFTCHG = ((BigDecimal) dataMap.get("ae_pft")).subtract(actualTotalSchdProfit);
-		BigDecimal CPZCHG = ((BigDecimal) dataMap.get("ae_cpzTot")).subtract(actualTotalCpzProfit);
-
-		dataMap.put("PFTCHG", PFTCHG);
-		dataMap.put("CPZCHG", CPZCHG);
-		dataMap.put("finOverDueInPast", finOverDueInPast);
-
 	}
 
 	public void setRuleDAO(RuleDAO ruleDAO) {

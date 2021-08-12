@@ -141,7 +141,7 @@ public class AdvancePaymentService extends ServiceHelper {
 
 			BigDecimal principalDue = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
 
-			//get excess
+			// get excess
 			String finReference = fm.getFinReference();
 			BigDecimal dueAmt = BigDecimal.ZERO;
 
@@ -160,7 +160,7 @@ public class AdvancePaymentService extends ServiceHelper {
 				continue;
 			}
 
-			//excess fetch
+			// excess fetch
 			FinExcessAmount excessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference, amountType);
 
 			BigDecimal excessBal = BigDecimal.ZERO;
@@ -170,7 +170,7 @@ public class AdvancePaymentService extends ServiceHelper {
 			}
 			excessBal = excessAmount.getBalanceAmt();
 
-			//Allocations
+			// Allocations
 			BigDecimal adjustedAmount = BigDecimal.ZERO;
 			if (dueAmt.compareTo(excessBal) >= 0) {
 				adjustedAmount = excessBal;
@@ -327,7 +327,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		aeEvent.setPostDate(valueDate);
 		aeEvent.setValueDate(valueDate);
 
-		//Postings Process and save all postings related to finance for one time accounts update
+		// Postings Process and save all postings related to finance for one time accounts update
 		try {
 			postAccountingEOD(aeEvent);
 		} catch (Exception e) {
@@ -356,7 +356,7 @@ public class AdvancePaymentService extends ServiceHelper {
 					RepayConstants.PAYTYPE_PRESENTMENT, valueDate);
 
 			if (excessAmovement != null) {
-				//reserve exist
+				// reserve exist
 				excess.setReservedAmt(excess.getReservedAmt().subtract(excessAmovement.getAmount()));
 			}
 
@@ -365,7 +365,7 @@ public class AdvancePaymentService extends ServiceHelper {
 					excess.getAmount().subtract(excess.getReservedAmt()).subtract(excess.getUtilisedAmt()));
 			finExcessAmountDAO.updateReserveUtilization(excess);
 
-			//movement
+			// movement
 			FinExcessMovement excessMovement = new FinExcessMovement();
 			excessMovement.setExcessID(excessID);
 			excessMovement.setAmount(adjAmount);
@@ -395,7 +395,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		rch.setExcessAdjustTo(PennantConstants.List_Select);
 		rch.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
 		rch.setReceiptAmount(receiptAmount);
-		//rch.setEffectSchdMethod(PennantConstants.List_Select);
+		// rch.setEffectSchdMethod(PennantConstants.List_Select);
 		rch.setReceiptMode(receiptMode);
 		rch.setSubReceiptMode(receiptMode);
 		rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
@@ -405,7 +405,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		rch.setRecordType("");
 		rch.setVersion(1);
 		rch.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		//rch.setLastMntBy(lastMntBy);
+		// rch.setLastMntBy(lastMntBy);
 		rch.setRealizationDate(valueDate);
 		rch.setCashierBranch(rch.getPostBranch());
 
@@ -578,7 +578,7 @@ public class AdvancePaymentService extends ServiceHelper {
 			} else if (RepayConstants.ALLOCATION_TDS.equals(allocation.getAllocationType())) {
 				rsd.setTdsSchdPayNow(allocation.getPaidNow().add(allocation.getWaivedNow()));
 			} else if (RepayConstants.ALLOCATION_NPFT.equals(allocation.getAllocationType())) {
-				//rsd.setTdsSchdPayNow(allocation.getPaidNow().add(allocation.getWaivedNow()));
+				// rsd.setTdsSchdPayNow(allocation.getPaidNow().add(allocation.getWaivedNow()));
 			}
 		}
 
@@ -804,7 +804,7 @@ public class AdvancePaymentService extends ServiceHelper {
 			return;
 		}
 
-		AdvancePaymentDetail oldAdvPay = advancePaymentDetailDAO.getAdvancePaymentDetailBalByRef(fm.getFinReference());
+		AdvancePaymentDetail oldAdvPay = advancePaymentDetailDAO.getAdvancePaymentDetailBalByRef(fm.getFinID());
 		AdvancePaymentDetail curAdvpay = AdvancePaymentUtil.getDiffOnAdvIntAndAdvEMI(finScheduleData, oldAdvPay, "");
 
 		BigDecimal amount = BigDecimal.ZERO;
@@ -819,13 +819,13 @@ public class AdvancePaymentService extends ServiceHelper {
 
 	}
 
-	public void setAdvancePaymentDetails(FinanceDetail financeDetail, AEAmountCodes amountCodes) {
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		String finReference = finScheduleData.getFinanceMain().getFinReference();
+	public void setAdvancePaymentDetails(FinanceDetail fd, AEAmountCodes amountCodes) {
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
 
-		AdvancePaymentDetail oldAdvPay = advancePaymentDetailDAO.getAdvancePaymentDetailBalByRef(finReference);
-		AdvancePaymentDetail curAdvpay = AdvancePaymentUtil.getDiffOnAdvIntAndAdvEMI(finScheduleData, oldAdvPay,
-				financeDetail.getModuleDefiner());
+		AdvancePaymentDetail oldAdvPay = advancePaymentDetailDAO.getAdvancePaymentDetailBalByRef(fm.getFinID());
+		AdvancePaymentDetail curAdvpay = AdvancePaymentUtil.getDiffOnAdvIntAndAdvEMI(schdData, oldAdvPay,
+				fd.getModuleDefiner());
 		if (curAdvpay != null) {
 			amountCodes.setIntAdjusted(curAdvpay.getAdvInt());
 			amountCodes.setEmiAdjusted(curAdvpay.getAdvEMI());
@@ -837,7 +837,7 @@ public class AdvancePaymentService extends ServiceHelper {
 				amountCodes.setEmiTdsAdjusted(BigDecimal.ZERO);
 			}
 		}
-		financeDetail.setAdvancePaymentDetail(curAdvpay);
+		fd.setAdvancePaymentDetail(curAdvpay);
 	}
 
 	public void setIntAdvFlag(FinanceMain main, AEAmountCodes aeAmountCodes, boolean bpi) {
@@ -948,7 +948,7 @@ public class AdvancePaymentService extends ServiceHelper {
 				adviseAmount = previousAdvInt.subtract(advPayment);
 				advancePayment.setRequestedAmt(adviseAmount);
 				excessAmountMovement(advancePayment, null, AccountConstants.TRANTYPE_DEBIT);
-				//createPayableAdvise(finReference, valueDate, feeTypeId, adviseAmount, lastMntBy);
+				// createPayableAdvise(finReference, valueDate, feeTypeId, adviseAmount, lastMntBy);
 			} else if (advPayment.compareTo(previousAdvInt) > 0) {
 				adviseAmount = advPayment.subtract(previousAdvInt);
 				advancePayment.setRequestedAmt(adviseAmount);
@@ -963,7 +963,7 @@ public class AdvancePaymentService extends ServiceHelper {
 				adviseAmount = previousAdvInt.subtract(advPayment);
 				advancePayment.setRequestedAmt(adviseAmount);
 				excessAmountMovement(advancePayment, null, AccountConstants.TRANTYPE_DEBIT);
-				//createPayableAdvise(finReference, valueDate, feeTypeId, adviseAmount, lastMntBy);
+				// createPayableAdvise(finReference, valueDate, feeTypeId, adviseAmount, lastMntBy);
 			} else if (advPayment.compareTo(previousAdvInt) > 0) {
 				adviseAmount = previousAdvInt.subtract(advPayment);
 				advancePayment.setRequestedAmt(adviseAmount);
@@ -1039,7 +1039,7 @@ public class AdvancePaymentService extends ServiceHelper {
 			amount = excess.getAmount().add(reqAmount);
 		} else {
 			amount = excess.getAmount().subtract(reqAmount);
-			//utilisedAmt = utilisedAmt.add(reqAmount);
+			// utilisedAmt = utilisedAmt.add(reqAmount);
 		}
 
 		excess.setFinReference(finReference);
