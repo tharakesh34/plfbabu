@@ -14,9 +14,9 @@ public class UserPendingCases implements Serializable {
 
 	private String finReference;
 	@XmlElement(name = "previousRolecode")
-	private String rolecode;
+	private String roleCode;
 	@XmlElement(name = "rolecodeDescription")
-	private String roledesc;
+	private String roleDesc;
 	private String recordStatus;
 	@XmlElement(name = "customerName")
 	private String custShrtName;
@@ -34,20 +34,20 @@ public class UserPendingCases implements Serializable {
 		this.finReference = finReference;
 	}
 
-	public String getRolecode() {
-		return rolecode;
+	public String getRoleCode() {
+		return roleCode;
 	}
 
-	public void setRolecode(String rolecode) {
-		this.rolecode = rolecode;
+	public void setRoleCode(String roleCode) {
+		this.roleCode = roleCode;
 	}
 
-	public String getRoledesc() {
-		return roledesc;
+	public String getRoleDesc() {
+		return roleDesc;
 	}
 
-	public void setRoledesc(String roledesc) {
-		this.roledesc = roledesc;
+	public void setRoleDesc(String roleDesc) {
+		this.roleDesc = roleDesc;
 	}
 
 	public String getRecordStatus() {

@@ -12,6 +12,7 @@ public class DMSQueue implements Serializable {
 	private long docManagerID;
 	private Long custId;
 	private String custCif;
+	private long finID;
 	private String finReference;
 	private String reference;
 	private DMSModule module;
@@ -36,9 +37,9 @@ public class DMSQueue implements Serializable {
 	private String auxiloryFields3;
 	private String auxiloryFields4;
 	private String auxiloryFields5;
-	/* -----Below Fields are Excluded----*/
+	/* -----Below Fields are Excluded---- */
 	private String folderIndex;
-	
+
 	public DMSQueue() {
 		super();
 	}
@@ -73,6 +74,14 @@ public class DMSQueue implements Serializable {
 
 	public void setCustCif(String custCif) {
 		this.custCif = custCif;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
