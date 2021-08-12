@@ -56,6 +56,7 @@ public class ChequeHeader extends AbstractWorkflowEntity {
 
 	@XmlElement
 	private long headerID = 0;
+	private long finID;
 	private String finReference;
 	private BigDecimal totalAmount;
 	private boolean active = false;
@@ -120,6 +121,14 @@ public class ChequeHeader extends AbstractWorkflowEntity {
 
 	public void setHeaderID(long headerID) {
 		this.headerID = headerID;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
