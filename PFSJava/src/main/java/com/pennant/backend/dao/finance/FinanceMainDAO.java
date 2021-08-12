@@ -42,45 +42,45 @@ import com.pennanttech.pff.core.TableType;
 public interface FinanceMainDAO {
 	FinanceMain getFinanceMain(boolean isWIF);
 
-	FinanceMain getFinanceMain(String id, String nextRoleCode, String type);
+	FinanceMain getFinanceMain(long finID, String nextRoleCode, String type);
 
 	FinanceMain getFinanceMainByRef(String finReferece, String type, boolean isWIF);
 
 	FinanceMain getFinanceMainById(long finID, String type, boolean isWIF);
 
-	String save(FinanceMain financeMain, TableType tableType, boolean wif);
+	long save(FinanceMain financeMain, TableType tableType, boolean wif);
 
 	void update(FinanceMain financeMain, TableType tableType, boolean wif);
 
 	void delete(FinanceMain financeMain, TableType tableType, boolean wif, boolean finalize);
 
-	boolean isFinReferenceExists(String id, String type, boolean isWIF);
+	boolean isFinReferenceExists(long finID, String type, boolean isWIF);
 
-	List<String> getFinanceMainListByBatch(Date curBD, Date nextBD, String type);
+	List<Long> getFinanceMainListByBatch(Date curBD, Date nextBD, String type);
 
-	List<BigDecimal> getActualPftBal(String finReference, String type);
+	List<BigDecimal> getActualPftBal(long finID, String type);
 
 	List<FinanceEnquiry> getFinanceDetailsByCustId(long custId);
 
-	void updateCustCIF(long custID, String finReference);
+	void updateCustCIF(long custID, long finID);
 
-	void updateFinBlackListStatus(String finReference);
+	void updateFinBlackListStatus(long finID);
 
-	FinanceSummary getFinanceProfitDetails(String finRef);
+	FinanceSummary getFinanceProfitDetails(long finID);
 
 	Boolean saveRejectFinanceDetails(FinanceMain financeMain);
 
-	FinanceMain getFinanceMainForBatch(String finReference);
+	FinanceMain getFinanceMainForBatch(long finID);
 
-	FinanceMain getFinanceMainForPftCalc(String finReference);
+	FinanceMain getFinanceMainForPftCalc(long finID);
 
-	FinanceMain getFinanceMainForRpyCancel(String id);
+	FinanceMain getFinanceMainForRpyCancel(long finID);
 
-	String getNextRoleCodeByRef(String finReference);
+	String getNextRoleCodeByRef(long finID);
 
 	List<String> getFinanceWorlflowFirstTaskOwners(String event, String moduleName);
 
-	void updateNextUserId(List<String> finRefList, String oldUserId, String newUserId, boolean singleUser);
+	void updateNextUserId(List<Long> finRefList, String oldUserId, String newUserId, boolean singleUser);
 
 	void updateDeviationApproval(FinanceMain financeMain, boolean rejected, String type);
 
@@ -92,41 +92,41 @@ public interface FinanceMainDAO {
 
 	// FinanceMain getFinanceMainByRef(String reference, String type, boolean isRejectFinance); FIXME
 
-	String getApprovedRepayMethod(String finReference, String type);
+	String getApprovedRepayMethod(long finID, String type);
 
-	void updateMaturity(String finReference, String closingStatus, boolean finIsActive, Date date);
+	void updateMaturity(long finID, String closingStatus, boolean finIsActive, Date date);
 
 	List<String> getScheduleEffectModuleList(boolean schdChangeReq);
 
 	List<FinanceMain> getFinanceMainbyCustId(long id);
 
-	int getFinanceCountById(String finReference, String type, boolean isWIF);
+	int getFinanceCountById(long finID, String type, boolean isWIF);
 
 	int getFinanceCountByMandateId(long mandateID);
 
-	int getFinanceCountById(String finReference, long mandateID);
+	int getFinanceCountById(long finID, long mandateID);
 
-	int loanMandateSwapping(String finReference, long newMandateID, String repayMethod, String type);
+	int loanMandateSwapping(long finID, long newMandateID, String repayMethod, String type);
 
-	FinanceMain getFinanceDetailsForService(String finReference, String type, boolean isWIF);
+	FinanceMain getFinanceDetailsForService(long finID, String type, boolean isWIF);
 
 	int updateFinanceBasicDetails(FinanceMain finacneMain, String type);
 
 	List<String> getUsersLoginList(List<String> nextRoleCodes);
 
-	FinanceMain getFinanceMainParms(String finReference);
+	FinanceMain getFinanceMainParms(long finID);
 
 	List<FinanceMain> getFinanceByCustId(long custId, String type);
 
 	List<FinanceMain> getFinanceByCollateralRef(String collateralRef);
 
-	List<String> getFinReferencesByMandateId(long mandateId);
+	List<Long> getFinReferencesByMandateId(long mandateId);
 
-	List<String> getFinReferencesByCustID(long custId, String finActiveStatus);
+	List<Long> getFinReferencesByCustID(long custId, String finActiveStatus);
 
-	BigDecimal getFinAssetValue(String finReference);
+	BigDecimal getFinAssetValue(long finID);
 
-	FinanceMain getDisbursmentFinMainById(String finReference, TableType tableType);
+	FinanceMain getDisbursmentFinMainById(long finID, TableType tableType);
 
 	BigDecimal getTotalMaxRepayAmount(long mandateId, String finReference);
 
@@ -140,19 +140,19 @@ public interface FinanceMainDAO {
 
 	List<FinanceMain> getBYCustIdForLimitRebuild(long id, boolean orgination);
 
-	FinanceMain getFinanceBasicDetailByRef(String finReference, boolean isWIF);
+	FinanceMain getFinanceBasicDetailByRef(long finID, boolean isWIF);
 
 	int getFinCountByCustId(long custID);
 
-	void updateFinMandateId(long mandateId, String finReference, String type);
+	void updateFinMandateId(long mandateId, long finID, String type);
 
-	long getMandateIdByRef(String finReference, String type);
+	long getMandateIdByRef(long finID, String type);
 
-	int getFinanceCountById(String finReference);
+	int getFinanceCountById(long finID);
 
 	boolean isAppNoExists(String applicationNo, TableType type);
 
-	String getApplicationNoById(String finReference, String type);
+	String getApplicationNoById(long finID, String type);
 
 	List<FinanceMain> getFinancesByExpenseType(String finType, Date finApprovalStartDate, Date finApprovalEndDate);
 
@@ -160,13 +160,13 @@ public interface FinanceMainDAO {
 
 	boolean isLoanPurposeExits(String purposeCode, String string);
 
-	String getEarlyPayMethodsByFinRefernce(String finReference);
+	String getEarlyPayMethodsByFinRefernce(long finID);
 
 	List<LoanPendingData> getCustomerODLoanDetails(long userID);
 
-	void updateNextUserId(String finReference, String nextUserId);
+	void updateNextUserId(long finID, String nextUserId);
 
-	String getNextUserId(String finReference);
+	String getNextUserId(long finID);
 
 	int getActiveCount(String finType, long custID);
 
@@ -174,66 +174,56 @@ public interface FinanceMainDAO {
 
 	List<FinanceMain> getUnApprovedFinances();
 
-	boolean isFinReferenceExitsWithEntity(String finReference, String type, String entity);// ###
-																							// 12-07-2018
-																							// Ticket
-																							// ID
-																							// :
-																							// 12499
+	boolean isFinReferenceExitsWithEntity(long finID, String type, String entity);
 
 	// ### 10-09-2018,Ticket id:124998
-	FinanceMain getEntityNEntityDesc(String finRefence, String type, boolean wif);
+	FinanceMain getEntityNEntityDesc(long finID, String type, boolean wif);
 
 	// ### 10-10-2018,Ticket id:124998
-	FinanceMain getClosingStatus(String finReference, TableType tempTab, boolean wif);
+	FinanceMain getClosingStatus(long finID, TableType tempTab, boolean wif);
 
-	boolean isDeveloperFinance(String finReference, String type, boolean wif);
+	boolean isDeveloperFinance(long finID, String type, boolean wif);
 
-	FinanceMain getFinanceDetailsByFinRefence(String reference, String type);
+	FinanceMain getFinanceDetailsByFinRefence(long finID, String type);
 
-	List<String> getFinanceMainbyCustId(long custId, String type);
+	List<Long> getFinanceMainbyCustId(long custId, String type);
 
-	String getFinanceTypeFinReference(String reference, String type);
+	String getFinanceTypeFinReference(long finID, String type);
 
 	void updateFinAssetValue(FinanceMain finMain);
 
-	FinanceMain getFinanceForAssignments(String finReference);
+	FinanceMain getFinanceForAssignments(long finID);
 
-	void updateAssignmentId(String finReference, long assignmentId);
+	void updateAssignmentId(long finID, long assignmentId);
 
-	Map<String, Object> getGLSubHeadCodes(String finRef);
+	Map<String, Object> getGLSubHeadCodes(long finID);
 
-	int getCountByBlockedFinances(String finReference);
+	int getCountByBlockedFinances(long finID);
 
 	void updateFromReceipt(FinanceMain financeMain, TableType tableType);
 
-	FinanceMain isFlexiLoan(String finReference);
+	FinanceMain isFlexiLoan(long finID);
 
-	boolean isFinReferenceExitsinLQ(String finReference, TableType tempTab, boolean wif);// ###
-																							// 17-07-2018
-																							// Ticket
-																							// ID
-																							// :
-																							// 127950
+	boolean isFinReferenceExitsinLQ(long finID, TableType tempTab, boolean wif);
 
 	List<FinanceMain> getFinanceMainForLinkedLoans(long custId);
 
 	List<FinanceMain> getFinanceMainForLinkedLoans(String finReference);
 
-	Map<String, Object> getGSTDataMap(String finReference, TableType tableType);
+	Map<String, Object> getGSTDataMap(long finID, TableType tableType);
 
-	Map<String, Object> getGSTDataMap(long custId, TableType tableType);
+	Map<String, Object> getCustGSTDataMap(long custId, TableType tableType);
 
-	boolean isFinActive(String finReference);
+	boolean isFinActive(long finID);
 
-	String getFinanceMainByRcdMaintenance(String finReference, String type);
+	String getFinanceMainByRcdMaintenance(long finID, String type);
 
-	FinanceMain getRcdMaintenanceByRef(String finReference, String type);
+	FinanceMain getRcdMaintenanceByRef(long finID, String type);
 
 	void deleteFinreference(FinanceMain financeMain, TableType tableType, boolean wifi, boolean finilize);
 
 	// Income Amortization
-	FinanceMain getFinanceForIncomeAMZ(String finReference);
+	FinanceMain getFinanceForIncomeAMZ(long finID);
 
 	List<FinanceMain> getFinListForIncomeAMZ(Date curMonthStart);
 
@@ -244,15 +234,15 @@ public interface FinanceMainDAO {
 	// Calculate Average POS
 	List<FinanceMain> getFinancesByFinApprovedDate(Date finApprovalStartDate, Date finApprovalEndDate);
 
-	int getCountByFinReference(String finReference, boolean active);
+	int getCountByFinReference(long finID, boolean active);
 
 	int getCountByOldFinReference(String oldFinReference);
 
-	long getLoanWorkFlowIdByFinRef(String loanReference, String type);
+	long getLoanWorkFlowIdByFinRef(long finID, String type);
 
-	String getLovDescEntityCode(String finReference, String string);
+	String getLovDescEntityCode(long finID, String string);
 
-	long saveHostRef(FinanceMainExtension financeMainExtension);
+	void saveHostRef(FinanceMainExtension financeMainExtension);
 
 	FinanceMain getFinanceMainByHostReference(String oldFinReference, boolean active);
 
@@ -265,13 +255,13 @@ public interface FinanceMainDAO {
 
 	void updateRejectFinanceMain(FinanceMain financeMain, TableType tempTab, boolean isWIF);
 
-	FinanceMain getFinanceMainStutusById(String id, String type);
+	FinanceMain getFinanceMainStutusById(long finID, String type);
 
-	FinanceMain getFinanceDetailsForInsurance(String finReference, String type);
+	FinanceMain getFinanceDetailsForInsurance(long finID, String type);
 
 	List<FinanceMain> getFinMainListBySQLQueryRule(String whereClause, String type);
 
-	FinanceMain getFinanceMainDetails(String reference);
+	FinanceMain getFinanceMainDetails(long finID);
 
 	boolean isFinExistsByPromotionSeqID(long referenceId);
 
@@ -279,31 +269,31 @@ public interface FinanceMainDAO {
 
 	boolean isGrcRepayFrqExists(String brType);
 
-	Date getFinStartDate(String finReference);
+	Date getFinStartDate(long finID);
 
-	FinanceMain getFinanceMain(String finReference, String[] columns);
+	FinanceMain getFinanceMain(long finID, String[] columns);
 
 	List<FinanceEnquiry> getAllFinanceDetailsByCustId(long custId);
 
-	void updateCustChange(long newCustId, long mandateId, String finReference, String type);
+	void updateCustChange(long newCustId, long mandateId, long finID, String type);
 
 	List<UserPendingCases> getUserPendingCasesDetails(long userID, String roleCodes);
 
-	Long getCustomerIdByFin(String FinReference);
+	Long getCustomerIdByFin(long finID);
 
-	FinanceMain getEHFinanceMain(String finReference);
+	FinanceMain getEHFinanceMain(long finID);
 
 	void updateEHFinanceMain(FinanceMain financeMain);
 
-	String getFinBranch(String finReference);
+	String getFinBranch(long finID);
 
-	Date getClosedDateByFinRef(String finReference);
+	Date getClosedDateByFinRef(long finID);
 
-	FinanceMain getFinBasicDetails(String finReference, String type);
+	FinanceMain getFinBasicDetails(long finID, String type);
 
 	void updateDeductFeeDisb(FinanceMain financeMain, TableType tableType);
 
-	FinanceMain getFinanceMain(String finReference, String[] columns, String type);
+	FinanceMain getFinanceMain(long finID, String[] columns, String type);
 
 	List<UserPendingCases> getUserPendingCasesDetails(String userLogin, String roleCode);
 
@@ -311,33 +301,33 @@ public interface FinanceMainDAO {
 
 	DMSQueue getOfferIdByFin(DMSQueue dmsQueue);
 
-	void updatePmay(String finReference, boolean pmay, String type);
+	void updatePmay(long finID, boolean pmay, String type);
 
 	FinCustomerDetails getDetailsByOfferID(String offerID);
 
-	List<FinanceMain> getFinanceByInvReference(String finReference, String type);
+	List<FinanceMain> getFinanceByInvReference(long finID, String type);
 
-	List<String> getInvestmentFinRef(String finReference, String type);
+	List<Long> getInvestmentFinRef(String investmentRef, String type);
 
-	List<String> getParentRefifAny(String finReference, String type, boolean isFromAgr);
+	List<Long> getParentRefifAny(String parentRef, String type, boolean isFromAgr);
 
-	Date getClosedDate(String finReference);
+	Date getClosedDate(long finID);
 
 	void updateTdsApplicable(FinanceMain financeMain);
 
-	boolean ispmayApplicable(String finReference, String type);
+	boolean isPmayApplicable(long finID, String type);
 
 	void updateRepaymentAmount(FinanceMain financeMain);
 
-	void updateRestructure(String finReference, boolean restructure);
+	void updateRestructure(long finID, boolean restructure);
 
-	void updateWriteOffStatus(String finReference, boolean writeoffLoan);
+	void updateWriteOffStatus(long finID, boolean writeoffLoan);
 
-	FinanceMain getFinCategoryByFinRef(String finReference);
+	FinanceMain getFinCategoryByFinRef(long finID);
 
-	void updateMaintainceStatus(String finReference, String rcdMaintainSts);
+	void updateMaintainceStatus(long finID, String rcdMaintainSts);
 
-	List<String> getChildFinRefByParentRef(String finReference);
+	List<Long> getChildFinRefByParentRef(String parentRef);
 
 	void updateChildFinance(List<FinanceMain> fm, String type);
 
@@ -345,9 +335,9 @@ public interface FinanceMainDAO {
 
 	void updateSchdVersion(FinanceMain fm, boolean isPresentment);
 
-	int getSchdVersion(String finReference);
+	int getSchdVersion(long finID);
 
 	Map<String, Object> getGSTDataMapForDealer(long manufacturerDealerId);
 
-	FinanceMain getFinMainLinkedFinancesByFinRef(String finReference, String string);
+	FinanceMain getFinMainLinkedFinancesByFinRef(long finID, String string);
 }

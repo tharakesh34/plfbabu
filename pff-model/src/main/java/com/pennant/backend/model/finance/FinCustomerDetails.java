@@ -14,6 +14,8 @@ import com.pennant.backend.model.WSReturnStatus;
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinCustomerDetails implements java.io.Serializable {
 	private static final long serialVersionUID = -8297008832257931628L;
+
+	private long finID;
 	@XmlElement
 	private String finReference;
 	@XmlElement
@@ -21,6 +23,14 @@ public class FinCustomerDetails implements java.io.Serializable {
 
 	@XmlElement
 	private WSReturnStatus returnStatus;
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
 
 	public String getFinReference() {
 		return finReference;
