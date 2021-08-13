@@ -9,6 +9,7 @@ public class FinExcessAmount implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private long excessID = 0;
+	private long finID;
 	private String finReference;
 	private String amountType;
 	private BigDecimal amount = BigDecimal.ZERO;
@@ -25,6 +26,7 @@ public class FinExcessAmount implements Serializable {
 	public FinExcessAmount copyEntity() {
 		FinExcessAmount entity = new FinExcessAmount();
 		entity.setExcessID(this.excessID);
+		entity.setFinID(this.finID);
 		entity.setFinReference(this.finReference);
 		entity.setAmountType(this.amountType);
 		entity.setAmount(this.amount);
@@ -57,6 +59,14 @@ public class FinExcessAmount implements Serializable {
 
 	public void setExcessID(long excessID) {
 		this.excessID = excessID;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

@@ -11,7 +11,7 @@ import com.pennant.backend.model.financemanagement.PresentmentDetail;
 
 public interface FinExcessAmountDAO {
 
-	List<FinExcessAmount> getExcessAmountsByRef(String finReference);
+	List<FinExcessAmount> getExcessAmountsByRef(long finID);
 
 	void saveExcess(FinExcessAmount excess);
 
@@ -29,7 +29,7 @@ public interface FinExcessAmountDAO {
 
 	void deleteExcessReserve(long receiptID, long payAgainstID, String paymentType);
 
-	FinExcessAmount getExcessAmountsByRefAndType(String finReference, String amountType);
+	FinExcessAmount getExcessAmountsByRefAndType(long finID, String amountType);
 
 	void updateExcessAmount(long excessID, String amountType, BigDecimal amount);
 
@@ -37,11 +37,11 @@ public interface FinExcessAmountDAO {
 
 	void deductExcessReserve(long excessID, BigDecimal amount);
 
-	int updateExcessReserveByRef(String reference, String amountType, BigDecimal amount);
+	int updateExcessReserveByRef(long finID, String amountType, BigDecimal amount);
 
-	int updateExcessBalByRef(String reference, String amountType, BigDecimal amount);
+	int updateExcessBalByRef(long finID, String amountType, BigDecimal amount);
 
-	int updExcessAfterRealize(String reference, String amountType, BigDecimal amount);
+	int updExcessAfterRealize(long finID, String amountType, BigDecimal amount);
 
 	List<FinExcessAmountReserve> getExcessReserveList(long receiptID);
 
@@ -55,7 +55,7 @@ public interface FinExcessAmountDAO {
 
 	void updateExcess(FinExcessAmount excess);
 
-	FinExcessAmount getFinExcessAmount(String finreference, String amountType);
+	FinExcessAmount getFinExcessAmount(long finID, String amountType);
 
 	FinExcessMovement getFinExcessMovement(long excessID, String movementFrom, Date schDate);
 
@@ -73,7 +73,7 @@ public interface FinExcessAmountDAO {
 
 	void saveExcessList(List<FinExcessAmount> feaList);
 
-	FinExcessAmount getFinExcessAmount(String finreference, long receiptId);
+	FinExcessAmount getFinExcessAmount(long finID, long receiptId);
 
 	void batchUpdateExcessAmount(List<PresentmentDetail> presentmentDetails);
 
@@ -85,6 +85,6 @@ public interface FinExcessAmountDAO {
 
 	int updateExcessEMIAmount(List<FinExcessAmount> emiInAdvance, String amtType);
 
-	boolean isFinExcessAmtExists(String finReference);
+	boolean isFinExcessAmtExists(long finID);
 
 }
