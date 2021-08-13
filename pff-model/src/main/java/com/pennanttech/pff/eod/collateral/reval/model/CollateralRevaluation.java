@@ -10,6 +10,7 @@ public class CollateralRevaluation implements Serializable {
 
 	private long id;
 	private long batchId;
+	private long finID;
 	private String finReference;
 	private String collateralType;
 	private String collateralRef;
@@ -56,6 +57,14 @@ public class CollateralRevaluation implements Serializable {
 
 	public void setBatchId(long batchId) {
 		this.batchId = batchId;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

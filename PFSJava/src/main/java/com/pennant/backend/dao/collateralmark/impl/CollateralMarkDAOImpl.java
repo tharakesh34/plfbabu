@@ -1,5 +1,7 @@
 package com.pennant.backend.dao.collateralmark.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,15 +9,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.collateralmark.CollateralMarkDAO;
 import com.pennant.backend.model.collateral.FinCollateralMark;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CollateralMarkDAOImpl extends SequenceDao<FinCollateralMark> implements CollateralMarkDAO {
 	private static Logger logger = LogManager.getLogger(CollateralMarkDAOImpl.class);
@@ -25,130 +25,124 @@ public class CollateralMarkDAOImpl extends SequenceDao<FinCollateralMark> implem
 	}
 
 	@Override
-	public int save(FinCollateralMark finCollateralMark) {
-		logger.debug("Entering ");
-
-		if (finCollateralMark.getId() == 0 || finCollateralMark.getId() == Long.MIN_VALUE) {
-			finCollateralMark.setFinCollateralId(getNextValue("SeqCollateralMarkLog"));
+	public int save(FinCollateralMark fcm) {
+		if (fcm.getId() == 0 || fcm.getId() == Long.MIN_VALUE) {
+			fcm.setFinCollateralId(getNextValue("SeqCollateralMarkLog"));
 		}
 
-		StringBuilder insertSql = new StringBuilder("Insert Into CollateralMarkLog");
-		insertSql.append(
-				" (FinCollateralId, FinReference, ReferenceNum, Status, Reason, BranchCode, DepositID, InsAmount,");
-		insertSql.append(" BlockingDate, ReturnCode, ReturnText, Processed)");
-		insertSql.append(
-				" Values(:FinCollateralId, :FinReference, :ReferenceNum, :Status, :Reason, :BranchCode, :DepositID, ");
-		insertSql.append(" :InsAmount, :BlockingDate, :ReturnCode, :ReturnText, :Processed)");
+		StringBuilder sql = new StringBuilder("Insert Into CollateralMarkLog");
+		sql.append(" (FinCollateralId, FinID, FinReference, ReferenceNum, Status");
+		sql.append(", Reason, BranchCode, DepositID, InsAmount, BlockingDate");
+		sql.append(", ReturnCode, ReturnText, Processed)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCollateralMark);
-		logger.debug("Leaving ");
+		logger.debug(Literal.SQL + sql.toString());
+
 		try {
-			return this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+			return this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, fcm.getFinCollateralId());
+				ps.setLong(index++, fcm.getFinID());
+				ps.setString(index++, fcm.getFinReference());
+				ps.setString(index++, fcm.getReferenceNum());
+				ps.setString(index++, fcm.getStatus());
+				ps.setString(index++, fcm.getReason());
+				ps.setString(index++, fcm.getBranchCode());
+				ps.setString(index++, fcm.getDepositID());
+				ps.setBigDecimal(index++, fcm.getInsAmount());
+				ps.setDate(index++, JdbcUtil.getDate(fcm.getBlockingDate()));
+				ps.setString(index++, fcm.getReturnCode());
+				ps.setString(index++, fcm.getReturnText());
+				ps.setBoolean(index++, fcm.isProcessed());
+
+			});
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
 			return 0;
 		}
 	}
 
-	/**
-	 * Method for Fetch Marked Deposit details
-	 * 
-	 * @param depositId
-	 * @return FinCollateralMark
-	 * 
-	 */
 	@Override
 	public FinCollateralMark getCollateralById(String depositId) {
-		logger.debug("Entering");
+		StringBuilder sql = getSqlQuery();
+		sql.append(" Where DepositID = ?");
 
-		FinCollateralMark finCollateralMark = new FinCollateralMark();
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("DepositID", depositId);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
-				" Select FinCollateralId, FinReference, ReferenceNum, Status, Reason, BranchCode, DepositID, InsAmount,");
-		selectSql.append(" BlockingDate, ReturnCode, ReturnText, Processed");
-		selectSql.append(" From CollateralMarkLog ");
-		selectSql.append(" Where DepositID =:DepositID");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
-		RowMapper<FinCollateralMark> typeRowMapper = BeanPropertyRowMapper.newInstance(FinCollateralMark.class);
+		FinCollateralMarkRM rowMapper = new FinCollateralMarkRM();
 
 		try {
-			finCollateralMark = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, depositId);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			finCollateralMark = null;
+			//
 		}
 
-		logger.debug("Leaving");
-		return finCollateralMark;
+		return null;
 	}
 
 	@Override
-	public FinCollateralMark getCollatDeMarkStatus(String finReference, String markStatus) {
-		logger.debug("Entering");
+	public FinCollateralMark getCollatDeMarkStatus(long finID, String markStatus) {
+		StringBuilder sql = getSqlQuery();
+		sql.append(" Where FinID = ? and Status = ? and Processed = ?");
 
-		FinCollateralMark finCollateralMark = new FinCollateralMark();
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("Status", markStatus);
-		source.addValue("Processed", 1);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
-				" Select FinCollateralId, FinReference, ReferenceNum, Status, Reason, BranchCode, DepositID, InsAmount,");
-		selectSql.append(" BlockingDate, ReturnCode, ReturnText, Processed");
-		selectSql.append(" From CollateralMarkLog ");
-		selectSql.append(" Where FinReference =:FinReference AND Status =:Status AND Processed =:Processed");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
-		RowMapper<FinCollateralMark> typeRowMapper = BeanPropertyRowMapper.newInstance(FinCollateralMark.class);
+		FinCollateralMarkRM rowMapper = new FinCollateralMarkRM();
 
 		try {
-			finCollateralMark = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, markStatus, 1);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			finCollateralMark = null;
+			//
 		}
 
-		logger.debug("Leaving");
-		return finCollateralMark;
+		return null;
 	}
 
 	@Override
-	public List<FinCollateralMark> getCollateralList(String finReference) {
-		logger.debug("Entering");
+	public List<FinCollateralMark> getCollateralList(long finID) {
+		List<FinCollateralMark> fcmList = new ArrayList<>();
 
-		List<FinCollateralMark> finCollateralList = new ArrayList<FinCollateralMark>();
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("Status", "MARK");
-		source.addValue("Processed", 1);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
-				" Select FinCollateralId, FinReference, ReferenceNum, Status, Reason, BranchCode, DepositID, InsAmount,");
-		selectSql.append(" BlockingDate, ReturnCode, ReturnText, Processed");
-		selectSql.append(" From CollateralMarkLog ");
-		selectSql.append(" Where FinReference =:FinReference AND Status =:Status AND Processed =:Processed");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
-		try {
-			finCollateralList = this.jdbcTemplate.queryForList(selectSql.toString(), source, FinCollateralMark.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			finCollateralList = null;
+		FinCollateralMark fcm = getCollatDeMarkStatus(finID, "MARK");
+		if (fcm != null) {
+			fcmList.add(fcm);
 		}
 
-		logger.debug("Leaving");
-		return finCollateralList;
+		return fcmList;
+	}
+
+	private class FinCollateralMarkRM implements RowMapper<FinCollateralMark> {
+
+		@Override
+		public FinCollateralMark mapRow(ResultSet rs, int rowNum) throws SQLException {
+			FinCollateralMark fcm = new FinCollateralMark();
+
+			fcm.setFinCollateralId(rs.getLong("FinCollateralId"));
+			fcm.setFinID(rs.getLong("FinID"));
+			fcm.setFinReference(rs.getString("FinReference"));
+			fcm.setReferenceNum(rs.getString("ReferenceNum"));
+			fcm.setStatus(rs.getString("Status"));
+			fcm.setReason(rs.getString("Reason"));
+			fcm.setBranchCode(rs.getString("BranchCode"));
+			fcm.setDepositID(rs.getString("DepositID"));
+			fcm.setInsAmount(rs.getBigDecimal("InsAmount"));
+			fcm.setBlockingDate(rs.getDate("BlockingDate"));
+			fcm.setReturnCode(rs.getString("ReturnCode"));
+			fcm.setReturnText(rs.getString("ReturnText"));
+			fcm.setProcessed(rs.getBoolean("Processed"));
+
+			return fcm;
+		}
+
+	}
+
+	private StringBuilder getSqlQuery() {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinCollateralId, FinID, FinReference, ReferenceNum");
+		sql.append(", Status, Reason, BranchCode, DepositID, InsAmount");
+		sql.append(", BlockingDate, ReturnCode, ReturnText, Processed");
+		sql.append(" From CollateralMarkLog");
+
+		return sql;
 	}
 
 }

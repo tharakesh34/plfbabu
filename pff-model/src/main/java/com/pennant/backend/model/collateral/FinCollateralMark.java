@@ -9,6 +9,7 @@ public class FinCollateralMark implements Serializable {
 	private static final long serialVersionUID = -5665749691631296093L;
 
 	private long FinCollateralId = Long.MIN_VALUE;
+	private long finID;
 	private String finReference;
 	private String referenceNum;
 	private String status;
@@ -39,6 +40,14 @@ public class FinCollateralMark implements Serializable {
 
 	public void setFinCollateralId(long finCollateralId) {
 		FinCollateralId = finCollateralId;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

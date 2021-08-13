@@ -15,6 +15,7 @@ public class CollateralRevaluationRowMapper implements RowMapper<CollateralReval
 		cr.setId(rs.getLong("Id"));
 		cr.setBatchId(rs.getLong("BatchId"));
 		cr.setFinReference(rs.getString("FinReference"));
+		cr.setFinID(rs.getLong("FinID"));
 		cr.setCollateralType(rs.getString("CollateralType"));
 		cr.setCollateralRef(rs.getString("CollateralRef"));
 		cr.setCollateralCCY(rs.getString("CollateralCCY"));

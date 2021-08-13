@@ -10,8 +10,8 @@ public interface CollateralMarkDAO {
 
 	FinCollateralMark getCollateralById(String depositId);
 
-	FinCollateralMark getCollatDeMarkStatus(String finReference, String markStatus);
+	FinCollateralMark getCollatDeMarkStatus(long finID, String markStatus);
 
-	List<FinCollateralMark> getCollateralList(String finReference);
+	List<FinCollateralMark> getCollateralList(long finID);
 
 }

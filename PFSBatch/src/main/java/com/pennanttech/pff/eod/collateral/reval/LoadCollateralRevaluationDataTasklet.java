@@ -29,10 +29,10 @@ public class LoadCollateralRevaluationDataTasklet extends BasicDao<CollateralRev
 		BatchUtil.setExecutionStatus(context, StepUtil.COLLATERAL_REVALUATION);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("insert into Collateral_Ltv_Breaches (BatchId, FinReference, CollateralType, CollateralRef");
+		sql.append("insert into Collateral_Ltv_Breaches (BatchId, FinID, FinReference, CollateralType, CollateralRef");
 		sql.append(", Collateralccy, MarketValue, CollateralValue, BankLTV, BankValuation");
 		sql.append(", ThresholdLTV, POS, CommodityId, ValueDate)");
-		sql.append(" select :BatchId, fm.FinReference, cs.CollateralType, ca.CollateralRef");
+		sql.append(" select :BatchId, fm.FinID, fm.FinReference, cs.CollateralType, ca.CollateralRef");
 		sql.append(", cs.Collateralccy, 0 , cs.CollateralValue, cs.BankLTV, cs.BankValuation");
 		sql.append(", ce.thresholdLtvPercentage, fpt.TotalPriBal, null , :ValueDate");
 		sql.append(" from collateralassignment ca");
@@ -41,7 +41,7 @@ public class LoadCollateralRevaluationDataTasklet extends BasicDao<CollateralRev
 		sql.append(" and ce.marketablesecurities = 1 and (CommodityId > 0 and CommodityId is not null)");
 		sql.append(" inner join financemain fm on fm.finreference = ca.reference");
 		sql.append(" inner join finpftdetails fpt on fpt.finreference = ca.reference");
-		sql.append(" where fm.finisactive = 1");
+		sql.append(" where fm.finisactive = 1"); /* FIXME : change to FinID */
 
 		try {
 			MapSqlParameterSource paramMap = new MapSqlParameterSource();
