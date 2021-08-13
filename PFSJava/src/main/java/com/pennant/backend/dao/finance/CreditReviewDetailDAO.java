@@ -10,18 +10,18 @@ public interface CreditReviewDetailDAO {
 
 	public CreditReviewDetails getCreditReviewDetails(CreditReviewDetails creditReviewDetail);
 
-	public CreditReviewData getCreditReviewData(String finReference, String templateName, int templateVersion);
+	public CreditReviewData getCreditReviewData(long finID, String templateName);
 
 	public void save(CreditReviewData creditReviewData);
 
 	public void update(CreditReviewData creditReviewData);
 
-	void delete(String finReference, TableType tableType);
+	void delete(long finID, TableType tableType);
 
 	CreditReviewDetails getCreditReviewDetailsbyLoanType(CreditReviewDetails creditReviewDetail);
 
 	public ExtCreditReviewConfig getExtCreditReviewConfigDetails(ExtCreditReviewConfig extCreditReviewDetail);
 
-	public ExtBreDetails getExtBreDetailsByRef(String finReference);
+	public ExtBreDetails getExtBreDetailsByRef(long finID);
 
 }

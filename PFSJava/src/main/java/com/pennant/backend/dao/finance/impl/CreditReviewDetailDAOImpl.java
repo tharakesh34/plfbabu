@@ -1,5 +1,8 @@
 package com.pennant.backend.dao.finance.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,6 +20,7 @@ import com.pennant.backend.model.finance.CreditReviewDetails;
 import com.pennant.backend.model.finance.ExtBreDetails;
 import com.pennant.backend.model.finance.ExtCreditReviewConfig;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -31,223 +35,266 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 
 	@Override
 	public CreditReviewDetails getCreditReviewDetails(CreditReviewDetails creditReviewDetail) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, FinCategory, EmploymentType, EligibilityMethod, Section");
+		sql.append(", TemplateName, TemplateVersion, Fields, ProtectedCells");
+		sql.append(" From CreditReviewConfig");
+		sql.append(" Where EligibilityMethod = ?");
 
-		logger.debug(Literal.ENTERING);
-		StringBuilder selectSql = new StringBuilder();
-		StringBuilder whereCondition = new StringBuilder();
-		whereCondition.append(" eligibilityMethod = :eligibilityMethod");
-
-		selectSql.append(
-				" Select ID,FINCATEGORY,EMPLOYMENTTYPE,ELIGIBILITYMETHOD,SECTION,TEMPLATENAME,TEMPLATEVERSION, FIELDS, PROTECTEDCELLS ");
-		selectSql.append(" FROM  CREDITREVIEWCONFIG ");
-		if (StringUtils.isNotBlank(whereCondition.toString())) {
-			selectSql.append(" Where ").append(whereCondition);
-		} else {
-			return creditReviewDetail = null;
-		}
-
-		logger.trace(Literal.SQL + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewDetail);
-		RowMapper<CreditReviewDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(CreditReviewDetails.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			creditReviewDetail = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				CreditReviewDetails crd = new CreditReviewDetails();
+
+				crd.setId(rs.getLong("Id"));
+				crd.setFinCategory(rs.getString("FinCategory"));
+				crd.setEmploymentType(rs.getString("EmploymentType"));
+				crd.setEligibilityMethod(rs.getString("EligibilityMethod"));
+				crd.setSection(rs.getString("Section"));
+				crd.setTemplateName(rs.getString("TemplateName"));
+				crd.setTemplateVersion(rs.getInt("TemplateVersion"));
+				crd.setFields(rs.getString("Fields"));
+				crd.setProtectedCells(rs.getString("ProtectedCells"));
+
+				return crd;
+			}, creditReviewDetail.getEligibilityMethod());
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			creditReviewDetail = null;
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
-		return creditReviewDetail;
+		return null;
 	}
 
 	@Override
-	public CreditReviewData getCreditReviewData(String finReference, String templateName, int templateVersion) {
-		logger.debug(Literal.ENTERING);
-		CreditReviewData creditReviewData = null;
-		StringBuilder selectSql = new StringBuilder();
+	public CreditReviewData getCreditReviewData(long finID, String templateName) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference, TemplateData, TemplateName, TemplateVersion");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From CreditReviewData");
+		sql.append(" Where FinID = ? and TemplateName = ?");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("TemplateName", templateName);
-		source.addValue("TemplateVersion", templateVersion);
-
-		selectSql.append(" Select FinReference, TemplateData, TemplateName, TemplateVersion,");
-		selectSql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" FROM  CreditReviewData");
-		selectSql.append(" Where FinReference = :FinReference AND TemplateName = :TemplateName ");
-
-		logger.trace(Literal.SQL + selectSql.toString());
-		RowMapper<CreditReviewData> typeRowMapper = BeanPropertyRowMapper.newInstance(CreditReviewData.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			creditReviewData = jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				CreditReviewData crd = new CreditReviewData();
+
+				crd.setFinID(rs.getString("FinID"));
+				crd.setFinReference(rs.getString("FinReference"));
+				crd.setTemplateData(rs.getString("TemplateData"));
+				crd.setTemplateName(rs.getString("TemplateName"));
+				crd.setTemplateVersion(rs.getInt("TemplateVersion"));
+				crd.setVersion(rs.getInt("Version"));
+				crd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				crd.setLastMntBy(rs.getLong("LastMntBy"));
+				crd.setRecordStatus(rs.getString("RecordStatus"));
+				crd.setRoleCode(rs.getString("RoleCode"));
+				crd.setNextRoleCode(rs.getString("NextRoleCode"));
+				crd.setTaskId(rs.getString("TaskId"));
+				crd.setNextTaskId(rs.getString("NextTaskId"));
+				crd.setRecordType(rs.getString("RecordType"));
+				crd.setWorkflowId(rs.getLong("WorkflowId"));
+
+				return crd;
+			}, finID, templateName);
 		} catch (EmptyResultDataAccessException e) {
-			creditReviewData = null;
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
-		return creditReviewData;
+		return null;
 
 	}
 
 	@Override
-	public void save(CreditReviewData creditReviewData) {
+	public void save(CreditReviewData crd) {
+		StringBuilder sql = new StringBuilder("Insert Into CreditReviewData");
+		sql.append(" (FinID, FinReference, TemplateData, TemplateName, TemplateVersion, Version, LastMntBy");
+		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType");
+		sql.append(", WorkflowId");
+		sql.append(") values(");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("insert into CreditReviewData");
-		sql.append(" (FinReference, TemplateData, TemplateName, TemplateVersion");
-		sql.append(" ,Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(" ,RecordType, WorkflowId)");
-		sql.append(" values (:FinReference, :TemplateData, :TemplateName, :TemplateVersion");
-		sql.append(" ,:Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId");
-		sql.append(" ,:RecordType, :WorkflowId)");
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(creditReviewData);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setString(index++, crd.getFinID());
+				ps.setString(index++, crd.getFinReference());
+				ps.setString(index++, crd.getTemplateData());
+				ps.setString(index++, crd.getTemplateName());
+				ps.setInt(index++, crd.getTemplateVersion());
+				ps.setInt(index++, crd.getVersion());
+				ps.setLong(index++, JdbcUtil.setLong(crd.getLastMntBy()));
+				ps.setTimestamp(index++, crd.getLastMntOn());
+				ps.setString(index++, crd.getRecordStatus());
+				ps.setString(index++, crd.getRoleCode());
+				ps.setString(index++, crd.getNextRoleCode());
+				ps.setString(index++, crd.getTaskId());
+				ps.setString(index++, crd.getNextTaskId());
+				ps.setString(index++, crd.getRecordType());
+				ps.setLong(index++, JdbcUtil.setLong(crd.getWorkflowId()));
+
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-
-		logger.debug(Literal.LEAVING);
-
 	}
 
 	@Override
-	public void update(CreditReviewData creditReviewData) {
-		logger.debug(Literal.ENTERING);
-		// Prepare the SQL.
+	public void update(CreditReviewData crd) {
 		StringBuilder sql = new StringBuilder("Update CreditReviewData");
-		sql.append(" set TemplateData = :TemplateData");
-		sql.append(" , Version = :Version, LastMntBy = :LastMntBy");
-		sql.append(" ,LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode");
-		sql.append(" ,NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
-		sql.append(" ,RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(
-				" where FinReference = :FinReference AND TemplateVersion=:TemplateVersion AND TemplateName=:TemplateName");
+		sql.append(" Set TemplateData = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
+		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where FinID = ? and TemplateVersion = ? and TemplateName = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(creditReviewData);
-		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		logger.debug(Literal.SQL + sql.toString());
 
-		// Check for the concurrency failure.
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, crd.getTemplateData());
+			ps.setInt(index++, crd.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(crd.getLastMntBy()));
+			ps.setTimestamp(index++, crd.getLastMntOn());
+			ps.setString(index++, crd.getRecordStatus());
+			ps.setString(index++, crd.getRoleCode());
+			ps.setString(index++, crd.getNextRoleCode());
+			ps.setString(index++, crd.getTaskId());
+			ps.setString(index++, crd.getNextTaskId());
+			ps.setString(index++, crd.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(crd.getWorkflowId()));
+
+			ps.setString(index++, crd.getFinID());
+			ps.setInt(index++, crd.getTemplateVersion());
+			ps.setString(index++, crd.getTemplateName());
+		});
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-
-		logger.debug(Literal.LEAVING);
-
 	}
 
 	@Override
-	public void delete(String finReference, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
+	public void delete(long finID, TableType tableType) {
 		StringBuilder sql = new StringBuilder("delete from CREDITREVIEWDATA");
 		sql.append(tableType.getSuffix());
-		sql.append(" where finReference = :finReference ");
+		sql.append(" Where FinID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("finReference", finReference);
+		logger.debug(Literal.SQL + sql.toString());
+
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				ps.setLong(1, finID);
+			});
 		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
+			//
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public CreditReviewDetails getCreditReviewDetailsbyLoanType(CreditReviewDetails crd) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ID, FINCATEGORY, EMPLOYMENTTYPE, ELIGIBILITYMETHOD, SECTION");
-		sql.append(", TEMPLATENAME, TEMPLATEVERSION, FIELDS, PROTECTEDCELLS, FieldKeys");
-		sql.append(" FROM CREDITREVIEWCONFIG");
+		sql.append(" Id, FinCategory, EmploymentType, EligibilityMethod, Section");
+		sql.append(", TemplateName, TemplateVersion, Fields, ProtectedCells, FieldKeys");
+		sql.append(" From CreditReviewConfig");
+
+		List<String> list = new ArrayList<>();
 
 		StringBuilder whereCondition = new StringBuilder();
 		if (StringUtils.isNotEmpty(crd.getProduct())) {
-			whereCondition.append(" Product = :Product");
+			whereCondition.append(" Product = ?");
+			list.add(crd.getProduct());
 		}
 
 		if (StringUtils.isNotEmpty(crd.getEmploymentType())) {
 			if (StringUtils.isNotEmpty(whereCondition.toString())) {
 				whereCondition.append(" and ");
 			}
-			whereCondition.append(" EmploymentType = :EmploymentType ");
+			whereCondition.append(" EmploymentType = ?");
+			list.add(crd.getEmploymentType());
 		}
 
 		if (StringUtils.isNotEmpty(crd.getEligibilityMethod())) {
 			if (StringUtils.isNotEmpty(whereCondition.toString())) {
 				whereCondition.append(" and ");
 			}
-			whereCondition.append(" EligibilityMethod = :EligibilityMethod ");
+			whereCondition.append(" EligibilityMethod = ?");
+			list.add(crd.getEligibilityMethod());
 		}
 
 		if (StringUtils.isNotBlank(whereCondition.toString())) {
 			sql.append(" Where ").append(whereCondition);
 		} else {
-			return crd = null;
-		}
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(crd);
-		RowMapper<CreditReviewDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(CreditReviewDetails.class);
-
-		try {
-			return jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.info("Credit Review Configuration not avilable for the spcified Product >> {}", crd.getProduct());
 			return null;
 		}
+
+		Object[] args = list.toArray();
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				CreditReviewDetails crdts = new CreditReviewDetails();
+
+				crdts.setId(rs.getLong("Id"));
+				crdts.setFinCategory(rs.getString("FinCategory"));
+				crdts.setEmploymentType(rs.getString("EmploymentType"));
+				crdts.setEligibilityMethod(rs.getString("EligibilityMethod"));
+				crdts.setSection(rs.getString("Section"));
+				crdts.setTemplateName(rs.getString("TemplateName"));
+				crdts.setTemplateVersion(rs.getInt("TemplateVersion"));
+				crdts.setFields(rs.getString("Fields"));
+				crdts.setProtectedCells(rs.getString("ProtectedCells"));
+				crdts.setFieldKeys(rs.getString("FieldKeys"));
+
+				return crdts;
+			}, args);
+		} catch (EmptyResultDataAccessException e) {
+			logger.info("Credit Review Configuration not avilable for the spcified Product >> {}", crd.getProduct());
+		}
+
+		return null;
 	}
 
 	@Override
 	public ExtCreditReviewConfig getExtCreditReviewConfigDetails(ExtCreditReviewConfig extCreditReviewConfig) {
+		String sql = "select * from BREExtCreditReviewConfig where CreditReviewType = :CreditReviewType";
 
-		logger.debug(Literal.ENTERING);
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("select * from BREExtCreditReviewConfig where CreditReviewType =:CreditReviewType");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extCreditReviewConfig);
 		RowMapper<ExtCreditReviewConfig> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtCreditReviewConfig.class);
 
 		try {
-			extCreditReviewConfig = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			extCreditReviewConfig = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			extCreditReviewConfig = null;
 		}
 
-		logger.debug(Literal.LEAVING);
 		return extCreditReviewConfig;
 	}
 
 	@Override
-	public ExtBreDetails getExtBreDetailsByRef(String finReference) {
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT * ");
-		selectSql.append(" FROM  EXTBreDetails");
-		selectSql.append(" Where finReference = :finReference");
+	public ExtBreDetails getExtBreDetailsByRef(long finID) {
+		String sql = "Select * From EXTBreDetails Where FinID = :FinID";
+
+		logger.debug(Literal.SQL + sql.toString());
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("finReference", finReference);
+		source.addValue("FinID", finID);
+
 		RowMapper<ExtBreDetails> rowMapper = BeanPropertyRowMapper.newInstance(ExtBreDetails.class);
 		try {
-			return jdbcTemplate.queryForObject(selectSql.toString(), source, rowMapper);
+			return jdbcTemplate.queryForObject(sql, source, rowMapper);
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION + e);
+			//
 		}
-		logger.debug(Literal.LEAVING);
+
 		return null;
 	}
 }

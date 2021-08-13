@@ -10,11 +10,20 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 public class CreditReviewData extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 6579430447635480792L;
 
+	private String finID;
 	private String finReference;
 	private String templateData;
 	private String templateName;
 	private int templateVersion;
 	private CreditReviewData befImage;
+
+	public String getFinID() {
+		return finID;
+	}
+
+	public void setFinID(String finID) {
+		this.finID = finID;
+	}
 
 	public String getFinReference() {
 		return finReference;
