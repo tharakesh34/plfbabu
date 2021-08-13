@@ -15,6 +15,7 @@ public class CommitmentMovement extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -2091525494536161888L;
 
 	private String cmtReference;
+	private long finID;
 	private String finReference;
 	private String finBranch;
 	private String finType;
@@ -45,9 +46,13 @@ public class CommitmentMovement extends AbstractWorkflowEntity {
 		return new HashSet<String>();
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
 
 	public String getId() {
 		return finReference;
