@@ -9,6 +9,7 @@ public class FinAssetAmtMovement implements Serializable {
 	private static final long serialVersionUID = -2091525494536161888L;
 
 	private long finServiceInstID;
+	private long finID;
 	private String finReference;
 	private Date movementDate;
 	private long movementOrder;
@@ -29,7 +30,13 @@ public class FinAssetAmtMovement implements Serializable {
 		super();
 	}
 
-	// setters / getters
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
 
 	public String getFinReference() {
 		return finReference;

@@ -8,6 +8,7 @@ public class FinanceScoreHeader implements Serializable {
 	private static final long serialVersionUID = -453344106804424915L;
 
 	private long headerId = Long.MIN_VALUE;
+	private long finID;
 	private String finReference;
 	private long groupId = Long.MIN_VALUE;
 	private String groupCode;
@@ -40,16 +41,20 @@ public class FinanceScoreHeader implements Serializable {
 		return excludeFields;
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
 	public long getHeaderId() {
 		return headerId;
 	}
 
 	public void setHeaderId(long headerId) {
 		this.headerId = headerId;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

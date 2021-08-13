@@ -1,18 +1,13 @@
 package com.pennant.backend.dao.finance.impl;
 
-import java.util.HashMap;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.backend.dao.finance.FinanceScoreHeaderDAO;
 import com.pennant.backend.model.finance.FinanceScoreDetail;
@@ -28,9 +23,9 @@ public class FinanceScoreHeaderDAOImpl extends SequenceDao<FinanceScoreHeader> i
 	}
 
 	@Override
-	public List<FinanceScoreHeader> getFinScoreHeaderList(String finReference, String type) {
+	public List<FinanceScoreHeader> getFinScoreHeaderList(long finID, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" HeaderId, FinReference, GroupId, MinScore, Override");
+		sql.append(" HeaderId, FinID, FinReference, GroupId, MinScore, Override");
 		sql.append(", OverrideScore, CreditWorth, CustId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -39,17 +34,17 @@ public class FinanceScoreHeaderDAOImpl extends SequenceDao<FinanceScoreHeader> i
 
 		sql.append(" from FinanceScoreHeader");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where finReference = ?");
+		sql.append(" Where FinID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
-			int index = 1;
-			ps.setString(index++, finReference);
+			ps.setLong(1, finID);
 		}, (rs, rowNum) -> {
 			FinanceScoreHeader fsh = new FinanceScoreHeader();
 
 			fsh.setHeaderId(rs.getLong("HeaderId"));
+			fsh.setFinID(rs.getLong("FinID"));
 			fsh.setFinReference(rs.getString("FinReference"));
 			fsh.setGroupId(rs.getLong("GroupId"));
 			fsh.setMinScore(rs.getInt("MinScore"));
@@ -68,138 +63,179 @@ public class FinanceScoreHeaderDAOImpl extends SequenceDao<FinanceScoreHeader> i
 	}
 
 	@Override
-	public long saveHeader(FinanceScoreHeader scoreHeader, String type) {
-		logger.debug("Entering");
-
-		if (scoreHeader.getHeaderId() == Long.MIN_VALUE) {
-			scoreHeader.setId(getNextValue("SeqFinanceScoreHeader"));
-			logger.debug("get NextID:" + scoreHeader.getId());
+	public long saveHeader(FinanceScoreHeader sh, String type) {
+		if (sh.getHeaderId() == Long.MIN_VALUE) {
+			sh.setId(getNextValue("SeqFinanceScoreHeader"));
 		}
 
-		StringBuilder insertSql = new StringBuilder("INSERT INTO FinanceScoreHeader");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (HeaderId , FinReference , GroupId , MinScore , ");
-		insertSql.append(" Override , OverrideScore , CreditWorth, CustId) ");
-		insertSql.append(" VALUES (:HeaderId , :FinReference , :GroupId , :MinScore , ");
-		insertSql.append(" :Override , :OverrideScore , :CreditWorth, :CustId) ");
+		StringBuilder sql = new StringBuilder("Insert Into FinanceScoreHeader");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (HeaderId, FinID, FinReference, GroupId, MinScore");
+		sql.append(", Override, OverrideScore, CreditWorth, CustId)");
+		sql.append(" Values( ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoreHeader);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return scoreHeader.getId();
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, sh.getHeaderId());
+			ps.setLong(index++, sh.getFinID());
+			ps.setString(index++, sh.getFinReference());
+			ps.setLong(index++, sh.getGroupId());
+			ps.setInt(index++, sh.getMinScore());
+			ps.setBoolean(index++, sh.isOverride());
+			ps.setInt(index++, sh.getOverrideScore());
+			ps.setString(index++, sh.getCreditWorth());
+			ps.setLong(index++, sh.getCustId());
+
+		});
+
+		return sh.getId();
 	}
 
 	@Override
-	public void deleteHeaderList(String finReferecne, String type) {
-		logger.debug("Entering");
+	public void deleteHeaderList(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Delete From FinanceScoreHeader");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
 
-		FinanceScoreHeader header = new FinanceScoreHeader();
-		header.setFinReference(finReferecne);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder deleteSql = new StringBuilder(" DELETE FROM FinanceScoreHeader");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" WHERE FinReference=:FinReference");
-
-		logger.debug("deleteSql: " + deleteSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			ps.setLong(1, finID);
+		});
 	}
 
 	@Override
 	public List<FinanceScoreDetail> getFinScoreDetailList(List<Long> headerIds, String type) {
-		logger.debug("Entering");
-
-		StringBuilder selectSql = new StringBuilder(" SELECT HeaderId , SubGroupId , ");
-		selectSql.append(" RuleId , MaxScore , ExecScore ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" HeaderId, SubGroupId, RuleId, MaxScore, ExecScore");
 		if (type.contains("View")) {
-			selectSql.append(" , SubGrpCodeDesc , RuleCode , RuleCodeDesc , CategoryType ");
+			sql.append(", SubGrpCodeDesc, RuleCode, RuleCodeDesc, CategoryType");
 		}
-		selectSql.append(" From FinanceScoreDetail");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where HeaderId  IN(:HeaderId )");
+		sql.append(" From FinanceScoreDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where HeaderId in(");
 
-		Map<String, List<Long>> parameterMap = new HashMap<String, List<Long>>();
-		parameterMap.put("HeaderId", headerIds);
+		int i = 0;
 
-		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<FinanceScoreDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceScoreDetail.class);
+		while (i < headerIds.size()) {
+			sql.append(" ?,");
+			i++;
+		}
 
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), parameterMap, typeRowMapper);
+		sql.deleteCharAt(sql.length() - 1);
+		sql.append(")");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			for (Long id : headerIds) {
+				ps.setLong(index++, id);
+			}
+		}, (rs, rowNum) -> {
+			FinanceScoreDetail fsd = new FinanceScoreDetail();
+
+			fsd.setHeaderId(rs.getLong("HeaderId"));
+			fsd.setSubGroupId(rs.getLong("SubGroupId"));
+			fsd.setRuleId(rs.getLong("RuleId"));
+			fsd.setMaxScore(rs.getBigDecimal("MaxScore"));
+			fsd.setExecScore(rs.getBigDecimal("ExecScore"));
+
+			if (type.contains("View")) {
+				fsd.setSubGrpCodeDesc(rs.getString("SubGrpCodeDesc"));
+				fsd.setRuleCode(rs.getString("RuleCode"));
+				fsd.setRuleCodeDesc(rs.getString("RuleCodeDesc"));
+				fsd.setCategoryType(rs.getString("CategoryType"));
+			}
+
+			return fsd;
+		});
 	}
 
 	@Override
 	public void saveDetailList(List<FinanceScoreDetail> scoreDetails, String type) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Insert Into FinanceScoreDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (HeaderId, SubGroupId, RuleId, MaxScore, ExecScore)");
+		sql.append(" Values(?, ?, ?, ?, ?)");
 
-		StringBuilder insertSql = new StringBuilder("INSERT INTO FinanceScoreDetail");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (HeaderId , SubGroupId , RuleId , MaxScore , ExecScore) ");
-		insertSql.append(" VALUES (:HeaderId , :SubGroupId , :RuleId , :MaxScore , :ExecScore) ");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(scoreDetails.toArray());
+		this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
-		logger.debug("Leaving");
-		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinanceScoreDetail fsd = scoreDetails.get(i);
+				int index = 1;
+
+				ps.setLong(index++, fsd.getHeaderId());
+				ps.setLong(index++, fsd.getSubGroupId());
+				ps.setLong(index++, fsd.getRuleId());
+				ps.setBigDecimal(index++, fsd.getMaxScore());
+				ps.setBigDecimal(index++, fsd.getExecScore());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return scoreDetails.size();
+			}
+		});
 	}
 
 	@Override
-	public void deleteDetailList(List<Long> headerIdList, String type) {
-		logger.debug("Entering");
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("HeaderIdList", headerIdList);
+	public void deleteDetailList(List<Long> headerIds, String type) {
+		StringBuilder sql = new StringBuilder("Delete From FinanceScoreDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where HeaderId in (");
 
-		StringBuilder deleteSql = new StringBuilder(" DELETE FROM FinanceScoreDetail");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" WHERE HeaderId IN(:HeaderIdList) ");
+		int i = 0;
+		while (i < headerIds.size()) {
+			sql.append(" ?,");
+			i++;
+		}
 
-		logger.debug("deleteSql: " + deleteSql.toString());
-		logger.debug("Leaving");
-		this.jdbcTemplate.update(deleteSql.toString(), parameterSource);
+		sql.deleteCharAt(sql.length() - 1);
+		sql.append(")");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			for (Long id : headerIds) {
+				ps.setLong(index++, id);
+			}
+		});
 
 	}
 
 	@Override
 	public boolean deleteHeader(FinanceScoreHeader scoreHeader, String type) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Delete From FinanceScoreHeader");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where HeaderId = ? and FinID = ?");
 
-		StringBuilder deleteSql = new StringBuilder(" DELETE FROM FinanceScoreHeader");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" WHERE HeaderId=:HeaderId AND FinReference=:FinReference");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("deleteSql: " + deleteSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoreHeader);
-		int recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-
-		logger.debug("Leaving");
-		if (recordCount <= 0) {
-			return false;
-		}
-		return true;
+		return this.jdbcOperations.update(sql.toString(), ps -> {
+			ps.setLong(1, scoreHeader.getHeaderId());
+			ps.setLong(2, scoreHeader.getFinID());
+		}) > 0;
 	}
 
 	@Override
 	public void deleteDetailList(long headerId, String type) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Delete From FinanceScoreHeader");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where HeaderId = ?");
 
-		FinanceScoreDetail detail = new FinanceScoreDetail();
-		detail.setHeaderId(headerId);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder deleteSql = new StringBuilder(" DELETE FROM FinanceScoreDetail");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" WHERE HeaderId=:HeaderId");
-
-		logger.debug("deleteSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-
-		logger.debug("Leaving");
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			ps.setLong(1, headerId);
+		});
 	}
 
 }

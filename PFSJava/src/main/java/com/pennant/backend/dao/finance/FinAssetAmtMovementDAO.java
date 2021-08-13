@@ -8,5 +8,5 @@ public interface FinAssetAmtMovementDAO {
 
 	void saveFinAssetAmtMovement(FinAssetAmtMovement assetAmtMovt);
 
-	public List<FinAssetAmtMovement> getFinAssetAmtMovements(String finReference, String movementType);
+	public List<FinAssetAmtMovement> getFinAssetAmtMovements(long finID, String movementType);
 }
