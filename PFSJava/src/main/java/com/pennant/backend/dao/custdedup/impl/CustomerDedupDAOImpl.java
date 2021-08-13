@@ -1,23 +1,24 @@
 package com.pennant.backend.dao.custdedup.impl;
 
-import java.util.ArrayList;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements CustomerDedupDAO {
@@ -28,66 +29,110 @@ public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements Cus
 	}
 
 	@Override
-	public void saveList(List<CustomerDedup> insertList, String type) {
-		logger.debug("Entering");
+	public void saveList(List<CustomerDedup> cdList, String type) {
+		StringBuilder sql = new StringBuilder("Insert Into CustomerDedupDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append("( FinID, FinReference, CustCIF, CustFName, CustLName, CustShrtName, CustDOB, CustCRCPR");
+		sql.append(", CustPassportNo, MobileNumber, CustNationality, DedupRule, Override, OverrideUser");
+		sql.append(", Module");
+		sql.append(") Values(");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append("Insert Into CustomerDedupDetail");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference , CustCIF , CustFName , CustLName , ");
-		insertSql.append(" CustShrtName , CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , ");
-		insertSql.append(" DedupRule , Override , OverrideUser ,Module )");
-		insertSql.append(" Values(:FinReference , :CustCIF , :CustFName , :CustLName , ");
-		insertSql.append(
-				" :CustShrtName , :CustDOB , :CustCRCPR ,:CustPassportNo , :MobileNumber , :CustNationality , ");
-		insertSql.append(" :DedupRule , :Override , :OverrideUser, :Module )");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("insertSql: " + insertSql.toString());
+		this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(insertList.toArray());
-		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				int index = 1;
 
+				CustomerDedup cd = cdList.get(i);
+
+				ps.setLong(index++, cd.getFinID());
+				ps.setString(index++, cd.getFinReference());
+				ps.setString(index++, cd.getCustCIF());
+				ps.setString(index++, cd.getCustFName());
+				ps.setString(index++, cd.getCustLName());
+				ps.setString(index++, cd.getCustShrtName());
+				ps.setDate(index++, JdbcUtil.getDate(cd.getCustDOB()));
+				ps.setString(index++, cd.getCustCRCPR());
+				ps.setString(index++, cd.getCustPassportNo());
+				ps.setString(index++, cd.getMobileNumber());
+				ps.setString(index++, cd.getCustNationality());
+				ps.setString(index++, cd.getDedupRule());
+				ps.setBoolean(index++, cd.isOverride());
+				ps.setString(index++, cd.getOverrideUser());
+				ps.setString(index++, cd.getModule());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return cdList.size();
+			}
+		});
 	}
 
 	@Override
-	public void updateList(List<CustomerDedup> updateList) {
-		logger.debug("Entering");
+	public void updateList(List<CustomerDedup> cdList) {
+		StringBuilder sql = new StringBuilder("Update CustomerDedupDetail");
+		sql.append(" Set CustFName = ?, CustLName = ?, CustShrtName = ?, CustDOB = ?");
+		sql.append(", CustCRCPR= ?, CustPassportNo = ?, MobileNumber = ?, CustNationality = ?");
+		sql.append(", DedupRule = ?, Override = ?, OverrideUser = ?, Module = ?");
+		sql.append(" Where FinID = ? and CustCIF = ?");
 
-		StringBuilder updateSql = new StringBuilder();
-		updateSql.append("Update CustomerDedupDetail Set CustFName = :CustFName,");
-		updateSql.append(" CustLName = :CustLName , CustShrtName = :CustShrtName, CustDOB = :CustDOB, ");
-		updateSql.append(
-				" CustCRCPR= :CustCRCPR, CustPassportNo = :CustPassportNo,MobileNumber = :MobileNumber, CustNationality = :CustNationality,");
-		updateSql
-				.append(" DedupRule = :DedupRule, Override = :Override, OverrideUser = :OverrideUser, Module=:Module ");
-		updateSql.append(" Where FinReference =:FinReference  AND CustCIF =:CustCIF");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("updateSql: " + updateSql.toString());
+		this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(updateList.toArray());
-		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				int index = 1;
+
+				CustomerDedup cd = cdList.get(i);
+
+				ps.setString(index++, cd.getCustFName());
+				ps.setString(index++, cd.getCustLName());
+				ps.setString(index++, cd.getCustShrtName());
+				ps.setDate(index++, JdbcUtil.getDate(cd.getCustDOB()));
+				ps.setString(index++, cd.getCustCRCPR());
+				ps.setString(index++, cd.getCustPassportNo());
+				ps.setString(index++, cd.getMobileNumber());
+				ps.setString(index++, cd.getCustNationality());
+				ps.setString(index++, cd.getDedupRule());
+				ps.setBoolean(index++, cd.isOverride());
+				ps.setString(index++, cd.getOverrideUser());
+				ps.setString(index++, cd.getModule());
+
+				ps.setLong(index++, cd.getFinID());
+				ps.setString(index++, cd.getCustCIF());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return cdList.size();
+			}
+		});
 	}
 
 	@Override
-	public List<CustomerDedup> fetchOverrideCustDedupData(String finReference, String queryCode, String module) {
+	public List<CustomerDedup> fetchOverrideCustDedupData(long finID, String queryCode, String module) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, CustCIF, CustFName, CustLName, CustShrtName");
+		sql.append(" FinID, FinReference, CustCIF, CustFName, CustLName, CustShrtName");
 		sql.append(", CustDOB, CustCRCPR, CustPassportNo, MobileNumber, CustNationality");
-		sql.append(", DedupRule , Override , OverrideUser,Module");
+		sql.append(", DedupRule , Override , OverrideUser, Module");
 		sql.append(" From CustomerDedupDetail");
-		sql.append(" Where FinReference = ? and DedupRule like(?) and Module= ?");
+		sql.append(" Where FinID = ? and DedupRule like(?) and Module= ?");
 
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, finReference);
+			ps.setLong(1, finID);
 			ps.setString(2, "%" + queryCode + "%");
 			ps.setString(3, module);
 		}, (rs, i) -> {
 			CustomerDedup cd = new CustomerDedup();
 
+			cd.setFinID(rs.getLong("FinID"));
 			cd.setFinReference(rs.getString("FinReference"));
 			cd.setCustCIF(rs.getString("CustCIF"));
 			cd.setCustFName(rs.getString("CustFName"));
@@ -107,10 +152,6 @@ public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements Cus
 		});
 	}
 
-	/**
-	 * Fetched the Dedup Fields if Dedup Exist for a Customer
-	 *
-	 */
 	public List<CustomerDedup> fetchCustomerDedupDetails(CustomerDedup dedup, String sqlQuery) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" CustId, CustCIF, CustFName, CustLName, CustCRCPR, CustPassportNo, CustShrtName");
@@ -133,46 +174,39 @@ public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements Cus
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedup);
 
-		try {
-			return this.jdbcTemplate.query(sql.toString(), beanParameters, (rs, rowNum) -> {
-				CustomerDedup cd = new CustomerDedup();
+		return this.jdbcTemplate.query(sql.toString(), beanParameters, (rs, rowNum) -> {
+			CustomerDedup cd = new CustomerDedup();
 
-				cd.setCustId(rs.getLong("CustId"));
-				cd.setCustCIF(rs.getString("CustCIF"));
-				cd.setCustFName(rs.getString("CustFName"));
-				cd.setCustLName(rs.getString("CustLName"));
-				cd.setCustCRCPR(rs.getString("CustCRCPR"));
-				cd.setCustPassportNo(rs.getString("CustPassportNo"));
-				cd.setCustShrtName(rs.getString("CustShrtName"));
-				cd.setCustDOB(rs.getTimestamp("CustDOB"));
-				cd.setCustNationality(rs.getString("CustNationality"));
-				cd.setMobileNumber(rs.getString("MobileNumber"));
-				cd.setCustCtgCode(rs.getString("CustCtgCode"));
-				cd.setCustDftBranch(rs.getString("CustDftBranch"));
-				cd.setCustSector(rs.getString("CustSector"));
-				cd.setCustSubSector(rs.getString("CustSubSector"));
-				cd.setAadharNumber(rs.getString("AadharNumber"));
-				cd.setPanNumber(rs.getString("PanNumber"));
-				cd.setCustEMail(rs.getString("CustEMail"));
+			cd.setCustId(rs.getLong("CustId"));
+			cd.setCustCIF(rs.getString("CustCIF"));
+			cd.setCustFName(rs.getString("CustFName"));
+			cd.setCustLName(rs.getString("CustLName"));
+			cd.setCustCRCPR(rs.getString("CustCRCPR"));
+			cd.setCustPassportNo(rs.getString("CustPassportNo"));
+			cd.setCustShrtName(rs.getString("CustShrtName"));
+			cd.setCustDOB(rs.getTimestamp("CustDOB"));
+			cd.setCustNationality(rs.getString("CustNationality"));
+			cd.setMobileNumber(rs.getString("MobileNumber"));
+			cd.setCustCtgCode(rs.getString("CustCtgCode"));
+			cd.setCustDftBranch(rs.getString("CustDftBranch"));
+			cd.setCustSector(rs.getString("CustSector"));
+			cd.setCustSubSector(rs.getString("CustSubSector"));
+			cd.setAadharNumber(rs.getString("AadharNumber"));
+			cd.setPanNumber(rs.getString("PanNumber"));
+			cd.setCustEMail(rs.getString("CustEMail"));
 
-				return cd;
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Records are not available in CustomersDedup_View");
-		}
-
-		return new ArrayList<>();
+			return cd;
+		});
 	}
 
 	@Override
 	public void moveData(String finReference, String suffix) {
+		/* FIXME : change to FinID Pre-approved(_PA) tables need to remove */
+		if (StringUtils.isBlank(suffix)) {
+			return;
+		}
 
-		logger.debug(" Entering ");
 		try {
-			if (StringUtils.isBlank(suffix)) {
-				return;
-			}
-
 			MapSqlParameterSource map = new MapSqlParameterSource();
 			map.addValue("FinReference", finReference);
 
@@ -188,9 +222,8 @@ public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements Cus
 			}
 
 		} catch (DataAccessException e) {
-			logger.debug(e);
+			//
 		}
-		logger.debug(" Leaving ");
 
 	}
 

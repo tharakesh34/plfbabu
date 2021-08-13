@@ -8,6 +8,7 @@ public class DealerResponse implements Serializable {
 
 	private long dealerResponseId = Long.MIN_VALUE;
 	private long dealerId;
+	private long finID;
 	private String finReference;
 	private String UniqueReference;
 	private String attachmentName;
@@ -37,6 +38,14 @@ public class DealerResponse implements Serializable {
 
 	public void setDealerId(long dealerId) {
 		this.dealerId = dealerId;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

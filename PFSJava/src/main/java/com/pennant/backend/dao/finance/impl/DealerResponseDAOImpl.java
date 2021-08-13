@@ -1,18 +1,19 @@
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.DealerResponseDAO;
 import com.pennant.backend.model.finance.DealerResponse;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class DealerResponseDAOImpl extends SequenceDao<DealerResponse> implements DealerResponseDAO {
 	private static Logger logger = LogManager.getLogger(DealerResponseDAOImpl.class);
@@ -21,131 +22,140 @@ public class DealerResponseDAOImpl extends SequenceDao<DealerResponse> implement
 		super();
 	}
 
-	/**
-	 * get DealerResponse List based on finance reference
-	 * 
-	 */
 	@Override
-	public List<DealerResponse> getDealerResponse(String finReference, String type) {
-		logger.debug("Entering");
-		DealerResponse dealerResponse = new DealerResponse();
-		dealerResponse.setFinReference(finReference);
+	public List<DealerResponse> getDealerResponse(long finID, String type) {
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where FinID = ?");
 
-		StringBuilder selectSql = new StringBuilder("Select DealerResponseId, DealerId, FinReference, ");
-		selectSql.append(" UniqueReference ,AttachmentName, ReqUserRole, ReqUserid,");
-		selectSql.append(" Status,RequestDate ,ResponseDate, ResponseRef,Processed ");
-		selectSql.append(" From DealerResponse");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dealerResponse);
-		RowMapper<DealerResponse> typeRowMapper = BeanPropertyRowMapper.newInstance(DealerResponse.class);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
-
-	/**
-	 * get DealerResponse List based on finance reference
-	 * 
-	 */
-	@Override
-	public List<DealerResponse> getByProcessed(String finReference, boolean processed, String type) {
-		logger.debug("Entering");
-		DealerResponse dealerResponse = new DealerResponse();
-		dealerResponse.setFinReference(finReference);
-		dealerResponse.setProcessed(processed);
-
-		StringBuilder selectSql = new StringBuilder("Select DealerResponseId, DealerId, FinReference, ");
-		selectSql.append(" UniqueReference ,AttachmentName, ReqUserRole, ReqUserid,");
-		selectSql.append(" Status,RequestDate ,ResponseDate, ResponseRef,Processed ");
-		selectSql.append(" From DealerResponse");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference and Processed = :Processed");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dealerResponse);
-		RowMapper<DealerResponse> typeRowMapper = BeanPropertyRowMapper.newInstance(DealerResponse.class);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
-
-	/**
-	 * get DealerResponse processed count based on finance reference
-	 * 
-	 */
-	@Override
-	public int getCountByProcessed(String finReference, boolean processed, String type) {
-		logger.debug("Entering");
-		DealerResponse dealerResponse = new DealerResponse();
-		dealerResponse.setFinReference(finReference);
-		dealerResponse.setProcessed(processed);
-
-		StringBuilder selectSql = new StringBuilder("Select count(*) From DealerResponse");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference and Processed = :Processed");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dealerResponse);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		DealerResponseRM rowMapper = new DealerResponseRM();
+		return this.jdbcOperations.query(sql.toString(), rowMapper, finID);
 	}
 
 	@Override
-	public void updateSatus(DealerResponse dealerResponse, String type) {
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update DealerResponse");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(
-				" Set  Status = :Status, ResponseDate=:ResponseDate, ResponseRef=:ResponseRef where DealerResponseId = :DealerResponseId ");
+	public List<DealerResponse> getByProcessed(long finID, boolean processed, String type) {
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where FinID = ? and Processed = ?");
 
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dealerResponse);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		logger.debug(Literal.SQL + sql.toString());
+
+		DealerResponseRM rowMapper = new DealerResponseRM();
+		return this.jdbcOperations.query(sql.toString(), rowMapper, finID, processed);
 	}
 
 	@Override
-	public void updateProcessed(String finReference, boolean processed, String type) {
-		logger.debug("Entering");
-		DealerResponse dealerResponse = new DealerResponse();
-		dealerResponse.setFinReference(finReference);
-		dealerResponse.setProcessed(processed);
-		StringBuilder updateSql = new StringBuilder("Update DealerResponse");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set Processed = :Processed where FinReference = :FinReference ");
+	public int getCountByProcessed(long finID, boolean processed, String type) {
+		StringBuilder sql = new StringBuilder("Select count(FinID) From DealerResponse");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ? and Processed = ?");
 
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dealerResponse);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID, processed);
 	}
 
-	/**
-	 * save DealerResponse details
-	 */
 	@Override
-	public long save(DealerResponse dealerResponse, String type) {
-		logger.debug("Entering");
+	public void updateSatus(DealerResponse dr, String type) {
+		StringBuilder sql = new StringBuilder("Update DealerResponse");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set  Status = ?, ResponseDate = ?, ResponseRef = ?");
+		sql.append(" Where DealerResponseId = ?");
 
-		if (dealerResponse.getDealerResponseId() == Long.MIN_VALUE) {
-			dealerResponse.setDealerResponseId(getNextValue("SeqDealerResponse"));
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, dr.getStatus());
+			ps.setDate(index++, JdbcUtil.getDate(dr.getRequestDate()));
+			ps.setString(index++, dr.getResponseRef());
+
+			ps.setLong(index++, dr.getDealerResponseId());
+		});
+	}
+
+	@Override
+	public void updateProcessed(long finID, boolean processed, String type) {
+		StringBuilder sql = new StringBuilder("Update DealerResponse");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set Processed = ? where FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			ps.setBoolean(1, processed);
+			ps.setLong(2, finID);
+		});
+	}
+
+	@Override
+	public long save(DealerResponse dr, String type) {
+		if (dr.getDealerResponseId() == Long.MIN_VALUE) {
+			dr.setDealerResponseId(getNextValue("SeqDealerResponse"));
 		}
-		StringBuilder insertSql = new StringBuilder("Insert Into DealerResponse");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" ( DealerResponseId, DealerId, FinReference, ");
-		insertSql.append(" UniqueReference ,AttachmentName, ReqUserRole, ReqUserid,");
-		insertSql.append(" Status,RequestDate ,ResponseDate, ResponseRef,Processed )");
 
-		insertSql.append(" Values( :DealerResponseId, :DealerId, :FinReference,");
-		insertSql.append(" :UniqueReference , :AttachmentName, :ReqUserRole, :ReqUserid,");
-		insertSql.append(" :Status, :RequestDate , :ResponseDate, :ResponseRef, :Processed )");
-		logger.debug("insertSql: " + insertSql.toString());
+		StringBuilder sql = new StringBuilder("Insert Into DealerResponse");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (DealerResponseId, DealerId, FinID, FinReference");
+		sql.append(", UniqueReference, AttachmentName, ReqUserRole, ReqUserid");
+		sql.append(", Status, RequestDate ,ResponseDate, ResponseRef, Processed)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dealerResponse);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return dealerResponse.getId();
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, JdbcUtil.setLong(dr.getDealerResponseId()));
+			ps.setLong(index++, JdbcUtil.setLong(dr.getDealerId()));
+			ps.setLong(index++, JdbcUtil.setLong(dr.getFinID()));
+			ps.setString(index++, dr.getFinReference());
+			ps.setString(index++, dr.getUniqueReference());
+			ps.setString(index++, dr.getAttachmentName());
+			ps.setString(index++, dr.getReqUserRole());
+			ps.setLong(index++, JdbcUtil.setLong(dr.getReqUserid()));
+			ps.setString(index++, dr.getStatus());
+			ps.setTimestamp(index++, dr.getRequestDate());
+			ps.setTimestamp(index++, dr.getResponseDate());
+			ps.setString(index++, dr.getResponseRef());
+			ps.setBoolean(index++, dr.isProcessed());
+		});
+
+		return dr.getId();
 	}
 
+	private StringBuilder getSqlQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" DealerResponseId, DealerId, FinID, FinReference, UniqueReference");
+		sql.append(", AttachmentName, ReqUserRole, ReqUserid, Status, RequestDate");
+		sql.append(", ResponseDate, ResponseRef, Processed");
+		sql.append(" From DealerResponse");
+		sql.append(StringUtils.trimToEmpty(type));
+
+		return sql;
+	}
+
+	private class DealerResponseRM implements RowMapper<DealerResponse> {
+
+		@Override
+		public DealerResponse mapRow(ResultSet rs, int rowNum) throws SQLException {
+			DealerResponse dr = new DealerResponse();
+
+			dr.setDealerResponseId(rs.getLong("DealerResponseId"));
+			dr.setDealerId(rs.getLong("DealerId"));
+			dr.setFinID(rs.getLong("FinID"));
+			dr.setFinReference(rs.getString("FinReference"));
+			dr.setUniqueReference(rs.getString("UniqueReference"));
+			dr.setAttachmentName(rs.getString("AttachmentName"));
+			dr.setReqUserRole(rs.getString("ReqUserRole"));
+			dr.setReqUserid(rs.getLong("ReqUserid"));
+			dr.setStatus(rs.getString("Status"));
+			dr.setRequestDate(rs.getTimestamp("RequestDate"));
+			dr.setResponseDate(rs.getTimestamp("ResponseDate"));
+			dr.setResponseRef(rs.getString("ResponseRef"));
+			dr.setProcessed(rs.getBoolean("Processed"));
+
+			return dr;
+		}
+	}
 }

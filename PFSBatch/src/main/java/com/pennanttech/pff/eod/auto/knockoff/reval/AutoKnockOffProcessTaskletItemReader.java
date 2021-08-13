@@ -19,7 +19,7 @@ public class AutoKnockOffProcessTaskletItemReader extends JdbcCursorItemReader<A
 	public String getSql() {
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" aked.ID, ake.ID ExcessID, ake.FinReference, ake.AmountType, ake.ValueDate");
+		sql.append(" aked.ID, ake.ID ExcessID, ake.FinID, ake.FinReference, ake.AmountType, ake.ValueDate");
 		sql.append(", ake.BalanceAmount, aked.KnockOffID, aked.Code, aked.Description, aked.ExecutionDays");
 		sql.append(", aked.FinType, aked.FeeTypeCode, aked.KnockOffOrder, aked.FeeOrder");
 		sql.append(", ake.ExecutionDay, ake.ThresholdValue, aked.FinCcy, ake.PayableId");
@@ -29,8 +29,9 @@ public class AutoKnockOffProcessTaskletItemReader extends JdbcCursorItemReader<A
 		sql.append(" Left join (select count(*) frhcount, Reference from FinReceiptHeader_Temp rh");
 		sql.append(" Inner join FinReceiptDetail_Temp rd on rd.ReceiptId = rh.ReceiptId");
 		sql.append(" Group by Reference) rh on rh.Reference = ake.FinReference");
-		sql.append(" Left join (select count(*) fmtcount, FinReference from FinanceMain_Temp");
-		sql.append(" Group by FinReference) fmt on ake.FinReference = fmt.FinReference");
+		/* FIXME : change to FinID */
+		sql.append(" Left join (select count(*) fmtcount, FinID from FinanceMain_Temp");
+		sql.append(" Group by FinID) fmt on ake.FinID = fmt.FinID");
 		sql.append(" Where ake.ProcessingFlag = 0");
 		sql.append(" and valueDate = ");
 

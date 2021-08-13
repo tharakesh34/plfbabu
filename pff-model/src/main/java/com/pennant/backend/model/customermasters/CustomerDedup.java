@@ -23,6 +23,7 @@ public class CustomerDedup implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@XmlElement(name = "cif")
 	private String custCIF;
+	private long finID;
 	private String finReference;
 	@XmlElement(name = "lastName")
 	private String custLName;
@@ -304,6 +305,14 @@ public class CustomerDedup implements Serializable {
 
 	public void setNewCustDedupRecord(boolean newCustDedupRecord) {
 		this.newCustDedupRecord = newCustDedupRecord;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

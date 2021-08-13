@@ -51,6 +51,7 @@ public class DueDiligenceDetails extends AbstractWorkflowEntity {
 	private String Remarks;
 	private DueDiligenceDetails befImage;
 	private LoggedInUser userDetails;
+	private long finID;
 	private String finReference;
 	private String particulars;
 
@@ -91,6 +92,14 @@ public class DueDiligenceDetails extends AbstractWorkflowEntity {
 
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
