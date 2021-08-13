@@ -29,13 +29,13 @@ public interface CIBILDAO {
 
 	List<CustomerAddres> getCustomerAddres(long customerId, String segmentType);
 
-	FinanceEnquiry getFinanceSummary(long customerId, String finReference, String segmentType);
+	FinanceEnquiry getFinanceSummary(long customerId, long finID, String segmentType);
 
 	List<FinanceEnquiry> getFinanceSummary(long customerId, String segmentType);
 
 	void deleteDetails();
 
-	void logFileInfoException(long id, String finReference, String reason);
+	void logFileInfoException(long id, long finID, String finReference, String reason);
 
 	DataEngineStatus getLatestExecution();
 
@@ -51,13 +51,13 @@ public interface CIBILDAO {
 
 	CibilMemberDetail getMemberDetails(String bureauType);
 
-	List<FinODDetails> getFinODDetails(String finReference, String finCCY);
+	List<FinODDetails> getFinODDetails(long finID, String finCCY);
 
-	List<CollateralSetup> getCollateralDetails(String finReference, String segmentType);
+	List<CollateralSetup> getCollateralDetails(long finID, String segmentType);
 
-	List<ChequeDetail> getChequeBounceStatus(String finReference);
+	List<ChequeDetail> getChequeBounceStatus(long finID);
 
-	List<Long> getGuarantorsDetails(String finRefrence, boolean isBankCustomer);
+	List<Long> getGuarantorsDetails(long finID, boolean isBankCustomer);
 
 	long getotalRecords(String segmentType);
 
@@ -71,6 +71,6 @@ public interface CIBILDAO {
 
 	EventProperties getEventProperties(String configName);
 
-	//changes to differentiate the CIBIL Member ID during CIBIL generation & enquiry
+	// changes to differentiate the CIBIL Member ID during CIBIL generation & enquiry
 	CibilMemberDetail getMemberDetailsByType(String bureauType, String type);
 }

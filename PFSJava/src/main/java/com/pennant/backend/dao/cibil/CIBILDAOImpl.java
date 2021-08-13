@@ -1,18 +1,14 @@
 package com.pennant.backend.dao.cibil;
 
-import java.sql.ResultSet;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Types;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
@@ -32,6 +28,7 @@ import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.model.cibil.CibilFileInfo;
@@ -61,315 +58,252 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 
 	@Override
 	public Customer getCustomer(long customerId, String bureauType) {
-		logger.trace(Literal.ENTERING);
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-
 		StringBuilder sql = new StringBuilder();
+		Object[] obj = new Object[] {};
 
 		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(bureauType)) {
-			sql.append("select custshrtname");
-			sql.append(", custsalutationcode");
-			sql.append(", custfname");
-			sql.append(", custmname");
-			sql.append(", custlname");
-			sql.append(", custdob");
-			sql.append(", custgendercode");
-			sql.append(", custcrcpr");
-			sql.append(" from customers where custid = :custid");
+			sql.append("Select");
+			sql.append(" CustShrtName, CustFName, CustMName, CustLName");
+			sql.append(", CustSalutationCode, CustDOB, CustGenderCode, CustCRCPR");
+			sql.append(" From Customers Where CustID = ?");
+
+			obj = new Object[] { customerId };
 		} else {
-			sql.append(" select distinct c.custid");
-			sql.append(", c.custdftbranch");
-			sql.append(", c.custfname");
-			sql.append(", c.custmname");
-			sql.append(", c.custlname");
-			sql.append(", c.custshrtname");
-			sql.append(", c.custtradelicencenum");
-			sql.append(", c.custdob");
-			sql.append(", custcob");
-			sql.append(", custgendercode");
-			sql.append(", c.custcrcpr");
-			sql.append(", c.custsalutationcode");
-			sql.append(", lcm.code legalconstitution");
-			sql.append(", bcm.code businesscategory");
-			sql.append(", cc.custctgtype lovdesccustctgtype");
-			sql.append(" from customers c ");
-			sql.append(" inner join bmtcustcategories cc on cc.custctgcode = c.custctgcode");
-			sql.append(" left join cibil_legal_const_mapping lcm on lcm.cust_type_code = c.custtypecode");
-			sql.append(" and lcm.segment_type =:CORP");
-			sql.append(" left join cibil_legal_constitution lc on lc.code = lcm.code");
-			sql.append(" and lc.segment_type=lcm.segment_type");
-			sql.append(" left join cibil_business_catgry_mapping bcm on bcm.category = c.custctgcode");
-			sql.append(" and bcm.segment_type =:CORP ");
-			sql.append(" left join cibil_business_category bc on bc.code = bcm.code");
-			sql.append(" and bc.segment_type=bcm.segment_type");
-			sql.append(" left join cibil_industry_type_mapping bit on bit.industry = c.custindustry");
-			sql.append(" where c.custid = :custid");
+			sql.append("Select distinct c.CustID");
+			sql.append(", c.CustDftBranch");
+			sql.append(", c.CustFName, c.CustMName, c.CustLName, c.CustShrtName");
+			sql.append(", c.CustTradeLicenceNum, c.CustDOB, CustCOB, CustGenderCode");
+			sql.append(", c.CustCRCPR, c.CustSalutationCode");
+			sql.append(", lcm.Code LegalConstitution, bcm.Code BusinessCategory, cc.CustCtgType LovDescCustCtgType");
+			sql.append(" From Customers c");
+			sql.append(" Inner Join BmtCustCategories cc on cc.CustCtgCode = c.CustCtgCode");
+			sql.append(" Left Join Cibil_Legal_Const_Mapping lcm on lcm.Cust_Type_Code = c.CustTypeCode");
+			sql.append(" and lcm.Segment_Type = ?");
+			sql.append(" Left Join Cibil_Legal_Constitution lc on lc.Code = lcm.Code");
+			sql.append(" and lc.Segment_Type = lcm.Segment_Type");
+			sql.append(" Left Join Cibil_Business_Catgry_Mapping bcm on bcm.Category = c.CustCtgCode");
+			sql.append(" and bcm.Segment_Type = ?");
+			sql.append(" Left Join Cibil_Business_Category bc on bc.Code = bcm.Code");
+			sql.append(" and bc.Segment_Type = bcm.Segment_Type");
+			sql.append(" Left Join Cibil_Industry_Type_Mapping bit on bit.Industry = c.CustIndustry");
+			sql.append(" where c.Custid = ?");
+
+			obj = new Object[] { "CORP", "CORP", customerId };
 		}
 
-		paramMap.addValue("custid", customerId);
-		paramMap.addValue("CORP", "CORP");
+		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcTemplate.queryForObject(sql.toString(), paramMap, new RowMapper<Customer>() {
-			@Override
-			public Customer mapRow(ResultSet rs, int rowNum) throws SQLException {
-				Customer customer = new Customer();
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			Customer customer = new Customer();
 
-				if (PennantConstants.PFF_CUSTCTG_INDIV.equals(bureauType)) {
-					customer.setCustShrtName(rs.getString("custshrtname"));
-					customer.setCustSalutationCode(rs.getString("custsalutationcode"));
-					customer.setCustFName(rs.getString("custfname"));
-					customer.setCustMName(rs.getString("custmname"));
-					customer.setCustLName(rs.getString("custlname"));
-					customer.setCustDOB(rs.getDate("custdob"));
-					customer.setCustGenderCode(rs.getString("custgendercode"));
-					customer.setCustCRCPR(rs.getString("custcrcpr"));
-				} else {
-					customer.setCustShrtName(rs.getString("custshrtname"));
-					customer.setCustDftBranch(rs.getString("custdftbranch"));
-					customer.setCustFName(rs.getString("custfname"));
-					customer.setCustMName(rs.getString("custmname"));
-					customer.setCustLName(rs.getString("custlname"));
-					customer.setCustShrtName(rs.getString("custshrtname"));
-					customer.setCustTradeLicenceNum(rs.getString("custtradelicencenum"));
-					customer.setCustDOB(rs.getDate("custdob"));
-					customer.setCustCOB(rs.getString("custcob"));
-					customer.setCustGenderCode(rs.getString("custgendercode"));
-					customer.setCustCRCPR(rs.getString("custcrcpr"));
-					customer.setCustSalutationCode(rs.getString("custsalutationcode"));
-					customer.setLegalconstitution(rs.getString("legalconstitution"));
-					customer.setBusinesscategory(rs.getString("businesscategory"));
-					customer.setLovDescCustCtgType(rs.getString("lovdesccustctgtype"));
-				}
-
-				return customer;
+			if (PennantConstants.PFF_CUSTCTG_INDIV.equals(bureauType)) {
+				customer.setCustShrtName(rs.getString("CustShrtName"));
+				customer.setCustFName(rs.getString("CustFName"));
+				customer.setCustMName(rs.getString("CustMName"));
+				customer.setCustLName(rs.getString("CustLName"));
+				customer.setCustSalutationCode(rs.getString("CustSalutationCode"));
+				customer.setCustDOB(rs.getDate("CustDOB"));
+				customer.setCustGenderCode(rs.getString("CustGenderCode"));
+				customer.setCustCRCPR(rs.getString("CustCRCPR"));
+			} else {
+				customer.setCustID(rs.getLong("CustID"));
+				customer.setCustDftBranch(rs.getString("CustDftBranch"));
+				customer.setCustFName(rs.getString("CustFName"));
+				customer.setCustMName(rs.getString("CustMName"));
+				customer.setCustLName(rs.getString("CustLName"));
+				customer.setCustShrtName(rs.getString("CustShrtName"));
+				customer.setCustTradeLicenceNum(rs.getString("CustTradeLicenceNum"));
+				customer.setCustDOB(rs.getDate("CustDOB"));
+				customer.setCustCOB(rs.getString("CustCOB"));
+				customer.setCustGenderCode(rs.getString("CustGenderCode"));
+				customer.setCustCRCPR(rs.getString("CustCRCPR"));
+				customer.setCustSalutationCode(rs.getString("CustSalutationCode"));
+				customer.setLegalconstitution(rs.getString("LegalConstitution"));
+				customer.setBusinesscategory(rs.getString("BusinessCategory"));
+				customer.setLovDescCustCtgType(rs.getString("LovDescCustCtgType"));
 			}
-		});
+
+			return customer;
+		}, obj);
+
 	}
 
 	@Override
 	public List<CustomerDocument> getCustomerDocuments(long customerId, String bureauType) {
-		logger.trace(Literal.ENTERING);
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
 
 		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(bureauType)) {
-			sql.append("select dt.code custdoccategory");
-			sql.append(", custdoctitle");
-			sql.append(", custdocissuedon");
-			sql.append(", custdocexpdate");
-			sql.append(" from customerdocuments doc");
-			sql.append(" inner join cibil_document_types_mapping dm on dm.doctypecode = doc.custdoccategory");
-			sql.append(" inner join cibil_document_types dt on dt.code = dm.code");
+			sql.append("Select");
+			sql.append(" dt.Code CustDocCategory, CustDocTitle, CustDocIssuedOn, CustDocExpDate");
+			sql.append(" From CustomerDocuments doc");
+			sql.append(" Inner Join Cibil_Document_Types_Mapping dm on dm.DocTypeCode = doc.CustDocCategory");
+			sql.append(" Inner Join Cibil_Document_Types dt on dt.Code = dm.Code");
 		} else {
-			sql.append("select custdoccategory");
-			sql.append(", custdoctitle");
-			sql.append(", custdocissuedon");
-			sql.append(", custdocexpdate");
-			sql.append(" from customerdocuments doc");
+			sql.append("Select CustDocCategory, CustDocTitle, CustDocIssuedOn, CustDocExpDate");
+			sql.append(" From CustomerDocuments doc");
 		}
-		sql.append(" where custid = :custid");
+		sql.append(" Where CustID = ?");
 
-		paramMap.addValue("custid", customerId);
+		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcTemplate.query(sql.toString(), paramMap, new RowMapper<CustomerDocument>() {
-			@Override
-			public CustomerDocument mapRow(ResultSet rs, int rowNum) throws SQLException {
-				CustomerDocument customerDocument = new CustomerDocument();
-				if (PennantConstants.PFF_CUSTCTG_INDIV.equals(bureauType)) {
-					customerDocument.setCustDocCategory(rs.getString("custdoccategory"));
-					customerDocument.setCustDocTitle(rs.getString("custdoctitle"));
-					customerDocument.setCustDocIssuedOn(rs.getDate("custdocissuedon"));
-					customerDocument.setCustDocExpDate(rs.getDate("custdocexpdate"));
-				} else {
-					customerDocument.setCustDocCategory(rs.getString("custdoccategory"));
-					customerDocument.setCustDocTitle(rs.getString("custdoctitle"));
-					customerDocument.setCustDocIssuedOn(rs.getDate("custdocissuedon"));
-					customerDocument.setCustDocExpDate(rs.getDate("custdocexpdate"));
-				}
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			CustomerDocument cd = new CustomerDocument();
 
-				return customerDocument;
-			}
-		});
+			cd.setCustDocCategory(rs.getString("CustDocCategory"));
+			cd.setCustDocTitle(rs.getString("CustDocTitle"));
+			cd.setCustDocIssuedOn(rs.getDate("CustDocIssuedOn"));
+			cd.setCustDocExpDate(rs.getDate("CustDocExpDate"));
+
+			return cd;
+		}, customerId);
 
 	}
 
 	@Override
 	public List<CustomerPhoneNumber> getCustomerPhoneNumbers(long customerId, String bureauType) {
-		logger.trace(Literal.ENTERING);
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
 
 		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(bureauType)) {
-			sql.append("select cpt.code phonetypecode");
-			sql.append(", cp.phonenumber");
-			sql.append(", phoneareacode");
-			sql.append(", phonetypepriority");
-			sql.append(" from customerphonenumbers cp");
-			sql.append(" left join cibil_phone_types_mapping pm on pm.phonetypecode=cp.phonetypecode");
-			sql.append(" left join cibil_phone_types cpt on cpt.code = pm.code");
+			sql.append("Select");
+			sql.append(" cpt.Code PhoneTypeCode, cp.PhoneNumber, PhoneAreaCode, PhoneTypePriority");
+			sql.append(" From CustomerPhoneNumbers cp");
+			sql.append(" Left Join Cibil_Phone_Types_Mapping pm on pm.PhoneTypeCode = cp.PhoneTypeCode");
+			sql.append(" Left Join Cibil_Phone_Types cpt on cpt.Code = pm.Code");
 		} else {
-			sql.append("select phonetypecode");
-			sql.append(", cp.phonenumber");
-			sql.append(", phoneareacode");
-			sql.append(", phonetypepriority");
-			sql.append(" from customerphonenumbers cp");
+			sql.append("Select");
+			sql.append(" PhoneTypeCode, cp.PhoneNumber, PhoneAreaCode, PhoneTypePriority");
+			sql.append(" From CustomerPhoneNumbers cp");
 		}
-		sql.append(" where phonecustid = :phonecustid");
-		paramMap.addValue("phonecustid", customerId);
-		return this.jdbcTemplate.query(sql.toString(), paramMap, new RowMapper<CustomerPhoneNumber>() {
-			@Override
-			public CustomerPhoneNumber mapRow(ResultSet rs, int rowNum) throws SQLException {
-				CustomerPhoneNumber custPhone = new CustomerPhoneNumber();
-				if (PennantConstants.PFF_CUSTCTG_INDIV.equals(bureauType)) {
-					custPhone.setPhoneTypeCode(rs.getString("phonetypecode"));
-					custPhone.setPhoneNumber(rs.getString("phonenumber"));
-					custPhone.setPhoneAreaCode(rs.getString("phoneareacode"));
-					custPhone.setPhoneTypePriority(rs.getInt("phonetypepriority"));
-				} else {
-					custPhone.setPhoneTypeCode(rs.getString("phonetypecode"));
-					custPhone.setPhoneNumber(rs.getString("phonenumber"));
-					custPhone.setPhoneAreaCode(rs.getString("phoneareacode"));
-					custPhone.setPhoneTypePriority(rs.getInt("phonetypepriority"));
-				}
-				return custPhone;
-			}
-		});
+		sql.append(" where PhoneCustID = ?");
 
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			CustomerPhoneNumber cpn = new CustomerPhoneNumber();
+
+			cpn.setPhoneTypeCode(rs.getString("PhoneTypeCode"));
+			cpn.setPhoneNumber(rs.getString("PhoneNumber"));
+			cpn.setPhoneAreaCode(rs.getString("PhoneAreaCode"));
+			cpn.setPhoneTypePriority(rs.getInt("PhoneTypePriority"));
+
+			return cpn;
+		}, customerId);
 	}
 
 	@Override
 	public List<CustomerEMail> getCustomerEmails(long customerId) {
-		logger.trace(Literal.ENTERING);
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		StringBuilder sql = new StringBuilder();
-		sql.append("select CustEMail from CUSTOMEREMAILS");
-		sql.append(" where CUSTID = :CUSTID");
-		paramMap.addValue("CUSTID", customerId);
-		return this.jdbcTemplate.query(sql.toString(), paramMap, new RowMapper<CustomerEMail>() {
-			@Override
-			public CustomerEMail mapRow(ResultSet rs, int rowNum) throws SQLException {
-				CustomerEMail custEmail = new CustomerEMail();
-				custEmail.setCustEMail(rs.getString("CustEMail"));
-				return custEmail;
-			}
+		String sql = "Select CustEMail from CustomerEmails where CustID = ?";
 
-		});
+		logger.debug(Literal.SQL + sql);
 
+		return this.jdbcOperations.query(sql, (rs, rowNum) -> {
+			CustomerEMail ce = new CustomerEMail();
+			ce.setCustEMail(rs.getString("CustEMail"));
+
+			return ce;
+		}, customerId);
 	}
 
 	@Override
 	public List<CustomerAddres> getCustomerAddres(long customerId, String segmentType) {
-		logger.trace(Literal.ENTERING);
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" cat.code CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet");
+		sql.append(", CustDistrict, pvc.PcCityName, CustAddrLine1, CustAddrLine2");
+		sql.append(", sm.code CustAddrProvince, sm.Description, CustAddrZIP, CustAddrCountry");
+		sql.append(" From CustomerAddresses ca");
+		sql.append(" Left Join Cibil_Address_Types_Mapping am on am.Address_Type = ca.CustAddrType");
+		sql.append(" and am.Segment_Type = ?");
+		sql.append(" Left Join Cibil_Address_Types cat on cat.Code = am.Code and cat.Segment_type = am.Segment_type");
+		sql.append(" Left Join Cibil_States_Mapping sm on sm.CpProvince = ca.CustAddrProvince");
+		sql.append(" and sm.Segment_Type  = am.Segment_Type");
+		sql.append(" Left Join RMTProvinceVsCity pvc on pvc.PcCity = ca.CustAddrCity");
+		sql.append(" Where CustID = ?");
 
-		StringBuilder sql = new StringBuilder();
-		sql.append("select cat.code CustAddrType");
-		sql.append(", CustAddrHNbr");
-		sql.append(", CustFlatNbr");
-		sql.append(", CustAddrStreet");
-		sql.append(", CustDistrict");
-		sql.append(", pvc.pccityname CustAddrcity");
-		sql.append(", CustAddrLine1");
-		sql.append(", CustAddrLine2");
-		sql.append(", sm.code CustAddrProvince");
-		sql.append(", sm.description LovDescCustAddrProvinceName");
-		sql.append(", CustAddrZIP");
-		sql.append(", CustAddrCountry");
-		sql.append(" from CustomerAddresses ca");
-		sql.append(" left join cibil_address_types_mapping am on am.address_type = ca.custaddrtype");
-		sql.append(" and am.segment_type = :segment_type");
-		sql.append(" left join cibil_address_types cat on cat.code = am.Code and cat.segment_type = am.segment_type");
-		sql.append(" left join cibil_states_mapping sm on sm.CPPROVINCE = ca.CUSTADDRPROVINCE");
-		sql.append(" and sm.segment_type  = am.segment_type");
-		sql.append(" left join RMTProvinceVsCity pvc on pvc.PCCITY=ca.CustAddrcity");
-		sql.append(" where CUSTID = :CUSTID");
+		Object[] obj = new Object[] { segmentType, customerId };
 
 		if (!PennantConstants.PFF_CUSTCTG_INDIV.equals(segmentType)) {
-			sql.append(" and custAddrPriority = :custAddrPriority");
+			sql.append(" and CustAddrPriority = ?");
+
+			obj = new Object[] { segmentType, customerId, PennantConstants.KYC_PRIORITY_VERY_HIGH };
 		}
 
-		paramMap.addValue("CUSTID", customerId);
-		paramMap.addValue("segment_type", segmentType);
-		paramMap.addValue("custAddrPriority", PennantConstants.KYC_PRIORITY_VERY_HIGH, Types.INTEGER);
+		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcTemplate.query(sql.toString(), paramMap, new RowMapper<CustomerAddres>() {
-			@Override
-			public CustomerAddres mapRow(ResultSet rs, int rowNum) throws SQLException {
-				CustomerAddres customerAddres = new CustomerAddres();
-				customerAddres.setCustAddrType(rs.getString("CustAddrType"));
-				customerAddres.setCustAddrHNbr(rs.getString("CustAddrHNbr"));
-				customerAddres.setCustFlatNbr(rs.getString("CustFlatNbr"));
-				customerAddres.setCustAddrStreet(rs.getString("CustAddrStreet"));
-				customerAddres.setCustDistrict(rs.getString("CustDistrict"));
-				customerAddres.setCustAddrCity(rs.getString("CustAddrcity"));
-				customerAddres.setCustAddrLine1(rs.getString("CustAddrLine1"));
-				customerAddres.setCustAddrLine2(rs.getString("CustAddrLine2"));
-				customerAddres.setCustAddrProvince(rs.getString("CustAddrProvince"));
-				customerAddres.setCustAddrZIP(rs.getString("CustAddrZIP"));
-				customerAddres.setCustAddrCountry(rs.getString("CustAddrCountry"));
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			CustomerAddres ca = new CustomerAddres();
+			ca.setCustAddrType(rs.getString("CustAddrType"));
+			ca.setCustAddrHNbr(rs.getString("CustAddrHNbr"));
+			ca.setCustFlatNbr(rs.getString("CustFlatNbr"));
+			ca.setCustAddrStreet(rs.getString("CustAddrStreet"));
+			ca.setCustDistrict(rs.getString("CustDistrict"));
+			ca.setCustAddrCity(rs.getString("PcCityName"));
+			ca.setCustAddrLine1(rs.getString("CustAddrLine1"));
+			ca.setCustAddrLine2(rs.getString("CustAddrLine2"));
+			ca.setCustAddrProvince(rs.getString("CustAddrProvince"));
+			// customerAddres.setLovDescCustAddrProvinceName(rs.getString("Description"));
+			ca.setCustAddrZIP(rs.getString("CustAddrZIP"));
+			ca.setCustAddrCountry(rs.getString("CustAddrCountry"));
 
-				return customerAddres;
-			}
-		});
+			return ca;
+		}, obj);
 	}
 
 	@Override
-	public FinanceEnquiry getFinanceSummary(long customerId, String finReference, String segmentType) {
-		logger.trace(Literal.ENTERING);
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		StringBuilder sql = new StringBuilder();
-		sql.append("select * from cibil_customer_loans_view cs");
-		sql.append(" where cs.finreference = :finreference");
-		sql.append(" and custid = :custid");
-		sql.append(" and cs.segment_type = :segment_type");
+	public FinanceEnquiry getFinanceSummary(long customerId, long finID, String segmentType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinType, FinID, FinReference, FinStartDate, FinApprovedDate, LatestRpyDate");
+		sql.append(", RepayFrq, FinAssetValue, Future_Schedule_Prin, Instalment_Due, Instalment_Paid");
+		sql.append(", Bounce_Due, Bounce_Paid, Late_Payment_Penalty_Due, Late_Payment_Penalty_Paid");
+		sql.append(", Total_Pri_Schd, Total_Pri_Paid, Total_Pft_Schd, Total_Pft_Paid");
+		sql.append(", Excess_Amount, Excess_Amt_Paid, CurOdDays, ClosingStatus, ClosedDate");
+		sql.append(", OwnerShip, NumberOfTerms, CustIncome, MaturityDate, CurReducingRate");
+		sql.append(" From Cibil_Customer_Loans_View cs");
+		sql.append(" Where cs.FinID = ? and  and CustID = ? and cs.Segment_Type = ?");
 
-		paramMap.addValue("finreference", finReference);
-		paramMap.addValue("custid", customerId);
-		paramMap.addValue("segment_type", segmentType);
+		logger.debug(Literal.SQL + sql.toString());
+
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), paramMap, new RowMapper<FinanceEnquiry>() {
-				@Override
-				public FinanceEnquiry mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinanceEnquiry finEnqy = new FinanceEnquiry();
-					finEnqy.setFinType(rs.getString("FINTYPE"));
-					finEnqy.setFinReference(rs.getString("FINREFERENCE"));
-					finEnqy.setFinStartDate(rs.getDate("FINSTARTDATE"));
-					finEnqy.setFinApprovedDate(rs.getDate("FINAPPROVEDDATE"));
-					finEnqy.setLatestRpyDate(rs.getDate("LATESTRPYDATE"));
-					finEnqy.setRepayFrq(rs.getString("REPAYFRQ"));
-					finEnqy.setFinAssetValue(rs.getBigDecimal("FINASSETVALUE"));
-					finEnqy.setFutureSchedulePrin(rs.getBigDecimal("FUTURE_SCHEDULE_PRIN"));
-					finEnqy.setInstalmentDue(rs.getBigDecimal("INSTALMENT_DUE"));
-					finEnqy.setInstalmentPaid(rs.getBigDecimal("INSTALMENT_PAID"));
-					finEnqy.setBounceDue(rs.getBigDecimal("BOUNCE_DUE"));
-					finEnqy.setBouncePaid(rs.getBigDecimal("BOUNCE_PAID"));
-					finEnqy.setLatePaymentPenaltyDue(rs.getBigDecimal("LATE_PAYMENT_PENALTY_DUE"));
-					finEnqy.setLatePaymentPenaltyPaid(rs.getBigDecimal("LATE_PAYMENT_PENALTY_PAID"));
-					finEnqy.setTotalPriSchd(rs.getBigDecimal("TOTAL_PRI_SCHD"));
-					finEnqy.setTotalPriPaid(rs.getBigDecimal("TOTAL_PRI_PAID"));
-					finEnqy.setTotalPftSchd(rs.getBigDecimal("TOTAL_PFT_SCHD"));
-					finEnqy.setTotalPftPaid(rs.getBigDecimal("TOTAL_PFT_PAID"));
-					finEnqy.setExcessAmount(rs.getBigDecimal("EXCESS_AMOUNT"));
-					finEnqy.setExcessAmtPaid(rs.getBigDecimal("EXCESS_AMT_PAID"));
-					finEnqy.setCurODDays(rs.getInt("CURODDAYS"));
-					finEnqy.setClosingStatus(rs.getString("CLOSINGSTATUS"));
-					finEnqy.setClosedDate(rs.getDate("CLOSEDDATE"));
-					finEnqy.setOwnership(rs.getString("OWNERSHIP"));
-					finEnqy.setNumberOfTerms(rs.getInt("NUMBEROFTERMS"));
-					finEnqy.setSvAmount(rs.getBigDecimal("CUSTINCOME"));
-					finEnqy.setMaturityDate(rs.getDate("MATURITYDATE"));
-					finEnqy.setRepayProfitRate(rs.getBigDecimal("CURREDUCINGRATE"));
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceEnquiry finEnqy = new FinanceEnquiry();
+				finEnqy.setFinType(rs.getString("FinType"));
+				finEnqy.setFinID(rs.getLong("FinID"));
+				finEnqy.setFinReference(rs.getString("FinReference"));
+				finEnqy.setFinStartDate(rs.getDate("FinStartDate"));
+				finEnqy.setFinApprovedDate(rs.getDate("FinApprovedDate"));
+				finEnqy.setLatestRpyDate(rs.getDate("LatestRpyDate"));
+				finEnqy.setRepayFrq(rs.getString("RepayFrq"));
+				finEnqy.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
+				finEnqy.setFutureSchedulePrin(rs.getBigDecimal("Future_Schedule_Prin"));
+				finEnqy.setInstalmentDue(rs.getBigDecimal("Instalment_Due"));
+				finEnqy.setInstalmentPaid(rs.getBigDecimal("Instalment_Paid"));
+				finEnqy.setBounceDue(rs.getBigDecimal("Bounce_Due"));
+				finEnqy.setBouncePaid(rs.getBigDecimal("Bounce_Paid"));
+				finEnqy.setLatePaymentPenaltyDue(rs.getBigDecimal("Late_Payment_Penalty_Due"));
+				finEnqy.setLatePaymentPenaltyPaid(rs.getBigDecimal("Late_Payment_Penalty_Paid"));
+				finEnqy.setTotalPriSchd(rs.getBigDecimal("Total_Pri_Schd"));
+				finEnqy.setTotalPriPaid(rs.getBigDecimal("Total_Pri_Paid"));
+				finEnqy.setTotalPftSchd(rs.getBigDecimal("Total_Pft_Schd"));
+				finEnqy.setTotalPftPaid(rs.getBigDecimal("Total_Pft_Paid"));
+				finEnqy.setExcessAmount(rs.getBigDecimal("Excess_Amount"));
+				finEnqy.setExcessAmtPaid(rs.getBigDecimal("Excess_Amt_Paid"));
+				finEnqy.setCurODDays(rs.getInt("CurOdDays"));
+				finEnqy.setClosingStatus(rs.getString("ClosingStatus"));
+				finEnqy.setClosedDate(rs.getDate("ClosedDate"));
+				finEnqy.setOwnership(rs.getString("OwnerShip"));
+				finEnqy.setNumberOfTerms(rs.getInt("NumberOfTerms"));
+				finEnqy.setSvAmount(rs.getBigDecimal("CustIncome"));
+				finEnqy.setMaturityDate(rs.getDate("MaturityDate"));
+				finEnqy.setRepayProfitRate(rs.getBigDecimal("CurReducingRate"));
 
-					return finEnqy;
-				}
-			});
+				return finEnqy;
+			}, finID, customerId, segmentType);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Loan details not availabe for the specified Custome Id {}, FinRegerence {}, segmentType {}",
-					customerId, finReference, segmentType);
+			logger.warn("Loan details not availabe for the specified Custome Id {}, FinID {}, segmentType {}",
+					customerId, finID, segmentType);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.trace(Literal.LEAVING);
+
 		return null;
 	}
 
@@ -378,604 +312,434 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		logger.trace(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("select * from cibil_customer_loans_view cs");
-		sql.append(" inner join cibil_customer_extract cce on cce.finreference = cs.finreference");
-		sql.append(" and cs.custid = cce.custid");
-		sql.append(" where cs.custid = :custid");
-		sql.append(" and cs.segment_type = :segment_type");
+		sql.append("select");
+		sql.append(" FinType, FinID, FinReference, FinStartDate, FinApprovedDate, LatestRpyDate");
+		sql.append(", RepayFrq, FinAssetValue, Future_Schedule_Prin, Instalment_Due, Instalment_Paid");
+		sql.append(", Bounce_Due, Bounce_Paid, Late_Payment_Penalty_Due, Late_Payment_Penalty_Paid");
+		sql.append(", Total_Pri_Schd, Total_Pri_Paid, Total_Pft_Schd, Total_Pft_Paid");
+		sql.append(", Excess_Amount, Excess_Amt_Paid, CurOdDays, ClosingStatus, ClosedDate");
+		sql.append(", OwnerShip, NumberOfTerms, CustIncome, MaturityDate");
+		sql.append(" From Cibil_Customer_Loans_View cs");
+		sql.append(" Inner Join Cibil_Customer_Extract cce on cce.FinID = cs.FinID and cs.CustID = cce.CustID");
+		sql.append(" where cs.CustID = ? and cs.segment_type = ?");
 
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("custid", customerId);
-		paramMap.addValue("segment_type", segmentType);
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcTemplate.query(sql.toString(), paramMap, new RowMapper<FinanceEnquiry>() {
-				@Override
-				public FinanceEnquiry mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinanceEnquiry finEnqy = new FinanceEnquiry();
-					finEnqy.setFinType(rs.getString("FINTYPE"));
-					finEnqy.setFinReference(rs.getString("FINREFERENCE"));
-					finEnqy.setFinStartDate(rs.getDate("FINSTARTDATE"));
-					finEnqy.setFinApprovedDate(rs.getDate("FINAPPROVEDDATE"));
-					finEnqy.setLatestRpyDate(rs.getDate("LATESTRPYDATE"));
-					finEnqy.setRepayFrq(rs.getString("REPAYFRQ"));
-					finEnqy.setFinAssetValue(rs.getBigDecimal("FINASSETVALUE"));
-					finEnqy.setFutureSchedulePrin(rs.getBigDecimal("FUTURE_SCHEDULE_PRIN"));
-					finEnqy.setInstalmentDue(rs.getBigDecimal("INSTALMENT_DUE"));
-					finEnqy.setInstalmentPaid(rs.getBigDecimal("INSTALMENT_PAID"));
-					finEnqy.setBounceDue(rs.getBigDecimal("BOUNCE_DUE"));
-					finEnqy.setBouncePaid(rs.getBigDecimal("BOUNCE_PAID"));
-					finEnqy.setLatePaymentPenaltyDue(rs.getBigDecimal("LATE_PAYMENT_PENALTY_DUE"));
-					finEnqy.setLatePaymentPenaltyPaid(rs.getBigDecimal("LATE_PAYMENT_PENALTY_PAID"));
-					finEnqy.setTotalPriSchd(rs.getBigDecimal("TOTAL_PRI_SCHD"));
-					finEnqy.setTotalPriPaid(rs.getBigDecimal("TOTAL_PRI_PAID"));
-					finEnqy.setTotalPftSchd(rs.getBigDecimal("TOTAL_PFT_SCHD"));
-					finEnqy.setTotalPftPaid(rs.getBigDecimal("TOTAL_PFT_PAID"));
-					finEnqy.setExcessAmount(rs.getBigDecimal("EXCESS_AMOUNT"));
-					finEnqy.setExcessAmtPaid(rs.getBigDecimal("EXCESS_AMT_PAID"));
-					finEnqy.setCurODDays(rs.getInt("CURODDAYS"));
-					finEnqy.setClosingStatus(rs.getString("CLOSINGSTATUS"));
-					finEnqy.setOwnership(rs.getString("OWNERSHIP"));
-					finEnqy.setNumberOfTerms(rs.getInt("NUMBEROFTERMS"));
-					finEnqy.setSvAmount(rs.getBigDecimal("CUSTINCOME"));
-					finEnqy.setMaturityDate(rs.getDate("MATURITYDATE"));
-					return finEnqy;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.trace(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			FinanceEnquiry finEnqy = new FinanceEnquiry();
+
+			finEnqy.setFinType(rs.getString("FinType"));
+			finEnqy.setFinID(rs.getLong("FinID"));
+			finEnqy.setFinReference(rs.getString("FinReference"));
+			finEnqy.setFinStartDate(rs.getDate("FinStartDate"));
+			finEnqy.setFinApprovedDate(rs.getDate("FinApprovedDate"));
+			finEnqy.setLatestRpyDate(rs.getDate("LatestRpyDate"));
+			finEnqy.setRepayFrq(rs.getString("RepayFrq"));
+			finEnqy.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
+			finEnqy.setFutureSchedulePrin(rs.getBigDecimal("Future_Schedule_Prin"));
+			finEnqy.setInstalmentDue(rs.getBigDecimal("Instalment_Due"));
+			finEnqy.setInstalmentPaid(rs.getBigDecimal("Instalment_Paid"));
+			finEnqy.setBounceDue(rs.getBigDecimal("Bounce_Due"));
+			finEnqy.setBouncePaid(rs.getBigDecimal("Bounce_Paid"));
+			finEnqy.setLatePaymentPenaltyDue(rs.getBigDecimal("Late_Payment_Penalty_Due"));
+			finEnqy.setLatePaymentPenaltyPaid(rs.getBigDecimal("Late_Payment_Penalty_Paid"));
+			finEnqy.setTotalPriSchd(rs.getBigDecimal("Total_Pri_Schd"));
+			finEnqy.setTotalPriPaid(rs.getBigDecimal("Total_Pri_Paid"));
+			finEnqy.setTotalPftSchd(rs.getBigDecimal("Total_Pft_Schd"));
+			finEnqy.setTotalPftPaid(rs.getBigDecimal("Total_Pft_Paid"));
+			finEnqy.setExcessAmount(rs.getBigDecimal("Excess_Amount"));
+			finEnqy.setExcessAmtPaid(rs.getBigDecimal("Excess_Amt_Paid"));
+			finEnqy.setCurODDays(rs.getInt("CurOdDays"));
+			finEnqy.setClosingStatus(rs.getString("ClosingStatus"));
+			finEnqy.setClosedDate(rs.getDate("ClosedDate"));
+			finEnqy.setOwnership(rs.getString("OwnerShip"));
+			finEnqy.setNumberOfTerms(rs.getInt("NumberOfTerms"));
+			finEnqy.setSvAmount(rs.getBigDecimal("CustIncome"));
+			finEnqy.setMaturityDate(rs.getDate("MaturityDate"));
+
+			return finEnqy;
+		}, customerId, segmentType);
+
 	}
 
 	@Override
-	public void logFileInfoException(long id, String finReference, String reason) {
-		logger.trace(Literal.ENTERING);
-
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-
+	public void logFileInfoException(long id, long finID, String finReference, String reason) {
 		StringBuilder sql = new StringBuilder("Insert Into CIBIL_FILE_INFO_LOG");
-		sql.append(" (ID");
-		sql.append(", FINREFERENCE");
-		sql.append(", REASON");
-		sql.append(", STATUS)");
-		sql.append(" Values(:ID");
-		sql.append(", :FINREFERENCE");
-		sql.append(", :REASON");
-		sql.append(", :STATUS)");
+		sql.append(" (ID, FinID, FinReference, Reason, Status)");
+		sql.append(" Values(?, ?, ?, ?, ?)");
 
-		paramMap.addValue("ID", id);
-		paramMap.addValue("FINREFERENCE", finReference);
-		paramMap.addValue("REASON", reason);
-		paramMap.addValue("STATUS", "F");
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			this.jdbcTemplate.update(sql.toString(), paramMap);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.trace(Literal.LEAVING);
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
 
+				ps.setLong(index++, id);
+				ps.setLong(index++, finID);
+				ps.setString(index++, finReference);
+				ps.setString(index++, reason);
+				ps.setString(index++, "F");
+			});
+		} catch (Exception e) {
+			//
+		}
 	}
 
 	@Override
 	public DataEngineStatus getLatestExecution() {
-		logger.trace(Literal.ENTERING);
-		DataEngineStatus dataStatus = new DataEngineStatus();
-
-		StringBuilder sql = null;
-
-		sql = new StringBuilder("Select ID");
-		sql.append(", TOTAL_RECORDS");
-		sql.append(", PROCESSED_RECORDS");
-		sql.append(", SUCCESS_RECORDS");
-		sql.append(", FAILED_RECORDS,");
-		sql.append(" REMARKS");
-		sql.append(", START_TIME");
-		sql.append(", END_TIME");
-		sql.append(" from CIBIL_FILE_INFO");
-		sql.append(" where Id = (Select MAX(Id) from CIBIL_FILE_INFO)");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ID, Total_Records, Processed_Records, Success_Records, Failed_Records");
+		sql.append(", Remarks, Start_Time, End_Time");
+		sql.append(" From Cibil_File_Info");
+		sql.append(" Where ID = (Select MAX(Id) from Cibil_File_Info)");
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), new MapSqlParameterSource(),
-					new RowMapper<DataEngineStatus>() {
-						@Override
-						public DataEngineStatus mapRow(ResultSet rs, int rowNum) throws SQLException {
-							dataStatus.setId(rs.getInt("ID"));
-							dataStatus.setTotalRecords(rs.getInt("TOTAL_RECORDS"));
-							dataStatus.setProcessedRecords(rs.getInt("PROCESSED_RECORDS"));
-							dataStatus.setSuccessRecords(rs.getInt("SUCCESS_RECORDS"));
-							dataStatus.setFailedRecords(rs.getInt("FAILED_RECORDS"));
-							dataStatus.setRemarks(rs.getString("REMARKS"));
-							dataStatus.setStartTime(rs.getDate("START_TIME"));
-							dataStatus.setEndTime(rs.getDate("END_TIME"));
-							if (dataStatus != null) {
-								List<DataEngineLog> list = getExceptions(dataStatus.getId());
-								if (list != null && !list.isEmpty()) {
-									dataStatus.setDataEngineLogList(list);
-								}
-							}
-							return dataStatus;
-						}
-					});
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				DataEngineStatus ds = new DataEngineStatus();
+
+				ds.setId(rs.getInt("ID"));
+				ds.setTotalRecords(rs.getInt("Total_Records"));
+				ds.setProcessedRecords(rs.getInt("Processed_Records"));
+				ds.setSuccessRecords(rs.getInt("Success_Records"));
+				ds.setFailedRecords(rs.getInt("Failed_Records"));
+				ds.setRemarks(rs.getString("Remarks"));
+				ds.setStartTime(rs.getDate("Start_Time"));
+				ds.setEndTime(rs.getDate("End_Time"));
+				ds.setDataEngineLogList(getExceptions(ds.getId()));
+
+				return ds;
+			});
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
-		logger.trace(Literal.LEAVING);
-		return dataStatus;
+
+		return new DataEngineStatus();
 	}
 
-	public List<DataEngineLog> getExceptions(long Id) {
-		logger.trace(Literal.ENTERING);
-		MapSqlParameterSource parameterMap = null;
-		StringBuilder sql = null;
-		sql = new StringBuilder("Select * from CIBIL_FILE_INFO_LOG");
-		sql.append(" where ID = :ID");
-		parameterMap = new MapSqlParameterSource();
-		parameterMap.addValue("ID", Id);
-		try {
-			return this.jdbcTemplate.query(sql.toString(), parameterMap, new RowMapper<DataEngineLog>() {
-				@Override
-				public DataEngineLog mapRow(ResultSet rs, int rowNum) throws SQLException {
-					DataEngineLog dataEngLog = new DataEngineLog();
-					dataEngLog.setKeyId(rs.getString("FINREFERENCE"));
-					dataEngLog.setReason(rs.getString("REASON"));
-					dataEngLog.setStatus(rs.getString("STATUS"));
-					return dataEngLog;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.trace(Literal.LEAVING);
-		return new ArrayList<>();
+	public List<DataEngineLog> getExceptions(long id) {
+		String sql = "Select FinID, FinReference, Reason, Status From Cibil_File_Info_Log where ID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.query(sql, (rs, rowNum) -> {
+			DataEngineLog dataEngLog = new DataEngineLog();
+			// dataEngLog.setId(rs.getLong("FinID"));
+			dataEngLog.setKeyId(rs.getString("FinReference"));
+			dataEngLog.setReason(rs.getString("Reason"));
+			dataEngLog.setStatus(rs.getString("Status"));
+			return dataEngLog;
+		}, id);
 	}
 
 	@Override
 	public void deleteDetails() {
-		logger.debug(Literal.ENTERING);
 		try {
-			jdbcTemplate.update("TRUNCATE TABLE CIBIL_CUSTOMER_EXTRACT", new MapSqlParameterSource());
+			jdbcOperations.update("Truncate Table Cibil_Customer_Extract");
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public EventProperties getEventProperties(String configName, String eventType) {
-		logger.trace(Literal.ENTERING);
-		EventProperties evntProrts = new EventProperties();
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		StringBuilder sql = null;
-		sql = new StringBuilder("SELECT DEP.* FROM DATA_ENGINE_EVENT_PROPERTIES DEP");
-		sql.append(" INNER JOIN DATA_ENGINE_CONFIG DC ON DC.ID = DEP.CONFIG_ID");
-		sql.append(" Where DC.NAME = :NAME");
-		sql.append(" AND DEP.STORAGE_TYPE = :STORAGE_TYPE");
-		parameterSource.addValue("NAME", configName);
-		parameterSource.addValue("STORAGE_TYPE", eventType);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" dep.Storage_Type, dep.Region_Name, dep.Bucket_Name, dep.Access_Key, dep.Secret_Key");
+		sql.append(", dep.Prefix, dep.Sse_Algorithm, dep.Host_Name, dep.Port, dep.Private_Key");
+		sql.append(" From Data_Engine_Event_Properties dep");
+		sql.append(" Inner Join Data_Engine_Config dc on dc.ID = dep.Config_ID");
+		sql.append(" Where dc.Name = ? and dep.Storage_Type = ?");
+
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, new RowMapper<EventProperties>() {
-				@Override
-				public EventProperties mapRow(ResultSet rs, int rowNum) throws SQLException {
-					evntProrts.setStorageType(rs.getString("STORAGE_TYPE"));
-					evntProrts.setRegionName(rs.getString("REGION_NAME"));
-					evntProrts.setBucketName(rs.getString("BUCKET_NAME"));
-					evntProrts.setAccessKey(rs.getString("ACCESS_KEY"));
-					evntProrts.setSecretKey(rs.getString("SECRET_KEY"));
-					evntProrts.setPrefix(rs.getString("PREFIX"));
-					evntProrts.setSseAlgorithm(rs.getString("SSE_ALGORITHM"));
-					evntProrts.setHostName(rs.getString("HOST_NAME"));
-					evntProrts.setPort(rs.getString("PORT"));
-					evntProrts.setPrivateKey(rs.getString("PRIVATE_KEY"));
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				EventProperties ep = new EventProperties();
 
-					return evntProrts;
+				ep.setStorageType(rs.getString("Storage_Type"));
+				ep.setRegionName(rs.getString("Region_Name"));
+				ep.setBucketName(rs.getString("Bucket_Name"));
+				ep.setAccessKey(rs.getString("Access_Key"));
+				ep.setSecretKey(rs.getString("Secret_Key"));
+				ep.setPrefix(rs.getString("Prefix"));
+				ep.setSseAlgorithm(rs.getString("Sse_Algorithm"));
+				ep.setHostName(rs.getString("Host_Name"));
+				ep.setPort(rs.getString("Port"));
+				ep.setPrivateKey(rs.getString("Private_Key"));
 
-				}
-			});
+				return ep;
+			}, configName, eventType);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
 			logger.warn("Configuration details not available for " + configName);
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
-		logger.trace(Literal.LEAVING);
+
 		return null;
 	}
 
 	@Override
 	public CibilMemberDetail getMemberDetails(String bureauType) {
-		logger.trace(Literal.ENTERING);
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		StringBuilder sql = null;
-		sql = new StringBuilder();
-		sql.append("select * from cibil_member_details");
-		sql.append(" where segment_Type =:segment_Type");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Segment_Type, Member_Code, Member_ID, Previous_Member_ID");
+		sql.append(", Member_Short_Name, Member_Password, File_Path, File_Formate");
+		sql.append(" From Cibil_Member_Details");
+		sql.append(" Where Segment_Type = ?");
 
-		parameterSource.addValue("segment_Type", bureauType);
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource,
-					new RowMapper<CibilMemberDetail>() {
-						@Override
-						public CibilMemberDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-							CibilMemberDetail cibilMemberDetail = new CibilMemberDetail();
-							cibilMemberDetail.setSegmentType(rs.getString("SEGMENT_TYPE"));
-							cibilMemberDetail.setMemberCode(rs.getString("MEMBER_CODE"));
-							cibilMemberDetail.setMemberId(rs.getString("MEMBER_ID"));
-							cibilMemberDetail.setPreviousMemberId(rs.getString("PREVIOUS_MEMBER_ID"));
-							cibilMemberDetail.setMemberShortName(rs.getString("MEMBER_SHORT_NAME"));
-							cibilMemberDetail.setMemberPassword(rs.getString("MEMBER_PASSWORD"));
-							cibilMemberDetail.setFilePath(rs.getString("FILE_PATH"));
-							cibilMemberDetail.setFileFormate(rs.getString("FILE_FORMATE"));
-							return cibilMemberDetail;
-						}
-					});
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				CibilMemberDetail cmd = new CibilMemberDetail();
+
+				cmd.setSegmentType(rs.getString("Segment_Type"));
+				cmd.setMemberCode(rs.getString("Member_Code"));
+				cmd.setMemberId(rs.getString("Member_ID"));
+				cmd.setPreviousMemberId(rs.getString("Previous_Member_ID"));
+				cmd.setMemberShortName(rs.getString("Member_Short_Name"));
+				cmd.setMemberPassword(rs.getString("Member_Password"));
+				cmd.setFilePath(rs.getString("File_Path"));
+				cmd.setFileFormate(rs.getString("File_Formate"));
+
+				return cmd;
+			}, bureauType);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			//
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
-		logger.trace(Literal.LEAVING);
+
 		return null;
 	}
 
-	//changes to differentiate the CIBIL Member ID during CIBIL generation & enquiry
 	@Override
 	public CibilMemberDetail getMemberDetailsByType(String bureauType, String type) {
-		logger.trace(Literal.ENTERING);
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ID, TYPE, SEGMENT_TYPE, MEMBER_CODE, MEMBER_ID");
-		sql.append(", PREVIOUS_MEMBER_ID, MEMBER_SHORT_NAME, MEMBER_PASSWORD");
-		sql.append(", FILE_PATH, FILE_FORMATE");
+		sql.append(" ID, Type, Segment_Type, Member_Code, Member_ID, Previous_Member_ID");
+		sql.append(", Member_Short_Name, Member_Password, File_Path, File_Formate");
 		sql.append(" From CIBIL_MEMBER_DETAILS");
-		sql.append(" Where SEGMENT_TYPE = ? and TYPE = ?");
+		sql.append(" Where Segment_Type = ? and Type = ?");
 
-		logger.trace(Literal.SQL, sql);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { bureauType, type },
-					new RowMapper<CibilMemberDetail>() {
-						@Override
-						public CibilMemberDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-							CibilMemberDetail cibilMemberDetail = new CibilMemberDetail();
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				CibilMemberDetail cmd = new CibilMemberDetail();
 
-							cibilMemberDetail.setId(rs.getString("ID"));
-							cibilMemberDetail.setType(rs.getString("TYPE"));
-							cibilMemberDetail.setSegmentType(rs.getString("SEGMENT_TYPE"));
-							cibilMemberDetail.setMemberCode(rs.getString("MEMBER_CODE"));
-							cibilMemberDetail.setMemberId(rs.getString("MEMBER_ID"));
-							cibilMemberDetail.setPreviousMemberId(rs.getString("PREVIOUS_MEMBER_ID"));
-							cibilMemberDetail.setMemberShortName(rs.getString("MEMBER_SHORT_NAME"));
-							cibilMemberDetail.setMemberPassword(rs.getString("MEMBER_PASSWORD"));
-							cibilMemberDetail.setFilePath(rs.getString("FILE_PATH"));
-							cibilMemberDetail.setFileFormate(rs.getString("FILE_FORMATE"));
+				cmd.setId(rs.getString("ID"));
+				cmd.setType(rs.getString("TYPE"));
+				cmd.setSegmentType(rs.getString("SEGMENT_TYPE"));
+				cmd.setMemberCode(rs.getString("MEMBER_CODE"));
+				cmd.setMemberId(rs.getString("MEMBER_ID"));
+				cmd.setPreviousMemberId(rs.getString("PREVIOUS_MEMBER_ID"));
+				cmd.setMemberShortName(rs.getString("MEMBER_SHORT_NAME"));
+				cmd.setMemberPassword(rs.getString("MEMBER_PASSWORD"));
+				cmd.setFilePath(rs.getString("FILE_PATH"));
+				cmd.setFileFormate(rs.getString("FILE_FORMATE"));
 
-							return cibilMemberDetail;
-						}
-					});
+				return cmd;
+			}, bureauType, type);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.trace(Literal.LEAVING);
 		return null;
 	}
 
 	@Override
 	public void logFileInfo(CibilFileInfo fileInfo) {
-		logger.trace(Literal.ENTERING);
-
 		final KeyHolder keyHolder = new GeneratedKeyHolder();
 		StringBuilder sql = new StringBuilder("insert into cibil_file_info");
-		sql.append(" (File_Name");
-		sql.append(", Member_Id");
-		sql.append(", Member_Short_Name");
-		sql.append(", Member_Password");
-		sql.append(", CreatedOn");
-		sql.append(", Status");
-		sql.append(", File_Location");
-		sql.append(", Start_Time");
-		sql.append(", Segment_Type)");
-		sql.append(" Values");
-		sql.append(" (:File_Name");
-		sql.append(", :Member_Id");
-		sql.append(", :Member_Short_Name");
-		sql.append(", :Member_Password");
-		sql.append(", :CreatedOn");
-		sql.append(", :Status");
-		sql.append(", :File_Location");
-		sql.append(", :Start_Time");
-		sql.append(", :Segment_Type)");
+		sql.append(" (File_Name, Member_Id, Member_Short_Name, Member_Password, CreatedOn");
+		sql.append(", Status, File_Location, Start_Time, Segment_Type)");
+		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		CibilMemberDetail memberDetail = fileInfo.getCibilMemberDetail();
+		logger.debug(Literal.SQL + sql.toString());
 
-		paramMap.addValue("Member_Id", memberDetail.getMemberId());
-		paramMap.addValue("File_Name", fileInfo.getFileName());
-
-		paramMap.addValue("Member_Short_Name", memberDetail.getMemberShortName());
-		paramMap.addValue("Member_Password", memberDetail.getMemberPassword());
-		paramMap.addValue("CreatedOn", SysParamUtil.getAppDate());
-		paramMap.addValue("Status", "I");
-		paramMap.addValue("File_Location", memberDetail.getFilePath());
-		paramMap.addValue("Start_Time", DateUtil.getSysDate());
-		paramMap.addValue("Segment_Type", memberDetail.getSegmentType());
 		try {
-			this.jdbcTemplate.update(sql.toString(), paramMap, keyHolder, new String[] { "id" });
+			this.jdbcOperations.update(new PreparedStatementCreator() {
+				@Override
+				public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+					PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "id" });
+					int index = 1;
+
+					CibilMemberDetail memberDetail = fileInfo.getCibilMemberDetail();
+					ps.setString(index++, fileInfo.getFileName());
+					ps.setString(index++, memberDetail.getMemberId());
+					ps.setString(index++, memberDetail.getMemberShortName());
+					ps.setString(index++, memberDetail.getMemberPassword());
+					ps.setDate(index++, JdbcUtil.getDate(SysParamUtil.getAppDate()));
+					ps.setString(index++, "I");
+					ps.setString(index++, memberDetail.getFilePath());
+					ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
+					ps.setString(index++, memberDetail.getSegmentType());
+
+					return ps;
+				}
+			}, keyHolder);
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
+
 		fileInfo.setId(keyHolder.getKey().longValue());
-		logger.trace(Literal.LEAVING);
 	}
 
 	@Override
 	public long extractCustomers(String segmentType) throws Exception {
-		logger.trace(Literal.ENTERING);
-		StringBuilder sql = new StringBuilder();
-		sql.append("INSERT INTO CIBIL_CUSTOMER_EXTRACT");
+		StringBuilder sql = new StringBuilder("INSERT INTO CIBIL_CUSTOMER_EXTRACT");
 		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(segmentType)) {
-			sql.append(" SELECT CUSTID");
-			sql.append(", FINREFERENCE");
-			sql.append(", OWNERSHIP");
-			sql.append(", LATESTRPYDATE");
-			sql.append(", :CUSTTYPECTG");
-			sql.append(" FROM CIBIL_CUSTOMER_EXTARCT_VIEW");
-			sql.append(" WHERE LATESTRPYDATE >= :LATESTRPYDATE ");
+			sql.append(" Select CustID, FinID, FinReference, OwnerShip, LatestRpyDate, ?");
+			sql.append(" From Cibil_Customer_Extarct_View");
+			sql.append(" Where LatestRpyDate >= ?");
 		} else {
-			sql.append(" SELECT C.CUSTID");
-			sql.append(", FM.FINREFERENCE");
-			sql.append(", 0, LATESTRPYDATE");
-			sql.append(", :CUSTTYPECTG");
-			sql.append(" FROM FINANCEMAIN FM");
-			sql.append(" INNER JOIN FINPFTDETAILS FP ON FP.FINREFERENCE = FM.FINREFERENCE");
-			sql.append(" INNER JOIN CUSTOMERS C ON C.CUSTID = FM.CUSTID");
-			sql.append(" INNER JOIN RMTCUSTTYPES CT ON CT.CUSTTYPECODE = C.CUSTTYPECODE AND CT.CUSTTYPECTG <> :INDIV");
-			sql.append(" WHERE LATESTRPYDATE >= :LATESTRPYDATE ");
+			sql.append(" Select c.CustID, fm.FinID, fm.FinReference, 0, LatestRpyDate, ?");
+			sql.append(" From FinanceMain fm");
+			sql.append(" Inner Join FinPftDetails fp on fp.FinID = fm.FinID");
+			sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
+			sql.append(" Inner Join RmtCustTypes ct on ct.CustTypeCode = c.CustTypeCode and ct.CustTypeCtg <> ?");
+			sql.append(" Where LatestRpyDate >= ?");
 		}
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("LATESTRPYDATE", DateUtil.addMonths(SysParamUtil.getAppDate(), -36));
-		paramMap.addValue("CUSTTYPECTG", segmentType);
-		paramMap.addValue("INDIV", PennantConstants.PFF_CUSTCTG_INDIV);
-		paramMap.addValue("LATESTRPYDATE_T", LocalDateTime.MIN);
+
+		logger.debug(Literal.SQL + sql.toString());
+
 		try {
-			return jdbcTemplate.update(sql.toString(), paramMap);
+			return jdbcOperations.update(sql.toString(), ps -> {
+				if (PennantConstants.PFF_CUSTCTG_INDIV.equals(segmentType)) {
+					ps.setString(1, segmentType);
+					ps.setDate(2, JdbcUtil.getDate(DateUtil.addMonths(SysParamUtil.getAppDate(), -36)));
+				} else {
+					ps.setString(1, segmentType);
+					ps.setString(2, PennantConstants.PFF_CUSTCTG_INDIV);
+					ps.setDate(3, JdbcUtil.getDate(DateUtil.addMonths(SysParamUtil.getAppDate(), -36)));
+				}
+			});
 		} catch (Exception e) {
 			throw new Exception(String.format("Unable Extarct %s CIBIL Data", segmentType));
 		}
-
 	}
 
 	@Override
 	public void updateFileStatus(CibilFileInfo fileInfo) {
-		logger.trace(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Update Cibil_File_Info");
+		sql.append(" Set Status = ?, Total_Records = ?, Processed_Records = ?");
+		sql.append(", Success_Records = ?, Failed_Records = ?, Remarks = ?, End_Time = ?");
+		sql.append(" Where ID = ?");
 
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		StringBuilder sql = new StringBuilder("update Cibil_File_Info");
-		sql.append(" set Status = :Status");
-		sql.append(", Total_Records = :TotalRecords");
-		sql.append(", Processed_Records = :ProcessedRecords");
-		sql.append(", SUCCESS_RECORDS = :SuccessCount");
-		sql.append(", Failed_Records = :FailedCount");
-		sql.append(", Remarks = :Remarks");
-		sql.append(", End_Time = :EndTime");
-		sql.append(" where ID = :ID");
-		String status = fileInfo.getStatus();
-		if ("S".equals(status)) {
-			paramMap.addValue("Status", "C");
-		} else {
-			paramMap.addValue("Status", "F");
-		}
-		paramMap.addValue("TotalRecords", fileInfo.getTotalRecords());
-		paramMap.addValue("ProcessedRecords", fileInfo.getProcessedRecords());
-		paramMap.addValue("SuccessCount", fileInfo.getSuccessCount());
-		paramMap.addValue("FailedCount", fileInfo.getFailedCount());
-		paramMap.addValue("Remarks", fileInfo.getRemarks());
-		paramMap.addValue("ID", fileInfo.getId());
-		paramMap.addValue("EndTime", DateUtil.getSysDate());
 		try {
-			this.jdbcTemplate.update(sql.toString(), paramMap);
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setString(index++, "S".equals(fileInfo.getStatus()) ? "C" : "F");
+				ps.setLong(index++, fileInfo.getTotalRecords());
+				ps.setLong(index++, fileInfo.getProcessedRecords());
+				ps.setLong(index++, fileInfo.getSuccessCount());
+				ps.setLong(index++, fileInfo.getFailedCount());
+				ps.setString(index++, fileInfo.getRemarks());
+				ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
+
+				ps.setLong(index++, fileInfo.getId());
+			});
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
-		logger.trace(Literal.LEAVING);
 	}
 
 	@Override
-	public List<FinODDetails> getFinODDetails(String finReference, String finCCY) {
-		logger.trace(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("Select FinODSchdDate");
-		sql.append(", UDF_CONVERTCURRENCY(FinCurODAmt, :FinCCY, :INR) FinCurODAmt");
-		sql.append(", FinCurODDays");
+	public List<FinODDetails> getFinODDetails(long finID, String finCCY) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinODSchdDate, UDF_CONVERTCURRENCY(FinCurODAmt, ?, ?) FinCurODAmt, FinCurODDays");
 		sql.append(" From FinODDetails od");
-		sql.append(" Where FinReference =:FinReference");
-		sql.append(" and FinCurODAmt >:FinCurODAmt");
-		logger.trace(Literal.SQL + sql.toString());
+		sql.append(" Where FinID = ? and FinCurODAmt > ?");
 
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("FinReference", finReference);
-		parameterSource.addValue("FinCurODAmt", 0);
-		parameterSource.addValue("FinCCY", "INR");
-		parameterSource.addValue("INR", "INR");
-		try {
-			return this.jdbcTemplate.query(sql.toString(), parameterSource, new RowMapper<FinODDetails>() {
-				@Override
-				public FinODDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinODDetails finODDtl = new FinODDetails();
-					finODDtl.setFinODSchdDate(rs.getDate("FinODSchdDate"));
-					finODDtl.setFinCurODAmt(rs.getBigDecimal("FinCurODAmt"));
-					finODDtl.setFinCurODDays(rs.getInt("FinCurODDays"));
-					return finODDtl;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.trace(Literal.LEAVING);
-		return new ArrayList<>();
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			FinODDetails finODDtl = new FinODDetails();
+			finODDtl.setFinODSchdDate(rs.getDate("FinODSchdDate"));
+			finODDtl.setFinCurODAmt(rs.getBigDecimal("FinCurODAmt"));
+			finODDtl.setFinCurODDays(rs.getInt("FinCurODDays"));
+			return finODDtl;
+		}, "INR", "INR", finID, 0);
 	}
 
 	@Override
-	public List<CollateralSetup> getCollateralDetails(String finReference, String segmentType) {
-		logger.trace(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-
-		sql.append("Select cs.bankvaluation");
-		sql.append(", ccy.ccynumber collateralccy");
-		sql.append(", collateral_type collateraltype");
+	public List<CollateralSetup> getCollateralDetails(long finID, String segmentType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" cs.BankValuation, ccy.CcyNumber, Collateral_Type");
 		sql.append(" From collateralassignment ca");
-		sql.append(" inner join cibil_customer_extract cce on cce.finreference = ca.reference");
-		sql.append(" inner join collateralsetup cs on cs.collateralref = ca.collateralref");
-		sql.append(" inner join rmtcurrencies ccy on ccy.ccycode = cs.collateralccy");
-		sql.append(" inner join collateralstructure ce on ce.collateraltype=cs.collateraltype");
-		sql.append(" left join cibil_collateral_types_mapping cctm on cctm.collateral_type = cs.collateraltype");
-		sql.append(" and cctm.segment_type= :segment_type");
-		sql.append(" left join cibil_collateral_types cct on cct.code = cctm.code and cct.segment_type=:segment_type");
-		sql.append(" where cce.finreference =:FinReference");
-		sql.append(" and cce.segment_type =:segment_type");
+		/* FIXME : change to FinID */
+		sql.append(" Inner Join Cibil_Customer_Extract cce on cce.FinReference = ca.Reference");
+		sql.append(" Inner Join CollateralSetup cs on cs.CollateralRef = ca.CollateralRef");
+		sql.append(" Inner Join RmtCurrencies ccy on ccy.CcyCode = cs.CollateralCcy");
+		sql.append(" Inner Join CollateralStructure ce on ce.CollateralType = cs.CollateralType");
+		sql.append(" Left Join Cibil_Collateral_Types_Mapping cctm on cctm.Collateral_Type = cs.CollateralType");
+		sql.append(" and cctm.Segment_Type = ?");
+		sql.append(" Left Join Cibil_Collateral_Types cct on cct.Code = cctm.Code and cct.Segment_Type = ?");
+		sql.append(" where cce.FinID = ? and cce.segment_type = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("FinReference", finReference);
-		parameterSource.addValue("segment_type", segmentType);
-		try {
-			return this.jdbcTemplate.query(sql.toString(), parameterSource, new RowMapper<CollateralSetup>() {
-				@Override
-				public CollateralSetup mapRow(ResultSet rs, int rowNum) throws SQLException {
-					CollateralSetup colltflStp = new CollateralSetup();
-					colltflStp.setBankValuation(rs.getBigDecimal("bankvaluation"));
-					colltflStp.setCollateralCcy(rs.getString("collateralccy"));
-					colltflStp.setCollateralType(rs.getString("collateraltype"));
-					return colltflStp;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.trace(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			CollateralSetup colltflStp = new CollateralSetup();
+
+			colltflStp.setBankValuation(rs.getBigDecimal("BankValuation"));
+			colltflStp.setCollateralCcy(rs.getString("CcyNumber"));
+			colltflStp.setCollateralType(rs.getString("Collateral_Type"));
+
+			return colltflStp;
+		}, segmentType, segmentType, finID, segmentType);
+
 	}
 
 	@Override
-	public List<ChequeDetail> getChequeBounceStatus(String finReference) {
-		logger.trace(Literal.ENTERING);
-		StringBuilder sql = new StringBuilder();
+	public List<ChequeDetail> getChequeBounceStatus(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" BounceDate, ReceiptAmount, rd.ChequeAcNo, br.Reason");
+		sql.append(" From finreceiptheader rh");
+		sql.append(" Inner Join FinReceiptDetail rd on rd.ReceiptId = rh.ReceiptId");
+		sql.append(" Inner Join ManualAdvise ma on ma.ReceiptId = rh.ReceiptId");
+		sql.append(" Inner Join bouncereasons br on br.BounceID = ma.BounceID");
+		sql.append(" where Receiptmode = ? and receiptmodestatus = ? and br.bouncecode in (?, ?)");
 
-		sql.append("select bouncedate chequeBounceDate");
-		sql.append(", receiptamount amount");
-		sql.append(", rd.chequeacno chequeNumber");
-		sql.append(", null chequeBounceDate");
-		sql.append(", br.reason chequeBounceReason");
-		sql.append(" from finreceiptheader rh");
-		sql.append(" inner join finreceiptdetail rd on rd.receiptid = rh.receiptid");
-		sql.append(" inner join manualadvise ma on ma.receiptid = rh.receiptid");
-		sql.append(" inner join bouncereasons br on br.bounceid = ma.bounceid");
-		sql.append(" where receiptmode=:ReceiptMode");
-		sql.append(" and receiptmodestatus= :ReceiptModeStatus");
-		sql.append(" and br.bouncecode in (:bouncecode)");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.trace(Literal.SQL + sql.toString());
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			ChequeDetail chqueDtl = new ChequeDetail();
 
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("FinReference", finReference);
-		parameterSource.addValue("ReceiptMode", " CHEQUE");
-		parameterSource.addValue("ReceiptModeStatus", "B");
-		parameterSource.addValue("bouncecode", Arrays.asList("41, 403"));
-		try {
-			return this.jdbcTemplate.query(sql.toString(), parameterSource, new RowMapper<ChequeDetail>() {
-				@Override
-				public ChequeDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					ChequeDetail chqueDtl = new ChequeDetail();
-					chqueDtl.setChequeBounceDate(rs.getDate("chequeBounceDate"));
-					chqueDtl.setAmount(rs.getBigDecimal("amount"));
-					chqueDtl.setChequeNumber(rs.getString("chequeNumber"));
-					chqueDtl.setChequeBounceDate(rs.getDate("chequeBounceDate"));
-					chqueDtl.setAmount(rs.getBigDecimal("chequeBounceReason"));
-					return chqueDtl;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.trace(Literal.LEAVING);
-		return new ArrayList<>();
+			chqueDtl.setChequeBounceDate(rs.getDate("BounceDate"));
+			chqueDtl.setAmount(rs.getBigDecimal("ReceiptAmount"));
+			chqueDtl.setChequeNumber(rs.getString("ChequeAcNo"));
+			chqueDtl.setAmount(rs.getBigDecimal("Reason"));
+
+			return chqueDtl;
+		}, " CHEQUE", "B", "41", "403");
 	}
 
 	@Override
-	public List<Long> getGuarantorsDetails(String finRefrence, boolean isBankCustomers) {
-		logger.trace(Literal.ENTERING);
-		StringBuilder sql = new StringBuilder();
+	public List<Long> getGuarantorsDetails(long finID, boolean isBankCustomers) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" c.CustID, GuarantorID");
+		sql.append(" From FinGuarantorsDetails gd");
+		sql.append(" Inner Join FinanceMain fm on fm.FinID = gd.FinID");
+		sql.append(" Inner Join Customers c on c.CustCif = gd.GuarantorCif");
+		sql.append(" Where fm.FinID = ? and BankCustomer = ?");
 
-		if (isBankCustomers) {
-			sql.append("select distinct c.custId");
-			sql.append(" from finguarantorsdetails gd");
-		} else {
-			sql.append("select guarantorid c.custId");
-			sql.append(" from finguarantorsdetails gd");
-		}
-		sql.append(" inner join Financemain fm on fm.finreference = gd.finreference");
-		sql.append(" inner join customers c on c.custcif = gd.guarantorcif");
-		sql.append(" where fm.finreference = :finreference");
-		sql.append(" and bankCustomer = :bankCustomer");
+		logger.debug(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("finreference", finRefrence);
-
-		if (isBankCustomers) {
-			parameterSource.addValue("bankCustomer", 1);
-		} else {
-			parameterSource.addValue("bankCustomer", 0);
-		}
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcTemplate.query(sql.toString(), parameterSource, new RowMapper<Long>() {
-				@Override
-				public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
-					return rs.getLong("custId");
-
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.trace(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			if (isBankCustomers) {
+				return rs.getLong("CustID");
+			} else {
+				return rs.getLong("GuarantorID");
+			}
+		}, finID, isBankCustomers ? 1 : 0);
 	}
 
 	@Override
 	public long getotalRecords(String segmentType) {
-		logger.trace(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder();
-		sql.append("select count(custid) from (select distinct custid");
-		sql.append(" from cibil_customer_extract");
-		sql.append(" where segment_type = :segment_type) t");
+		sql.append("Select count(CustID) from (");
+		sql.append(" Select distinct CustID From Cibil_Customer_Extract");
+		sql.append(" Where Segment_Type = ?) t");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("segment_type", segmentType);
-
-		return this.jdbcTemplate.queryForObject(sql.toString(), paramMap, Long.class);
+		return this.jdbcOperations.queryForObject(sql.toString(), Long.class, segmentType);
 	}
 
 	@Override
@@ -1004,40 +768,36 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 
 	@Override
 	public EventProperties getEventProperties(String configName) {
-		logger.trace(Literal.ENTERING);
-		EventProperties evntProrts = new EventProperties();
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		StringBuilder sql = null;
-		sql = new StringBuilder("SELECT DEP.* FROM DATA_ENGINE_EVENT_PROPERTIES DEP");
-		sql.append(" INNER JOIN DATA_ENGINE_CONFIG DC ON DC.ID = DEP.CONFIG_ID");
-		sql.append(" Where DC.NAME = :NAME");
-		parameterSource.addValue("NAME", configName);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" dep.Storage_Type, dep.Region_Name, dep.Bucket_Name, dep.Access_Key");
+		sql.append(", dep.Secret_Key, dep.Prefix, dep.Sse_Algorithm, dep.Host_Name, dep.Port, dep.Private_Key");
+		sql.append(" From Data_Engine_Event_Properties dep");
+		sql.append(" Inner Join Data_Engine_Config dc on dc.ID = dep.Config_ID");
+		sql.append(" Where dc.Name = ?");
+
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, new RowMapper<EventProperties>() {
-				@Override
-				public EventProperties mapRow(ResultSet rs, int rowNum) throws SQLException {
-					evntProrts.setStorageType(rs.getString("STORAGE_TYPE"));
-					evntProrts.setRegionName(rs.getString("REGION_NAME"));
-					evntProrts.setBucketName(rs.getString("BUCKET_NAME"));
-					evntProrts.setAccessKey(rs.getString("ACCESS_KEY"));
-					evntProrts.setSecretKey(rs.getString("SECRET_KEY"));
-					evntProrts.setPrefix(rs.getString("PREFIX"));
-					evntProrts.setSseAlgorithm(rs.getString("SSE_ALGORITHM"));
-					evntProrts.setHostName(rs.getString("HOST_NAME"));
-					evntProrts.setPort(rs.getString("PORT"));
-					evntProrts.setPrivateKey(rs.getString("PRIVATE_KEY"));
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				EventProperties evntProrts = new EventProperties();
 
-					return evntProrts;
+				evntProrts.setStorageType(rs.getString("Storage_Type"));
+				evntProrts.setRegionName(rs.getString("Region_Name"));
+				evntProrts.setBucketName(rs.getString("Bucket_Name"));
+				evntProrts.setAccessKey(rs.getString("Access_Key"));
+				evntProrts.setSecretKey(rs.getString("Secret_Key"));
+				evntProrts.setPrefix(rs.getString("Prefix"));
+				evntProrts.setSseAlgorithm(rs.getString("Sse_Algorithm"));
+				evntProrts.setHostName(rs.getString("Host_Name"));
+				evntProrts.setPort(rs.getString("Port"));
+				evntProrts.setPrivateKey(rs.getString("Private_Key"));
 
-				}
-			});
+				return evntProrts;
+			}, configName);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
 			logger.warn("Configuration details not available for " + configName);
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
-		logger.trace(Literal.LEAVING);
+
 		return null;
 	}
 }
