@@ -7,6 +7,7 @@ import java.util.Date;
 public class ScheduleDueTaxDetail implements Serializable {
 	private static final long serialVersionUID = -5722811453434523809L;
 
+	private long finID;
 	private String finReference;
 	private Date schDate;
 	private String taxType;
@@ -15,12 +16,16 @@ public class ScheduleDueTaxDetail implements Serializable {
 	private Long invoiceID;
 
 	public ScheduleDueTaxDetail() {
-
+		super();
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
 
 	public String getFinReference() {
 		return finReference;

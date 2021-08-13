@@ -9537,7 +9537,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	@Override
 	public FinanceScheduleDetail getFinSchduleDetails(String finReference, Date schdDate) {
-		return getFinanceScheduleDetailDAO().getFinSchduleDetails(finReference, schdDate, false);
+		return getFinanceScheduleDetailDAO().getFinanceScheduleDetailById(finReference, schdDate, "", false);
 	}
 
 	// ******************************************************//

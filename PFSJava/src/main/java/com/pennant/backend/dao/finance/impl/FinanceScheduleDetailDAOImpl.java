@@ -31,9 +31,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -42,22 +40,14 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.FinanceWriteoff;
 import com.pennant.backend.model.finance.ScheduleDueTaxDetail;
-import com.pennant.backend.model.finance.ScheduleMapDetails;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
@@ -84,6 +74,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		StringBuilder sql = getScheduleDetailQuery(type, isWIF);
 		sql.append(" Where FinID = ? and SchDate = ?");
+
 		logger.debug(Literal.SQL + sql.toString());
 
 		RowMapper<FinanceScheduleDetail> rowMapper = new ScheduleDetailRowMapper(isWIF);
@@ -91,13 +82,13 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, schdDate);
 		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
+			//
 		}
 
 		return null;
 	}
 
-	public void deleteByFinReference(String id, String type, boolean isWIF, long logKey) {
+	public void deleteByFinReference(long finID, String type, boolean isWIF, long logKey) {
 		StringBuilder sql = new StringBuilder("Delete From");
 
 		if (isWIF) {
@@ -107,15 +98,16 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		}
 
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
 
 		if (logKey != 0) {
 			sql.append(" AND LogKey = ?");
 		}
-		logger.trace(Literal.SQL + sql.toString());
+
+		logger.debug(Literal.SQL + sql.toString());
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
-			ps.setString(1, id);
+			ps.setLong(1, finID);
 
 			if (logKey != 0) {
 				ps.setLong(2, logKey);
@@ -124,114 +116,42 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		});
 	}
 
-	/**
-	 * This method Deletes the Record from the WIFFinScheduleDetails or WIFFinScheduleDetails_Temp. if Record not
-	 * deleted then throws DataAccessException with error 41003. delete Finance Schedule Detail by key FinReference
-	 * 
-	 * @param Finance Schedule Detail (wIFFinanceScheduleDetail)
-	 * @param type    (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-
 	@Override
-	public void delete(FinanceScheduleDetail wIFFinanceScheduleDetail, String type, boolean isWIF) {
-		logger.debug("Entering");
-		int recordCount = 0;
-
-		StringBuilder deleteSql = new StringBuilder("Delete From ");
+	public void delete(FinanceScheduleDetail schdule, String type, boolean isWIF) {
+		StringBuilder sql = new StringBuilder("Delete");
 
 		if (isWIF) {
-			deleteSql.append(" WIFFinScheduleDetails");
+			sql.append(" From WIFFinScheduleDetails");
 		} else {
-			deleteSql.append(" FinScheduleDetails");
+			sql.append(" From FinScheduleDetails");
 		}
 
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinReference =:FinReference and SchDate = :SchDate");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ? and SchDate = ?");
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wIFFinanceScheduleDetail);
+		logger.debug(Literal.SQL + sql.toString());
+
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+				ps.setLong(1, schdule.getFinID());
+				ps.setDate(2, JdbcUtil.getDate(schdule.getSchDate()));
+			});
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
 	}
-
-	/**
-	 * This method insert new Records into WIFFinScheduleDetails or WIFFinScheduleDetails_Temp.
-	 * 
-	 * save Finance Schedule Detail
-	 * 
-	 * @param Finance Schedule Detail (wIFFinanceScheduleDetail)
-	 * @param type    (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 
 	@Override
-	public String save(FinanceScheduleDetail wIFFinanceScheduleDetail, String type, boolean isWIF) {
-		logger.debug("Entering");
+	public void save(FinanceScheduleDetail schedule, String type, boolean isWIF) {
+		List<FinanceScheduleDetail> schedules = new ArrayList<>();
 
-		StringBuilder insertSql = new StringBuilder("Insert Into ");
-
-		if (isWIF) {
-			insertSql.append(" WIFFinScheduleDetails");
-		} else {
-			insertSql.append(" FinScheduleDetails");
-		}
-
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference, SchDate, SchSeq, PftOnSchDate,");
-		insertSql.append(" CpzOnSchDate, RepayOnSchDate, RvwOnSchDate, DisbOnSchDate,");
-		insertSql.append(" DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, MrgRate, ActRate, NoOfDays,");
-		insertSql.append(" DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd, RepayAmount, ProfitBalance,");
-		insertSql.append(" DisbAmount, DownPaymentAmount, CpzAmount, CpzBalance, OrgPft , OrgPri, OrgEndBal, ");
-		insertSql.append(" ClosingBalance, ProfitFraction, PrvRepayAmount, OrgPlanPft,");
-		insertSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid, Specifier,");
-		insertSql.append(" CalculatedRate,FeeChargeAmt,");
-		insertSql.append(" InstNumber, BpiOrHoliday, FrqDate, RecalLock,");
-		insertSql.append(" FeeSchd , SchdFeePaid , SchdFeeOS ,");
-		insertSql.append(" TDSAmount, TDSPaid, PftDaysBasis,");
-		if (!isWIF) {
-			insertSql.append(" RefundOrWaiver, EarlyPaid, EarlyPaidBal , WriteoffPrincipal, WriteoffProfit,");
-			insertSql.append(" WriteoffSchFee, PartialPaidAmt, SchdPftWaiver,");
-		}
-		insertSql.append(" DefSchdDate, SchdMethod)");
-		insertSql.append(" Values(:FinReference, :SchDate, :SchSeq, :PftOnSchDate,");
-		insertSql.append(" :CpzOnSchDate, :RepayOnSchDate, :RvwOnSchDate, :DisbOnSchDate, ");
-		insertSql.append(
-				" :DownpaymentOnSchDate, :BalanceForPftCal, :BaseRate, :SplRate,:MrgRate, :ActRate, :NoOfDays,");
-		insertSql.append(" :DayFactor, :ProfitCalc, :ProfitSchd, :PrincipalSchd, :RepayAmount, :ProfitBalance,");
-		insertSql.append(" :DisbAmount, :DownPaymentAmount, :CpzAmount, :CpzBalance, :OrgPft , :OrgPri, :OrgEndBal, ");
-		insertSql.append(" :ClosingBalance, :ProfitFraction, :PrvRepayAmount, :OrgPlanPft,");
-		insertSql.append(" :SchdPriPaid, :SchdPftPaid, :SchPriPaid, :SchPftPaid, :Specifier,");
-		insertSql.append(" :CalculatedRate,:FeeChargeAmt, ");
-		insertSql.append(" :InstNumber, :BpiOrHoliday, :FrqDate, :RecalLock,");
-		insertSql.append(" :FeeSchd , :SchdFeePaid , :SchdFeeOS , ");
-		insertSql.append(" :TDSAmount, :TDSPaid, :PftDaysBasis, ");
-		if (!isWIF) {
-			insertSql.append(" :RefundOrWaiver, :EarlyPaid, :EarlyPaidBal, :WriteoffPrincipal, :WriteoffProfit,");
-			insertSql.append(" :WriteoffSchFee, :PartialPaidAmt, :SchdPftWaiver,");
-		}
-		insertSql.append("  :DefSchdDate, :SchdMethod)");
-
-		logger.debug("insertSql: " + insertSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wIFFinanceScheduleDetail);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return wIFFinanceScheduleDetail.getFinReference();
+		saveList(schedules, type, isWIF);
 	}
 
-	public int saveList(List<FinanceScheduleDetail> financeScheduleDetail, String type, boolean isWIF) {
+	public int saveList(List<FinanceScheduleDetail> schedules, String type, boolean isWIF) {
 		StringBuilder sql = new StringBuilder("Insert Into ");
 
 		if (isWIF) {
@@ -241,7 +161,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		}
 
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" (FinReference, SchDate, SchSeq, PftOnSchDate, CpzOnSchDate, RepayOnSchDate");
+		sql.append(" (FinID, FinReference, SchDate, SchSeq, PftOnSchDate, CpzOnSchDate, RepayOnSchDate");
 		sql.append(", RvwOnSchDate, DisbOnSchDate, DownpaymentOnSchDate, BalanceForPftCal, BaseRate");
 		sql.append(", SplRate, MrgRate, ActRate, NoOfDays, DayFactor, ProfitCalc");
 		sql.append(", ProfitSchd, PrincipalSchd, RepayAmount, ProfitBalance, DisbAmount, DownPaymentAmount");
@@ -260,7 +180,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		sql.append(", DefSchdDate, SchdMethod, InstNumber, BpiOrHoliday, FrqDate, RecalLock)");
 
 		sql.append(" Values(");
-		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		if (!isWIF) {
 			sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
@@ -271,169 +191,101 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+		return jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
-				@Override
-				public void setValues(PreparedStatement ps, int i) throws SQLException {
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
 
-					FinanceScheduleDetail fsd = financeScheduleDetail.get(i);
-					int index = 1;
-					ps.setString(index++, fsd.getFinReference());
-					ps.setDate(index++, JdbcUtil.getDate(fsd.getSchDate()));
-					ps.setInt(index++, fsd.getSchSeq());
-					ps.setBoolean(index++, fsd.isPftOnSchDate());
-					ps.setBoolean(index++, fsd.isCpzOnSchDate());
-					ps.setBoolean(index++, fsd.isRepayOnSchDate());
-					ps.setBoolean(index++, fsd.isRvwOnSchDate());
-					ps.setBoolean(index++, fsd.isDisbOnSchDate());
-					ps.setBoolean(index++, fsd.isDownpaymentOnSchDate());
-					ps.setBigDecimal(index++, fsd.getBalanceForPftCal());
-					ps.setString(index++, fsd.getBaseRate());
-					ps.setString(index++, fsd.getSplRate());
-					ps.setBigDecimal(index++, fsd.getMrgRate());
-					ps.setBigDecimal(index++, fsd.getActRate());
-					ps.setInt(index++, fsd.getNoOfDays());
-					ps.setBigDecimal(index++, fsd.getDayFactor());
-					ps.setBigDecimal(index++, fsd.getProfitCalc());
-					ps.setBigDecimal(index++, fsd.getProfitSchd());
-					ps.setBigDecimal(index++, fsd.getPrincipalSchd());
-					ps.setBigDecimal(index++, fsd.getRepayAmount());
-					ps.setBigDecimal(index++, fsd.getProfitBalance());
-					ps.setBigDecimal(index++, fsd.getDisbAmount());
-					ps.setBigDecimal(index++, fsd.getDownPaymentAmount());
-					ps.setBigDecimal(index++, fsd.getCpzAmount());
-					ps.setBigDecimal(index++, fsd.getCpzBalance());
-					ps.setBigDecimal(index++, fsd.getOrgPft());
-					ps.setBigDecimal(index++, fsd.getOrgPri());
-					ps.setBigDecimal(index++, fsd.getOrgEndBal());
-					ps.setBigDecimal(index++, fsd.getOrgPlanPft());
-					ps.setBigDecimal(index++, fsd.getClosingBalance());
-					ps.setBigDecimal(index++, fsd.getProfitFraction());
-					ps.setBigDecimal(index++, fsd.getPrvRepayAmount());
-					ps.setBigDecimal(index++, fsd.getCalculatedRate());
-					ps.setBigDecimal(index++, fsd.getFeeChargeAmt());
-					ps.setBigDecimal(index++, fsd.getFeeSchd());
-					ps.setBigDecimal(index++, fsd.getSchdFeePaid());
-					ps.setBigDecimal(index++, fsd.getSchdFeeOS());
-					ps.setBigDecimal(index++, fsd.getTDSAmount());
-					ps.setBigDecimal(index++, fsd.getTDSPaid());
-					ps.setString(index++, fsd.getPftDaysBasis());
+				FinanceScheduleDetail fsd = schedules.get(i);
 
-					if (!isWIF) {
-						ps.setBigDecimal(index++, fsd.getRefundOrWaiver());
-						ps.setBigDecimal(index++, fsd.getEarlyPaid());
-						ps.setBigDecimal(index++, fsd.getEarlyPaidBal());
-						ps.setBigDecimal(index++, fsd.getWriteoffPrincipal());
-						ps.setBigDecimal(index++, fsd.getWriteoffProfit());
-						ps.setBigDecimal(index++, fsd.getWriteoffSchFee());
-						ps.setBigDecimal(index++, fsd.getPartialPaidAmt());
-						ps.setLong(index++, fsd.getPresentmentId());
-						ps.setBoolean(index++, fsd.isTDSApplicable());
-						ps.setBigDecimal(index++, fsd.getSchdPftWaiver());
-						if (type.contains("Log")) {
-							ps.setLong(index++, fsd.getLogKey());
-						}
+				int index = 1;
+
+				ps.setLong(index++, fsd.getFinID());
+				ps.setString(index++, fsd.getFinReference());
+				ps.setDate(index++, JdbcUtil.getDate(fsd.getSchDate()));
+				ps.setInt(index++, fsd.getSchSeq());
+				ps.setBoolean(index++, fsd.isPftOnSchDate());
+				ps.setBoolean(index++, fsd.isCpzOnSchDate());
+				ps.setBoolean(index++, fsd.isRepayOnSchDate());
+				ps.setBoolean(index++, fsd.isRvwOnSchDate());
+				ps.setBoolean(index++, fsd.isDisbOnSchDate());
+				ps.setBoolean(index++, fsd.isDownpaymentOnSchDate());
+				ps.setBigDecimal(index++, fsd.getBalanceForPftCal());
+				ps.setString(index++, fsd.getBaseRate());
+				ps.setString(index++, fsd.getSplRate());
+				ps.setBigDecimal(index++, fsd.getMrgRate());
+				ps.setBigDecimal(index++, fsd.getActRate());
+				ps.setInt(index++, fsd.getNoOfDays());
+				ps.setBigDecimal(index++, fsd.getDayFactor());
+				ps.setBigDecimal(index++, fsd.getProfitCalc());
+				ps.setBigDecimal(index++, fsd.getProfitSchd());
+				ps.setBigDecimal(index++, fsd.getPrincipalSchd());
+				ps.setBigDecimal(index++, fsd.getRepayAmount());
+				ps.setBigDecimal(index++, fsd.getProfitBalance());
+				ps.setBigDecimal(index++, fsd.getDisbAmount());
+				ps.setBigDecimal(index++, fsd.getDownPaymentAmount());
+				ps.setBigDecimal(index++, fsd.getCpzAmount());
+				ps.setBigDecimal(index++, fsd.getCpzBalance());
+				ps.setBigDecimal(index++, fsd.getOrgPft());
+				ps.setBigDecimal(index++, fsd.getOrgPri());
+				ps.setBigDecimal(index++, fsd.getOrgEndBal());
+				ps.setBigDecimal(index++, fsd.getOrgPlanPft());
+				ps.setBigDecimal(index++, fsd.getClosingBalance());
+				ps.setBigDecimal(index++, fsd.getProfitFraction());
+				ps.setBigDecimal(index++, fsd.getPrvRepayAmount());
+				ps.setBigDecimal(index++, fsd.getCalculatedRate());
+				ps.setBigDecimal(index++, fsd.getFeeChargeAmt());
+				ps.setBigDecimal(index++, fsd.getFeeSchd());
+				ps.setBigDecimal(index++, fsd.getSchdFeePaid());
+				ps.setBigDecimal(index++, fsd.getSchdFeeOS());
+				ps.setBigDecimal(index++, fsd.getTDSAmount());
+				ps.setBigDecimal(index++, fsd.getTDSPaid());
+				ps.setString(index++, fsd.getPftDaysBasis());
+
+				if (!isWIF) {
+					ps.setBigDecimal(index++, fsd.getRefundOrWaiver());
+					ps.setBigDecimal(index++, fsd.getEarlyPaid());
+					ps.setBigDecimal(index++, fsd.getEarlyPaidBal());
+					ps.setBigDecimal(index++, fsd.getWriteoffPrincipal());
+					ps.setBigDecimal(index++, fsd.getWriteoffProfit());
+					ps.setBigDecimal(index++, fsd.getWriteoffSchFee());
+					ps.setBigDecimal(index++, fsd.getPartialPaidAmt());
+					ps.setLong(index++, fsd.getPresentmentId());
+					ps.setBoolean(index++, fsd.isTDSApplicable());
+					ps.setBigDecimal(index++, fsd.getSchdPftWaiver());
+					if (type.contains("Log")) {
+						ps.setLong(index++, fsd.getLogKey());
 					}
-
-					ps.setBigDecimal(index++, fsd.getSchdPriPaid());
-					ps.setBigDecimal(index++, fsd.getSchdPftPaid());
-					ps.setBoolean(index++, fsd.isSchPriPaid());
-					ps.setBoolean(index++, fsd.isSchPftPaid());
-					ps.setString(index++, fsd.getSpecifier());
-					ps.setDate(index++, JdbcUtil.getDate(fsd.getDefSchdDate()));
-					ps.setString(index++, fsd.getSchdMethod());
-					ps.setInt(index++, fsd.getInstNumber());
-					ps.setString(index++, fsd.getBpiOrHoliday());
-					ps.setBoolean(index++, fsd.isFrqDate());
-					ps.setBoolean(index++, fsd.isRecalLock());
 				}
 
-				@Override
-				public int getBatchSize() {
-					return financeScheduleDetail.size();
-				}
-			}).length;
+				ps.setBigDecimal(index++, fsd.getSchdPriPaid());
+				ps.setBigDecimal(index++, fsd.getSchdPftPaid());
+				ps.setBoolean(index++, fsd.isSchPriPaid());
+				ps.setBoolean(index++, fsd.isSchPftPaid());
+				ps.setString(index++, fsd.getSpecifier());
+				ps.setDate(index++, JdbcUtil.getDate(fsd.getDefSchdDate()));
+				ps.setString(index++, fsd.getSchdMethod());
+				ps.setInt(index++, fsd.getInstNumber());
+				ps.setString(index++, fsd.getBpiOrHoliday());
+				ps.setBoolean(index++, fsd.isFrqDate());
+				ps.setBoolean(index++, fsd.isRecalLock());
+			}
 
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw e;
-		}
-	}
+			@Override
+			public int getBatchSize() {
+				return schedules.size();
+			}
+		}).length;
 
-	/**
-	 * This method updates the Record WIFFinScheduleDetails or WIFFinScheduleDetails_Temp. if Record not updated then
-	 * throws DataAccessException with error 41004. update Finance Schedule Detail by key FinReference and Version
-	 * 
-	 * @param Finance Schedule Detail (wIFFinanceScheduleDetail)
-	 * @param type    (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-
-	@Override
-	public void update(FinanceScheduleDetail financeScheduleDetail, String type, boolean isWIF) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update ");
-
-		if (isWIF) {
-			updateSql.append("WIFFinScheduleDetails");
-		} else {
-			updateSql.append(" FinScheduleDetails");
-		}
-
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(
-				" Set PftOnSchDate= :PftOnSchDate, CpzOnSchDate = :CpzOnSchDate, RepayOnSchDate= :RepayOnSchDate,");
-		updateSql.append(" RvwOnSchDate= :RvwOnSchDate, DisbOnSchDate= :DisbOnSchDate, ");
-		updateSql.append(" DownpaymentOnSchDate = :DownpaymentOnSchDate,");
-		updateSql.append(
-				" BalanceForPftCal= :BalanceForPftCal, BaseRate= :BaseRate, SplRate= :SplRate,MrgRate =:MrgRate,");
-		updateSql.append(" ActRate= :ActRate, NoOfDays= :NoOfDays, DayFactor =:DayFactor, ProfitCalc= :ProfitCalc,");
-		updateSql.append(" ProfitSchd= :ProfitSchd, PrincipalSchd= :PrincipalSchd, RepayAmount= :RepayAmount,");
-		updateSql.append(
-				" ProfitBalance=:ProfitBalance, DisbAmount= :DisbAmount, DownPaymentAmount= :DownPaymentAmount,");
-		updateSql.append(" CpzAmount= :CpzAmount, CpzBalance = :CpzBalance, ClosingBalance= :ClosingBalance,");
-		updateSql.append(" OrgPft =:OrgPft , OrgPri=:OrgPri, OrgEndBal=:OrgEndBal,OrgPlanPft=:OrgPlanPft, ");
-		updateSql.append(" ProfitFraction= :ProfitFraction, PrvRepayAmount= :PrvRepayAmount, ");
-		updateSql.append(" SchdPriPaid= :SchdPriPaid, SchdPftPaid= :SchdPftPaid, SchPriPaid= :SchPriPaid,");
-
-		updateSql.append(" SchPftPaid= :SchPftPaid,Specifier= :Specifier,");
-		updateSql.append(" CalculatedRate =:CalculatedRate,FeeChargeAmt=:FeeChargeAmt,");
-		updateSql.append(" FeeSchd=:FeeSchd , SchdFeePaid=:SchdFeePaid , SchdFeeOS=:SchdFeeOS , ");
-		updateSql.append(" TDSAmount=:TDSAmount, TDSPaid=:TDSPaid, PftDaysBasis=:PftDaysBasis, ");
-		if (!isWIF) {
-			updateSql.append(" RefundOrWaiver=:RefundOrWaiver, EarlyPaid =:EarlyPaid, EarlyPaidBal=:EarlyPaidBal ,");
-			updateSql.append(" WriteoffPrincipal=:WriteoffPrincipal, WriteoffProfit=:WriteoffProfit ,");
-			updateSql.append(" PresentmentId=:PresentmentId, ");
-			updateSql.append(" WriteoffSchFee=:WriteoffSchFee, PartialPaidAmt=:PartialPaidAmt,  ");
-			updateSql.append(" tDSApplicable=:tDSApplicable, SchdPftWaiver = :SchdPftWaiver,");
-		}
-		updateSql.append(" DefSchdDate= :DefSchdDate, SchdMethod = :SchdMethod, ");
-		updateSql.append(
-				" InstNumber= :InstNumber, BpiOrHoliday= :BpiOrHoliday, FrqDate = :FrqDate,RecalLock=:RecalLock, ");
-		updateSql.append(" Where FinReference =:FinReference AND SchDate = :SchDate AND SchSeq = :SchSeq");
-
-		logger.debug("updateSql: " + updateSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeScheduleDetail);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-
-		if (recordCount <= 0) {
-			throw new ConcurrencyException();
-		}
-		logger.debug("Leaving");
 	}
 
 	@Override
 	public void updateForRpy(FinanceScheduleDetail schd) {
 		StringBuilder sql = getUpdateQuery();
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
 			setPrepareStatementSetter(schd, ps);
@@ -479,7 +331,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		ps.setBigDecimal(index++, schd.getTDSPaid());
 		ps.setBigDecimal(index++, schd.getSchdFeePaid());
 
-		ps.setString(index++, schd.getFinReference());
+		ps.setLong(index++, schd.getFinID());
 		ps.setDate(index++, JdbcUtil.getDate(schd.getSchDate()));
 		ps.setLong(index++, schd.getSchSeq());
 	}
@@ -488,18 +340,18 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		StringBuilder sql = new StringBuilder();
 		sql.append("Update FinScheduleDetails set");
 		sql.append(" SchdPftPaid = ?, SchdPriPaid = ?, SchPftPaid = ?, SchPriPaid = ?, TDSPaid = ?, SchdFeePaid = ?");
-		sql.append(" Where FinReference = ? and SchDate = ? and SchSeq = ?");
+		sql.append(" Where FinID = ? and SchDate = ? and SchSeq = ?");
 		return sql;
 	}
 
 	public int updateForRateReview(List<FinanceScheduleDetail> schedules) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("Update FinScheduleDetails set");
-		sql.append(" BalanceForPftCal = ?, BaseRate = ?, SplRate = ?, MrgRate = ?, ActRate = ?, CalculatedRate = ?");
+		StringBuilder sql = new StringBuilder("Update FinScheduleDetails");
+		sql.append(
+				" Set BalanceForPftCal = ?, BaseRate = ?, SplRate = ?, MrgRate = ?, ActRate = ?, CalculatedRate = ?");
 		sql.append(", ProfitCalc = ?, ProfitSchd = ?, PrincipalSchd = ?, RepayAmount = ?, ProfitBalance = ?");
 		sql.append(", CpzAmount = ?, CpzBalance = ?, ClosingBalance = ?, ProfitFraction = ?, PrvRepayAmount = ?");
 		sql.append(", SchPriPaid = ?, SchPftPaid = ?, SchdMethod = ?, TDSAmount = ?, TDSPaid = ?");
-		sql.append(" Where FinReference = ? and SchDate = ? and SchSeq = ?");
+		sql.append(" Where FinID = ? and SchDate = ? and SchSeq = ?");
 
 		int[] count = jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
@@ -531,7 +383,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 				ps.setBigDecimal(index++, schd.getTDSAmount());
 				ps.setBigDecimal(index++, schd.getTDSPaid());
 
-				ps.setString(index++, schd.getFinReference());
+				ps.setLong(index++, schd.getFinID());
 				ps.setDate(index++, JdbcUtil.getDate(schd.getSchDate()));
 				ps.setInt(index++, schd.getSchSeq());
 
@@ -552,7 +404,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		StringBuilder sql = getScheduleDetailQuery(type, isWIF);
 		sql.append(" Where FinID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		RowMapper<FinanceScheduleDetail> rowMapper = new ScheduleDetailRowMapper(isWIF);
 
@@ -564,22 +416,11 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	private StringBuilder getScheduleDetailQuery(String type, boolean isWIF) {
-		StringBuilder sql = new StringBuilder("select");
-		sql.append(" FinID, FinReference, SchDate, SchSeq, PftOnSchDate, CpzOnSchDate, RepayOnSchDate, RvwOnSchDate");
-		sql.append(", DisbOnSchDate, DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, MrgRate");
-		sql.append(", ActRate, NoOfDays, DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd");
-		sql.append(", RepayAmount, ProfitBalance, DisbAmount, DownPaymentAmount, CpzAmount, CpzBalance");
-		sql.append(", OrgPft, OrgPri, OrgEndBal, OrgPlanPft, ClosingBalance, ProfitFraction, PrvRepayAmount");
-		sql.append(", CalculatedRate, FeeChargeAmt, FeeSchd, SchdFeePaid, SchdFeeOS");
-		sql.append(", TDSAmount, TDSPaid, PftDaysBasis, SchdPriPaid, SchdPftPaid");
-		sql.append(", SchPriPaid, SchPftPaid, Specifier, DefSchdDate, SchdMethod, InstNumber, BpiOrHoliday");
-		sql.append(", FrqDate, RecalLock");
+		StringBuilder sql = new StringBuilder("Select");
+		appendSchdColumns(isWIF, sql);
 
 		if (!isWIF) {
-			sql.append(", RefundOrWaiver, EarlyPaid, EarlyPaidBal, WriteoffPrincipal, WriteoffProfit, PresentmentId");
-			sql.append(", WriteoffSchFee, PartialPaidAmt, TdsApplicable, SchdPftWaiver");
 			sql.append(" From FinScheduleDetails");
-
 		} else {
 			sql.append(" From WIFFinScheduleDetails");
 		}
@@ -593,6 +434,23 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		return sql;
 	}
 
+	private void appendSchdColumns(boolean isWIF, StringBuilder sql) {
+		sql.append(" FinID, FinReference, SchDate, SchSeq, PftOnSchDate, CpzOnSchDate, RepayOnSchDate, RvwOnSchDate");
+		sql.append(", DisbOnSchDate, DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, MrgRate");
+		sql.append(", ActRate, NoOfDays, DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd");
+		sql.append(", RepayAmount, ProfitBalance, DisbAmount, DownPaymentAmount, CpzAmount, CpzBalance");
+		sql.append(", OrgPft, OrgPri, OrgEndBal, OrgPlanPft, ClosingBalance, ProfitFraction, PrvRepayAmount");
+		sql.append(", CalculatedRate, FeeChargeAmt, FeeSchd, SchdFeePaid, SchdFeeOS");
+		sql.append(", TDSAmount, TDSPaid, PftDaysBasis, SchdPriPaid, SchdPftPaid");
+		sql.append(", SchPriPaid, SchPftPaid, Specifier, DefSchdDate, SchdMethod, InstNumber, BpiOrHoliday");
+		sql.append(", FrqDate, RecalLock");
+
+		if (!isWIF) {
+			sql.append(", RefundOrWaiver, EarlyPaid, EarlyPaidBal, WriteoffPrincipal, WriteoffProfit, PresentmentId");
+			sql.append(", WriteoffSchFee, PartialPaidAmt, TdsApplicable, SchdPftWaiver");
+		}
+	}
+
 	@Override
 	public List<FinanceScheduleDetail> getFinScheduleDetails(long Custid, boolean isActive) {
 		StringBuilder sql = getScheduleDetailQuery("", false);
@@ -602,14 +460,14 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 			sql.append(" AND FinIsActive = ?");
 		}
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		RowMapper<FinanceScheduleDetail> rowMapper = new ScheduleDetailRowMapper(false);
 
 		List<FinanceScheduleDetail> finSchdDetails = null;
 
 		try {
-			finSchdDetails = this.jdbcTemplate.getJdbcOperations().query(sql.toString(), ps -> {
+			finSchdDetails = this.jdbcOperations.query(sql.toString(), ps -> {
 				ps.setLong(1, Custid);
 				if (isActive) {
 					ps.setBoolean(2, isActive);
@@ -617,7 +475,6 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 			}, rowMapper);
 		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
 			finSchdDetails = new ArrayList<>();
 		}
 		return ScheduleCalculator.sortSchdDetails(finSchdDetails);
@@ -628,698 +485,350 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		StringBuilder sql = getScheduleDetailQuery(type, isWIF);
 		sql.append(" Where FinID = ? and LogKey = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		RowMapper<FinanceScheduleDetail> rowMapper = new ScheduleDetailRowMapper(isWIF);
 
-		try {
-			return this.jdbcTemplate.getJdbcOperations().query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setLong(1, finID);
-					ps.setLong(2, logKey);
-				}
-			}, rowMapper);
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-
-		return new ArrayList<>();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, finID);
+			ps.setLong(2, logKey);
+		}, rowMapper);
 	}
 
 	@Override
-	public List<FinanceScheduleDetail> getFinSchdDetailsForBatch(String finReference) {
-		StringBuilder sql = new StringBuilder("select");
+	public List<FinanceScheduleDetail> getFinSchdDetailsForBatch(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" SchDate, SchSeq, PftOnSchDate, CpzOnSchDate, RepayOnSchDate, RvwOnSchDate, BalanceForPftCal");
 		sql.append(", ClosingBalance, CalculatedRate, NoOfDays, ProfitCalc, ProfitSchd, PrincipalSchd");
 		sql.append(", DisbAmount, DownPaymentAmount, CpzAmount, CpzBalance, FeeChargeAmt, SchdPriPaid");
 		sql.append(", SchdPftPaid, SchPftPaid, SchPriPaid, Specifier, SchdPftWaiver");
 		sql.append(" from FinScheduleDetails");
-		sql.append(" Where finReference = ?");
+		sql.append(" Where FinID = ?");
 
-		try {
-			return this.jdbcTemplate.getJdbcOperations().query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setString(1, finReference);
-				}
-			}, new RowMapper<FinanceScheduleDetail>() {
-				@Override
-				public FinanceScheduleDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinanceScheduleDetail schd = new FinanceScheduleDetail();
+		return jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, finID);
+		}, (rs, rowNum) -> {
+			FinanceScheduleDetail schd = new FinanceScheduleDetail();
 
-					schd.setSchDate(rs.getTimestamp("SchDate"));
-					schd.setSchSeq(rs.getInt("SchSeq"));
-					schd.setPftOnSchDate(rs.getBoolean("PftOnSchDate"));
-					schd.setCpzOnSchDate(rs.getBoolean("CpzOnSchDate"));
-					schd.setRepayOnSchDate(rs.getBoolean("RepayOnSchDate"));
-					schd.setRvwOnSchDate(rs.getBoolean("RvwOnSchDate"));
-					schd.setBalanceForPftCal(rs.getBigDecimal("BalanceForPftCal"));
-					schd.setClosingBalance(rs.getBigDecimal("ClosingBalance"));
-					schd.setCalculatedRate(rs.getBigDecimal("CalculatedRate"));
-					schd.setNoOfDays(rs.getInt("NoOfDays"));
-					schd.setProfitCalc(rs.getBigDecimal("ProfitCalc"));
-					schd.setProfitSchd(rs.getBigDecimal("ProfitSchd"));
-					schd.setPrincipalSchd(rs.getBigDecimal("PrincipalSchd"));
-					schd.setDisbAmount(rs.getBigDecimal("DisbAmount"));
-					schd.setDownPaymentAmount(rs.getBigDecimal("DownPaymentAmount"));
-					schd.setCpzAmount(rs.getBigDecimal("CpzAmount"));
-					schd.setCpzBalance(rs.getBigDecimal("CpzBalance"));
-					schd.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
-					schd.setSchdPriPaid(rs.getBigDecimal("SchdPriPaid"));
-					schd.setSchdPftPaid(rs.getBigDecimal("SchdPftPaid"));
-					schd.setSchPftPaid(rs.getBoolean("SchPftPaid"));
-					schd.setSchPriPaid(rs.getBoolean("SchPriPaid"));
-					schd.setSpecifier(rs.getString("Specifier"));
-					schd.setSchdPftWaiver(rs.getBigDecimal("SchdPftWaiver"));
+			schd.setSchDate(rs.getTimestamp("SchDate"));
+			schd.setSchSeq(rs.getInt("SchSeq"));
+			schd.setPftOnSchDate(rs.getBoolean("PftOnSchDate"));
+			schd.setCpzOnSchDate(rs.getBoolean("CpzOnSchDate"));
+			schd.setRepayOnSchDate(rs.getBoolean("RepayOnSchDate"));
+			schd.setRvwOnSchDate(rs.getBoolean("RvwOnSchDate"));
+			schd.setBalanceForPftCal(rs.getBigDecimal("BalanceForPftCal"));
+			schd.setClosingBalance(rs.getBigDecimal("ClosingBalance"));
+			schd.setCalculatedRate(rs.getBigDecimal("CalculatedRate"));
+			schd.setNoOfDays(rs.getInt("NoOfDays"));
+			schd.setProfitCalc(rs.getBigDecimal("ProfitCalc"));
+			schd.setProfitSchd(rs.getBigDecimal("ProfitSchd"));
+			schd.setPrincipalSchd(rs.getBigDecimal("PrincipalSchd"));
+			schd.setDisbAmount(rs.getBigDecimal("DisbAmount"));
+			schd.setDownPaymentAmount(rs.getBigDecimal("DownPaymentAmount"));
+			schd.setCpzAmount(rs.getBigDecimal("CpzAmount"));
+			schd.setCpzBalance(rs.getBigDecimal("CpzBalance"));
+			schd.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
+			schd.setSchdPriPaid(rs.getBigDecimal("SchdPriPaid"));
+			schd.setSchdPftPaid(rs.getBigDecimal("SchdPftPaid"));
+			schd.setSchPftPaid(rs.getBoolean("SchPftPaid"));
+			schd.setSchPriPaid(rs.getBoolean("SchPriPaid"));
+			schd.setSpecifier(rs.getString("Specifier"));
+			schd.setSchdPftWaiver(rs.getBigDecimal("SchdPftWaiver"));
 
-					return schd;
-				}
-			});
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		return new ArrayList<>();
+			return schd;
+		});
 	}
 
 	@Override
-	public FinanceScheduleDetail getFinSchdDetailForRpy(String finReference, Date rpyDate, String finRpyFor) {
-		logger.debug("Entering");
+	public BigDecimal getSuspenseAmount(long finID, Date dateValueDate) {
+		String sql = "Select sum(ProfitCalc - SchdPftPaid) From finscheduleDetails Where FinID = ?";
 
-		FinanceScheduleDetail schdDetail = new FinanceScheduleDetail();
-		schdDetail.setFinReference(finReference);
-		schdDetail.setSchDate(rpyDate);
-
-		StringBuilder selectSql = new StringBuilder(" Select SchSeq ");
-		selectSql.append(" ,SchdPftPaid, SchdPriPaid, ProfitSchd, PrincipalSchd ");
-		selectSql.append(" From FinScheduleDetails");
-		selectSql.append(" Where FinReference =:FinReference AND SchDate=:SchDate ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(schdDetail);
-		RowMapper<FinanceScheduleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceScheduleDetail.class);
-
-		try {
-			schdDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			schdDetail = null;
-		}
-		logger.debug("Leaving");
-		return schdDetail;
-	}
-
-	@Override
-	public List<ScheduleMapDetails> getFinSchdDetailTermByDates(List<String> finReferences, Date schdFromdate,
-			Date schdTodate) {
-		logger.debug("Entering");
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReferences);
-		source.addValue("FromDate", schdFromdate);
-		source.addValue("ToDate", schdTodate);
-
-		StringBuilder selectSql = new StringBuilder(
-				"Select T1.FinReference, MIN(T1.SchDate) schdFromDate, MAX(T1.SchDate) schdToDate ");
-		selectSql.append("FROM FinScheduleDetails T1 INNER JOIN  FinanceMain T2 ON T1.FinReference = T2.FinReference ");
-		selectSql.append(" WHERE ");
-		selectSql.append(" T1.FinReference IN( :FinReference ) AND ( T1.SchDate >= :FromDate");
-		if (schdTodate != null) {
-			selectSql.append(" AND T1.SchDate <=:ToDate ");
-		}
-		selectSql.append(" ) GROUP BY T1.FinReference");
-		RowMapper<ScheduleMapDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(ScheduleMapDetails.class);
-		logger.debug("selectSql: " + selectSql.toString());
-
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-	}
-
-	@Override
-	public List<ScheduleMapDetails> getRecalCulateFinSchdDetailTermByDates(List<String> finReferences,
-			Date schdFromdate, Date schdTodate) {
-		logger.debug("Entering");
-		Map<String, List<String>> map = new HashMap<String, List<String>>();
-		map.put("FinReference", finReferences);
-		StringBuilder selectSql = new StringBuilder(
-				"Select T1.FinReference, MIN(T1.SchDate) schdRecalFromDate, MAX(T1.SchDate) schdRecalToDate ,T2.MaturityDate");
-		selectSql.append("FROM FinScheduleDetails T1 INNER JOIN  FinanceMain T2 ON T1.FinReference = T2.FinReference ");
-		selectSql.append(" WHERE ");
-		selectSql.append(" T1.FinReference IN( :FinReference ) AND ( T1.SchDate >= ");
-		selectSql.append("'" + schdFromdate + "'");
-		if (schdTodate != null) {
-			selectSql.append(" AND T1.SchDate <= ");
-			selectSql.append("'" + schdTodate + "'");
-		} else {
-			selectSql.append(" AND T1.SchDate <= ");
-			selectSql.append("T2.MaturityDate");
-		}
-		selectSql.append(" ) GROUP BY T1.FinReference and T2.MaturityDate");
-		RowMapper<ScheduleMapDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(ScheduleMapDetails.class);
-		logger.debug("selectSql: " + selectSql.toString());
-
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), map, typeRowMapper);
-	}
-
-	/**
-	 * Method for get the count of FinScheduleDetails records depend on condition
-	 * 
-	 * @param finReference
-	 * @param schdDate
-	 * @return
-	 */
-	public int getFrqDfrCount(String finReference) {
-		logger.debug("Entering");
-
-		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-		mapSqlParameterSource.addValue("FinReference", finReference);
-
-		StringBuilder selectQry = new StringBuilder(" Select Count(FinReference) From FinScheduleDetails ");
-		selectQry.append(" Where FinReference = :FinReference ");
-		logger.debug("selectSql: " + selectQry.toString());
-
-		int recordCount = this.jdbcTemplate.queryForObject(selectQry.toString(), mapSqlParameterSource, Integer.class);
-		logger.debug("Leaving");
-		return recordCount;
-	}
-
-	/**
-	 * Method for fetch Suspense Amount for Particular Finance
-	 */
-	@Override
-	public BigDecimal getSuspenseAmount(String finReference, Date dateValueDate) {
-		logger.debug("Entering");
-
-		FinanceScheduleDetail financeScheduleDetail = new FinanceScheduleDetail();
-		financeScheduleDetail.setFinReference(finReference);
-		financeScheduleDetail.setSchDate(dateValueDate);
-
-		// Get Profit calculated - Paid Profits
-		StringBuilder selectSql = new StringBuilder(" SELECT ");
-		selectSql.append(" SUM(ProfitCalc - SchdPftPaid) ");
-		selectSql.append(" FROM finscheduleDetails where FinReference = :FinReference");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeScheduleDetail);
+		logger.debug(Literal.SQL + sql);
 
 		BigDecimal suspAmount = BigDecimal.ZERO;
 		try {
-			suspAmount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
+			suspAmount = this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
 			suspAmount = BigDecimal.ZERO;
 		}
 
-		selectSql = new StringBuilder(" SELECT SUM(CpzAmount) ");
-		selectSql.append(" FROM finscheduleDetails ");
-		selectSql.append(" WHERE FinReference = :FinReference AND SchDate <= :SchDate ");
+		sql = "Select SUM(CpzAmount) FROM finscheduleDetails Where FinID = ? AND SchDate <= ?";
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + sql);
+
 		BigDecimal cpzTillNow = BigDecimal.ZERO;
 		try {
-			cpzTillNow = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
+			cpzTillNow = this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID,
+					JdbcUtil.getDate(dateValueDate));
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
 			cpzTillNow = BigDecimal.ZERO;
 		}
 
 		suspAmount = suspAmount.subtract(cpzTillNow);
 
-		logger.debug("Leaving");
 		return suspAmount;
 	}
 
-	/**
-	 * Method for preparing Finance Summary Details for Inquiry
-	 */
 	@Override
-	public FinanceSummary getFinanceSummaryDetails(FinanceSummary summary) {
-		logger.debug("Entering");
+	public BigDecimal getTotalRepayAmount(long finID) {
+		String sql = "Select sum((ProfitSchd - SchdPftPaid) + (PrincipalSchd - SchdPriPaid) + (FeeSchd - SchdFeePaid)) From FinScheduleDetails Where FinID = ?";
 
-		StringBuilder selectSql = new StringBuilder(
-				" SELECT FPD.FinReference, FinAmount TotalDisbursement, TotalPriSchd,TotalFees,");
-		selectSql.append(
-				" TotalPftSchd, PrincipalSchd, ProfitSchd, SchdPftPaid, SchdPriPaid, Downpayment TotalDownPayment , ");
-		selectSql.append(
-				" TotalPftCpz TotalCpz, COALESCE(UtilizedDefCnt,0) UtilizedDefCnt FROM (SELECT FinReference, SUM(PrincipalSchd) PrincipalSchd, ");
-		selectSql.append(" SUM(ProfitSchd) ProfitSchd, SUM(SchdPftPaid) SchdPftPaid, SUM(SchdPriPaid) SchdPriPaid ");
-		selectSql.append(" FROM FinScheduleDetails WHERE FinReference = :FinReference ");
-		selectSql.append(" AND SchDate <= :NextSchDate GROUP BY FinReference) T ");
-		selectSql.append(" INNER JOIN FinPftDetails FPD ON FPD.FinReference=T.FinReference ");
-		selectSql.append(
-				" INNER JOIN (SELECT FinReference,Sum(ActualAmount) TotalFees from finfeedetail group by FinReference) FFD ON FFD.FinReference=T.FinReference");
-		selectSql.append(
-				" LEFT JOIN (SELECT FinReference,COUNT(*)UtilizedDefCnt FROM FinScheduleDetails t1 WHERE FinReference = :FinReference");
-		selectSql.append(" GROUP BY FinReference)T2 on T2.FinReference = T.FinReference");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(summary);
-		RowMapper<FinanceSummary> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceSummary.class);
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			summary = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return BigDecimal.ZERO;
+
+	}
+
+	@Override
+	public BigDecimal getTotalUnpaidPriAmount(long finID) {
+		String sql = "Select sum((PrincipalSchd - SchdPriPaid) - WriteoffPrincipal) From FinScheduleDetails Where FinID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return BigDecimal.ZERO;
+	}
+
+	@Override
+	public BigDecimal getTotalUnpaidPftAmount(long finID) {
+		String sql = "Select sum((ProfitSchd - SchdPftPaid) - WriteoffProfit) From FinScheduleDetails  Where FinID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return BigDecimal.ZERO;
+	}
+
+	@Override
+	public FinanceWriteoff getWriteoffTotals(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append("  sum(WriteoffPrincipal) WrittenoffPri");
+		sql.append(", sum(WriteoffProfit) WrittenoffPft");
+		sql.append(", sum(WriteoffSchFee) WrittenoffSchFee, ");
+		sql.append(", sum((PrincipalSchd - SchdPriPaid) - WriteoffPrincipal) UnPaidSchdPri");
+		sql.append(", sum((ProfitSchd - SchdPftPaid) - WriteoffProfit) UnPaidSchdPft");
+		sql.append(", sum((FeeSchd - SchdFeePaid) - WriteoffSchFee) UnpaidSchFee");
+		sql.append(" From FinScheduleDetails");
+		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceWriteoff fw = new FinanceWriteoff();
+
+				fw.setWrittenoffPri(rs.getBigDecimal("WrittenoffPri"));
+				fw.setWrittenoffPft(rs.getBigDecimal("WrittenoffPft"));
+				fw.setWrittenoffSchFee(rs.getBigDecimal("WrittenoffSchFee"));
+				fw.setUnPaidSchdPri(rs.getBigDecimal("UnPaidSchdPri"));
+				fw.setUnPaidSchdPft(rs.getBigDecimal("UnPaidSchdPft"));
+				fw.setUnpaidSchFee(rs.getBigDecimal("UnpaidSchFee"));
+
+				return fw;
+
+			}, finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
+	@Override
+	public Date getFirstRepayDate(long finID) {
+		StringBuilder sql = new StringBuilder("Select min(SchDate) From (");
+		sql.append(" Select FinID, SchDate, PftOnSchDate, RepayAmount From FinScheduleDetails");
+		sql.append(" Union All");
+		sql.append(" Select FinID, SchDate, PftOnSchDate, RepayAmount From FinScheduleDetails_Temp");
+		sql.append(" ) T");
+		sql.append(" Where FinID = ? and (RepayOnSchDate = 1 or (PftOnSchDate = 1 and RepayAmount > 0))");
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Date.class, finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
+	@Override
+	public FinanceScheduleDetail getTotals(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append("  sum(ProfitSchd) ProfitSchd");
+		sql.append(", sum(SchdPftPaid) SchdPftPaid");
+		sql.append(", sum(PrincipalSchd) PrincipalSchd");
+		sql.append(", Sum(SchdPriPaid) SchdPriPaid");
+		sql.append(", sum(ProfitCalc) ProfitCalc");
+		sql.append(", sum(ClosingBalance) ClosingBalance");
+		sql.append(" From FinScheduleDetails Where FinID = ?");
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceScheduleDetail schedule = new FinanceScheduleDetail();
+
+				schedule.setProfitSchd(rs.getBigDecimal("ProfitSchd"));
+				schedule.setSchdPftPaid(rs.getBigDecimal("SchdPftPaid"));
+				schedule.setPrincipalSchd(rs.getBigDecimal("PrincipalSchd"));
+				schedule.setSchdPriPaid(rs.getBigDecimal("SchdPriPaid"));
+				schedule.setProfitCalc(rs.getBigDecimal("ProfitCalc"));
+				schedule.setClosingBalance(rs.getBigDecimal("ClosingBalance"));
+
+				return schedule;
+
+			}, finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
+	@Override
+	public FinanceScheduleDetail getNextSchPayment(long finID, Date curBussDate) {
+		StringBuilder sql = new StringBuilder("Select * from (");
+		sql.append(" Select row_number() Over(order by Schdate) row_num, ");
+		appendSchdColumns(false, sql);
+		sql.append(" From FinScheduleDetails");
+		sql.append(" Where FinID = ? and  SchDate > = ?) T");
+		sql.append(" Where row_num = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		RowMapper<FinanceScheduleDetail> rowMapper = new ScheduleDetailRowMapper(false);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, curBussDate, 1);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		}
-		logger.debug("Leaving");
-		return summary;
-	}
-
-	@Override
-	public BigDecimal getTotalRepayAmount(String finReference) {
-		logger.debug("Entering");
-
-		FinanceScheduleDetail financeScheduleDetail = new FinanceScheduleDetail();
-		financeScheduleDetail.setFinReference(finReference);
-
-		// Get Sum of Total Payment Amount(profits and Principals)
-		StringBuilder selectSql = new StringBuilder(
-				" select sum(ProfitSchd - SchdPftPaid + PrincipalSchd - SchdPriPaid + ");
-		selectSql.append(" FeeSchd - SchdFeePaid ) ");
-		selectSql.append(" from FinScheduleDetails  where FinReference = :FinReference ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeScheduleDetail);
-
-		BigDecimal repayAmount = BigDecimal.ZERO;
-		try {
-			repayAmount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			repayAmount = BigDecimal.ZERO;
+			//
 		}
 
-		logger.debug("Leaving");
-		return repayAmount;
-
-	}
-
-	@Override
-	public BigDecimal getTotalUnpaidPriAmount(String finReference) {
-		logger.debug("Entering");
-
-		FinanceScheduleDetail financeScheduleDetail = new FinanceScheduleDetail();
-		financeScheduleDetail.setFinReference(finReference);
-
-		// Get Sum of Total Payment Amount(profits and Principals)
-		StringBuilder selectSql = new StringBuilder(" select sum(PrincipalSchd - SchdPriPaid ");
-		selectSql.append(" - WriteoffPrincipal) ");
-		selectSql.append(" from FinScheduleDetails  where FinReference = :FinReference ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeScheduleDetail);
-
-		BigDecimal priAmt = BigDecimal.ZERO;
-		try {
-			priAmt = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			priAmt = BigDecimal.ZERO;
-		}
-
-		logger.debug("Leaving");
-		return priAmt;
-	}
-
-	@Override
-	public BigDecimal getTotalUnpaidPftAmount(String finReference) {
-		logger.debug("Entering");
-
-		FinanceScheduleDetail financeScheduleDetail = new FinanceScheduleDetail();
-		financeScheduleDetail.setFinReference(finReference);
-
-		// Get Sum of Total Payment Amount(profits and Principals)
-		StringBuilder selectSql = new StringBuilder(" select sum(ProfitSchd - SchdPftPaid  ");
-		selectSql.append(" - WriteoffProfit ) ");
-		selectSql.append(" from FinScheduleDetails  where FinReference = :FinReference ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeScheduleDetail);
-
-		BigDecimal pftAmt = BigDecimal.ZERO;
-		try {
-			pftAmt = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			pftAmt = BigDecimal.ZERO;
-		}
-
-		logger.debug("Leaving");
-		return pftAmt;
-	}
-
-	@Override
-	public FinanceWriteoff getWriteoffTotals(String finReference) {
-		logger.debug("Entering");
-
-		FinanceWriteoff financeWriteoff = new FinanceWriteoff();
-		financeWriteoff.setFinReference(finReference);
-
-		StringBuilder selectSql = new StringBuilder(
-				" select sum(WriteoffPrincipal) WrittenoffPri, sum(WriteoffProfit) WrittenoffPft, ");
-		selectSql.append(" sum(WriteoffSchFee) WrittenoffSchFee, ");
-		selectSql.append(" sum(PrincipalSchd - SchdPriPaid - WriteoffPrincipal) UnPaidSchdPri, ");
-		selectSql.append(" sum(ProfitSchd - SchdPftPaid - WriteoffProfit) UnPaidSchdPft,");
-		selectSql.append(" sum(FeeSchd - SchdFeePaid - WriteoffSchFee) UnpaidSchFee ");
-		selectSql.append(" from FinScheduleDetails  where FinReference = :FinReference ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWriteoff);
-		RowMapper<FinanceWriteoff> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceWriteoff.class);
-
-		try {
-			financeWriteoff = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			financeWriteoff = null;
-		}
-
-		logger.debug("Leaving");
-		return financeWriteoff;
-	}
-
-	@Override
-	public Date getFirstRepayDate(String finReference) {
-		logger.debug("Entering");
-
-		FinanceScheduleDetail financeScheduleDetail = new FinanceScheduleDetail();
-		financeScheduleDetail.setFinReference(finReference);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("  select min(SchDate) from FinScheduleDetails");
-		selectSql.append(" where FinReference = :FinReference AND ");
-		selectSql.append(" (RepayOnSchDate = 1 OR (PftOnSchDate = 1 AND RepayAmount > 0)) ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeScheduleDetail);
-
-		Date firstRepayDate = null;
-		try {
-			firstRepayDate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Date.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			firstRepayDate = null;
-		}
-
-		if (firstRepayDate == null) {
-			selectSql = new StringBuilder();
-			selectSql.append("  select min(SchDate) from FinScheduleDetails_TEMP");
-			selectSql.append(" where FinReference = :FinReference AND ");
-			selectSql.append(" (RepayOnSchDate = 1 OR (PftOnSchDate = 1 AND RepayAmount > 0)) ");
-
-			try {
-				firstRepayDate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Date.class);
-			} catch (EmptyResultDataAccessException e) {
-				logger.warn("Exception: ", e);
-				firstRepayDate = null;
-			}
-		}
-
-		logger.debug("Leaving");
-		return firstRepayDate;
-	}
-
-	/**
-	 * Method for fetch Finance Schedule details base on schdDate
-	 * 
-	 */
-	@Override
-	public FinanceScheduleDetail getFinSchduleDetails(String finReference, Date schdDate, boolean isWIF) {
-		logger.debug("Entering");
-
-		FinanceScheduleDetail financeScheduleDetail = new FinanceScheduleDetail();
-		financeScheduleDetail.setSchDate(schdDate);
-		financeScheduleDetail.setFinReference(finReference);
-
-		StringBuilder selectSql = new StringBuilder(" Select FinReference, SchDate, SchSeq, PftOnSchDate,");
-		selectSql.append(" CpzOnSchDate, RepayOnSchDate, RvwOnSchDate, DisbOnSchDate,");
-		selectSql.append(" DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, MrgRate, ActRate, NoOfDays,");
-		selectSql.append(" DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd, RepayAmount, ProfitBalance,");
-		selectSql.append(
-				" DisbAmount, DownPaymentAmount, CpzAmount, CpzBalance, ClosingBalance, ProfitFraction, PrvRepayAmount, ");
-		selectSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid,Specifier, OrgPlanPft,");
-		selectSql.append(" DefSchdDate,SchdMethod, CalculatedRate,FeeChargeAmt,");
-		selectSql.append(" FeeSchd , SchdFeePaid , SchdFeeOS , ");
-		selectSql.append(" TDSAmount, TDSPaid, PftDaysBasis,  ");
-		selectSql.append(" InstNumber, BpiOrHoliday, FrqDate, RecalLock ");
-
-		selectSql.append(" , RefundOrWaiver ,EarlyPaid, EarlyPaidBal, WriteoffPrincipal, WriteoffProfit, ");
-		selectSql.append(" WriteoffSchFee,PartialPaidAmt ");
-		if (!isWIF) {
-			selectSql.append(", SchdPftWaiver");
-			selectSql.append(" From FinScheduleDetails");
-		} else {
-			selectSql.append(" From WIFFinScheduleDetails");
-		}
-
-		selectSql.append(" Where FinReference =:FinReference AND SchDate=:SchDate");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeScheduleDetail);
-		RowMapper<FinanceScheduleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceScheduleDetail.class);
-
-		try {
-			financeScheduleDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			financeScheduleDetail = null;
-		}
-
-		logger.debug("Leaving");
-		return financeScheduleDetail;
-	}
-
-	@Override
-	public FinanceScheduleDetail getTotals(String finReference) {
-		logger.debug("Entering");
-
-		FinanceScheduleDetail financeScheduleDetail = new FinanceScheduleDetail();
-		financeScheduleDetail.setFinReference(finReference);
-
-		StringBuilder selectSql = new StringBuilder(
-				" Select Sum(ProfitSchd) ProfitSchd, Sum(SchdPftPaid) SchdPftPaid,");
-		selectSql.append(" Sum(PrincipalSchd) PrincipalSchd, Sum(SchdPriPaid) SchdPriPaid,");
-		selectSql.append(" Sum(ProfitCalc) ProfitCalc, Sum(ClosingBalance) ClosingBalance");
-		selectSql.append(" FROM FinScheduleDetails Where FinReference =:FinReference");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeScheduleDetail);
-		RowMapper<FinanceScheduleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceScheduleDetail.class);
-
-		try {
-			financeScheduleDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			financeScheduleDetail = null;
-		}
-
-		logger.debug("Leaving");
-		return financeScheduleDetail;
-	}
-
-	@Override
-	public FinanceScheduleDetail getNextSchPayment(String finReference, Date curBussDate) {
-		logger.debug("Entering");
-
-		FinanceScheduleDetail financeScheduleDetail = new FinanceScheduleDetail();
-		financeScheduleDetail.setFinReference(finReference);
-		financeScheduleDetail.setSchDate(curBussDate);
-
-		StringBuilder selectSql = new StringBuilder(
-				" Select * from (select ROW_NUMBER() Over(order by Schdate) row_num, ");
-		selectSql.append(" FinReference, SchDate, ProfitSchd, PrincipalSchd  FROM FinScheduleDetails Where ");
-		selectSql.append(" FinReference =:FinReference AND SchDate>=:SchDate )T where row_num = 1 ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeScheduleDetail);
-		RowMapper<FinanceScheduleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceScheduleDetail.class);
-
-		try {
-			financeScheduleDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			financeScheduleDetail = null;
-		}
-
-		logger.debug("Leaving");
-		return financeScheduleDetail;
+		return null;
 	}
 
 	@Override
 	public boolean getFinScheduleCountByDate(long finID, Date fromDate, boolean isWIF) {
-		StringBuilder selectSql = new StringBuilder("Select COUNT(*)");
+		StringBuilder selectSql = new StringBuilder("Select count(FinID)");
+
 		if (!isWIF) {
 			selectSql.append(" From FinScheduleDetails");
 		} else {
 			selectSql.append(" From WIFFinScheduleDetails");
 		}
 
-		selectSql.append(" Where FinReference = ? and SchDate = ?");
+		selectSql.append(" Where FinID = ? and SchDate = ?");
 
 		logger.debug(Literal.SQL + selectSql.toString());
 
-		int recordCount = 0;
 		try {
-			recordCount = this.jdbcOperations.queryForObject(selectSql.toString(), Integer.class, finID, fromDate);
+			return this.jdbcOperations.queryForObject(selectSql.toString(), Integer.class, finID, fromDate) > 0;
 		} catch (EmptyResultDataAccessException e) {
-			recordCount = 0;
+			//
 		}
 
-		if (recordCount <= 0) {
-			return false;
-		}
-
-		return true;
+		return false;
 	}
 
-	/**
-	 * Method for fetch Finance Schedule details when Principal Payment greater than zero
-	 * 
-	 */
 	@Override
-	public BigDecimal getPriPaidAmount(String finReference) {
-		logger.debug("Entering");
+	public BigDecimal getPriPaidAmount(long finID) {
+		String sql = "Select sum(SchdPriPaid) From FinScheduleDetails Where FinID = ?";
 
-		MapSqlParameterSource detail = new MapSqlParameterSource();
-		detail.addValue("FinReference", finReference);
+		logger.debug(Literal.SQL + sql);
 
-		StringBuilder selectSql = new StringBuilder(" Select SUM(SchdPriPaid)  ");
-		selectSql.append(" From FinScheduleDetails");
-		selectSql.append(" Where FinReference = :FinReference");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
-		BigDecimal schdPriPaid = this.jdbcTemplate.queryForObject(selectSql.toString(), detail, BigDecimal.class);
-		if (schdPriPaid == null) {
-			schdPriPaid = BigDecimal.ZERO;
-		}
-
-		logger.debug("Leaving");
-		return schdPriPaid;
-	}
-
-	/**
-	 * Method for fetch Finance Schedule details when Principal Payment greater than zero
-	 * 
-	 */
-	@Override
-	public BigDecimal getOutStandingBalFromFees(String finReference) {
-		logger.debug("Entering");
-
-		MapSqlParameterSource detail = new MapSqlParameterSource();
-		detail.addValue("FinReference", finReference);
-
-		StringBuilder selectSql = new StringBuilder(" Select SUM(FeeSchd) -  Sum(SchdFeePaid) ");
-		selectSql.append(" From FinScheduleDetails");
-		selectSql.append(" Where FinReference = :FinReference");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
-		BigDecimal outStandingFeeBal = this.jdbcTemplate.queryForObject(selectSql.toString(), detail, BigDecimal.class);
-		if (outStandingFeeBal == null) {
-			outStandingFeeBal = BigDecimal.ZERO;
-		}
-
-		logger.debug("Leaving");
-		return outStandingFeeBal;
-	}
-
-	/**
-	 * retrive last schdate be present appDate
-	 * 
-	 * @param finReference
-	 * @param appDate
-	 */
-	@Override
-	public Date getPrevSchdDate(String finReference, Date appDate) {
-		logger.debug("Entering");
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("  select max(SchDate) from FinScheduleDetails");
-		selectSql.append(" where FinReference = :FinReference AND ");
-		selectSql.append("  SchDate <= :schdate");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
-		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-
-		mapSqlParameterSource.addValue("FinReference", finReference);
-		mapSqlParameterSource.addValue("schdate", appDate);
-
-		Date prevSchdDate = null;
 		try {
-			prevSchdDate = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Date.class);
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			prevSchdDate = null;
+			//
 		}
-		return prevSchdDate;
+
+		return BigDecimal.ZERO;
 	}
 
-	/**
-	 * method return true if given date is Installment schedule or it will consider as schedule change date
-	 */
 	@Override
-	public boolean isInstallSchd(String finReference, Date lastPrevDate) {
-		logger.debug("Entering");
+	public BigDecimal getOutStandingBalFromFees(long finID) {
+		String sql = "Select sum(FeeSchd) -  sum(SchdFeePaid) From FinScheduleDetails Where FinID = ?";
 
-		MapSqlParameterSource detail = new MapSqlParameterSource();
-		detail.addValue("FinReference", finReference);
-		detail.addValue("schDate", lastPrevDate);
+		logger.debug(Literal.SQL + sql);
 
-		StringBuilder selectSql = new StringBuilder(" Select (REPAYAMOUNT -PARTIALPAIDAMT) ");
-		selectSql.append(" From FinScheduleDetails");
-		selectSql.append(" Where FinReference = :FinReference AND SchDate = :schDate");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
-		BigDecimal repayAmount = this.jdbcTemplate.queryForObject(selectSql.toString(), detail, BigDecimal.class);
-		if (repayAmount == null) {
-			repayAmount = BigDecimal.ZERO;
+		try {
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
 		}
 
-		logger.debug("Leaving");
+		return BigDecimal.ZERO;
+	}
 
-		if (repayAmount.compareTo(BigDecimal.ZERO) > 0) {
-			return true;
-		} else {
-			return false;
+	@Override
+	public Date getPrevSchdDate(long finID, Date appDate) {
+		String sql = "Select max(SchDate) from FinScheduleDetails Where FinID = ? and SchDate <= ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Date.class, finID, appDate);
+		} catch (EmptyResultDataAccessException e) {
+			//
 		}
+
+		return null;
+	}
+
+	@Override
+	public boolean isInstallSchd(long finID, Date lastPrevDate) {
+		String sql = "Select (RepayAmount - PartialPaidAmt) From FinScheduleDetails Where FinID = ? and SchDate = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID, lastPrevDate)
+					.compareTo(BigDecimal.ZERO) > 0;
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return false;
 
 	}
 
-	/**
-	 * Ticket id:124998,receipt upload Retrieve closing balance for given schedule date
-	 * 
-	 * @param finReference
-	 * @param valueDate
-	 */
 	@Override
-	public BigDecimal getClosingBalance(String finReference, Date valueDate) {
-		logger.debug("Entering");
+	public BigDecimal getClosingBalance(long finID, Date valueDate) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ClosingBalance");
+		sql.append(" From FinScheduleDetails");
+		sql.append(" Where FinID = ? and SchDate = (");
+		sql.append(" Select max(SchDate) From FinScheduleDetails Where FinID = ? and SchDate <= ?");
+		sql.append(")");
 
-		MapSqlParameterSource detail = new MapSqlParameterSource();
-		detail.addValue("FinReference", finReference);
-		detail.addValue("schDate", valueDate);
+		logger.debug(Literal.SQL + sql);
 
-		StringBuilder selectSql = new StringBuilder("SELECT CLOSINGBALANCE FROM FINSCHEDULEDETAILS ");
-		selectSql.append(
-				" Where FinReference = :FinReference AND SCHDATE =(SELECT  MAX(SCHDATE) FROM FINSCHEDULEDETAILS ");
-		selectSql.append("WHERE FINREFERENCE=:FinReference AND SCHDATE <=:schDate)");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
-		BigDecimal closingBal = this.jdbcTemplate.queryForObject(selectSql.toString(), detail, BigDecimal.class);
-		if (closingBal == null) {
-			closingBal = BigDecimal.ZERO;
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID, finID, valueDate);
+		} catch (EmptyResultDataAccessException e) {
+			//
 		}
 
-		logger.debug("Leaving");
-		return closingBal;
+		return BigDecimal.ZERO;
 	}
 
 	@Override
@@ -1330,24 +839,21 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 			sql.append(" And LogKey = ?");
 		}
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		RowMapper<FinanceScheduleDetail> rowMapper = new ScheduleDetailRowMapper(false);
 
 		List<FinanceScheduleDetail> finSchdDetails = null;
 
 		try {
-			finSchdDetails = this.jdbcTemplate.getJdbcOperations().query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setLong(1, finID);
+			finSchdDetails = this.jdbcTemplate.getJdbcOperations().query(sql.toString(), ps -> {
+				ps.setLong(1, finID);
 
-					if (logKey > 0) {
-						ps.setLong(2, logKey);
-					}
+				if (logKey > 0) {
+					ps.setLong(2, logKey);
 				}
 			}, rowMapper);
-		} catch (Exception e) {
+		} catch (EmptyResultDataAccessException e) {
 			finSchdDetails = new ArrayList<>();
 		}
 
@@ -1356,28 +862,42 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	@Override
-	public void updateTDS(List<FinanceScheduleDetail> schdList) {
-		logger.debug("Entering");
+	public void updateTDS(List<FinanceScheduleDetail> schedules) {
+		StringBuilder sql = new StringBuilder("Update FinScheduleDetails");
+		sql.append(" Set TDSApplicable = ?, TDSAmount= ?");
+		sql.append(" Where FinID = ? and SchDate = ?");
 
-		StringBuilder updateSql = new StringBuilder("Update FinScheduleDetails SET ");
-		updateSql.append(" tDSApplicable=:tDSApplicable,TDSAmount=:TDSAmount ");
-		updateSql.append(" Where FinReference =:FinReference AND SchDate = :SchDate ");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(schdList.toArray());
-		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinanceScheduleDetail schedule = schedules.get(i);
+
+				int index = 1;
+				ps.setBoolean(index++, schedule.isTDSApplicable());
+				ps.setBigDecimal(index++, schedule.getTDSAmount());
+				ps.setLong(index++, schedule.getFinID());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return schedules.size();
+			}
+
+		});
 	}
 
 	@Override
-	public List<FinanceScheduleDetail> getFirstRepayAmt(String finReference) {
+	public List<FinanceScheduleDetail> getFirstRepayAmt(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" SchDate, PrincipalSchd, ProfitSchd, RepayAmount, PartialPaidAmt, InstNumber");
 		sql.append(" From FinScheduleDetails");
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
 
 		List<FinanceScheduleDetail> schedules = this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, finReference);
+			ps.setLong(1, finID);
 		}, (rs, rowNum) -> {
 			FinanceScheduleDetail schd = new FinanceScheduleDetail();
 
@@ -1395,35 +915,29 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	@Override
-	public FinanceScheduleDetail getPrvSchd(String finRef, Date curBussDate) {
+	public FinanceScheduleDetail getPrvSchd(long finID, Date curBussDate) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" SchDate, RepayAmount, PartialPaidAmt");
 		sql.append(" From FinScheduleDetails");
-		sql.append(" Where FinReference = ? and SchDate = ");
-		sql.append("(select max(SchDate)");
-		sql.append(" From FinScheduleDetails");
-		sql.append(" Where FinReference = ? and SchDate <= ?)");
+		sql.append(" Where FinReference = ? and SchDate = (");
+		sql.append(" Select max(SchDate) From FinScheduleDetails Where FinReference = ? and SchDate <= ?");
+		sql.append(")");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), new Object[] { finRef, finRef, curBussDate },
-					new RowMapper<FinanceScheduleDetail>() {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceScheduleDetail fsd = new FinanceScheduleDetail();
 
-						@Override
-						public FinanceScheduleDetail mapRow(ResultSet rs, int arg1) throws SQLException {
-							FinanceScheduleDetail fsd = new FinanceScheduleDetail();
-							fsd.setSchDate(rs.getDate("SchDate"));
-							fsd.setRepayAmount(rs.getBigDecimal("RepayAmount"));
-							fsd.setPartialPaidAmt(rs.getBigDecimal("PartialPaidAmt"));
+				fsd.setSchDate(rs.getDate("SchDate"));
+				fsd.setRepayAmount(rs.getBigDecimal("RepayAmount"));
+				fsd.setPartialPaidAmt(rs.getBigDecimal("PartialPaidAmt"));
 
-							return fsd;
-						}
-					});
+				return fsd;
+
+			}, finID, finID, curBussDate);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(
-					"Records not found in FinScheduleDetails for the specified FinReference >> {} and SchDate [<=] >> {}",
-					finRef, curBussDate);
+			//
 		}
 
 		return null;
@@ -1431,111 +945,94 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 	@Override
 	public void updateSchPaid(FinanceScheduleDetail curSchd) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Update FinScheduleDetails");
+		sql.append(" Set SchdPftPaid = ?, SchPftPaid = ?, SchdPriPaid = ?, SchPriPaid = ?, TDSPaid = ?");
+		sql.append(" Where FinID = ? and SchDate = ?");
 
-		StringBuilder sql = new StringBuilder("Update FinScheduleDetails set");
-		sql.append(" SchdPftPaid = :SchdPftPaid");
-		sql.append(", SchPftPaid = :SchPftPaid");
+		logger.debug(Literal.SQL + sql.toString());
 
-		sql.append(", SchdPriPaid = :SchdPriPaid");
-		sql.append(", SchPriPaid = :SchPriPaid");
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 
-		sql.append(", TDSPaid = :TDSPaid");
-		sql.append(" where FinReference =:FinReference And SchDate = :SchDate");
+			int index = 1;
+			ps.setBigDecimal(index++, curSchd.getSchdPftPaid());
+			ps.setBoolean(index++, curSchd.isSchPftPaid());
+			ps.setBigDecimal(index++, curSchd.getSchdPriPaid());
+			ps.setBoolean(index++, curSchd.isSchPriPaid());
+			ps.setBigDecimal(index++, curSchd.getTDSPaid());
+			ps.setLong(index++, curSchd.getFinID());
+			ps.setDate(index++, JdbcUtil.getDate(curSchd.getSchDate()));
 
-		logger.trace(Literal.SQL + sql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(curSchd);
-		int recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Getting fin schedule details for rate report
 	 */
 	@Override
-	public List<FinanceScheduleDetail> getFinSchdDetailsForRateReport(String finReference) {
-		logger.debug(Literal.ENTERING);
+	public List<FinanceScheduleDetail> getFinSchdDetailsForRateReport(long finID) {
+		StringBuilder sql = getScheduleDetailQuery("", false);
+		sql.append(" Where FinID = ?");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder sql = new StringBuilder(" Select FinReference, SchDate, SchSeq, PftOnSchDate,");
-		sql.append(" CpzOnSchDate, RepayOnSchDate, RvwOnSchDate, DisbOnSchDate,");
-		sql.append(" DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, MrgRate, ActRate, NoOfDays,");
-		sql.append(" DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd, RepayAmount, ProfitBalance,");
-		sql.append(" DisbAmount, DownPaymentAmount, CpzAmount, CpzBalance, OrgPft , OrgPri, OrgEndBal,OrgPlanPft, ");
-		sql.append(" ClosingBalance, ProfitFraction, PrvRepayAmount, CalculatedRate,FeeChargeAmt, ");
-		sql.append(" FeeSchd , SchdFeePaid , SchdFeeOS, ");
-		sql.append(" TDSAmount, TDSPaid, PftDaysBasis, ");
-		sql.append(" RefundOrWaiver, EarlyPaid , EarlyPaidBal ,WriteoffPrincipal, WriteoffProfit,");
-		sql.append(" WriteoffSchFee, PartialPaidAmt,PresentmentId, ");
-		sql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid,Specifier,");
-		sql.append(" DefSchdDate, SchdMethod, ");
-		sql.append(" InstNumber, BpiOrHoliday, FrqDate, RecalLock, SchdPftWaiver");
+		RowMapper<FinanceScheduleDetail> rowMapper = new ScheduleDetailRowMapper(false);
 
-		sql.append(" From FinScheduleDetails Where");
-		sql.append(" FinReference = :FinReference ");
+		try {
+			return this.jdbcOperations.query(sql.toString(), rowMapper, finID);
+		} catch (Exception e) {
+			//
+		}
 
-		logger.trace(Literal.SQL + sql.toString());
-
-		RowMapper<FinanceScheduleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceScheduleDetail.class);
-
-		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		return null;
 	}
 
-	/**
-	 * Fetch the Record Finance Main Detail details by key field
-	 * 
-	 * @param id   (String)
-	 * @param type (String) ""/_Temp/_View
-	 * @return FinanceMain
-	 */
+	// FIXME Move to FinanceMainDAO
 	@Override
-	public FinanceMain getFinanceMainForRateReport(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
+	public FinanceMain getFinanceMainForRateReport(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" fm.FinID, fm.FinReference, fm.FinCcy, cu.CustCIF, cu.CustShrtName");
+		sql.append(" fm.FinCurrAssetValue, fm.ProfitDaysBasis, fm.CalRoundingMode, fm.RoundingTarget");
+		sql.append(" From FinanceMain fm");
+		sql.append(" Inner Join Customers cu On cu.CustID = fm.CustID");
+		sql.append(" Where FinID = ?");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder sql = new StringBuilder(
-				"SELECT FM.FinReference, FM.FinCcy, CU.CustCIF LovDescCustCIF,  CU.CustShrtName LovDescCustShrtName, ");
-		sql.append(" FM.FinCurrAssetValue, FM.ProfitDaysBasis, FM.CalRoundingMode ,FM.RoundingTarget ");
-		sql.append("From FinanceMain FM INNER JOIN CUSTOMERS CU ON FM.CUSTID = CU.CUSTID");
-		sql.append(" Where FinReference =:FinReference");
-
-		logger.debug("selectSql: " + sql.toString());
-
-		source.addValue("FinReference", finReference);
-
-		RowMapper<FinanceMain> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceMain fm = new FinanceMain();
+
+				fm.setFinID(rs.getLong("FinID"));
+				fm.setFinReference(rs.getString("FinReference"));
+				fm.setFinCcy(rs.getString("FinCcy"));
+				fm.setLovDescCustCIF(rs.getString("CustCIF"));
+				fm.setLovDescCustShrtName(rs.getString("CustShrtName"));
+				fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
+				fm.setProfitDaysBasis(rs.getString("ProfitDaysBasis"));
+				fm.setCalRoundingMode(rs.getString("CalRoundingMode"));
+				fm.setRoundingTarget(rs.getInt("RoundingTarget"));
+
+				return fm;
+			});
 		} catch (EmptyResultDataAccessException e) {
+			//
 		}
-		logger.debug(Literal.LEAVING);
+
 		return null;
 	}
 
 	@Override
-	public boolean isScheduleInQueue(String finReference) {
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
+	public boolean isScheduleInQueue(long finID) {
+		String sql = "Select count(FinID) from FinScheduleDetails_Temp where FinID = ?";
 
-		int count = jdbcTemplate.queryForObject(
-				"select count(FinReference) from FinScheduleDetails_Temp where FinReference = :FinReference", source,
-				Integer.class);
+		logger.debug(Literal.SQL + sql.toString());
 
-		if (count > 0) {
-			return true;
-		}
-
-		return false;
+		return jdbcOperations.queryForObject(sql, Integer.class, finID) > 0;
 	}
 
 	public class ScheduleDetailRowMapper implements RowMapper<FinanceScheduleDetail> {
@@ -1619,56 +1116,66 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 	}
 
-	public int getDueBucket(String finReference) {
-		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-		mapSqlParameterSource.addValue("FinReference", finReference);
+	// FIXME Move to FinanceMainDAO
+	@Override
+	public int getDueBucket(long finID) {
+		String sql = "Select DueBucket From FinanceMain Where FinID = ?";
 
-		StringBuilder sql = new StringBuilder(" Select DueBucket From FinanceMain ");
-		sql.append(" Where FinReference = :FinReference ");
+		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcTemplate.queryForObject(sql.toString(), mapSqlParameterSource, Integer.class);
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID);
 	}
 
 	/**
 	 * Method for Fetch Due Schedule details against Loan Reference and Value Date
 	 */
 	@Override
-	public List<FinanceScheduleDetail> getDueSchedulesByFacilityRef(String finReference, Date valueDate) {
-		logger.debug(Literal.ENTERING);
+	public List<FinanceScheduleDetail> getDueSchedulesByFacilityRef(long finID, Date valueDate) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" schd.FinID, schd.FinReference, schd.SchDate, schd.ProfitSchd, schd.PrincipalSchd");
+		sql.append(", schd.SchdPriPaid, schd.SchdPftPaid, schd.TdsApplicable");
+		sql.append(" From FinScheduleDetails schd");
+		sql.append(" Inner Join FinanceMain fm On fm.FinID = schd.FinID");
+		sql.append(" Where fm.FinID = ? and schd.SchDate <= ?");
+		sql.append(" and ((ProfitSchd + PrincipalSchd) - (SchdPftPaid - SchdPriPaid)) > 0");
+		sql.append(" and fm.FinIsActive = 1");
+		sql.append(" order by SchDate, FinID");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("ValueDate", valueDate);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder sql = new StringBuilder(" Select S.FinReference, S.SchDate, S.ProfitSchd, S.PrincipalSchd, ");
-		sql.append(" S.SchdPriPaid, S.SchdPftPaid, S.TdsApplicable ");
-		sql.append(" From FinScheduleDetails S INNER JOIN FinanceMain F ON S.FinReference = F.FinReference ");
-		sql.append(
-				" Where F.FinReference = :FinReference AND S.SchDate <=:ValueDate AND (ProfitSchd + PrincipalSchd - SchdPftPaid - SchdPriPaid) > 0  ");
-		sql.append(" AND F.FinIsActive = 1 ORDER BY SchDate , FinReference  ");
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, finID);
+			ps.setDate(2, JdbcUtil.getDate(valueDate));
+		}, (rs, rowNum) -> {
+			FinanceScheduleDetail schd = new FinanceScheduleDetail();
 
-		logger.trace(Literal.SQL + sql.toString());
-		RowMapper<FinanceScheduleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceScheduleDetail.class);
+			schd.setFinID(rs.getLong("FinID"));
+			schd.setFinReference(rs.getString("FinReference"));
+			schd.setSchDate(rs.getDate("SchDate"));
+			schd.setProfitSchd(rs.getBigDecimal("ProfitSchd"));
+			schd.setPrincipalSchd(rs.getBigDecimal("PrincipalSchd"));
+			schd.setSchdPriPaid(rs.getBigDecimal("SchdPriPaid"));
+			schd.setSchdPftPaid(rs.getBigDecimal("SchdPftPaid"));
+			schd.setTDSApplicable(rs.getBoolean("TdsApplicable"));
 
-		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+			return schd;
+		});
+
 	}
 
-	/**
-	 * Method for Save Due Tax details against Loan Reference and Schedule Date
-	 */
 	@Override
 	public void saveSchDueTaxDetail(ScheduleDueTaxDetail sdtd) {
 		StringBuilder sql = new StringBuilder();
-		sql.append(" Insert Into ScheduleDueTaxDetails ");
-		sql.append(" (FinReference, SchDate, TaxType, TaxCalcOn, Amount, InvoiceID)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?)");
+		sql.append("Insert Into ScheduleDueTaxDetails");
+		sql.append(" (FinID, FinReference, SchDate, TaxType, TaxCalcOn, Amount, InvoiceID)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?)");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		this.jdbcOperations.update(sql.toString(), (ps) -> {
 			int index = 1;
 
+			ps.setLong(index++, sdtd.getFinID());
 			ps.setString(index++, sdtd.getFinReference());
 			ps.setDate(index++, JdbcUtil.getDate(sdtd.getSchDate()));
 			ps.setString(index++, sdtd.getTaxType());
@@ -1685,111 +1192,83 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 	}
 
-	/**
-	 * Method for Fetching Invoice ID for the Due schedule
-	 */
 	@Override
-	public Long getSchdDueInvoiceID(String finReference, Date schdate) {
-		logger.debug(Literal.ENTERING);
-		Long invoiceID = null;
+	public Long getSchdDueInvoiceID(long finID, Date schdate) {
+		String sql = "Select InvoiceID From ScheduleDueTaxDetails Where FinID = ? and SchDate = ?";
+
+		logger.debug(Literal.SQL + sql.toString());
 		try {
-			MapSqlParameterSource source = new MapSqlParameterSource();
-			source.addValue("FinReference", finReference);
-			source.addValue("SchDate", schdate);
-
-			StringBuilder sql = new StringBuilder();
-			sql.append(" Select InvoiceID From ScheduleDueTaxDetails");
-			sql.append(" Where FinReference = :FinReference AND SchDate =:SchDate ");
-
-			logger.trace(Literal.SQL + sql.toString());
-
-			invoiceID = this.jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
+			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finID, schdate);
+		} catch (EmptyResultDataAccessException e) {
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
-		return invoiceID;
+		return null;
 
 	}
 
 	@Override
-	public void updateTDSChange(List<FinanceScheduleDetail> schdList) {
+	public void updateTDSChange(List<FinanceScheduleDetail> schedules) {
+		String sql = "Update FinScheduleDetails Set TDSAmount = :TDSAmount Where FinID = ? and SchDate = ?";
 
-		StringBuilder updateSql = new StringBuilder("Update FinScheduleDetails SET ");
-		updateSql.append(" TDSAmount = :TDSAmount ");
-		updateSql.append(" Where FinReference = :FinReference AND SchDate = :SchDate ");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(schdList.toArray());
-		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinanceScheduleDetail schedule = schedules.get(i);
+
+				int index = 1;
+
+				ps.setBigDecimal(index++, schedule.getTDSAmount());
+				ps.setLong(index++, schedule.getFinID());
+				ps.setDate(index++, JdbcUtil.getDate(schedule.getSchDate()));
+			}
+
+			@Override
+			public int getBatchSize() {
+				return schedules.size();
+			}
+		});
+
 	}
 
 	@Override
 	public List<FinanceScheduleDetail> getFinScheduleDetailsBySchPriPaid(long finID, String type, boolean isWIF) {
-		logger.debug(Literal.ENTERING);
 		StringBuilder sql = getScheduleDetailQuery(type, isWIF);
 		sql.append(" Where FinID = ? and SchdPriPaid > 0 order by SchDate asc");
+
 		logger.debug(Literal.SQL + sql.toString());
 
 		RowMapper<FinanceScheduleDetail> rowMapper = new ScheduleDetailRowMapper(isWIF);
 
-		try {
-			return this.jdbcTemplate.getJdbcOperations().query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setLong(1, finID);
-				}
-			}, rowMapper);
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcTemplate.getJdbcOperations().query(sql.toString(), ps -> {
+			ps.setLong(1, finID);
+		}, rowMapper);
 	}
 
 	@Override
-	public FinanceScheduleDetail getFinSchDetailOrderBySchDate(String selectQuery, String whereClause,
-			String reference) {
-		logger.debug(Literal.ENTERING);
-		StringBuilder sql = new StringBuilder(selectQuery);
-		sql.append(whereClause);
+	public FinanceScheduleDetail getNextUnpaidSchPayment(long finID, Date valueDate) {
+		StringBuilder sql = new StringBuilder("Select * from (");
+		sql.append(" Select row_number() Over(order by Schdate) row_num, ");
+		appendSchdColumns(false, sql);
+		sql.append(" From FinScheduleDetails");
+		sql.append(" Where FinID = ? and  SchDate > = ? ");
+		sql.append(" and (SchPftPaid=0 AND SchPriPaid = 0) and (RepayOnSchDate = 1 and PftOnSchDate = 1 )) T");
+		sql.append(" Where row_num = ?");
+
 		logger.debug(Literal.SQL + sql.toString());
-		RowMapper<FinanceScheduleDetail> rowMapper = BeanPropertyRowMapper.newInstance(FinanceScheduleDetail.class);
-		try {
-			return this.jdbcTemplate.getJdbcOperations().queryForObject(sql.toString(), new Object[] { reference },
-					rowMapper);
 
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+		RowMapper<FinanceScheduleDetail> rowMapper = new ScheduleDetailRowMapper(false);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, valueDate, 1);
+		} catch (Exception e) {
+			//
 		}
-		logger.debug(Literal.LEAVING);
+
 		return null;
-	}
 
-	@Override
-	public FinanceScheduleDetail getNextUnpaidSchPayment(String finReference, Date valueDate) {
-		FinanceScheduleDetail financeScheduleDetail = new FinanceScheduleDetail();
-		financeScheduleDetail.setFinReference(finReference);
-		financeScheduleDetail.setSchDate(valueDate);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select * from (select ROW_NUMBER() Over(order by Schdate) row_num, ");
-		selectSql.append(" * FROM FinScheduleDetails Where FinReference =:FinReference ");
-		selectSql.append(" AND SchDate>=:SchDate AND (SchPftPaid=0 AND SchPriPaid=0) ");
-		selectSql.append(" AND (RepayOnSchDate = 1 AND PftOnSchDate = 1 ) )T where row_num = 1 ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeScheduleDetail);
-		RowMapper<FinanceScheduleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceScheduleDetail.class);
-
-		try {
-			financeScheduleDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-			financeScheduleDetail = null;
-		}
-		return financeScheduleDetail;
 	}
 }

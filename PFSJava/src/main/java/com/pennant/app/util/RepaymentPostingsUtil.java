@@ -775,8 +775,8 @@ public class RepaymentPostingsUtil {
 		// receiptPurpose))) this condition sanction based loans closed after scheduled payment.
 
 		if (!isPresentProc && isSchdFullyPaid(finReference, scheduleDetails)
-				&& (!financeMain.isSanBsdSchdle() || (financeMain.isSanBsdSchdle() && ((receiptPurpose != null
-						&& FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)))))) {
+				&& (!financeMain.isSanBsdSchdle() || (financeMain.isSanBsdSchdle()
+						&& ((receiptPurpose != null && FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)))))) {
 
 			pftDetail.setSvnAcrCalReq(false);
 			financeMain.setFinIsActive(false);
@@ -1029,8 +1029,8 @@ public class RepaymentPostingsUtil {
 
 			FinanceScheduleDetail oldLastSchd = null;
 			if (lastSchd.isFrqDate()) {
-				oldLastSchd = financeScheduleDetailDAO.getFinSchduleDetails(financeMain.getFinReference(),
-						lastSchd.getSchDate(), false);
+				oldLastSchd = financeScheduleDetailDAO.getFinanceScheduleDetailById(financeMain.getFinReference(),
+						lastSchd.getSchDate(), "", false);
 			}
 
 			// If Final Schedule not exists on Approved Schedule details

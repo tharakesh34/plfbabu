@@ -31,114 +31,94 @@ import java.util.List;
 
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.FinanceWriteoff;
 import com.pennant.backend.model.finance.ScheduleDueTaxDetail;
-import com.pennant.backend.model.finance.ScheduleMapDetails;
 
 public interface FinanceScheduleDetailDAO {
 
 	FinanceScheduleDetail getFinanceScheduleDetailById(long finID, Date schdDate, String type, boolean isWIF);
 
-	void update(FinanceScheduleDetail financeScheduleDetail, String type, boolean isWIF);
+	void deleteByFinReference(long finID, String type, boolean isWIF, long logKey);
 
-	void deleteByFinReference(String id, String type, boolean isWIF, long logKey);
-
-	String save(FinanceScheduleDetail financeScheduleDetail, String type, boolean isWIF);
+	void save(FinanceScheduleDetail schedule, String type, boolean isWIF);
 
 	List<FinanceScheduleDetail> getFinScheduleDetails(long finID, String type, boolean isWIF, long logKey);
 
 	List<FinanceScheduleDetail> getFinScheduleDetails(long finID, String type, boolean isWIF);
 
-	void delete(FinanceScheduleDetail financeScheduleDetail, String type, boolean isWIF);
+	void delete(FinanceScheduleDetail schedule, String type, boolean isWIF);
 
-	int getFrqDfrCount(String finReference);
+	int updateForRateReview(List<FinanceScheduleDetail> schedules);
 
-	int updateForRateReview(List<FinanceScheduleDetail> financeScheduleDetail);
+	int saveList(List<FinanceScheduleDetail> schedule, String type, boolean isWIF);
 
-	int saveList(List<FinanceScheduleDetail> financeScheduleDetail, String type, boolean isWIF);
+	BigDecimal getSuspenseAmount(long finID, Date dateValueDate);
 
-	BigDecimal getSuspenseAmount(String finReference, Date dateValueDate);
+	BigDecimal getTotalRepayAmount(long finID);
 
-	FinanceSummary getFinanceSummaryDetails(FinanceSummary summary);
+	BigDecimal getTotalUnpaidPriAmount(long finID);
 
-	BigDecimal getTotalRepayAmount(String finReference);
+	BigDecimal getTotalUnpaidPftAmount(long finID);
 
-	BigDecimal getTotalUnpaidPriAmount(String finReference);
+	FinanceWriteoff getWriteoffTotals(long finID);
 
-	BigDecimal getTotalUnpaidPftAmount(String finReference);
+	void updateForRpy(FinanceScheduleDetail schedule);
 
-	FinanceWriteoff getWriteoffTotals(String finReference);
+	Date getFirstRepayDate(long finID);
 
-	FinanceScheduleDetail getFinSchdDetailForRpy(String finReference, Date rpyDate, String finRpyFor);
+	List<FinanceScheduleDetail> getFinSchdDetailsForBatch(long finID);
 
-	void updateForRpy(FinanceScheduleDetail financeScheduleDetail);
+	FinanceScheduleDetail getTotals(long finID);
 
-	Date getFirstRepayDate(String finReference);
-
-	List<ScheduleMapDetails> getFinSchdDetailTermByDates(List<String> finReferences, Date schdFromdate,
-			Date schdTodate);
-
-	List<ScheduleMapDetails> getRecalCulateFinSchdDetailTermByDates(List<String> finReferences, Date schdFromdate,
-			Date schdTodate);
-
-	FinanceScheduleDetail getFinSchduleDetails(String finReference, Date schdDate, boolean isWIF);
-
-	List<FinanceScheduleDetail> getFinSchdDetailsForBatch(String finReference);
-
-	FinanceScheduleDetail getTotals(String finReference);
-
-	FinanceScheduleDetail getNextSchPayment(String finReference, Date curBussDate);
+	FinanceScheduleDetail getNextSchPayment(long finID, Date curBussDate);
 
 	boolean getFinScheduleCountByDate(long finID, Date fromDate, boolean isWIF);
 
 	List<FinanceScheduleDetail> getFinScheduleDetails(long Custid, boolean isActive);
 
-	void updateListForRpy(List<FinanceScheduleDetail> schdList);
+	void updateListForRpy(List<FinanceScheduleDetail> schedules);
 
-	BigDecimal getPriPaidAmount(String finReference);
+	BigDecimal getPriPaidAmount(long finID);
 
-	BigDecimal getOutStandingBalFromFees(String finReference);
+	BigDecimal getOutStandingBalFromFees(long finID);
 
 	List<FinanceScheduleDetail> getFinScheduleDetails(long finID, String type, long logKey);
 
-	void updateTDS(List<FinanceScheduleDetail> schdList);
+	void updateTDS(List<FinanceScheduleDetail> schedules);
 
 	// Mandate Registration Request
-	List<FinanceScheduleDetail> getFirstRepayAmt(String finReference);
+	List<FinanceScheduleDetail> getFirstRepayAmt(long finID);
 
 	// ## Ticket id:124998(receipt upload) 16/8/2018
-	BigDecimal getClosingBalance(String finReference, Date valueDate);
+	BigDecimal getClosingBalance(long finID, Date valueDate);
 
-	FinanceScheduleDetail getPrvSchd(String finReference, Date curBussDate);
+	FinanceScheduleDetail getPrvSchd(long finID, Date curBussDate);
 
 	// Ticket id:124998(receipt upload)
-	Date getPrevSchdDate(String finReference, Date appDate);
+	Date getPrevSchdDate(long finID, Date appDate);
 
-	boolean isInstallSchd(String finReference, Date lastPrevDate); // ## Ticket id:124998(receipt upload) 16/8/2018
+	boolean isInstallSchd(long finID, Date lastPrevDate); // ## Ticket id:124998(receipt upload) 16/8/2018
 
 	void updateSchPaid(FinanceScheduleDetail curSchd);
 
-	List<FinanceScheduleDetail> getFinSchdDetailsForRateReport(String finReference);
+	List<FinanceScheduleDetail> getFinSchdDetailsForRateReport(long finID);
 
-	FinanceMain getFinanceMainForRateReport(String finReference, String type);
+	FinanceMain getFinanceMainForRateReport(long finID, String type);
 
-	boolean isScheduleInQueue(String finReference);
+	boolean isScheduleInQueue(long finID);
 
-	int getDueBucket(String finReference);
+	int getDueBucket(long finID);
 
-	List<FinanceScheduleDetail> getDueSchedulesByFacilityRef(String finReference, Date valueDate);
+	List<FinanceScheduleDetail> getDueSchedulesByFacilityRef(long finID, Date valueDate);
 
 	List<FinanceScheduleDetail> getFinScheduleDetailsBySchPriPaid(long finID, String type, boolean isWIF);
 
-	FinanceScheduleDetail getFinSchDetailOrderBySchDate(String selectQuery, String whereClause, String reference);
-
-	FinanceScheduleDetail getNextUnpaidSchPayment(String finReference, Date valueDate);
+	FinanceScheduleDetail getNextUnpaidSchPayment(long finID, Date valueDate);
 
 	void saveSchDueTaxDetail(ScheduleDueTaxDetail dueTaxDetail);
 
-	Long getSchdDueInvoiceID(String finReference, Date schdate);
+	Long getSchdDueInvoiceID(long finID, Date schdate);
 
-	void updateTDSChange(List<FinanceScheduleDetail> schdList);
+	void updateTDSChange(List<FinanceScheduleDetail> schedules);
 
 }
