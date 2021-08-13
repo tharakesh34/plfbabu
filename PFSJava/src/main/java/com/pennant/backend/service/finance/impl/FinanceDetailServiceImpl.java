@@ -8222,7 +8222,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			 * summary = getFinanceScheduleDetailDAO().getFinanceSummaryDetails(summary); summary =
 			 * getFinFeeDetailDAO().getTotalFeeCharges(summary);
 			 */
-			summary.setFinCurODDays(getProfitDetailsDAO().getCurOddays(finReference, ""));
+			summary.setFinCurODDays(getProfitDetailsDAO().getCurOddays(finReference));
 			finSchData.setFinanceSummary(summary);
 
 			FinODDetails finODDetails = getFinODDetailsDAO().getFinODSummary(finReference);

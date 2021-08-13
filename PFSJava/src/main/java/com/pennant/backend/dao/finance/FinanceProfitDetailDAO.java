@@ -29,7 +29,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 
 /**
@@ -40,82 +39,60 @@ public interface FinanceProfitDetailDAO {
 
 	FinanceProfitDetail getFinProfitDetailsById(long finID);
 
-	void update(FinanceProfitDetail finProfitDetails, boolean isRpyProcess);
+	void update(FinanceProfitDetail pd, boolean isRpyProcess);
 
-	void update(List<FinanceProfitDetail> finProfitDetails, String type);
+	void save(FinanceProfitDetail pd);
 
-	void save(FinanceProfitDetail finProfitDetails);
+	BigDecimal getAccrueAmount(long finID);
 
-	BigDecimal getAccrueAmount(String finReference);
+	FinanceProfitDetail getFinProfitDetailsByRef(long finID);
 
-	void updateLBDAccruals(FinanceProfitDetail finProfitDetails, boolean isMonthEnd);
+	void updateCpzDetail(List<FinanceProfitDetail> pdList);
 
-	FinanceProfitDetail getFinProfitDetailsByRef(String finReference);
-
-	void updateCpzDetail(List<FinanceProfitDetail> pftDetailsList, String type);
-
-	void refreshTemp();
-
-	FinanceProfitDetail getProfitDetailForWriteOff(String finReference);
+	FinanceProfitDetail getProfitDetailForWriteOff(long finID);
 
 	FinanceProfitDetail getPftDetailForEarlyStlReport(long finID);
 
-	void updateLatestRpyDetails(FinanceProfitDetail financeProfitDetail);
+	void updateLatestRpyDetails(FinanceProfitDetail pd);
 
-	void saveAccumulates(Date valueDate);
-
-	void resetAcrTsfdInSusp();
-
-	void updateAcrTsfdInSusp(List<AccountHoldStatus> list);
-
-	FinanceProfitDetail getFinProfitDetailsForSummary(String finReference);
+	FinanceProfitDetail getFinProfitDetailsForSummary(long finID);
 
 	List<FinanceProfitDetail> getFinProfitDetailsByCustId(long custID, boolean isActive);
 
 	FinanceProfitDetail getFinProfitDetailsByFinRef(long finID, boolean isActive);
 
-	void updateEOD(FinanceProfitDetail finProfitDetails, boolean posted, boolean monthend);
+	void updateEOD(FinanceProfitDetail pd, boolean posted, boolean monthend);
 
-	void UpdateActiveSts(String finReference, boolean isActive);
+	void UpdateActiveSts(long finID, boolean isActive);
 
-	void updateODDetailsEOD(Date valueDate);
+	int getCurOddays(long finID, String type);
 
-	void updateTDDetailsEOD(Date valueDate);
-
-	void updateReceivableDetailsEOD(Date valueDate);
-
-	void updateBounceDetailsEOD(Date valueDate);
-
-	int getCurOddays(String finReference, String type);
-
-	boolean isSuspenseFinance(String finReference);
+	boolean isSuspenseFinance(long finID);
 
 	BigDecimal getTotalCustomerExposre(long custId);
 
-	BigDecimal getTotalCoApplicantsExposre(String finReferece);
+	BigDecimal getTotalCoApplicantsExposre(long finID);
 
-	Date getFirstRePayDateByFinRef(String finReference);
+	Date getFirstRePayDateByFinRef(long finID);
 
-	BigDecimal getMaxRpyAmount(String finReference);
+	BigDecimal getMaxRpyAmount(long finID);
 
-	BigDecimal getGoldPOSByCustCif(String custCif, String promotionCode, String repledgeRef);
+	List<FinanceProfitDetail> getFinProfitListByFinRefList(List<Long> finRefList);
 
-	List<FinanceProfitDetail> getFinProfitListByFinRefList(List<String> finRefList); // Linked Loans
+	void updateAssignmentBPIAmounts(FinanceProfitDetail pd);
 
-	void updateAssignmentBPIAmounts(FinanceProfitDetail finProfitDetails); // Assignments
-
-	void updateFinPftMaturity(String finReference, String closingStatus, boolean finIsActive);
+	void updateFinPftMaturity(long finID, String closingStatus, boolean finIsActive);
 
 	// IND AS One Time Activity
 	List<FinanceProfitDetail> getFinPftListForIncomeAMZ(Date curMonthStart);
 
-	FinanceProfitDetail getFinProfitForAMZ(String finReference);
+	FinanceProfitDetail getFinProfitForAMZ(long finID);
 
-	void updateAMZMethod(String finReference, String amzMethod);
+	void updateAMZMethod(long finID, String amzMethod);
 
-	void updateSchPaid(FinanceProfitDetail profitDetail);
+	void updateSchPaid(FinanceProfitDetail pd);
 
-	void updateClosingSts(String finReference, boolean writeoffLoan);
+	void updateClosingSts(long finID, boolean writeoffLoan);
 
 	FinanceProfitDetail getFinProfitDetailsByFinRef(long finID);
 }

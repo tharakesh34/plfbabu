@@ -28,30 +28,18 @@ import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
-import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
-import com.pennant.backend.model.finance.MonthlyAccumulateDetail;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
@@ -71,119 +59,18 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		super();
 	}
 
-	/**
-	 * Method for get the FinanceProfitDetail Object by Key finReference
-	 */
 	@Override
 	public FinanceProfitDetail getFinProfitDetailsById(long finID) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, CustId, FinBranch, FinType, FinCcy, LastMdfDate, FinIsActive");
-		sql.append(", TotalpriSchd, TotalPftSchd, TotalPftCpz, TotalPftPaid, TotalPftBal, TotalPftPaidInAdv");
-		sql.append(", TotalPriPaid, TotalPriBal, TdSchdPft, TdPftCpz, TdSchdPftPaid, TdSchdPftBal");
-		sql.append(", PftAccrued, PftAccrueSusp, PftAmz, PftAmzSusp, TdSchdPri, TdSchdPriPaid, TdSchdPriBal");
-		sql.append(", AcrTillLBD, AmzTillLBD, LpiTillLBD, LppTillLBD, GstLpiTillLBD, GstLppTillLBD");
-		sql.append(", FinWorstStatus, FinStatus, FinStsReason, ClosingStatus, FinCategory, PrvRpySchDate");
-		sql.append(", NSchdDate, PrvRpySchPri, PrvRpySchPft, LatestRpyDate, LatestRpyPri, LatestRpyPft");
-		sql.append(", TotalWriteoff, FirstODDate, PrvODDate, ODPrincipal, ODProfit, CurODDays, ActualODDays");
-		sql.append(", FinStartDate, MaturityDate, ProductCategory, ExcessAmt, EmiInAdvance, PrvMthAmz");
-		sql.append(", PayableAdvise, ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv, PenaltyPaid");
-		sql.append(", PenaltyDue, GapIntAmz, GapIntAmzLbd, PrvMthGapIntAmz, PrvMthGapIntAmz, SvAmount");
-		sql.append(", CbAmount, NOAutoIncGrcEnd, FirstRepayDate, PrvMthAcr, WriteoffLoan");
-		sql.append(" from FinPftDetails");
+		StringBuilder sql = getProfitDetailQuery();
 		sql.append(" Where FinID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
-				FinanceProfitDetail fpd = new FinanceProfitDetail();
+		ProfitDetailRowMapper rowMapper = new ProfitDetailRowMapper();
+		return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID);
 
-				fpd.setFinID(rs.getLong("FinID"));
-				fpd.setFinReference(rs.getString("FinReference"));
-				fpd.setCustId(rs.getLong("CustId"));
-				fpd.setFinBranch(rs.getString("FinBranch"));
-				fpd.setFinType(rs.getString("FinType"));
-				fpd.setFinCcy(rs.getString("FinCcy"));
-				fpd.setLastMdfDate(rs.getTimestamp("LastMdfDate"));
-				fpd.setFinIsActive(rs.getBoolean("FinIsActive"));
-				fpd.setTotalpriSchd(rs.getBigDecimal("TotalpriSchd"));
-				fpd.setTotalPftSchd(rs.getBigDecimal("TotalPftSchd"));
-				fpd.setTotalPftCpz(rs.getBigDecimal("TotalPftCpz"));
-				fpd.setTotalPftPaid(rs.getBigDecimal("TotalPftPaid"));
-				fpd.setTotalPftBal(rs.getBigDecimal("TotalPftBal"));
-				fpd.setTotalPftPaidInAdv(rs.getBigDecimal("TotalPftPaidInAdv"));
-				fpd.setTotalPriPaid(rs.getBigDecimal("TotalPriPaid"));
-				fpd.setTotalPriBal(rs.getBigDecimal("TotalPriBal"));
-				fpd.setTdSchdPft(rs.getBigDecimal("TdSchdPft"));
-				fpd.setTdPftCpz(rs.getBigDecimal("TdPftCpz"));
-				fpd.setTdSchdPftPaid(rs.getBigDecimal("TdSchdPftPaid"));
-				fpd.setTdSchdPftBal(rs.getBigDecimal("TdSchdPftBal"));
-				fpd.setPftAccrued(rs.getBigDecimal("PftAccrued"));
-				fpd.setPftAccrueSusp(rs.getBigDecimal("PftAccrueSusp"));
-				fpd.setPftAmz(rs.getBigDecimal("PftAmz"));
-				fpd.setPftAmzSusp(rs.getBigDecimal("PftAmzSusp"));
-				fpd.setTdSchdPri(rs.getBigDecimal("TdSchdPri"));
-				fpd.setTdSchdPriPaid(rs.getBigDecimal("TdSchdPriPaid"));
-				fpd.setTdSchdPriBal(rs.getBigDecimal("TdSchdPriBal"));
-				fpd.setAcrTillLBD(rs.getBigDecimal("AcrTillLBD"));
-				fpd.setAmzTillLBD(rs.getBigDecimal("AmzTillLBD"));
-				fpd.setLpiTillLBD(rs.getBigDecimal("LpiTillLBD"));
-				fpd.setLppTillLBD(rs.getBigDecimal("LppTillLBD"));
-				fpd.setGstLpiTillLBD(rs.getBigDecimal("GstLpiTillLBD"));
-				fpd.setGstLppTillLBD(rs.getBigDecimal("GstLppTillLBD"));
-				fpd.setFinWorstStatus(rs.getString("FinWorstStatus"));
-				fpd.setFinStatus(rs.getString("FinStatus"));
-				fpd.setFinStsReason(rs.getString("FinStsReason"));
-				fpd.setClosingStatus(rs.getString("ClosingStatus"));
-				fpd.setFinCategory(rs.getString("FinCategory"));
-				fpd.setPrvRpySchDate(rs.getTimestamp("PrvRpySchDate"));
-				fpd.setNSchdDate(rs.getTimestamp("NSchdDate"));
-				fpd.setPrvRpySchPri(rs.getBigDecimal("PrvRpySchPri"));
-				fpd.setPrvRpySchPft(rs.getBigDecimal("PrvRpySchPft"));
-				fpd.setLatestRpyDate(rs.getTimestamp("LatestRpyDate"));
-				fpd.setLatestRpyPri(rs.getBigDecimal("LatestRpyPri"));
-				fpd.setLatestRpyPft(rs.getBigDecimal("LatestRpyPft"));
-				fpd.setTotalWriteoff(rs.getBigDecimal("TotalWriteoff"));
-				fpd.setFirstODDate(rs.getTimestamp("FirstODDate"));
-				fpd.setPrvODDate(rs.getTimestamp("PrvODDate"));
-				fpd.setODPrincipal(rs.getBigDecimal("ODPrincipal"));
-				fpd.setODProfit(rs.getBigDecimal("ODProfit"));
-				fpd.setCurODDays(rs.getInt("CurODDays"));
-				fpd.setActualODDays(rs.getInt("ActualODDays"));
-				fpd.setFinStartDate(rs.getTimestamp("FinStartDate"));
-				fpd.setMaturityDate(rs.getTimestamp("MaturityDate"));
-				fpd.setProductCategory(rs.getString("ProductCategory"));
-				fpd.setExcessAmt(rs.getBigDecimal("ExcessAmt"));
-				fpd.setEmiInAdvance(rs.getBigDecimal("EmiInAdvance"));
-				fpd.setPrvMthAmz(rs.getBigDecimal("PrvMthAmz"));
-				fpd.setPayableAdvise(rs.getBigDecimal("PayableAdvise"));
-				fpd.setExcessAmtResv(rs.getBigDecimal("ExcessAmtResv"));
-				fpd.setEmiInAdvanceResv(rs.getBigDecimal("EmiInAdvanceResv"));
-				fpd.setPayableAdviseResv(rs.getBigDecimal("PayableAdviseResv"));
-				fpd.setPenaltyPaid(rs.getBigDecimal("PenaltyPaid"));
-				fpd.setPenaltyDue(rs.getBigDecimal("PenaltyDue"));
-				fpd.setGapIntAmz(rs.getBigDecimal("GapIntAmz"));
-				fpd.setGapIntAmzLbd(rs.getBigDecimal("GapIntAmzLbd"));
-				fpd.setPrvMthGapIntAmz(rs.getBigDecimal("PrvMthGapIntAmz"));
-				fpd.setSvAmount(rs.getBigDecimal("SvAmount"));
-				fpd.setCbAmount(rs.getBigDecimal("CbAmount"));
-				fpd.setNOAutoIncGrcEnd(rs.getInt("NOAutoIncGrcEnd"));
-				fpd.setFirstRepayDate(rs.getTimestamp("FirstRepayDate"));
-				fpd.setPrvMthAcr(rs.getBigDecimal("PrvMthAcr"));
-				fpd.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
-
-				return fpd;
-			}, finID);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record not found in FinPftDetails table for the specified FinID >> {}", finID);
-		}
-
-		return null;
 	}
 
-	/**
-	 * Method for get the FinanceProfitDetail Object by Key finReference
-	 */
 	@Override
 	public List<FinanceProfitDetail> getFinProfitDetailsByCustId(long custID, boolean isActive) {
 		StringBuilder sql = getProfitDetailQuery();
@@ -191,13 +78,14 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		if (App.DATABASE == Database.SQL_SERVER) {
 			sql.append(EodConstants.SQL_NOLOCK);
 		}
+
 		sql.append(" where CustId = ?");
 
 		if (isActive) {
 			sql.append(" and FinIsActive = ?");
 		}
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		ProfitDetailRowMapper rowMapper = new ProfitDetailRowMapper();
 
@@ -223,13 +111,12 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		sql.append(", ExcessAmt, EmiInAdvance, PayableAdvise, ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv");
 		sql.append(", AMZMethod, GapIntAmz, GapIntAmzLbd, SvAmount, CbAmount, NOPaidInst");
 		sql.append(", NOAutoIncGrcEnd, WriteoffLoan");
+		sql.append(", TotalPriSchd, MaturityDate, ProductCategory, PrvMthAmz, PenaltyPaid, PenaltyDue");
+		sql.append(", PrvMthGapIntAmz, FirstRepayDate, PrvMthAcr");
 		sql.append(" from FinPftDetails");
 		return sql;
 	}
 
-	/**
-	 * Method for get the FinanceProfitDetail Object by Key finReference
-	 */
 	@Override
 	public FinanceProfitDetail getFinProfitDetailsByFinRef(long finID, boolean isActive) {
 		logger.debug(Literal.ENTERING);
@@ -241,7 +128,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 			sql.append(" and FinIsActive = ?");
 		}
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		ProfitDetailRowMapper rowMapper = new ProfitDetailRowMapper();
 		return this.jdbcTemplate.getJdbcOperations().queryForObject(sql.toString(), rowMapper, finID, isActive);
@@ -258,198 +145,110 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID);
 	}
 
-	/**
-	 * Method for get the FinanceProfitDetail Object by Key finReference
-	 */
 	@Override
 	public FinanceProfitDetail getPftDetailForEarlyStlReport(long finID) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinID, FinReference, TotalPftPaid, TotalPftBal");
 		sql.append(", TotalPriPaid, TotalPriBal, NOInst, NOPaidInst");
 		sql.append(" from FinPftDetails");
 		sql.append(" Where FinID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<FinanceProfitDetail>() {
-				@Override
-				public FinanceProfitDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinanceProfitDetail fpd = new FinanceProfitDetail();
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceProfitDetail fpd = new FinanceProfitDetail();
 
-					fpd.setFinID(rs.getLong("FinID"));
-					fpd.setFinReference(rs.getString("FinReference"));
-					fpd.setTotalPftPaid(rs.getBigDecimal("TotalPftPaid"));
-					fpd.setTotalPftBal(rs.getBigDecimal("TotalPftBal"));
-					fpd.setTotalPriPaid(rs.getBigDecimal("TotalPriPaid"));
-					fpd.setTotalPriBal(rs.getBigDecimal("TotalPriBal"));
-					fpd.setNOInst(rs.getInt("NOInst"));
-					fpd.setNOPaidInst(rs.getInt("NOPaidInst"));
+				fpd.setFinID(rs.getLong("FinID"));
+				fpd.setFinReference(rs.getString("FinReference"));
+				fpd.setTotalPftPaid(rs.getBigDecimal("TotalPftPaid"));
+				fpd.setTotalPftBal(rs.getBigDecimal("TotalPftBal"));
+				fpd.setTotalPriPaid(rs.getBigDecimal("TotalPriPaid"));
+				fpd.setTotalPriBal(rs.getBigDecimal("TotalPriBal"));
+				fpd.setNOInst(rs.getInt("NOInst"));
+				fpd.setNOPaidInst(rs.getInt("NOPaidInst"));
 
-					return fpd;
-				}
+				return fpd;
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
-	/**
-	 * Method for get the FinanceProfitDetail Object by Key finReference
-	 */
 	@Override
-	public FinanceProfitDetail getFinProfitDetailsByRef(String finReference) {
-		logger.debug("Entering");
+	public FinanceProfitDetail getFinProfitDetailsByRef(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" AcrTillLBD, PftAmzSusp, AmzTillLBD, LpiTillLBD, LppTillLBD");
+		sql.append(", GstLpiTillLBD, GstLppTillLBD, GapIntAmzLbd");
+		sql.append(" From FinPftDetails");
+		sql.append(" Where FinID = ?");
 
-		FinanceProfitDetail finProfitDetails = new FinanceProfitDetail();
-		finProfitDetails.setFinReference(finReference);
-
-		StringBuilder selectSql = new StringBuilder(
-				"Select AcrTillLBD, PftAmzSusp,  AmzTillLBD,LpiTillLBD, LppTillLBD,GstLpiTillLBD, GstLppTillLBD ");
-		selectSql.append(" , GapIntAmzLbd");
-		selectSql.append(" From FinPftDetails");
-		selectSql.append(" Where FinReference =:FinReference");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
-		RowMapper<FinanceProfitDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceProfitDetail.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			finProfitDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			finProfitDetails = null;
-		}
-		logger.debug("Leaving");
-		return finProfitDetails;
+			this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceProfitDetail pd = new FinanceProfitDetail();
 
+				pd.setAcrTillLBD(rs.getBigDecimal("AcrTillLBD"));
+				pd.setPftAmzSusp(rs.getBigDecimal("PftAmzSusp"));
+				pd.setAmzTillLBD(rs.getBigDecimal("AmzTillLBD"));
+				pd.setLpiTillLBD(rs.getBigDecimal("LpiTillLBD"));
+				pd.setLppTillLBD(rs.getBigDecimal("LppTillLBD"));
+				pd.setGstLpiTillLBD(rs.getBigDecimal("GstLpiTillLBD"));
+				pd.setGstLppTillLBD(rs.getBigDecimal("GstLppTillLBD"));
+				pd.setGapIntAmzLbd(rs.getBigDecimal("GapIntAmzLbd"));
+
+				return pd;
+
+			}, finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
 	}
 
-	/**
-	 * Method for get the FinanceProfitDetail Object by Key finReference
-	 */
 	@Override
-	public FinanceProfitDetail getProfitDetailForWriteOff(String finReference) {
-		logger.debug(Literal.ENTERING);
-
+	public FinanceProfitDetail getProfitDetailForWriteOff(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ODPrincipal, ODProfit, PenaltyDue, PftAccrued, MaturityDate");
 		sql.append(" from FinPftDetails");
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
-					new RowMapper<FinanceProfitDetail>() {
-						@Override
-						public FinanceProfitDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-							FinanceProfitDetail fpd = new FinanceProfitDetail();
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceProfitDetail fpd = new FinanceProfitDetail();
 
-							fpd.setODPrincipal(rs.getBigDecimal("ODPrincipal"));
-							fpd.setODProfit(rs.getBigDecimal("ODProfit"));
-							fpd.setPenaltyDue(rs.getBigDecimal("PenaltyDue"));
-							fpd.setPftAccrued(rs.getBigDecimal("PftAccrued"));
-							fpd.setMaturityDate(rs.getDate("MaturityDate"));
+				fpd.setODPrincipal(rs.getBigDecimal("ODPrincipal"));
+				fpd.setODProfit(rs.getBigDecimal("ODProfit"));
+				fpd.setPenaltyDue(rs.getBigDecimal("PenaltyDue"));
+				fpd.setPftAccrued(rs.getBigDecimal("PftAccrued"));
+				fpd.setMaturityDate(rs.getDate("MaturityDate"));
 
-							return fpd;
-						}
-					});
+				return fpd;
+
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
-	/**
-	 * Method for get the FinanceProfitDetail Object by Key finReference.<br>
-	 * Details to be fetched for the purpose of statement summary
-	 * 
-	 * @param finReference
-	 * @return FinanceProfitDetail
-	 */
 	@Override
-	public FinanceProfitDetail getFinProfitDetailsForSummary(String finReference) {
-		logger.debug(Literal.ENTERING);
+	public FinanceProfitDetail getFinProfitDetailsForSummary(long finID) {
+		StringBuilder sql = getProfitDetailQuery();
+		sql.append(" Where FinID = ?");
 
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, CustId, TotalPftSchd, TotalPftCpz, TotalPftPaid, TotalPftBal");
-		sql.append(", TotalPftPaidInAdv, TotalPriPaid, TotalPriBal, FinStartDate, NOInst, MaturityDate");
-		sql.append(", FirstRepayAmt, NSchdDate, NSchdPri, NSchdPft, FirstRepayDate, NSchdDate, PrvRpySchDate");
-		sql.append(", ODPrincipal, ODProfit, NOODInst, NOPaidInst, ClosingStatus, TotalPftPaidInAdv");
-		sql.append(", TotalPriPaidInAdv, AmzTillLBD, LpiTillLBD, LppTillLBD, GstLpiTillLBD, GstLppTillLBD");
-		sql.append(", TdSchdPftPaid, ExcessAmt, EmiInAdvance, PayableAdvise, GapIntAmzLbd, SvAmount");
-		sql.append(", CbAmount, PenaltyDue, BounceAmtDue, LatestDisbDate, FirstDisbDate, WriteoffLoan");
-		sql.append(" from FinPftDetails");
-		sql.append(" Where FinReference = ?");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.trace(Literal.SQL + sql.toString());
+		ProfitDetailRowMapper rowMapper = new ProfitDetailRowMapper();
+		return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
-					new RowMapper<FinanceProfitDetail>() {
-						@Override
-						public FinanceProfitDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-							FinanceProfitDetail fpd = new FinanceProfitDetail();
-
-							fpd.setFinReference(rs.getString("FinReference"));
-							fpd.setCustId(rs.getLong("CustId"));
-							fpd.setTotalPftSchd(rs.getBigDecimal("TotalPftSchd"));
-							fpd.setTotalPftCpz(rs.getBigDecimal("TotalPftCpz"));
-							fpd.setTotalPftPaid(rs.getBigDecimal("TotalPftPaid"));
-							fpd.setTotalPftBal(rs.getBigDecimal("TotalPftBal"));
-							fpd.setTotalPftPaidInAdv(rs.getBigDecimal("TotalPftPaidInAdv"));
-							fpd.setTotalPriPaid(rs.getBigDecimal("TotalPriPaid"));
-							fpd.setTotalPriBal(rs.getBigDecimal("TotalPriBal"));
-							fpd.setFinStartDate(rs.getTimestamp("FinStartDate"));
-							fpd.setNOInst(rs.getInt("NOInst"));
-							fpd.setMaturityDate(rs.getTimestamp("MaturityDate"));
-							fpd.setFirstRepayAmt(rs.getBigDecimal("FirstRepayAmt"));
-							fpd.setNSchdDate(rs.getTimestamp("NSchdDate"));
-							fpd.setNSchdPri(rs.getBigDecimal("NSchdPri"));
-							fpd.setNSchdPft(rs.getBigDecimal("NSchdPft"));
-							fpd.setFirstRepayDate(rs.getTimestamp("FirstRepayDate"));
-							fpd.setPrvRpySchDate(rs.getTimestamp("PrvRpySchDate"));
-							fpd.setODPrincipal(rs.getBigDecimal("ODPrincipal"));
-							fpd.setODProfit(rs.getBigDecimal("ODProfit"));
-							fpd.setNOODInst(rs.getInt("NOODInst"));
-							fpd.setNOPaidInst(rs.getInt("NOPaidInst"));
-							fpd.setClosingStatus(rs.getString("ClosingStatus"));
-							fpd.setTotalPriPaidInAdv(rs.getBigDecimal("TotalPriPaidInAdv"));
-							fpd.setAmzTillLBD(rs.getBigDecimal("AmzTillLBD"));
-							fpd.setLpiTillLBD(rs.getBigDecimal("LpiTillLBD"));
-							fpd.setLppTillLBD(rs.getBigDecimal("LppTillLBD"));
-							fpd.setGstLpiTillLBD(rs.getBigDecimal("GstLpiTillLBD"));
-							fpd.setGstLppTillLBD(rs.getBigDecimal("GstLppTillLBD"));
-							fpd.setTdSchdPftPaid(rs.getBigDecimal("TdSchdPftPaid"));
-							fpd.setExcessAmt(rs.getBigDecimal("ExcessAmt"));
-							fpd.setEmiInAdvance(rs.getBigDecimal("EmiInAdvance"));
-							fpd.setPayableAdvise(rs.getBigDecimal("PayableAdvise"));
-							fpd.setGapIntAmzLbd(rs.getBigDecimal("GapIntAmzLbd"));
-							fpd.setSvAmount(rs.getBigDecimal("SvAmount"));
-							fpd.setCbAmount(rs.getBigDecimal("CbAmount"));
-							fpd.setPenaltyDue(rs.getBigDecimal("PenaltyDue"));
-							fpd.setBounceAmtDue(rs.getBigDecimal("BounceAmtDue"));
-							fpd.setLatestDisbDate(rs.getTimestamp("LatestDisbDate"));
-							fpd.setFirstDisbDate(rs.getTimestamp("FirstDisbDate"));
-							fpd.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
-
-							return fpd;
-						}
-					});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	@Override
@@ -478,7 +277,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 			sql.append(", LatestRpyDate = ?, LatestRpyPri = ?, LatestRpyPft = ?");
 		}
 
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql);
 
@@ -569,274 +368,241 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 				ps.setBigDecimal(index++, pd.getLatestRpyPft());
 			}
 
-			ps.setString(index, pd.getFinReference());
+			ps.setLong(index, pd.getFinID());
 		});
 
 	}
 
 	@Override
-	public void update(List<FinanceProfitDetail> finProfitDetails, String type) {
-		logger.debug("Entering");
+	public void updateCpzDetail(List<FinanceProfitDetail> pdList) {
+		String sql = "Update FinPftDetails Set TdPftCpz = ?, LastMdfDate = ? Where FinID = ?";
 
-		StringBuilder updateSql = new StringBuilder("Update FinPftDetails").append(type);
-		updateSql.append(
-				" Set TotalPftSchd = :TotalPftSchd , TotalPftCpz = :TotalPftCpz , TotalPftPaid = :TotalPftPaid , TotalPftBal = :TotalPftBal , ");
-		updateSql.append(
-				" TotalPftPaidInAdv = :TotalPftPaidInAdv , TotalPriPaid = :TotalPriPaid , TotalPriBal = :TotalPriBal , TdSchdPft = :TdSchdPft , ");
-		updateSql.append(
-				" TdPftCpz = :TdPftCpz , TdSchdPftPaid = :TdSchdPftPaid , TdSchdPftBal = :TdSchdPftBal , PftAccrued = :PftAccrued , ");
-		updateSql.append(" PftAccrueSusp = :PftAccrueSusp , TdSchdPri = :TdSchdPri , ");
-		updateSql.append(" TdSchdPriPaid = :TdSchdPriPaid , TdSchdPriBal = :TdSchdPriBal , PftAmz = :PftAmz , ");
-		updateSql.append(" PftAmzSusp = :PftAmzSusp , ");
-		updateSql.append(
-				" FullPaidDate = :FullPaidDate , CurReducingRate = :CurReducingRate , CurFlatRate = :CurFlatRate , TotalpriSchd = :TotalpriSchd , ");
-		updateSql.append(" ODPrincipal = :ODPrincipal , ODProfit = :ODProfit , PenaltyPaid = :PenaltyPaid , ");
-		updateSql.append(
-				" PenaltyDue = :PenaltyDue , PenaltyWaived = :PenaltyWaived , NSchdDate = :NSchdDate , NSchdPri = :NSchdPri , NSchdPft = :NSchdPft , ");
-		updateSql.append(" NSchdPriDue = :NSchdPriDue , NSchdPftDue = :NSchdPftDue , ");
-		updateSql.append(
-				" PftInSusp = :PftInSusp , AccumulatedDepPri=:AccumulatedDepPri, DepreciatePri=:DepreciatePri, ");
-		updateSql.append(
-				" FinWorstStatus = :FinWorstStatus , NOInst = :NOInst , NOPaidInst = :NOPaidInst , NOODInst = :NOODInst ,  ");
-		updateSql
-				.append(" FirstRepayAmt = :FirstRepayAmt , FinalRepayAmt = :FinalRepayAmt ,FinIsActive=:FinIsActive, ");
-		updateSql.append(
-				" CurODDays = :CurODDays, FirstODDate =:FirstODDate , PrvODDate = :PrvODDate,  FinStatus=:FinStatus, FinStsReason =:FinStsReason, ");
-		updateSql.append(" ClosingStatus = :ClosingStatus, PrvRpySchDate = :PrvRpySchDate, ");
-		updateSql.append(
-				" PrvRpySchPri = :PrvRpySchPri, PrvRpySchPft = :PrvRpySchPft, TotalWriteoff = :TotalWriteoff, ");
-		updateSql.append(" TotalPriPaidInAdv=:TotalPriPaidInAdv,");
-		updateSql.append(" PftAmzNormal = :PftAmzNormal, PftAmzPD=:PftAmzPD ");
-		updateSql.append(" ,GapIntAmz = :GapIntAmz, GapIntAmzLbd = :GapIntAmzLbd ");
-		updateSql.append(" Where FinReference =:FinReference");
+		logger.debug(Literal.SQL + sql);
 
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(finProfitDetails.toArray());
-		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
-		logger.debug("Leaving");
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinanceProfitDetail pd = pdList.get(i);
+
+				int index = 1;
+
+				ps.setBigDecimal(index++, pd.getTdPftCpz());
+				ps.setDate(index++, JdbcUtil.getDate(pd.getLastMdfDate()));
+				ps.setLong(index++, pd.getFinID());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return pdList.size();
+			}
+		});
 	}
 
 	@Override
-	public void updateLBDAccruals(FinanceProfitDetail finProfitDetail, boolean isMonthEnd) {
-		logger.debug("Entering");
+	public void save(FinanceProfitDetail pd) {
+		StringBuilder sql = new StringBuilder("Insert Into FinPftDetails(");
+		sql.append("FinID, FinReference, CustId, FinBranch, FinType, LastMdfDate, TotalPftSchd");
+		sql.append(", TotalPftCpz, TotalPftPaid, TotalPftBal, TotalPftPaidInAdv, TotalPriPaid");
+		sql.append(", TotalPriBal, TdSchdPft, TdPftCpz, TdSchdPftPaid, TdSchdPftBal, PftAccrued");
+		sql.append(", PftAccrueSusp, PftAmz, PftAmzSusp, TdSchdPri, TdSchdPriPaid, TdSchdPriBal");
+		sql.append(", AcrTillLBD, AmzTillLBD, LpiTillLBD, LppTillLBD, GstLpiTillLBD, GstLppTillLBD");
+		sql.append(", RepayFrq, CustCIF, FinCcy, FinPurpose, FinContractDate");
+		sql.append(", FinApprovedDate, FinStartDate, MaturityDate, FullPaidDate, FinAmount");
+		sql.append(", DownPayment, CurReducingRate, CurFlatRate, TotalpriSchd, ODPrincipal, ODProfit");
+		sql.append(", PenaltyPaid, PenaltyDue, PenaltyWaived, NSchdDate, NSchdPri, NSchdPft");
+		sql.append(", NSchdPriDue, NSchdPftDue, PftInSusp, FinStatus, FinStsReason, FinWorstStatus");
+		sql.append(", NOInst, NOPaidInst, NOODInst, FinCommitmentRef, FinIsActive, FirstRepayDate");
+		sql.append(", FirstRepayAmt, FinalRepayAmt, CurODDays, ActualODDays, MaxODDays, FirstODDate, PrvODDate");
+		sql.append(", ClosingStatus, FinCategory, PrvRpySchDate, PrvRpySchPri, PrvRpySchPft, LatestRpyDate");
+		sql.append(", LatestRpyPri, LatestRpyPft, TotalWriteoff, AccumulatedDepPri, DepreciatePri");
+		sql.append(", TotalPriPaidInAdv, PftAmzNormal, PftAmzPD");
+		sql.append(", AmzTillLBDNormal, AmzTillLBDPD, AmzTillLBDPIS, CalPftOnPD, PftOnPDMethod");
+		sql.append(", PftOnPDMrg, TotPftOnPD, TotPftOnPDPaid, TotPftOnPDWaived, TotPftOnPDDue");
+		sql.append(", AcrSuspTillLBD, PrvMthAmz, PrvMthAmzNrm, PrvMthAmzPD, PrvMthAmzSusp, PrvMthAcr, PrvMthAcrSusp");
+		sql.append(", FirstDisbDate, LatestDisbDate, FutureInst, RemainingTenor, TotalTenor, ProductCategory");
+		sql.append(", ExcessAmt, EmiInAdvance, PayableAdvise, ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv");
+		sql.append(", GapIntAmz, GapIntAmzLbd, PrvMthGapIntAmz, SvAmount, CbAmount , NOAutoIncGrcEnd");
+		sql.append(" ) Values (");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?");
+		sql.append(" )");
 
-		StringBuilder updateSql = new StringBuilder("Update FinPftDetails Set");
-		updateSql.append(
-				" AmzTillLBD = :AmzTillLBD, LpiTillLBD=:LpiTillLBD, LppTillLBD=:LppTillLBD, GstLpiTillLBD=:GstLpiTillLBD, GstLppTillLBD=:GstLppTillLBD, AmzTillLBDNormal= :AmzTillLBDNormal, ");
-		updateSql.append(" AmzTillLBDPD = :AmzTillLBDPD, AmzTillLBDPIS = :AmzTillLBDPIS,");
-		updateSql.append(" AcrTillLBD = :AcrTillLBD, AcrSuspTillLBD = :AcrSuspTillLBD, PrvMthAmz = :PrvMthAmz,");
-		updateSql.append(" PrvMthAmzNrm = :PrvMthAmzNrm, PrvMthAmzPD = :PrvMthAmzPD, PrvMthAmzSusp = :PrvMthAmzSusp,");
-		updateSql.append(" PrvMthAcr = :PrvMthAcr, PrvMthAcrSusp = :PrvMthAcrSusp");
-		updateSql.append(" ,GapIntAmzLbd = :GapIntAmzLbd, PrvMthGapIntAmz = :PrvMthGapIntAmz ");
-		updateSql.append(" Where FinReference =:FinReference");
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetail);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug(Literal.SQL + sql);
 
-		logger.debug("Leaving");
+		jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, pd.getFinID());
+			ps.setString(index++, pd.getFinReference());
+			ps.setLong(index++, pd.getCustId());
+			ps.setString(index++, pd.getFinBranch());
+			ps.setString(index++, pd.getFinType());
+			ps.setDate(index++, JdbcUtil.getDate(pd.getLastMdfDate()));
+			ps.setBigDecimal(index++, pd.getTotalPftSchd());
+			ps.setBigDecimal(index++, pd.getTotalPftCpz());
+			ps.setBigDecimal(index++, pd.getTotalPftPaid());
+			ps.setBigDecimal(index++, pd.getTotalPftBal());
+			ps.setBigDecimal(index++, pd.getTotalPftPaidInAdv());
+			ps.setBigDecimal(index++, pd.getTotalPriPaid());
+			ps.setBigDecimal(index++, pd.getTotalPriBal());
+			ps.setBigDecimal(index++, pd.getTdSchdPft());
+			ps.setBigDecimal(index++, pd.getTdPftCpz());
+			ps.setBigDecimal(index++, pd.getTdSchdPftPaid());
+			ps.setBigDecimal(index++, pd.getTdSchdPftBal());
+			ps.setBigDecimal(index++, pd.getPftAccrued());
+			ps.setBigDecimal(index++, pd.getPftAccrueSusp());
+			ps.setBigDecimal(index++, pd.getPftAmz());
+			ps.setBigDecimal(index++, pd.getPftAmzSusp());
+			ps.setBigDecimal(index++, pd.getTdSchdPri());
+			ps.setBigDecimal(index++, pd.getTdSchdPriPaid());
+			ps.setBigDecimal(index++, pd.getTdSchdPriBal());
+			ps.setBigDecimal(index++, pd.getAcrTillLBD());
+			ps.setBigDecimal(index++, pd.getAmzTillLBD());
+			ps.setBigDecimal(index++, pd.getLpiTillLBD());
+			ps.setBigDecimal(index++, pd.getLppTillLBD());
+			ps.setBigDecimal(index++, pd.getGstLpiTillLBD());
+			ps.setBigDecimal(index++, pd.getGstLppTillLBD());
+			ps.setString(index++, pd.getRepayFrq());
+			ps.setString(index++, pd.getCustCIF());
+			ps.setString(index++, pd.getFinCcy());
+			ps.setString(index++, pd.getFinPurpose());
+			ps.setDate(index++, JdbcUtil.getDate(pd.getFinContractDate()));
+			ps.setDate(index++, JdbcUtil.getDate(pd.getFinApprovedDate()));
+			ps.setDate(index++, JdbcUtil.getDate(pd.getFinStartDate()));
+			ps.setDate(index++, JdbcUtil.getDate(pd.getMaturityDate()));
+			ps.setDate(index++, JdbcUtil.getDate(pd.getFullPaidDate()));
+			ps.setBigDecimal(index++, pd.getFinAmount());
+			ps.setBigDecimal(index++, pd.getDownPayment());
+			ps.setBigDecimal(index++, pd.getCurReducingRate());
+			ps.setBigDecimal(index++, pd.getCurFlatRate());
+			ps.setBigDecimal(index++, pd.getTotalpriSchd());
+			ps.setBigDecimal(index++, pd.getODPrincipal());
+			ps.setBigDecimal(index++, pd.getODProfit());
+			ps.setBigDecimal(index++, pd.getPenaltyPaid());
+			ps.setBigDecimal(index++, pd.getPenaltyDue());
+			ps.setBigDecimal(index++, pd.getPenaltyWaived());
+			ps.setDate(index++, JdbcUtil.getDate(pd.getNSchdDate()));
+			ps.setBigDecimal(index++, pd.getNSchdPri());
+			ps.setBigDecimal(index++, pd.getNSchdPft());
+			ps.setBigDecimal(index++, pd.getNSchdPriDue());
+			ps.setBigDecimal(index++, pd.getNSchdPftDue());
+			ps.setBoolean(index++, pd.isPftInSusp());
+			ps.setString(index++, pd.getFinStatus());
+			ps.setString(index++, pd.getFinStsReason());
+			ps.setString(index++, pd.getFinWorstStatus());
+			ps.setInt(index++, pd.getNOInst());
+			ps.setInt(index++, pd.getNOPaidInst());
+			ps.setInt(index++, pd.getNOODInst());
+			ps.setString(index++, pd.getFinCommitmentRef());
+			ps.setBoolean(index++, pd.getFinIsActive());
+			ps.setDate(index++, JdbcUtil.getDate(pd.getFirstRepayDate()));
+			ps.setBigDecimal(index++, pd.getFirstRepayAmt());
+			ps.setBigDecimal(index++, pd.getFinalRepayAmt());
+			ps.setInt(index++, pd.getCurODDays());
+			ps.setInt(index++, pd.getActualODDays());
+			ps.setInt(index++, pd.getMaxODDays());
+			ps.setDate(index++, JdbcUtil.getDate(pd.getFirstODDate()));
+			ps.setDate(index++, JdbcUtil.getDate(pd.getPrvODDate()));
+			ps.setString(index++, pd.getClosingStatus());
+			ps.setString(index++, pd.getFinCategory());
+			ps.setDate(index++, JdbcUtil.getDate(pd.getPrvRpySchDate()));
+			ps.setBigDecimal(index++, pd.getPrvRpySchPri());
+			ps.setBigDecimal(index++, pd.getPrvRpySchPft());
+			ps.setDate(index++, JdbcUtil.getDate(pd.getLatestRpyDate()));
+			ps.setBigDecimal(index++, pd.getLatestRpyPri());
+			ps.setBigDecimal(index++, pd.getLatestRpyPft());
+			ps.setBigDecimal(index++, pd.getTotalWriteoff());
+			ps.setBigDecimal(index++, pd.getAccumulatedDepPri());
+			ps.setBigDecimal(index++, pd.getDepreciatePri());
+			ps.setBigDecimal(index++, pd.getTotalPriPaidInAdv());
+			ps.setBigDecimal(index++, pd.getPftAmzNormal());
+			ps.setBigDecimal(index++, pd.getPftAmzPD());
+			ps.setBigDecimal(index++, pd.getAmzTillLBDNormal());
+			ps.setBigDecimal(index++, pd.getAmzTillLBDPD());
+			ps.setBigDecimal(index++, pd.getAmzTillLBDPIS());
+			ps.setBoolean(index++, pd.isCalPftOnPD());
+			ps.setString(index++, pd.getPftOnPDMethod());
+			ps.setBigDecimal(index++, pd.getPftOnPDMrg());
+			ps.setBigDecimal(index++, pd.getTotPftOnPD());
+			ps.setBigDecimal(index++, pd.getTotPftOnPDPaid());
+			ps.setBigDecimal(index++, pd.getTotPftOnPDWaived());
+			ps.setBigDecimal(index++, pd.getTotPftOnPDDue());
+			ps.setBigDecimal(index++, pd.getAcrSuspTillLBD());
+			ps.setBigDecimal(index++, pd.getPrvMthAmz());
+			ps.setBigDecimal(index++, pd.getPrvMthAmzNrm());
+			ps.setBigDecimal(index++, pd.getPrvMthAmzPD());
+			ps.setBigDecimal(index++, pd.getPrvMthAmzSusp());
+			ps.setBigDecimal(index++, pd.getPrvMthAcr());
+			ps.setBigDecimal(index++, pd.getPrvMthAcrSusp());
+			ps.setDate(index++, JdbcUtil.getDate(pd.getFirstDisbDate()));
+			ps.setDate(index++, JdbcUtil.getDate(pd.getLatestDisbDate()));
+			ps.setInt(index++, pd.getFutureInst());
+			ps.setInt(index++, pd.getRemainingTenor());
+			ps.setInt(index++, pd.getTotalTenor());
+			ps.setString(index++, pd.getProductCategory());
+			ps.setBigDecimal(index++, pd.getExcessAmt());
+			ps.setBigDecimal(index++, pd.getEmiInAdvance());
+			ps.setBigDecimal(index++, pd.getPayableAdvise());
+			ps.setBigDecimal(index++, pd.getExcessAmtResv());
+			ps.setBigDecimal(index++, pd.getEmiInAdvanceResv());
+			ps.setBigDecimal(index++, pd.getPayableAdviseResv());
+			ps.setBigDecimal(index++, pd.getGapIntAmz());
+			ps.setBigDecimal(index++, pd.getGapIntAmzLbd());
+			ps.setBigDecimal(index++, pd.getPrvMthGapIntAmz());
+			ps.setBigDecimal(index++, pd.getSvAmount());
+			ps.setBigDecimal(index++, pd.getCbAmount());
+			ps.setInt(index++, pd.getNOAutoIncGrcEnd());
+		});
 	}
 
 	@Override
-	public void updateCpzDetail(List<FinanceProfitDetail> pftDetailsList, String type) {
-		logger.debug("Entering");
+	public BigDecimal getAccrueAmount(long finID) {
+		String sql = "Select PftAccrued From FinPftDetails Where FinID = ?";
 
-		StringBuilder updateSql = new StringBuilder("Update FinPftDetails").append(type);
-		updateSql.append(" Set TdPftCpz=:TdPftCpz, LastMdfDate =:LastMdfDate ");
-		updateSql.append(" Where FinReference =:FinReference");
+		logger.debug(Literal.SQL + sql);
 
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(pftDetailsList.toArray());
-		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-
-		logger.debug("Leaving");
-	}
-
-	@Override
-	public void save(FinanceProfitDetail finProfitDetails) {
-		logger.debug("Entering");
-
-		StringBuilder insertSql = new StringBuilder("Insert Into FinPftDetails");
-		insertSql.append(" (FinReference, CustId, FinBranch, FinType, LastMdfDate, TotalPftSchd,");
-		insertSql.append(" TotalPftCpz, TotalPftPaid, TotalPftBal, TotalPftPaidInAdv, TotalPriPaid,");
-		insertSql.append(" TotalPriBal, TdSchdPft, TdPftCpz, TdSchdPftPaid, TdSchdPftBal, PftAccrued,");
-		insertSql.append(" PftAccrueSusp, PftAmz, PftAmzSusp, TdSchdPri, TdSchdPriPaid, TdSchdPriBal,");
-		insertSql.append(
-				" AcrTillLBD, AmzTillLBD,LpiTillLBD, LppTillLBD,GstLpiTillLBD, GstLppTillLBD, RepayFrq, CustCIF, FinCcy, FinPurpose, FinContractDate,");
-		insertSql.append(" FinApprovedDate, FinStartDate, MaturityDate, FullPaidDate, FinAmount,");
-		insertSql.append(" DownPayment, CurReducingRate, CurFlatRate, TotalpriSchd, ODPrincipal, ODProfit,");
-		insertSql.append(" PenaltyPaid, PenaltyDue, PenaltyWaived, NSchdDate, NSchdPri, NSchdPft,");
-		insertSql.append(" NSchdPriDue, NSchdPftDue, PftInSusp, FinStatus, FinStsReason, FinWorstStatus,");
-		insertSql.append(" NOInst, NOPaidInst, NOODInst, ");
-		insertSql.append(" FinCommitmentRef, FinIsActive, FirstRepayDate, FirstRepayAmt, FinalRepayAmt,");
-		insertSql.append(" CurODDays, ActualODDays, MaxODDays, FirstODDate, PrvODDate, ClosingStatus, FinCategory,");
-		insertSql.append(" PrvRpySchDate, PrvRpySchPri, PrvRpySchPft, LatestRpyDate, LatestRpyPri,");
-		insertSql.append(" LatestRpyPft, TotalWriteoff, AccumulatedDepPri, DepreciatePri,");
-		insertSql.append(" TotalPriPaidInAdv, PftAmzNormal, PftAmzPD,");
-		insertSql.append(" AmzTillLBDNormal, AmzTillLBDPD, AmzTillLBDPIS, CalPftOnPD, PftOnPDMethod,");
-		insertSql.append(" PftOnPDMrg, TotPftOnPD, TotPftOnPDPaid, TotPftOnPDWaived, TotPftOnPDDue,");
-		insertSql.append(" AcrSuspTillLBD, PrvMthAmz, PrvMthAmzNrm, PrvMthAmzPD, PrvMthAmzSusp, PrvMthAcr,");
-		insertSql.append(" PrvMthAcrSusp, FirstDisbDate, LatestDisbDate, FutureInst, RemainingTenor,");
-		insertSql.append(" TotalTenor,ProductCategory");
-		insertSql.append(" ,ExcessAmt, EmiInAdvance, PayableAdvise, ");
-		insertSql.append(
-				" ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv, GapIntAmz, GapIntAmzLbd, PrvMthGapIntAmz, SvAmount, CbAmount ");
-		insertSql.append(", NOAutoIncGrcEnd");
-		insertSql.append(" ) Values");
-		insertSql.append(" (:FinReference, :CustId, :FinBranch, :FinType, :LastMdfDate, :TotalPftSchd, ");
-		insertSql.append(" :TotalPftCpz, :TotalPftPaid, :TotalPftBal, :TotalPftPaidInAdv, :TotalPriPaid, ");
-		insertSql.append(" :TotalPriBal, :TdSchdPft, :TdPftCpz, :TdSchdPftPaid, :TdSchdPftBal, :PftAccrued, ");
-		insertSql.append(" :PftAccrueSusp, :PftAmz, :PftAmzSusp, :TdSchdPri, :TdSchdPriPaid, :TdSchdPriBal, ");
-		insertSql.append(
-				" :AcrTillLBD, :AmzTillLBD,:LpiTillLBD, :LppTillLBD,:GstLpiTillLBD, :GstLppTillLBD, :RepayFrq, :CustCIF, :FinCcy, :FinPurpose, :FinContractDate,");
-		insertSql.append(" :FinApprovedDate, :FinStartDate, :MaturityDate, :FullPaidDate, :FinAmount, ");
-		insertSql.append(" :DownPayment, :CurReducingRate, :CurFlatRate, :TotalpriSchd, :ODPrincipal, :ODProfit,");
-		insertSql.append(" :PenaltyPaid, :PenaltyDue, :PenaltyWaived, :NSchdDate, :NSchdPri, :NSchdPft,");
-		insertSql.append(" :NSchdPriDue, :NSchdPftDue, :PftInSusp, :FinStatus, :FinStsReason, :FinWorstStatus,");
-		insertSql.append(" :NOInst, :NOPaidInst, :NOODInst, ");
-		insertSql.append(" :FinCommitmentRef, :FinIsActive, :FirstRepayDate, :FirstRepayAmt, :FinalRepayAmt,");
-		insertSql.append(
-				" :CurODDays, :ActualODDays, :MaxODDays, :FirstODDate, :PrvODDate, :ClosingStatus, :FinCategory,");
-		insertSql.append(" :PrvRpySchDate, :PrvRpySchPri, :PrvRpySchPft, :LatestRpyDate, :LatestRpyPri,");
-		insertSql.append(" :LatestRpyPft, :TotalWriteoff, :AccumulatedDepPri, :DepreciatePri,");
-		insertSql.append(" :TotalPriPaidInAdv, :PftAmzNormal, :PftAmzPD,");
-		insertSql.append(" :AmzTillLBDNormal, :AmzTillLBDPD, :AmzTillLBDPIS, :CalPftOnPD, :PftOnPDMethod,");
-		insertSql.append(" :PftOnPDMrg, :TotPftOnPD, :TotPftOnPDPaid, :TotPftOnPDWaived, :TotPftOnPDDue,");
-		insertSql.append(" :AcrSuspTillLBD, :PrvMthAmz, :PrvMthAmzNrm, :PrvMthAmzPD, :PrvMthAmzSusp, :PrvMthAcr,");
-		insertSql.append(" :PrvMthAcrSusp, :FirstDisbDate, :LatestDisbDate, :FutureInst, :RemainingTenor,");
-		insertSql.append(" :TotalTenor,:ProductCategory ");
-		insertSql.append(" , :ExcessAmt, :EmiInAdvance, :PayableAdvise, ");
-		insertSql.append(
-				" :ExcessAmtResv, :EmiInAdvanceResv, :PayableAdviseResv, :GapIntAmz, :GapIntAmzLbd, :PrvMthGapIntAmz, :SvAmount, :CbAmount ");
-		insertSql.append(", :NOAutoIncGrcEnd) ");
-
-		logger.debug("insertSql: " + insertSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-	}
-
-	@Override
-	public BigDecimal getAccrueAmount(String finReference) {
-		logger.debug("Entering");
-
-		BigDecimal accruedAmount = null;
-		FinanceProfitDetail finProfitDetails = new FinanceProfitDetail();
-		finProfitDetails.setFinReference(finReference);
-
-		StringBuilder selectSql = new StringBuilder("Select PftAccrued ");
-		selectSql.append(" From FinPftDetails Where FinReference =:FinReference ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
 		try {
-			accruedAmount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			accruedAmount = BigDecimal.ZERO;
+			//
 		}
-		logger.debug("Leaving");
-		return accruedAmount;
+		return BigDecimal.ZERO;
 	}
 
 	@Override
-	public void refreshTemp() {
-		logger.debug("Entering");
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource("");
-		try {
-			this.jdbcTemplate.update("DELETE FROM FinPftDetails_Temp", beanParameters);
-			this.jdbcTemplate.update("INSERT INTO FinPftDetails_Temp  SELECT * FROM FinPftDetails", beanParameters);
+	public void updateLatestRpyDetails(FinanceProfitDetail pd) {
+		String sql = "Update FinPftDetails Set LatestRpyDate = ?, LatestRpyPri = ?, LatestRpyPft = ?  Where FinID = ?";
 
-		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-		} finally {
-			beanParameters = null;
-		}
-		logger.debug("Leaving");
-	}
+		logger.debug(Literal.SQL + sql);
 
-	/**
-	 * Method for Updating Latest Repayment Details On End Of Day Process
-	 */
-	@Override
-	public void updateLatestRpyDetails(FinanceProfitDetail financeProfitDetail) {
-		logger.debug("Entering");
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-		StringBuilder updateSql = new StringBuilder("Update FinPftDetails ");
-		updateSql.append(
-				" Set LatestRpyDate = :LatestRpyDate, LatestRpyPri =:LatestRpyPri, LatestRpyPft = :LatestRpyPft ");
-		updateSql.append(" Where FinReference =:FinReference");
+			ps.setDate(index++, JdbcUtil.getDate(pd.getLatestRpyDate()));
+			ps.setBigDecimal(index++, pd.getLatestRpyPri());
+			ps.setBigDecimal(index++, pd.getLatestRpyPft());
 
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeProfitDetail);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Method for Updation of Finance Active Status after Finance Cancellation
-	 */
-	@Override
-	public void UpdateActiveSts(String finReference, boolean isActive) {
-		logger.debug("Entering");
-
-		FinanceProfitDetail finProfitDetails = new FinanceProfitDetail();
-		finProfitDetails.setFinReference(finReference);
-		finProfitDetails.setFinIsActive(isActive);
-
-		StringBuilder updateSql = new StringBuilder("Update FinPftDetails ");
-		updateSql.append(" Set FinIsActive = :FinIsActive Where FinReference =:FinReference");
-
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
+			ps.setLong(index++, pd.getFinID());
+		});
 	}
 
 	@Override
-	public void saveAccumulates(Date valueDate) {
-		logger.debug("Entering");
+	public void UpdateActiveSts(long finID, boolean isActive) {
+		String sql = "Update FinPftDetails Set FinIsActive = ? Where FinID = ?";
 
-		MonthlyAccumulateDetail accumulateDetail = new MonthlyAccumulateDetail();
-		accumulateDetail.setMonthEndDate(valueDate);
-		accumulateDetail.setMonthStartDate(DateUtility.getMonthStart(valueDate));
+		logger.debug(Literal.SQL + sql);
 
-		// FIXME: PV 14APR17 based on finPftDetails
-		StringBuilder insertSql = new StringBuilder(" INSERT INTO MonthlyAccumulateDetail ");
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accumulateDetail);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Method for Updation of Repayment Account ID on Finance Basic Details Maintenance
-	 */
-	@Override
-	public void resetAcrTsfdInSusp() {
-		logger.debug("Entering");
-
-		StringBuilder updateSql = new StringBuilder("Update FinPftDetails ");
-		updateSql.append(" Set AcrTsfdInSusp = 0 Where AcrTsfdInSusp != 0");
-
-		logger.debug("updateSql: " + updateSql.toString());
-		this.jdbcTemplate.getJdbcOperations().update(updateSql.toString());
-		logger.debug("Leaving");
-	}
-
-	@Override
-	public void updateAcrTsfdInSusp(List<AccountHoldStatus> list) {
-		logger.debug("Entering");
-
-		StringBuilder updateSql = new StringBuilder("Update FinPftDetails ");
-		updateSql.append(" Set AcrTsfdInSusp = :CurODAmount Where FinReference = :Account");
-
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(list.toArray());
-		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
+			ps.setBoolean(index++, isActive);
+			ps.setLong(index++, finID);
+		});
 	}
 
 	@Override
@@ -978,329 +744,125 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 	}
 
-	/**
-	 * 
-	 */
 	@Override
-	public void updateODDetailsEOD(Date valueDate) {
-		logger.debug("Entering");
+	public int getCurOddays(long finID, String type) {
+		String sql = "Select CurOdDays From FinPftDetails Where FinID = ?";
 
-		StringBuilder updateSql = new StringBuilder();
-		updateSql.append(" MERGE INTO FINPFTDETAILS T1 ");
-		updateSql.append(" USING (select T1.FinREFERENCE, SUM(FINCURODPRI) ODPRINCIPAL, SUM(FINCURODPFT) ODPROFIT,");
-		updateSql.append(" MAX(FINCURODDAYS) ActualODDays, SUM(TOTWAIVED) PENALTYWAIVED, ");
-		updateSql.append(" SUM(TOTPENALTYPAID) PENALTYPAID, SUM(TOTPENALTYBAL) PENALTYDUE,");
-		updateSql.append(" MIN(T1.FINODSCHDDATE) FIRSTODDATE, MAX(T1.FINODSCHDDATE) PRVODDATE ");
-		updateSql.append(" from FinODdetails T1");
-		updateSql.append(" Inner Join FinanceMain T2 on T1.FinReference = T2.FINREFERENCE");
-		updateSql.append(" Inner Join FinPftDetails T3 on T1.FinReference = T3.FINREFERENCE");
-		updateSql.append(" where (T2.FinIsActive = '1' or (T2.FinIsActive = '0' and T3.LatestRpyDate = :valueDate))");
-		updateSql.append(" Group BY T1.FinReference ) T2 ");
-		updateSql.append(" ON (T1.FinReference = T2.FinReference)");
-		updateSql.append(" WHEN MATCHED THEN UPDATE SET T1.ODPRINCIPAL = T2.ODPRINCIPAL, T1.ODPROFIT = T2.ODPROFIT, ");
-		updateSql.append(" T1.ActualODDays = T2.ActualODDays, T1.PENALTYWAIVED = T2.PENALTYWAIVED, ");
-		updateSql.append(" T1.PENALTYPAID = T2.PENALTYPAID, T1.PENALTYDUE = T2.PENALTYDUE,");
-		updateSql.append(" T1.FIRSTODDATE = T2.FIRSTODDATE, T1.PRVODDATE = T2.PRVODDATE");
+		logger.debug(Literal.SQL + sql);
 
-		MapSqlParameterSource beanParameters = new MapSqlParameterSource();
-		beanParameters.addValue("valueDate", valueDate);
-
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * 
-	 */
-	@Override
-	public void updateTDDetailsEOD(Date valueDate) {
-		logger.debug("Entering");
-
-		StringBuilder updateSql = new StringBuilder();
-		updateSql.append(" MERGE INTO Finpftdetails FP ");
-		updateSql.append(
-				" USING ( Select  FS.FINREFERENCE,SUM(FS.PROFITSCHD)PROFITSCHD,SUM(FS.SCHDPFTPAID)SCHDPFTPAID,");
-		updateSql.append(" SUM(FS.PROFITSCHD-FS.SCHDPFTPAID)PROFITSCHD_SCHDPFTPAID,");
-		updateSql.append(
-				" SUM(FS.PRINCIPALSCHD)PRINCIPALSCHD,SUM(FS.SCHDPRIPAID)SCHDPRIPAID,SUM(FS.PRINCIPALSCHD-FS.SCHDPRIPAID) PRINCIPALSCHD_SCHDPRIPAID,");
-		updateSql.append(" SUM(CPZAMOUNT) TDPFTCPZ");
-		updateSql.append(" from FINSCHEDULEDETAILS FS inner join ");
-		updateSql.append(" Finpftdetails FP on FS.FINREFERENCE = FP.FINREFERENCE ");
-		updateSql.append(" where (FP.Finisactive=1 or (FP.FinIsActive = '0' and FP.LatestRpyDate = :valueDate))");
-		updateSql.append(" and FS.SCHDATE <= :valueDate");
-		updateSql.append(" group by  FS.FINREFERENCE ) T2");
-		updateSql.append(
-				" ON (T2.FINREFERENCE = FP.FINREFERENCE and (T2.PRINCIPALSCHD_SCHDPRIPAID != FP.TDSCHDPRIBAL or T2.PROFITSCHD_SCHDPFTPAID != FP.TDSCHDPFTBAL");
-		updateSql.append(
-				" or FP.TDSCHDPRIPAID != T2.SCHDPRIPAID or FP.TDSCHDPFTPAID!= T2.SCHDPFTPAID Or FP.TDPFTCPZ != T2.TDPFTCPZ))");
-		updateSql.append(
-				" WHEN MATCHED THEN UPDATE SET FP.TDSCHDPFT = T2.PROFITSCHD, FP.TDSCHDPFTPAID =  T2.SCHDPFTPAID,");
-		updateSql.append(" FP.TDSCHDPFTBAL = T2.PROFITSCHD_SCHDPFTPAID, FP.TDSCHDPRI =  T2.PRINCIPALSCHD,");
-		updateSql.append(
-				" FP.TDSCHDPRIPAID =  T2.SCHDPRIPAID, FP.TDSCHDPRIBAL =  T2.PRINCIPALSCHD_SCHDPRIPAID, FP.TDPFTCPZ = T2.TDPFTCPZ ");
-
-		MapSqlParameterSource beanParameters = new MapSqlParameterSource();
-		beanParameters.addValue("valueDate", valueDate);
-
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * 
-	 */
-	@Override
-	public void updateReceivableDetailsEOD(Date valueDate) {
-		logger.debug("Entering");
-
-		StringBuilder updateSql = new StringBuilder();
-		updateSql.append(" MERGE INTO Finpftdetails FP ");
-		updateSql.append(" USING ( Select MA.FINREFERENCE, SUM(MA.ADVISEAMOUNT) RECEIVABLEADVISE, ");
-		updateSql.append(" SUM(MA.ADVISEAMOUNT - MA.PAIDAMOUNT - MA.WAIVEDAMOUNT) RECEIVABLEADVISEBAL");
-		updateSql.append(" from ManualAdvise MA inner join ");
-		updateSql.append(" Finpftdetails FP on MA.FINREFERENCE = FP.FINREFERENCE ");
-		updateSql.append(" where (FP.Finisactive=1 or (FP.FinIsActive = '0' and FP.LatestRpyDate = :valueDate))");
-		updateSql.append(" and MA.AdviseType = '1' and BounceID <= 0 ");
-		updateSql.append(" group by  MA.FINREFERENCE ) T2");
-		updateSql.append(" ON (T2.FINREFERENCE = FP.FINREFERENCE ) ");
-		updateSql.append(
-				" WHEN MATCHED THEN UPDATE SET FP.RECEIVABLEADVISE = T2.RECEIVABLEADVISE, FP.RECEIVABLEADVISEBAL = T2.RECEIVABLEADVISEBAL");
-
-		MapSqlParameterSource beanParameters = new MapSqlParameterSource();
-		beanParameters.addValue("valueDate", valueDate);
-
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * 
-	 */
-	@Override
-	public void updateBounceDetailsEOD(Date valueDate) {
-		logger.debug("Entering");
-
-		StringBuilder updateSql = new StringBuilder();
-		updateSql.append(" MERGE INTO Finpftdetails FP ");
-		updateSql.append(" USING ( Select MA.FINREFERENCE, SUM(MA.ADVISEAMOUNT) BOUNCEAMT, ");
-		updateSql.append(" SUM(MA.PAIDAMOUNT) BOUNCEAMTPAID, ");
-		updateSql.append(" SUM(MA.ADVISEAMOUNT - MA.PAIDAMOUNT - MA.WAIVEDAMOUNT) BOUNCEAMTDUE");
-		updateSql.append(" from ManualAdvise MA inner join ");
-		updateSql.append(" Finpftdetails FP on MA.FINREFERENCE = FP.FINREFERENCE ");
-		updateSql.append(" where (FP.Finisactive=1 or (FP.FinIsActive = '0' and FP.LatestRpyDate = :valueDate))");
-		updateSql.append(" and MA.AdviseType = '1' and BounceID > 0 ");
-		updateSql.append(" group by  MA.FINREFERENCE ) T2");
-		updateSql.append(" ON (T2.FINREFERENCE = FP.FINREFERENCE ) ");
-		// updateSql.append(" ( FP.BOUNCEAMT != T2.BOUNCEAMT or FP.BOUNCEAMTPAID
-		// != T2.BOUNCEAMTPAID or FP.BOUNCEAMTDUE != T2.BOUNCEAMTDUE))");
-		updateSql.append(
-				" WHEN MATCHED THEN UPDATE SET FP.BOUNCEAMT = T2.BOUNCEAMT, FP.BOUNCEAMTPAID = T2.BOUNCEAMTPAID, FP.BOUNCEAMTDUE = T2.BOUNCEAMTDUE");
-
-		MapSqlParameterSource beanParameters = new MapSqlParameterSource();
-		beanParameters.addValue("valueDate", valueDate);
-
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * @param finReference
-	 * @param type
-	 * 
-	 *                     method return curOddays from FinPFtDetails Based On Reference
-	 */
-	@Override
-	public int getCurOddays(String finReference, String type) {
-		logger.debug("Entering");
 		try {
-			FinanceProfitDetail financeProfitDetails = new FinanceProfitDetail();
-			financeProfitDetails.setFinReference(finReference);
-			StringBuilder selectSql = new StringBuilder("Select CURODDAYS ");
-			selectSql.append(" From Finpftdetails");
-			selectSql.append(StringUtils.trimToEmpty(type));
-			selectSql.append(" Where FinReference =:FinReference ");
-			logger.debug("selectSql: " + selectSql.toString());
-			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeProfitDetails);
-			logger.debug("Leaving");
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		} catch (Exception e) {
-			logger.debug(e);
+			return this.jdbcOperations.queryForObject(sql, Integer.class, finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
 		}
+
 		return 0;
 	}
 
-	/**
-	 * @param finReference
-	 * @param type
-	 * 
-	 *                     method return PFTINSUSP from FinPFtDetails Based On Reference
-	 */
 	@Override
-	public boolean isSuspenseFinance(String finReference) {
-		logger.debug("Entering");
+	public boolean isSuspenseFinance(long finID) {
+		String sql = "Select PftInSusp From FinPftDetails Where FinID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
 		try {
-			MapSqlParameterSource source = new MapSqlParameterSource();
-			source.addValue("FinReference", finReference);
-
-			StringBuilder selectSql = new StringBuilder("Select PFTINSUSP ");
-			selectSql.append(" From Finpftdetails");
-			selectSql.append(" Where FinReference =:FinReference ");
-
-			logger.debug("selectSql: " + selectSql.toString());
-			logger.debug("Leaving");
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Boolean.class);
-		} catch (Exception e) {
-			logger.debug(e);
+			return this.jdbcOperations.queryForObject(sql, Boolean.class, finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
 		}
+
 		return false;
 	}
 
 	@Override
 	public BigDecimal getTotalCustomerExposre(long custId) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append(" select  coalesce(sum((NSchdPri+NSchdPft)), 0) from FinPftdetails");
-		sql.append(" where finreference in (select finreference from financemain where custId = :custId)");
-		logger.debug(Literal.SQL + sql.toString());
-
-		BigDecimal totalExposer = BigDecimal.ZERO;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("custId", custId);
-
-		try {
-			totalExposer = this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return totalExposer;
-	}
-
-	@Override
-	public BigDecimal getTotalCoApplicantsExposre(String finReferece) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append(" select  coalesce(sum((NSchdPri+NSchdPft)), 0) from FinPftdetails");
-		sql.append(" where finreference in (select finreference from financemain where custId in (");
-		sql.append(" select custId from finjointaccountdetails_view where finreference = :finreference))");
-		logger.debug(Literal.SQL + sql.toString());
-
-		BigDecimal totalExposer = BigDecimal.ZERO;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("finreference", finReferece);
-
-		try {
-			totalExposer = this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return totalExposer;
-	}
-
-	@Override
-	public void updateFinPftMaturity(String finReference, String closingStatus, boolean finIsActive) {
-		logger.debug("Entering");
-		FinanceProfitDetail pftDetail = new FinanceProfitDetail();
-		pftDetail.setFinReference(finReference);
-		pftDetail.setClosingStatus(closingStatus);
-		pftDetail.setFinIsActive(finIsActive);
-
-		StringBuilder updateSql = new StringBuilder("Update finpftdetails ");
-		updateSql.append(" Set FinIsActive = :FinIsActive, ClosingStatus = :ClosingStatus ");
-		updateSql.append(" Where FinReference = :FinReference ");
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(pftDetail);
-
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
-	}
-
-	@Override
-	public Date getFirstRePayDateByFinRef(String finReference) {
-		logger.debug("Entering");
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		Date accruedAmount = null;
-
-		StringBuilder selectSql = new StringBuilder(" SELECT FIRSTREPAYDATE FROM FINPFTDETAILS");
-		selectSql.append(" WHERE FINREFERENCE = :FINREFERENCE");
-
-		paramMap.addValue("FINREFERENCE", finReference);
-		logger.debug("selectSql: " + selectSql.toString());
-
-		try {
-			accruedAmount = this.jdbcTemplate.queryForObject(selectSql.toString(), paramMap, Date.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-		}
-		logger.debug("Leaving");
-		return accruedAmount;
-	}
-
-	@Override
-	public BigDecimal getMaxRpyAmount(String finReference) {
-		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		StringBuilder selectSql = new StringBuilder("SELECT MaxRpyAmount  FROM  Finpftdetails");
-		selectSql.append(" WHERE FINREFERENCE = :FINREFERENCE");
-		source.addValue("FINREFERENCE", finReference);
-
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
-	}
-
-	@Override
-	public BigDecimal getGoldPOSByCustCif(String custCif, String promotionCode, String repledgeRef) {
-		logger.debug("Entering");
-
-		BigDecimal posBal = null;
-
-		MapSqlParameterSource beanParameters = new MapSqlParameterSource();
-		beanParameters.addValue("CustCIF", custCif);
-		beanParameters.addValue("ProductCategory", FinanceConstants.PRODUCT_GOLD);
-		beanParameters.addValue("PromotionCode", promotionCode);
-		beanParameters.addValue("FinReference", repledgeRef);
-
-		StringBuilder selectSql = new StringBuilder("Select SUM(P.TotalPriBal) POSBAL ");
-		selectSql.append(" From FinPftDetails P INNER JOIN FINANCEMAIN F ON P.FinReference = F.FinReference ");
-		selectSql.append("  Where P.CustCIF =:CustCIF AND F.ProductCategory = :ProductCategory AND F.FinIsActive = 1 ");
-		if (StringUtils.isNotBlank(promotionCode)) {
-			selectSql.append(" AND F.PromotionCode=:PromotionCode ");
-		}
-		if (StringUtils.isNotBlank(repledgeRef)) {
-			selectSql.append(" AND F.FinReference!=:FinReference ");
-		}
-
-		logger.debug("selectSql: " + selectSql.toString());
-		try {
-			posBal = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			posBal = BigDecimal.ZERO;
-		}
-
-		if (posBal == null) {
-			posBal = BigDecimal.ZERO;
-		}
-
-		logger.debug("Leaving");
-		return posBal;
-	}
-
-	@Override
-	public List<FinanceProfitDetail> getFinProfitListByFinRefList(List<String> finRefList) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, NSchdPri, NSchdPft, curODDays");
+		sql.append(" coalesce(sum((NSchdPri + NSchdPft)), 0)");
+		sql.append(" From FinPftDetails");
+		sql.append(" Where FinID in (Select FinID from FinanceMain Where CustID = ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, custId);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+		return BigDecimal.ZERO;
+	}
+
+	@Override
+	public BigDecimal getTotalCoApplicantsExposre(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" coalesce(sum((NSchdPri + NSchdPft)), 0)");
+		sql.append(" From FinPftDetails");
+		sql.append(" Where FinID in (Select FinID from FinanceMain Where CustID in (");
+		sql.append(" Select CustID from FinjointAccountDetails_View Where FinID = ?))");
+		logger.debug(Literal.SQL + sql.toString());
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+		return BigDecimal.ZERO;
+	}
+
+	@Override
+	public void updateFinPftMaturity(long finID, String closingStatus, boolean finIsActive) {
+		String sql = "Update finpftdetails Set FinIsActive = ?, ClosingStatus = ? Where FinID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
+			ps.setBoolean(index++, finIsActive);
+			ps.setString(index++, closingStatus);
+			ps.setLong(index++, finID);
+		});
+	}
+
+	@Override
+	public Date getFirstRePayDateByFinRef(long finID) {
+		String sql = "Select FirstRepayDate From FinPftDetails Where FinID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Date.class, finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+		return null;
+	}
+
+	@Override
+	public BigDecimal getMaxRpyAmount(long finID) {
+		String sql = "Select MaxRpyAmount From FinPftDetails Where FinID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+		return BigDecimal.ZERO;
+	}
+
+	@Override
+	public List<FinanceProfitDetail> getFinProfitListByFinRefList(List<Long> finIDList) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference, NSchdPri, NSchdPft, curODDays");
 		sql.append(" from FinPftDetails");
-		sql.append(" where FinReference IN (");
+		sql.append(" where FinID in (");
 
 		int i = 0;
 
-		if (CollectionUtils.isNotEmpty(finRefList)) {
-			while (i < finRefList.size()) {
+		if (CollectionUtils.isNotEmpty(finIDList)) {
+			while (i < finIDList.size()) {
 				sql.append(" ?,");
 				i++;
 			}
@@ -1309,61 +871,46 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 		sql.append(")");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-					for (String finReference : finRefList) {
-						ps.setString(index++, finReference);
-					}
+			for (long finID : finIDList) {
+				ps.setLong(index++, finID);
+			}
 
-				}
-			}, new RowMapper<FinanceProfitDetail>() {
-				@Override
-				public FinanceProfitDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinanceProfitDetail fpd = new FinanceProfitDetail();
+		}, (rs, rowNum) -> {
+			FinanceProfitDetail fpd = new FinanceProfitDetail();
 
-					fpd.setFinReference(rs.getString("FinReference"));
-					fpd.setNSchdPri(rs.getBigDecimal("NSchdPri"));
-					fpd.setNSchdPft(rs.getBigDecimal("NSchdPft"));
-					fpd.setCurODDays(rs.getInt("curODDays"));
+			fpd.setFinID(rs.getLong("FinID"));
+			fpd.setFinReference(rs.getString("FinReference"));
+			fpd.setNSchdPri(rs.getBigDecimal("NSchdPri"));
+			fpd.setNSchdPft(rs.getBigDecimal("NSchdPft"));
+			fpd.setCurODDays(rs.getInt("curODDays"));
 
-					return fpd;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return fpd;
+		});
 	}
 
 	@Override
-	public void updateAssignmentBPIAmounts(FinanceProfitDetail finProfitDetails) {
+	public void updateAssignmentBPIAmounts(FinanceProfitDetail pd) {
+		String sql = "Update FinPftDetails Set AssignBPI1 = ?, AssignBPI2 = ? Where FinID = ?";
 
-		StringBuilder updateSql = new StringBuilder("Update FinPftDetails Set");
-		updateSql.append(" AssignBPI1 = :AssignBPI1, AssignBPI2 = :AssignBPI2 ");
-		updateSql.append(" Where FinReference = :FinReference");
-
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
+			ps.setBigDecimal(index++, pd.getAssignBPI1());
+			ps.setBigDecimal(index++, pd.getAssignBPI2());
+			ps.setLong(index++, pd.getFinID());
+		});
 
 	}
 
-	// IND AS - START
 	@Override
 	public List<FinanceProfitDetail> getFinPftListForIncomeAMZ(Date curMonthStart) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, CustId, FinBranch, FinType, FinCcy, LastMdfDate, FinIsActive");
-		sql.append(", totalpriSchd, TotalPftSchd, TotalPftCpz, TotalPftPaid, TotalPftBal, TotalPriPaid");
+		sql.append(" FinID, FinReference, CustId, FinBranch, FinType, FinCcy, LastMdfDate, FinIsActive");
+		sql.append(", TotalpriSchd, TotalPftSchd, TotalPftCpz, TotalPftPaid, TotalPftBal, TotalPriPaid");
 		sql.append(", TotalPriBal, TdSchdPft, TdPftCpz, TdSchdPftPaid, TdSchdPftBal, PftAccrued, PftAccrueSusp");
 		sql.append(", PftAmz, PftAmzSusp, TdSchdPri, TdSchdPriPaid, TdSchdPriBal, PrvMthAmz, ClosingStatus");
 		sql.append(", FinCategory, TotalWriteoff, ODPrincipal, ODProfit, CurODDays, ActualODDays, FinStartDate");
@@ -1371,189 +918,165 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		sql.append(" from FinPftDetails");
 		sql.append(" Where MaturityDate >= ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setDate(index++, JdbcUtil.getDate(curMonthStart));
-				}
-			}, new RowMapper<FinanceProfitDetail>() {
-				@Override
-				public FinanceProfitDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinanceProfitDetail fpd = new FinanceProfitDetail();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setDate(index++, JdbcUtil.getDate(curMonthStart));
+		}, (rs, rowNum) -> {
+			FinanceProfitDetail fpd = new FinanceProfitDetail();
 
-					fpd.setFinReference(rs.getString("FinReference"));
-					fpd.setCustId(rs.getLong("CustId"));
-					fpd.setFinBranch(rs.getString("FinBranch"));
-					fpd.setFinType(rs.getString("FinType"));
-					fpd.setFinCcy(rs.getString("FinCcy"));
-					fpd.setLastMdfDate(rs.getTimestamp("LastMdfDate"));
-					fpd.setFinIsActive(rs.getBoolean("FinIsActive"));
-					fpd.setTotalpriSchd(rs.getBigDecimal("totalpriSchd"));
-					fpd.setTotalPftSchd(rs.getBigDecimal("TotalPftSchd"));
-					fpd.setTotalPftCpz(rs.getBigDecimal("TotalPftCpz"));
-					fpd.setTotalPftPaid(rs.getBigDecimal("TotalPftPaid"));
-					fpd.setTotalPftBal(rs.getBigDecimal("TotalPftBal"));
-					fpd.setTotalPriPaid(rs.getBigDecimal("TotalPriPaid"));
-					fpd.setTotalPriBal(rs.getBigDecimal("TotalPriBal"));
-					fpd.setTdSchdPft(rs.getBigDecimal("TdSchdPft"));
-					fpd.setTdPftCpz(rs.getBigDecimal("TdPftCpz"));
-					fpd.setTdSchdPftPaid(rs.getBigDecimal("TdSchdPftPaid"));
-					fpd.setTdSchdPftBal(rs.getBigDecimal("TdSchdPftBal"));
-					fpd.setPftAccrued(rs.getBigDecimal("PftAccrued"));
-					fpd.setPftAccrueSusp(rs.getBigDecimal("PftAccrueSusp"));
-					fpd.setPftAmz(rs.getBigDecimal("PftAmz"));
-					fpd.setPftAmzSusp(rs.getBigDecimal("PftAmzSusp"));
-					fpd.setTdSchdPri(rs.getBigDecimal("TdSchdPri"));
-					fpd.setTdSchdPriPaid(rs.getBigDecimal("TdSchdPriPaid"));
-					fpd.setTdSchdPriBal(rs.getBigDecimal("TdSchdPriBal"));
-					fpd.setPrvMthAmz(rs.getBigDecimal("PrvMthAmz"));
-					fpd.setClosingStatus(rs.getString("ClosingStatus"));
-					fpd.setFinCategory(rs.getString("FinCategory"));
-					fpd.setTotalWriteoff(rs.getBigDecimal("TotalWriteoff"));
-					fpd.setODPrincipal(rs.getBigDecimal("ODPrincipal"));
-					fpd.setODProfit(rs.getBigDecimal("ODProfit"));
-					fpd.setCurODDays(rs.getInt("CurODDays"));
-					fpd.setActualODDays(rs.getInt("ActualODDays"));
-					fpd.setFinStartDate(rs.getTimestamp("FinStartDate"));
-					fpd.setMaturityDate(rs.getTimestamp("MaturityDate"));
-					fpd.setLatestRpyDate(rs.getTimestamp("LatestRpyDate"));
-					fpd.setGapIntAmz(rs.getBigDecimal("GapIntAmz"));
-					fpd.setGapIntAmzLbd(rs.getBigDecimal("GapIntAmzLbd"));
-					fpd.setPrvMthGapIntAmz(rs.getBigDecimal("PrvMthGapIntAmz"));
-					fpd.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
+			fpd.setFinID(rs.getLong("FinID"));
+			fpd.setFinReference(rs.getString("FinReference"));
+			fpd.setCustId(rs.getLong("CustId"));
+			fpd.setFinBranch(rs.getString("FinBranch"));
+			fpd.setFinType(rs.getString("FinType"));
+			fpd.setFinCcy(rs.getString("FinCcy"));
+			fpd.setLastMdfDate(rs.getTimestamp("LastMdfDate"));
+			fpd.setFinIsActive(rs.getBoolean("FinIsActive"));
+			fpd.setTotalpriSchd(rs.getBigDecimal("totalpriSchd"));
+			fpd.setTotalPftSchd(rs.getBigDecimal("TotalPftSchd"));
+			fpd.setTotalPftCpz(rs.getBigDecimal("TotalPftCpz"));
+			fpd.setTotalPftPaid(rs.getBigDecimal("TotalPftPaid"));
+			fpd.setTotalPftBal(rs.getBigDecimal("TotalPftBal"));
+			fpd.setTotalPriPaid(rs.getBigDecimal("TotalPriPaid"));
+			fpd.setTotalPriBal(rs.getBigDecimal("TotalPriBal"));
+			fpd.setTdSchdPft(rs.getBigDecimal("TdSchdPft"));
+			fpd.setTdPftCpz(rs.getBigDecimal("TdPftCpz"));
+			fpd.setTdSchdPftPaid(rs.getBigDecimal("TdSchdPftPaid"));
+			fpd.setTdSchdPftBal(rs.getBigDecimal("TdSchdPftBal"));
+			fpd.setPftAccrued(rs.getBigDecimal("PftAccrued"));
+			fpd.setPftAccrueSusp(rs.getBigDecimal("PftAccrueSusp"));
+			fpd.setPftAmz(rs.getBigDecimal("PftAmz"));
+			fpd.setPftAmzSusp(rs.getBigDecimal("PftAmzSusp"));
+			fpd.setTdSchdPri(rs.getBigDecimal("TdSchdPri"));
+			fpd.setTdSchdPriPaid(rs.getBigDecimal("TdSchdPriPaid"));
+			fpd.setTdSchdPriBal(rs.getBigDecimal("TdSchdPriBal"));
+			fpd.setPrvMthAmz(rs.getBigDecimal("PrvMthAmz"));
+			fpd.setClosingStatus(rs.getString("ClosingStatus"));
+			fpd.setFinCategory(rs.getString("FinCategory"));
+			fpd.setTotalWriteoff(rs.getBigDecimal("TotalWriteoff"));
+			fpd.setODPrincipal(rs.getBigDecimal("ODPrincipal"));
+			fpd.setODProfit(rs.getBigDecimal("ODProfit"));
+			fpd.setCurODDays(rs.getInt("CurODDays"));
+			fpd.setActualODDays(rs.getInt("ActualODDays"));
+			fpd.setFinStartDate(rs.getTimestamp("FinStartDate"));
+			fpd.setMaturityDate(rs.getTimestamp("MaturityDate"));
+			fpd.setLatestRpyDate(rs.getTimestamp("LatestRpyDate"));
+			fpd.setGapIntAmz(rs.getBigDecimal("GapIntAmz"));
+			fpd.setGapIntAmzLbd(rs.getBigDecimal("GapIntAmzLbd"));
+			fpd.setPrvMthGapIntAmz(rs.getBigDecimal("PrvMthGapIntAmz"));
+			fpd.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 
-					return fpd;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return fpd;
+		});
 	}
 
-	/**
-	 * Method for get the FinanceProfitDetail Object by Key finReference
-	 */
 	@Override
-	public FinanceProfitDetail getFinProfitForAMZ(String finReference) {
+	public FinanceProfitDetail getFinProfitForAMZ(long finID) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, CustId, FinBranch, FinType, FinCcy, LastMdfDate, FinIsActive");
+		sql.append(" FinID, FinReference, CustId, FinBranch, FinType, FinCcy, LastMdfDate, FinIsActive");
 		sql.append(", TotalpriSchd, TotalPftSchd, TotalPftCpz, TotalPftPaid, TotalPftBal, TotalPriPaid");
 		sql.append(", TotalPriBal, TdSchdPft, TdPftCpz, TdSchdPftPaid, TdSchdPftBal, PftAccrued, PftAccrueSusp");
 		sql.append(", PftAmz, PftAmzSusp, TdSchdPri, TdSchdPriPaid, TdSchdPriBal, PrvMthAmz, ClosingStatus");
 		sql.append(", FinCategory, TotalWriteoff, ODPrincipal, ODProfit, CurODDays, ActualODDays, FinStartDate");
 		sql.append(", MaturityDate, LatestRpyDate, GapIntAmz, GapIntAmzLbd, PrvMthGapIntAmz, WriteoffLoan");
 		sql.append(" from FinPftDetails");
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
-					new RowMapper<FinanceProfitDetail>() {
-						@Override
-						public FinanceProfitDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-							FinanceProfitDetail fpd = new FinanceProfitDetail();
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceProfitDetail fpd = new FinanceProfitDetail();
 
-							fpd.setFinReference(rs.getString("FinReference"));
-							fpd.setCustId(rs.getLong("CustId"));
-							fpd.setFinBranch(rs.getString("FinBranch"));
-							fpd.setFinType(rs.getString("FinType"));
-							fpd.setFinCcy(rs.getString("FinCcy"));
-							fpd.setLastMdfDate(rs.getTimestamp("LastMdfDate"));
-							fpd.setFinIsActive(rs.getBoolean("FinIsActive"));
-							fpd.setTotalpriSchd(rs.getBigDecimal("TotalpriSchd"));
-							fpd.setTotalPftSchd(rs.getBigDecimal("TotalPftSchd"));
-							fpd.setTotalPftCpz(rs.getBigDecimal("TotalPftCpz"));
-							fpd.setTotalPftPaid(rs.getBigDecimal("TotalPftPaid"));
-							fpd.setTotalPftBal(rs.getBigDecimal("TotalPftBal"));
-							fpd.setTotalPriPaid(rs.getBigDecimal("TotalPriPaid"));
-							fpd.setTotalPriBal(rs.getBigDecimal("TotalPriBal"));
-							fpd.setTdSchdPft(rs.getBigDecimal("TdSchdPft"));
-							fpd.setTdPftCpz(rs.getBigDecimal("TdPftCpz"));
-							fpd.setTdSchdPftPaid(rs.getBigDecimal("TdSchdPftPaid"));
-							fpd.setTdSchdPftBal(rs.getBigDecimal("TdSchdPftBal"));
-							fpd.setPftAccrued(rs.getBigDecimal("PftAccrued"));
-							fpd.setPftAccrueSusp(rs.getBigDecimal("PftAccrueSusp"));
-							fpd.setPftAmz(rs.getBigDecimal("PftAmz"));
-							fpd.setPftAmzSusp(rs.getBigDecimal("PftAmzSusp"));
-							fpd.setTdSchdPri(rs.getBigDecimal("TdSchdPri"));
-							fpd.setTdSchdPriPaid(rs.getBigDecimal("TdSchdPriPaid"));
-							fpd.setTdSchdPriBal(rs.getBigDecimal("TdSchdPriBal"));
-							fpd.setPrvMthAmz(rs.getBigDecimal("PrvMthAmz"));
-							fpd.setClosingStatus(rs.getString("ClosingStatus"));
-							fpd.setFinCategory(rs.getString("FinCategory"));
-							fpd.setTotalWriteoff(rs.getBigDecimal("TotalWriteoff"));
-							fpd.setODPrincipal(rs.getBigDecimal("ODPrincipal"));
-							fpd.setODProfit(rs.getBigDecimal("ODProfit"));
-							fpd.setCurODDays(rs.getInt("CurODDays"));
-							fpd.setActualODDays(rs.getInt("ActualODDays"));
-							fpd.setFinStartDate(rs.getTimestamp("FinStartDate"));
-							fpd.setMaturityDate(rs.getTimestamp("MaturityDate"));
-							fpd.setLatestRpyDate(rs.getTimestamp("LatestRpyDate"));
-							fpd.setGapIntAmz(rs.getBigDecimal("GapIntAmz"));
-							fpd.setGapIntAmzLbd(rs.getBigDecimal("GapIntAmzLbd"));
-							fpd.setPrvMthGapIntAmz(rs.getBigDecimal("PrvMthGapIntAmz"));
-							fpd.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
+				fpd.setFinID(rs.getLong("FinID"));
+				fpd.setFinReference(rs.getString("FinReference"));
+				fpd.setCustId(rs.getLong("CustId"));
+				fpd.setFinBranch(rs.getString("FinBranch"));
+				fpd.setFinType(rs.getString("FinType"));
+				fpd.setFinCcy(rs.getString("FinCcy"));
+				fpd.setLastMdfDate(rs.getTimestamp("LastMdfDate"));
+				fpd.setFinIsActive(rs.getBoolean("FinIsActive"));
+				fpd.setTotalpriSchd(rs.getBigDecimal("TotalpriSchd"));
+				fpd.setTotalPftSchd(rs.getBigDecimal("TotalPftSchd"));
+				fpd.setTotalPftCpz(rs.getBigDecimal("TotalPftCpz"));
+				fpd.setTotalPftPaid(rs.getBigDecimal("TotalPftPaid"));
+				fpd.setTotalPftBal(rs.getBigDecimal("TotalPftBal"));
+				fpd.setTotalPriPaid(rs.getBigDecimal("TotalPriPaid"));
+				fpd.setTotalPriBal(rs.getBigDecimal("TotalPriBal"));
+				fpd.setTdSchdPft(rs.getBigDecimal("TdSchdPft"));
+				fpd.setTdPftCpz(rs.getBigDecimal("TdPftCpz"));
+				fpd.setTdSchdPftPaid(rs.getBigDecimal("TdSchdPftPaid"));
+				fpd.setTdSchdPftBal(rs.getBigDecimal("TdSchdPftBal"));
+				fpd.setPftAccrued(rs.getBigDecimal("PftAccrued"));
+				fpd.setPftAccrueSusp(rs.getBigDecimal("PftAccrueSusp"));
+				fpd.setPftAmz(rs.getBigDecimal("PftAmz"));
+				fpd.setPftAmzSusp(rs.getBigDecimal("PftAmzSusp"));
+				fpd.setTdSchdPri(rs.getBigDecimal("TdSchdPri"));
+				fpd.setTdSchdPriPaid(rs.getBigDecimal("TdSchdPriPaid"));
+				fpd.setTdSchdPriBal(rs.getBigDecimal("TdSchdPriBal"));
+				fpd.setPrvMthAmz(rs.getBigDecimal("PrvMthAmz"));
+				fpd.setClosingStatus(rs.getString("ClosingStatus"));
+				fpd.setFinCategory(rs.getString("FinCategory"));
+				fpd.setTotalWriteoff(rs.getBigDecimal("TotalWriteoff"));
+				fpd.setODPrincipal(rs.getBigDecimal("ODPrincipal"));
+				fpd.setODProfit(rs.getBigDecimal("ODProfit"));
+				fpd.setCurODDays(rs.getInt("CurODDays"));
+				fpd.setActualODDays(rs.getInt("ActualODDays"));
+				fpd.setFinStartDate(rs.getTimestamp("FinStartDate"));
+				fpd.setMaturityDate(rs.getTimestamp("MaturityDate"));
+				fpd.setLatestRpyDate(rs.getTimestamp("LatestRpyDate"));
+				fpd.setGapIntAmz(rs.getBigDecimal("GapIntAmz"));
+				fpd.setGapIntAmzLbd(rs.getBigDecimal("GapIntAmzLbd"));
+				fpd.setPrvMthGapIntAmz(rs.getBigDecimal("PrvMthGapIntAmz"));
+				fpd.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 
-							return fpd;
-						}
-					});
+				return fpd;
+
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
-	/**
-	 * Update AMZMethod for same month created and EarlySettled Loans
-	 */
 	@Override
-	public void updateAMZMethod(String finReference, String amzMethod) {
+	public void updateAMZMethod(long finID, String amzMethod) {
+		String sql = "Update FinPftDetails Set AMZMethod = ? Where FinID = ?";
 
-		StringBuilder updateSql = new StringBuilder(" Update FinPftDetails");
-		updateSql.append(" Set AMZMethod = :AMZMethod Where FinReference = :FinReference");
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		MapSqlParameterSource beanParameters = new MapSqlParameterSource();
-		beanParameters.addValue("FinReference", finReference);
-		beanParameters.addValue("AMZMethod", amzMethod);
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+			ps.setString(index++, amzMethod);
+			ps.setLong(index++, finID);
+
+		});
 	}
-	// IND AS - END
 
 	@Override
-	public void updateSchPaid(FinanceProfitDetail profitDetail) {
-		logger.debug(Literal.ENTERING);
+	public void updateSchPaid(FinanceProfitDetail pd) {
+		String sql = "Update FinPftDetails Set TotalPftPaid = ?, TotalPriPaid = ? Where FinID = ?";
 
-		StringBuilder sql = new StringBuilder("Update FinPftDetails set");
-		sql.append(" TotalPftPaid = :TotalPftPaid");
-		sql.append(", TotalPriPaid = :TotalPriPaid");
-		// sql.append(", TdTdsPaid = :TdTdsPaid");
-		// sql.append(", TdTdsBal = :TdTdsBal");
-		sql.append(" where FinReference =:FinReference");
+		logger.debug(Literal.SQL + sql);
 
-		logger.trace(Literal.SQL + sql.toString());
+		int recordCount = this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(profitDetail);
-		int recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
+			ps.setBigDecimal(index++, pd.getTotalPftPaid());
+			ps.setBigDecimal(index++, pd.getTotalPriPaid());
+			ps.setLong(index++, pd.getFinID());
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 
-		logger.debug(Literal.LEAVING);
 	}
 
 	public class ProfitDetailRowMapper implements RowMapper<FinanceProfitDetail> {
@@ -1629,20 +1152,29 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 			pftd.setNOPaidInst(rs.getInt("NOPaidInst"));
 			pftd.setNOAutoIncGrcEnd(rs.getInt("NOAutoIncGrcEnd"));
 			pftd.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
+			pftd.setTotalpriSchd(rs.getBigDecimal("TotalpriSchd"));
+			pftd.setMaturityDate(rs.getTimestamp("MaturityDate"));
+			pftd.setProductCategory(rs.getString("ProductCategory"));
+			pftd.setPrvMthAmz(rs.getBigDecimal("PrvMthAmz"));
+			pftd.setPenaltyPaid(rs.getBigDecimal("PenaltyPaid"));
+			pftd.setPenaltyDue(rs.getBigDecimal("PenaltyDue"));
+			pftd.setPrvMthGapIntAmz(rs.getBigDecimal("PrvMthGapIntAmz"));
+			pftd.setFirstRepayDate(rs.getTimestamp("FirstRepayDate"));
+			pftd.setPrvMthAcr(rs.getBigDecimal("PrvMthAcr"));
 
 			return pftd;
 		}
 	}
 
 	@Override
-	public void updateClosingSts(String finReference, boolean writeoffLoan) {
-		String sql = "Update FinPftDetails Set WriteoffLoan = ? Where FinReference = ?";
+	public void updateClosingSts(long finID, boolean writeoffLoan) {
+		String sql = "Update FinPftDetails Set WriteoffLoan = ? Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
 
 		this.jdbcOperations.update(sql, ps -> {
 			ps.setBoolean(1, writeoffLoan);
-			ps.setString(2, finReference);
+			ps.setLong(2, finID);
 		});
 	}
 

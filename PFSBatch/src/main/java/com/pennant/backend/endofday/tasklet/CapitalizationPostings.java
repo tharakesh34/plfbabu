@@ -143,13 +143,13 @@ public class CapitalizationPostings implements Tasklet {
 
 				pftDetailsList.add(pftDetail);
 				if (pftDetailsList.size() == 500) {
-					financeProfitDetailDAO.updateCpzDetail(pftDetailsList, "");
+					financeProfitDetailDAO.updateCpzDetail(pftDetailsList);
 					pftDetailsList.clear();
 				}
 			}
 
 			if (pftDetailsList.size() > 0) {
-				financeProfitDetailDAO.updateCpzDetail(pftDetailsList, "");
+				financeProfitDetailDAO.updateCpzDetail(pftDetailsList);
 				pftDetailsList = null;
 			}
 

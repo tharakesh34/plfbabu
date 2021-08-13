@@ -3625,7 +3625,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 
 					for (CustomerFinanceDetail cfd : response.getCustomerFinanceDetailList()) {
 						cfd.setStage(cfd.getNextRoleCode());
-						cfd.setCurOddays(financeProfitDetailDAO.getCurOddays(cfd.getFinReference(), ""));
+						cfd.setCurOddays(financeProfitDetailDAO.getCurOddays(cfd.getFinReference()));
 					}
 				}
 				customerDetailsList.add(response);
