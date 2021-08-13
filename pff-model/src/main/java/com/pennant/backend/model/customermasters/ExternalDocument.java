@@ -17,6 +17,7 @@ public class ExternalDocument extends AbstractWorkflowEntity {
 
 	private long id = Long.MIN_VALUE;
 	private long custId;
+	private long finID;
 	private String finReference;
 	@XmlElement
 	private String docName;
@@ -68,6 +69,14 @@ public class ExternalDocument extends AbstractWorkflowEntity {
 
 	public void setCustId(long custId) {
 		this.custId = custId;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
