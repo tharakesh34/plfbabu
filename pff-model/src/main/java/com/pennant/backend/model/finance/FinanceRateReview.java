@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceRateReview.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  02-12-2011    														*
- *                                                                  						*
- * Modified Date    :  02-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceRateReview.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 02-12-2011 * * Modified
+ * Date : 02-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 02-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 02-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -56,6 +38,7 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 public class FinanceRateReview extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
+	private long finID;
 	private String finReference = null;
 	private String rateType = null;
 	private String currency = null;
@@ -66,6 +49,14 @@ public class FinanceRateReview extends AbstractWorkflowEntity {
 	private Date recalFromdate = null;
 	private Date recalToDate = null;
 	private BigDecimal eMIAmount = BigDecimal.ZERO;
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
 
 	public String getFinReference() {
 		return finReference;
