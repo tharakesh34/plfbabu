@@ -63,9 +63,6 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		super();
 	}
 
-	/**
-	 * Method for Fetching List of Excess amounts exist against FinID
-	 */
 	@Override
 	public List<FinExcessAmount> getExcessAmountsByRef(long finId) {
 		StringBuilder sql = getExcessAmountSqlQuery();
@@ -81,9 +78,6 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		}, rowMapper);
 	}
 
-	/**
-	 * Method for Saving Excess Movements after Excess Utilization
-	 */
 	@Override
 	public void saveExcess(FinExcessAmount fe) {
 		if (fe.getId() == 0 || fe.getId() == Long.MIN_VALUE) {
