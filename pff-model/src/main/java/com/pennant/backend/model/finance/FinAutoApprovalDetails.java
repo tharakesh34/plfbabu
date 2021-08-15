@@ -9,6 +9,7 @@ public class FinAutoApprovalDetails extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -6234931333270161797L;
 	private long id;
 	private long batchId;
+	private long finID;
 	private String finReference;
 	private long disbId;
 	private Date realizedDate;
@@ -36,6 +37,14 @@ public class FinAutoApprovalDetails extends AbstractWorkflowEntity {
 
 	public void setBatchId(long batchId) {
 		this.batchId = batchId;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

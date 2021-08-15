@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  BlackListCustomerDAO.java                                            * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  23-08-2011    														*
- *                                                                  						*
- * Modified Date    :  23-08-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : BlackListCustomerDAO.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 23-08-2011 * * Modified
+ * Date : 23-08-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 23-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.applicationmaster;
 
 import java.util.List;
@@ -58,15 +40,15 @@ public interface BlackListCustomerDAO extends BasicCrudDao<BlackListCustomers> {
 
 	void saveList(List<FinBlacklistCustomer> finBlackList, String type);
 
-	List<FinBlacklistCustomer> fetchOverrideBlackListData(String finReference, String queryCode, String sourceCIF);
+	List<FinBlacklistCustomer> fetchOverrideBlackListData(long finID, String queryCode, String sourceCIF);
 
 	List<BlackListCustomers> fetchBlackListedCustomers(BlackListCustomers blCustData, String watchRule);
 
 	void updateList(List<FinBlacklistCustomer> finBlackList);
 
-	void deleteList(String finReference);
+	void deleteList(long finID);
 
-	List<FinBlacklistCustomer> fetchFinBlackList(String finReference);
+	List<FinBlacklistCustomer> fetchFinBlackList(long finID);
 
 	BlackListCustomers getBlackListCustomers();
 
@@ -76,15 +58,6 @@ public interface BlackListCustomerDAO extends BasicCrudDao<BlackListCustomers> {
 
 	void moveData(String finReference, String type);
 
-	/**
-	 * Checks whether another record exists with the key attributes in the specified table type.
-	 * 
-	 * @param CustCIF
-	 *            of BlackListCustomers
-	 * @param tableType
-	 *            of BlackListCustomers
-	 * @return
-	 */
 	boolean isDuplicateKey(String custCIF, TableType tableType);
 
 	void deleteNegativeReasonList(String blacklisCIF, TableType tableType);

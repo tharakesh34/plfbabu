@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinExpenseDetailsDAOImpl.java                                        * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  17-12-2017    														*
- *                                                                  						*
- * Modified Date    :  17-12-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinExpenseDetailsDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 17-12-2017 * *
+ * Modified Date : 17-12-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 17-12-2017       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 17-12-2017 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.finance.impl;
 
@@ -48,14 +30,11 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.FinExpenseDetailsDAO;
 import com.pennant.backend.model.expenses.FinExpenseDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -71,130 +50,147 @@ public class FinExpenseDetailsDAOImpl extends SequenceDao<FinExpenseDetails> imp
 	}
 
 	@Override
-	public long saveFinExpenseDetails(FinExpenseDetails finExpenseDetails) {
-		logger.debug("Entering");
-
-		StringBuilder sql = new StringBuilder();
-
-		if (finExpenseDetails.getFinExpenseId() == Long.MIN_VALUE) {
-			finExpenseDetails.setFinExpenseId(getNextValue("SeqFinExpenseDetails"));
-			logger.debug("get NextID:" + finExpenseDetails.getFinExpenseId());
+	public long saveFinExpenseDetails(FinExpenseDetails ed) {
+		if (ed.getFinExpenseId() == Long.MIN_VALUE) {
+			ed.setFinExpenseId(getNextValue("SeqFinExpenseDetails"));
 		}
 
-		sql.append(" Insert Into FinExpenseDetails");
-		sql.append(" (FinExpenseId, FinReference, ExpenseTypeId, Amount,");
-		sql.append(
-				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" Values(:FinExpenseId, :FinReference, :ExpenseTypeId, :Amount,");
-		sql.append(
-				" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		StringBuilder sql = new StringBuilder("Insert Into FinExpenseDetails");
+		sql.append("(FinExpenseId, FinID, FinReference, ExpenseTypeId, Amount");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		logger.debug("sql: " + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finExpenseDetails);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		logger.debug("Leaving");
+			ps.setLong(index++, ed.getFinExpenseId());
+			ps.setLong(index++, ed.getFinID());
+			ps.setString(index++, ed.getFinReference());
+			ps.setLong(index++, ed.getExpenseTypeId());
+			ps.setBigDecimal(index++, ed.getAmount());
+			ps.setInt(index++, ed.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(ed.getLastMntBy()));
+			ps.setTimestamp(index++, ed.getLastMntOn());
+			ps.setString(index++, ed.getRecordStatus());
+			ps.setString(index++, ed.getRoleCode());
+			ps.setString(index++, ed.getNextRoleCode());
+			ps.setString(index++, ed.getTaskId());
+			ps.setString(index++, ed.getNextTaskId());
+			ps.setString(index++, ed.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(ed.getWorkflowId()));
 
-		return finExpenseDetails.getFinExpenseId();
+		});
+
+		return ed.getFinExpenseId();
 	}
 
 	@Override
-	public FinExpenseDetails getFinExpenseDetailsByReference(String finReference, long expenseTypeId) {
-		logger.debug("Entering");
+	public FinExpenseDetails getFinExpenseDetailsByReference(long finID, long expenseTypeId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append("(FinExpenseId, FinID, FinReference, ExpenseTypeId, Amount");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" From FinExpenseDetails");
+		sql.append(" Where FinID = ? and ExpenseTypeId = ?");
 
-		FinExpenseDetails finExpenseDetails = new FinExpenseDetails();
-		finExpenseDetails.setFinReference(finReference);
-		finExpenseDetails.setExpenseTypeId(expenseTypeId);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FinExpenseId, FinReference, ExpenseTypeId, Amount,");
-		selectSql.append(
-				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode,  NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From FinExpenseDetails");
-		selectSql.append(" WHERE  FinReference = :FinReference And ExpenseTypeId = :ExpenseTypeId");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finExpenseDetails);
-		RowMapper<FinExpenseDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinExpenseDetails.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			finExpenseDetails = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinExpenseDetails ed = new FinExpenseDetails();
+
+				ed.setFinExpenseId(rs.getLong("FinExpenseId"));
+				ed.setFinID(rs.getLong("FinID"));
+				ed.setFinReference(rs.getString("FinReference"));
+				ed.setExpenseTypeId(rs.getLong("ExpenseTypeId"));
+				ed.setAmount(rs.getBigDecimal("Amount"));
+				ed.setVersion(rs.getInt("Version"));
+				ed.setLastMntBy(rs.getLong("LastMntBy"));
+				ed.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				ed.setRecordStatus(rs.getString("RecordStatus"));
+				ed.setRoleCode(rs.getString("RoleCode"));
+				ed.setNextRoleCode(rs.getString("NextRoleCode"));
+				ed.setTaskId(rs.getString("TaskId"));
+				ed.setNextTaskId(rs.getString("NextTaskId"));
+				ed.setRecordType(rs.getString("RecordType"));
+				ed.setWorkflowId(rs.getLong("WorkflowId"));
+
+				return ed;
+			}, finID, expenseTypeId);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			finExpenseDetails = null;
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
-
-		return finExpenseDetails;
+		return null;
 	}
 
 	@Override
-	public void update(FinExpenseDetails finExpenseDetails) {
-		logger.debug(Literal.ENTERING);
+	public void update(FinExpenseDetails fed) {
+		StringBuilder sql = new StringBuilder("Update FinExpenseDetails");
+		sql.append(" set Amount = ?, LastMntOn = ?");
+		sql.append(" where FinExpenseId = ?");
 
-		// Prepare the SQL, ensure primary key will not be updated.
-		StringBuilder sql = new StringBuilder("update FinExpenseDetails");
-		sql.append(" set Amount = :Amount, LastMntOn = :LastMntOn");
-		sql.append(" where FinExpenseId = :FinExpenseId");
+		logger.debug(Literal.SQL + sql.toString());
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finExpenseDetails);
-		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		// Check for the concurrency failure.
+			ps.setBigDecimal(index++, fed.getAmount());
+			ps.setTimestamp(index++, fed.getLastMntOn());
+
+			ps.setLong(index++, fed.getFinExpenseId());
+		});
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public List<FinExpenseDetails> getFinExpenseDetailsById(String financeRef) {
-		logger.debug("Entering");
+	public List<FinExpenseDetails> getFinExpenseDetailsById(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ed.FinexpenseID, ed.Amount, et.ExpenseTypeCode, et.ExpenseTypeDesc, ed.LastMntOn");
+		sql.append(" From FinExpenseDetails ed");
+		sql.append(" Inner Join ExpenseTypes et on et.ExpenseTypeID = ed.ExpenseTypeID");
+		sql.append(" Where ed.FinID = ?");
 
-		FinExpenseDetails finExpenseDetails = new FinExpenseDetails();
-		finExpenseDetails.setFinReference(financeRef);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT T1.FinexpenseID,T1.Amount,T2.expensetypecode,t2.expensetypedesc,T1.lastmnton");
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			FinExpenseDetails ed = new FinExpenseDetails();
 
-		selectSql.append(" From finexpensedetails T1");
-		selectSql.append(" Inner join expensetypes T2 on T2.expenseTypeid=T1.ExpenseTypeID");
-		selectSql.append(" Where T1.FinReference = :FinReference");
+			ed.setFinExpenseId(rs.getLong("FinExpenseId"));
+			ed.setAmount(rs.getBigDecimal("Amount"));
+			ed.setExpenseTypeCode(rs.getString("ExpenseTypeCode"));
+			ed.setExpenseTypeDesc(rs.getString("ExpenseTypeDesc"));
+			ed.setLastMntOn(rs.getTimestamp("LastMntOn"));
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finExpenseDetails);
-		RowMapper<FinExpenseDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinExpenseDetails.class);
-		logger.debug("Leaving");
-
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return ed;
+		}, finID);
 	}
 
-	/**
-	 * 
-	 */
-	public List<FinExpenseDetails> getAMZFinExpenseDetails(String finRef, String type) {
-		logger.debug("Entering");
+	public List<FinExpenseDetails> getAMZFinExpenseDetails(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ed.FinExpenseId, ed.FinID, ed.FinReference, ed.ExpenseTypeId, ed.Amount");
+		sql.append(" From FinExpenseDetails ed");
+		sql.append(" Inner Join ExpenseTypes et on et.ExpenseTypeId = ed.ExpenseTypeId and et.AmortReq = ?");
+		sql.append(" Where ed.FinID = ?");
 
-		FinExpenseDetails expenseDetail = new FinExpenseDetails();
-		expenseDetail.setFinReference(finRef);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT T1.FinExpenseId, T1.FinReference, T1.ExpenseTypeId, T1.Amount");
-		selectSql.append(" From FinExpenseDetails T1");
-		selectSql.append(" INNER JOIN ExpenseTypes T2 ON T2.ExpenseTypeId = T1.ExpenseTypeId AND T2.AmortReq = 1");
-		selectSql.append(" Where T1.FinReference = :FinReference");
+		return this.jdbcOperations.query(sql.toString(), (rs, i) -> {
+			FinExpenseDetails ed = new FinExpenseDetails();
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(expenseDetail);
-		RowMapper<FinExpenseDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinExpenseDetails.class);
-		logger.debug("Leaving");
+			ed.setFinExpenseId(rs.getLong("FinExpenseId"));
+			ed.setFinID(rs.getLong("FinID"));
+			ed.setFinReference(rs.getString("FinReference"));
+			ed.setExpenseTypeId(rs.getLong("ExpenseTypeId"));
+			ed.setAmount(rs.getBigDecimal("Amount"));
 
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return ed;
+		}, 1, finID);
 	}
 }

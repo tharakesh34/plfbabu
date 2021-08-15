@@ -57,6 +57,7 @@ public class PaymentHeader extends AbstractWorkflowEntity {
 
 	private long paymentId = Long.MIN_VALUE;
 	private String paymentType;
+	private long finID;
 	private String finReference;
 	private BigDecimal paymentAmount = BigDecimal.ZERO;
 	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
@@ -120,6 +121,14 @@ public class PaymentHeader extends AbstractWorkflowEntity {
 
 	public void setPaymentType(String paymentType) {
 		this.paymentType = paymentType;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

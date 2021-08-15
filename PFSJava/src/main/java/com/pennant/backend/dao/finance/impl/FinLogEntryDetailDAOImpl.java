@@ -7,11 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
@@ -29,18 +24,20 @@ public class FinLogEntryDetailDAOImpl extends SequenceDao<FinLogEntryDetail> imp
 	@Override
 	public long save(FinLogEntryDetail entryDetail) {
 		StringBuilder sql = new StringBuilder("insert into");
-		sql.append(" FinLogEntryDetail ");
-		sql.append("(FinReference, LogKey, EventAction, SchdlRecal, PostDate, ReversalCompleted");
+		sql.append(" FinLogEntryDetail");
+		sql.append("( FinID, FinReference, LogKey, EventAction, SchdlRecal, PostDate, ReversalCompleted");
 		sql.append(") values(");
 		sql.append("?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
-		entryDetail.setLogKey(getNextValue("seqFinLogEntryDetail"));
+		entryDetail.setLogKey(getNextValue("SeqFinLogEntryDetail"));
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
+
+			ps.setLong(index++, entryDetail.getFinID());
 			ps.setString(index++, entryDetail.getFinReference());
 			ps.setLong(index++, entryDetail.getLogKey());
 			ps.setString(index++, entryDetail.getEventAction());
@@ -53,21 +50,22 @@ public class FinLogEntryDetailDAOImpl extends SequenceDao<FinLogEntryDetail> imp
 	}
 
 	@Override
-	public List<FinLogEntryDetail> getFinLogEntryDetailList(String finReference, long logKey) {
+	public List<FinLogEntryDetail> getFinLogEntryDetailList(long finID, long logKey) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, LogKey, EventAction, SchdlRecal, PostDate, ReversalCompleted");
+		sql.append(" FinID, FinReference, LogKey, EventAction, SchdlRecal, PostDate, ReversalCompleted");
 		sql.append(" From FinLogEntryDetail");
-		sql.append(" Where LogKey > ? and FinReference = ? and ReversalCompleted = ?");
+		sql.append(" Where LogKey > ? and FinID = ? and ReversalCompleted = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			ps.setLong(1, logKey);
-			ps.setString(2, finReference);
+			ps.setLong(2, finID);
 			ps.setBoolean(3, false);
 		}, (rs, i) -> {
 			FinLogEntryDetail logDtls = new FinLogEntryDetail();
 
+			logDtls.setFinID(rs.getLong("FinID"));
 			logDtls.setFinReference(rs.getString("FinReference"));
 			logDtls.setLogKey(rs.getLong("LogKey"));
 			logDtls.setEventAction(rs.getString("EventAction"));
@@ -80,149 +78,119 @@ public class FinLogEntryDetailDAOImpl extends SequenceDao<FinLogEntryDetail> imp
 	}
 
 	@Override
-	public FinLogEntryDetail getFinLogEntryDetail(long logKey) {
-		logger.debug("Entering");
-
-		FinLogEntryDetail finLogEntryDetail = new FinLogEntryDetail();
-		finLogEntryDetail.setLogKey(logKey);
-
-		StringBuilder selectSql = new StringBuilder(
-				" Select T1.FinReference, T1.LogKey, T1.EventAction, T1.SchdlRecal, T1.PostDate, T1.ReversalCompleted ");
-		selectSql.append(" From FinLogEntryDetail T1 Where T1.LogKey =:LogKey AND T1.ReversalCompleted = 0 ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finLogEntryDetail);
-		RowMapper<FinLogEntryDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinLogEntryDetail.class);
-		logger.debug("Leaving");
-		try {
-			finLogEntryDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (Exception e) {
-			logger.warn("Exception: ", e);
-			finLogEntryDetail = null;
-		}
-		return finLogEntryDetail;
-
-	}
-
-	@Override
-	public void updateLogEntryStatus(FinLogEntryDetail finLogEntryDetail) {
-		logger.debug("Entering");
-
-		StringBuilder selectSql = new StringBuilder("  Update FinLogEntryDetail SET ReversalCompleted = 1 ");
-		selectSql.append(" WHERE LogKey =:LogKey ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finLogEntryDetail);
-
-		logger.debug("Leaving");
-		this.jdbcTemplate.update(selectSql.toString(), beanParameters);
-	}
-
-	/**
-	 * get postdate for particular finreference where schdRecal is happend
-	 * 
-	 * @param finReference Ticket id:124998
-	 */
-	@Override
-	public Date getMaxPostDate(String finReference) {
-		logger.debug("Entering");
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("  select max(POSTDATE) from FINLOGENTRYDETAIL");
-		selectSql.append(" where FinReference = :FinReference and SCHDLRECAL=1 ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
-		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-
-		mapSqlParameterSource.addValue("FinReference", finReference);
-
-		Date maxPostDate = null;
-		try {
-			maxPostDate = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Date.class);
-		} catch (DataAccessException e) {
-			logger.warn("Exception: ", e);
-			maxPostDate = null;
-		}
-		return maxPostDate;
-	}
-
-	@Override
-	public long getPrevSchedLogKey(String finReference, Date date) {
-		logger.debug("Entering");
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("MonthEndDate", date);
-		source.addValue("SchdlRecal", 1);
-
-		StringBuilder selectSql = new StringBuilder(" Select MIN(LOGKEY)  ");
-		selectSql.append(" From FINLOGENTRYDETAIL");
-		selectSql.append(
-				" Where PostDate > :MonthEndDate AND SchdlRecal = :SchdlRecal AND  FinReference = :FinReference ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
-		Long logKey;
-		try {
-			logKey = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.info(e);
-			logKey = 0L;
-		}
-
-		if (logKey == null) {
-			logKey = 0L;
-		}
-
-		logger.debug("Leaving");
-		return logKey;
-	}
-
-	@Override
-	public Date getMaxPostDateByRef(String finReference) {
+	public FinLogEntryDetail getFinLogEntryDetailByLog(long logKey) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" max(POSTDATE) from FINLOGENTRYDETAIL");
-		sql.append(" Where FinReference = ?");
+		sql.append(" FinID, FinReference, LogKey, EventAction, SchdlRecal, PostDate, ReversalCompleted");
+		sql.append(" From FinLogEntryDetail");
+		sql.append(" Where LogKey = ? and ReversalCompleted = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, Date.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
+				FinLogEntryDetail logDtls = new FinLogEntryDetail();
+
+				logDtls.setFinID(rs.getLong("FinID"));
+				logDtls.setFinReference(rs.getString("FinReference"));
+				logDtls.setLogKey(rs.getLong("LogKey"));
+				logDtls.setEventAction(rs.getString("EventAction"));
+				logDtls.setSchdlRecal(rs.getBoolean("SchdlRecal"));
+				logDtls.setPostDate(JdbcUtil.getDate(rs.getDate("PostDate")));
+				logDtls.setReversalCompleted(rs.getBoolean("ReversalCompleted"));
+
+				return logDtls;
+			}, logKey, 0);
+		} catch (Exception e) {
+			//
+		}
+		return null;
+
+	}
+
+	@Override
+	public void updateLogEntryStatus(FinLogEntryDetail logEntryDtls) {
+		String sql = "Update FinLogEntryDetail set ReversalCompleted = ? Where LogKey = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setInt(1, 1);
+			ps.setLong(2, logEntryDtls.getLogKey());
+		});
+	}
+
+	@Override
+	public Date getMaxPostDate(long finID) {
+		String sql = "Select max(PostDate) from FinLogEntryDetail Where FinID = ? and SchdlRecal = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Date.class, finID, 1);
 		} catch (DataAccessException e) {
-			logger.warn("Record is not found in FINLOGENTRYDETAIL table for the specified FinReference >> {}",
-					finReference);
+			//
+		}
+		return null;
+	}
+
+	@Override
+	public long getPrevSchedLogKey(long finID, Date date) {
+		String sql = "Select min(LogKey) From FinLogEntryDetail Where PostDate > ? and SchdlRecal = ? and FinID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		java.sql.Date postDate = JdbcUtil.getDate(date);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Long.class, postDate, 1, finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return 0l;
+	}
+
+	@Override
+	public Date getMaxPostDateByRef(long finID) {
+		String sql = "Select max(PostDate) from FinLogEntryDetail Where FinID = ?";
+
+		logger.trace(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Date.class, finID);
+		} catch (DataAccessException e) {
+			//
 		}
 
 		return null;
 	}
 
 	@Override
-	public FinLogEntryDetail getFinLogEntryDetail(String finreference) {
+	public FinLogEntryDetail getFinLogEntryDetail(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, LogKey, EventAction, SchdlRecal, PostDate, ReversalCompleted ");
+		sql.append(" FinID, FinReference, LogKey, EventAction, SchdlRecal, PostDate, ReversalCompleted");
 		sql.append(" From FinLogEntryDetail");
-		sql.append(" Where FinReference = ? and LogKey = ");
-		sql.append("(Select max(LogKey) From FinLogEntryDetail where Finreference = ?)");
+		sql.append(" Where FinID = ? and LogKey = ");
+		sql.append("(Select max(LogKey) From FinLogEntryDetail where FinID = ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finreference, finreference },
-					(rs, i) -> {
-						FinLogEntryDetail logDtls = new FinLogEntryDetail();
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
+				FinLogEntryDetail logDtls = new FinLogEntryDetail();
 
-						logDtls.setFinReference(rs.getString("FinReference"));
-						logDtls.setLogKey(rs.getLong("LogKey"));
-						logDtls.setEventAction(rs.getString("EventAction"));
-						logDtls.setSchdlRecal(rs.getBoolean("SchdlRecal"));
-						logDtls.setPostDate(JdbcUtil.getDate(rs.getDate("PostDate")));
-						logDtls.setReversalCompleted(rs.getBoolean("ReversalCompleted"));
+				logDtls.setFinID(rs.getLong("FinID"));
+				logDtls.setFinReference(rs.getString("FinReference"));
+				logDtls.setLogKey(rs.getLong("LogKey"));
+				logDtls.setEventAction(rs.getString("EventAction"));
+				logDtls.setSchdlRecal(rs.getBoolean("SchdlRecal"));
+				logDtls.setPostDate(JdbcUtil.getDate(rs.getDate("PostDate")));
+				logDtls.setReversalCompleted(rs.getBoolean("ReversalCompleted"));
 
-						return logDtls;
-					});
+				return logDtls;
+			}, finID, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record is not found in FinLogEntryDetail for the specified FinReference >> {}", finreference);
+			//
 		}
 
 		return null;

@@ -4,22 +4,25 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.SecLoginlog;
+import com.pennant.backend.model.payment.PaymentHeader;
 
 public class GenerateInsert {
 
 	private static Set<String> fields = new LinkedHashSet<>();
-	private static Object object = new SecLoginlog();
-	private static String tableName = "SecLoginLog";
-	private static String varibaleName = "ssl";
+	private static Object object = new PaymentHeader();
+	private static String tableName = "PaymentHeader";
+	private static String varibaleName = "ph";
 	private static boolean bulkInsert = false;
 	private static String listVaribaleName = "fmList";
 
 	private static String getSelectQuery() {
-		StringBuilder insertSql = new StringBuilder(
-				"LoginLogID,loginUsrLogin,LoginTime,LoginIP,LoginBrowserType,LoginStsID,");
-		insertSql.append("LoginSessionID,LoginError");
-		return insertSql.toString();
+		StringBuilder sql = new StringBuilder();
+		sql.append(
+				"paymentId, paymentType, paymentAmount, createdOn, approvedOn, status, finID,finReference, linkedTranId,");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		return sql.toString();
 	}
 
 	public static void main(String[] args) throws NoSuchFieldException, SecurityException {

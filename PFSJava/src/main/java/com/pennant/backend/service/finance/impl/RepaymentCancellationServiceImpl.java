@@ -478,7 +478,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			// Log Tables
 			// Otherwise Only Schedule Change with Repayments Amount
 			// ============================================
-			FinLogEntryDetail detail = getFinLogEntryDetailDAO().getFinLogEntryDetail(0);
+			FinLogEntryDetail detail = getFinLogEntryDetailDAO().getFinLogEntryDetailByLog(0);
 			boolean isMigratedRepayment = false;
 			if (detail == null) {
 				logger.debug("Log Entry Details Missing. Cancellation process for Manual Reversal Payment Process");

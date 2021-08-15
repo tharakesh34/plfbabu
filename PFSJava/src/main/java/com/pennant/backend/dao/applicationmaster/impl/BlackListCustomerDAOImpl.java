@@ -1,47 +1,32 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DedupParmDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  23-08-2011    														*
- *                                                                  						*
- * Modified Date    :  23-08-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DedupParmDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 23-08-2011 * * Modified
+ * Date : 23-08-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 23-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -50,12 +35,12 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.applicationmaster.BlackListCustomerDAO;
@@ -67,6 +52,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -85,136 +71,617 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 
 	@Override
 	public BlackListCustomers getBlackListCustomers() {
-		logger.debug(Literal.ENTERING);
-		BlackListCustomers blackListCustomers = new BlackListCustomers();
-		logger.debug(Literal.LEAVING);
-		return blackListCustomers;
+		return new BlackListCustomers();
 	}
 
 	@Override
 	public BlackListCustomers getBlacklistCustomerById(String id, String type) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustCIF, CustFName, CustLName, CustDOB, CustCRCPR, CustPassportNo, MobileNumber");
+		sql.append(", CustNationality, Employer, CustIsActive, ReasonCode, Source, Version, LastMntBy");
+		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType");
+		sql.append(", WorkflowId, CustCtgCode, CustCompName, CustAadhaar, CustCin, Gender, Vid, Dl");
+		sql.append(", AddressType, HouseNumber, Street, City, Country, State, Pincode, Product_Applied_In_Other_FI");
+		sql.append(", Forged_Document_Type, Remarks, Branch, AdditionalField0, AdditionalField1, AdditionalField2");
+		sql.append(", AdditionalField3, AdditionalField4, AdditionalField5, AdditionalField6, AdditionalField7");
+		sql.append(", AdditionalField8, AdditionalField9, AdditionalField10, AdditionalField11, AdditionalField12");
+		sql.append(", AdditionalField13, Address, AdditionalField14");
 
-		BlackListCustomers blacklistCustomer = new BlackListCustomers();
-		blacklistCustomer.setId(id);
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select CustCIF , CustFName , CustLName , ");
-		selectSql.append(
-				" CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , Employer, CustIsActive, ReasonCode , Source , ");
-		selectSql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
-		selectSql.append(" CustCtgCode, CustCompName, CustAadhaar, CustCin,");
-		selectSql.append(
-				" Gender, Vid, Dl, AddressType, HouseNumber, Street, City, Country, State, Pincode, Product_Applied_In_Other_FI, Forged_Document_Type, Remarks, ");
-		selectSql.append(
-				"Branch, AdditionalField0, AdditionalField1, AdditionalField2, AdditionalField3, AdditionalField4, AdditionalField5, AdditionalField6, ");
-		selectSql.append(
-				"AdditionalField7, AdditionalField8, AdditionalField9, AdditionalField10, AdditionalField11, AdditionalField12, AdditionalField13, Address ");
-		selectSql.append(", AdditionalField14");
 		if (type.contains("_View")) {
-			selectSql.append(" ,lovDescNationalityDesc, lovDescEmpName, empIndustry ");
+			sql.append(", LovDescNationalityDesc, LovDescEmpName, EmpIndustry");
 		}
-		selectSql.append(" From BlackListCustomer");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustCIF =:CustCIF ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		sql.append(" From BlackListCustomer");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CustCIF = ?");
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(blacklistCustomer);
-		RowMapper<BlackListCustomers> typeRowMapper = BeanPropertyRowMapper.newInstance(BlackListCustomers.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			blacklistCustomer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				BlackListCustomers su = new BlackListCustomers();
+
+				su.setCustCIF(rs.getString("CustCIF"));
+				su.setCustFName(rs.getString("CustFName"));
+				su.setCustLName(rs.getString("CustLName"));
+				su.setCustDOB(rs.getTimestamp("CustDOB"));
+				su.setCustCRCPR(rs.getString("CustCRCPR"));
+				su.setCustPassportNo(rs.getString("CustPassportNo"));
+				su.setMobileNumber(rs.getString("MobileNumber"));
+				su.setCustNationality(rs.getString("CustNationality"));
+				su.setEmployer(rs.getLong("Employer"));
+				su.setCustIsActive(rs.getBoolean("CustIsActive"));
+				su.setReasonCode(rs.getString("ReasonCode"));
+				su.setSource(rs.getString("Source"));
+				su.setVersion(rs.getInt("Version"));
+				su.setLastMntBy(rs.getLong("LastMntBy"));
+				su.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				su.setRecordStatus(rs.getString("RecordStatus"));
+				su.setRoleCode(rs.getString("RoleCode"));
+				su.setNextRoleCode(rs.getString("NextRoleCode"));
+				su.setTaskId(rs.getString("TaskId"));
+				su.setNextTaskId(rs.getString("NextTaskId"));
+				su.setRecordType(rs.getString("RecordType"));
+				su.setWorkflowId(rs.getLong("WorkflowId"));
+				su.setCustCtgCode(rs.getString("CustCtgCode"));
+				su.setCustCompName(rs.getString("CustCompName"));
+				su.setCustAadhaar(rs.getString("CustAadhaar"));
+				su.setCustCin(rs.getString("CustCin"));
+				su.setGender(rs.getString("Gender"));
+				su.setVid(rs.getString("Vid"));
+				su.setDl(rs.getString("Dl"));
+				su.setAddressType(rs.getString("AddressType"));
+				su.setHouseNumber(rs.getString("HouseNumber"));
+				su.setStreet(rs.getString("Street"));
+				su.setCity(rs.getString("City"));
+				su.setCountry(rs.getString("Country"));
+				su.setState(rs.getString("State"));
+				su.setPincode(rs.getString("Pincode"));
+				su.setProduct_Applied_In_Other_FI(rs.getString("Product_Applied_In_Other_FI"));
+				su.setForged_Document_Type(rs.getString("Forged_Document_Type"));
+				su.setRemarks(rs.getString("Remarks"));
+				su.setBranch(rs.getString("Branch"));
+				su.setAdditionalField0(rs.getTimestamp("AdditionalField0"));
+				su.setAdditionalField1(rs.getString("AdditionalField1"));
+				su.setAdditionalField2(rs.getString("AdditionalField2"));
+				su.setAdditionalField3(rs.getString("AdditionalField3"));
+				su.setAdditionalField4(rs.getString("AdditionalField4"));
+				su.setAdditionalField5(rs.getString("AdditionalField5"));
+				su.setAdditionalField6(rs.getString("AdditionalField6"));
+				su.setAdditionalField7(rs.getString("AdditionalField7"));
+				su.setAdditionalField8(rs.getString("AdditionalField8"));
+				su.setAdditionalField9(rs.getString("AdditionalField9"));
+				su.setAdditionalField10(rs.getString("AdditionalField10"));
+				su.setAdditionalField11(rs.getString("AdditionalField11"));
+				su.setAdditionalField12(rs.getString("AdditionalField12"));
+				su.setAdditionalField13(rs.getString("AdditionalField13"));
+				su.setAddress(rs.getString("Address"));
+				su.setAdditionalField14(rs.getString("AdditionalField14"));
+
+				if (type.contains("_View")) {
+					su.setLovDescNationalityDesc(rs.getString("LovDescNationalityDesc"));
+					su.setLovDescEmpName(rs.getString("LovDescEmpName"));
+					su.setEmpIndustry(rs.getString("EmpIndustry"));
+				}
+
+				return su;
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			blacklistCustomer = null;
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
-		return blacklistCustomer;
+		return null;
 	}
 
 	@Override
 	public BlackListCustomers getNewBlacklistCustomer() {
-		logger.debug("Entering ");
-
 		BlackListCustomers blackListedCustomer = getBlackListCustomers();
 		blackListedCustomer.setNewRecord(true);
 
-		logger.debug("Leaving ");
 		return blackListedCustomer;
 	}
 
 	@Override
 	public void saveList(List<FinBlacklistCustomer> blackList, String type) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Insert Into FinBlackListDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append("(FinID, FinReference, CustCIF, CustFName, CustLName, CustShrtName, CustDOB, CustCRCPR");
+		sql.append(", CustPassportNo, MobileNumber, CustNationality, ReasonCode, Source, Employer, WatchListRule");
+		sql.append(", Override, OverrideUser, SourceCIF");
+		sql.append(") values(");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into FinBlackListDetail");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference , CustCIF , CustFName , CustLName , ");
-		insertSql.append(
-				" CustShrtName , CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , ReasonCode , Source , ");
-		insertSql.append(" Employer , WatchListRule , Override , OverrideUser, SourceCIF )");
-		insertSql.append(" Values( ");
-		insertSql.append(" :FinReference , :CustCIF , :CustFName , :CustLName , ");
-		insertSql.append(" :CustShrtName , :CustDOB , :CustCRCPR ,:CustPassportNo , :MobileNumber ,");
-		insertSql.append(" :CustNationality , :ReasonCode, :Source,");
-		insertSql.append(" :Employer , :WatchListRule , :Override , :OverrideUser, :SourceCIF)");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("insertSql: " + insertSql.toString());
+		this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(blackList.toArray());
-		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinBlacklistCustomer bl = blackList.get(i);
+				int index = 1;
 
-		logger.debug(Literal.LEAVING);
+				ps.setLong(index++, JdbcUtil.setLong(bl.getFinID()));
+				ps.setString(index++, bl.getFinReference());
+				ps.setString(index++, bl.getCustCIF());
+				ps.setString(index++, bl.getCustFName());
+				ps.setString(index++, bl.getCustLName());
+				ps.setString(index++, bl.getCustShrtName());
+				ps.setDate(index++, JdbcUtil.getDate(bl.getCustDOB()));
+				ps.setString(index++, bl.getCustCRCPR());
+				ps.setString(index++, bl.getCustPassportNo());
+				ps.setString(index++, bl.getMobileNumber());
+				ps.setString(index++, bl.getCustNationality());
+				ps.setString(index++, bl.getReasonCode());
+				ps.setString(index++, bl.getSource());
+				ps.setString(index++, bl.getEmployer());
+				ps.setString(index++, bl.getWatchListRule());
+				ps.setBoolean(index++, bl.isOverride());
+				ps.setString(index++, bl.getOverrideUser());
+				ps.setString(index++, bl.getSourceCIF());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return blackList.size();
+			}
+		});
 	}
 
 	@Override
-	public List<FinBlacklistCustomer> fetchOverrideBlackListData(String finReference, String queryCode,
-			String sourceCIF) {
-		logger.debug(Literal.ENTERING);
+	public List<FinBlacklistCustomer> fetchOverrideBlackListData(long finID, String queryCode, String sourceCIF) {
+		StringBuilder sql = getSqlQuery();
+		sql.append(" Where FinID = ? and SourceCIF = ? and WatchListRule like (?)");
 
-		BlackListCustomers blackListCustomer = new BlackListCustomers();
-		blackListCustomer.setFinReference(finReference);
-		blackListCustomer.setWatchListRule(queryCode);
-		blackListCustomer.setSourceCIF(sourceCIF);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder(" Select FinReference , CustCIF , CustFName , CustLName , ");
-		selectSql.append(
-				" CustShrtName , CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , ReasonCode , Source , ");
-		selectSql.append(" Employer , WatchListRule , Override , OverrideUser, SourceCIF ");
-		selectSql.append(" From FinBlackListDetail");
-		selectSql.append(" Where FinReference = :FinReference AND SourceCIF = :SourceCIF AND WatchListRule LIKE ('%");
-		selectSql.append(queryCode);
-		selectSql.append("%')");
+		FinBlacklistCustomerRM rowMapper = new FinBlacklistCustomerRM();
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(blackListCustomer);
-		RowMapper<FinBlacklistCustomer> typeRowMapper = BeanPropertyRowMapper.newInstance(FinBlacklistCustomer.class);
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			ps.setLong(index++, finID);
+			ps.setString(index++, sourceCIF);
+			ps.setString(index++, "%" + queryCode + "%");
+		}, rowMapper);
 	}
 
 	@Override
-	public List<FinBlacklistCustomer> fetchFinBlackList(String finReference) {
-		logger.debug(Literal.ENTERING);
+	public List<FinBlacklistCustomer> fetchFinBlackList(long finID) {
+		StringBuilder sql = getSqlQuery();
+		sql.append(" Where FinID = ?");
 
-		FinBlacklistCustomer finBlacklistCustomer = new FinBlacklistCustomer();
-		finBlacklistCustomer.setFinReference(finReference);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder(" Select FinReference , CustCIF , CustFName , CustLName , ");
-		selectSql.append(" CustShrtName , CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality ,");
-		selectSql.append(" Employer , WatchListRule , Override , OverrideUser , ReasonCode , Source ");
-		selectSql.append(" From FinBlackListDetail");
-		selectSql.append(" Where FinReference =:FinReference ");
+		FinBlacklistCustomerRM rowMapper = new FinBlacklistCustomerRM();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, finID);
+		}, rowMapper);
+	}
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finBlacklistCustomer);
-		RowMapper<FinBlacklistCustomer> typeRowMapper = BeanPropertyRowMapper.newInstance(FinBlacklistCustomer.class);
+	@Override
+	public void updateList(List<FinBlacklistCustomer> blackList) {
+		StringBuilder sql = new StringBuilder("Update FinBlackListDetail");
+		sql.append(" Set");
+		sql.append(" CustFName = ?, CustLName = ?, CustShrtName = ?, CustDOB = ?");
+		sql.append(", CustCRCPR= ?, CustPassportNo = ?, MobileNumber = ?, CustNationality = ?");
+		sql.append(", ReasonCode= ?, Source= ?,  Employer = ?, WatchListRule = ?");
+		sql.append(", Override = ?, OverrideUser = ?");
+		sql.append(" Where FinID = ? and CustCIF = ? and SourceCIF = ? ");
 
-		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinBlacklistCustomer bl = blackList.get(i);
+
+				int index = 1;
+
+				ps.setString(index++, bl.getCustFName());
+				ps.setString(index++, bl.getCustLName());
+				ps.setString(index++, bl.getCustShrtName());
+				ps.setDate(index++, JdbcUtil.getDate(bl.getCustDOB()));
+				ps.setString(index++, bl.getCustCRCPR());
+				ps.setString(index++, bl.getCustPassportNo());
+				ps.setString(index++, bl.getMobileNumber());
+				ps.setString(index++, bl.getCustNationality());
+				ps.setString(index++, bl.getReasonCode());
+				ps.setString(index++, bl.getSource());
+				ps.setString(index++, bl.getEmployer());
+				ps.setString(index++, bl.getWatchListRule());
+				ps.setBoolean(index++, bl.isOverride());
+				ps.setString(index++, bl.getOverrideUser());
+
+				ps.setLong(index++, JdbcUtil.setLong(bl.getFinID()));
+				ps.setString(index++, bl.getCustCIF());
+				ps.setString(index++, bl.getSourceCIF());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return blackList.size();
+			}
+		});
+	}
+
+	@Override
+	public void deleteList(long finID) {
+		String sql = "Delete From FinBlackListDetail Where FinID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setLong(1, finID);
+		});
+	}
+
+	@Override
+	public void update(BlackListCustomers blc, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Update BlackListCustomer");
+		sql.append(tableType.getSuffix());
+		sql.append(" Set");
+		sql.append(" CustFName = ?, CustLName = ?, CustDOB = ?, CustCRCPR = ?, CustPassportNo = ?");
+		sql.append(", MobileNumber = ?, CustNationality = ?, ReasonCode = ?, Source = ?, Employer = ?");
+		sql.append(", CustIsActive = ?, Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?");
+		sql.append(", RoleCode = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(", CustCtgCode = ?, CustCompName = ?, CustAadhaar = ?, CustCin = ?, Gender = ?, Vid = ?, Dl = ?");
+		sql.append(", AddressType = ?, HouseNumber = ?, Street = ?, City = ?, Country = ?, State = ?, Pincode = ?");
+		sql.append(", Product_Applied_In_Other_FI = ?, Forged_Document_Type = ?, Remarks = ?, Branch = ?, Address = ?");
+		sql.append(", AdditionalField0 = ?, AdditionalField1 = ?, AdditionalField2 = ?, AdditionalField3 = ?");
+		sql.append(", AdditionalField4 = ?, AdditionalField5 = ?, AdditionalField6 = ?, AdditionalField7 = ?");
+		sql.append(", AdditionalField8 = ?, AdditionalField9 = ?, AdditionalField10 = ?, AdditionalField11 = ?");
+		sql.append(", AdditionalField12 = ?, AdditionalField13 = ?, AdditionalField14 = ?");
+		sql.append(" Where CustCIF = ?");
+		sql.append(QueryUtil.getConcurrencyClause(tableType));
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, blc.getCustFName());
+			ps.setString(index++, blc.getCustLName());
+			ps.setDate(index++, JdbcUtil.getDate(blc.getCustDOB()));
+			ps.setString(index++, blc.getCustCRCPR());
+			ps.setString(index++, blc.getCustPassportNo());
+			ps.setString(index++, blc.getMobileNumber());
+			ps.setString(index++, blc.getCustNationality());
+			ps.setString(index++, blc.getReasonCode());
+			ps.setString(index++, blc.getSource());
+			ps.setLong(index++, blc.getEmployer());
+			ps.setBoolean(index++, blc.isCustIsActive());
+			ps.setInt(index++, blc.getVersion());
+			ps.setLong(index++, blc.getLastMntBy());
+			ps.setTimestamp(index++, blc.getLastMntOn());
+			ps.setString(index++, blc.getRecordStatus());
+			ps.setString(index++, blc.getRoleCode());
+			ps.setString(index++, blc.getNextRoleCode());
+			ps.setString(index++, blc.getTaskId());
+			ps.setString(index++, blc.getNextTaskId());
+			ps.setString(index++, blc.getRecordType());
+			ps.setLong(index++, blc.getWorkflowId());
+			ps.setString(index++, blc.getCustCtgCode());
+			ps.setString(index++, blc.getCustCompName());
+			ps.setString(index++, blc.getCustAadhaar());
+			ps.setString(index++, blc.getCustCin());
+			ps.setString(index++, blc.getGender());
+			ps.setString(index++, blc.getVid());
+			ps.setString(index++, blc.getDl());
+			ps.setString(index++, blc.getAddressType());
+			ps.setString(index++, blc.getHouseNumber());
+			ps.setString(index++, blc.getStreet());
+			ps.setString(index++, blc.getCity());
+			ps.setString(index++, blc.getCountry());
+			ps.setString(index++, blc.getState());
+			ps.setString(index++, blc.getPincode());
+			ps.setString(index++, blc.getProduct_Applied_In_Other_FI());
+			ps.setString(index++, blc.getForged_Document_Type());
+			ps.setString(index++, blc.getRemarks());
+			ps.setString(index++, blc.getBranch());
+			ps.setString(index++, blc.getAddress());
+			ps.setDate(index++, JdbcUtil.getDate(blc.getAdditionalField0()));
+			ps.setString(index++, blc.getAdditionalField1());
+			ps.setString(index++, blc.getAdditionalField2());
+			ps.setString(index++, blc.getAdditionalField3());
+			ps.setString(index++, blc.getAdditionalField4());
+			ps.setString(index++, blc.getAdditionalField5());
+			ps.setString(index++, blc.getAdditionalField6());
+			ps.setString(index++, blc.getAdditionalField7());
+			ps.setString(index++, blc.getAdditionalField8());
+			ps.setString(index++, blc.getAdditionalField9());
+			ps.setString(index++, blc.getAdditionalField10());
+			ps.setString(index++, blc.getAdditionalField11());
+			ps.setString(index++, blc.getAdditionalField12());
+			ps.setString(index++, blc.getAdditionalField13());
+			ps.setString(index++, blc.getAdditionalField14());
+
+			ps.setString(index++, blc.getCustCIF());
+
+			if (TableType.TEMP_TAB.equals(tableType)) {
+				ps.setTimestamp(index++, blc.getPrevMntOn());
+			} else {
+				ps.setInt(index++, blc.getVersion() - 1);
+			}
+
+		});
+
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+	}
+
+	@Override
+	public void delete(BlackListCustomers blc, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Delete From BlackListCustomer");
+		sql.append(tableType.getSuffix());
+		sql.append(" Where CustCIF = ?");
+		sql.append(QueryUtil.getConcurrencyClause(tableType));
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+				ps.setString(index++, blc.getCustCIF());
+				if (TableType.TEMP_TAB.equals(tableType)) {
+					ps.setTimestamp(index++, blc.getPrevMntOn());
+				} else {
+					ps.setInt(index++, blc.getVersion() - 1);
+				}
+			});
+
+			if (recordCount == 0) {
+				throw new ConcurrencyException();
+			}
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+	}
+
+	@Override
+	public String save(BlackListCustomers blc, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Insert Into BlackListCustomer");
+		sql.append(tableType.getSuffix());
+		sql.append("(CustCIF, CustFName, CustLName, CustDOB, CustCRCPR, CustPassportNo, MobileNumber");
+		sql.append(", CustNationality, ReasonCode, Source, Employer, CustIsActive, Version, LastMntBy");
+		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType");
+		sql.append(", WorkflowId, CustCtgCode, CustCompName, CustAadhaar, CustCin, Gender, Vid, Dl, AddressType");
+		sql.append(", HouseNumber, Street, City, Country, State, Pincode, Product_Applied_In_Other_FI");
+		sql.append(", Forged_Document_Type, Remarks, Branch, AdditionalField0, AdditionalField1, AdditionalField2");
+		sql.append(", AdditionalField3, AdditionalField4, AdditionalField5, AdditionalField6, AdditionalField7");
+		sql.append(", AdditionalField8, AdditionalField9, AdditionalField10, AdditionalField11, AdditionalField12");
+		sql.append(", AdditionalField13, Address, AdditionalField14");
+		sql.append(") values(");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setString(index++, blc.getCustCIF());
+				ps.setString(index++, blc.getCustFName());
+				ps.setString(index++, blc.getCustLName());
+				ps.setDate(index++, JdbcUtil.getDate(blc.getCustDOB()));
+				ps.setString(index++, blc.getCustCRCPR());
+				ps.setString(index++, blc.getCustPassportNo());
+				ps.setString(index++, blc.getMobileNumber());
+				ps.setString(index++, blc.getCustNationality());
+				ps.setString(index++, blc.getReasonCode());
+				ps.setString(index++, blc.getSource());
+				ps.setLong(index++, JdbcUtil.setLong(blc.getEmployer()));
+				ps.setBoolean(index++, blc.isCustIsActive());
+				ps.setInt(index++, blc.getVersion());
+				ps.setLong(index++, JdbcUtil.setLong(blc.getLastMntBy()));
+				ps.setTimestamp(index++, blc.getLastMntOn());
+				ps.setString(index++, blc.getRecordStatus());
+				ps.setString(index++, blc.getRoleCode());
+				ps.setString(index++, blc.getNextRoleCode());
+				ps.setString(index++, blc.getTaskId());
+				ps.setString(index++, blc.getNextTaskId());
+				ps.setString(index++, blc.getRecordType());
+				ps.setLong(index++, JdbcUtil.setLong(blc.getWorkflowId()));
+				ps.setString(index++, blc.getCustCtgCode());
+				ps.setString(index++, blc.getCustCompName());
+				ps.setString(index++, blc.getCustAadhaar());
+				ps.setString(index++, blc.getCustCin());
+				ps.setString(index++, blc.getGender());
+				ps.setString(index++, blc.getVid());
+				ps.setString(index++, blc.getDl());
+				ps.setString(index++, blc.getAddressType());
+				ps.setString(index++, blc.getHouseNumber());
+				ps.setString(index++, blc.getStreet());
+				ps.setString(index++, blc.getCity());
+				ps.setString(index++, blc.getCountry());
+				ps.setString(index++, blc.getState());
+				ps.setString(index++, blc.getPincode());
+				ps.setString(index++, blc.getProduct_Applied_In_Other_FI());
+				ps.setString(index++, blc.getForged_Document_Type());
+				ps.setString(index++, blc.getRemarks());
+				ps.setString(index++, blc.getBranch());
+				ps.setDate(index++, JdbcUtil.getDate(blc.getAdditionalField0()));
+				ps.setString(index++, blc.getAdditionalField1());
+				ps.setString(index++, blc.getAdditionalField2());
+				ps.setString(index++, blc.getAdditionalField3());
+				ps.setString(index++, blc.getAdditionalField4());
+				ps.setString(index++, blc.getAdditionalField5());
+				ps.setString(index++, blc.getAdditionalField6());
+				ps.setString(index++, blc.getAdditionalField7());
+				ps.setString(index++, blc.getAdditionalField8());
+				ps.setString(index++, blc.getAdditionalField9());
+				ps.setString(index++, blc.getAdditionalField10());
+				ps.setString(index++, blc.getAdditionalField11());
+				ps.setString(index++, blc.getAdditionalField12());
+				ps.setString(index++, blc.getAdditionalField13());
+				ps.setString(index++, blc.getAddress());
+				ps.setString(index++, blc.getAdditionalField14());
+			});
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+
+		return blc.getId();
+	}
+
+	@Override
+	public void moveData(String finReference, String suffix) {
+		/* FIXME : change to FinID Pre-approved(_PA) tables need to remove */
+		try {
+			if (StringUtils.isBlank(suffix)) {
+				return;
+			}
+
+			MapSqlParameterSource map = new MapSqlParameterSource();
+			map.addValue("FinReference", finReference);
+
+			StringBuilder selectSql = new StringBuilder();
+			selectSql.append(" SELECT * FROM FinBlackListDetail");
+			selectSql.append(" WHERE FinReference = :FinReference ");
+
+			RowMapper<FinBlacklistCustomer> typeRowMapper = BeanPropertyRowMapper
+					.newInstance(FinBlacklistCustomer.class);
+			List<FinBlacklistCustomer> list = this.jdbcTemplate.query(selectSql.toString(), map, typeRowMapper);
+
+			if (list != null && !list.isEmpty()) {
+				saveList(list, suffix);
+			}
+
+		} catch (DataAccessException e) {
+			logger.debug(e);
+		}
+		logger.debug(" Leaving ");
+
+	}
+
+	@Override
+	public boolean isDuplicateKey(String custCIF, TableType tableType) {
+		String sql;
+		String whereClause = " CustCIF = ?";
+
+		Object[] args = new Object[] { custCIF };
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("BlackListCustomer", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("BlackListCustomer_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "BlackListCustomer_Temp", "BlackListCustomer" }, whereClause);
+
+			args = new Object[] { custCIF, custCIF };
+			break;
+		}
+
+		logger.debug(Literal.SQL + sql);
+
+		return jdbcOperations.queryForObject(sql, Integer.class, args) > 0;
+	}
+
+	@Override
+	public void deleteNegativeReasonList(String blackListCIF, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Delete From NegativeReasonCodes");
+		sql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
+		sql.append(" Where BlackListCIF = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			ps.setString(1, blackListCIF);
+		});
+	}
+
+	@Override
+	public void deleteNegativeReason(long reasonId, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Delete From NegativeReasonCodes");
+		sql.append(tableType.getSuffix());
+		sql.append(" Where Id = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			jdbcOperations.update(sql.toString(), ps -> {
+				ps.setLong(1, reasonId);
+			});
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+	}
+
+	@Override
+	public void saveNegativeReason(NegativeReasoncodes nrc, TableType tableType) {
+		if (nrc.getId() == Long.MIN_VALUE) {
+			nrc.setId(getNextValue("SeqNegativeReasonCodes"));
+		}
+
+		StringBuilder sql = new StringBuilder("Insert into NegativeReasonCodes");
+		sql.append(tableType.getSuffix());
+		sql.append("(Id, BlackListCIF, ReasonId, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(") Values(");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, JdbcUtil.setLong(nrc.getId()));
+				ps.setString(index++, nrc.getBlackListCIF());
+				ps.setLong(index++, JdbcUtil.setLong(nrc.getReasonId()));
+				ps.setInt(index++, nrc.getVersion());
+				ps.setLong(index++, JdbcUtil.setLong(nrc.getLastMntBy()));
+				ps.setTimestamp(index++, nrc.getLastMntOn());
+				ps.setString(index++, nrc.getRecordStatus());
+				ps.setString(index++, nrc.getRoleCode());
+				ps.setString(index++, nrc.getNextRoleCode());
+				ps.setString(index++, nrc.getTaskId());
+				ps.setString(index++, nrc.getNextTaskId());
+				ps.setString(index++, nrc.getRecordType());
+				ps.setLong(index++, JdbcUtil.setLong(nrc.getWorkflowId()));
+			});
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+	}
+
+	@Override
+	public List<NegativeReasoncodes> getNegativeReasonList(String blacklistCIF, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, BlackListCIF, ReasonId, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From NegativeReasonCodes");
+		sql.append(type);
+		sql.append(" Where BlackListCIF = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, blacklistCIF);
+		}, (rs, rowNum) -> {
+			NegativeReasoncodes nrc = new NegativeReasoncodes();
+
+			nrc.setId(rs.getLong("Id"));
+			nrc.setBlackListCIF(rs.getString("BlackListCIF"));
+			nrc.setReasonId(rs.getLong("ReasonId"));
+			nrc.setVersion(rs.getInt("Version"));
+			nrc.setLastMntBy(rs.getLong("LastMntBy"));
+			nrc.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			nrc.setRecordStatus(rs.getString("RecordStatus"));
+			nrc.setRoleCode(rs.getString("RoleCode"));
+			nrc.setNextRoleCode(rs.getString("NextRoleCode"));
+			nrc.setTaskId(rs.getString("TaskId"));
+			nrc.setNextTaskId(rs.getString("NextTaskId"));
+			nrc.setRecordType(rs.getString("RecordType"));
+			nrc.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return nrc;
+		});
+
 	}
 
 	@Override
@@ -248,326 +715,42 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
-	@Override
-	public void updateList(List<FinBlacklistCustomer> blackList) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder updateSql = new StringBuilder("Update FinBlackListDetail");
-		updateSql.append(" Set CustFName = :CustFName,");
-		updateSql.append(" CustLName = :CustLName , CustShrtName = :CustShrtName, CustDOB = :CustDOB, ");
-		updateSql.append(
-				" CustCRCPR= :CustCRCPR, CustPassportNo = :CustPassportNo,MobileNumber = :MobileNumber, CustNationality = :CustNationality, ReasonCode= :ReasonCode, Source= :Source , ");
-		updateSql.append(
-				" Employer = :Employer, WatchListRule = :WatchListRule, Override = :Override, OverrideUser = :OverrideUser");
-		updateSql.append(" Where FinReference =:FinReference  AND CustCIF =:CustCIF AND SourceCIF = :SourceCIF ");
-
-		logger.debug("updateSql: " + updateSql.toString());
-
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(blackList.toArray());
-		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-
-		logger.debug(Literal.LEAVING);
-
+	private StringBuilder getSqlQuery() {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference, CustCIF, CustFName, CustLName, CustShrtName, CustDOB, CustCRCPR");
+		sql.append(", CustPassportNo, MobileNumber, CustNationality, ReasonCode, Source, Employer");
+		sql.append(", WatchListRule, Override, OverrideUser, SourceCIF");
+		sql.append(" From FinBlackListDetail");
+		return sql;
 	}
 
-	@Override
-	public void deleteList(String finReference) {
-		logger.debug(Literal.ENTERING);
+	private class FinBlacklistCustomerRM implements RowMapper<FinBlacklistCustomer> {
 
-		BlackListCustomers blackListCustomer = new BlackListCustomers();
-		blackListCustomer.setFinReference(finReference);
+		@Override
+		public FinBlacklistCustomer mapRow(ResultSet rs, int rowNum) throws SQLException {
+			FinBlacklistCustomer fblc = new FinBlacklistCustomer();
 
-		StringBuilder deleteSql = new StringBuilder("Delete From FinBlackListDetail");
-		deleteSql.append(" Where FinReference =:FinReference");
-		logger.debug("deleteSql: " + deleteSql.toString());
+			fblc.setFinID(rs.getLong("FinID"));
+			fblc.setFinReference(rs.getString("FinReference"));
+			fblc.setCustCIF(rs.getString("CustCIF"));
+			fblc.setCustFName(rs.getString("CustFName"));
+			fblc.setCustLName(rs.getString("CustLName"));
+			fblc.setCustShrtName(rs.getString("CustShrtName"));
+			fblc.setCustDOB(rs.getTimestamp("CustDOB"));
+			fblc.setCustCRCPR(rs.getString("CustCRCPR"));
+			fblc.setCustPassportNo(rs.getString("CustPassportNo"));
+			fblc.setMobileNumber(rs.getString("MobileNumber"));
+			fblc.setCustNationality(rs.getString("CustNationality"));
+			fblc.setReasonCode(rs.getString("ReasonCode"));
+			fblc.setSource(rs.getString("Source"));
+			fblc.setEmployer(rs.getString("Employer"));
+			fblc.setWatchListRule(rs.getString("WatchListRule"));
+			fblc.setOverride(rs.getBoolean("Override"));
+			fblc.setOverrideUser(rs.getString("OverrideUser"));
+			fblc.setSourceCIF(rs.getString("SourceCIF"));
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(blackListCustomer);
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public void update(BlackListCustomers finBlacklistCustomer, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		int recordCount = 0;
-		StringBuilder updateSql = new StringBuilder();
-		updateSql.append("Update BlackListCustomer");
-		updateSql.append(tableType.getSuffix());
-		updateSql.append(" Set CustFName= :CustFName , CustLName= :CustLName , ");
-		updateSql.append(
-				" CustDOB= :CustDOB, CustCRCPR= :CustCRCPR , CustPassportNo= :CustPassportNo , MobileNumber= :MobileNumber , CustNationality= :CustNationality, ReasonCode= :ReasonCode,  Source= :Source , ");
-		updateSql.append(
-				" Employer= :Employer, CustIsActive = :CustIsActive, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
-		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, ");
-		updateSql.append(
-				" CustCtgCode = :CustCtgCode, CustCompName = :CustCompName, CustAadhaar = :CustAadhaar, CustCin = :CustCin, ");
-		updateSql.append(
-				"Gender = :Gender , Vid = :Vid, Dl = :Dl, AddressType = :AddressType, HouseNumber = :HouseNumber, Street = :Street, City = :City, Country = :Country, State = :State, ");
-		updateSql.append(
-				" Pincode = :Pincode, Product_Applied_In_Other_FI = :Product_Applied_In_Other_FI, Forged_Document_Type = :Forged_Document_Type, Remarks = :Remarks, ");
-		updateSql.append(
-				"Branch = :Branch, AdditionalField0 = :AdditionalField0, AdditionalField1 = :AdditionalField1, AdditionalField2 = :AdditionalField2,");
-		updateSql.append(
-				" AdditionalField3 = :AdditionalField3, AdditionalField4 = :AdditionalField4, AdditionalField5 = :AdditionalField5, AdditionalField6 = :AdditionalField6,");
-		updateSql.append(
-				" AdditionalField7 = :AdditionalField7, AdditionalField8 = :AdditionalField8, AdditionalField9 = :AdditionalField9, AdditionalField10 = :AdditionalField10,");
-		updateSql.append(
-				" AdditionalField11 = :AdditionalField11, AdditionalField12 = :AdditionalField12, AdditionalField13 = :AdditionalField13, Address = :Address");
-		updateSql.append(", AdditionalField14 = :AdditionalField14");
-		updateSql.append(" WHERE CustCIF = :CustCIF ");
-		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
-
-		logger.trace(Literal.SQL + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finBlacklistCustomer);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
+			return fblc;
 		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public void delete(BlackListCustomers finBlacklistCustomer, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		int recordCount = 0;
-		StringBuilder deleteSql = new StringBuilder();
-
-		deleteSql.append("Delete From BlackListCustomer");
-		deleteSql.append(tableType.getSuffix());
-		deleteSql.append(" Where CustCIF =:CustCIF");
-		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
-
-		logger.trace(Literal.SQL + deleteSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finBlacklistCustomer);
-		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		} catch (DataAccessException e) {
-			throw new DependencyFoundException(e);
-		}
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public String save(BlackListCustomers finBlacklistCustomer, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder insertSql = new StringBuilder("Insert Into BlackListCustomer");
-		insertSql.append(tableType.getSuffix());
-		insertSql.append(
-				"(CustCIF, CustFName, CustLName , CustDOB, CustCRCPR, CustPassportNo ,MobileNumber,CustNationality, ReasonCode , Source , ");
-		insertSql.append(
-				" Employer, CustIsActive, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		insertSql.append(" RecordType, WorkflowId, CustCtgCode, CustCompName, CustAadhaar, CustCin,");
-
-		insertSql.append(
-				"Gender, Vid, Dl, AddressType, HouseNumber, Street, City, Country, State, Pincode, Product_Applied_In_Other_FI, Forged_Document_Type, Remarks,");
-		insertSql.append(
-				" Branch, AdditionalField0, AdditionalField1, AdditionalField2, AdditionalField3, AdditionalField4, AdditionalField5, AdditionalField6,");
-		insertSql.append(
-				" AdditionalField7, AdditionalField8, AdditionalField9, AdditionalField10, AdditionalField11, AdditionalField12, AdditionalField13, Address,");
-		insertSql.append(" AdditionalField14)");
-		insertSql.append(" Values(");
-		insertSql.append(
-				" :CustCIF , :CustFName , :CustLName, :CustDOB , :CustCRCPR , :CustPassportNo, :MobileNumber, :CustNationality, :ReasonCode , :Source ,");
-		insertSql.append(
-				" :Employer, :CustIsActive, :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
-		insertSql.append(" :RecordType, :WorkflowId, :CustCtgCode, :CustCompName, :CustAadhaar, :CustCin,");
-		insertSql.append(
-				" :Gender, :Vid, :Dl, :AddressType, :HouseNumber, :Street, :City, :Country, :State, :Pincode, :Product_Applied_In_Other_FI, :Forged_Document_Type, :Remarks,");
-		insertSql.append(
-				" :Branch, :AdditionalField0, :AdditionalField1, :AdditionalField2, :AdditionalField3, :AdditionalField4, :AdditionalField5, :AdditionalField6,");
-		insertSql.append(
-				" :AdditionalField7, :AdditionalField8, :AdditionalField9, :AdditionalField10, :AdditionalField11, :AdditionalField12, :AdditionalField13, :Address,");
-		insertSql.append(" :AdditionalField14)");
-		logger.trace(Literal.SQL + insertSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finBlacklistCustomer);
-		try {
-			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		} catch (DuplicateKeyException e) {
-			throw new ConcurrencyException(e);
-		}
-		logger.debug(Literal.LEAVING);
-		return finBlacklistCustomer.getId();
-	}
-
-	@Override
-	public void moveData(String finReference, String suffix) {
-		logger.debug(" Entering ");
-		try {
-			if (StringUtils.isBlank(suffix)) {
-				return;
-			}
-
-			MapSqlParameterSource map = new MapSqlParameterSource();
-			map.addValue("FinReference", finReference);
-
-			StringBuilder selectSql = new StringBuilder();
-			selectSql.append(" SELECT * FROM FinBlackListDetail");
-			selectSql.append(" WHERE FinReference = :FinReference ");
-
-			RowMapper<FinBlacklistCustomer> typeRowMapper = BeanPropertyRowMapper
-					.newInstance(FinBlacklistCustomer.class);
-			List<FinBlacklistCustomer> list = this.jdbcTemplate.query(selectSql.toString(), map, typeRowMapper);
-
-			if (list != null && !list.isEmpty()) {
-				saveList(list, suffix);
-			}
-
-		} catch (DataAccessException e) {
-			logger.debug(e);
-		}
-		logger.debug(" Leaving ");
-
-	}
-
-	@Override
-	public boolean isDuplicateKey(String custCIF, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-		// Prepare the SQL.
-		String sql;
-		String whereClause = "CustCIF =:CustCIF";
-
-		switch (tableType) {
-		case MAIN_TAB:
-			sql = QueryUtil.getCountQuery("BlackListCustomer", whereClause);
-			break;
-		case TEMP_TAB:
-			sql = QueryUtil.getCountQuery("BlackListCustomer_Temp", whereClause);
-			break;
-		default:
-			sql = QueryUtil.getCountQuery(new String[] { "BlackListCustomer_Temp", "BlackListCustomer" }, whereClause);
-			break;
-		}
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql);
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("CustCIF", custCIF);
-
-		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
-
-		boolean exists = false;
-		if (count > 0) {
-			exists = true;
-		}
-
-		logger.debug(Literal.LEAVING);
-		return exists;
-	}
-
-	@Override
-	public void deleteNegativeReasonList(String blackListCIF, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder deleteSql = new StringBuilder("Delete From NegativeReasonCodes");
-		deleteSql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
-		deleteSql.append(" Where blacklistCIF = :blackListCIF ");
-		logger.debug("deleteSql: " + deleteSql.toString());
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("blackListCIF", blackListCIF);
-
-		this.jdbcTemplate.update(deleteSql.toString(), source);
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public void deleteNegativeReason(long reasonId, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from NegativeReasonCodes");
-		sql.append(tableType.getSuffix());
-		sql.append(" where Id = :id ");
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("id", reasonId);
-		int recordCount = 0;
-
-		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
-		} catch (DataAccessException e) {
-			throw new DependencyFoundException(e);
-		}
-
-		// Check for the concurrency failure.
-		/*
-		 * if (recordCount == 0) { throw new ConcurrencyException(); }
-		 */
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public void saveNegativeReason(NegativeReasoncodes negativeReasoncodes, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" insert into NegativeReasonCodes");
-		sql.append(tableType.getSuffix());
-		sql.append("( id, blackListCIF, reasonId, ");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(");
-		sql.append("  :Id, :blackListCIF, :ReasonId, ");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-
-		if (negativeReasoncodes.getId() == Long.MIN_VALUE) {
-			negativeReasoncodes.setId(getNextValue("SeqNegativeReasonCodes"));
-			logger.debug("get NextID:" + negativeReasoncodes.getId());
-		}
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(negativeReasoncodes);
-
-		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
-		} catch (DuplicateKeyException e) {
-			throw new ConcurrencyException(e);
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public List<NegativeReasoncodes> getNegativeReasonList(String blacklistCIF, String type) {
-
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("blacklistCIF", blacklistCIF);
-
-		RowMapper<NegativeReasoncodes> typeRowMapper = BeanPropertyRowMapper.newInstance(NegativeReasoncodes.class);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" id, blacklistCIF, reasonId, ");
-
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From NegativeReasonCodes");
-		sql.append(type);
-		sql.append(" Where blacklistCIF = :blacklistCIF");
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-
-		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 
 	}
 

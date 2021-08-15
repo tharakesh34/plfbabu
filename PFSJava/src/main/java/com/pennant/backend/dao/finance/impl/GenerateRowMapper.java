@@ -4,33 +4,28 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.administration.SecurityUser;
+import com.pennant.backend.model.finance.liability.LiabilityRequest;
 
 public class GenerateRowMapper {
 
 	private static Set<String> fields = new LinkedHashSet<>();
-	private static Object object = new SecurityUser();
-	private static String tableName = "secusers";
+	private static Object object = new LiabilityRequest();
+	private static String tableName = "LiabilityRequest";
 	private static String whereClause = "";
-	private static String varibaleName = "su";
+	private static String varibaleName = "lr";
 	private static boolean list = false;
 
 	private static String getSelectQuery() {
 		StringBuilder sql = new StringBuilder();
-		sql.append(" UsrID, UsrLogin, UsrPwd, UserStaffID, UsrFName, UsrMName, UsrLName, UsrMobile, UsrEmail");
-		sql.append(", UsrEnabled, UsrCanSignonFrom, UsrCanSignonTo, UsrCanOverrideLimits, UsrAcExp, UsrAcExpDt");
-		sql.append(", UsrAcLocked, UsrLanguage, UsrDftAppId, UsrBranchCode, UsrDeptCode, UsrToken");
-		sql.append(", UsrIsMultiBranch, UsrInvldLoginTries, UsrDesg, AuthType,UsrDftAppCode");
-		sql.append(", PwdExpDt, UserType,businessVertical, ldapDomainName");
+		sql.append(" Id, FinID, FinReference, InitiatedBy, FinEvent, InsPaidStatus, InsClaimAmount, InsClaimReason");
 
-		//if (StringUtils.trimToEmpty(type).contains("View")) {
-		sql.append(", lovDescUsrDftAppCodeName, lovDescUsrDeptCodeName"); //lovDescUsrDftAppCode
-		sql.append(
-				", lovDescUsrBranchCodeName, LovDescUsrLanguage, lovDescUsrDesg, businessVerticalCode,businessVerticalDesc");
+		// if (StringUtils.trimToEmpty(type).contains("View")) {
+		sql.append(", FinType, CustCIF, FinBranch, FinStartDate, NumberOfTerms");
+		sql.append(", MaturityDate, FinCcy, FinAmount, CustShrtName, BranchDesc");
+		// }
 
-		//	}
-		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", RecordType, WorkflowId");
+		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
 		return sql.toString();
 	}

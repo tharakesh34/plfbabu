@@ -42,6 +42,7 @@ public class LiabilityRequest extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
+	private long finID;
 	private String finReference;
 	private long initiatedBy;
 	private String finEvent;
@@ -130,6 +131,14 @@ public class LiabilityRequest extends AbstractWorkflowEntity {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

@@ -1239,7 +1239,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				// Update Log Entry Based on FinPostDate and Reference
 				// ============================================
 				if (receiptDetail.getLogKey() != 0 && receiptDetail.getLogKey() != Long.MIN_VALUE) {
-					FinLogEntryDetail detail = finLogEntryDetailDAO.getFinLogEntryDetail(receiptDetail.getLogKey());
+					FinLogEntryDetail detail = finLogEntryDetailDAO.getFinLogEntryDetailByLog(receiptDetail.getLogKey());
 					if (detail == null) {
 						ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("60207", "", null),
 								PennantConstants.default_Language);

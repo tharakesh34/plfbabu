@@ -34,6 +34,7 @@ public class FinExpenseDetails extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -7156982149543027619L;
 
 	private long finExpenseId = Long.MIN_VALUE;
+	private long finID;
 	private String finReference = null;
 	private long expenseTypeId = 0;
 	private BigDecimal amount = BigDecimal.ZERO;
@@ -57,6 +58,14 @@ public class FinExpenseDetails extends AbstractWorkflowEntity {
 
 	public void setFinExpenseId(long finExpenseId) {
 		this.finExpenseId = finExpenseId;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

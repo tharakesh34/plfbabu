@@ -11,15 +11,15 @@ public interface FinLogEntryDetailDAO {
 
 	void updateLogEntryStatus(FinLogEntryDetail finLogEntryDetail);
 
-	List<FinLogEntryDetail> getFinLogEntryDetailList(String finReference, long logKey);
+	List<FinLogEntryDetail> getFinLogEntryDetailList(long finID, long logKey);
 
-	FinLogEntryDetail getFinLogEntryDetail(long logKey);
+	FinLogEntryDetail getFinLogEntryDetailByLog(long logKey);
 
-	Date getMaxPostDate(String finReference);
+	Date getMaxPostDate(long finID);
 
-	long getPrevSchedLogKey(String finReference, Date date);
+	long getPrevSchedLogKey(long finID, Date date);
 
-	Date getMaxPostDateByRef(String finReference);
+	Date getMaxPostDateByRef(long finID);
 
-	FinLogEntryDetail getFinLogEntryDetail(String finreference);
+	FinLogEntryDetail getFinLogEntryDetail(long finID);
 }

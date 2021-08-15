@@ -5,9 +5,9 @@ import java.util.Date;
 import java.util.List;
 
 public class FinLogEntryDetail implements Serializable {
-
 	private static final long serialVersionUID = 587826313209520957L;
 
+	private long finID;
 	private String finReference;
 	private long logKey;
 	private String eventAction;
@@ -18,12 +18,16 @@ public class FinLogEntryDetail implements Serializable {
 	private List<FinanceScheduleDetail> financeScheduleDetailList;
 
 	public FinLogEntryDetail() {
-
+		super();
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
 
 	public String getFinReference() {
 		return finReference;

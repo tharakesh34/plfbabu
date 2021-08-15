@@ -1,60 +1,39 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LiabilityRequestDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-12-2015    														*
- *                                                                  						*
- * Modified Date    :  31-12-2015    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LiabilityRequestDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-12-2015 * *
+ * Modified Date : 31-12-2015 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-12-2015       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-12-2015 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.finance.liability.impl;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.liability.LiabilityRequestDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -62,7 +41,9 @@ import com.pennant.backend.model.finance.liability.LiabilityRequest;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>LiabilityRequest model</b> class.<br>
@@ -76,279 +57,244 @@ public class LiabilityRequestDAOImpl extends SequenceDao<LiabilityRequest> imple
 		super();
 	}
 
-	/**
-	 * This method set the Work Flow id based on the module name and return the new LiabilityRequest
-	 * 
-	 * @return LiabilityRequest
-	 */
-
 	@Override
 	public LiabilityRequest getLiabilityRequest() {
-		logger.debug("Entering");
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("LiabilityRequest");
 		LiabilityRequest liabilityRequest = new LiabilityRequest();
+
 		if (workFlowDetails != null) {
 			liabilityRequest.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
-		logger.debug("Leaving");
+
 		return liabilityRequest;
 	}
-
-	/**
-	 * This method get the module from method getLiabilityRequest() and set the new record flag as true and return
-	 * LiabilityRequest()
-	 * 
-	 * @return LiabilityRequest
-	 */
 
 	@Override
 	public LiabilityRequest getNewLiabilityRequest() {
-		logger.debug("Entering");
 		LiabilityRequest liabilityRequest = getLiabilityRequest();
 		liabilityRequest.setNewRecord(true);
-		logger.debug("Leaving");
+
 		return liabilityRequest;
 	}
 
-	/**
-	 * Fetch the Record LiabilityRequest details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return LiabilityRequest
-	 */
 	@Override
-	public LiabilityRequest getLiabilityRequestById(final long id, String type) {
-		logger.debug("Entering");
-		LiabilityRequest liabilityRequest = getLiabilityRequest();
+	public LiabilityRequest getLiabilityRequestById(long id, String type) {
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where Id = ?");
 
-		liabilityRequest.setId(id);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder(
-				"Select Id, FinReference, InitiatedBy, FinEvent,InsPaidStatus,InsClaimAmount,InsClaimReason, ");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(
-					"  FinType, CustCIF, FinBranch, FinStartDate, NumberOfTerms, MaturityDate, FinCcy, FinAmount, CustShrtName , BranchDesc, ");
-		}
-		selectSql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From FinLiabilityReq");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where Id =:Id");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(liabilityRequest);
-		RowMapper<LiabilityRequest> typeRowMapper = BeanPropertyRowMapper.newInstance(LiabilityRequest.class);
+		LiabilityRequestRM rowMapper = new LiabilityRequestRM(type);
 
 		try {
-			liabilityRequest = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			liabilityRequest = null;
+			//
 		}
-		logger.debug("Leaving");
-		return liabilityRequest;
+
+		return null;
 	}
 
-	/**
-	 * Fetch the Record LiabilityRequest details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return LiabilityRequest
-	 */
 	@Override
-	public LiabilityRequest getLiabilityRequestByFinReference(String finReference, String type) {
-		logger.debug("Entering");
-		LiabilityRequest liabilityRequest = getLiabilityRequest();
-		liabilityRequest.setFinReference(finReference);
+	public LiabilityRequest getLiabilityRequestByFinReference(long finID, String type) {
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where FinID = ?");
 
-		StringBuilder selectSql = new StringBuilder(
-				"Select Id, FinReference, InitiatedBy, FinEvent,InsPaidStatus,InsClaimAmount,InsClaimReason, ");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(
-					"  FinType, CustCIF, FinBranch, FinStartDate, NumberOfTerms, MaturityDate, FinCcy, FinAmount, CustShrtName , BranchDesc, ");
-		}
-		selectSql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From FinLiabilityReq");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(liabilityRequest);
-		RowMapper<LiabilityRequest> typeRowMapper = BeanPropertyRowMapper.newInstance(LiabilityRequest.class);
+		LiabilityRequestRM rowMapper = new LiabilityRequestRM(type);
 
 		try {
-			liabilityRequest = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			liabilityRequest = null;
+			//
 		}
-		logger.debug("Leaving");
-		return liabilityRequest;
+
+		return null;
 	}
 
-	/**
-	 * This method Deletes the Record from the FinLiabilityReq or FinLiabilityReq_Temp. if Record not deleted then
-	 * throws DataAccessException with error 41003. delete LiabilityRequest by key FinReference
-	 * 
-	 * @param LiabilityRequest
-	 *            (liabilityRequest)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void delete(LiabilityRequest liabilityRequest, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
+	public void delete(LiabilityRequest lr, String type) {
+		StringBuilder sql = new StringBuilder("Delete From FinLiabilityReq");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where Id = ?");
 
-		StringBuilder deleteSql = new StringBuilder("Delete From FinLiabilityReq");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where Id =:Id");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(liabilityRequest);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-			if (recordCount <= 0) {
+			if (this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, lr.getId())) <= 0) {
 				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * This method insert new Records into FinLiabilityReq or FinLiabilityReq_Temp.
-	 *
-	 * save LiabilityRequest
-	 * 
-	 * @param LiabilityRequest
-	 *            (liabilityRequest)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-
 	@Override
-	public String save(LiabilityRequest liabilityRequest, String type) {
-		logger.debug("Entering");
-
-		StringBuilder insertSql = new StringBuilder("Insert Into FinLiabilityReq");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(
-				" (Id, FinReference, FinEvent,InsPaidStatus,InsClaimAmount,InsClaimReason, InitiatedBy, Version , LastMntBy, LastMntOn, RecordStatus");
-		insertSql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(
-				" Values(:Id, :FinReference,  :FinEvent,:InsPaidStatus,:InsClaimAmount,:InsClaimReason, :InitiatedBy, :Version , :LastMntBy, :LastMntOn, :RecordStatus");
-		insertSql.append(", :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-
-		logger.debug("insertSql: " + insertSql.toString());
-
-		// Get the identity sequence number.
-		if (liabilityRequest.getId() <= 0) {
-			liabilityRequest.setId(getNextValue("SeqFinLiabilityReq"));
+	public String save(LiabilityRequest lr, String type) {
+		if (lr.getId() <= 0) {
+			lr.setId(getNextValue("SeqFinLiabilityReq"));
 		}
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(liabilityRequest);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return String.valueOf(liabilityRequest.getId());
+		StringBuilder sql = new StringBuilder("Insert Into FinLiabilityReq");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (Id, FinID, FinReference, FinEvent, InsPaidStatus, InsClaimAmount");
+		sql.append(", InsClaimReason, InitiatedBy, Version , LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, lr.getId());
+			ps.setLong(index++, lr.getFinID());
+			ps.setString(index++, lr.getFinReference());
+			ps.setString(index++, lr.getFinEvent());
+			ps.setString(index++, lr.getInsPaidStatus());
+			ps.setBigDecimal(index++, lr.getInsClaimAmount());
+			ps.setString(index++, lr.getInsClaimReason());
+			ps.setLong(index++, lr.getInitiatedBy());
+			ps.setInt(index++, lr.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(lr.getLastMntBy()));
+			ps.setTimestamp(index++, lr.getLastMntOn());
+			ps.setString(index++, lr.getRecordStatus());
+			ps.setString(index++, lr.getRoleCode());
+			ps.setString(index++, lr.getNextRoleCode());
+			ps.setString(index++, lr.getTaskId());
+			ps.setString(index++, lr.getNextTaskId());
+			ps.setString(index++, lr.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(lr.getWorkflowId()));
+		});
+
+		return String.valueOf(lr.getId());
 	}
 
-	/**
-	 * This method updates the Record FinLiabilityReq or FinLiabilityReq_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update LiabilityRequest by key FinReference and Version
-	 * 
-	 * @param LiabilityRequest
-	 *            (liabilityRequest)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-
 	@Override
-	public void update(LiabilityRequest liabilityRequest, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update FinLiabilityReq");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(
-				" Set InsPaidStatus=:InsPaidStatus,InsClaimAmount=:InsClaimAmount,InsClaimReason=:InsClaimReason,InitiatedBy = :InitiatedBy");
-		updateSql.append(
-				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(" Where Id =:Id");
+	public void update(LiabilityRequest lr, String type) {
+		StringBuilder sql = new StringBuilder("Update FinLiabilityReq");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set InsPaidStatus = ?, InsClaimAmount = ?, InsClaimReason = ?, InitiatedBy = ?");
+		sql.append(", Version = ? , LastMntBy = ?, LastMntOn = ?, RecordStatus= ?, RoleCode = ?");
+		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where Id = ?");
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(liabilityRequest);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, lr.getInsPaidStatus());
+			ps.setBigDecimal(index++, lr.getInsClaimAmount());
+			ps.setString(index++, lr.getInsClaimReason());
+			ps.setLong(index++, lr.getInitiatedBy());
+			ps.setInt(index++, lr.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(lr.getLastMntBy()));
+			ps.setTimestamp(index++, lr.getLastMntOn());
+			ps.setString(index++, lr.getRecordStatus());
+			ps.setString(index++, lr.getRoleCode());
+			ps.setString(index++, lr.getNextRoleCode());
+			ps.setString(index++, lr.getTaskId());
+			ps.setString(index++, lr.getNextTaskId());
+			ps.setString(index++, lr.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(lr.getWorkflowId()));
+			ps.setLong(index++, lr.getId());
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * Fetch the Record LiabilityRequest details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return LiabilityRequest
-	 */
 	@Override
 	public String getProceedingWorkflow(String finType, String finEvent) {
-		logger.debug("Entering");
+		String sql = "Select NextFinEvent From ProceedWorkflowType Where FinType = ? and FinEvent = ?";
 
-		String proceedWorkflowType = null;
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("FinType", finType);
-		map.put("FinEvent", finEvent);
+		logger.debug(Literal.SQL + sql);
 
-		StringBuilder selectSql = new StringBuilder("Select NextFinEvent From ProceedWorkflowType");
-		selectSql.append(" Where FinType =:FinType AND FinEvent=:FinEvent ");
-
-		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			proceedWorkflowType = this.jdbcTemplate.queryForObject(selectSql.toString(), map, String.class);
+			return this.jdbcOperations.queryForObject(sql, String.class, finType, finEvent);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			proceedWorkflowType = null;
+			//
 		}
-		logger.debug("Leaving");
-		return proceedWorkflowType;
+
+		return null;
 	}
 
 	@Override
-	public int getFinareferenceCount(String finReference, String type) {
-		LiabilityRequest liabilityRequest = new LiabilityRequest();
-		liabilityRequest.setFinReference(finReference);
+	public int getFinareferenceCount(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Select count(ID)");
+		sql.append(" From FinLiabilityReq");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
 
-		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
-		selectSql.append(" From FinLiabilityReq");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(liabilityRequest);
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID);
+	}
 
-		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	private StringBuilder getSqlQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, FinID, FinReference, InitiatedBy, FinEvent, InsPaidStatus, InsClaimAmount, InsClaimReason");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", FinType, CustCIF, FinBranch, FinStartDate, NumberOfTerms");
+			sql.append(", MaturityDate, FinCcy, FinAmount, CustShrtName, BranchDesc");
+		}
+
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From FinLiabilityReq");
+		sql.append(StringUtils.trimToEmpty(type));
+
+		return sql;
+	}
+
+	private class LiabilityRequestRM implements RowMapper<LiabilityRequest> {
+		private String type;
+
+		public LiabilityRequestRM(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public LiabilityRequest mapRow(ResultSet rs, int rowNum) throws SQLException {
+			LiabilityRequest lr = new LiabilityRequest();
+			lr.setId(rs.getLong("Id"));
+			lr.setFinID(rs.getLong("FinID"));
+			lr.setFinReference(rs.getString("FinReference"));
+			lr.setInitiatedBy(rs.getLong("InitiatedBy"));
+			lr.setFinEvent(rs.getString("FinEvent"));
+			lr.setInsPaidStatus(rs.getString("InsPaidStatus"));
+			lr.setInsClaimAmount(rs.getBigDecimal("InsClaimAmount"));
+			lr.setInsClaimReason(rs.getString("InsClaimReason"));
+
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				lr.setFinType(rs.getString("FinType"));
+				lr.setCustCIF(rs.getString("CustCIF"));
+				lr.setFinBranch(rs.getString("FinBranch"));
+				lr.setFinStartDate(rs.getDate("FinStartDate"));
+				lr.setNumberOfTerms(rs.getInt("NumberOfTerms"));
+				lr.setMaturityDate(rs.getDate("MaturityDate"));
+				lr.setFinCcy(rs.getString("FinCcy"));
+				lr.setFinAmount(rs.getBigDecimal("FinAmount"));
+				// lr.setCustShrtName(rs.getString("CustShrtName"));
+				// lr.setBranchDesc(rs.getString("BranchDesc"));
+			}
+
+			lr.setVersion(rs.getInt("Version"));
+			lr.setLastMntBy(rs.getLong("LastMntBy"));
+			lr.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			lr.setRecordStatus(rs.getString("RecordStatus"));
+			lr.setRoleCode(rs.getString("RoleCode"));
+			lr.setNextRoleCode(rs.getString("NextRoleCode"));
+			lr.setTaskId(rs.getString("TaskId"));
+			lr.setNextTaskId(rs.getString("NextTaskId"));
+			lr.setRecordType(rs.getString("RecordType"));
+			lr.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return lr;
+		}
 	}
 }

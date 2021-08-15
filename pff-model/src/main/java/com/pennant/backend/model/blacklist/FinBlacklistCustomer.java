@@ -9,6 +9,7 @@ public class FinBlacklistCustomer implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	private long finID;
 	private String finReference;
 	private String custCIF;
 	private String custFName;
@@ -28,7 +29,7 @@ public class FinBlacklistCustomer implements Serializable {
 	private boolean newBlacklistRecord = true;
 	private String custCtgType;
 
-	//Audit Purpose Fields
+	// Audit Purpose Fields
 	private long lastMntBy;
 	private String roleCode;
 	private String recordStatus;
@@ -47,10 +48,6 @@ public class FinBlacklistCustomer implements Serializable {
 		excludeFields.add("newBlacklistRecord");
 		return excludeFields;
 	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
 
 	public String getCustCIF() {
 		return custCIF;
@@ -146,6 +143,14 @@ public class FinBlacklistCustomer implements Serializable {
 
 	public void setCustCtgType(String custCtgType) {
 		this.custCtgType = custCtgType;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

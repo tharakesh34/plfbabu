@@ -9,15 +9,15 @@ public interface FinAutoApprovalDetailDAO {
 	void save(FinAutoApprovalDetails autoAppList);
 
 	void update(FinAutoApprovalDetails autoAppList);
-	
+
 	void delete(FinAutoApprovalDetails autoAppList);
 
 	Map<String, Integer> loadQDPValidityDays();
 
-	boolean getFinanceIfApproved(String finReference);
+	boolean getFinanceIfApproved(long finID);
 
-	boolean getFinanceServiceInstruction(String finReference);
+	boolean getFinanceServiceInstruction(long finID);
 
-	boolean isQuickDisb(String finReference);
+	boolean isQuickDisb(long finID);
 
 }

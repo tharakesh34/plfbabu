@@ -50,6 +50,7 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -5230263039482884873L;
 
+	private long finID;
 	private String finReference = null;
 	@XmlElement
 	private Date disbDate = null;
@@ -103,6 +104,7 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 
 	public FinanceDisbursement copyEntity() {
 		FinanceDisbursement entity = new FinanceDisbursement();
+		entity.setFinID(this.finID);
 		entity.setFinReference(this.finReference);
 		entity.setDisbDate(this.disbDate);
 		entity.setDisbSeq(this.disbSeq);
@@ -147,16 +149,20 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 		return entity;
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
 	public String getId() {
 		return finReference;
 	}
 
 	public void setId(String id) {
 		this.finReference = id;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

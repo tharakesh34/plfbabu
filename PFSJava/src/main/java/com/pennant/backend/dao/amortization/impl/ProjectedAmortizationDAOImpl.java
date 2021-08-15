@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ProjectedAmortizationDAOImpl.java                                    * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  23-01-2018    														*
- *                                                                  						*
- * Modified Date    :  23-01-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ProjectedAmortizationDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 23-01-2018 * *
+ * Modified Date : 23-01-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 23-01-2018       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-01-2018 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.amortization.impl;
@@ -893,41 +875,34 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		return this.jdbcTemplate.update(sql.toString(), source);
 	}
 
-	/**
-	 * 
-	 * @param monthEndDate
-	 * @return
-	 */
 	@Override
 	public int prepareAMZExpenseDetails(Date monthEndDate, Date appDate) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Insert Into IncomeAmortization");
-		sql.append(" (FinReference, CustID, FinType, ReferenceID, IncomeTypeID, IncomeType");
-		sql.append(", LastMntOn, CalculatedOn, CalcFactor");
-		sql.append(", Amount, ActualAmount, AMZMethod, MonthEndDate");
-		sql.append(", AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active)");
-		sql.append(" SELECT T3.FinReference, T3.CUSTID, T3.FINTYPE, T1.FINEXPENSEID, T1.EXPENSETYPEID, :IncomeType");
-		sql.append(", :LastMntOn, :CalculatedOn, 0 CalcFactor");
-		sql.append(", T1.AMOUNT, T1.AMOUNT ACTUALAMOUNT, T3.AMZMethod, :MonthEndDate");
-		sql.append(", 0 AmortizedAmount, T1.AMOUNT UnAmortizedAmount, 0 CurMonthAmz, 0 PrvMonthAmz, :Active");
-		sql.append(" FROM FINEXPENSEDETAILS T1 ");
-		sql.append(" INNER JOIN EXPENSETYPES T2 ON T1.EXPENSETYPEID = T2.EXPENSETYPEID AND T2.AMORTREQ = 1 ");
-		sql.append(" INNER JOIN FINPFTDETAILS T3 ON T1.FINREFERENCE = T3.FINREFERENCE ");
-		sql.append(" WHERE T1.AMOUNT > 0 AND T1.FINEXPENSEID");
-		sql.append(" NOT IN (Select ReferenceID From INCOMEAMORTIZATION WHERE IncomeType = :IncomeType)");
+		sql.append(" (FinID, FinReference, CustID, FinType, ReferenceID, IncomeTypeID, IncomeType");
+		sql.append(", LastMntOn, CalculatedOn, CalcFactor, Amount, ActualAmount, AMZMethod");
+		sql.append(", MonthEndDate, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active)");
+		sql.append(" Select fm.FinID, fm.FinReference, fm.CustID, fm.FinType, ed.FinExpenseId, ed.ExpenseTypeId");
+		sql.append(", ?, ?, ?, 0 CalcFactor, ed.Amount, ed.Amount actualamount, pd.AMZMethod, ?");
+		sql.append(", 0 AmortizedAmount, ed.Amount UnAmortizedAmount, 0 CurMonthAmz, 0 PrvMonthAmz, ?");
+		sql.append(" From FinExpenseDetails ed");
+		sql.append(" Inner join ExpenseTypes et on et.ExpenseTypeId = ed.ExpenseTypeId and t2.AmortReq = 1");
+		sql.append(" Inner Join FinanceMain fm on fm.FinID = ed.FinID");
+		sql.append(" Inner Join FinPftDetails pd on pd.FinID = fm.FinID");
+		sql.append(" Where ed.Amount > 0 and ed.FinExpenseId");
+		sql.append(" not in (Select ReferenceID From IncomeAmortization Where IncomeType = ?)");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Active", true);
-		source.addValue("CalculatedOn", appDate);
-		source.addValue("MonthEndDate", monthEndDate);
-		source.addValue("LastMntOn", DateUtility.getSysDate());
-		source.addValue("IncomeType", AmortizationConstants.AMZ_INCOMETYPE_EXPENSE);
+		return this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.update(sql.toString(), source);
+			ps.setString(index++, AmortizationConstants.AMZ_INCOMETYPE_EXPENSE);
+			ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
+			ps.setDate(index++, JdbcUtil.getDate(appDate));
+			ps.setDate(index++, JdbcUtil.getDate(monthEndDate));
+			ps.setBoolean(index++, true);
+			ps.setString(index++, AmortizationConstants.AMZ_INCOMETYPE_EXPENSE);
+		});
 
 	}
 

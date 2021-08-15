@@ -39,7 +39,8 @@ public class FinAutoApprovalDetailDAOImpl extends SequenceDao<FinAutoApprovalDet
 	@Override
 	public void save(FinAutoApprovalDetails fapd) {
 		StringBuilder sql = new StringBuilder("Insert Into FinAutoApprovalDetails");
-		sql.append(" (BatchId, FinReference, DisbId,  RealizedDate,  Status,  ErrorDesc,  UserId, Downloaded_on)");
+		sql.append(" (BatchId, FinID, FinReference, DisbId,  RealizedDate");
+		sql.append(",  Status,  ErrorDesc,  UserId, Downloaded_on)");
 		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -54,7 +55,9 @@ public class FinAutoApprovalDetailDAOImpl extends SequenceDao<FinAutoApprovalDet
 					PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "id" });
 
 					int index = 1;
+
 					ps.setLong(index++, fapd.getBatchId());
+					ps.setLong(index++, fapd.getFinID());
 					ps.setString(index++, fapd.getFinReference());
 					ps.setLong(index++, fapd.getDisbId());
 					ps.setDate(index++, JdbcUtil.getDate(fapd.getRealizedDate()));
@@ -93,12 +96,12 @@ public class FinAutoApprovalDetailDAOImpl extends SequenceDao<FinAutoApprovalDet
 
 	@Override
 	public void delete(FinAutoApprovalDetails faad) {
-		String sql = "delete from FinAutoApprovalDetails Where FinReference = ? and DisbId = ?";
+		String sql = "delete from FinAutoApprovalDetails Where FinID = ? and DisbId = ?";
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		jdbcOperations.update(sql, ps -> {
-			ps.setString(1, faad.getFinReference());
+			ps.setLong(1, faad.getFinID());
 			ps.setLong(2, faad.getDisbId());
 		});
 
@@ -124,13 +127,13 @@ public class FinAutoApprovalDetailDAOImpl extends SequenceDao<FinAutoApprovalDet
 	}
 
 	@Override
-	public boolean getFinanceIfApproved(String finReference) {
-		String sql = "Select FinReference from Financemain where FinReference = ?";
+	public boolean getFinanceIfApproved(long finID) {
+		String sql = "Select FinReference from Financemain where FinID = ?";
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcOperations.queryForObject(sql, new Object[] { finReference }, String.class);
+			jdbcOperations.queryForObject(sql, String.class, finID);
 		} catch (Exception e) {
 			return false;
 		}
@@ -139,14 +142,13 @@ public class FinAutoApprovalDetailDAOImpl extends SequenceDao<FinAutoApprovalDet
 	}
 
 	@Override
-	public boolean getFinanceServiceInstruction(String finReference) {
-		String sql = "Select Finreference from FinServiceInstruction_Temp where Finreference = ? and  FinEvent = ?";
+	public boolean getFinanceServiceInstruction(long finID) {
+		String sql = "Select Finreference from FinServiceInstruction_Temp where FinID = ? and  FinEvent = ?";
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcOperations.queryForObject(sql, new Object[] { finReference, FinServiceEvent.ADDDISB },
-					String.class);
+			jdbcOperations.queryForObject(sql, String.class, finID, FinServiceEvent.ADDDISB);
 		} catch (EmptyResultDataAccessException e) {
 			return false;
 		}
@@ -155,13 +157,13 @@ public class FinAutoApprovalDetailDAOImpl extends SequenceDao<FinAutoApprovalDet
 	}
 
 	@Override
-	public boolean isQuickDisb(String finReference) {
-		String sql = "Select QuickDisb From FinDisbursementDetails_Temp Where FinReference = ?";
-		
+	public boolean isQuickDisb(long finID) {
+		String sql = "Select QuickDisb From FinDisbursementDetails_Temp Where FinID = ?";
+
 		logger.debug(Literal.SQL + sql.toString());
-		
+
 		try {
-			return this.jdbcOperations.queryForObject(sql, new Object[] { finReference }, Boolean.class);
+			return this.jdbcOperations.queryForObject(sql, Boolean.class, finID);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}

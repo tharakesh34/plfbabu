@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PaymentHeaderDAO.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2017    														*
- *                                                                  						*
- * Modified Date    :  27-05-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PaymentHeaderDAO.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2017 * * Modified
+ * Date : 27-05-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-05-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.payment;
@@ -56,23 +38,21 @@ public interface PaymentHeaderDAO extends BasicCrudDao<PaymentHeader> {
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
-	 * @param paymentId
-	 *            paymentId of the PaymentHeader.
-	 * @param tableType
-	 *            The type of the table.
+	 * @param paymentId paymentId of the PaymentHeader.
+	 * @param tableType The type of the table.
 	 * @return PaymentHeader
 	 */
 	PaymentHeader getPaymentHeader(long paymentId, String type);
 
 	boolean isDuplicateKey(long paymentId, TableType tableType);
 
-	FinanceMain getFinanceDetails(String finReference);
+	FinanceMain getFinanceDetails(long finID);
 
-	List<FinExcessAmount> getfinExcessAmount(String finReference);
+	List<FinExcessAmount> getfinExcessAmount(long finID);
 
-	List<ManualAdvise> getManualAdvise(String finReference);
+	List<ManualAdvise> getManualAdvise(long finID);
 
-	List<ManualAdvise> getManualAdviseForEnquiry(String finReference);
+	List<ManualAdvise> getManualAdviseForEnquiry(long finID);
 
 	long getNewPaymentHeaderId();
 

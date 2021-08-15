@@ -31,7 +31,7 @@ public class InstBasedSchdDetailDAOImpl extends SequenceDao<InstBasedSchdDetails
 	@Override
 	public void save(InstBasedSchdDetails instBasedSchd) {
 		StringBuilder sql = new StringBuilder("Insert Into InstBasedSchdDetails");
-		sql.append(" (BatchId, FinReference, DisbId,  RealizedDate,  Status,  ErrorDesc,");
+		sql.append(" (BatchId, FinID, FinReference, DisbId,  RealizedDate,  Status,  ErrorDesc,");
 		sql.append(" UserId, Downloaded_On, DisbAmount, LinkedTranId)");
 		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
@@ -48,6 +48,7 @@ public class InstBasedSchdDetailDAOImpl extends SequenceDao<InstBasedSchdDetails
 
 					int index = 1;
 					ps.setLong(index++, instBasedSchd.getBatchId());
+					ps.setLong(index++, instBasedSchd.getFinID());
 					ps.setString(index++, instBasedSchd.getFinReference());
 					ps.setLong(index++, instBasedSchd.getDisbId());
 					ps.setDate(index++, JdbcUtil.getDate(instBasedSchd.getRealizedDate()));
@@ -87,25 +88,25 @@ public class InstBasedSchdDetailDAOImpl extends SequenceDao<InstBasedSchdDetails
 
 	@Override
 	public void delete(InstBasedSchdDetails instBasedSchd) {
-		String sql = "delete from FinAutoApprovalDetails Where FinReference = ? and DisbId = ?";
+		String sql = "delete from FinAutoApprovalDetails Where FinID = ? and DisbId = ?";
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		jdbcOperations.update(sql, ps -> {
-			ps.setString(1, instBasedSchd.getFinReference());
+			ps.setLong(1, instBasedSchd.getFinID());
 			ps.setLong(2, instBasedSchd.getDisbId());
 		});
 
 	}
 
 	@Override
-	public boolean getFinanceIfApproved(String finReference) {
-		String sql = "Select FinReference from Financemain where FinReference = ?";
+	public boolean getFinanceIfApproved(long finID) {
+		String sql = "Select FinReference from Financemain where FinID = ?";
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcOperations.queryForObject(sql, new Object[] { finReference }, String.class);
+			jdbcOperations.queryForObject(sql, String.class, finID);
 		} catch (Exception e) {
 			return false;
 		}

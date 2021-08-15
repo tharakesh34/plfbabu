@@ -10,6 +10,6 @@ public interface InstBasedSchdDetailDAO {
 
 	void delete(InstBasedSchdDetails instBasedSchd);
 
-	boolean getFinanceIfApproved(String finReference);
+	boolean getFinanceIfApproved(long finID);
 
 }

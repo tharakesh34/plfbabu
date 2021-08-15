@@ -34,11 +34,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.payment.PaymentHeaderDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -65,134 +60,165 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 
 	@Override
 	public PaymentHeader getPaymentHeader(long paymentId, String type) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" paymentId, paymentType, paymentAmount, createdOn, approvedOn, status, finReference,");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PaymentId, PaymentType, PaymentAmount, CreatedOn, ApprovedOn, Status, FinID, FinReference");
 		if (type.contains("View")) {
-			sql.append("paymentType,status,");
+			sql.append(", PaymentType, Status");
 		}
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From PaymentHeader");
 		sql.append(type);
-		sql.append(" Where paymentId = :paymentId");
+		sql.append(" Where PaymentId = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-
-		PaymentHeader paymentHeader = new PaymentHeader();
-		paymentHeader.setPaymentId(paymentId);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(paymentHeader);
-		RowMapper<PaymentHeader> rowMapper = BeanPropertyRowMapper.newInstance(PaymentHeader.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			paymentHeader = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				PaymentHeader ph = new PaymentHeader();
+				ph.setPaymentId(rs.getLong("PaymentId"));
+				ph.setPaymentType(rs.getString("PaymentType"));
+				ph.setPaymentAmount(rs.getBigDecimal("PaymentAmount"));
+				ph.setCreatedOn(rs.getTimestamp("CreatedOn"));
+				ph.setApprovedOn(rs.getDate("ApprovedOn"));
+				ph.setStatus(rs.getString("Status"));
+				ph.setFinID(rs.getLong("FinID"));
+				ph.setFinReference(rs.getString("FinReference"));
+
+				if (type.contains("View")) {
+					ph.setPaymentType(rs.getString("PaymentType"));
+					ph.setStatus(rs.getString("Status"));
+				}
+
+				ph.setVersion(rs.getInt("Version"));
+				ph.setLastMntBy(rs.getLong("LastMntBy"));
+				ph.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				ph.setRecordStatus(rs.getString("RecordStatus"));
+				ph.setRoleCode(rs.getString("RoleCode"));
+				ph.setNextRoleCode(rs.getString("NextRoleCode"));
+				ph.setTaskId(rs.getString("TaskId"));
+				ph.setNextTaskId(rs.getString("NextTaskId"));
+				ph.setRecordType(rs.getString("RecordType"));
+				ph.setWorkflowId(rs.getLong("WorkflowId"));
+
+				return ph;
+			}, paymentId);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			paymentHeader = null;
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
-		return paymentHeader;
+		return null;
 	}
 
 	@Override
-	public String save(PaymentHeader paymentHeader, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" insert into PaymentHeader");
-		sql.append(tableType.getSuffix());
-		sql.append(
-				"(paymentId, paymentType, paymentAmount, createdOn, approvedOn, status, finReference, linkedTranId,");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(");
-		sql.append(
-				" :paymentId, :paymentType, :paymentAmount, :createdOn, :approvedOn, :status, :finReference, :linkedTranId,");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		// Get the sequence number.
-		if (paymentHeader.getPaymentId() <= 0) {
-			paymentHeader.setPaymentId(getNextValue("SeqPaymentHeader"));
+	public String save(PaymentHeader ph, TableType tableType) {
+		if (ph.getPaymentId() <= 0) {
+			ph.setPaymentId(getNextValue("SeqPaymentHeader"));
 		}
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(paymentHeader);
+
+		StringBuilder sql = new StringBuilder("Insert Into PaymentHeader");
+		sql.append(tableType.getSuffix());
+		sql.append("( PaymentId, PaymentType, PaymentAmount, CreatedOn, ApprovedOn, Status, FinID, FinReference");
+		sql.append(", LinkedTranId, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(") Values(");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, JdbcUtil.setLong(ph.getPaymentId()));
+				ps.setString(index++, ph.getPaymentType());
+				ps.setBigDecimal(index++, ph.getPaymentAmount());
+				ps.setDate(index++, JdbcUtil.getDate(ph.getCreatedOn()));
+				ps.setDate(index++, JdbcUtil.getDate(ph.getApprovedOn()));
+				ps.setString(index++, ph.getStatus());
+				ps.setLong(index++, JdbcUtil.setLong(ph.getFinID()));
+				ps.setString(index++, ph.getFinReference());
+				ps.setLong(index++, JdbcUtil.setLong(ph.getLinkedTranId()));
+				ps.setInt(index++, ph.getVersion());
+				ps.setLong(index++, JdbcUtil.setLong(ph.getLastMntBy()));
+				ps.setTimestamp(index++, ph.getLastMntOn());
+				ps.setString(index++, ph.getRecordStatus());
+				ps.setString(index++, ph.getRoleCode());
+				ps.setString(index++, ph.getNextRoleCode());
+				ps.setString(index++, ph.getTaskId());
+				ps.setString(index++, ph.getNextTaskId());
+				ps.setString(index++, ph.getRecordType());
+				ps.setLong(index++, JdbcUtil.setLong(ph.getWorkflowId()));
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return String.valueOf(paymentHeader.getPaymentId());
+		return String.valueOf(ph.getPaymentId());
 	}
 
 	@Override
-	public void update(PaymentHeader paymentHeader, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("update PaymentHeader");
+	public void update(PaymentHeader ph, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Update PaymentHeader");
 		sql.append(tableType.getSuffix());
-		sql.append(" set paymentType = :paymentType, paymentAmount = :paymentAmount, createdOn = :createdOn, ");
-		sql.append(" approvedOn = :approvedOn, status = :status, ");
-		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" where paymentId = :paymentId ");
+		sql.append(" Set");
+		sql.append(" PaymentType = ?, PaymentAmount = ?, CreatedOn = ?, ApprovedOn = ?, Status = ?");
+		sql.append(", LastMntOn = ?, RecordStatus = ?, RoleCode = ?, NextRoleCode = ?");
+		sql.append(", TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where PaymentId = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(paymentHeader);
-		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		// Check for the concurrency failure.
+			ps.setString(index++, ph.getPaymentType());
+			ps.setBigDecimal(index++, ph.getPaymentAmount());
+			ps.setDate(index++, JdbcUtil.getDate(ph.getCreatedOn()));
+			ps.setDate(index++, JdbcUtil.getDate(ph.getApprovedOn()));
+			ps.setString(index++, ph.getStatus());
+			ps.setTimestamp(index++, ph.getLastMntOn());
+			ps.setString(index++, ph.getRecordStatus());
+			ps.setString(index++, ph.getRoleCode());
+			ps.setString(index++, ph.getNextRoleCode());
+			ps.setString(index++, ph.getTaskId());
+			ps.setString(index++, ph.getNextTaskId());
+			ps.setString(index++, ph.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(ph.getWorkflowId()));
+
+			ps.setLong(index++, JdbcUtil.setLong(ph.getPaymentId()));
+		});
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public void delete(PaymentHeader paymentHeader, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from PaymentHeader");
+		StringBuilder sql = new StringBuilder("Delete from PaymentHeader");
 		sql.append(tableType.getSuffix());
-		sql.append(" where paymentId = :paymentId ");
+		sql.append(" Where PaymentId = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(paymentHeader);
-		int recordCount = 0;
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+			if (jdbcOperations.update(sql.toString(), paymentHeader.getPaymentId()) == 0) {
+				throw new ConcurrencyException();
+			}
+
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-		logger.debug(Literal.LEAVING);
+
 	}
 
 	@Override
 	public boolean isDuplicateKey(long paymentId, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
 		String sql;
-		String whereClause = "PaymentId = :PaymentId";
+		String whereClause = "PaymentId = ?";
+
+		Object[] args = new Object[] { paymentId };
 
 		switch (tableType) {
 		case MAIN_TAB:
@@ -203,47 +229,56 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 			break;
 		default:
 			sql = QueryUtil.getCountQuery(new String[] { "PaymentHeader_Temp", "PaymentHeader" }, whereClause);
+
+			args = new Object[] { paymentId, paymentId };
 			break;
 		}
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql);
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("PaymentId", paymentId);
+		logger.debug(Literal.SQL + sql);
 
-		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
-
-		boolean exists = false;
-		if (count > 0) {
-			exists = true;
-		}
-
-		logger.debug(Literal.LEAVING);
-		return exists;
+		return jdbcOperations.queryForObject(sql, Integer.class, args) > 0;
 	}
 
 	@Override
-	public FinanceMain getFinanceDetails(String finReference) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("  SELECT FM.FinReference, FT.FinType, FT.FINTYPEDESC LovDescFinTypeName,");
-		sql.append("  FT.FinDivision FinPurpose, FM.CalRoundingMode, FM.RoundingTarget,");
-		sql.append("  FM.FinBranch,FM.CustId, CU.CUSTCIF LovDescCustCif, CU.CUSTSHRTNAME LovDescCustShrtName,");
-		sql.append("  CURR.CCYCODE finCcy, FM.FINSTARTDATE, FM.MATURITYDATE,DIV.EntityCode LOVDESCENTITYCODE ");
-		sql.append(", FM.ClosingStatus");
-		sql.append(" FROM FinanceMainMaintenance_View FM ");
-		sql.append(" INNER JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID");
-		sql.append(" INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE");
-		sql.append(" INNER JOIN RMTCURRENCIES CURR ON CURR.CCYCODE = FM.FINCCY");
-		sql.append(" INNER JOIN SMTDIVISIONDETAIL DIV ON DIV.DIVISIONCODE = FT.FINDIVISION");
-		sql.append(" Where FinReference = :FinReference");
-		logger.trace(Literal.SQL + sql.toString());
+	public FinanceMain getFinanceDetails(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" fm.FinID, fm.FinReference, ft.FinType, ft.FinTypeDesc, ft.FinDivision");
+		sql.append(", fm.CalRoundingMode, fm.RoundingTarget, fm.FinBranch, fm.CustID, cu.CustCif");
+		sql.append(", cu.CustShrtName, curr.CcyCode, fm.FinStartDate, fm.MaturityDate, div.EntityCode");
+		sql.append(", fm.ClosingStatus");
+		sql.append(" From FinanceMainMaintenance_View fm");
+		sql.append(" Inner Join Customers cu on cu.CustID = fm.CustID");
+		sql.append(" Inner Join RMTFinanceTypes ft on ft.FinType = fm.FinType");
+		sql.append(" Inner Join RMTCurrencies curr on curr.CcyCode = fm.FinCcy");
+		sql.append(" Inner Join SMTDivisionDetail div on div.DivisionCode = ft.FinDivision");
+		sql.append(" Where FinID = ?");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
+		logger.debug(Literal.SQL + sql.toString());
 
-		RowMapper<FinanceMain> rowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
 		try {
-			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceMain fm = new FinanceMain();
+
+				fm.setFinID(rs.getLong("FinID"));
+				fm.setFinReference(rs.getString("FinReference"));
+				fm.setFinType(rs.getString("FinType"));
+				fm.setLovDescFinTypeName(rs.getString("FinTypeDesc"));
+				fm.setFinPurpose(rs.getString("FinDivision"));
+				fm.setCalRoundingMode(rs.getString("CalRoundingMode"));
+				fm.setRoundingTarget(rs.getInt("RoundingTarget"));
+				fm.setFinBranch(rs.getString("FinBranch"));
+				fm.setCustID(rs.getLong("CustID"));
+				fm.setLovDescCustCIF(rs.getString("CustCif"));
+				fm.setLovDescCustShrtName(rs.getString("CustShrtName"));
+				fm.setFinCcy(rs.getString("CcyCode"));
+				fm.setFinStartDate(rs.getDate("FinStartDate"));
+				fm.setMaturityDate(rs.getDate("MaturityDate"));
+				fm.setEntityCode(rs.getString("EntityCode"));
+				fm.setLovDescEntityCode(rs.getString("EntityCode"));
+				fm.setClosingStatus(rs.getString("ClosingStatus"));
+
+				return fm;
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}
@@ -251,47 +286,41 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 	}
 
 	@Override
-	public List<FinExcessAmount> getfinExcessAmount(String finReference) {
-		logger.debug(Literal.ENTERING);
+	public List<FinExcessAmount> getfinExcessAmount(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ExcessID, FinID, FinReference, AmountType, Amount, BalanceAmt, ReservedAmt");
+		sql.append(" From finexcessamount Where FinID = ?");
 
-		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
+		logger.debug(Literal.SQL + sql.toString());
 
-		sql = new StringBuilder();
-		sql.append(" select excessID, finReference, amountType, amount, balanceAmt, reservedAmt");
-		sql.append("  from finexcessamount Where FinReference = :FinReference");
-		logger.trace(Literal.SQL + sql.toString());
+		return jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finID), (rs, rowNum) -> {
+			FinExcessAmount fea = new FinExcessAmount();
 
-		source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
+			fea.setExcessID(rs.getLong("ExcessID"));
+			fea.setFinID(rs.getLong("FinID"));
+			fea.setFinReference(rs.getString("FinReference"));
+			fea.setAmountType(rs.getString("AmountType"));
+			fea.setAmount(rs.getBigDecimal("Amount"));
+			fea.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
+			fea.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
 
-		RowMapper<FinExcessAmount> rowMapper = BeanPropertyRowMapper.newInstance(FinExcessAmount.class);
-		try {
-			return jdbcTemplate.query(sql.toString(), source, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		} finally {
-			source = null;
-			sql = null;
-		}
-		logger.debug(Literal.LEAVING);
-		return null;
+			return fea;
+		});
 	}
 
 	@Override
-	public List<ManualAdvise> getManualAdvise(String finReference) {
+	public List<ManualAdvise> getManualAdvise(long finID) {
 		StringBuilder sql = getSqlQuery();
-		sql.append(" Where FinReference = ? and ma.AdviseType = ? and HoldDue = ?");
+		sql.append(" Where FinID = ? and ma.AdviseType = ? and HoldDue = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		List<ManualAdvise> list = jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, finReference);
+			ps.setLong(1, finID);
 			ps.setInt(2, 2);
 			ps.setInt(3, 0);
 		}, (rs, i) -> {
-			ManualAdvise ma = getRowMapper(rs);
-			return ma;
+			return getRowMapper(rs);
 		});
 
 		return list.stream().sorted((l1, l2) -> l1.getValueDate().compareTo(l2.getValueDate()))
@@ -299,19 +328,18 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 	}
 
 	@Override
-	public List<ManualAdvise> getManualAdviseForEnquiry(String finReference) {
+	public List<ManualAdvise> getManualAdviseForEnquiry(long finID) {
 		StringBuilder sql = getSqlQuery();
-		sql.append(" Where FinReference = ? and ma.AdviseType = ? and PaidAmount > ?");
+		sql.append(" Where FinID = ? and ma.AdviseType = ? and PaidAmount > ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		List<ManualAdvise> list = jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, finReference);
+			ps.setLong(1, finID);
 			ps.setInt(2, 2);
 			ps.setInt(3, 0);
 		}, (rs, i) -> {
-			ManualAdvise ma = getRowMapper(rs);
-			return ma;
+			return getRowMapper(rs);
 		});
 
 		return list.stream().sorted((l1, l2) -> l1.getValueDate().compareTo(l2.getValueDate()))
@@ -322,6 +350,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		ManualAdvise ma = new ManualAdvise();
 
 		ma.setAdviseID(rs.getLong("AdviseID"));
+		ma.setFinID(rs.getLong("FinID"));
 		ma.setFinReference(rs.getString("FinReference"));
 		ma.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
 		ma.setAdviseType(rs.getInt("AdviseType"));
@@ -349,7 +378,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 
 	private StringBuilder getSqlQuery() {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" AdviseID, FinReference, BalanceAmt, ma.AdviseType, AdviseAmount, ReservedAmt, ValueDate");
+		sql.append(" AdviseID, FinID, FinReference, BalanceAmt, ma.AdviseType, AdviseAmount, ReservedAmt, ValueDate");
 		sql.append(", PaidAmount, WaivedAmount, FeeTypeCode, FeeTypeDesc, ft.TaxApplicable, ft.TaxComponent");
 		sql.append(", PaidCGST, PaidIGST, PaidSGST, PaidUGST, PaidCESS");
 		sql.append(", WaivedCGST, WaivedIGST, WaivedSGST, WaivedUGST, WaivedCESS");
