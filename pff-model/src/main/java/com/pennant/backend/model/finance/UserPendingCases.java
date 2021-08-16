@@ -9,9 +9,9 @@ import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UserPendingCases implements Serializable {
-
 	private static final long serialVersionUID = 1L;
 
+	private long finID;
 	private String finReference;
 	@XmlElement(name = "previousRolecode")
 	private String roleCode;
@@ -25,6 +25,14 @@ public class UserPendingCases implements Serializable {
 	@XmlElement(name = "loanType")
 	private String finType;
 	private Date initiateDate;
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
 
 	public String getFinReference() {
 		return finReference;

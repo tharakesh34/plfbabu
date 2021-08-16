@@ -318,7 +318,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" inner join RmtFinanceTypes ft on ft.Fintype = fm.Fintype");
 		sql.append(" inner join SmtDivisionDetail d on d.DivisionCode = ft.FinDivision");
 		sql.append(" inner join entity e on e.EntityCode = d.EntityCode");
-		sql.append("  Where FinReference = ?");
+		sql.append("  Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql);
 
@@ -1044,7 +1044,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	@Override
 	public List<FinanceEnquiry> getFinanceDetailsByCustId(long custId) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, FinBranch, FinType, FinCcy, ScheduleMethod, ProfitDaysBasis");
+		sql.append(" FinID, FinReference, FinBranch, FinType, FinCcy, ScheduleMethod, ProfitDaysBasis");
 		sql.append(", FinStartDate, NumberOfTerms, CustID, FinAmount, GrcPeriodEndDate, MaturityDate");
 		sql.append(", FinRepaymentAmount, FinIsActive, AllowGrcPeriod, LovDescFinTypeName, LovDescCustCIF");
 		sql.append(", LovDescCustShrtName, LovDescFinBranchName, Blacklisted, LovDescFinScheduleOn");
@@ -1062,6 +1062,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}, (rs, rowNum) -> {
 			FinanceEnquiry fm = new FinanceEnquiry();
 
+			fm.setFinID(rs.getLong("FinID"));
 			fm.setFinReference(rs.getString("FinReference"));
 			fm.setFinBranch(rs.getString("FinBranch"));
 			fm.setFinType(rs.getString("FinType"));
@@ -4211,6 +4212,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			UserPendingCases pc = new UserPendingCases();
+
+			pc.setFinID(rs.getLong("FinID"));
 			pc.setFinReference(rs.getString("FinReference"));
 			pc.setRecordStatus(rs.getString("RecordStatus"));
 			pc.setRoleCode(rs.getString("RoleCode"));
@@ -4619,9 +4622,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public Long getCustomerIdByFin(long finID) {
 		StringBuilder sql = new StringBuilder("Select distinct CustId");
 		sql.append(" from (");
-		sql.append(" Select CustId, FinReference from FinanceMain_Temp");
+		sql.append(" Select CustId, FinID from FinanceMain_Temp");
 		sql.append(" Union all");
-		sql.append(" Select CustId, FinReference from FinanceMain");
+		sql.append(" Select CustId, FinID from FinanceMain");
 		sql.append(") T");
 		sql.append(" Where FinID = ?");
 

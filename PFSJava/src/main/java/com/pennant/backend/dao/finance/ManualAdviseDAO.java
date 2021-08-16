@@ -40,7 +40,7 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 
 	ManualAdvise getManualAdviseById(long adviseID, String type);
 
-	List<ManualAdvise> getManualAdviseByRef(String finReference, int adviseType, String type);
+	List<ManualAdvise> getManualAdviseByRef(long finID, int adviseType, String type);
 
 	void saveMovement(ManualAdviseMovements movement, String type);
 
@@ -79,53 +79,49 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 
 	Date getPresentmentBounceDueDate(long receiptId);
 
-	List<Long> getBounceAdvisesListByRef(String finReference, int adviseType, String type);
+	List<Long> getBounceAdvisesListByRef(long finID, int adviseType, String type);
 
 	void deleteByAdviseId(ManualAdvise manualAdvise, TableType tableType);
 
-	FinanceMain getFinanceDetails(String finReference);
+	FinanceMain getFinanceDetails(long finID);
 
 	List<ManualAdvise> getAMZManualAdviseDetails(String finRef, String type);
 
-	BigDecimal getBalanceAmt(String finReference);
+	BigDecimal getBalanceAmt(long finID);
 
 	String getTaxComponent(long adviseID, String type);
 
-	List<ManualAdvise> getManualAdvise(String finReference);
+	List<ManualAdvise> getManualAdvise(long finID);
 
 	void updateWaivedAmount(ManualAdvise advise, TableType tableType);
 
 	List<ManualAdvise> getManualAdvisesByFinRef(long finID, String type);
 
-	List<ManualAdviseMovements> getDMAdviseMovementsByFinRef(String finReference, String type);
+	List<ManualAdviseMovements> getDMAdviseMovementsByFinRef(long finID, String type);
 
 	// ### Ticket id :124998
-	List<ManualAdvise> getManualAdviseByRef(String finReference, String feeTypeCode, String type);
+	List<ManualAdvise> getManualAdviseByRef(long finID, String feeTypeCode, String type);
 
 	// Refund Uploads
-	List<ManualAdvise> getManualAdviseByRefAndFeeCode(String finReference, int adviseType, String feeTypeCode);
+	List<ManualAdvise> getManualAdviseByRefAndFeeCode(long finID, int adviseType, String feeTypeCode);
 
 	List<ManualAdvise> getManualAdviseByRefAndFeeId(int adviseType, long feeTypeId);
 
 	void updatePaidAmountOnly(long adviseID, BigDecimal amount);
 
-	List<ManualAdvise> getManualAdviseByRef(String finReference, int adviseType, String type, Date valuDate);
+	List<ManualAdvise> getManualAdviseByRef(long finID, int adviseType, String type, Date valuDate);
 
-	Date getManualAdviseDate(String reference, Date valueDate, String string, int manualAdviseReceivable);
+	Date getManualAdviseDate(long finID, Date valueDate, String string, int manualAdviseReceivable);
 
 	List<ManualAdviseMovements> getInProcManualAdvMovmnts(List<Long> receiptList);
 
-	boolean isManualAdviceExitsInManualMovements(long adviseID);
-
 	List<ManualAdviseMovements> getAdvMovementsByReceiptSeq(long receiptID, long receiptSeqID, String string);
 
-	List<ManualAdvise> getPreviousAdvPayments(String finReference);
+	List<ManualAdvise> getPreviousAdvPayments(long finID);
 
 	void saveDueTaxDetail(AdviseDueTaxDetail dueTaxDetail);
 
 	boolean isAdviseDueCreated(long adviseID);
-
-	AdviseDueTaxDetail getUnPaidTaxDetail(long adviseID);
 
 	long getNewAdviseID();
 
@@ -137,8 +133,6 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 
 	void updatePayableReserveAmount(long payAgainstID, BigDecimal reserveAmt);
 
-	BigDecimal getPayableBalanceAmt(String finReference, int adviseType);
-
-	BigDecimal getReceivableAmt(String finReference, boolean isBounce);
+	BigDecimal getReceivableAmt(long finID, boolean isBounce);
 
 }

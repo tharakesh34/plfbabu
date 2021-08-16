@@ -636,7 +636,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 			sql.append(", PrvMthAmz = ?, PrvMthAmzNrm = ?, PrvMthAmzPD = ?, PrvMthAmzSusp = ?, PrvMthAcr = ?");
 			sql.append(", PrvMthAcrSusp = ?, PrvMthGapIntAmz = ?");
 		}
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
 
 		jdbcOperations.update(sql.toString(), ps -> {
 
@@ -738,7 +738,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 				ps.setBigDecimal(index++, fpd.getPrvMthGapIntAmz());
 			}
 
-			ps.setString(index++, fpd.getFinReference());
+			ps.setLong(index++, fpd.getFinID());
 
 		});
 

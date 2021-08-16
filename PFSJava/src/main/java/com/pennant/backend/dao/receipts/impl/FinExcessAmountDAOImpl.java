@@ -573,7 +573,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	@Override
 	public FinExcessAmount getExcessAmountsByRefAndType(long finID, String amountType) {
 		StringBuilder sql = getExcessAmountSqlQuery();
-		sql.append(" Where FinReference = ? and AmountType = ?");
+		sql.append(" Where FinID = ? and AmountType = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 

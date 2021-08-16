@@ -28,11 +28,9 @@ import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -40,7 +38,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -75,180 +72,39 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 	@Override
 	public ManualAdvise getManualAdviseById(long adviseID, String type) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" AdviseID, AdviseType, FinReference, FeeTypeID, Sequence, AdviseAmount, BounceID");
-		sql.append(", ReceiptID, PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate, ReservedAmt");
-		sql.append(
-				", BalanceAmt, PaidCGST, PaidSGST, PaidUGST, PaidIGST, PaidCESS, WaivedCGST, WaivedSGST, WaivedUGST");
-		sql.append(", WaivedIGST, WaivedCESS, FinSource, DueCreation");
-
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", FeeTypeCode, FeeTypeDesc, TaxApplicable, TaxComponent, TDSReq");
-		}
-
-		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" from ManualAdvise");
-		sql.append(StringUtils.trimToEmpty(type));
+		StringBuilder sql = getManualAdvicequery(type);
 		sql.append(" Where adviseID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
+
+		ManualAdviseRM rowMapper = new ManualAdviseRM(type);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { adviseID },
-					new RowMapper<ManualAdvise>() {
-						@Override
-						public ManualAdvise mapRow(ResultSet rs, int rowNum) throws SQLException {
-							ManualAdvise manualAdvise = new ManualAdvise();
-
-							manualAdvise.setAdviseID(rs.getLong("adviseID"));
-							manualAdvise.setAdviseType(rs.getInt("adviseType"));
-							manualAdvise.setFinReference(rs.getString("finReference"));
-							manualAdvise.setFeeTypeID(rs.getLong("feeTypeID"));
-							manualAdvise.setSequence(rs.getInt("sequence"));
-							manualAdvise.setAdviseAmount(rs.getBigDecimal("adviseAmount"));
-							manualAdvise.setBounceID(rs.getLong("BounceID"));
-							manualAdvise.setReceiptID(rs.getLong("ReceiptID"));
-							manualAdvise.setPaidAmount(rs.getBigDecimal("paidAmount"));
-							manualAdvise.setWaivedAmount(rs.getBigDecimal("waivedAmount"));
-							manualAdvise.setRemarks(rs.getString("remarks"));
-							manualAdvise.setValueDate(rs.getTimestamp("ValueDate"));
-							manualAdvise.setPostDate(rs.getTimestamp("PostDate"));
-							manualAdvise.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
-							manualAdvise.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
-							manualAdvise.setPaidCGST(rs.getBigDecimal("PaidCGST"));
-							manualAdvise.setPaidSGST(rs.getBigDecimal("PaidSGST"));
-							manualAdvise.setPaidUGST(rs.getBigDecimal("PaidUGST"));
-							manualAdvise.setPaidIGST(rs.getBigDecimal("PaidIGST"));
-							manualAdvise.setPaidCESS(rs.getBigDecimal("PaidCESS"));
-							manualAdvise.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
-							manualAdvise.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
-							manualAdvise.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
-							manualAdvise.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
-							manualAdvise.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
-							manualAdvise.setFinSource(rs.getString("FinSource"));
-							manualAdvise.setDueCreation(rs.getBoolean("DueCreation"));
-
-							if (type.contains("View")) {
-								manualAdvise.setFeeTypeCode(rs.getString("FeeTypeCode"));
-								manualAdvise.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-								manualAdvise.setTaxApplicable(rs.getBoolean("taxApplicable"));
-								manualAdvise.setTaxComponent(rs.getString("taxComponent"));
-								manualAdvise.setTdsReq(rs.getBoolean("TDSReq"));
-							}
-
-							manualAdvise.setVersion(rs.getInt("Version"));
-							manualAdvise.setLastMntOn(rs.getTimestamp("LastMntOn"));
-							manualAdvise.setLastMntBy(rs.getLong("LastMntBy"));
-							manualAdvise.setRecordStatus(rs.getString("RecordStatus"));
-							manualAdvise.setRoleCode(rs.getString("RoleCode"));
-							manualAdvise.setNextRoleCode(rs.getString("NextRoleCode"));
-							manualAdvise.setTaskId(rs.getString("TaskId"));
-							manualAdvise.setNextTaskId(rs.getString("NextTaskId"));
-							manualAdvise.setRecordType(rs.getString("RecordType"));
-							manualAdvise.setWorkflowId(rs.getLong("WorkflowId"));
-
-							return manualAdvise;
-						}
-					});
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, adviseID);
 
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
 	@Override
 	public ManualAdvise getManualAdviseByReceiptId(long receiptID, String type) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" AdviseID, AdviseType, FinReference, FeeTypeID, Sequence, AdviseAmount, BounceID");
-		sql.append(", ReceiptID, PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate, ReservedAmt");
-		sql.append(
-				", BalanceAmt, PaidCGST, PaidSGST, PaidUGST, PaidIGST, PaidCESS, WaivedCGST, WaivedSGST, WaivedUGST");
-		sql.append(", WaivedIGST, WaivedCESS, DueCreation");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", FeeTypeCode, FeeTypeDesc, BounceCode, BounceCodeDesc");
-			sql.append(", TaxApplicable, TaxComponent, FinSource, TDSReq");
-		}
-		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus");
-		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" from ManualAdvise");
-		sql.append(StringUtils.trimToEmpty(type));
+		StringBuilder sql = getManualAdvicequery(type);
 		sql.append(" Where ReceiptID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
+
+		ManualAdviseRM rowMapper = new ManualAdviseRM(type);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { receiptID },
-					new RowMapper<ManualAdvise>() {
-						@Override
-						public ManualAdvise mapRow(ResultSet rs, int rowNum) throws SQLException {
-							ManualAdvise manualAdvise = new ManualAdvise();
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, receiptID);
 
-							manualAdvise.setAdviseID(rs.getLong("AdviseID"));
-							manualAdvise.setAdviseType(rs.getInt("AdviseType"));
-							manualAdvise.setFinReference(rs.getString("FinReference"));
-							manualAdvise.setFeeTypeID(rs.getLong("FeeTypeID"));
-							manualAdvise.setSequence(rs.getInt("Sequence"));
-							manualAdvise.setAdviseAmount(rs.getBigDecimal("AdviseAmount"));
-							manualAdvise.setBounceID(rs.getLong("BounceID"));
-							manualAdvise.setReceiptID(rs.getLong("ReceiptID"));
-							manualAdvise.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-							manualAdvise.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
-							manualAdvise.setRemarks(rs.getString("Remarks"));
-							manualAdvise.setValueDate(rs.getTimestamp("ValueDate"));
-							manualAdvise.setPostDate(rs.getTimestamp("PostDate"));
-							manualAdvise.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
-							manualAdvise.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
-							manualAdvise.setPaidCGST(rs.getBigDecimal("PaidCGST"));
-							manualAdvise.setPaidSGST(rs.getBigDecimal("PaidSGST"));
-							manualAdvise.setPaidUGST(rs.getBigDecimal("PaidUGST"));
-							manualAdvise.setPaidIGST(rs.getBigDecimal("PaidIGST"));
-							manualAdvise.setPaidCESS(rs.getBigDecimal("PaidCESS"));
-							manualAdvise.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
-							manualAdvise.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
-							manualAdvise.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
-							manualAdvise.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
-							manualAdvise.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
-
-							manualAdvise.setDueCreation(rs.getBoolean("DueCreation"));
-
-							if (type.contains("View")) {
-								manualAdvise.setFeeTypeCode(rs.getString("FeeTypeCode"));
-								manualAdvise.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-								manualAdvise.setBounceCode(rs.getString("BounceCode"));
-								manualAdvise.setBounceCodeDesc(rs.getString("BounceCodeDesc"));
-								manualAdvise.setTaxApplicable(rs.getBoolean("taxApplicable"));
-								manualAdvise.setTaxComponent(rs.getString("taxComponent"));
-								manualAdvise.setFinSource(rs.getString("FinSource"));
-								manualAdvise.setTdsReq(rs.getBoolean("TDSReq"));
-							}
-
-							manualAdvise.setVersion(rs.getInt("Version"));
-							manualAdvise.setLastMntOn(rs.getTimestamp("LastMntOn"));
-							manualAdvise.setLastMntBy(rs.getLong("LastMntBy"));
-							manualAdvise.setRecordStatus(rs.getString("RecordStatus"));
-							manualAdvise.setRoleCode(rs.getString("RoleCode"));
-							manualAdvise.setNextRoleCode(rs.getString("NextRoleCode"));
-							manualAdvise.setTaskId(rs.getString("TaskId"));
-							manualAdvise.setNextTaskId(rs.getString("NextTaskId"));
-							manualAdvise.setRecordType(rs.getString("RecordType"));
-							manualAdvise.setWorkflowId(rs.getLong("WorkflowId"));
-
-							return manualAdvise;
-						}
-					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
@@ -257,7 +113,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		StringBuilder sql = new StringBuilder("Insert into");
 		sql.append(" ManualAdvise");
 		sql.append(tableType.getSuffix());
-		sql.append("(adviseID, adviseType, finReference, feeTypeID, sequence, adviseAmount, BounceID");
+		sql.append("(AdviseID, AdviseType, finReference, feeTypeID, sequence, AdviseAmount, BounceID");
 		sql.append(", ReceiptID, paidAmount, waivedAmount, remarks, ValueDate, PostDate, ReservedAmt");
 		sql.append(", BalanceAmt, PaidCGST, PaidSGST, PaidUGST, PaidIGST, PaidCESS, WaivedCGST, WaivedSGST");
 		sql.append(", WaivedUGST, WaivedIGST, WaivedCESS, FinSource, Version, LastMntBy, LastMntOn, RecordStatus");
@@ -272,7 +128,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ma.setAdviseID(getNewAdviseID());
 		}
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
 			jdbcOperations.update(sql.toString(), ps -> {
@@ -325,176 +181,128 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	}
 
 	@Override
-	public void update(ManualAdvise manualAdvise, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("update ManualAdvise");
+	public void update(ManualAdvise ma, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Update ManualAdvise");
 		sql.append(tableType.getSuffix());
-		sql.append("  set adviseType = :adviseType, finReference = :finReference, feeTypeID = :feeTypeID, ");
-		sql.append(" sequence = :sequence, adviseAmount = :adviseAmount, paidAmount = :paidAmount, ");
-		sql.append(" waivedAmount = :waivedAmount, remarks = :remarks,BounceID=:BounceID, ReceiptID=:ReceiptID, ");
-		sql.append(" ValueDate=:ValueDate, PostDate=:PostDate, ReservedAmt=:ReservedAmt, BalanceAmt=:BalanceAmt, ");
-		sql.append(
-				" PaidCGST=:PaidCGST, PaidSGST=:PaidSGST, PaidUGST=:PaidUGST, PaidIGST=:PaidIGST, PaidCESS =:PaidCESS, FinSource=:FinSource,");
-		sql.append(
-				" WaivedCGST = :WaivedCGST, WaivedSGST = :WaivedSGST, WaivedIGST = :WaivedIGST, WaivedUGST = :WaivedUGST, WaivedCESS =:WaivedCESS,");
-		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(
-				" RecordType = :RecordType, WorkflowId = :WorkflowId, DueCreation =:DueCreation, LinkedTranId =:LinkedTranId");
-		sql.append(" where adviseID = :adviseID ");
-		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(" Set AdviseType = ?, FinID = ?  FinReference = ?, FeeTypeID = ?");
+		sql.append(", Sequence = ?, AdviseAmount = ?, PaidAmount = ?");
+		sql.append(", WaivedAmount = ?, Remarks = ?, BounceID = ?, ReceiptID = ?");
+		sql.append(", ValueDate = ?, PostDate = ?, ReservedAmt = ?, BalanceAmt = ?");
+		sql.append(", PaidCGST = ?, PaidSGST = ?, PaidUGST = ?, PaidIGST = ?, PaidCESS = ?");
+		sql.append(", WaivedCGST = ?, WaivedSGST = ?, WaivedIGST = ?, WaivedUGST = ?, WaivedCESS = ?");
+		sql.append(", FinSource = ?, DueCreation = ?, LinkedTranId = ?");
+		sql.append(", LastMntOn = ?, RecordStatus = ?, RoleCode = ? , NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
+		sql.append(" RecordType = ?, WorkflowId = ?");
+		sql.append(" Where AdviseID = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
-		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		// Check for the concurrency failure.
+			ps.setInt(index++, ma.getAdviseType());
+			ps.setLong(index++, ma.getFinID());
+			ps.setString(index++, ma.getFinReference());
+			ps.setLong(index++, ma.getFeeTypeID());
+			ps.setInt(index++, ma.getSequence());
+			ps.setBigDecimal(index++, ma.getAdviseAmount());
+			ps.setBigDecimal(index++, ma.getPaidAmount());
+			ps.setBigDecimal(index++, ma.getWaivedAmount());
+			ps.setString(index++, ma.getRemarks());
+			ps.setLong(index++, ma.getBounceID());
+			ps.setLong(index++, ma.getReceiptID());
+			ps.setDate(index++, JdbcUtil.getDate(ma.getValueDate()));
+			ps.setDate(index++, JdbcUtil.getDate(ma.getPostDate()));
+			ps.setBigDecimal(index++, ma.getReservedAmt());
+			ps.setBigDecimal(index++, ma.getPaidCGST());
+			ps.setBigDecimal(index++, ma.getPaidSGST());
+			ps.setBigDecimal(index++, ma.getPaidUGST());
+			ps.setBigDecimal(index++, ma.getPaidIGST());
+			ps.setBigDecimal(index++, ma.getPaidCESS());
+			ps.setBigDecimal(index++, ma.getWaivedCGST());
+			ps.setBigDecimal(index++, ma.getWaivedSGST());
+			ps.setBigDecimal(index++, ma.getWaivedIGST());
+			ps.setBigDecimal(index++, ma.getWaivedUGST());
+			ps.setBigDecimal(index++, ma.getWaivedCESS());
+			ps.setString(index++, ma.getFinSource());
+			ps.setBoolean(index++, ma.isDueCreation());
+			ps.setLong(index++, ma.getLinkedTranId());
+			ps.setTimestamp(index++, ma.getLastMntOn());
+			ps.setString(index++, ma.getRecordStatus());
+			ps.setString(index++, ma.getRoleCode());
+			ps.setString(index++, ma.getNextRoleCode());
+			ps.setString(index++, ma.getTaskId());
+			ps.setString(index++, ma.getNextTaskId());
+			ps.setString(index++, ma.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(ma.getWorkflowId()));
+
+		});
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public void delete(ManualAdvise manualAdvise, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from ManualAdvise");
+	public void delete(ManualAdvise ma, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Delete from ManualAdvise");
 		sql.append(tableType.getSuffix());
-		sql.append(" where adviseID = :adviseID ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(" Where AdviseID = ?");
+		sql.append(QueryUtil.getConcurrencyClause(tableType));
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
+		logger.debug(Literal.SQL + sql.toString());
+
 		int recordCount = 0;
-
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, ma.getAdviseID());
+				if (tableType == TableType.TEMP_TAB) {
+					ps.setDate(index++, JdbcUtil.getDate(ma.getPrevMntOn()));
+				} else {
+					ps.setLong(index++, ma.getVersion());
+				}
+			});
+
+			if (recordCount == 0) {
+				throw new ConcurrencyException();
+			}
+
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public void deleteByAdviseId(ManualAdvise manualAdvise, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from ManualAdvise");
+	public void deleteByAdviseId(ManualAdvise ma, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Delete From ManualAdvise");
 		sql.append(tableType.getSuffix());
-		sql.append(" where adviseID = :adviseID ");
+		sql.append(" Where AdviseID = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
-		jdbcTemplate.update(sql.toString(), paramSource);
-
-		logger.debug(Literal.LEAVING);
+		jdbcOperations.update(sql.toString(), ma.getAdviseID());
 	}
 
 	@Override
-	public List<ManualAdvise> getManualAdviseByRef(String finReference, int adviseType, String type) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" AdviseID, AdviseAmount, PaidAmount, WaivedAmount, ReservedAmt, BalanceAmt");
-		sql.append(", BounceID, ReceiptID, PaidCGST, PaidSGST, PaidUGST, PaidIGST, PaidCESS, WaivedCGST, WaivedSGST");
-		sql.append(", WaivedUGST, WaivedIGST, WaivedCESS, FinSource, DueCreation");
-
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", FeeTypeCode, FeeTypeDesc, BounceCode, BounceCodeDesc");
-			sql.append(", taxApplicable, taxComponent, dueCreation, linkedTranId, tdsReq ");
-			sql.append(", WorkflowId");
-		}
-		sql.append(" from ManualAdvise");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append("  Where FinReference = ? and AdviseType = ?");
+	public List<ManualAdvise> getManualAdviseByRef(long finID, int adviseType, String type) {
+		StringBuilder sql = getManualAdvicequery(type);
+		sql.append(" Where FinID = ? and AdviseType = ?");
 		sql.append(" and (AdviseAmount - PaidAmount - WaivedAmount) > 0 Order By FeeTypeID desc");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-					ps.setInt(index++, adviseType);
-				}
-			}, new RowMapper<ManualAdvise>() {
-				@Override
-				public ManualAdvise mapRow(ResultSet rs, int rowNum) throws SQLException {
-					ManualAdvise manualAdvise = new ManualAdvise();
+		ManualAdviseRM rowMapper = new ManualAdviseRM(type);
 
-					manualAdvise.setAdviseID(rs.getLong("AdviseID"));
-					manualAdvise.setAdviseAmount(rs.getBigDecimal("AdviseAmount"));
-					manualAdvise.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-					manualAdvise.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
-					manualAdvise.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
-					manualAdvise.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
-					manualAdvise.setBounceID(rs.getLong("BounceID"));
-					manualAdvise.setReceiptID(rs.getLong("ReceiptID"));
-					manualAdvise.setPaidCGST(rs.getBigDecimal("PaidCGST"));
-					manualAdvise.setPaidSGST(rs.getBigDecimal("PaidSGST"));
-					manualAdvise.setPaidUGST(rs.getBigDecimal("PaidUGST"));
-					manualAdvise.setPaidIGST(rs.getBigDecimal("PaidIGST"));
-					manualAdvise.setPaidCESS(rs.getBigDecimal("PaidCESS"));
-					manualAdvise.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
-					manualAdvise.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
-					manualAdvise.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
-					manualAdvise.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
-					manualAdvise.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
-					manualAdvise.setFinSource(rs.getString("FinSource"));
-					manualAdvise.setDueCreation(rs.getBoolean("DueCreation"));
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-					if (StringUtils.trimToEmpty(type).contains("View")) {
-						manualAdvise.setFeeTypeCode(rs.getString("FeeTypeCode"));
-						manualAdvise.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-						manualAdvise.setBounceCode(rs.getString("BounceCode"));
-						manualAdvise.setBounceCodeDesc(rs.getString("BounceCodeDesc"));
-						manualAdvise.setTaxApplicable(rs.getBoolean("taxApplicable"));
-						manualAdvise.setTaxComponent(rs.getString("taxComponent"));
-						manualAdvise.setDueCreation(rs.getBoolean("dueCreation"));
-						manualAdvise.setLinkedTranId(rs.getLong("linkedTranId"));
-						manualAdvise.setTdsReq(rs.getBoolean("tdsReq"));
-						manualAdvise.setWorkflowId(rs.getInt("WorkflowId"));
-					}
-
-					return manualAdvise;
-				}
-			});
-
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			ps.setLong(1, finID);
+			ps.setInt(1, adviseType);
+		}, rowMapper);
 
 	}
 
-	/**
-	 * Method for updating Manual advise Payment Details
-	 * 
-	 * @param adviseID
-	 * @param paidAmount
-	 * @param waivedAmount
-	 * @param tableType
-	 */
 	@Override
 	public void updateAdvPayment(ManualAdvise ma, TableType tableType) {
 		StringBuilder sql = new StringBuilder("Update ManualAdvise");
@@ -506,7 +314,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(", WaivedIGST = WaivedIGST + ?, WaivedCESS = WaivedCESS + ?, TdsPaid = TdsPaid + ?");
 		sql.append(" WHERE AdviseID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
@@ -535,8 +343,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			mam.setMovementID(getNextValue("SeqManualAdviseMovements"));
 		}
 
-		StringBuilder sql = new StringBuilder("Insert into");
-		sql.append(" ManualAdviseMovements").append(StringUtils.trimToEmpty(type));
+		StringBuilder sql = new StringBuilder("Insert into ManualAdviseMovements");
+		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" (MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount, Status");
 		sql.append(", ReceiptID, ReceiptSeqID, WaiverID, TaxHeaderId, TdsPaid");
 		sql.append(", PaidCGST, PaidSGST, PaidIGST, PaidCESS, WaivedCGST, WaivedSGST, WaivedIGST, WaivedCESS");
@@ -572,8 +380,6 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 	@Override
 	public List<ManualAdviseMovements> getAdviseMovementsByReceipt(long receiptID, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount");
 		sql.append(", Status, ReceiptID, ReceiptSeqID, TaxHeaderId");
@@ -581,124 +387,85 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where ReceiptID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, receiptID);
-				}
-			}, new RowMapper<ManualAdviseMovements>() {
-				@Override
-				public ManualAdviseMovements mapRow(ResultSet rs, int rowNum) throws SQLException {
-					ManualAdviseMovements manualAdviseMovements = new ManualAdviseMovements();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, receiptID);
+		}, (rs, rowNum) -> {
+			ManualAdviseMovements ma = new ManualAdviseMovements();
 
-					manualAdviseMovements.setMovementID(rs.getLong("MovementID"));
-					manualAdviseMovements.setAdviseID(rs.getLong("AdviseID"));
-					manualAdviseMovements.setMovementDate(rs.getTimestamp("MovementDate"));
-					manualAdviseMovements.setMovementAmount(rs.getBigDecimal("MovementAmount"));
-					manualAdviseMovements.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-					manualAdviseMovements.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
-					manualAdviseMovements.setStatus(rs.getString("Status"));
-					manualAdviseMovements.setReceiptID(rs.getLong("ReceiptID"));
-					manualAdviseMovements.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
-					manualAdviseMovements.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
+			ma.setMovementID(rs.getLong("MovementID"));
+			ma.setAdviseID(rs.getLong("AdviseID"));
+			ma.setMovementDate(rs.getTimestamp("MovementDate"));
+			ma.setMovementAmount(rs.getBigDecimal("MovementAmount"));
+			ma.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			ma.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+			ma.setStatus(rs.getString("Status"));
+			ma.setReceiptID(rs.getLong("ReceiptID"));
+			ma.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
+			ma.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
 
-					return manualAdviseMovements;
-				}
-			});
-
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return ma;
+		});
 	}
 
 	@Override
 	public List<ManualAdviseMovements> getAdviseMovements(long id) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" T1.MovementID, T1.MovementDate, T1.MovementAmount");
-		sql.append(", T1.PaidAmount, T1.WaivedAmount, T1.Status, T2.ReceiptMode, T1.TaxHeaderId");
-		sql.append(", T1.PaidCGST, T1.PaidSGST, T1.PaidUGST, T1.PaidIGST, T1.PaidCESS");
-		sql.append(", T1.WaivedCGST, T1.WaivedSGST, T1.WaivedUGST, T1.WaivedIGST, T1.WaivedCESS");
-		sql.append(" from ManualAdviseMovements");
-		sql.append(" T1 LEFT OUTER JOIN FinReceiptHeader T2 ON T1.ReceiptID = T2.ReceiptID");
+		sql.append(" mam.MovementID, mam.MovementDate, mam.MovementAmount");
+		sql.append(", mam.PaidAmount, mam.WaivedAmount, mam.Status, T2.ReceiptMode, mam.TaxHeaderId");
+		sql.append(", mam.PaidCGST, mam.PaidSGST, mam.PaidUGST, mam.PaidIGST, mam.PaidCESS");
+		sql.append(", mam.WaivedCGST, mam.WaivedSGST, mam.WaivedUGST, mam.WaivedIGST, mam.WaivedCESS");
+		sql.append(" From ManualAdviseMovements mam");
+		sql.append(" Left Join FinReceiptHeader rh ON rh.ReceiptID = mam.ReceiptID");
 		sql.append(" Where AdviseID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, id);
-				}
-			}, new RowMapper<ManualAdviseMovements>() {
-				@Override
-				public ManualAdviseMovements mapRow(ResultSet rs, int rowNum) throws SQLException {
-					ManualAdviseMovements mam = new ManualAdviseMovements();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, id);
+		}, (rs, rowNum) -> {
+			ManualAdviseMovements mam = new ManualAdviseMovements();
 
-					mam.setMovementID(rs.getLong("MovementID"));
-					mam.setMovementDate(rs.getTimestamp("MovementDate"));
-					mam.setMovementAmount(rs.getBigDecimal("MovementAmount"));
-					mam.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-					mam.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
-					mam.setStatus(rs.getString("Status"));
-					mam.setReceiptMode(rs.getString("ReceiptMode"));
-					mam.setTaxHeaderId(rs.getLong("TaxHeaderId"));
-					mam.setPaidCGST(rs.getBigDecimal("PaidCGST"));
-					mam.setPaidSGST(rs.getBigDecimal("PaidSGST"));
-					mam.setPaidUGST(rs.getBigDecimal("PaidUGST"));
-					mam.setPaidIGST(rs.getBigDecimal("PaidIGST"));
-					mam.setPaidCESS(rs.getBigDecimal("PaidCESS"));
-					mam.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
-					mam.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
-					mam.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
-					mam.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
-					mam.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
+			mam.setMovementID(rs.getLong("MovementID"));
+			mam.setMovementDate(rs.getTimestamp("MovementDate"));
+			mam.setMovementAmount(rs.getBigDecimal("MovementAmount"));
+			mam.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			mam.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+			mam.setStatus(rs.getString("Status"));
+			mam.setReceiptMode(rs.getString("ReceiptMode"));
+			mam.setTaxHeaderId(rs.getLong("TaxHeaderId"));
+			mam.setPaidCGST(rs.getBigDecimal("PaidCGST"));
+			mam.setPaidSGST(rs.getBigDecimal("PaidSGST"));
+			mam.setPaidUGST(rs.getBigDecimal("PaidUGST"));
+			mam.setPaidIGST(rs.getBigDecimal("PaidIGST"));
+			mam.setPaidCESS(rs.getBigDecimal("PaidCESS"));
+			mam.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
+			mam.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
+			mam.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
+			mam.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
+			mam.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
 
-					return mam;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return mam;
+		});
 	}
 
 	@Override
 	public void deleteMovementsByReceiptID(long receiptID, String type) {
-		logger.debug(Literal.ENTERING);
-
-		ManualAdviseMovements movements = new ManualAdviseMovements();
-		movements.setReceiptID(receiptID);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from ManualAdviseMovements");
+		StringBuilder sql = new StringBuilder("Delete from ManualAdviseMovements");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" where ReceiptID = :ReceiptID ");
+		sql.append(" Where ReceiptID = ? ");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(movements);
-		jdbcTemplate.update(sql.toString(), paramSource);
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.SQL + sql.toString());
+
+		jdbcOperations.update(sql.toString(), receiptID);
 	}
 
 	@Override
 	public List<ManualAdviseMovements> getAdvMovementsByReceiptSeq(long receiptID, long receiptSeqID, int adviseType,
 			String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount");
 		sql.append(", Status, ReceiptID, ReceiptSeqID, TaxHeaderId");
@@ -707,7 +474,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			sql.append(", FeeTypeCode, FeeTypeDesc, TaxApplicable, TaxComponent");
 		}
 
-		sql.append(" from ManualAdviseMovements");
+		sql.append(" From ManualAdviseMovements");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where ReceiptID = ? and ReceiptSeqID = ?");
 
@@ -715,218 +482,146 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			sql.append(" AND AdviseType = ?");
 		}
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, receiptID);
-					ps.setLong(index++, receiptSeqID);
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, receiptID);
+			ps.setLong(index++, receiptSeqID);
 
-					if (StringUtils.contains(type, "View")) {
-						ps.setInt(index++, adviseType);
-					}
+			if (StringUtils.contains(type, "View")) {
+				ps.setInt(index++, adviseType);
+			}
+		}, (rs, rowNum) -> {
+			ManualAdviseMovements mam = new ManualAdviseMovements();
 
-				}
-			}, new RowMapper<ManualAdviseMovements>() {
-				@Override
-				public ManualAdviseMovements mapRow(ResultSet rs, int rowNum) throws SQLException {
-					ManualAdviseMovements ManualAdviseMovements = new ManualAdviseMovements();
+			mam.setMovementID(rs.getLong("MovementID"));
+			mam.setAdviseID(rs.getLong("AdviseID"));
+			mam.setMovementDate(rs.getTimestamp("MovementDate"));
+			mam.setMovementAmount(rs.getBigDecimal("MovementAmount"));
+			mam.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			mam.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+			mam.setStatus(rs.getString("Status"));
+			mam.setReceiptID(rs.getLong("ReceiptID"));
+			mam.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
+			mam.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
 
-					ManualAdviseMovements.setMovementID(rs.getLong("MovementID"));
-					ManualAdviseMovements.setAdviseID(rs.getLong("AdviseID"));
-					ManualAdviseMovements.setMovementDate(rs.getTimestamp("MovementDate"));
-					ManualAdviseMovements.setMovementAmount(rs.getBigDecimal("MovementAmount"));
-					ManualAdviseMovements.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-					ManualAdviseMovements.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
-					ManualAdviseMovements.setStatus(rs.getString("Status"));
-					ManualAdviseMovements.setReceiptID(rs.getLong("ReceiptID"));
-					ManualAdviseMovements.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
-					ManualAdviseMovements.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
+			if (StringUtils.contains(type, "View")) {
+				mam.setFeeTypeCode(rs.getString("FeeTypeCode"));
+				mam.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+				mam.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+				mam.setTaxComponent(rs.getString("TaxComponent"));
+			}
 
-					if (StringUtils.contains(type, "View")) {
-						ManualAdviseMovements.setFeeTypeCode(rs.getString("FeeTypeCode"));
-						ManualAdviseMovements.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-						ManualAdviseMovements.setTaxApplicable(rs.getBoolean("TaxApplicable"));
-						ManualAdviseMovements.setTaxComponent(rs.getString("TaxComponent"));
-					}
-
-					return ManualAdviseMovements;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return mam;
+		});
 	}
 
 	@Override
 	public void updateMovementStatus(long receiptID, long receiptSeqID, String status, String type) {
-		logger.debug(Literal.ENTERING);
-
-		ManualAdviseMovements movements = new ManualAdviseMovements();
-		movements.setReceiptID(receiptID);
-		movements.setReceiptSeqID(receiptSeqID);
-		movements.setStatus(status);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("update ManualAdviseMovements");
+		StringBuilder sql = new StringBuilder("Update ManualAdviseMovements");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" set Status = :Status ");
-		sql.append(" Where ReceiptID = :ReceiptID AND ReceiptSeqID=:ReceiptSeqID ");
+		sql.append(" Set Status = ?");
+		sql.append(" Where ReceiptID = ? and ReceiptSeqID = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(movements);
-		jdbcTemplate.update(sql.toString(), paramSource);
-		logger.debug(Literal.LEAVING);
+		jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, status);
+			ps.setLong(index++, receiptID);
+		});
 	}
 
-	/**
-	 * Method for Fetch the Reserved Payable Amounts Log details
-	 */
 	@Override
 	public List<ManualAdviseReserve> getPayableReserveList(long receiptSeqID) {
-		logger.debug(Literal.ENTERING);
+		String sql = "Select ReceiptSeqID, AdviseID, ReservedAmt From ManualAdviseReserve Where ReceiptSeqID = ?";
 
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ReceiptSeqID, AdviseID, ReservedAmt");
-		sql.append(" from ManualAdviseReserve");
-		sql.append(" Where ReceiptSeqID = ?");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.trace(Literal.SQL + sql.toString());
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, receiptSeqID);
+		}, (rs, rowNum) -> {
+			ManualAdviseReserve ma = new ManualAdviseReserve();
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, receiptSeqID);
-				}
-			}, new RowMapper<ManualAdviseReserve>() {
-				@Override
-				public ManualAdviseReserve mapRow(ResultSet rs, int rowNum) throws SQLException {
-					ManualAdviseReserve manualAdviseReserve = new ManualAdviseReserve();
+			ma.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
+			ma.setAdviseID(rs.getLong("AdviseID"));
+			ma.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
 
-					manualAdviseReserve.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
-					manualAdviseReserve.setAdviseID(rs.getLong("AdviseID"));
-					manualAdviseReserve.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
-
-					return manualAdviseReserve;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
-
+			return ma;
+		});
 	}
 
-	/**
-	 * Method for Fetch the Reserved Payable Amounts Log details
-	 */
 	@Override
 	public ManualAdviseReserve getPayableReserve(long receiptSeqID, long payAgainstID) {
-		logger.debug(Literal.ENTERING);
+		String sql = "Select ReceiptSeqID, AdviseID, ReservedAmt from ManualAdviseReserve Where ReceiptSeqID = ? and AdviseID= ?";
 
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ReceiptSeqID, AdviseID, ReservedAmt");
-		sql.append(" from ManualAdviseReserve");
-		sql.append(" Where ReceiptSeqID = ? and AdviseID= ?");
-
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { receiptSeqID, payAgainstID },
-					new RowMapper<ManualAdviseReserve>() {
-						@Override
-						public ManualAdviseReserve mapRow(ResultSet rs, int rowNum) throws SQLException {
-							ManualAdviseReserve manualAdviseReserve = new ManualAdviseReserve();
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				ManualAdviseReserve mar = new ManualAdviseReserve();
 
-							manualAdviseReserve.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
-							manualAdviseReserve.setAdviseID(rs.getLong("AdviseID"));
-							manualAdviseReserve.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
+				mar.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
+				mar.setAdviseID(rs.getLong("AdviseID"));
+				mar.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
 
-							return manualAdviseReserve;
-						}
-					});
+				return mar;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 
 	}
 
-	/**
-	 * Method for Save Reserved amount against Advise ID
-	 */
 	@Override
 	public void savePayableReserveLog(long receiptSeqID, long payAgainstID, BigDecimal reserveAmt) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Insert Into ManualAdviseReserve");
+		sql.append(" (AdviseID, ReceiptSeqID, ReservedAmt)");
+		sql.append(" Values(?, ?, ?)");
 
-		ManualAdviseReserve reserve = new ManualAdviseReserve();
-		reserve.setReceiptSeqID(receiptSeqID);
-		reserve.setAdviseID(payAgainstID);
-		reserve.setReservedAmt(reserveAmt);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder insertSql = new StringBuilder("Insert Into ManualAdviseReserve");
-		insertSql.append(" (AdviseID, ReceiptSeqID, ReservedAmt )");
-		insertSql.append(" Values(:AdviseID, :ReceiptSeqID, :ReservedAmt)");
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		logger.debug("insertSql: " + insertSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reserve);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
+			ps.setLong(index++, payAgainstID);
+			ps.setLong(index++, receiptSeqID);
+			ps.setBigDecimal(index++, reserveAmt);
+		});
 	}
 
-	/**
-	 * Method for updating Reserved excess Amount after modifications
-	 */
 	@Override
 	public void updatePayableReserveLog(long receiptID, long payAgainstID, BigDecimal diffInReserve) {
-		logger.debug("Entering");
+		String sql = "Update ManualAdviseReserve Set ReservedAmt = ReservedAmt + ? Where ReceiptSeqID = ? and AdviseID = ?";
 
-		int recordCount = 0;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ReceiptSeqID", receiptID);
-		source.addValue("AdviseID", payAgainstID);
-		source.addValue("PaidNow", diffInReserve);
+		logger.debug(Literal.SQL + sql);
 
-		StringBuilder updateSql = new StringBuilder("Update ManualAdviseReserve ");
-		updateSql.append(" Set ReservedAmt = ReservedAmt + :PaidNow ");
-		updateSql.append(" Where ReceiptSeqID =:ReceiptSeqID AND AdviseID =:AdviseID ");
-
-		logger.debug("updateSql: " + updateSql.toString());
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
+		int recordCount = this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
+			ps.setBigDecimal(index++, diffInReserve);
+			ps.setLong(index++, receiptID);
+			ps.setLong(index++, payAgainstID);
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method for Deleting Reserved Amounts against Advise ID Processed for Utilization
-	 */
 	@Override
 	public void deletePayableReserve(long receiptID, long payAgainstID) {
-		StringBuilder sql = new StringBuilder("Delete From ManualAdviseReserve ");
+		StringBuilder sql = new StringBuilder("Delete From ManualAdviseReserve");
 		sql.append(" Where ReceiptSeqID = ?");
 		if (payAgainstID != 0) {
 			sql.append(" and AdviseID = ?");
 		}
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
@@ -937,16 +632,12 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		});
 	}
 
-	/**
-	 * Method for updating Reserved amount against Advise ID
-	 */
 	@Override
 	public void updatePayableReserve(long payAgainstID, BigDecimal reserveAmt) {
-		StringBuilder sql = new StringBuilder("Update ManualAdvise ");
-		sql.append(" Set ReservedAmt = ReservedAmt + ?, BalanceAmt = BalanceAmt - ?");
-		sql.append(" Where AdviseID = ? and BalanceAmt >= ?");
+		String sql = "Update ManualAdvise Set ReservedAmt = ReservedAmt + ?, BalanceAmt = BalanceAmt - ? Where AdviseID = ? and BalanceAmt >= ?";
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
+
 		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 			ps.setBigDecimal(index++, reserveAmt);
@@ -962,29 +653,23 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 	@Override
 	public void updatePayableReserveAmount(long payAgainstID, BigDecimal reserveAmt) {
-		logger.debug("Entering");
+		String sql = "Update ManualAdvise Set ReservedAmt = ReservedAmt + ?, BalanceAmt = BalanceAmt - ? Where AdviseID = ? ";
 
-		int recordCount = 0;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("AdviseID", payAgainstID);
-		source.addValue("PaidNow", reserveAmt);
+		logger.debug(Literal.SQL);
 
-		StringBuilder updateSql = new StringBuilder("Update ManualAdvise ");
-		updateSql.append(" Set ReservedAmt = ReservedAmt + :PaidNow, BalanceAmt = BalanceAmt - :PaidNow ");
-		updateSql.append(" Where AdviseID =:AdviseID ");
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		logger.debug("updateSql: " + updateSql.toString());
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
+			ps.setBigDecimal(index++, reserveAmt);
+			ps.setBigDecimal(index++, reserveAmt);
+			ps.setLong(index++, payAgainstID);
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method for Update utilization amount after amounts Approval
-	 */
 	@Override
 	public void updateUtilise(long adviseID, BigDecimal amount, boolean noManualReserve) {
 		StringBuilder sql = new StringBuilder("Update ManualAdvise");
@@ -995,7 +680,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		}
 		sql.append(" Where AdviseID = ? and ReservedAmt >= ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
+
 		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
@@ -1013,371 +699,315 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		}
 	}
 
-	/**
-	 * Method for Update utilization amount after amounts Reversal
-	 */
 	@Override
 	public void reverseUtilise(long adviseID, BigDecimal amount) {
-		logger.debug("Entering");
+		String sql = "Update ManualAdvise Set PaidAmount = PaidAmount - ?, BalanceAmt = ?, HoldDue = ? Where AdviseID = ?";
 
-		int recordCount = 0;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("AdviseID", adviseID);
-		source.addValue("PaidNow", amount);
-		source.addValue("HoldDue", false);
+		logger.debug(Literal.SQL);
 
-		StringBuilder updateSql = new StringBuilder("Update ManualAdvise");
-		updateSql.append(" Set PaidAmount = PaidAmount - :PaidNow, BalanceAmt = :PaidNow, HoldDue = :HoldDue ");
-		updateSql.append(" Where AdviseID =:AdviseID");
+		int recordCount = this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-		logger.debug("updateSql: " + updateSql.toString());
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
+			ps.setBigDecimal(index++, amount);
+			ps.setBigDecimal(index++, amount);
+			ps.setBoolean(index++, false);
+			ps.setLong(index++, adviseID);
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
 	@Override
 	public Date getPresentmentBounceDueDate(long receiptId) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select schd.schDate FROM ManualAdvise ma");
+		sql.append(" Inner Join PresentmentDetails pd on pd.ReceiptId = ma.ReceiptId");
+		sql.append(" Inner Join FinscheduleDetails schd on schd.FinID = pd.FinID and schd.schdate = pd.schdate");
+		sql.append(" Where M.AdviseType <> 2 and m.AdviseAmount > 0 and m.ReceiptId = ?");
+		sql.append(" and FeeTypeId not in (Select FeeTypeId from FeeTypes)");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ReceiptId", receiptId);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder("SELECT T5.schDate	FROM MANUALADVISE M ");
-		selectSql.append(
-				" INNER Join PRESENTMENTDETAILS T4 on T4.RECEIPTID = M.RECEIPTID and M.RECEIPTID !=0 and T4.RECEIPTID !=0 ");
-		selectSql.append(
-				" INNER Join FINSCHEDULEDETAILS T5 on T4.FInreference = T5.FInreference and T4.schdate = T5.schdate ");
-		selectSql.append(
-				" where M.AdviseType <> 2 and	m.ADVISEAMOUNT > 0 and FEETYPEID not in (Select FEETYPEID from FEETYPES) ");
-		selectSql.append(" AND M.ReceiptId =:ReceiptId ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		Date schDate = null;
 		try {
-			schDate = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Date.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), Date.class, receiptId);
 		} catch (EmptyResultDataAccessException ede) {
-			logger.warn("Warning:", ede);
-		}
-		logger.debug("Leaving");
-
-		return schDate;
-	}
-
-	/**
-	 * Method for Fetch All Bounce ID List using Reference
-	 */
-	@Override
-	public List<Long> getBounceAdvisesListByRef(String finReference, int adviseType, String type) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" Select AdviseId ");
-		sql.append(" From ManualAdvise");
-		sql.append(type);
-		sql.append(" Where FinReference = :FinReference AND AdviseType =:AdviseType AND BounceId > 0 ");
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-
-		ManualAdvise manualAdvise = new ManualAdvise();
-		manualAdvise.setFinReference(finReference);
-		manualAdvise.setAdviseType(adviseType);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
-
-		List<Long> bounceIDList = jdbcTemplate.queryForList(sql.toString(), paramSource, Long.class);
-		logger.debug(Literal.LEAVING);
-		return bounceIDList;
-	}
-
-	@Override
-	public FinanceMain getFinanceDetails(String finReference) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FM.FinReference, FT.FinType, FT.FINTYPEDESC LovDescFinTypeName, FM.FinBranch");
-		sql.append(", FM.CustId, Cust.CUSTCIF LovDescCustCif, Cust.CUSTSHRTNAME LovDescCustShrtName,  SD.EntityCode");
-		sql.append(", FM.FinAssetValue,FM.FINSTARTDATE, FM.MATURITYDATE,FM.FinCcy, FM.TDSApplicable");
-		sql.append(" from FINANCEMAIN FM");
-		sql.append(" INNER JOIN Customers Cust on FM.CUSTID=Cust.CUSTID");
-		sql.append(" INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE");
-		sql.append(" INNER JOIN  SMTDivisiondetail SD On FT.FINDIVISION = SD.DivisionCode");
-		sql.append(" Where FM.FinReference = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, (rs, rowNum) -> {
-				FinanceMain financeMain = new FinanceMain();
-
-				financeMain.setFinReference(rs.getString("FinReference"));
-				financeMain.setFinType(rs.getString("FinType"));
-				financeMain.setLovDescFinTypeName(rs.getString("LovDescFinTypeName"));
-				financeMain.setFinBranch(rs.getString("FinBranch"));
-				financeMain.setCustID(rs.getLong("CustID"));
-				financeMain.setLovDescCustCIF(rs.getString("LovDescCustCIF"));
-				financeMain.setLovDescCustShrtName(rs.getString("LovDescCustShrtName"));
-				financeMain.setEntityCode(rs.getString("EntityCode"));
-				financeMain.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
-				financeMain.setFinStartDate(rs.getTimestamp("FinStartDate"));
-				financeMain.setMaturityDate(rs.getTimestamp("MaturityDate"));
-				financeMain.setFinCcy(rs.getString("FinCcy"));
-				financeMain.setTDSApplicable(rs.getBoolean("TDSApplicable"));
-
-				return financeMain;
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record not found in financemain for the specified finReference>>{}", finReference);
+			//
 		}
 
 		return null;
 	}
 
-	/**
-	 * 
-	 * @param reference
-	 * @param type
-	 * @return
-	 */
-	public List<ManualAdvise> getAMZManualAdviseDetails(String finRef, String type) {
-		logger.debug("Entering");
+	@Override
+	public List<Long> getBounceAdvisesListByRef(long finID, int adviseType, String type) {
+		StringBuilder sql = new StringBuilder("Select AdviseId");
+		sql.append(" From ManualAdvise");
+		sql.append(type);
+		sql.append(" Where FinID = ? AND AdviseType = ? AND BounceId > 0");
 
-		ManualAdvise manualAdvise = new ManualAdvise();
-		manualAdvise.setFinReference(finRef);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder(" SELECT ");
-		selectSql.append(
-				" T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence, T1.AdviseAmount, T1.BounceID, T1.ReceiptID,");
-		selectSql.append(
-				" T1.PaidAmount, T1.WaivedAmount, T1.ValueDate, T1.PostDate, T1.ReservedAmt, T1.BalanceAmt,T1.PaidCGST, T1.PaidSGST, T1.PaidUGST, T1.PaidIGST, T1.PaidCESS, T1.FinSource,");
-		selectSql.append(" T1.WaivedCGST, T1.WaivedSGST, T1.WaivedUGST, T1.WaivedIGST, T1.WaivedCESS, T1.DueCreation ");
-		selectSql.append(" From ManualAdvise T1 ");
-		selectSql.append(" INNER JOIN FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID AND T2.AmortzReq = 1");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where T1.AdviseType = 1 AND T1.FinReference = :FinReference");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(manualAdvise);
-		RowMapper<ManualAdvise> typeRowMapper = BeanPropertyRowMapper.newInstance(ManualAdvise.class);
-		logger.debug("Leaving");
-
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return jdbcOperations.queryForList(sql.toString(), Long.class, finID, adviseType);
 	}
 
 	@Override
-	public BigDecimal getBalanceAmt(String finReference) {
-		logger.debug("Entering");
-		BigDecimal balance = BigDecimal.ZERO;
-		ManualAdvise manualAdvise = new ManualAdvise();
-		manualAdvise.setFinReference(finReference);
-		manualAdvise.setAdviseType(1);
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("SELECT sum(adviseamount-paidamount-waivedamount) from manualAdvise");
-		selectSql.append(" Where FinReference =:FinReference and AdviseType =:AdviseType");
+	public FinanceMain getFinanceDetails(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" fm.FinID, fm.FinReference, ft.FinType, ft.FINTYPEDESC LovDescFinTypeName, fm.FinBranch");
+		sql.append(", fm.CustId, cu.CUSTCIF LovDescCustCif, cu.CUSTSHRTNAME LovDescCustShrtName, SD.EntityCode");
+		sql.append(", fm.FinAssetValue, fm.FinStartDate, fm.MaturityDate, fm.FinCcy, fm.TDSApplicable");
+		sql.append(" From FinanceMain fm");
+		sql.append(" Inner Join Customers cu on fm.CustID = cu.CustID");
+		sql.append(" Inner Join RmtFinanceTypes ft on ft.FinType = fm.FinType");
+		sql.append(" Inner Join SMTDivisiondetail sd On sd.DivisionCode = ft.FinDivision");
+		sql.append(" Where fm.FinID = ?");
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
+		logger.debug(Literal.SQL + sql.toString());
 
-		balance = this.jdbcTemplate.queryForObject(selectSql.toString(), paramSource, BigDecimal.class);
-		logger.debug("Leaving");
-		return balance;
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceMain fm = new FinanceMain();
 
+				fm.setFinID(rs.getLong("FinID"));
+				fm.setFinReference(rs.getString("FinReference"));
+				fm.setFinType(rs.getString("FinType"));
+				fm.setLovDescFinTypeName(rs.getString("LovDescFinTypeName"));
+				fm.setFinBranch(rs.getString("FinBranch"));
+				fm.setCustID(rs.getLong("CustID"));
+				fm.setLovDescCustCIF(rs.getString("LovDescCustCIF"));
+				fm.setLovDescCustShrtName(rs.getString("LovDescCustShrtName"));
+				fm.setEntityCode(rs.getString("EntityCode"));
+				fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
+				fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
+				fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
+				fm.setFinCcy(rs.getString("FinCcy"));
+				fm.setTDSApplicable(rs.getBoolean("TDSApplicable"));
+
+				return fm;
+			}, finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
+	public List<ManualAdvise> getAMZManualAdviseDetails(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ma.AdviseID, ma.AdviseType, ma.FinID, ma.FinReference, ma.FeeTypeID, ma.Sequence");
+		sql.append(", ma.AdviseAmount, ma.BounceID, ma.ReceiptID, ma.PaidAmount, ma.WaivedAmount");
+		sql.append(", ma.ValueDate, ma.PostDate, ma.ReservedAmt, ma.BalanceAmt");
+		sql.append(", ma.PaidCGST, ma.PaidSGST, ma.PaidUGST, ma.PaidIGST, ma.PaidCESS");
+		sql.append(", ma.WaivedCGST, ma.WaivedSGST, ma.WaivedUGST, ma.WaivedIGST, ma.WaivedCESS");
+		sql.append(", ma.FinSource, ma.DueCreation");
+		sql.append(" From ManualAdvise ma");
+		sql.append(" Inner Join FeeTypes ft on ft.FeeTypeID = ma.FeeTypeID and ft.AmortzReq = 1");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where ma.AdviseType = 1 and am.FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, finID);
+		}, (rs, rowNum) -> {
+			ManualAdvise ma = new ManualAdvise();
+
+			ma.setAdviseID(rs.getLong("AdviseID"));
+			ma.setAdviseType(rs.getInt("AdviseType"));
+			ma.setFinID(rs.getLong("FinID"));
+			ma.setFinReference(rs.getString("FinReference"));
+			ma.setFeeTypeID(rs.getLong("FeeTypeID"));
+			ma.setSequence(rs.getInt("Sequence"));
+			ma.setAdviseAmount(rs.getBigDecimal("AdviseAmount"));
+			ma.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
+			ma.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
+			ma.setPaidCGST(rs.getBigDecimal("PaidCGST"));
+			ma.setPaidSGST(rs.getBigDecimal("PaidSGST"));
+			ma.setPaidUGST(rs.getBigDecimal("PaidUGST"));
+			ma.setPaidIGST(rs.getBigDecimal("PaidIGST"));
+			ma.setPaidCESS(rs.getBigDecimal("PaidCESS"));
+			ma.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
+			ma.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
+			ma.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
+			ma.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
+			ma.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
+			ma.setFinSource(rs.getString("FinSource"));
+			ma.setDueCreation(rs.getBoolean("DueCreation"));
+
+			return ma;
+		});
+	}
+
+	@Override
+	public BigDecimal getBalanceAmt(long finID) {
+		String sql = "Select sum(AdviseAmount-PaidAmount-WaivedAmount) From manualAdvise Where FinID = ? and AdviseType = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID, 1);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return BigDecimal.ZERO;
 	}
 
 	@Override
 	public String getTaxComponent(long adviseID, String type) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT TaxComponent ");
+		StringBuilder sql = new StringBuilder("Select TaxComponent");
 		sql.append(" From ManualAdvise");
 		sql.append(type);
-		sql.append(" Where adviseID = :adviseID");
+		sql.append(" Where adviseID = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		ManualAdvise manualAdvise = new ManualAdvise();
-		manualAdvise.setAdviseID(adviseID);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
-		String taxComponent = null;
 		try {
-			taxComponent = jdbcTemplate.queryForObject(sql.toString(), paramSource, String.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, adviseID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			taxComponent = null;
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
-		return taxComponent;
+		return null;
 	}
 
-	// MIGRATION PURPOSE
 	@Override
 	public List<ManualAdvise> getManualAdvisesByFinRef(long finID, String type) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" AdviseID, AdviseType, FInID, FinReference, FeeTypeID, Sequence, AdviseAmount, BounceID");
-		sql.append(", ReceiptID, PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate, ReservedAmt");
-		sql.append(", BalanceAmt, PaidCGST, PaidSGST, PaidUGST, PaidIGST, PaidCESS, WaivedCGST, WaivedSGST");
-		sql.append(", WaivedUGST, WaivedIGST, WaivedCESS, DueCreation");
-
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", FeeTypeCode, FeeTypeDesc, BounceCode, BounceCodeDesc, taxApplicable, taxComponent, tdsReq");
-		}
-
-		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
-		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" from ManualAdvise");
-		sql.append(StringUtils.trimToEmpty(type));
+		StringBuilder sql = getManualAdvicequery(type);
 		sql.append(" Where FinID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
+
+		ManualAdviseRM rowMapper = new ManualAdviseRM(type);
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
-			int index = 1;
-			ps.setLong(index++, finID);
+			ps.setLong(1, finID);
+		}, rowMapper);
+
+	}
+
+	@Override
+	public List<ManualAdviseMovements> getDMAdviseMovementsByFinRef(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" mam.MovementID, mam.AdviseID, mam.MovementDate");
+		sql.append(", mam.MovementAmount, mam.PaidAmount, mam.WaivedAmount");
+		sql.append(", mam.Status, mam.ReceiptID, mam.ReceiptSeqID");
+		sql.append(", mam.PaidCGST, mam.PaidSGST, mam.PaidUGST, mam.PaidIGST, mam.PaidCESS");
+		sql.append(", mam.WaivedCGST, mam.WaivedSGST, mam.WaivedUGST, mam.WaivedIGST, mam.WaivedCESS, mam.TaxHeaderId");
+		sql.append(" From ManualAdvise");
+		sql.append(StringUtils.trim(type)).append(" ma");
+		sql.append(" Inner Join ManualAdviseMovements");
+		sql.append(StringUtils.trim(type)).append(" mam on ma.AdviseId = mam.AdviseId");
+		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, finID);
 		}, (rs, rowNum) -> {
-			ManualAdvise manualAdvise = new ManualAdvise();
+			ManualAdviseMovements ma = new ManualAdviseMovements();
 
-			manualAdvise.setAdviseID(rs.getLong("AdviseID"));
-			manualAdvise.setAdviseType(rs.getInt("AdviseType"));
-			manualAdvise.setFinID(rs.getLong("FinID"));
-			manualAdvise.setFinReference(rs.getString("FinReference"));
-			manualAdvise.setFeeTypeID(rs.getLong("FeeTypeID"));
-			manualAdvise.setSequence(rs.getInt("Sequence"));
-			manualAdvise.setAdviseAmount(rs.getBigDecimal("AdviseAmount"));
-			manualAdvise.setBounceID(rs.getLong("BounceID"));
-			manualAdvise.setReceiptID(rs.getLong("ReceiptID"));
-			manualAdvise.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-			manualAdvise.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
-			manualAdvise.setRemarks(rs.getString("Remarks"));
-			manualAdvise.setValueDate(rs.getTimestamp("ValueDate"));
-			manualAdvise.setPostDate(rs.getTimestamp("PostDate"));
-			manualAdvise.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
-			manualAdvise.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
-			manualAdvise.setPaidCGST(rs.getBigDecimal("PaidCGST"));
-			manualAdvise.setPaidSGST(rs.getBigDecimal("PaidSGST"));
-			manualAdvise.setPaidUGST(rs.getBigDecimal("PaidUGST"));
-			manualAdvise.setPaidIGST(rs.getBigDecimal("PaidIGST"));
-			manualAdvise.setPaidCESS(rs.getBigDecimal("PaidCESS"));
-			manualAdvise.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
-			manualAdvise.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
-			manualAdvise.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
-			manualAdvise.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
-			manualAdvise.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
-			manualAdvise.setDueCreation(rs.getBoolean("DueCreation"));
+			ma.setMovementID(rs.getLong("MovementID"));
+			ma.setAdviseID(rs.getLong("AdviseID"));
+			ma.setMovementDate(rs.getDate("MovementDate"));
+			ma.setMovementAmount(rs.getBigDecimal("MovementAmount"));
+			ma.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			ma.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+			ma.setStatus(rs.getString("Status"));
+			ma.setReceiptID(rs.getLong("ReceiptID"));
+			ma.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
+			ma.setPaidCGST(rs.getBigDecimal("PaidCGST"));
+			ma.setPaidSGST(rs.getBigDecimal("PaidSGST"));
+			ma.setPaidUGST(rs.getBigDecimal("PaidUGST"));
+			ma.setPaidIGST(rs.getBigDecimal("PaidIGST"));
+			ma.setPaidCESS(rs.getBigDecimal("PaidCESS"));
+			ma.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
+			ma.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
+			ma.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
+			ma.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
+			ma.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
+			ma.setTaxHeaderId(JdbcUtil.getLong(rs.getObject("TaxHeaderId")));
 
-			if (type.contains("View")) {
-				manualAdvise.setFeeTypeCode(rs.getString("FeeTypeCode"));
-				manualAdvise.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-				manualAdvise.setBounceCode(rs.getString("BounceCode"));
-				manualAdvise.setBounceCodeDesc(rs.getString("BounceCodeDesc"));
-				manualAdvise.setTaxApplicable(rs.getBoolean("taxApplicable"));
-				manualAdvise.setTaxComponent(rs.getString("taxComponent"));
-				manualAdvise.setTdsReq(rs.getBoolean("tdsReq"));
-			}
-
-			manualAdvise.setVersion(rs.getInt("Version"));
-			manualAdvise.setLastMntOn(rs.getTimestamp("LastMntOn"));
-			manualAdvise.setLastMntBy(rs.getLong("LastMntBy"));
-			manualAdvise.setRecordStatus(rs.getString("RecordStatus"));
-			manualAdvise.setRoleCode(rs.getString("RoleCode"));
-			manualAdvise.setNextRoleCode(rs.getString("NextRoleCode"));
-			manualAdvise.setTaskId(rs.getString("TaskId"));
-			manualAdvise.setNextTaskId(rs.getString("NextTaskId"));
-			manualAdvise.setRecordType(rs.getString("RecordType"));
-			manualAdvise.setWorkflowId(rs.getLong("WorkflowId"));
-
-			return manualAdvise;
+			return ma;
 		});
 
 	}
 
 	@Override
-	public List<ManualAdviseMovements> getDMAdviseMovementsByFinRef(String finReference, String type) {
+	public List<ManualAdvise> getManualAdvise(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ma.AdviseID, ma.AdviseType, ma.FeeTypeID, ma.Sequence, ma.FinID, ma.FinRefeRence");
+		sql.append(", (ma.AdviseAmount - ma.PaidAmount - ma.WaivedAmount) BalanceAmt, ma.AdviseAmount");
+		sql.append(", ma.PaidAmount, ma.WaivedAmount, ma.ValueDate, ma.PostDate, ma.BounceID, ma.ReceiptID");
+		sql.append(", ma.ReservedAmt, ft.TaxComponent");
+		sql.append(", ft.FeeTypeCode, ft.FeeTypeDesc, coalesce(ft.TaxApplicable, 0) TaxApplicable, ma.DueCreation");
+		sql.append(", ma.PaidCGST, ma.PaidSGST, ma.PaidIGST, ma.PaidUGST, ma.PaidCESS");
+		sql.append(", ma.WaivedCGST, ma.WaivedSGST, ma.WaivedIGST,  ma.WaivedUGST, ma.WaivedCESS");
+		sql.append(", ma.Remarks, ma.FinSource, ma.LinkedTranId");
+		sql.append(", ma.Version, ma.LastMntOn, ma.LastMntBy, ma.RecordStatus");
+		sql.append(", ma.RoleCode, ma.NextRoleCode, ma.TaskId, ma.NextTaskId, ma.RecordType, ma.WorkflowId");
+		sql.append(" From ManualaAdvise_Aview ma");
+		sql.append(" Left Join FeeTypes ft on ma.FeeTypeId = ft.FeeTypeId");
+		sql.append(" Where FinID = ?");
+		sql.append(" order by ma.adviseID");
 
-		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = null;
+		return jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-		StringBuilder selectSql = new StringBuilder(
-				" Select T2.MovementID, T2.AdviseID, T2.MovementDate, T2.MovementAmount, T2.PaidAmount, ");
-		selectSql.append(
-				" T2.WaivedAmount, T2.Status, T2.ReceiptID, T2.ReceiptSeqID, T2.PaidCGST, T2.PaidSGST, T2.PaidUGST, T2.PaidIGST, T2.PaidCESS ");
-		selectSql.append(" T2.WaivedCGST, T2.WaivedSGST, T2.WaivedUGST, T2.WaivedIGST, T2.WaivedCESS, T2.TaxHeaderId");
-		selectSql.append(" From ManualAdvise");
-		selectSql.append(StringUtils.trim(type));
-		selectSql.append(" T1");
-		selectSql.append(" Inner Join ManualAdviseMovements");
-		selectSql.append(StringUtils.trim(type));
-		selectSql.append(" T2 on T1.AdviseId = T2.AdviseId");
-		selectSql.append(" Where FinReference = :FinReference");
+			ps.setLong(index++, finID);
+			ps.setInt(index++, FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + selectSql.toString());
+		}, (rs, rowNum) -> {
+			ManualAdvise ma = new ManualAdvise();
 
-		source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
+			ma.setAdviseID(rs.getLong("AdviseID"));
+			ma.setAdviseType(rs.getInt("AdviseType"));
+			ma.setFeeTypeID(rs.getInt("FeeTypeID"));
+			ma.setSequence(rs.getInt("Sequence"));
+			ma.setFinID(rs.getLong("FinID"));
+			ma.setFinReference(rs.getString("FinRefeRence"));
+			ma.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
+			ma.setAdviseAmount(rs.getBigDecimal("AdviseAmount"));
+			ma.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			ma.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+			ma.setValueDate(rs.getDate("ValueDate"));
+			ma.setPostDate(rs.getDate("PostDate"));
+			ma.setBounceID(JdbcUtil.getLong(rs.getLong("BounceID")));
+			ma.setReceiptID(JdbcUtil.getLong(rs.getObject("ReceiptID")));
+			ma.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
+			ma.setTaxComponent(rs.getString("TaxComponent"));
+			ma.setFeeTypeCode(rs.getString("FeeTypeCode"));
+			ma.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+			ma.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+			ma.setDueCreation(rs.getBoolean("DueCreation"));
+			ma.setPaidCGST(rs.getBigDecimal("PaidCGST"));
+			ma.setPaidSGST(rs.getBigDecimal("PaidSGST"));
+			ma.setPaidIGST(rs.getBigDecimal("PaidIGST"));
+			ma.setPaidUGST(rs.getBigDecimal("PaidUGST"));
+			ma.setPaidCESS(rs.getBigDecimal("PaidCESS"));
+			ma.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
+			ma.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
+			ma.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
+			ma.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
+			ma.setRemarks(rs.getString("Remarks"));
+			ma.setFinSource(rs.getString("FinSource"));
+			ma.setLinkedTranId(JdbcUtil.getLong(rs.getObject("LinkedTranId")));
+			ma.setVersion(rs.getInt("Version"));
+			ma.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			ma.setLastMntBy(rs.getLong("LastMntBy"));
+			ma.setRecordStatus(rs.getString("RecordStatus"));
+			ma.setRoleCode(rs.getString("RoleCode"));
+			ma.setNextRoleCode(rs.getString("NextRoleCode"));
+			ma.setTaskId(rs.getString("TaskId"));
+			ma.setNextTaskId(rs.getString("NextTaskId"));
+			ma.setRecordType(rs.getString("RecordType"));
+			ma.setWorkflowId(rs.getLong("WorkflowId"));
 
-		try {
-			RowMapper<ManualAdviseMovements> typeRowMapper = BeanPropertyRowMapper
-					.newInstance(ManualAdviseMovements.class);
-			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (Exception e) {
-			return null;
-		} finally {
-			source = null;
-			logger.debug(Literal.LEAVING);
-		}
+			return ma;
 
-	}
-
-	@Override
-	public List<ManualAdvise> getManualAdvise(String finReference) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = null;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("AdviseType", FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
-
-		sql = new StringBuilder();
-		sql.append(
-				" Select MA.adviseID, MA.AdviseType, MA.FeeTypeID, MA.Sequence, MA.finReference, (MA.AdviseAmount - MA.PaidAmount - MA.WaivedAmount) balanceAmt,");
-		sql.append(
-				" MA.adviseAmount, MA.PaidAmount, MA.WaivedAmount, MA.ValueDate, MA.PostDate, MA.BounceID, MA.ReceiptID, MA.ReservedAmt,");
-		sql.append(" MA.paidsgst, MA.paidugst, MA.paidigst, MA.paidcgst, MA.paidcess,");
-		sql.append(
-				" MA.Version, MA.LastMntOn, MA.LastMntBy,MA.RecordStatus, MA.RoleCode, MA.NextRoleCode, MA.TaskId, MA.NextTaskId, MA.RecordType, MA.WorkflowId,");
-		sql.append(" FT.feetypecode, FT.FeeTypeDesc, coalesce(FT.TaxApplicable, 0) TaxApplicable, FT.TaxComponent,");
-		sql.append(" MA.WaivedCGST, MA.WaivedSGST, MA.WaivedUGST, MA.WaivedIGST, MA.DUECREATION");
-		sql.append(", MA.PaidCGST, MA.PaidSGST, MA.PaidIGST, MA.PaidUGST");
-		sql.append(", MA.Remarks, MA.PaidCGST, MA.PaidSGST, MA.PaidUGST, MA.PaidIGST,");
-		sql.append(" MA.PaidCESS, MA.FinSource,  MA.WaivedCESS, MA.LinkedTranId");
-		sql.append(" From MANUALADVISE_Aview  MA");
-		sql.append(" Left join FEETYPES FT on MA.FEETYPEID = FT.FEETYPEID");
-		sql.append(" Where FinReference = :FinReference");
-		sql.append(" ORDER by MA.adviseID");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		RowMapper<ManualAdvise> rowMapper = BeanPropertyRowMapper.newInstance(ManualAdvise.class);
-		try {
-			return jdbcTemplate.query(sql.toString(), source, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		} finally {
-			source = null;
-			sql = null;
-		}
-
-		logger.debug(Literal.LEAVING);
-
-		return null;
+		});
 	}
 
 	/**
@@ -1398,7 +1028,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(" WHERE AdviseID = :AdviseID ");
 
 		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(advise);
 		this.jdbcTemplate.update(sql.toString(), paramSource);
 		logger.debug(Literal.LEAVING);
@@ -1414,10 +1044,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	 *                     Ticket id:12499
 	 */
 	@Override
-	public List<ManualAdvise> getManualAdviseByRef(String finReference, String feeTypeCode, String type) {
-
-		logger.debug(Literal.ENTERING);
-
+	public List<ManualAdvise> getManualAdviseByRef(long finID, String feeTypeCode, String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" AdviseID, AdviseAmount, PaidAmount, WaivedAmount, ReservedAmt, BalanceAmt");
 		sql.append(", BounceID, ReceiptID, DueCreation");
@@ -1428,57 +1055,42 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		sql.append(" from ManualAdvise");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = ? AND FeeTypeCode = ?");
+		sql.append(" Where FinID = ? AND FeeTypeCode = ?");
 		sql.append(" order by AdviseID");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-					ps.setString(index++, feeTypeCode);
-				}
-			}, new RowMapper<ManualAdvise>() {
-				@Override
-				public ManualAdvise mapRow(ResultSet rs, int rowNum) throws SQLException {
-					ManualAdvise manualAdvise = new ManualAdvise();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, finID);
+			ps.setString(index++, feeTypeCode);
+		}, (rs, rowNum) -> {
+			ManualAdvise ma = new ManualAdvise();
 
-					manualAdvise.setAdviseID(rs.getLong("AdviseID"));
-					manualAdvise.setAdviseAmount(rs.getBigDecimal("AdviseAmount"));
-					manualAdvise.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-					manualAdvise.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
-					manualAdvise.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
-					manualAdvise.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
-					manualAdvise.setBounceID(rs.getLong("BounceID"));
-					manualAdvise.setReceiptID(rs.getLong("ReceiptID"));
-					manualAdvise.setDueCreation(rs.getBoolean("DueCreation"));
+			ma.setAdviseID(rs.getLong("AdviseID"));
+			ma.setAdviseAmount(rs.getBigDecimal("AdviseAmount"));
+			ma.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			ma.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+			ma.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
+			ma.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
+			ma.setBounceID(rs.getLong("BounceID"));
+			ma.setReceiptID(rs.getLong("ReceiptID"));
+			ma.setDueCreation(rs.getBoolean("DueCreation"));
 
-					if (StringUtils.trimToEmpty(type).contains("View")) {
-						manualAdvise.setFeeTypeCode(rs.getString("FeeTypeCode"));
-						manualAdvise.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-						manualAdvise.setBounceCode(rs.getString("BounceCode"));
-						manualAdvise.setBounceCodeDesc(rs.getString("BounceCodeDesc"));
-					}
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				ma.setFeeTypeCode(rs.getString("FeeTypeCode"));
+				ma.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+				ma.setBounceCode(rs.getString("BounceCode"));
+				ma.setBounceCodeDesc(rs.getString("BounceCodeDesc"));
+			}
 
-					return manualAdvise;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return ma;
+		});
 
 	}
 
 	@Override
 	public List<ManualAdvise> getManualAdviseByRefAndFeeId(int adviseType, long feeTypeID) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" AdviseID, AdviseType, finReference, feeTypeID, sequence, adviseAmount, BounceID");
 		sql.append(", ReceiptID, PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate, ReservedAmt");
@@ -1487,63 +1099,47 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(" from ManualAdvise");
 		sql.append(" Where  AdviseType = ? And FeeTypeID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setInt(index++, adviseType);
-					ps.setLong(index++, feeTypeID);
-				}
-			}, new RowMapper<ManualAdvise>() {
-				@Override
-				public ManualAdvise mapRow(ResultSet rs, int rowNum) throws SQLException {
-					ManualAdvise manualAdvise = new ManualAdvise();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setInt(index++, adviseType);
+			ps.setLong(index++, feeTypeID);
+		}, (rs, rowNum) -> {
+			ManualAdvise ma = new ManualAdvise();
 
-					manualAdvise.setAdviseID(rs.getLong("AdviseID"));
-					manualAdvise.setAdviseType(rs.getInt("AdviseType"));
-					manualAdvise.setFinReference(rs.getString("finReference"));
-					manualAdvise.setFeeTypeID(rs.getLong("feeTypeID"));
-					manualAdvise.setSequence(rs.getInt("sequence"));
-					manualAdvise.setAdviseAmount(rs.getBigDecimal("adviseAmount"));
-					manualAdvise.setBounceID(rs.getLong("BounceID"));
-					manualAdvise.setReceiptID(rs.getLong("ReceiptID"));
-					manualAdvise.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-					manualAdvise.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
-					manualAdvise.setRemarks(rs.getString("Remarks"));
-					manualAdvise.setValueDate(rs.getTimestamp("ValueDate"));
-					manualAdvise.setPostDate(rs.getTimestamp("PostDate"));
-					manualAdvise.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
-					manualAdvise.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
-					manualAdvise.setVersion(rs.getInt("Version"));
-					manualAdvise.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					manualAdvise.setLastMntBy(rs.getLong("LastMntBy"));
-					manualAdvise.setRecordStatus(rs.getString("RecordStatus"));
-					manualAdvise.setRoleCode(rs.getString("RoleCode"));
-					manualAdvise.setNextRoleCode(rs.getString("NextRoleCode"));
-					manualAdvise.setTaskId(rs.getString("TaskId"));
-					manualAdvise.setNextTaskId(rs.getString("NextTaskId"));
-					manualAdvise.setRecordType(rs.getString("RecordType"));
-					manualAdvise.setWorkflowId(rs.getLong("WorkflowId"));
-					manualAdvise.setDueCreation(rs.getBoolean("DueCreation"));
+			ma.setAdviseID(rs.getLong("AdviseID"));
+			ma.setAdviseType(rs.getInt("AdviseType"));
+			ma.setFinReference(rs.getString("finReference"));
+			ma.setFeeTypeID(rs.getLong("feeTypeID"));
+			ma.setSequence(rs.getInt("sequence"));
+			ma.setAdviseAmount(rs.getBigDecimal("adviseAmount"));
+			ma.setBounceID(rs.getLong("BounceID"));
+			ma.setReceiptID(rs.getLong("ReceiptID"));
+			ma.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			ma.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+			ma.setRemarks(rs.getString("Remarks"));
+			ma.setValueDate(rs.getTimestamp("ValueDate"));
+			ma.setPostDate(rs.getTimestamp("PostDate"));
+			ma.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
+			ma.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
+			ma.setVersion(rs.getInt("Version"));
+			ma.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			ma.setLastMntBy(rs.getLong("LastMntBy"));
+			ma.setRecordStatus(rs.getString("RecordStatus"));
+			ma.setRoleCode(rs.getString("RoleCode"));
+			ma.setNextRoleCode(rs.getString("NextRoleCode"));
+			ma.setTaskId(rs.getString("TaskId"));
+			ma.setNextTaskId(rs.getString("NextTaskId"));
+			ma.setRecordType(rs.getString("RecordType"));
+			ma.setWorkflowId(rs.getLong("WorkflowId"));
+			ma.setDueCreation(rs.getBoolean("DueCreation"));
 
-					return manualAdvise;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return ma;
+		});
 
 	}
 
-	/**
-	 * Method for Update Paid Amount Only after amounts Approval
-	 */
 	@Override
 	public void updatePaidAmountOnly(long adviseID, BigDecimal amount) {
 		logger.debug("Entering");
@@ -1567,79 +1163,63 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	}
 
 	@Override
-	public List<ManualAdvise> getManualAdviseByRefAndFeeCode(String finReference, int adviseType, String feeTypeCode) {
-		logger.debug(Literal.ENTERING);
-
+	public List<ManualAdvise> getManualAdviseByRefAndFeeCode(long finID, int adviseType, String feeTypeCode) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" AdviseID, AdviseType, finReference, feeTypeID, sequence, adviseAmount, BounceID");
+		sql.append(" AdviseID, AdviseType, FinID, FinReference, FeeTypeID, Sequence, AdviseAmount, BounceID");
 		sql.append(", ReceiptID, PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate, ReservedAmt");
 		sql.append(", BalanceAmt, FeeTypeCode, FeeTypeDesc, Version, LastMntOn, LastMntBy, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, DueCreation");
 		sql.append(" From ManualAdvise_Aview");
-		sql.append(" Where FinReference = ? and AdviseType = ? And FeeTypeCode = ?");
+		sql.append(" Where FinID = ? and AdviseType = ? And FeeTypeCode = ?");
 		sql.append(" Order By ValueDate");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-					ps.setInt(index++, adviseType);
-					ps.setString(index++, feeTypeCode);
-				}
-			}, new RowMapper<ManualAdvise>() {
-				@Override
-				public ManualAdvise mapRow(ResultSet rs, int rowNum) throws SQLException {
-					ManualAdvise manualAdvise = new ManualAdvise();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, finID);
+			ps.setInt(index++, adviseType);
+			ps.setString(index++, feeTypeCode);
+		}, (rs, rowNum) -> {
+			ManualAdvise ma = new ManualAdvise();
 
-					manualAdvise.setAdviseID(rs.getLong("AdviseID"));
-					manualAdvise.setAdviseType(rs.getInt("AdviseType"));
-					manualAdvise.setFinReference(rs.getString("finReference"));
-					manualAdvise.setFeeTypeID(rs.getLong("feeTypeID"));
-					manualAdvise.setSequence(rs.getInt("sequence"));
-					manualAdvise.setAdviseAmount(rs.getBigDecimal("adviseAmount"));
-					manualAdvise.setBounceID(rs.getLong("BounceID"));
-					manualAdvise.setReceiptID(rs.getLong("ReceiptID"));
-					manualAdvise.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-					manualAdvise.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
-					manualAdvise.setRemarks(rs.getString("Remarks"));
-					manualAdvise.setValueDate(rs.getTimestamp("ValueDate"));
-					manualAdvise.setPostDate(rs.getTimestamp("PostDate"));
-					manualAdvise.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
-					manualAdvise.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
-					manualAdvise.setFeeTypeCode(rs.getString("FeeTypeCode"));
-					manualAdvise.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-					manualAdvise.setVersion(rs.getInt("Version"));
-					manualAdvise.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					manualAdvise.setLastMntBy(rs.getLong("LastMntBy"));
-					manualAdvise.setRecordStatus(rs.getString("RecordStatus"));
-					manualAdvise.setRoleCode(rs.getString("RoleCode"));
-					manualAdvise.setNextRoleCode(rs.getString("NextRoleCode"));
-					manualAdvise.setTaskId(rs.getString("TaskId"));
-					manualAdvise.setNextTaskId(rs.getString("NextTaskId"));
-					manualAdvise.setRecordType(rs.getString("RecordType"));
-					manualAdvise.setWorkflowId(rs.getLong("WorkflowId"));
-					manualAdvise.setDueCreation(rs.getBoolean("DueCreation"));
+			ma.setAdviseID(rs.getLong("AdviseID"));
+			ma.setAdviseType(rs.getInt("AdviseType"));
+			ma.setFinID(rs.getLong("FinID"));
+			ma.setFinReference(rs.getString("FinReference"));
+			ma.setFeeTypeID(rs.getLong("FeeTypeID"));
+			ma.setSequence(rs.getInt("Sequence"));
+			ma.setAdviseAmount(rs.getBigDecimal("AdviseAmount"));
+			ma.setBounceID(rs.getLong("BounceID"));
+			ma.setReceiptID(rs.getLong("ReceiptID"));
+			ma.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			ma.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+			ma.setRemarks(rs.getString("Remarks"));
+			ma.setValueDate(rs.getTimestamp("ValueDate"));
+			ma.setPostDate(rs.getTimestamp("PostDate"));
+			ma.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
+			ma.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
+			ma.setFeeTypeCode(rs.getString("FeeTypeCode"));
+			ma.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+			ma.setVersion(rs.getInt("Version"));
+			ma.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			ma.setLastMntBy(rs.getLong("LastMntBy"));
+			ma.setRecordStatus(rs.getString("RecordStatus"));
+			ma.setRoleCode(rs.getString("RoleCode"));
+			ma.setNextRoleCode(rs.getString("NextRoleCode"));
+			ma.setTaskId(rs.getString("TaskId"));
+			ma.setNextTaskId(rs.getString("NextTaskId"));
+			ma.setRecordType(rs.getString("RecordType"));
+			ma.setWorkflowId(rs.getLong("WorkflowId"));
+			ma.setDueCreation(rs.getBoolean("DueCreation"));
 
-					return manualAdvise;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return ma;
+		});
 
 	}
 
 	@Override
-	public List<ManualAdvise> getManualAdviseByRef(String finReference, int adviseType, String type, Date valuDate) {
-		logger.debug(Literal.ENTERING);
-
+	public List<ManualAdvise> getManualAdviseByRef(long finID, int adviseType, String type, Date valuDate) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" AdviseID, AdviseAmount, PaidAmount, WaivedAmount, ReservedAmt, BalanceAmt");
 		sql.append(", BounceID, ReceiptID, PaidCGST, PaidSGST, PaidUGST, PaidIGST, PaidCESS, WaivedCGST, WaivedSGST");
@@ -1651,135 +1231,98 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		sql.append(" from ManualAdvise");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = ? and AdviseType = ?");
+		sql.append(" Where FinID = ? and AdviseType = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-					ps.setInt(index++, adviseType);
-				}
-			}, new RowMapper<ManualAdvise>() {
-				@Override
-				public ManualAdvise mapRow(ResultSet rs, int rowNum) throws SQLException {
-					ManualAdvise manualAdvise = new ManualAdvise();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, finID);
+			ps.setInt(index++, adviseType);
+		}, (rs, rowNum) -> {
+			ManualAdvise ma = new ManualAdvise();
 
-					manualAdvise.setAdviseID(rs.getLong("AdviseID"));
-					manualAdvise.setAdviseAmount(rs.getBigDecimal("AdviseAmount"));
-					manualAdvise.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-					manualAdvise.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
-					manualAdvise.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
-					manualAdvise.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
-					manualAdvise.setBounceID(rs.getLong("BounceID"));
-					manualAdvise.setReceiptID(rs.getLong("ReceiptID"));
-					manualAdvise.setPaidCGST(rs.getBigDecimal("PaidCGST"));
-					manualAdvise.setPaidSGST(rs.getBigDecimal("PaidSGST"));
-					manualAdvise.setPaidUGST(rs.getBigDecimal("PaidUGST"));
-					manualAdvise.setPaidIGST(rs.getBigDecimal("PaidIGST"));
-					manualAdvise.setPaidCESS(rs.getBigDecimal("PaidCESS"));
-					manualAdvise.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
-					manualAdvise.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
-					manualAdvise.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
-					manualAdvise.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
-					manualAdvise.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
-					manualAdvise.setDueCreation(rs.getBoolean("DueCreation"));
+			ma.setAdviseID(rs.getLong("AdviseID"));
+			ma.setAdviseAmount(rs.getBigDecimal("AdviseAmount"));
+			ma.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			ma.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+			ma.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
+			ma.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
+			ma.setBounceID(rs.getLong("BounceID"));
+			ma.setReceiptID(rs.getLong("ReceiptID"));
+			ma.setPaidCGST(rs.getBigDecimal("PaidCGST"));
+			ma.setPaidSGST(rs.getBigDecimal("PaidSGST"));
+			ma.setPaidUGST(rs.getBigDecimal("PaidUGST"));
+			ma.setPaidIGST(rs.getBigDecimal("PaidIGST"));
+			ma.setPaidCESS(rs.getBigDecimal("PaidCESS"));
+			ma.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
+			ma.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
+			ma.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
+			ma.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
+			ma.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
+			ma.setDueCreation(rs.getBoolean("DueCreation"));
 
-					if (StringUtils.trimToEmpty(type).contains("View")) {
-						manualAdvise.setFeeTypeCode(rs.getString("FeeTypeCode"));
-						manualAdvise.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-						manualAdvise.setBounceCode(rs.getString("BounceCode"));
-						manualAdvise.setBounceCodeDesc(rs.getString("BounceCodeDesc"));
-						manualAdvise.setTaxApplicable(rs.getBoolean("taxApplicable"));
-						manualAdvise.setTaxComponent(rs.getString("taxComponent"));
-						manualAdvise.setTdsReq(rs.getBoolean("tdsReq"));
-					}
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				ma.setFeeTypeCode(rs.getString("FeeTypeCode"));
+				ma.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+				ma.setBounceCode(rs.getString("BounceCode"));
+				ma.setBounceCodeDesc(rs.getString("BounceCodeDesc"));
+				ma.setTaxApplicable(rs.getBoolean("taxApplicable"));
+				ma.setTaxComponent(rs.getString("taxComponent"));
+				ma.setTdsReq(rs.getBoolean("tdsReq"));
+			}
 
-					return manualAdvise;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+			return ma;
+		});
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
 	}
 
 	@Override
-	public Date getManualAdviseDate(String finReference, Date valueDate, String type, int adviseType) {
-		StringBuilder selectSql = new StringBuilder();
-		Date manAdvDate = null;
+	public Date getManualAdviseDate(long finID, Date valueDate, String type, int adviseType) {
+		StringBuilder sql = new StringBuilder("Select max(ValueDate)");
+		sql.append(" From ManualAdvise");
+		sql.append(type);
+		sql.append(" Where  FinID = ? and AdviseType = ? and ValueDate > ?");
+		sql.append(" and (AdviseAmount - PaidAmount - WaivedAmount) > 0");
 
-		selectSql.append("select MAX(ValueDate) from MANUALADVISE ");
-		selectSql.append(type);
-		selectSql.append(" Where  FinReference = :FinReference AND AdviseType =:AdviseType and ValueDate>:ValueDate  ");
-		selectSql.append(" AND (AdviseAmount - PaidAmount - WaivedAmount) > 0");
-
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("FinReference", finReference);
-		paramMap.addValue("ValueDate", new SimpleDateFormat("dd-MMM-yy").format(valueDate));
-		paramMap.addValue("AdviseType", adviseType);
-
-		manAdvDate = jdbcTemplate.queryForObject(selectSql.toString(), paramMap, Date.class);
-		return manAdvDate;
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), Date.class, finID, adviseType, valueDate);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+		return null;
 	}
 
 	@Override
 	public List<ManualAdviseMovements> getInProcManualAdvMovmnts(List<Long> receiptList) {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource source = null;
-		source = new MapSqlParameterSource();
-		source.addValue("ReceiptId", receiptList);
-
 		StringBuilder sql = new StringBuilder();
-		sql.append(" Select AdviseID, SUM(PaidAmount) PaidAmount, SUM(WaivedAmount) WaivedAmount");
+		sql.append(" Select AdviseID, sum(PaidAmount) PaidAmount, sum(WaivedAmount) WaivedAmount");
 		sql.append(" From ManualAdviseMovements");
-		sql.append(" Where ReceiptID IN (:ReceiptID)  GROUP BY AdviseID");
+		sql.append(" Where ReceiptID in (");
+		sql.append(commaJoin(receiptList));
+		sql.append(")");
+		sql.append(" group by AdviseID");
 
 		logger.debug(Literal.SQL + sql.toString());
-		RowMapper<ManualAdviseMovements> typeRowMapper = BeanPropertyRowMapper.newInstance(ManualAdviseMovements.class);
 
-		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-	}
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			for (Long receiptID : receiptList) {
+				ps.setLong(index++, receiptID);
+			}
+		}, (rs, rowNum) -> {
+			ManualAdviseMovements ma = new ManualAdviseMovements();
 
-	@Override
-	public boolean isManualAdviceExitsInManualMovements(long manualAdviseId) {
+			ma.setAdviseID(rs.getLong("AdviseID"));
+			ma.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			ma.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
 
-		StringBuilder selectSql = new StringBuilder();
-		boolean adviceCondition = false;
-		long adviceId = 0;
-
-		selectSql.append("select adviseid from MANUALADVISEMOVEMENTS_Temp ");
-		selectSql.append(" WHERE adviseid= :adviseid");
-
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("adviseid", manualAdviseId);
-
-		try {
-			adviceId = jdbcTemplate.queryForObject(selectSql.toString(), paramMap, Long.class);
-		} catch (EmptyResultDataAccessException er) {
-			adviceId = 0;
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		if (adviceId > 0) {
-			adviceCondition = true;
-		} else {
-			adviceCondition = false;
-		}
-		return adviceCondition;
+			return ma;
+		});
 	}
 
 	@Override
 	public List<ManualAdviseMovements> getAdvMovementsByReceiptSeq(long receiptID, long receiptSeqID, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount");
 		sql.append(", Status, ReceiptID, ReceiptSeqID, TaxHeaderId,TdsPaid ");
@@ -1792,56 +1335,41 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append("  Where ReceiptID = ? and ReceiptSeqID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, receiptID);
-					ps.setLong(index++, receiptSeqID);
-				}
-			}, new RowMapper<ManualAdviseMovements>() {
-				@Override
-				public ManualAdviseMovements mapRow(ResultSet rs, int rowNum) throws SQLException {
-					ManualAdviseMovements manualAdviseMovements = new ManualAdviseMovements();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, receiptID);
+			ps.setLong(index++, receiptSeqID);
+		}, (rs, rowNum) -> {
+			ManualAdviseMovements mam = new ManualAdviseMovements();
 
-					manualAdviseMovements.setMovementID(rs.getLong("MovementID"));
-					manualAdviseMovements.setAdviseID(rs.getLong("AdviseID"));
-					manualAdviseMovements.setMovementDate(rs.getTimestamp("MovementDate"));
-					manualAdviseMovements.setMovementAmount(rs.getBigDecimal("MovementAmount"));
-					manualAdviseMovements.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-					manualAdviseMovements.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
-					manualAdviseMovements.setStatus(rs.getString("Status"));
-					manualAdviseMovements.setReceiptID(rs.getLong("ReceiptID"));
-					manualAdviseMovements.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
-					manualAdviseMovements.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
-					manualAdviseMovements.setTdsPaid(rs.getBigDecimal("TdsPaid"));
+			mam.setMovementID(rs.getLong("MovementID"));
+			mam.setAdviseID(rs.getLong("AdviseID"));
+			mam.setMovementDate(rs.getTimestamp("MovementDate"));
+			mam.setMovementAmount(rs.getBigDecimal("MovementAmount"));
+			mam.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			mam.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+			mam.setStatus(rs.getString("Status"));
+			mam.setReceiptID(rs.getLong("ReceiptID"));
+			mam.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
+			mam.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
+			mam.setTdsPaid(rs.getBigDecimal("TdsPaid"));
 
-					if (StringUtils.contains(type, "View")) {
-						manualAdviseMovements.setFeeTypeCode(rs.getString("FeeTypeCode"));
-						manualAdviseMovements.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-						manualAdviseMovements.setTaxApplicable(rs.getBoolean("TaxApplicable"));
-						manualAdviseMovements.setTaxComponent(rs.getString("TaxComponent"));
-					}
+			if (StringUtils.contains(type, "View")) {
+				mam.setFeeTypeCode(rs.getString("FeeTypeCode"));
+				mam.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+				mam.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+				mam.setTaxComponent(rs.getString("TaxComponent"));
+			}
 
-					return manualAdviseMovements;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return mam;
+		});
 
 	}
 
 	@Override
 	public ManualAdviseMovements getAdvMovByReceiptSeq(long receiptID, long receiptSeqID, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount");
 		sql.append(", Status, ReceiptID, ReceiptSeqID, TaxHeaderId ");
@@ -1854,61 +1382,64 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append("  Where ReceiptID = ? and ReceiptSeqID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { receiptID, receiptSeqID },
-					new RowMapper<ManualAdviseMovements>() {
-						@Override
-						public ManualAdviseMovements mapRow(ResultSet rs, int rowNum) throws SQLException {
-							ManualAdviseMovements movement = new ManualAdviseMovements();
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				ManualAdviseMovements mam = new ManualAdviseMovements();
 
-							movement.setMovementID(rs.getLong("MovementID"));
-							movement.setAdviseID(rs.getLong("AdviseID"));
-							movement.setMovementDate(rs.getTimestamp("MovementDate"));
-							movement.setMovementAmount(rs.getBigDecimal("MovementAmount"));
-							movement.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-							movement.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
-							movement.setStatus(rs.getString("Status"));
-							movement.setReceiptID(rs.getLong("ReceiptID"));
-							movement.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
-							movement.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
+				mam.setMovementID(rs.getLong("MovementID"));
+				mam.setAdviseID(rs.getLong("AdviseID"));
+				mam.setMovementDate(rs.getTimestamp("MovementDate"));
+				mam.setMovementAmount(rs.getBigDecimal("MovementAmount"));
+				mam.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+				mam.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+				mam.setStatus(rs.getString("Status"));
+				mam.setReceiptID(rs.getLong("ReceiptID"));
+				mam.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
+				mam.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
 
-							if (StringUtils.contains(type, "View")) {
-								movement.setFeeTypeCode(rs.getString("FeeTypeCode"));
-								movement.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-								movement.setTaxApplicable(rs.getBoolean("TaxApplicable"));
-								movement.setTaxComponent(rs.getString("TaxComponent"));
-							}
+				if (StringUtils.contains(type, "View")) {
+					mam.setFeeTypeCode(rs.getString("FeeTypeCode"));
+					mam.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+					mam.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+					mam.setTaxComponent(rs.getString("TaxComponent"));
+				}
 
-							return movement;
-						}
-					});
+				return mam;
+			}, receiptID, receiptSeqID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 
 	}
 
 	@Override
-	public List<ManualAdvise> getPreviousAdvPayments(String finReference) {
-		StringBuilder sql = new StringBuilder();
-
-		sql.append("select ma.FeeTypeID, ft.FeeTypeCode, ma.AdviseType, ma.AdviseAmount");
+	public List<ManualAdvise> getPreviousAdvPayments(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ma.FeeTypeID, ft.FeeTypeCode, ma.AdviseType, ma.AdviseAmount");
 		sql.append(" from ManualAdvise ma");
-		sql.append(" inner join FeeTypes ft on ft.FeeTypeID = ma.FeeTypeID");
-		sql.append(" where FinReference = :FinReference and FeeTypeCode in (:FeeTypeCode)");
+		sql.append(" Inner Join FeeTypes ft on ft.FeeTypeID = ma.FeeTypeID");
+		sql.append(" Where FinID = ? and FeeTypeCode in (?, ?)");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("FeeTypeCode", Arrays.asList(AdvanceRuleCode.ADVINT.name(), AdvanceRuleCode.ADVEMI.name()));
+		logger.debug(Literal.SQL + sql.toString());
 
-		RowMapper<ManualAdvise> typeRowMapper = BeanPropertyRowMapper.newInstance(ManualAdvise.class);
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, finID);
+			ps.setString(2, AdvanceRuleCode.ADVINT.name());
+			ps.setString(3, AdvanceRuleCode.ADVEMI.name());
 
-		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		}, (rs, rownum) -> {
+			ManualAdvise ma = new ManualAdvise();
+			ma.setFeeTypeID(rs.getLong("FeeTypeID"));
+			ma.setFeeTypeCode(rs.getString("FeeTypeCode"));
+			ma.setAdviseType(rs.getInt("AdviseType"));
+			ma.setAdviseAmount(rs.getBigDecimal("AdviseAmount"));
+
+			return ma;
+		});
 	}
 
 	@Override
@@ -1918,7 +1449,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(" (AdviseID, Amount, TaxType , CGST , SGST , UGST , IGST , CESS, TotalGST, InvoiceID)");
 		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
 
@@ -1943,90 +1474,34 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 	@Override
 	public boolean isAdviseDueCreated(long adviseID) {
-		logger.debug("Entering");
+		String sql = "Select count(AdviseID) From AdviseDueTaxDetail Where AdviseID = ?";
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("AdviseID", adviseID);
-
-		StringBuilder selectSql = new StringBuilder(" Select COUNT(*)  From AdviseDueTaxDetail");
-		selectSql.append(" Where AdviseID = :AdviseID ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
-		int recordCount = 0;
-		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			recordCount = 0;
-		}
-
-		logger.debug("Leaving");
-
-		if (recordCount > 0) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	@Override
-	public AdviseDueTaxDetail getUnPaidTaxDetail(long adviseID) {
-		logger.debug(Literal.ENTERING);
-
-		AdviseDueTaxDetail taxDetail = new AdviseDueTaxDetail();
-		taxDetail.setAdviseID(adviseID);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
-				" SELECT A.AdviseID, (A.CGST - COALESCE(PAIDCGST,0)) CGST, (A.SGST - COALESCE(PAIDSGST,0)) SGST, ");
-		selectSql.append(
-				" (A.IGST - COALESCE(PAIDIGST,0)) IGST, (A.UGST - COALESCE(PAIDUGST,0)) UGST from AdviseDueTaxDetail A ");
-		selectSql.append(
-				" LEFT JOIN (Select AdviseID , SUM(PAIDCGST) PAIDCGST, SUM(PAIDSGST) PAIDSGST, SUM(PAIDIGST) PAIDIGST, SUM(PAIDUGST) PAIDUGST ");
-		selectSql.append(
-				" FROM ManualAdviseMovements WHERE COALESCE(STATUS, 'A') NOT IN ('B','C') GROUP BY AdviseID) M ON A.AdviseID = M.AdviseID WHERE A.AdviseID = :AdviseID ");
-
-		logger.trace(Literal.SQL + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taxDetail);
-		RowMapper<AdviseDueTaxDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(AdviseDueTaxDetail.class);
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			taxDetail = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql, Integer.class, adviseID) > 0;
 		} catch (EmptyResultDataAccessException e) {
-			taxDetail = null;
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
-		return taxDetail;
+		return false;
 	}
 
 	@Override
 	public Long getDebitInvoiceID(long adviseID) {
-		logger.debug(Literal.ENTERING);
+		String sql = "Select InvoiceID  From AdviseDueTaxDetail Where AdviseID = ? ";
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("AdviseID", adviseID);
-
-		StringBuilder selectSql = new StringBuilder(" Select InvoiceID  From AdviseDueTaxDetail");
-		selectSql.append(" Where AdviseID = :AdviseID ");
-
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, adviseID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
-	/**
-	 * Method for fetching New Advise ID based on Sequence Object
-	 * 
-	 * @return
-	 */
 	@Override
 	public long getNewAdviseID() {
 		return getNextValue("seqManualAdvise");
@@ -2038,7 +1513,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(" Set PaidAmount = PaidAmount + ?, BalanceAmt = BalanceAmt - ?");
 		sql.append(" Where AdviseID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
@@ -2056,8 +1531,6 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 	@Override
 	public ManualAdviseMovements getAdvMovByReceiptSeq(long receiptID, long receiptSeqID, long adviseId, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount");
 		sql.append(", Status, ReceiptID, ReceiptSeqID, TaxHeaderId ");
@@ -2070,60 +1543,44 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append("  Where ReceiptID = ? and ReceiptSeqID = ? and AdviseID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(),
-					new Object[] { receiptID, receiptSeqID, adviseId }, new RowMapper<ManualAdviseMovements>() {
-						@Override
-						public ManualAdviseMovements mapRow(ResultSet rs, int rowNum) throws SQLException {
-							ManualAdviseMovements movement = new ManualAdviseMovements();
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				ManualAdviseMovements mam = new ManualAdviseMovements();
 
-							movement.setMovementID(rs.getLong("MovementID"));
-							movement.setAdviseID(rs.getLong("AdviseID"));
-							movement.setMovementDate(rs.getTimestamp("MovementDate"));
-							movement.setMovementAmount(rs.getBigDecimal("MovementAmount"));
-							movement.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-							movement.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
-							movement.setStatus(rs.getString("Status"));
-							movement.setReceiptID(rs.getLong("ReceiptID"));
-							movement.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
-							movement.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
+				mam.setMovementID(rs.getLong("MovementID"));
+				mam.setAdviseID(rs.getLong("AdviseID"));
+				mam.setMovementDate(rs.getTimestamp("MovementDate"));
+				mam.setMovementAmount(rs.getBigDecimal("MovementAmount"));
+				mam.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+				mam.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+				mam.setStatus(rs.getString("Status"));
+				mam.setReceiptID(rs.getLong("ReceiptID"));
+				mam.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
+				mam.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
 
-							if (StringUtils.contains(type, "View")) {
-								movement.setFeeTypeCode(rs.getString("FeeTypeCode"));
-								movement.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-								movement.setTaxApplicable(rs.getBoolean("TaxApplicable"));
-								movement.setTaxComponent(rs.getString("TaxComponent"));
-							}
+				if (StringUtils.contains(type, "View")) {
+					mam.setFeeTypeCode(rs.getString("FeeTypeCode"));
+					mam.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+					mam.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+					mam.setTaxComponent(rs.getString("TaxComponent"));
+				}
 
-							return movement;
-						}
-					});
+				return mam;
+			}, receiptID, receiptSeqID, adviseId);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
 	@Override
-	public BigDecimal getPayableBalanceAmt(String finReference, int adviseType) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT sum(adviseamount-paidamount-waivedamount) from manualAdvise");
-		sql.append(" Where FinReference = ? and AdviseType = ?");
-
-		Object[] object = new Object[] { finReference, adviseType };
-		return this.jdbcOperations.queryForObject(sql.toString(), object, BigDecimal.class);
-
-	}
-
-	@Override
-	public BigDecimal getReceivableAmt(String finReference, boolean isBounce) {
+	public BigDecimal getReceivableAmt(long finID, boolean isBounce) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Coalesce(Sum(AdviseAmount - PaidAmount - WaivedAmount), 0) Amount");
 		sql.append(" from ManualAdvise");
-		sql.append(" Where FinReference = ? and AdviseType = ? ");
+		sql.append(" Where FinID = ? and AdviseType = ? ");
 
 		if (isBounce) {
 			sql.append(" And (BounceId > 0 or FeeTypeID IN (Select FeeTypeID from FeeTypes Where FeeTypeCode = ?))");
@@ -2131,17 +1588,104 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			sql.append(" And FeeTypeID Not IN (Select FeeTypeID from FeeTypes Where FeeTypeCode = ?)");
 		}
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, 1, "BOUNCE" },
-					BigDecimal.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID, 1, "BOUNCE");
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record is not found in ManualAdvise for the specified reference >> {} and AdviseTpe >> 1",
-					finReference);
+			//
 		}
 
 		return BigDecimal.ZERO;
 	}
 
+	private StringBuilder getManualAdvicequery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" AdviseID, AdviseType, FinID, FinReference, FeeTypeID, Sequence, AdviseAmount, BounceID");
+		sql.append(", LinkedTranId, ReceiptID, PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate, ReservedAmt");
+		sql.append(", BalanceAmt, PaidCGST, PaidSGST, PaidUGST, PaidIGST, PaidCESS");
+		sql.append(", WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedCESS, FinSource, DueCreation");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", FeeTypeCode, FeeTypeDesc, TaxApplicable, TaxComponent, TDSReq");
+		}
+
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From ManualAdvise");
+		sql.append(StringUtils.trimToEmpty(type));
+		return sql;
+	}
+
+	private class ManualAdviseRM implements RowMapper<ManualAdvise> {
+		private String type;
+
+		public ManualAdviseRM(String type) {
+			super();
+			this.type = type;
+		}
+
+		@Override
+		public ManualAdvise mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+			ManualAdvise ma = new ManualAdvise();
+
+			ma.setAdviseID(rs.getLong("AdviseID"));
+			ma.setAdviseType(rs.getInt("AdviseType"));
+			ma.setFinID(rs.getLong("FinID"));
+			ma.setFinReference(rs.getString("FinReference"));
+			ma.setFeeTypeID(rs.getLong("FeeTypeID"));
+			ma.setSequence(rs.getInt("sequence"));
+			ma.setAdviseAmount(rs.getBigDecimal("adviseAmount"));
+			ma.setBounceID(rs.getLong("BounceID"));
+			ma.setReceiptID(rs.getLong("ReceiptID"));
+			ma.setLinkedTranId(rs.getLong("LinkedTranId"));
+			ma.setReceiptID(rs.getLong("ReceiptID"));
+			ma.setPaidAmount(rs.getBigDecimal("paidAmount"));
+			ma.setWaivedAmount(rs.getBigDecimal("waivedAmount"));
+			ma.setRemarks(rs.getString("remarks"));
+			ma.setValueDate(rs.getTimestamp("ValueDate"));
+			ma.setPostDate(rs.getTimestamp("PostDate"));
+			ma.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
+			ma.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
+			ma.setPaidCGST(rs.getBigDecimal("PaidCGST"));
+			ma.setPaidSGST(rs.getBigDecimal("PaidSGST"));
+			ma.setPaidUGST(rs.getBigDecimal("PaidUGST"));
+			ma.setPaidIGST(rs.getBigDecimal("PaidIGST"));
+			ma.setPaidCESS(rs.getBigDecimal("PaidCESS"));
+			ma.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
+			ma.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
+			ma.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
+			ma.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
+			ma.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
+			ma.setFinSource(rs.getString("FinSource"));
+			ma.setDueCreation(rs.getBoolean("DueCreation"));
+
+			if (type.contains("View")) {
+				ma.setFeeTypeCode(rs.getString("FeeTypeCode"));
+				ma.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+				ma.setTaxApplicable(rs.getBoolean("taxApplicable"));
+				ma.setTaxComponent(rs.getString("taxComponent"));
+				ma.setTdsReq(rs.getBoolean("TDSReq"));
+			}
+
+			ma.setVersion(rs.getInt("Version"));
+			ma.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			ma.setLastMntBy(rs.getLong("LastMntBy"));
+			ma.setRecordStatus(rs.getString("RecordStatus"));
+			ma.setRoleCode(rs.getString("RoleCode"));
+			ma.setNextRoleCode(rs.getString("NextRoleCode"));
+			ma.setTaskId(rs.getString("TaskId"));
+			ma.setNextTaskId(rs.getString("NextTaskId"));
+			ma.setRecordType(rs.getString("RecordType"));
+			ma.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return ma;
+
+		}
+	}
+
+	private String commaJoin(List<Long> headerIdList) {
+		return headerIdList.stream().map(e -> "?").collect(Collectors.joining(","));
+	}
 }

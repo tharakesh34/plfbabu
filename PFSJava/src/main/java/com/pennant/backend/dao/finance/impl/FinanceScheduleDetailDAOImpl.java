@@ -919,8 +919,8 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" SchDate, RepayAmount, PartialPaidAmt");
 		sql.append(" From FinScheduleDetails");
-		sql.append(" Where FinReference = ? and SchDate = (");
-		sql.append(" Select max(SchDate) From FinScheduleDetails Where FinReference = ? and SchDate <= ?");
+		sql.append(" Where FinID = ? and SchDate = (");
+		sql.append(" Select max(SchDate) From FinScheduleDetails Where FinID = ? and SchDate <= ?");
 		sql.append(")");
 
 		logger.debug(Literal.SQL + sql.toString());
