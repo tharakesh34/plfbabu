@@ -85,8 +85,6 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 
 	FinanceMain getFinanceDetails(long finID);
 
-	List<ManualAdvise> getAMZManualAdviseDetails(String finRef, String type);
-
 	BigDecimal getBalanceAmt(long finID);
 
 	String getTaxComponent(long adviseID, String type);

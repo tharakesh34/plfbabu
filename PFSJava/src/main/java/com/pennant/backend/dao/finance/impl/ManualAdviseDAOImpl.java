@@ -1688,4 +1688,5 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	private String commaJoin(List<Long> headerIdList) {
 		return headerIdList.stream().map(e -> "?").collect(Collectors.joining(","));
 	}
+
 }
