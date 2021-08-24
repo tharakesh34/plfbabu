@@ -147,7 +147,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	@Override
 	public void save(FinanceScheduleDetail schedule, String type, boolean isWIF) {
 		List<FinanceScheduleDetail> schedules = new ArrayList<>();
-
+		schedules.add(schedule);
 		saveList(schedules, type, isWIF);
 	}
 
@@ -620,7 +620,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append("  sum(WriteoffPrincipal) WrittenoffPri");
 		sql.append(", sum(WriteoffProfit) WrittenoffPft");
-		sql.append(", sum(WriteoffSchFee) WrittenoffSchFee, ");
+		sql.append(", sum(WriteoffSchFee) WrittenoffSchFee");
 		sql.append(", sum((PrincipalSchd - SchdPriPaid) - WriteoffPrincipal) UnPaidSchdPri");
 		sql.append(", sum((ProfitSchd - SchdPftPaid) - WriteoffProfit) UnPaidSchdPft");
 		sql.append(", sum((FeeSchd - SchdFeePaid) - WriteoffSchFee) UnpaidSchFee");
@@ -710,7 +710,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		sql.append(" Select row_number() Over(order by Schdate) row_num, ");
 		appendSchdColumns(false, sql);
 		sql.append(" From FinScheduleDetails");
-		sql.append(" Where FinID = ? and  SchDate > = ?) T");
+		sql.append(" Where FinID = ? and  SchDate >= ?) T");
 		sql.append(" Where row_num = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -879,6 +879,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 				ps.setBoolean(index++, schedule.isTDSApplicable());
 				ps.setBigDecimal(index++, schedule.getTDSAmount());
 				ps.setLong(index++, schedule.getFinID());
+				ps.setDate(index++, JdbcUtil.getDate(schedule.getSchDate()));
 			}
 
 			@Override
@@ -996,7 +997,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	public FinanceMain getFinanceMainForRateReport(long finID, String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" fm.FinID, fm.FinReference, fm.FinCcy, cu.CustCIF, cu.CustShrtName");
-		sql.append(" fm.FinCurrAssetValue, fm.ProfitDaysBasis, fm.CalRoundingMode, fm.RoundingTarget");
+		sql.append(" ,fm.FinCurrAssetValue, fm.ProfitDaysBasis, fm.CalRoundingMode, fm.RoundingTarget");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join Customers cu On cu.CustID = fm.CustID");
 		sql.append(" Where FinID = ?");
@@ -1018,7 +1019,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 				fm.setRoundingTarget(rs.getInt("RoundingTarget"));
 
 				return fm;
-			});
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}
@@ -1209,7 +1210,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 	@Override
 	public void updateTDSChange(List<FinanceScheduleDetail> schedules) {
-		String sql = "Update FinScheduleDetails Set TDSAmount = :TDSAmount Where FinID = ? and SchDate = ?";
+		String sql = "Update FinScheduleDetails Set TDSAmount = ? Where FinID = ? and SchDate = ?";
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -1254,7 +1255,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		sql.append(" Select row_number() Over(order by Schdate) row_num, ");
 		appendSchdColumns(false, sql);
 		sql.append(" From FinScheduleDetails");
-		sql.append(" Where FinID = ? and  SchDate > = ? ");
+		sql.append(" Where FinID = ? and  SchDate >= ? ");
 		sql.append(" and (SchPftPaid=0 AND SchPriPaid = 0) and (RepayOnSchDate = 1 and PftOnSchDate = 1 )) T");
 		sql.append(" Where row_num = ?");
 

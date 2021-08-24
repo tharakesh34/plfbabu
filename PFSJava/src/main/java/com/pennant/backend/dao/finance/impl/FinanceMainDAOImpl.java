@@ -126,7 +126,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(" and WorkFlowActive = ?");
 			objects = new Object[] { event, 1 };
 		} else {
-			sql.append(" and WorkFlowActive = ?");
+			sql.append(") and WorkFlowActive = ?");
 			objects = new Object[] { 1 };
 		}
 
@@ -2593,7 +2593,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		if (wif) {
 			sql.append(" From WifFinanceMain fm");
 		} else {
-			sql.append(" frm FinanceMain fm");
+			sql.append(" from FinanceMain fm");
 		}
 		sql.append(" Inner Join RmTFinanceTypes ft On ft.FinType = fm.FinType");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -3234,7 +3234,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				map.put("ResidentialStatus", rs.getString("ResidentialStatus"));
 				map.put("CustResidentialSts", rs.getString("CustResidentialSts"));
 				return map;
-			}, finID, Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH));
+			}, Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH), finID);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}
@@ -3275,7 +3275,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				map.put("ResidentialStatus", rs.getString("ResidentialStatus"));
 				map.put("CustResidentialSts", rs.getString("CustResidentialSts"));
 				return map;
-			}, custId, Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH));
+			}, Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH), custId);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}
@@ -3455,7 +3455,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinID, FinReference, FinType, CustID, ClosingStatus, FinIsActive, MaturityDate, ClosedDate");
 		sql.append(", WriteoffLoan From FinanceMain");
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -3560,7 +3560,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	@Override
 	public long getLoanWorkFlowIdByFinRef(long finID, String type) {
 		StringBuilder sql = new StringBuilder("Select WorkflowId");
-		sql.append("From FinanceMain");
+		sql.append(" From FinanceMain");
 		sql.append(type);
 		sql.append(" Where FinID = ?");
 
@@ -3793,7 +3793,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", AvailedDefFrqChange, RecalType, FinAssetValue, FinIsActive");
 		sql.append(", LastRepayDate, LastRepayPftDate,LastRepayRvwDate, LastRepayCpzDate, AllowGrcRepay");
 		sql.append(", GrcMargin, RepayMargin, FinCommitmentRef, FinCurrAssetValue");
-		sql.append(", ClosingStatus, FinApprovedDate,");
+		sql.append(", ClosingStatus, FinApprovedDate");
 		sql.append(", AnualizedPercRate , EffectiveRateOfReturn , FinRepayPftOnFrq , GrcProfitDaysBasis");
 		sql.append(", LinkedFinRef, GrcMinRate, GrcMaxRate , RpyMinRate, RpyMaxRate,GrcSchdMthd, StepPolicy");
 		sql.append(", ManualSchedule");
@@ -3810,7 +3810,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", CalRoundingMode , AlwMultiDisb, BpiAmount, PastduePftMargin,FinCategory,ProductCategory");
 		sql.append(", DeviationApproval,FinPreApprovedRef,MandateID,FirstDroplineDate,PftServicingODLimit");
 		sql.append(", UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi,BpiTreatment, PlanEMIHAlw, PlanEMIHAlwInGrace");
-		sql.append(",, StepType, DroplineFrq, NoOfSteps");
+		sql.append(", StepType, DroplineFrq, NoOfSteps");
 		sql.append(", StepFinance, FinContractDate, TdsType, WriteoffLoan");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -4973,7 +4973,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", fm.LovDescFinDivision");
 		}
 		if (type.contains("Temp")) {
-			sql.append(", T2.FinDivision");
+			sql.append(", ft.FinDivision");
 		}
 		sql.append(" From FinanceMain").append(type).append(" fm");
 		sql.append(" Inner Join RMTFinanceTypes ft On ft.FinType = fm.FinType");
