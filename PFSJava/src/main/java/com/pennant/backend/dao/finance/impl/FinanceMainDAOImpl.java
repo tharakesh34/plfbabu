@@ -116,8 +116,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public List<String> getFinanceWorlflowFirstTaskOwners(String event, String moduleName) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FirstTaskOwner");
-		sql.append(" from WorkFlowDetails");
-		sql.append(" where WorkFlowType in (Select distinct WorkFlowType from LMTFinanceWorkFlowDef");
+		sql.append(" From WorkFlowDetails");
+		sql.append(" where WorkFlowType in (Select distinct WorkFlowType From LMTFinanceWorkFlowDef");
 
 		Object[] objects = null;
 
@@ -198,7 +198,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", fm.BpiTreatment, fm.QuickDisb, fm.InstBasedSchd, fm.FinAssetValue, fm.FinCurrAssetValue");
 		sql.append(", c.CustCIF, c.CustShrtName, ft.alwMultiPartyDisb, ft.FinTypeDesc");
 		sql.append(", PromotionCode, e.EntityCode");
-		sql.append(" from FinanceMain");
+		sql.append(" From FinanceMain");
 		sql.append(tableType.getSuffix());
 		sql.append(" fm");
 		sql.append(" Inner Join RMTFinanceTypes ft On fm.FinType = ft.FinType");
@@ -258,7 +258,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", FinStatus, FinStsReason, InitiateUser");
 		sql.append(", ClosingStatus, LastRepayDate, NextRepayDate, PromotionCode, PastduePftCalMthd");
 		sql.append(", PastduePftMargin, InstBasedSchd, SchdVersion");
-		sql.append(" from FinanceMain");
+		sql.append(" From FinanceMain");
 		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql);
@@ -314,7 +314,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", FinStatus, FinAmount, FeeChargeAmt, FinRepaymentAmount, fm.FinCcy, FinBranch");
 		sql.append(", ProfitDaysBasis, FinStartDate, FinAssetValue, LastRepayPftDate, LastRepayRvwDate");
 		sql.append(", FinCurrAssetValue, MaturityDate, PromotionCode, e.EntityCode, WriteoffLoan, SchdVersion");
-		sql.append(" from Financemain fm");
+		sql.append(" From Financemain fm");
 		sql.append(" inner join RmtFinanceTypes ft on ft.Fintype = fm.Fintype");
 		sql.append(" inner join SmtDivisionDetail d on d.DivisionCode = ft.FinDivision");
 		sql.append(" inner join entity e on e.EntityCode = d.EntityCode");
@@ -375,7 +375,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", InitiateUser, MaturityDate");
 		sql.append(", MinDownPayPerc, PromotionCode, FinIsActive, SanBsdSchdle, PromotionSeqId");
 		sql.append(", SvAmount, CbAmount, EmployeeName, SchdVersion");
-		sql.append(" from Financemain");
+		sql.append(" From Financemain");
 		sql.append("  Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql);
@@ -942,7 +942,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public void delete(FinanceMain fm, TableType tableType, boolean wif, boolean finalize) {
-		StringBuilder sql = new StringBuilder("delete from");
+		StringBuilder sql = new StringBuilder("delete From");
 		if (wif) {
 			sql.append(" WIFFinanceMain");
 		} else {
@@ -1050,7 +1050,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", LovDescCustShrtName, LovDescFinBranchName, Blacklisted, LovDescFinScheduleOn");
 		sql.append(", FeeChargeAmt, ClosingStatus, CustTypeCtg, GraceTerms, LovDescFinDivision");
 		sql.append(", LovDescProductCodeName, Defferments, SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount");
-		sql.append(" from FinanceEnquiry_View");
+		sql.append(" From FinanceEnquiry_View");
 		sql.append(" Where CustID = ?");
 		sql.append(" and (ClosingStatus is null or ClosingStatus != 'C')");
 		sql.append(" order by FinType, FinCcy ");
@@ -1135,7 +1135,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	@Override
 	public FinanceSummary getFinanceProfitDetails(long finID) {
 
-		StringBuilder sql = new StringBuilder("select * from FinanceProfitEnquiry_View");
+		StringBuilder sql = new StringBuilder("select * From FinanceProfitEnquiry_View");
 		sql.append(" where FinID = :FinID");
 
 		logger.debug(Literal.SQL + sql);
@@ -1321,7 +1321,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" FinID, FinReference, FinCommitmentRef, CmtTitle, CustID");
 		sql.append(", NumberOfTerms, FinStartDate, FinType, TotalOriginal, CmtAmount, CmtAvailable");
 		sql.append(", CmtExpiryDate, TotalOutStanding, MaturityDate, TotalRepayAmt, FinStatus");
-		sql.append(" from CustFinanceExposure_View");
+		sql.append(" From CustFinanceExposure_View");
 		sql.append(" Where CustID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -1430,8 +1430,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public List<FinanceMain> getFinanceRefByPriority() {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinId, FinReference, LastMntBy, NextUserId, NextRoleCode, Priority");
-		sql.append(" from FinanceMain_Temp");
-		sql.append(" Where FinReference Not In (Select Reference from MailLog) AND Priority != 0");
+		sql.append(" From FinanceMain_Temp");
+		sql.append(" Where FinReference Not In (Select Reference From MailLog) AND Priority != 0");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -1538,7 +1538,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public List<FinanceMain> getFinanceMainbyCustId(final long custID) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinID, FinReference, CustID, FinAmount, FinType, FinCcy, WriteoffLoan");
-		sql.append(" from FinanceMain");
+		sql.append(" From FinanceMain");
 		sql.append(" Where CustID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -1732,7 +1732,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("usrid", userIds);
 
-		StringBuilder sql = new StringBuilder("Select usrlogin from secusers");
+		StringBuilder sql = new StringBuilder("Select usrlogin From secusers");
 		sql.append(" Where usrid IN (:usrid) ");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -1748,7 +1748,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", PlanEMIHMethod, PlanEMIHMaxPerYear, PlanEMIHMax, PlanEMIHLockPeriod, PlanEMICpz, AlwMultiDisb");
 		sql.append(", UnPlanEMIHLockPeriod, UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays");
 		sql.append(", AvailedUnPlanEmi, AvailedReAgeH, PromotionCode, AllowedDefFrqChange, WriteoffLoan");
-		sql.append(" from FinanceMain_View");
+		sql.append(" From FinanceMain_View");
 		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -1805,7 +1805,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", fm.FirstRepay, ft.FinCategory lovDescFinProduct, fm.ClosingStatus");
 		sql.append(", fm.RecordStatus, fm.ProductCategory, fm.FinBranch, fm.FinApprovedDate, fm.FinIsActive");
 		sql.append(", fm.WriteoffLoan");
-		sql.append(" from FinanceMain");
+		sql.append(" From FinanceMain");
 		sql.append(StringUtils.trimToEmpty(type)).append(" fm");
 		sql.append(" Inner Join RMTFinanceTypes ft On fm.FinType = ft.FinType");
 		sql.append(" Where CustID = ?");
@@ -1937,8 +1937,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		// not supported by Postgresql
 		// // Prepare the SQL.
 		// StringBuilder sql = new StringBuilder("select
-		// coalesce(sum(max(RepayAmount)), 0) from FinScheduleDetails_View");
-		// sql.append(" where FinReference in (select FinReference from
+		// coalesce(sum(max(RepayAmount)), 0) From FinScheduleDetails_View");
+		// sql.append(" where FinReference in (select FinReference From
 		// FinanceMain_View ");
 		// sql.append(" where MandateId = :MandateId and FinIsActive = 1 and
 		// FinReference != :FinReference)");
@@ -2314,7 +2314,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" fm.FinID, fm.FinReference, fm.FinAssetValue, fm.FinCurrAssetValue, fm.FinCcy");
 		sql.append(", fm.FinBranch, fm.FinType, e.EntityCode");
-		sql.append(" from FinanceMain fm, SMTDivisionDetail e");
+		sql.append(" From FinanceMain fm, SMTDivisionDetail e");
 		sql.append(" inner join  RMTFinanceTypes ft on e.DivisionCode = ft.FinDivision and ft.FinType= ?");
 		sql.append(" WHERE  fm.FinType = ? And (ClosingStatus is null or ClosingStatus <> ?)");
 		sql.append(" And fm.FinApprovedDate >= ? And fm.FinApprovedDate <= ?");
@@ -2367,8 +2367,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public String getEarlyPayMethodsByFinRefernce(long finID) {
-		StringBuilder sql = new StringBuilder("Select AlwEarlyPayMethods from RMTFinanceTypes");
-		sql.append(" Where FinType = (Select FinType from FinanceMain Where FinID = ?)");
+		StringBuilder sql = new StringBuilder("Select AlwEarlyPayMethods From RMTFinanceTypes");
+		sql.append(" Where FinType = (Select FinType From FinanceMain Where FinID = ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -2481,7 +2481,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public String getNextUserId(long finID) {
-		String sql = "Select NextUserId from FinanceMain_Temp Where FinID = ?";
+		String sql = "Select NextUserId From FinanceMain_Temp Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -2593,7 +2593,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		if (wif) {
 			sql.append(" From WifFinanceMain fm");
 		} else {
-			sql.append(" from FinanceMain fm");
+			sql.append(" From FinanceMain fm");
 		}
 		sql.append(" Inner Join RmTFinanceTypes ft On ft.FinType = fm.FinType");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -2733,7 +2733,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public List<FinanceMain> getFinListForIncomeAMZ(Date curMonthStart) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinID, FinReference, FinStartDate, FinApprovedDate, ClosingStatus, FinIsActive, ClosedDate");
-		sql.append(", WriteoffLoan from FinanceMain");
+		sql.append(", WriteoffLoan From FinanceMain");
 		sql.append(" Where MaturityDate >= ? Order by FinID");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -3112,7 +3112,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		if (wif) {
 			sql.append(" From WifFinanceMain");
 		} else {
-			sql.append(" from FinanceMain");
+			sql.append(" From FinanceMain");
 		}
 		sql.append(StringUtils.trimToEmpty(tempTab.getSuffix()));
 		sql.append(" Where FinID = ? and RcdMaintainSts is null");
@@ -3163,7 +3163,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", fm.FinCurrAssetValue, fm.FeeChargeAmt, fm.FinRepaymentAmount");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join CollateralAssignment ca On ca.Reference = fm.FinReference");
-		sql.append(" Where ca.CollateralRef In (select CollateralRef from CollateralAssignment");
+		sql.append(" Where ca.CollateralRef In (select CollateralRef From CollateralAssignment");
 		sql.append(" Where Reference = ?)");
 		sql.append(" Union");
 		sql.append(" Select distinct fm.FinID, fm.FinReference, fm.FinType, fm.FinStartDate, fm.FinStatus, fm.FinCcy");
@@ -3204,15 +3204,15 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", cu.CustResidentialSts CustResidentialSts");
 
 		if (TableType.MAIN_TAB == tableType) {
-			sql.append(" from FinanceMain fm");
+			sql.append(" From FinanceMain fm");
 			sql.append(" inner join Customers cu on cu.CustId = fm.CustId");
 			sql.append(" inner join CustomerAddresses ca on ca.CustId = cu.CustId");
 		} else if (TableType.TEMP_TAB == tableType) {
-			sql.append(" from FinanceMain_Temp fm");
+			sql.append(" From FinanceMain_Temp fm");
 			sql.append(" inner join Customers cu on cu.CustId = fm.CustId");
 			sql.append(" inner join CustomerAddresses ca on ca.CustId = cu.CustId");
 		} else if (TableType.VIEW == tableType) {
-			sql.append(" from FinanceMain_View fm");
+			sql.append(" From FinanceMain_View fm");
 			sql.append(" inner join Customers_View cu on cu.CustId = fm.CustId");
 			sql.append(" inner join CustomerAddresses_View ca on ca.CustId = cu.CustId");
 		}
@@ -3252,13 +3252,13 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", cu.CustResidentialSts CustResidentialSts");
 
 		if (TableType.MAIN_TAB == tableType) {
-			sql.append(" from Customers cu");
+			sql.append(" From Customers cu");
 			sql.append(" inner join CustomerAddresses ca on ca.CustId = cu.CustId");
 		} else if (TableType.TEMP_TAB == tableType) {
-			sql.append(" from Customers_Temp cu");
+			sql.append(" From Customers_Temp cu");
 			sql.append(" inner join CustomerAddresses_Temp ca on ca.CustId = cu.CustId");
 		} else if (TableType.VIEW == tableType) {
-			sql.append(" from Customers_View cu");
+			sql.append(" From Customers_View cu");
 			sql.append(" inner join CustomerAddresses_View ca on ca.CustId = cu.CustId");
 		}
 
@@ -3300,7 +3300,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public String getFinanceMainByRcdMaintenance(long finID, String type) {
-		StringBuilder sql = new StringBuilder("Select RcdMaintainSts from FinanceMain");
+		StringBuilder sql = new StringBuilder("Select RcdMaintainSts From FinanceMain");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinID = ?");
 
@@ -3315,7 +3315,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public FinanceMain getRcdMaintenanceByRef(long finID, String type) {
-		StringBuilder sql = new StringBuilder("Select RcdMaintainSts, MaturityDate, WriteoffLoan from FinanceMain");
+		StringBuilder sql = new StringBuilder("Select RcdMaintainSts, MaturityDate, WriteoffLoan From FinanceMain");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinID = ?");
 
@@ -3619,7 +3619,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", PromotionSeqId, AvailedDefFrqChange, FinIsActive, PromotionCode, OldFinReference");
 		sql.append(", FinCategory, FinType, FinBranch, MandateID, CustID");
 		sql.append(" From FinanceMain");
-		sql.append(" Where FinID = (Select FinID from Financemain_Extension Where HostReference = ?)");
+		sql.append(" Where FinID = (Select FinID From Financemain_Extension Where HostReference = ?)");
 		sql.append(" And FinIsActive = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -4055,7 +4055,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", EmployeeName, FinAssetValue, FinCurrAssetValue, AlwGrcAdj, EndGrcPeriodAftrFullDisb");
 		sql.append(", AutoIncGrcEndDate, Version, LastMntOn, ReferralId, GraceTerms, NumberOfTerms");
 		sql.append(", WriteoffLoan, SchdVersion, Alwmultidisb, TdsType");
-		sql.append(" from FinanceMain");
+		sql.append(" From FinanceMain");
 		return sql;
 	}
 
@@ -4300,9 +4300,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 		if (!wif) {
-			sql.append(" from FinanceMain");
+			sql.append(" From FinanceMain");
 		} else {
-			sql.append(" from WIFFinanceMain");
+			sql.append(" From WIFFinanceMain");
 		}
 
 		sql.append(StringUtils.trimToEmpty(type));
@@ -4621,10 +4621,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	@Override
 	public Long getCustomerIdByFin(long finID) {
 		StringBuilder sql = new StringBuilder("Select distinct CustId");
-		sql.append(" from (");
-		sql.append(" Select CustId, FinID from FinanceMain_Temp");
+		sql.append(" From (");
+		sql.append(" Select CustId, FinID From FinanceMain_Temp");
 		sql.append(" Union all");
-		sql.append(" Select CustId, FinID from FinanceMain");
+		sql.append(" Select CustId, FinID From FinanceMain");
 		sql.append(") T");
 		sql.append(" Where FinID = ?");
 
@@ -4741,9 +4741,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" CustShrtName, CustCif, fm.FinID, fm.Finreference, fm.OfferId");
 		sql.append(" From Customers cu");
 		sql.append(" Inner Join (");
-		sql.append(" Select OfferId, FinID, Finreference, CustID from FinanceMain");
+		sql.append(" Select OfferId, FinID, Finreference, CustID From FinanceMain");
 		sql.append(" Union All");
-		sql.append(" Select OfferId, FinID, Finreference, CustID from FinanceMain_Temp");
+		sql.append(" Select OfferId, FinID, Finreference, CustID From FinanceMain_Temp");
 		sql.append(") fm on fm.CustID = cu.CustID");
 		sql.append(" Where OfferId = ?");
 
@@ -4774,11 +4774,11 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	private void setJointAccountDetails(FinCustomerDetails cd) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" CustShrtName, CustCif, fm.FinID, fm.Finreference");
-		sql.append(" from Customers cu");
+		sql.append(" From Customers cu");
 		sql.append(" Inner Join (");
-		sql.append(" Select FinID, Finreference, CustID from FinJointAccountDetails");
+		sql.append(" Select FinID, Finreference, CustID From FinJointAccountDetails");
 		sql.append(" Union All");
-		sql.append(" Select FinID, Finreference, CustID from FinJointAccountDetails_Temp");
+		sql.append(" Select FinID, Finreference, CustID From FinJointAccountDetails_Temp");
 		sql.append(") fm on fm.CustID = cu.CustID");
 		sql.append(" Where FinID = ?");
 
@@ -4807,7 +4807,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" From (");
 		sql.append(" Select fm.OfferId, fm.FinID, fm.ApplicationNo From FinanceMain_Temp fm");
 		sql.append(" Union All");
-		sql.append(" Select fm.OfferId, fm.FinID, fm.ApplicationNo from FinanceMain fm");
+		sql.append(" Select fm.OfferId, fm.FinID, fm.ApplicationNo From FinanceMain fm");
 		sql.append(" Where Not (Exists (Select 1 From FinanceMain_Temp");
 		sql.append(" Where FinanceMain_Temp.FinID = fm.FinID))");
 		sql.append(") T where FinID = ?");
@@ -5143,7 +5143,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public Map<String, Object> getGSTDataMapForDealer(long dealerId) {
-		String sql = "Select DealerProvince, DealerCountry from AMTVehicleDealer_Aview Where DealerId = ?";
+		String sql = "Select DealerProvince, DealerCountry From AMTVehicleDealer_Aview Where DealerId = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -5191,7 +5191,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public FinanceMain getFinCategoryByFinRef(long finID) {
-		String sql = "Select FinCategory from FinanceMain Where FinID = ?";
+		String sql = "Select FinCategory From FinanceMain Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
 
