@@ -1,6 +1,5 @@
 package com.pennant.backend.dao.finance.impl;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -10,15 +9,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.FinanceDeviationsDAO;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.util.DeviationConstants;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -29,242 +25,262 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 		super();
 	}
 
-	/**
-	 * get Deviation Details List based on finance reference
-	 * 
-	 */
 	@Override
-	public List<FinanceDeviations> getFinanceDeviations(String finReference, String type) {
-		StringBuilder sql = getSqlQuery(type);
-		sql.append(" Where FinReference = ?");
+	public List<FinanceDeviations> getFinanceDeviations(long finID, String type) {
+		StringBuilder sql = getSelectQuery(type);
+		sql.append(" Where FinID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
-		FinDeviationRowMapper rowMapper = new FinDeviationRowMapper(type);
-		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				int index = 1;
-				ps.setString(index++, finReference);
-			}
-		}, rowMapper);
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, finID);
+		}, new FinDeviationRowMapper(type));
 
 	}
 
 	@Override
-	public List<FinanceDeviations> getFinanceDeviations(String finReference, boolean deviProcessed, String type) {
-		StringBuilder sql = getSqlQuery(type);
-		sql.append(" Where FinReference = ? and DeviProcessed = ?");
+	public List<FinanceDeviations> getFinanceDeviations(long finID, boolean deviProcessed, String type) {
+		StringBuilder sql = getSelectQuery(type);
+		sql.append(" Where FinID = ? and DeviProcessed = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		FinDeviationRowMapper rowMapper = new FinDeviationRowMapper(type);
-		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				int index = 1;
-				ps.setString(index++, finReference);
-				ps.setBoolean(index++, deviProcessed);
-			}
-		}, rowMapper);
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+
+			int index = 1;
+			ps.setLong(index++, finID);
+			ps.setBoolean(index++, deviProcessed);
+		}, new FinDeviationRowMapper(type));
 	}
 
-	/**
-	 * This method updates the Record BMTAcademics or BMTAcademics_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Academic Details by key AcademicLevel and Version
-	 * 
-	 * @param Academic
-	 *            Details (academic)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-
 	@Override
-	public void update(FinanceDeviations financeDeviations, String type) {
-		logger.debug(Literal.ENTERING);
-
+	public void update(FinanceDeviations fd, String type) {
 		StringBuilder sql = new StringBuilder("Update FinanceDeviations");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append("  Set FinReference = :FinReference, Module = :Module, DeviationCode =:DeviationCode, ");
-		sql.append(" DeviationType = :DeviationType , DeviationValue = :DeviationValue, UserRole = :UserRole,");
-		sql.append(
-				" DelegationRole = :DelegationRole, ApprovalStatus = :ApprovalStatus ,DeviationDate = :DeviationDate,");
-		sql.append(" DeviationCategory = :DeviationCategory, Remarks =:Remarks, ");
-		sql.append(" DeviationUserId=:DeviationUserId, DelegatedUserId = :DelegatedUserId, ");
-		sql.append(" MarkDeleted = :MarkDeleted, RaisedUser = :RaisedUser, Mitigants = :Mitigants");
-		sql.append(" where DeviationId = :DeviationId");
+		sql.append(" Set FinID = ?, FinReference = ?, Module = ?, DeviationCode = ?");
+		sql.append(", DeviationType = ?, DeviationValue = ?, UserRole = ?, DelegationRole = ?");
+		sql.append(", ApprovalStatus = ?, DeviationDate = ?, DeviationCategory = ?, Remarks = ?");
+		sql.append(", DeviationUserId = ?, DelegatedUserId = ?, MarkDeleted = ?, RaisedUser = ?, Mitigants = ?");
+		sql.append(" Where DeviationId = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug(Literal.LEAVING);
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index, fd.getFinID());
+			ps.setString(index, fd.getFinReference());
+			ps.setString(index, fd.getModule());
+			ps.setString(index, fd.getDeviationCode());
+			ps.setString(index, fd.getDeviationType());
+			ps.setString(index, fd.getDeviationValue());
+			ps.setString(index, fd.getUserRole());
+			ps.setString(index, fd.getDelegationRole());
+			ps.setString(index, fd.getApprovalStatus());
+			ps.setDate(index, JdbcUtil.getDate(fd.getDeviationDate()));
+			ps.setString(index, fd.getDeviationCategory());
+			ps.setString(index, fd.getRemarks());
+			ps.setString(index, fd.getDeviationUserId());
+			ps.setString(index, fd.getDelegatedUserId());
+			ps.setBoolean(index, fd.isMarkDeleted());
+			ps.setString(index, fd.getRaisedUser());
+			ps.setString(index, fd.getMitigants());
+			ps.setLong(index, fd.getDeviationId());
+
+		});
+
 	}
 
-	/**
-	 * save Deviation details
-	 */
 	@Override
-	public long save(FinanceDeviations financeDeviations, String type) {
-		logger.debug("Entering");
-
-		if (financeDeviations.getDeviationId() == Long.MIN_VALUE) {
-			financeDeviations.setDeviationId(getNextValue("SeqDeviations"));
+	public long save(FinanceDeviations fd, String type) {
+		if (fd.getDeviationId() == Long.MIN_VALUE) {
+			fd.setDeviationId(getNextValue("SeqDeviations"));
 		}
-		StringBuilder insertSql = new StringBuilder("Insert Into FinanceDeviations");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" ( DeviationId, FinReference, Module, DeviationCode, DeviationType, ");
-		insertSql.append(" DeviationValue, UserRole, DelegationRole,ApprovalStatus,");
-		insertSql.append(
-				" DeviationDate, DeviationUserId,DelegatedUserId,DeviationCategory,Remarks,DeviProcessed, DeviationDesc, MarkDeleted, RaisedUser, Mitigants)");
 
-		insertSql.append(" Values( :DeviationId, :FinReference, :Module, :DeviationCode, :DeviationType,");
-		insertSql.append(" :DeviationValue, :UserRole, :DelegationRole, :ApprovalStatus,");
-		insertSql.append(
-				" :DeviationDate, :DeviationUserId, :DelegatedUserId, :DeviationCategory, :Remarks, :DeviProcessed, :DeviationDesc, :MarkDeleted, :RaisedUser, :Mitigants)");
-		logger.debug("insertSql: " + insertSql.toString());
+		StringBuilder sql = new StringBuilder("Insert Into FinanceDeviations");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (DeviationId, FinID, FinReference, Module, DeviationCode, DeviationType");
+		sql.append(", DeviationValue, UserRole, DelegationRole, ApprovalStatus, DeviationDate, DeviationUserId");
+		sql.append(", DelegatedUserId, DeviationCategory, Remarks, DeviProcessed");
+		sql.append(", DeviationDesc, MarkDeleted, RaisedUser, Mitigants)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return financeDeviations.getId();
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index, fd.getDeviationId());
+			ps.setLong(index, fd.getFinID());
+			ps.setString(index, fd.getFinReference());
+			ps.setString(index, fd.getModule());
+			ps.setString(index, fd.getDeviationCode());
+			ps.setString(index, fd.getDeviationType());
+			ps.setString(index, fd.getDeviationValue());
+			ps.setString(index, fd.getUserRole());
+			ps.setString(index, fd.getDelegationRole());
+			ps.setString(index, fd.getApprovalStatus());
+			ps.setDate(index, JdbcUtil.getDate(fd.getDeviationDate()));
+			ps.setString(index, fd.getDeviationUserId());
+			ps.setString(index, fd.getDelegatedUserId());
+			ps.setString(index, fd.getDeviationCategory());
+			ps.setString(index, fd.getRemarks());
+			ps.setBoolean(index, fd.isDeviProcessed());
+			ps.setString(index, fd.getDeviationDesc());
+			ps.setBoolean(index, fd.isMarkDeleted());
+			ps.setString(index, fd.getRaisedUser());
+			ps.setString(index, fd.getMitigants());
+		});
+		return fd.getId();
 	}
 
 	@Override
-	public void delete(FinanceDeviations financeDeviations, String type) {
-		logger.debug("Entering");
+	public void delete(FinanceDeviations fd, String type) {
+		StringBuilder sql = new StringBuilder("Delete From FinanceDeviations");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where  FinID = ? and Module = ? and DeviationCode = ?");
 
-		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append("Delete From FinanceDeviations");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where  FinReference = :FinReference and Module = :Module ");
-		deleteSql.append(" and DeviationCode = :DeviationCode ");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("deleteSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);
 		try {
-			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
 
-		} catch (Exception e) {
-			logger.debug(e);
-
+				ps.setLong(index++, fd.getFinID());
+				ps.setString(index++, fd.getModule());
+				ps.setString(index++, fd.getDeviationCode());
+			});
+		} catch (DataAccessException e) {
+			//
 		}
-		logger.debug("Leaving");
 	}
 
 	@Override
-	public void deleteCheckListRef(String finReference, String module, String refId, String type) {
-		logger.debug("Entering");
+	public void deleteCheckListRef(long finID, String module, String refId, String type) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Delete From FinanceDeviations");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ? and Module = ? and (DeviationCode = ? or DeviationCode = ? or DeviationCode = ?)");
 
-		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-		mapSqlParameterSource.addValue("FinReference", finReference);
-		mapSqlParameterSource.addValue("Module", module);
-		mapSqlParameterSource.addValue("CheckExpired", refId + DeviationConstants.CL_EXPIRED);
-		mapSqlParameterSource.addValue("CheckPostoned", refId + DeviationConstants.CL_POSTPONED);
-		mapSqlParameterSource.addValue("CheckWaived", refId + DeviationConstants.CL_WAIVED);
-
-		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append("Delete From FinanceDeviations");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where  FinReference = :FinReference and Module = :Module and ");
-		deleteSql.append(
-				"( DeviationCode =:CheckExpired or DeviationCode =:CheckPostoned or DeviationCode =:CheckWaived)");
-
-		logger.debug("deleteSql: " + deleteSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			this.jdbcTemplate.update(deleteSql.toString(), mapSqlParameterSource);
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
 
-		} catch (Exception e) {
-			logger.debug(e);
+				ps.setLong(index++, finID);
+				ps.setString(index++, module);
+				ps.setString(index++, refId + DeviationConstants.CL_EXPIRED);
+				ps.setString(index++, refId + DeviationConstants.CL_POSTPONED);
+				ps.setString(index++, refId + DeviationConstants.CL_WAIVED);
+			});
 
+		} catch (DataAccessException e) {
+			//
 		}
-		logger.debug("Leaving");
 	}
 
 	@Override
-	public void updateDeviProcessed(String finReference, String type) {
-		logger.debug("Entering");
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("DeviProcessed", true);
-		source.addValue("DeviNotProcessed", false);
+	public void updateDeviProcessed(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Update FinanceDeviations");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set DeviProcessed = ? Where FinID = ? and DeviProcessed = ?");
 
-		StringBuilder updateSql = new StringBuilder("Update FinanceDeviations");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append("  Set DeviProcessed = :DeviProcessed  ");
-		updateSql.append("  where FinReference = :FinReference and  DeviProcessed =:DeviNotProcessed ");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("updateSql: " + updateSql.toString());
-		this.jdbcTemplate.update(updateSql.toString(), source);
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		logger.debug("Leaving");
+			ps.setInt(index++, 1);
+			ps.setLong(index++, finID);
+			ps.setInt(index++, 0);
+		});
 	}
 
 	@Override
-	public void deleteById(FinanceDeviations financeDeviations, String type) {
-		logger.debug("Entering");
+	public void deleteById(FinanceDeviations fd, String type) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Delete From FinanceDeviations");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where DeviationId = ?");
 
-		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append("Delete From FinanceDeviations");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where  DeviationId = :DeviationId");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("deleteSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);
 		try {
-			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, fd.getDeviationId()));
 
-		} catch (Exception e) {
-			logger.debug(e);
-
+		} catch (DataAccessException e) {
+			//
 		}
-		logger.debug("Leaving");
 	}
 
-	//### 05-05-2018- Start- story #361(tuleap server) Manual Deviations
 	@Override
 	public void updateMarkDeleted(long deviationId, String finReference) {
-		logger.debug("Entering");
-		FinanceDeviations financeDeviations = new FinanceDeviations();
-		financeDeviations.setDeviationId(deviationId);
-		financeDeviations.setMarkDeleted(true);
-		StringBuilder updateSql = new StringBuilder("Update FinanceDeviations");
-		updateSql.append("  Set MarkDeleted = :MarkDeleted ");
-		updateSql.append("where DeviationId=:DeviationId ");
+		String sql = "Update FinanceDeviations Set MarkDeleted = ? Where DeviationId = ?";
 
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug(Literal.SQL + sql);
 
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
+
+			ps.setInt(index++, 1);
+			ps.setLong(index++, deviationId);
+		});
 	}
-	//### 05-05-2018- END- story #361(tuleap server) Manual Deviations
 
 	@Override
 	public void updateMarkDeleted(long deviationId, boolean markDeleted) {
-		logger.debug(Literal.ENTERING);
+		String sql = "Update FinanceDeviations set MarkDeleted = ? Where DeviationId = ?";
 
-		FinanceDeviations deviation = new FinanceDeviations();
-		deviation.setDeviationId(deviationId);
-		deviation.setMarkDeleted(markDeleted);
+		logger.debug(Literal.SQL + sql);
 
-		StringBuilder sql = new StringBuilder("update FinanceDeviations");
-		sql.append(" set MarkDeleted = :MarkDeleted");
-		sql.append(" where DeviationId = :DeviationId");
-		logger.trace(Literal.SQL + sql.toString());
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(deviation);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
-
-		logger.debug(Literal.LEAVING);
+			ps.setBoolean(index++, markDeleted);
+			ps.setLong(index++, deviationId);
+		});
 	}
 
-	private StringBuilder getSqlQuery(String type) {
+	@Override
+	public List<FinanceDeviations> getFinanceDeviationsByStatus(long finID, String status, String type) {
+		StringBuilder sql = getSelectQuery(type);
+		sql.append(" Where FinID = ? and ApprovalStatus = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		FinDeviationRowMapper rowMapper = new FinDeviationRowMapper(type);
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, finID);
+			ps.setString(index++, status);
+		}, rowMapper);
+	}
+
+	@Override
+	public FinanceDeviations getFinanceDeviationsByIdAndFinRef(long finID, long deviationId, String type) {
+		StringBuilder sql = getSelectQuery(type);
+		sql.append(" Where FinID = ? and DeviationId = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		FinDeviationRowMapper rowMapper = new FinDeviationRowMapper(type);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, deviationId);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
+	private StringBuilder getSelectQuery(String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" DeviationId, FinReference, Module, Remarks, DeviationCode, DeviationType, DeviationValue");
+		sql.append(" DeviationId, FinID, FinReference, Module, Remarks, DeviationCode, DeviationType, DeviationValue");
 		sql.append(", UserRole, DeviationCategory, DelegationRole, ApprovalStatus, DeviationDate, DeviationUserId");
 		sql.append(", MarkDeleted, DelegatedUserId, DeviationDesc, RaisedUser, Mitigants");
 
@@ -274,6 +290,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 
 		sql.append(" from FinanceDeviations");
 		sql.append(StringUtils.trimToEmpty(type));
+
 		return sql;
 	}
 
@@ -289,6 +306,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 			FinanceDeviations fd = new FinanceDeviations();
 
 			fd.setDeviationId(rs.getLong("DeviationId"));
+			fd.setFinID(rs.getLong("FinID"));
 			fd.setFinReference(rs.getString("FinReference"));
 			fd.setModule(rs.getString("Module"));
 			fd.setRemarks(rs.getString("Remarks"));
@@ -310,45 +328,8 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 			if (!StringUtils.containsIgnoreCase(type, "View")) {
 				fd.setDeviProcessed(rs.getBoolean("DeviProcessed"));
 			}
+
 			return fd;
 		}
-
-	}
-
-	@Override
-	public List<FinanceDeviations> getFinanceDeviationsByStatus(String finReference, String status, String type) {
-		StringBuilder sql = getSqlQuery(type);
-		sql.append(" Where FinReference = ? and ApprovalStatus = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		FinDeviationRowMapper rowMapper = new FinDeviationRowMapper(type);
-		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				int index = 1;
-				ps.setString(index++, finReference);
-				ps.setString(index++, status);
-			}
-		}, rowMapper);
-	}
-
-	@Override
-	public FinanceDeviations getFinanceDeviationsByIdAndFinRef(String finReference, long deviationId, String type) {
-		StringBuilder sql = getSqlQuery(type);
-		sql.append(" Where FinReference = ? and deviationId = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-		FinDeviationRowMapper rowMapper = new FinDeviationRowMapper(type);
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, deviationId },
-					rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(
-					"Deviation not exist in FinanceDeviations{} table/view for the specified FinReference >> {} and deviationId >> {}",
-					type, finReference, deviationId);
-		}
-
-		return null;
 	}
 }

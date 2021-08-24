@@ -20,6 +20,7 @@ public class FinanceEligibilityDetail implements Serializable {
 
 	private static final long serialVersionUID = 4194235332884338495L;
 
+	private long finID;
 	private String finReference;
 	private long elgRuleCode;
 	private String elgRuleValue;
@@ -251,6 +252,14 @@ public class FinanceEligibilityDetail implements Serializable {
 
 	public void setJson(JSONObject json) {
 		this.json = json;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 }

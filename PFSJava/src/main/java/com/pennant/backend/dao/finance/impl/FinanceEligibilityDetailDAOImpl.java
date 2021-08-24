@@ -1,13 +1,14 @@
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.backend.dao.finance.FinanceEligibilityDetailDAO;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
@@ -23,27 +24,28 @@ public class FinanceEligibilityDetailDAOImpl extends BasicDao<FinanceEligibility
 	}
 
 	@Override
-	public List<FinanceEligibilityDetail> getFinElgDetailByFinRef(final String finReference, String type) {
+	public List<FinanceEligibilityDetail> getFinElgDetailByFinRef(final long finID, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, ElgRuleCode, RuleResultType");
+		sql.append(" FinID, FinReference, ElgRuleCode, RuleResultType");
 		sql.append(", RuleResult, CanOverride, OverridePerc, UserOverride");
 
 		if (type.contains("View")) {
 			sql.append(", LovDescElgRuleCode, LovDescElgRuleCodeDesc");
 		}
 
-		sql.append(" from FinanceEligibilityDetail");
+		sql.append(" From FinanceEligibilityDetail");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, finReference);
+			ps.setLong(index++, finID);
 		}, (rs, rowNum) -> {
 			FinanceEligibilityDetail ed = new FinanceEligibilityDetail();
 
+			ed.setFinID(rs.getLong("FinID"));
 			ed.setFinReference(rs.getString("FinReference"));
 			ed.setElgRuleCode(rs.getLong("ElgRuleCode"));
 			ed.setRuleResultType(rs.getString("RuleResultType"));
@@ -62,70 +64,99 @@ public class FinanceEligibilityDetailDAOImpl extends BasicDao<FinanceEligibility
 	}
 
 	@Override
-	public int getFinElgDetailCount(FinanceEligibilityDetail financeEligibilityDetail) {
-		logger.debug("Entering");
+	public int getFinElgDetailCount(FinanceEligibilityDetail fed) {
+		String sql = "Select count(FinID) From FinanceEligibilityDetail Where FinID = ? and ElgRuleCode = ?";
 
-		StringBuilder selectSql = new StringBuilder("Select count(*) ");
-		selectSql.append(" From FinanceEligibilityDetail");
-		selectSql.append(" Where FinReference =:FinReference and ElgRuleCode = :ElgRuleCode ");
+		logger.debug(Literal.SQL + sql);
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeEligibilityDetail);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		try {
+			return this.jdbcOperations.queryForObject(sql, Integer.class, fed.getFinID(), fed.getElgRuleCode());
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return 0;
 	}
 
 	@Override
-	public void saveList(List<FinanceEligibilityDetail> eligibilityDetails, String type) {
-		logger.debug("Entering");
+	public void saveList(List<FinanceEligibilityDetail> fed, String type) {
+		StringBuilder sql = new StringBuilder("Insert Into FinanceEligibilityDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (FinID, FinReference, ElgRuleCode, RuleResultType, RuleResult");
+		sql.append(", CanOverride, OverridePerc, UserOverride, LastMntOn, LastMntBy)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into FinanceEligibilityDetail");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(
-				" (FinReference, ElgRuleCode, RuleResultType,RuleResult ,CanOverride, OverridePerc, UserOverride, LastMntOn, LastMntBy )");
-		insertSql.append(
-				" Values(:FinReference, :ElgRuleCode, :RuleResultType, :RuleResult, :CanOverride, :OverridePerc, :UserOverride, :LastMntOn, :LastMntBy  )");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("insertSql: " + insertSql.toString());
+		this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinanceEligibilityDetail ed = fed.get(i);
 
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(eligibilityDetails.toArray());
-		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
+				int index = 1;
+
+				ps.setLong(index++, ed.getFinID());
+				ps.setString(index++, ed.getFinReference());
+				ps.setLong(index++, ed.getElgRuleCode());
+				ps.setString(index++, ed.getRuleResultType());
+				ps.setString(index++, ed.getRuleResult());
+				ps.setBoolean(index++, ed.isCanOverride());
+				ps.setInt(index++, ed.getOverridePerc());
+				ps.setBoolean(index++, ed.isUserOverride());
+				ps.setTimestamp(index++, ed.getLastMntOn());
+				ps.setLong(index++, ed.getLastMntBy());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return fed.size();
+			}
+		});
 	}
 
 	@Override
 	public void updateList(List<FinanceEligibilityDetail> eligibilityDetails) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder();
+		sql.append("Update FinanceEligibilityDetail");
+		sql.append(" Set RuleResultType = ?, RuleResult = ?, CanOverride = ?, OverridePerc = ?, UserOverride = ?");
+		sql.append(", LastMntOn = ?, LastMntBy = ?");
+		sql.append(" Where FinID = ? and ElgRuleCode = ?");
 
-		StringBuilder updateSql = new StringBuilder();
-		updateSql.append("Update FinanceEligibilityDetail");
-		updateSql.append(" Set RuleResultType = :RuleResultType, RuleResult = :RuleResult ,");
-		updateSql.append(" CanOverride = :CanOverride , OverridePerc = :OverridePerc, UserOverride = :UserOverride, ");
-		updateSql.append(" LastMntOn = :LastMntOn , LastMntBy = :LastMntBy ");
-		updateSql.append("  Where FinReference =:FinReference and ElgRuleCode = :ElgRuleCode ");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("updateSql: " + updateSql.toString());
+		this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinanceEligibilityDetail ed = eligibilityDetails.get(i);
 
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(eligibilityDetails.toArray());
-		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
+				int index = 1;
+
+				ps.setString(index++, ed.getRuleResultType());
+				ps.setString(index++, ed.getRuleResult());
+				ps.setBoolean(index++, ed.isCanOverride());
+				ps.setInt(index++, ed.getOverridePerc());
+				ps.setBoolean(index++, ed.isUserOverride());
+				ps.setTimestamp(index++, ed.getLastMntOn());
+				ps.setLong(index++, ed.getLastMntBy());
+				ps.setLong(index++, ed.getFinID());
+				ps.setLong(index++, ed.getElgRuleCode());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return eligibilityDetails.size();
+			}
+
+		});
 	}
 
 	@Override
-	public void deleteByFinRef(String finReference) {
-		logger.debug("Entering");
+	public void deleteByFinRef(long finID) {
+		String sql = "Delete From FinanceEligibilityDetail Where FinID = ?";
 
-		FinanceEligibilityDetail detail = new FinanceEligibilityDetail();
-		detail.setFinReference(finReference);
+		logger.debug(Literal.SQL + sql);
 
-		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append(" DELETE FROM FinanceEligibilityDetail ");
-		deleteSql.append(" Where FinReference =:FinReference ");
-
-		logger.debug("updateSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql, ps -> ps.setLong(1, finID));
 	}
 
 }

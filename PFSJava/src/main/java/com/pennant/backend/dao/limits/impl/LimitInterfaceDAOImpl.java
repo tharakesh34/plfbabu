@@ -1,23 +1,23 @@
 package com.pennant.backend.dao.limits.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.limits.ClosedFacilityDetail;
 import com.pennant.backend.model.limits.FinanceLimitProcess;
 import com.pennant.backend.model.limits.LimitDetail;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class LimitInterfaceDAOImpl extends SequenceDao<FinanceLimitProcess> implements LimitInterfaceDAO {
 	private static Logger logger = LogManager.getLogger(LimitInterfaceDAOImpl.class);
@@ -26,230 +26,250 @@ public class LimitInterfaceDAOImpl extends SequenceDao<FinanceLimitProcess> impl
 		super();
 	}
 
-	/**
-	 * Method to save the Limit Utilization details
-	 * 
-	 * @param finLimitProcess
-	 */
 	@Override
-	public void saveFinLimitUtil(FinanceLimitProcess finLimitProcess) {
-		logger.debug("Entering");
-
-		if (finLimitProcess.getId() == 0 || finLimitProcess.getId() == Long.MIN_VALUE) {
-			finLimitProcess.setFinLimitId(getNextValue("SeqFinanceLimitProcess"));
+	public void saveFinLimitUtil(FinanceLimitProcess flp) {
+		if (flp.getId() == 0 || flp.getId() == Long.MIN_VALUE) {
+			flp.setFinLimitId(getNextValue("SeqFinanceLimitProcess"));
 		}
 
-		StringBuilder insertSql = new StringBuilder("INSERT INTO FinanceLimitProcess ");
-		insertSql.append(" (FinLimitId, FinReference, RequestType, ReferenceNum, CustCIF, LimitRef, ResStatus,");
-		insertSql.append("  ResMessage, ErrorCode, ErrorMsg, ValueDate, DealAmount)");
-		insertSql.append(" Values(");
-		insertSql.append(" :FinLimitId,:FinReference, :RequestType, :ReferenceNum, :CustCIF, :LimitRef, :ResStatus,");
-		insertSql.append(" :ResMessage, :ErrorCode, :ErrorMsg, :ValueDate, :DealAmount)");
+		StringBuilder sql = new StringBuilder("Insert Into FinanceLimitProcess");
+		sql.append(" (FinLimitId, FinID, FinReference, RequestType, ReferenceNum, CustCIF, LimitRef, ResStatus");
+		sql.append(", ResMessage, ErrorCode, ErrorMsg, ValueDate, DealAmount)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finLimitProcess);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		logger.debug("Leaving");
+			ps.setLong(index++, flp.getFinLimitId());
+			ps.setLong(index++, flp.getFinID());
+			ps.setString(index++, flp.getFinReference());
+			ps.setString(index++, flp.getRequestType());
+			ps.setString(index++, flp.getReferenceNum());
+			ps.setString(index++, flp.getCustCIF());
+			ps.setString(index++, flp.getLimitRef());
+			ps.setString(index++, flp.getResStatus());
+			ps.setString(index++, flp.getResMessage());
+			ps.setString(index++, flp.getErrorCode());
+			ps.setString(index++, flp.getErrorMsg());
+			ps.setDate(index++, JdbcUtil.getDate(flp.getValueDate()));
+			ps.setBigDecimal(index++, flp.getDealAmount());
+		});
 	}
 
-	/**
-	 * Method for saving the Customer limit details
-	 * 
-	 * @param limitDetail
-	 */
 	@Override
-	public void saveCustomerLimitDetails(LimitDetail limitDetail) {
-		logger.debug("Entering");
+	public void saveCustomerLimitDetails(LimitDetail ld) {
+		StringBuilder sql = new StringBuilder("Insert Into CustomerLimitDetails (");
+		sql.append(" CustCIF, LimitRef, LimitDesc, RevolvingType, LimitExpiryDate, LimitCcy");
+		sql.append(", ApprovedLimitCcy, ApprovedLimit, OutstandingAmtCcy, OutstandingAmt, BlockedAmtCcy");
+		sql.append(", BlockedAmt, ReservedAmtCcy, ReservedAmt, AvailableAmtCcy, AvailableAmt, Notes");
+		sql.append("  ) Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		StringBuilder insertSql = new StringBuilder("INSERT INTO CustomerLimitDetails ");
-		insertSql.append(" (CustCIF, LimitRef, LimitDesc, RevolvingType, LimitExpiryDate, LimitCcy,");
-		insertSql.append(
-				"  ApprovedLimitCcy, ApprovedLimit, OutstandingAmtCcy, OutstandingAmt, BlockedAmtCcy, BlockedAmt,");
-		insertSql.append("  ReservedAmtCcy, ReservedAmt, AvailableAmtCcy, AvailableAmt, Notes)");
-		insertSql.append(" 	Values(");
-		insertSql.append("  :CustCIF, :LimitRef, :LimitDesc, :RevolvingType, :LimitExpiryDate, :LimitCcy,");
-		insertSql.append(
-				"  :ApprovedLimitCcy, :ApprovedLimit, :OutstandingAmtCcy, :OutstandingAmt, :BlockedAmtCcy, :BlockedAmt,");
-		insertSql.append("  :ReservedAmtCcy, :ReservedAmt, :AvailableAmtCcy, :AvailableAmt, :Notes)");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("insertSql: " + insertSql.toString());
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-
-		logger.debug("Leaving");
-
+			ps.setString(index++, ld.getCustCIF());
+			ps.setString(index++, ld.getLimitRef());
+			ps.setString(index++, ld.getLimitDesc());
+			ps.setString(index++, ld.getRevolvingType());
+			ps.setDate(index++, JdbcUtil.getDate(ld.getLimitExpiryDate()));
+			ps.setString(index++, ld.getLimitCcy());
+			ps.setString(index++, ld.getApprovedLimitCcy());
+			ps.setBigDecimal(index++, ld.getApprovedLimit());
+			ps.setString(index++, ld.getOutstandingAmtCcy());
+			ps.setBigDecimal(index++, ld.getOutstandingAmt());
+			ps.setString(index++, ld.getBlockedAmtCcy());
+			ps.setBigDecimal(index++, ld.getBlockedAmt());
+			ps.setString(index++, ld.getReservedAmtCcy());
+			ps.setBigDecimal(index++, ld.getReservedAmt());
+			ps.setString(index++, ld.getAvailableAmtCcy());
+			ps.setBigDecimal(index++, ld.getAvailableAmt());
+			ps.setString(index++, ld.getNotes());
+		});
 	}
 
-	/**
-	 * Method to fetch the limit Utilization details
-	 * 
-	 * @param limitUtilReq
-	 */
 	@Override
-	public FinanceLimitProcess getLimitUtilDetails(FinanceLimitProcess financeLimitProcess) {
-		logger.debug("Entering");
+	public FinanceLimitProcess getLimitUtilDetails(FinanceLimitProcess flps) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select * From (Select FinLimitId, FinID, FinReference, RequestType, ReferenceNum, CustCIF");
+		sql.append(", LimitRef, ResStatus, ResMessage, ErrorCode, ErrorMsg, ValueDate");
+		sql.append(", DealAmount, row_number() over (order by Valuedate desc)");
+		sql.append(" row_num From FinanceLimitProcess Where FinID = ? and RequestType = ?");
+		sql.append(" and CustCIF = ?) T Where row_num < = 1");
 
-		FinanceLimitProcess limitProcess = new FinanceLimitProcess();
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select * from (Select FinLimitId , FinReference, RequestType, ReferenceNum , CustCIF, ");
-		selectSql.append(" LimitRef, ResStatus, ResMessage, ErrorCode,ErrorMsg, ValueDate, ");
-		selectSql.append(" DealAmount,ROW_NUMBER() over (order by Valuedate desc)");
-		selectSql.append(
-				" row_num from FinanceLimitProcess Where FinReference =:FinReference AND RequestType =:RequestType ");
-		selectSql.append(" AND CustCIF =:CustCIF) T Where row_num <=1");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeLimitProcess);
-		RowMapper<FinanceLimitProcess> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceLimitProcess.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			limitProcess = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			limitProcess = null;
-		}
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
+				FinanceLimitProcess flp = new FinanceLimitProcess();
 
-		logger.debug("Leaving");
-		return limitProcess;
+				flp.setFinLimitId(rs.getLong("FinLimitId"));
+				flp.setFinID(rs.getLong("FinID"));
+				flp.setFinReference(rs.getString("FinReference"));
+				flp.setRequestType(rs.getString("RequestType"));
+				flp.setReferenceNum(rs.getString("ReferenceNum"));
+				flp.setCustCIF(rs.getString("CustCIF"));
+				flp.setLimitRef(rs.getString("LimitRef"));
+				flp.setResStatus(rs.getString("ResStatus"));
+				flp.setResMessage(rs.getString("ResMessage"));
+				flp.setErrorCode(rs.getString("ErrorCode"));
+				flp.setErrorMsg(rs.getString("ErrorMsg"));
+				flp.setValueDate(rs.getTimestamp("ValueDate"));
+				flp.setDealAmount(rs.getBigDecimal("DealAmount"));
+				return flp;
+			}, flps.getFinID(), flps.getRequestType(), flps.getCustCIF());
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+		return null;
 	}
 
-	/**
-	 * Method for fetch Customer Limit Details based on the Limit Reference
-	 * 
-	 * @param limitRef
-	 */
 	@Override
 	public LimitDetail getCustomerLimitDetails(String limitRef) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustCIF, LimitRef, LimitDesc, RevolvingType");
+		sql.append(", LimitExpiryDate, LimitCcy, ApprovedLimitCcy, ApprovedLimit, OutstandingAmtCcy, OutstandingAmt");
+		sql.append(", ReservedAmtCcy, ReservedAmt, AvailableAmtCcy, AvailableAmt, Notes, BlockedAmtCcy, BlockedAmt");
+		sql.append("  From  CustomerLimitDetails");
+		sql.append("  Where LimitRef = ?");
 
-		LimitDetail limitDetail = new LimitDetail();
-		limitDetail.setLimitRef(limitRef);
-
-		StringBuilder selectSql = new StringBuilder("SELECT  CustCIF, LimitRef, LimitDesc, RevolvingType,");
-		selectSql.append(
-				"  LimitExpiryDate, LimitCcy, ApprovedLimitCcy, ApprovedLimit, OutstandingAmtCcy, OutstandingAmt,");
-		selectSql.append(
-				"  ReservedAmtCcy, ReservedAmt, AvailableAmtCcy, AvailableAmt, Notes, BlockedAmtCcy, BlockedAmt ");
-		selectSql.append("  FROM  CustomerLimitDetails");
-		selectSql.append("  Where LimitRef =:LimitRef");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
-		RowMapper<LimitDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitDetail.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			limitDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
+				LimitDetail ld = new LimitDetail();
+
+				ld.setCustCIF(rs.getString("CustCIF"));
+				ld.setLimitRef(rs.getString("LimitRef"));
+				ld.setLimitDesc(rs.getString("LimitDesc"));
+				ld.setRevolvingType(rs.getString("RevolvingType"));
+				ld.setLimitExpiryDate(rs.getDate("LimitExpiryDate"));
+				ld.setLimitCcy(rs.getString("LimitCcy"));
+				ld.setApprovedLimitCcy(rs.getString("ApprovedLimitCcy"));
+				ld.setApprovedLimit(rs.getBigDecimal("ApprovedLimit"));
+				ld.setOutstandingAmtCcy(rs.getString("OutstandingAmtCcy"));
+				ld.setOutstandingAmt(rs.getBigDecimal("OutstandingAmt"));
+				ld.setReservedAmtCcy(rs.getString("ReservedAmtCcy"));
+				ld.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
+				ld.setAvailableAmtCcy(rs.getString("AvailableAmtCcy"));
+				ld.setAvailableAmt(rs.getBigDecimal("AvailableAmt"));
+				ld.setNotes(rs.getString("Notes"));
+				ld.setBlockedAmtCcy(rs.getString("BlockedAmtCcy"));
+				ld.setBlockedAmt(rs.getBigDecimal("BlockedAmt"));
+				return ld;
+			}, limitRef);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			limitDetail = null;
+			//
 		}
-		logger.debug("Leaving");
-		return limitDetail;
+		return null;
 	}
 
-	/**
-	 * Method for Update Customer Limit Details
-	 * 
-	 * @param limitDetail
-	 */
 	@Override
-	public void updateCustomerLimitDetails(LimitDetail limitDetail) {
-		logger.debug("Entering");
+	public void updateCustomerLimitDetails(LimitDetail ld) {
+		StringBuilder sql = new StringBuilder("Update CustomerLimitDetails");
+		sql.append(" Set LimitDesc = ?, RevolvingType = ?, LimitExpiryDate = ?, LimitCcy = ?");
+		sql.append(", ApprovedLimitCcy = ?, ApprovedLimit = ?, OutstandingAmtCcy = ?, OutstandingAmt = ?");
+		sql.append(", BlockedAmtCcy = ?, BlockedAmt = ?, ReservedAmtCcy = ?, ReservedAmt = ?");
+		sql.append(", AvailableAmtCcy = ?, AvailableAmt = ?, Notes = ?");
+		sql.append(" Where LimitRef = ? and CustCIF = ?");
 
-		StringBuilder updateSql = new StringBuilder("UPDATE CustomerLimitDetails");
-		updateSql.append("  Set LimitDesc =:LimitDesc,");
-		updateSql.append("  RevolvingType =:RevolvingType, LimitExpiryDate =:LimitExpiryDate, LimitCcy =:LimitCcy, ");
-		updateSql.append("  ApprovedLimitCcy =:ApprovedLimitCcy, ApprovedLimit =:ApprovedLimit,");
-		updateSql.append(
-				"  OutstandingAmtCcy =:OutstandingAmtCcy, OutstandingAmt =:OutstandingAmt, BlockedAmtCcy =:BlockedAmtCcy,");
-		updateSql.append("  BlockedAmt =:BlockedAmt, ReservedAmtCcy =:ReservedAmtCcy, ReservedAmt =:ReservedAmt,");
-		updateSql.append("  AvailableAmtCcy =:AvailableAmtCcy, AvailableAmt =:AvailableAmt, Notes =:Notes ");
-		updateSql.append("  Where LimitRef =:LimitRef AND CustCIF =:CustCIF");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("updateSql: " + updateSql.toString());
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-
-		logger.debug("Leaving");
-
+			ps.setString(index++, ld.getLimitDesc());
+			ps.setString(index++, ld.getRevolvingType());
+			ps.setDate(index++, JdbcUtil.getDate(ld.getLimitExpiryDate()));
+			ps.setString(index++, ld.getLimitCcy());
+			ps.setString(index++, ld.getApprovedLimitCcy());
+			ps.setBigDecimal(index++, ld.getApprovedLimit());
+			ps.setString(index++, ld.getOutstandingAmtCcy());
+			ps.setBigDecimal(index++, ld.getOutstandingAmt());
+			ps.setString(index++, ld.getBlockedAmtCcy());
+			ps.setBigDecimal(index++, ld.getBlockedAmt());
+			ps.setString(index++, ld.getReservedAmtCcy());
+			ps.setBigDecimal(index++, ld.getReservedAmt());
+			ps.setString(index++, ld.getAvailableAmtCcy());
+			ps.setBigDecimal(index++, ld.getAvailableAmt());
+			ps.setString(index++, ld.getNotes());
+			ps.setString(index++, ld.getLimitRef());
+			ps.setString(index++, ld.getCustCIF());
+		});
 	}
 
-	/**
-	 * Method for save the Closed facility details into PFF DB
-	 * 
-	 * @param proClFacilityList
-	 * @return boolean
-	 */
 	@Override
 	public boolean saveClosedFacilityDetails(List<ClosedFacilityDetail> proClFacilityList) {
-		logger.debug("Entering");
-		StringBuilder insertSql = new StringBuilder();
+		StringBuilder sql = new StringBuilder("Insert Into ClosedFaciltyDetails (");
+		sql.append("LimitReference, FacilityStatus, ClosedDate, Processed, ProcessedDate");
+		sql.append(") Values (?, ?, ?, ?, ?)");
 
-		insertSql.append("Insert Into ClosedFaciltyDetails");
-		insertSql.append(" (LimitReference, FacilityStatus, ClosedDate, Processed, ProcessedDate)");
-		insertSql.append(" Values (:LimitReference, :FacilityStatus, :ClosedDate, :Processed, :ProcessedDate)");
-
-		logger.debug("selectSql: " + insertSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(proClFacilityList.toArray());
-		logger.debug("Leaving");
+		logger.debug(Literal.SQL + sql.toString());
 
 		int[] recordCount;
 		try {
-			recordCount = this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			recordCount = this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps, int i) throws SQLException {
+					ClosedFacilityDetail cfd = proClFacilityList.get(i);
+
+					int index = 1;
+
+					ps.setString(index++, cfd.getLimitReference());
+					ps.setString(index++, cfd.getFacilityStatus());
+					ps.setDate(index++, JdbcUtil.getDate(cfd.getClosedDate()));
+					ps.setBoolean(index++, cfd.isProcessed());
+					ps.setDate(index++, JdbcUtil.getDate(cfd.getProcessedDate()));
+
+				}
+
+				@Override
+				public int getBatchSize() {
+					return proClFacilityList.size();
+				}
+			});
 			if (recordCount.length > 0) {
 				return true;
 			} else {
 				return false;
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			//
 			throw e;
 		}
 	}
 
 	@Override
-	public FinanceMain getFinanceMainByRef(String dealID, String type, boolean isRejectFinance) {
-		logger.debug("Entering");
-
-		FinanceMain financeMain = new FinanceMain();
-		financeMain.setFinReference(dealID);
-		StringBuilder selectSql = new StringBuilder("select  *  FROM ");
-		/*
-		 * StringBuilder selectSql = new StringBuilder("select  FinReference, GrcPeriodEndDate, FinRepaymentAmount," );
-		 * selectSql. append(" FinCommitmentRef, FinLimitRef," ); selectSql.
-		 * append(" FinCcy, FinBranch, CustId, FinAmount, FeeChargeAmt, DownPayment, DownPayBank, DownPaySupl, FinType, "
-		 * ); selectSql.
-		 * append(" FinStartDate,GraceTerms, NumberOfTerms, NextGrcPftDate, NextRepayDate, LastRepayPftDate, NextRepayPftDate, "
-		 * ); selectSql.append(" LastRepayRvwDate, NextRepayRvwDate, FinAssetValue, FinCurrAssetValue,FinRepayMethod, "
-		 * ); selectSql.append(" RecordType, Version, ProfitDaysBasis , FeeChargeAmt, FinStatus, FinStsReason," );
-		 * selectSql.append(" InitiateUser, BankName, AccountType, MaturityDate " );
-		 */
+	public FinanceMain getFinanceMainByRef(long finID, String type, boolean isRejectFinance) {
+		StringBuilder sql = new StringBuilder("Select  FinID, FinReference, RoleCode");
 		if (isRejectFinance) {
-			selectSql.append(" RejectFinancemain");
+			sql.append(" From RejectFinancemain");
 		} else {
-			selectSql.append(" Financemain");
+			sql.append(" From Financemain");
 		}
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		RowMapper<FinanceMain> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			financeMain = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceMain fm = new FinanceMain();
+
+				fm.setFinID(rs.getLong("FinID"));
+				fm.setFinReference(rs.getString("FinReference"));
+				fm.setRoleCode(rs.getString("RoleCode"));
+
+				return fm;
+
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			financeMain = null;
+			//
 		}
-		logger.debug("Leaving");
-		return financeMain;
+
+		return null;
 	}
 }

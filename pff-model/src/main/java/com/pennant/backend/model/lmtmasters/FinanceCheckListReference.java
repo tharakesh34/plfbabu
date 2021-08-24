@@ -39,6 +39,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class FinanceCheckListReference extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
+	private long finID;
 	private String finReference = null;
 	private long questionId;
 	private long answer;
@@ -185,4 +186,13 @@ public class FinanceCheckListReference extends AbstractWorkflowEntity {
 	public void setInstructionUID(long instructionUID) {
 		this.instructionUID = instructionUID;
 	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
+
 }

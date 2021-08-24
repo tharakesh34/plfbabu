@@ -24,6 +24,7 @@ public class FinanceDeviations extends AbstractWorkflowEntity {
 
 	@XmlElement
 	private long deviationId = Long.MIN_VALUE;
+	private long finID;
 	@XmlElement
 	private String finReference;
 	@XmlElement
@@ -369,4 +370,13 @@ public class FinanceDeviations extends AbstractWorkflowEntity {
 	public void setMitigants(String mitigants) {
 		this.mitigants = mitigants;
 	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
+
 }

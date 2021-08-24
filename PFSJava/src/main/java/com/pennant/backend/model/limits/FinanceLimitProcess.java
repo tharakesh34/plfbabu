@@ -9,6 +9,7 @@ public class FinanceLimitProcess implements Serializable {
 	private static final long serialVersionUID = -6204271721852032496L;
 
 	private long finLimitId;
+	private long finID;
 	private String finReference;
 	private String requestType;
 	private String referenceNum;
@@ -132,4 +133,13 @@ public class FinanceLimitProcess implements Serializable {
 	public void setId(long id) {
 		this.finLimitId = id;
 	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
+
 }

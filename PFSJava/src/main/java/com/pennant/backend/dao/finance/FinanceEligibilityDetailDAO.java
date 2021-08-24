@@ -10,9 +10,9 @@ public interface FinanceEligibilityDetailDAO {
 
 	void updateList(List<FinanceEligibilityDetail> eligibilityDetails);
 
-	List<FinanceEligibilityDetail> getFinElgDetailByFinRef(String finReference, String type);
+	List<FinanceEligibilityDetail> getFinElgDetailByFinRef(long finID, String type);
 
 	int getFinElgDetailCount(FinanceEligibilityDetail financeEligibilityDetail);
 
-	void deleteByFinRef(String finReference);
+	void deleteByFinRef(long finID);
 }
