@@ -71,7 +71,6 @@ import com.pennant.backend.model.finance.PaymentTransaction;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
-import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.systemmasters.VASProviderAccDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.InstrumentwiseLimitService;
@@ -338,11 +337,6 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 		logger.debug("Leaving");
 		return auditDetails;
-	}
-
-	@Override
-	public List<ReturnDataSet> getPostingsByLinkedTranId(List<Long> tranIdList, String finReference) {
-		return postingsDAO.getPostingsByLinkTransId(tranIdList, finReference);
 	}
 
 	private List<AuditDetail> getAdvancePaymentAuditDetail(List<FinAdvancePayments> finAdvancePayments,

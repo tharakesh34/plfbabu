@@ -272,8 +272,6 @@ public interface FinanceDetailService {
 
 	FinanceMain getRcdMaintenanceByRef(String reference, String type);
 
-	List<ReturnDataSet> getInsurancePostings(String finReference);
-
 	List<FinTypeFees> getSchemeFeesList(long referenceId, String eventCode, boolean origination, int moduleId);
 
 	Date getFinStartDate(String finReference);

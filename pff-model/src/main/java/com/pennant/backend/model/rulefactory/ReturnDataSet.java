@@ -22,6 +22,7 @@ public class ReturnDataSet implements Serializable {
 	@XmlElement
 	private String postref;
 	private String postingId;
+	private long finID;
 	private String finReference;
 	@XmlElement(name = "accEvent")
 	private String finEvent;
@@ -62,14 +63,14 @@ public class ReturnDataSet implements Serializable {
 	private BigDecimal postAmountLcCcy = BigDecimal.ZERO;
 
 	private String accountType;
-	//External Purpose fields
-	//private String ruleDecider;
+	// External Purpose fields
+	// private String ruleDecider;
 	private String eventCodeName;
 	private String accSetCodeName;
 	private long accSetId;
 	private String finType;
 	private String CustCIF;
-	//	private String finBranch;
+	// private String finBranch;
 	private boolean flagCreateNew;
 	private boolean flagCreateIfNF;
 	private boolean internalAc;
@@ -97,6 +98,7 @@ public class ReturnDataSet implements Serializable {
 		entity.setLinkedTranId(this.linkedTranId);
 		entity.setPostref(this.postref);
 		entity.setPostingId(this.postingId);
+		entity.setFinID(this.finID);
 		entity.setFinReference(this.finReference);
 		entity.setFinEvent(this.finEvent);
 		entity.setLovDescEventCodeName(this.lovDescEventCodeName);
@@ -176,6 +178,14 @@ public class ReturnDataSet implements Serializable {
 
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinEvent() {
@@ -322,13 +332,13 @@ public class ReturnDataSet implements Serializable {
 		CustCIF = custCIF;
 	}
 
-	//	public String getFinBranch() {
-	//		return finBranch;
-	//	}
+	// public String getFinBranch() {
+	// return finBranch;
+	// }
 	//
-	//	public void setFinBranch(String finBranch) {
-	//		this.finBranch = finBranch;
-	//	}
+	// public void setFinBranch(String finBranch) {
+	// this.finBranch = finBranch;
+	// }
 
 	public boolean isFlagCreateNew() {
 		return flagCreateNew;

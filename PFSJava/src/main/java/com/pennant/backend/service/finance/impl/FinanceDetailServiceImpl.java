@@ -8426,11 +8426,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return postings;
 	}
 
-	@Override
-	public List<ReturnDataSet> getInsurancePostings(String finReference) {
-		return getPostingsDAO().getPostingsByFinRef(finReference);
-	}
-
 	/**
 	 * Method for fetching list of entries executed based on Linked Transaction ID
 	 */

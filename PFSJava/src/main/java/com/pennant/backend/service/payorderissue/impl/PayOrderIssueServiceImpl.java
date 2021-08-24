@@ -596,7 +596,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
 		if (payOrderIssueHeader.isNewRecord()) { // for New record or new record into
-											// work flow
+			// work flow
 
 			if (!payOrderIssueHeader.isWorkflow()) {// With out Work flow only
 													// new records
@@ -1032,12 +1032,6 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
 		this.finAdvancePaymentsService = finAdvancePaymentsService;
-	}
-
-	@Override
-	public List<ReturnDataSet> getInsurancePostings(String finReference) {
-		return postingsDAO.getPostingsByFinRef(finReference);
-
 	}
 
 	@Override

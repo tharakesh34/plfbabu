@@ -1,52 +1,43 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  *********************************************************************************************
- *                                 FILE HEADER                                               *
+ * FILE HEADER *
  *********************************************************************************************
  *
- * FileName    		:  PostingsDAOImpl.java                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES              			
- *                                                                  
- * Creation Date    :  07-02-2012    
- *                                                                  
- * Modified Date    :  07-02-2012    
- *                                                                  
- * Description 		:                                             
- *                                                                                          
+ * FileName : PostingsDAOImpl.java
+ * 
+ * Author : PENNANT TECHONOLOGIES
+ * 
+ * Creation Date : 07-02-2012
+ * 
+ * Modified Date : 07-02-2012
+ * 
+ * Description :
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 07-02-2012       PENNANT TECHONOLOGIES	    0.1                                         * 
- * 02-06-2018		Satish						1.0			Fix for the posting reversal values mismatch                                                                                         * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 07-02-2012 PENNANT TECHONOLOGIES 0.1 * 02-06-2018 Satish 1.0 Fix for the posting reversal values mismatch * * * * * *
+ * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.rulefactory.impl;
 
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -56,16 +47,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.DateUtility;
@@ -89,253 +72,148 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		super();
 	}
 
-	/**
-	 * Fetch ReturnDataSet details by finReference and TransId
-	 * 
-	 * @param tranIdList
-	 * @param finReference
-	 * 
-	 * @return List<ReturnDataSet>
-	 */
-
 	@Override
-	public List<ReturnDataSet> getPostingsByLinkTransId(List<Long> tranIdList, String finReference) {
-		logger.debug("Entering");
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("LinkedTranId", tranIdList);
-		source.addValue("FinReference", finReference);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent, PostDate,ValueDate,TranCode, ");
-		selectSql.append(
-				" TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting, PostAmount,AmountType,PostStatus,ErrorId, ");
-		selectSql.append(
-				" ErrorMsg, AcCcy, TranOrderId, PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate, UserBranch ");
-		selectSql.append(" FROM Postings ");
-		selectSql.append(" Where FinReference =:FinReference AND  LinkedTranId  IN(:LinkedTranId) ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ReturnDataSet> typeRowMapper = BeanPropertyRowMapper.newInstance(ReturnDataSet.class);
-		List<ReturnDataSet> postings = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		logger.debug("Leaving");
-		return postings;
-	}
-
-	@Override
-	public List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal,
+	public List<ReturnDataSet> getPostingsByFinRefAndEvent(long finID, String finEvent, boolean showZeroBal,
 			String postingGroupBy, String type) {
-		logger.debug("Entering");
 
-		ReturnDataSet dataSet = new ReturnDataSet();
-		dataSet.setFinReference(finReference);
-		dataSet.setFinEvent(finEvent);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
-				" SELECT ValueDate,PostDate, AppDate, AppValueDate, TranCode,RevTranCode, TranDesc, RevTranCode, DrOrCr, Account, PostAmount, ");
-		selectSql.append(" FinEvent, AcCcy, PostBranch, UserBranch ");
-
-		if (StringUtils.isNotBlank(type)) {
-			selectSql.append(", LovDescEventCodeName");
-		} else {
-			selectSql.append(", T2.AEEventCodeDesc LovDescEventCodeName");
-		}
-
-		selectSql.append(" FROM Postings");
-		if (StringUtils.isBlank(type)) {
-			selectSql.append(" T1 INNER JOIN BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode");
-		}
-		if (StringUtils.isNotBlank(type)) {
-			selectSql.append(type);
-		}
-		selectSql.append(" Where FinReference =:FinReference AND FinEvent IN (" + finEvent + ")");
-		if (!showZeroBal) {
-			selectSql.append(" AND PostAmount != 0");
-		}
-
-		if (StringUtils.equals(PennantConstants.EVENTBASE, postingGroupBy)) {
-			selectSql.append(" ORDER BY FinEvent, LinkedTranID ");
-		} else if (StringUtils.equals(PennantConstants.POSTDATE, postingGroupBy)) {
-			selectSql.append(" ORDER BY PostDate, LinkedTranID ");
-		} else if (StringUtils.equals(PennantConstants.ACCNO, postingGroupBy)) {
-			selectSql.append(" ORDER BY Account, LinkedTranID ");
-		} else {
-			selectSql.append(" ORDER BY ValueDate, LinkedTranID ");
-		}
-		selectSql.append(" , TransOrder ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dataSet);
-		RowMapper<ReturnDataSet> typeRowMapper = BeanPropertyRowMapper.newInstance(ReturnDataSet.class);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
-
-	@Override
-	public List<ReturnDataSet> getPostingsByLinkTransId(long linkedTranId) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" T1.LinkedTranId, T1.Postref, T1.PostingId, T1.FinReference, T1.FinEvent");
-		sql.append(", T1.PostDate, T1.ValueDate, T1.TranCode, T1.TranDesc, T1.RevTranCode, T1.DrOrCr");
-		sql.append(", T1.Account,  T1.ShadowPosting, T1.PostAmount, T1.AmountType, T1.PostStatus, T1.ErrorId");
-		sql.append(", T1.ErrorMsg, T1.AcCcy, T1.TranOrderId, T1.TransOrder, T1.PostToSys, T1.ExchangeRate");
-		sql.append(", T1.PostBranch, T1.AppDate, T1.AppValueDate, T1.UserBranch, T1.AccountType");
-		sql.append(" From Postings T1");
-		sql.append(" Where LinkedTranId = ?");
-		sql.append(" Order By T1.LinkedTranId, T1.TranOrderId");
+		sql.append(" ValueDate, PostDate, AppDate, AppValueDate, TranCode, RevTranCode, TranDesc");
+		sql.append(", RevTranCode, DrOrCr, Account, PostAmount");
+		sql.append(" FinEvent, AcCcy, PostBranch, UserBranch ");
 
-		logger.trace(Literal.SQL + sql.toString());
+		if (StringUtils.isNotBlank(type)) {
+			sql.append(", LovDescEventCodeName");
+		} else {
+			sql.append(", AEEventCodeDesc LovDescEventCodeName");
+		}
+
+		sql.append(" FROM Postings");
+
+		if (StringUtils.isBlank(type)) {
+			sql.append(" p Inner Join BMTAEEvents ba on ba.AEEventCode = p.FinEvent");
+		}
+
+		if (StringUtils.isNotBlank(type)) {
+			sql.append(type);
+		}
+
+		sql.append(" Where FinID = ? and FinEvent in (");
+		JdbcUtil.getInCondition(Arrays.asList(finEvent.split(",")));
+		sql.append(")");
+
+		if (!showZeroBal) {
+			sql.append(" and PostAmount != ?");
+		}
+
+		if (PennantConstants.EVENTBASE.equals(postingGroupBy)) {
+			sql.append(" order by FinEvent, LinkedTranID, TransOrder");
+		} else if (PennantConstants.POSTDATE.equals(postingGroupBy)) {
+			sql.append(" order by PostDate, LinkedTranID, TransOrder");
+		} else if (PennantConstants.ACCNO.equals(postingGroupBy)) {
+			sql.append(" order by Account, LinkedTranID, TransOrder");
+		} else {
+			sql.append(" order by ValueDate, LinkedTranID, TransOrder");
+		}
+
+		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index, linkedTranId);
+
+			ps.setLong(index++, finID);
+
+			for (String event : finEvent.split(",")) {
+				ps.setString(index++, event);
+			}
+
+			ps.setBigDecimal(index++, BigDecimal.ZERO);
+
 		}, (rs, rowNum) -> {
-			ReturnDataSet rd = new ReturnDataSet();
+			ReturnDataSet rds = new ReturnDataSet();
 
-			rd.setLinkedTranId(rs.getLong("LinkedTranId"));
-			rd.setPostref(rs.getString("Postref"));
-			rd.setPostingId(rs.getString("PostingId"));
-			rd.setFinReference(rs.getString("FinReference"));
-			rd.setFinEvent(rs.getString("FinEvent"));
-			rd.setPostDate(JdbcUtil.getDate(rs.getDate("PostDate")));
-			rd.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
-			rd.setTranCode(rs.getString("TranCode"));
-			rd.setTranDesc(rs.getString("TranDesc"));
-			rd.setRevTranCode(rs.getString("RevTranCode"));
-			rd.setDrOrCr(rs.getString("DrOrCr"));
-			rd.setAccount(rs.getString("Account"));
-			rd.setShadowPosting(rs.getBoolean("ShadowPosting"));
-			rd.setPostAmount(rs.getBigDecimal("PostAmount"));
-			rd.setAmountType(rs.getString("AmountType"));
-			rd.setPostStatus(rs.getString("PostStatus"));
-			rd.setErrorId(rs.getString("ErrorId"));
-			rd.setErrorMsg(rs.getString("ErrorMsg"));
-			rd.setAcCcy(rs.getString("AcCcy"));
-			rd.setTranOrderId(rs.getString("TranOrderId"));
-			rd.setTransOrder(rs.getInt("TransOrder"));
-			rd.setPostToSys(rs.getString("PostToSys"));
-			rd.setExchangeRate(rs.getBigDecimal("ExchangeRate"));
-			rd.setPostBranch(rs.getString("PostBranch"));
-			rd.setAppDate(JdbcUtil.getDate(rs.getDate("AppDate")));
-			rd.setAppValueDate(JdbcUtil.getDate(rs.getDate("AppValueDate")));
-			rd.setUserBranch(rs.getString("UserBranch"));
-			rd.setAccountType(rs.getString("AccountType"));
+			rds.setValueDate(rs.getDate("ValueDate"));
+			rds.setPostDate(rs.getDate("PostDate"));
+			rds.setAppDate(rs.getDate("AppDate"));
+			rds.setAppValueDate(rs.getDate("AppValueDate"));
+			rds.setTranCode(rs.getString("TranCode"));
+			rds.setRevTranCode(rs.getString("RevTranCode"));
+			rds.setTranDesc(rs.getString("TranDesc"));
+			rds.setDrOrCr(rs.getString("DrOrCr"));
+			rds.setAccount(rs.getString("Account"));
+			rds.setPostAmount(rs.getBigDecimal("PostAmount"));
+			rds.setFinEvent(rs.getString("FinEvent"));
+			rds.setAcCcy(rs.getString("AcCcy"));
+			rds.setPostBranch(rs.getString("PostBranch"));
+			rds.setUserBranch(rs.getString("UserBranch"));
+			rds.setLovDescEventCodeName(rs.getString("LovDescEventCodeName"));
 
-			return rd;
+			return rds;
 		});
 	}
 
 	@Override
+	public List<ReturnDataSet> getPostingsByLinkTransId(long linkedTranId) {
+		StringBuilder sql = getSelectQuery();
+		sql.append(" Where LinkedTranId = ?");
+		sql.append(" order by LinkedTranId, TranOrderId");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, linkedTranId);
+		}, new ReturnDataSetRowMapper());
+	}
+
+	@Override
 	public List<ReturnDataSet> getPostingsByTransIdList(List<Long> tranIdList) {
-		logger.debug("Entering");
+		StringBuilder sql = getSelectQuery();
+		sql.append(" Where LinkedTranId in (");
+		sql.append(JdbcUtil.getInCondition(tranIdList));
+		sql.append(")");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("LinkedTranId", tranIdList);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent, PostDate,ValueDate,TranCode, ");
-		selectSql.append(
-				" TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting, PostAmount,AmountType,PostStatus,ErrorId, ");
-		selectSql.append(
-				" ErrorMsg, AcCcy, TranOrderId, PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate, UserBranch ");
-		selectSql.append(" FROM Postings");
-		selectSql.append(" Where LinkedTranId  IN(:LinkedTranId) ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ReturnDataSet> typeRowMapper = BeanPropertyRowMapper.newInstance(ReturnDataSet.class);
-		List<ReturnDataSet> postings = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		logger.debug("Leaving");
-		return postings;
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			for (Long linkedTranId : tranIdList) {
+				ps.setLong(index++, linkedTranId);
+			}
+		}, new ReturnDataSetRowMapper());
 	}
 
 	@Override
 	public List<ReturnDataSet> getPostingsByPostRef(String postref) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" LinkedTranId, Postref, PostingId, FinReference, FinEvent, PostDate, ValueDate");
-		sql.append(", TranCode, TranDesc, RevTranCode, DrOrCr, Account, ShadowPosting, PostAmount");
-		sql.append(", AmountType, PostStatus, ErrorId, ErrorMsg, AcCcy, TranOrderId, PostToSys");
-		sql.append(", ExchangeRate, PostBranch, AppDate, AppValueDate, UserBranch");
-		sql.append(" From Postings");
+		StringBuilder sql = getSelectQuery();
 		sql.append(" Where Postref  = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			ps.setString(1, postref);
-		}, (rs, i) -> {
-			ReturnDataSet dataSet = new ReturnDataSet();
-
-			dataSet.setLinkedTranId(rs.getLong("LinkedTranId"));
-			dataSet.setPostref(rs.getString("Postref"));
-			dataSet.setPostingId(rs.getString("PostingId"));
-			dataSet.setFinReference(rs.getString("FinReference"));
-			dataSet.setFinEvent(rs.getString("FinEvent"));
-			dataSet.setPostDate(rs.getTimestamp("PostDate"));
-			dataSet.setValueDate(rs.getTimestamp("ValueDate"));
-			dataSet.setTranCode(rs.getString("TranCode"));
-			dataSet.setTranDesc(rs.getString("TranDesc"));
-			dataSet.setRevTranCode(rs.getString("RevTranCode"));
-			dataSet.setDrOrCr(rs.getString("DrOrCr"));
-			dataSet.setAccount(rs.getString("Account"));
-			dataSet.setShadowPosting(rs.getBoolean("ShadowPosting"));
-			dataSet.setPostAmount(rs.getBigDecimal("PostAmount"));
-			dataSet.setAmountType(rs.getString("AmountType"));
-			dataSet.setPostStatus(rs.getString("PostStatus"));
-			dataSet.setErrorId(rs.getString("ErrorId"));
-			dataSet.setErrorMsg(rs.getString("ErrorMsg"));
-			dataSet.setAcCcy(rs.getString("AcCcy"));
-			dataSet.setTranOrderId(rs.getString("TranOrderId"));
-			dataSet.setPostToSys(rs.getString("PostToSys"));
-			dataSet.setExchangeRate(rs.getBigDecimal("ExchangeRate"));
-			dataSet.setPostBranch(rs.getString("PostBranch"));
-			dataSet.setAppDate(rs.getTimestamp("AppDate"));
-			dataSet.setAppValueDate(rs.getTimestamp("AppValueDate"));
-			dataSet.setUserBranch(rs.getString("UserBranch"));
-
-			return dataSet;
-		});
-	}
-
-	@Override
-	public long saveHeader(ReturnDataSet dataSet, String status, String type) {
-		logger.debug("Entering");
-
-		dataSet.setPostStatus(status);
-
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append("Insert Into EODPostingsHeader");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (LinkedTranId, finReference, FinEvent, ValueDate, PostStatus) ");
-		insertSql.append(" Values(:LinkedTranId, :finReference, :FinEvent, :ValueDate, :PostStatus)");
-
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dataSet);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return dataSet.getLinkedTranId();
+		}, new ReturnDataSetRowMapper());
 	}
 
 	@Override
 	public void saveBatch(List<ReturnDataSet> dataSetList) {
 		setEntityCode(dataSetList);
 
-		StringBuilder insertSql = new StringBuilder("insert into");
-		insertSql.append(" Postings");
-		insertSql.append(" (LinkedTranId, Postref, PostingId, finReference, FinEvent, PostDate");
-		insertSql.append(", ValueDate, TranCode, TranDesc, RevTranCode, DrOrCr, Account, ShadowPosting");
-		insertSql.append(", PostAmountLcCcy, TransOrder, DerivedTranOrder, PostToSys, ExchangeRate");
-		insertSql.append(", PostAmount, AmountType, PostStatus, ErrorId, ErrorMsg, AcCcy, TranOrderId");
-		insertSql.append(", PostBranch, AppDate, AppValueDate, UserBranch, PostCategory, CustAppDate");
-		insertSql.append(", AccountType, OldLinkedTranId, EntityCode");
-		insertSql.append(") values(");
-		insertSql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		insertSql.append(", ?, ?, ?, ?, ?, ?, ?, ?");
-		insertSql.append(")");
+		StringBuilder sql = new StringBuilder("insert into");
+		sql.append(" Postings");
+		sql.append(" (LinkedTranId, PostRef, PostingId, FinID, FinReference, FinEvent, PostDate");
+		sql.append(", ValueDate, TranCode, TranDesc, RevTranCode, DrOrCr, Account, ShadowPosting");
+		sql.append(", PostAmountLcCcy, TransOrder, DerivedTranOrder, PostToSys, ExchangeRate");
+		sql.append(", PostAmount, AmountType, PostStatus, ErrorId, ErrorMsg, AcCcy, TranOrderId");
+		sql.append(", PostBranch, AppDate, AppValueDate, UserBranch, PostCategory, CustAppDate");
+		sql.append(", AccountType, OldLinkedTranId, EntityCode");
+		sql.append(") values(");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(")");
 
-		logger.trace(Literal.SQL + insertSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			this.jdbcOperations.batchUpdate(insertSql.toString(), new BatchPreparedStatementSetter() {
+			this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
 				@Override
 				public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -346,6 +224,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 					ps.setLong(index++, pstngs.getLinkedTranId());
 					ps.setString(index++, pstngs.getPostref());
 					ps.setString(index++, pstngs.getPostingId());
+					ps.setLong(index++, pstngs.getFinID());
 					ps.setString(index++, pstngs.getFinReference());
 					ps.setString(index++, pstngs.getFinEvent());
 					ps.setDate(index++, JdbcUtil.getDate(pstngs.getPostDate()));
@@ -392,350 +271,151 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 
 	}
 
-	private void setEntityCode(List<ReturnDataSet> dataSetList) {
-		String entityCode = null;
-		for (ReturnDataSet returnDataSet : dataSetList) {
-			if (returnDataSet.getEntityCode() == null) {
-				if (entityCode == null) {
-					entityCode = SysParamUtil.getValueAsString("ENTITYCODE");
-				}
-
-				returnDataSet.setEntityCode(entityCode);
-			}
-		}
-	}
-
 	// FIXME CH to be changed to Batch Update
 	@Override
 	public void updateStatusByLinkedTranId(long linkedTranId, String postStatus) {
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("LinkedTranId", linkedTranId);
-		paramSource.addValue("PostStatus", postStatus);
+		String sql = "Update Postings Set PostStatus = ? where LinkedTranId = ?";
 
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append(" Update Postings SET ");
-		insertSql.append(" PostStatus = :PostStatus where LinkedTranId = :LinkedTranId");
-
-		logger.debug("insertSql: " + insertSql.toString());
-		this.jdbcTemplate.update(insertSql.toString(), paramSource);
+		logger.debug(Literal.SQL + sql);
+		this.jdbcOperations.update(sql, postStatus, linkedTranId);
 	}
 
 	// FIXME CH to be changed to Batch Update
 	@Override
-	public void updateStatusByFinRef(String finReference, String postStatus) {
-		logger.debug("Entering");
+	public void updateStatusByFinRef(long finID, String postStatus) {
+		String sql = "Update Postings Set PostStatus = ? where FinID = ?";
 
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("finReference", finReference);
-		paramSource.addValue("PostStatus", postStatus);
-
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append(" Update Postings Set ");
-		insertSql.append(" PostStatus = :PostStatus where finReference = :finReference");
-
-		logger.debug("insertSql: " + insertSql.toString());
-		this.jdbcTemplate.update(insertSql.toString(), paramSource);
-		logger.debug("Leaving");
+		logger.debug(Literal.SQL + sql);
+		this.jdbcOperations.update(sql, postStatus, finID);
 	}
 
-	/**
-	 * Generate Linked Transaction ID
-	 */
 	public long getLinkedTransId() {
 		return getNextValue("SeqPostings");
 	}
 
-	/**
-	 * Generate Posting ID
-	 */
 	public long getPostingId() {
 		return getNextValue("SeqPostingId");
 	}
 
 	@Override
-	public void updateBatch(List<ReturnDataSet> dataSetList, String type) {
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder();
-		updateSql.append("Update Postings");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" set PostStatus=:PostStatus where Postref=:Postref");
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(dataSetList.toArray());
-		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
-	}
-
-	@Override
-	public void deleteAll(String type) {
-		logger.debug("Entering");
-		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append("DELETE FROM Postings").append(type);
-
-		logger.debug("deleteSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = null;
-		try {
-			beanParameters = new BeanPropertySqlParameterSource("");
-			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-
-		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-
-		} finally {
-			beanParameters = null;
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Method for Fetching Posted Amount On Particular Finance Event
-	 */
-	@Override
-	public BigDecimal getPostAmtByTranIdandEvent(String finReference, String finEvent, long linkedTranId) {
-		logger.debug("Entering");
-
-		BigDecimal totalPostAmount = BigDecimal.ZERO;
-
-		ReturnDataSet set = new ReturnDataSet();
-		set.setFinReference(finReference);
-		set.setFinEvent(finEvent);
-		set.setLinkedTranId(linkedTranId);
-
-		StringBuilder selectSql = new StringBuilder(" SELECT SUM(PostAmount) ");
-		selectSql.append(" FROM Postings");
-		selectSql.append(" WHERE FinReference=:FinReference AND LinkedTranId=:LinkedTranId AND FinEvent =:FinEvent ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(set);
-
-		try {
-			totalPostAmount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			totalPostAmount = BigDecimal.ZERO;
-		}
-
-		logger.debug("Leaving");
-		return totalPostAmount;
-	}
-
-	/**
-	 * Method for Fetching Posted Amount On Particular Finance Event
-	 */
-	@Override
-	public List<Long> getLinkTranIdByRef(String finReference) {
-		logger.debug("Entering");
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		List<String> eventCodeList = new ArrayList<String>();
-		eventCodeList.add("ADDDBSP");
-		eventCodeList.add("ADDDBSF");
-		eventCodeList.add("ADDDBSN");
-		eventCodeList.add("STAGE");
-		source.addValue("FinEvent", eventCodeList);
-
-		StringBuilder selectSql = new StringBuilder(" SELECT DISTINCT LinkedTranId ");
-		selectSql.append(" FROM Postings");
-		selectSql.append(" WHERE FinReference=:FinReference AND FinEvent IN( :FinEvent ) ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		List<Long> linkedTranIdList = null;
-		try {
-			linkedTranIdList = this.jdbcTemplate.queryForList(selectSql.toString(), source, Long.class);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			linkedTranIdList = null;
-		}
-
-		logger.debug("Leaving");
-		return linkedTranIdList;
-	}
-
-	@Override
 	public List<ReturnDataSet> getPostingsbyFinanceBranch(String branchCode) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select * From (");
+		sql.append("Select p.LinkedTranId, p.Postref, p.PostingId, p.FinID, p.FinReference, p.FinEvent");
+		sql.append(", p.PostDate, p.ValueDate, p.TranCode, p.TranDesc, p.RevTranCode, p.DrOrCr, p.Account");
+		sql.append(", p.ShadowPosting, p.PostAmount, p.AmountType, p.PostStatus, p.ErrorId, p.ErrorMsg, p.AcCcy");
+		sql.append(", p.TransOrder, p.TranOrderId, p.PostToSys, p.ExchangeRate, UserBranch");
+		sql.append(", p.AppDate, p.AppValueDate, p.AccountType");
+		sql.append(" From Postings p");
+		sql.append(" Inner Join FinanceMain_Temp fm on fm.FinID = p.FinID");
+		sql.append(" Where fm.FinBranch = ");
+		sql.append(" Union All ");
+		sql.append("Select p.LinkedTranId, p.Postref, p.PostingId, p.FinID, p.FinReference, p.FinEvent");
+		sql.append(", p.PostDate, p.ValueDate, p.TranCode, p.TranDesc, p.RevTranCode, p.DrOrCr, p.Account");
+		sql.append(", p.ShadowPosting, p.PostAmount, p.AmountType, p.PostStatus, p.ErrorId, p.ErrorMsg, p.AcCcy");
+		sql.append(", p.TransOrder, p.TranOrderId, p.PostToSys, p.ExchangeRate, UserBranch");
+		sql.append(", p.AppDate, p.AppValueDate, p.AccountType");
+		sql.append(" From Postings p");
+		sql.append(" Inner Join FinanceMain fm on fm.FinID = p.FinID");
+		sql.append(" Where not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
+		sql.append(" and fm.FinBranch = ?");
+		sql.append(") temp order by p.Account, p.FinReference, p.TranCode");
 
-		MapSqlParameterSource mSource = new MapSqlParameterSource();
-		mSource.addValue("FinBranch", branchCode);
+		logger.debug(Literal.SQL + sql);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql
-				.append(" Select * From ( SELECT T1.LinkedTranId,T1.Postref,T1.PostingId,T1.finReference,T1.FinEvent,");
-		selectSql.append(
-				" T1.PostDate,T1.ValueDate,T1.TranCode,T1.TranDesc,T1.RevTranCode,T1.DrOrCr,T1.Account, T1.ShadowPosting,");
-		selectSql
-				.append(" T1.PostAmount,T1.AmountType,T1.PostStatus,T1.ErrorId,T1.ErrorMsg, T1.AcCcy, T1.TranOrderId,");
-		selectSql.append(" T1.PostToSys,T1.ExchangeRate, UserBranch  ");
-		selectSql.append(" FROM Postings T1 INNER JOIN  FinanceMain_Temp T2 on T1.FinReference = T2.FinReference");
-		selectSql.append(" Where T2.FinBranch = :FinBranch");
-		selectSql.append(" UNION ALL ");
-		selectSql.append(" SELECT T1.LinkedTranId,T1.Postref,T1.PostingId,T1.finReference,T1.FinEvent,");
-		selectSql.append(
-				" T1.PostDate,T1.ValueDate,T1.TranCode,T1.TranDesc,T1.RevTranCode,T1.DrOrCr,T1.Account, T1.ShadowPosting,");
-		selectSql
-				.append(" T1.PostAmount,T1.AmountType,T1.PostStatus,T1.ErrorId,T1.ErrorMsg, T1.AcCcy, T1.TranOrderId,");
-		selectSql.append(" T1.PostToSys,T1.ExchangeRate, UserBranch  ");
-		selectSql.append(" FROM Postings T1 INNER JOIN FinanceMain T2 on T1.FinReference = T2.FinReference ");
-		selectSql
-				.append(" Where NOT EXISTS (SELECT 1 FROM FinanceMain_Temp WHERE FinReference = T2.FinReference) and ");
-		selectSql.append(" T2.FinBranch = :FinBranch)T1 order by T1.Account,T1.finReference,T1.TranCode ");
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, branchCode);
+			ps.setString(2, branchCode);
 
-		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ReturnDataSet> typeRowMapper = BeanPropertyRowMapper.newInstance(ReturnDataSet.class);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), mSource, typeRowMapper);
+		}, new ReturnDataSetRowMapper());
 	}
 
-	/*
-	 * Method to get the Trancode and DrOrCr to reversal the accounting in VasCancellation
-	 */
-
 	@Override
-	public List<ReturnDataSet> getPostingsByVasref(String finReference, String[] finEvent) {
-		logger.debug(Literal.ENTERING);
+	public List<ReturnDataSet> getPostingsByVasref(long finID, String[] finEvent) {
+		StringBuilder sql = getSelectQuery();
+		sql.append(" Where FinID = ? and FinEvent in(");
+		sql.append(")");
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent,");
-		selectSql.append(" PostDate,ValueDate,TranCode,TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting,");
-		selectSql.append(" PostAmount,AmountType,PostStatus,ErrorId,ErrorMsg, AcCcy, TranOrderId,");
-		selectSql.append(" PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate, UserBranch ");
-		selectSql.append(" FROM Postings");
-		selectSql.append(" Where FinReference =:FinReference And finEvent in(:finEvent) ");
+		logger.debug(Literal.SQL + sql.toString());
+		return this.jdbcOperations.query(sql.toString(), ps -> {
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("finEvent", Arrays.asList(finEvent));
-
-		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ReturnDataSet> typeRowMapper = BeanPropertyRowMapper.newInstance(ReturnDataSet.class);
-		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		}, new ReturnDataSetRowMapper());
 	}
 
-	/*
-	 * Method to get the Posting Details By FinRefernce
-	 */
-
 	@Override
-	public List<ReturnDataSet> getPostingsByFinRef(String finReference, boolean reqReversals) {
-		logger.debug("Entering");
+	public List<ReturnDataSet> getPostingsByFinRef(long finID, boolean reqReversals) {
+		boolean rpayPostingRev = SysParamUtil
+				.isAllowed(SMTParameterConstants.REPAY_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL);
+		boolean disPostingRev = SysParamUtil.isAllowed(SMTParameterConstants.DISB_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL);
 
-		ReturnDataSet dataSet = new ReturnDataSet();
-		dataSet.setFinReference(finReference);
-		dataSet.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
+		StringBuilder sql = getSelectQuery();
+		sql.append(" Where FinID = ? and PostStatus = ?");
 
-		StringBuilder selectSql = new StringBuilder();
-		// FIX version 1.0
-		selectSql.append(
-				" SELECT T1.LinkedTranId, T1.Postref, T1.PostingId, T1.finReference, T1.FinEvent, T1.PostAmountLcCcy, T1.CustAppDate,");
-		selectSql.append(
-				" T1.PostDate, T1.ValueDate, T1.TranCode, T1.TranDesc, T1.RevTranCode, T1.DrOrCr, T1.Account,  T1.ShadowPosting,");
-		selectSql.append(
-				" T1.PostAmount, T1.AmountType, T1.PostStatus, T1.ErrorId, T1.ErrorMsg, T1.AcCcy, T1.TranOrderId, T1.TransOrder,");
-		selectSql.append(
-				" T1.PostToSys, T1.ExchangeRate, T1.PostBranch, T1.AppDate, T1.AppValueDate, T1.UserBranch, T1.AccountType ");
-		selectSql.append(" FROM Postings T1");
-		selectSql.append(" Where FinReference =:FinReference and PostStatus = :PostStatus");
 		if (!reqReversals) {
-			selectSql.append(" and OldLinkedTranID = 0 ");
+			sql.append(" and OldLinkedTranID = ?");
 		}
 
-		if (!SysParamUtil.isAllowed(SMTParameterConstants.REPAY_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL)) {
-			selectSql.append(" and T1.FinEvent != 'REPAY' ");
+		if (!rpayPostingRev) {
+			sql.append(" and FinEvent != ?");
 		}
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.DISB_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL)) {
-			selectSql.append(
-					" and T1.LinkedTranId not in (Select LINKEDTRANID from FINADVANCEPAYMENTS Where STATUS in ('REJECTED','CANCELED') ");
-			selectSql.append(" and FINREFERENCE= :FinReference and  T1.FinEvent = 'DISBINS') ");
+		if (disPostingRev) {
+			sql.append(" and LinkedTranId not in (Select LinkedTranId from FinAdvancePayments Where Status in (?, ?)");
+			sql.append(" and FinID = ? and  FinEvent = ?) ");
 		}
 
-		selectSql.append(" Order By T1.LinkedTranId, T1.TranOrderId ");
+		sql.append(" order by LinkedTranId, TranOrderId ");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dataSet);
-		RowMapper<ReturnDataSet> typeRowMapper = BeanPropertyRowMapper.newInstance(ReturnDataSet.class);
-		logger.debug("Leaving");
-		List<ReturnDataSet> returnDataSetList = new ArrayList<ReturnDataSet>();
-		try {
-			returnDataSetList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.error("Exception: ", dae);
-			return Collections.emptyList();
-		}
-		logger.debug("Leaving");
-		return returnDataSetList;
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, finID);
+			ps.setString(index++, AccountConstants.POSTINGS_SUCCESS);
+
+			if (!reqReversals) {
+				ps.setLong(index++, 0);
+			}
+
+			if (!rpayPostingRev) {
+				ps.setString(index++, "REPAY");
+			}
+
+			if (disPostingRev) {
+				ps.setString(index++, "REJECTED");
+				ps.setString(index++, "CANCELED");
+				ps.setLong(index++, finID);
+				ps.setString(index++, "DISBINS");
+
+			}
+
+		}, new ReturnDataSetRowMapper());
+
 	}
 
 	@Override
 	public void updatePostCtg() {
-		logger.debug("Entering");
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("PostCategory", AccountConstants.POSTING_CATEGORY_ACUPDATE);
-		source.addValue("PostCategory_From", AccountConstants.POSTING_CATEGORY_EOD);
+		String sql = "Update Postings Set PostCategory = ? WHERE PostCategory = ?";
 
-		StringBuilder updateSql = new StringBuilder();
-		updateSql.append("Update Postings");
-		updateSql.append(" set PostCategory=:PostCategory WHERE postCategory=:PostCategory_From");
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		this.jdbcTemplate.update(updateSql.toString(), source);
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql, AccountConstants.POSTING_CATEGORY_ACUPDATE,
+				AccountConstants.POSTING_CATEGORY_EOD);
 	}
 
 	@Override
 	public List<ReturnDataSet> getPostingsByPostRef(long postrRef) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" LinkedTranId, Postref, PostingId, FinReference, FinEvent, PostAmountLcCcy, CustAppDate");
-		sql.append(", PostDate, ValueDate, TranCode, TranDesc, RevTranCode, DrOrCr, Account, ShadowPosting");
-		sql.append(", PostAmount, AmountType, PostStatus, ErrorId, ErrorMsg, AcCcy, TranOrderId, TransOrder");
-		sql.append(", PostToSys, ExchangeRate, PostBranch, AppDate, AppValueDate, UserBranch, AccountType");
-		sql.append(" from Postings");
+		StringBuilder sql = getSelectQuery();
 		sql.append(" Where PostStatus = ? and Postref = ?");
 		sql.append(" order by LinkedTranId, TranOrderId");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setString(index++, AccountConstants.POSTINGS_SUCCESS);
 			ps.setString(index++, String.valueOf(postrRef));
-		}, (rs, rowNum) -> {
-			ReturnDataSet p = new ReturnDataSet();
-
-			p.setLinkedTranId(rs.getLong("LinkedTranId"));
-			p.setPostref(rs.getString("Postref"));
-			p.setPostingId(rs.getString("PostingId"));
-			p.setFinReference(rs.getString("FinReference"));
-			p.setFinEvent(rs.getString("FinEvent"));
-			p.setPostAmountLcCcy(rs.getBigDecimal("PostAmountLcCcy"));
-			p.setCustAppDate(rs.getTimestamp("CustAppDate"));
-			p.setPostDate(rs.getTimestamp("PostDate"));
-			p.setValueDate(rs.getTimestamp("ValueDate"));
-			p.setTranCode(rs.getString("TranCode"));
-			p.setTranDesc(rs.getString("TranDesc"));
-			p.setRevTranCode(rs.getString("RevTranCode"));
-			p.setDrOrCr(rs.getString("DrOrCr"));
-			p.setAccount(rs.getString("Account"));
-			p.setShadowPosting(rs.getBoolean("ShadowPosting"));
-			p.setPostAmount(rs.getBigDecimal("PostAmount"));
-			p.setAmountType(rs.getString("AmountType"));
-			p.setPostStatus(rs.getString("PostStatus"));
-			p.setErrorId(rs.getString("ErrorId"));
-			p.setErrorMsg(rs.getString("ErrorMsg"));
-			p.setAcCcy(rs.getString("AcCcy"));
-			p.setTranOrderId(rs.getString("TranOrderId"));
-			p.setTransOrder(rs.getInt("TransOrder"));
-			p.setPostToSys(rs.getString("PostToSys"));
-			p.setExchangeRate(rs.getBigDecimal("ExchangeRate"));
-			p.setPostBranch(rs.getString("PostBranch"));
-			p.setAppDate(rs.getTimestamp("AppDate"));
-			p.setAppValueDate(rs.getTimestamp("AppValueDate"));
-			p.setUserBranch(rs.getString("UserBranch"));
-			p.setAccountType(rs.getString("AccountType"));
-
-			return p;
-		});
+		}, new ReturnDataSetRowMapper());
 
 	}
 
@@ -752,183 +432,19 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	}
 
 	@Override
-	public List<ReturnDataSet> getPostingsByFinRef(String finReference) {
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("finReference", finReference);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent, PostDate,ValueDate,TranCode, ");
-		selectSql.append(
-				" TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting, PostAmount,AmountType,PostStatus,ErrorId, ");
-		selectSql.append(
-				" ErrorMsg, AcCcy, TranOrderId,PostBranch, AppDate, AppValueDate, UserBranch, 'Insurance Payment' as LovDescEventCodeName ");
-		selectSql.append(" FROM Postings");
-		selectSql.append(" Where LInkedTraniD in (Select linkedTranid from InsurancePaymentInstructions where id in (");
-		selectSql.append(" select paymentinsid from vasrecording where PRIMARYlinkref = :finReference) )");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ReturnDataSet> typeRowMapper = BeanPropertyRowMapper.newInstance(ReturnDataSet.class);
-		try {
-			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-		}
-		logger.debug("Leaving");
-		return null;
-	}
-
-	@Override
-	public List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent) {
-		logger.debug("Entering");
-
-		ReturnDataSet dataSet = new ReturnDataSet();
-		dataSet.setFinReference(finReference);
-		dataSet.setFinEvent(finEvent);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
-				" SELECT ValueDate,PostDate, AppDate, AppValueDate, TranCode,RevTranCode, TranDesc, RevTranCode, DrOrCr, Account, PostAmount, ");
-		selectSql.append(" FinEvent, AcCcy, PostBranch, UserBranch ");
-		selectSql.append(" FROM Postings");
-		selectSql.append(" Where FinReference =:FinReference AND FinEvent=:FinEvent");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dataSet);
-		RowMapper<ReturnDataSet> typeRowMapper = BeanPropertyRowMapper.newInstance(ReturnDataSet.class);
-		logger.debug("Leaving");
-
-		try {
-			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-		}
-		return null;
-	}
-
-	@Override
-	public List<ReturnDataSet> getPostingsByLinkedTranId(List<Long> linkedTranId, boolean reversal) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("Select * from (");
-		sql.append("Select LinkedTranId, Postref, PostingId, FinReference, FinEvent, PostDate, ValueDate");
-		sql.append(", TranCode, TranDesc, RevTranCode, DrOrCr, Account, ShadowPosting, PostAmount");
-		sql.append(", AmountType, PostStatus, ErrorId, ErrorMsg, AcCcy, TranOrderId, PostToSys, ExchangeRate");
-		sql.append(", PostBranch, AppDate, AppValueDate, UserBranch");
-		sql.append(" from Postings");
-		sql.append(" Where LinkedTranId in (?) ");
-		if (reversal) {
-			sql.append(" union all");
-			sql.append(" Select LinkedTranId, Postref, PostingId, FinReference, FinEvent, PostDate, ValueDate");
-			sql.append(", TranCode,  TranDesc, RevTranCode, DrOrCr, Account, ShadowPosting, PostAmount");
-			sql.append(", AmountType, PostStatus, ErrorId, ErrorMsg");
-			sql.append(", AcCcy, TranOrderId, PostToSys, ExchangeRate, PostBranch");
-			sql.append(", AppDate, AppValueDate, UserBranch");
-			sql.append(" FROM Postings");
-			sql.append(" Where OldLinkedTranId  in (?)");
-		}
-		sql.append(")Rev");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					for (Long o : linkedTranId) {
-						ps.setObject(index, o);
-						if (reversal) {
-							index++;
-							ps.setObject(index, o);
-						}
-					}
-
-				}
-			}, new RowMapper<ReturnDataSet>() {
-				@Override
-				public ReturnDataSet mapRow(ResultSet rs, int rowNum) throws SQLException {
-					ReturnDataSet pst = new ReturnDataSet();
-
-					pst.setLinkedTranId(rs.getLong("LinkedTranId"));
-					pst.setPostref(rs.getString("Postref"));
-					pst.setPostingId(rs.getString("PostingId"));
-					pst.setFinReference(rs.getString("FinReference"));
-					pst.setFinEvent(rs.getString("FinEvent"));
-					pst.setPostDate(rs.getTimestamp("PostDate"));
-					pst.setValueDate(rs.getTimestamp("ValueDate"));
-					pst.setTranCode(rs.getString("TranCode"));
-					pst.setTranDesc(rs.getString("TranDesc"));
-					pst.setRevTranCode(rs.getString("RevTranCode"));
-					pst.setDrOrCr(rs.getString("DrOrCr"));
-					pst.setAccount(rs.getString("Account"));
-					pst.setShadowPosting(rs.getBoolean("ShadowPosting"));
-					pst.setPostAmount(rs.getBigDecimal("PostAmount"));
-					pst.setAmountType(rs.getString("AmountType"));
-					pst.setPostStatus(rs.getString("PostStatus"));
-					pst.setErrorId(rs.getString("ErrorId"));
-					pst.setErrorMsg(rs.getString("ErrorMsg"));
-					pst.setAcCcy(rs.getString("AcCcy"));
-					pst.setTranOrderId(rs.getString("TranOrderId"));
-					pst.setPostToSys(rs.getString("PostToSys"));
-					pst.setExchangeRate(rs.getBigDecimal("ExchangeRate"));
-					pst.setPostBranch(rs.getString("PostBranch"));
-					pst.setAppDate(rs.getTimestamp("AppDate"));
-					pst.setAppValueDate(rs.getTimestamp("AppValueDate"));
-					pst.setUserBranch(rs.getString("UserBranch"));
-
-					return pst;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
-	}
-
-	@Override
 	public List<ReturnDataSet> getPostings(String postRef, String finEvent) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ValueDate, PostDate, AppDate, AppValueDate, TranCode");
-		sql.append(", RevTranCode, TranDesc, DrOrCr, Account, PostAmount");
-		sql.append(", FinEvent, AcCcy, PostBranch, UserBranch, PostStatus, TranOrderId");
+		StringBuilder sql = getSelectQuery();
 		sql.append(" From Postings");
 		sql.append(" Where Postref = ? AND FinEvent = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
-		List<ReturnDataSet> list = null;
+		logger.debug(Literal.SQL + sql.toString());
 
-		list = this.jdbcOperations.query(sql.toString(), ps -> {
+		List<ReturnDataSet> list = this.jdbcOperations.query(sql.toString(), ps -> {
 			ps.setString(1, postRef);
 			ps.setString(2, finEvent);
-		}, (rs, i) -> {
-			ReturnDataSet rds = new ReturnDataSet();
-
-			rds.setValueDate(rs.getTimestamp("ValueDate"));
-			rds.setPostDate(rs.getTimestamp("PostDate"));
-			rds.setAppDate(rs.getTimestamp("AppDate"));
-			rds.setAppValueDate(rs.getTimestamp("AppValueDate"));
-			rds.setTranCode(rs.getString("TranCode"));
-			rds.setRevTranCode(rs.getString("RevTranCode"));
-			rds.setTranDesc(rs.getString("TranDesc"));
-			rds.setDrOrCr(rs.getString("DrOrCr"));
-			rds.setAccount(rs.getString("Account"));
-			rds.setPostAmount(rs.getBigDecimal("PostAmount"));
-			rds.setFinEvent(rs.getString("FinEvent"));
-			rds.setAcCcy(rs.getString("AcCcy"));
-			rds.setPostBranch(rs.getString("PostBranch"));
-			rds.setUserBranch(rs.getString("UserBranch"));
-			rds.setPostStatus(rs.getString("PostStatus"));
-			rds.setTranOrderId(rs.getString("TranOrderId"));
-			rds.setValueDate(rs.getTimestamp("ValueDate"));
-
-			return rds;
-		});
+		}, new ReturnDataSetRowMapper());
 
 		if (CollectionUtils.isEmpty(list)) {
-			logger.info(Literal.LEAVING);
 			return list;
 		}
 
@@ -940,47 +456,20 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	}
 
 	@Override
-	public List<ReturnDataSet> getDisbursementPostings(String finReference) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ValueDate, PostDate, AppDate, AppValueDate, TranCode");
-		sql.append(", RevTranCode, TranDesc, DrOrCr, Account, PostAmount");
-		sql.append(", FinEvent, AcCcy, PostBranch, UserBranch, PostStatus, TranOrderId");
-		sql.append(" From Postings");
+	public List<ReturnDataSet> getDisbursementPostings(long finID) {
+		StringBuilder sql = getSelectQuery();
 		sql.append(" Where FinReference = ? AND FinEvent in (?, ?)");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 		List<ReturnDataSet> list = null;
 
 		list = this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, finReference);
+			ps.setLong(1, finID);
 			ps.setString(2, AccountingEvent.DISBINS);
 			ps.setString(3, AccountingEvent.INSPAY);
-		}, (rs, i) -> {
-			ReturnDataSet rds = new ReturnDataSet();
-
-			rds.setValueDate(rs.getTimestamp("ValueDate"));
-			rds.setPostDate(rs.getTimestamp("PostDate"));
-			rds.setAppDate(rs.getTimestamp("AppDate"));
-			rds.setAppValueDate(rs.getTimestamp("AppValueDate"));
-			rds.setTranCode(rs.getString("TranCode"));
-			rds.setRevTranCode(rs.getString("RevTranCode"));
-			rds.setTranDesc(rs.getString("TranDesc"));
-			rds.setDrOrCr(rs.getString("DrOrCr"));
-			rds.setAccount(rs.getString("Account"));
-			rds.setPostAmount(rs.getBigDecimal("PostAmount"));
-			rds.setFinEvent(rs.getString("FinEvent"));
-			rds.setAcCcy(rs.getString("AcCcy"));
-			rds.setPostBranch(rs.getString("PostBranch"));
-			rds.setUserBranch(rs.getString("UserBranch"));
-			rds.setPostStatus(rs.getString("PostStatus"));
-			rds.setTranOrderId(rs.getString("TranOrderId"));
-			rds.setValueDate(rs.getTimestamp("ValueDate"));
-
-			return rds;
-		});
+		}, new ReturnDataSetRowMapper());
 
 		if (CollectionUtils.isEmpty(list)) {
-			logger.info(Literal.LEAVING);
 			return list;
 		}
 
@@ -989,6 +478,76 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		sortPostingsByTransOrder(list);
 
 		return list;
+	}
+
+	private void setEntityCode(List<ReturnDataSet> dataSetList) {
+		String entityCode = null;
+		for (ReturnDataSet returnDataSet : dataSetList) {
+			if (returnDataSet.getEntityCode() == null) {
+				if (entityCode == null) {
+					entityCode = SysParamUtil.getValueAsString("ENTITYCODE");
+				}
+
+				returnDataSet.setEntityCode(entityCode);
+			}
+		}
+	}
+
+	private StringBuilder getSelectQuery() {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" LinkedTranId, Postref, PostingId, FinID, FinReference, FinEvent");
+		sql.append(", PostDate, ValueDate, TranCode, TranDesc, RevTranCode, DrOrCr");
+		sql.append(", Account,  ShadowPosting, PostAmount, AmountType, PostStatus, ErrorId");
+		sql.append(", ErrorMsg, AcCcy, TranOrderId, TransOrder, PostToSys, ExchangeRate");
+		sql.append(", PostBranch, AppDate, AppValueDate, UserBranch, AccountType, PostAmountLcCcy, CustAppDate");
+		sql.append(" From Postings");
+		return sql;
+	}
+
+	private class ReturnDataSetRowMapper implements RowMapper<ReturnDataSet> {
+		private ReturnDataSetRowMapper() {
+			super();
+		}
+
+		@Override
+		public ReturnDataSet mapRow(ResultSet rs, int rowNum) throws SQLException {
+			ReturnDataSet rd = new ReturnDataSet();
+
+			rd.setLinkedTranId(rs.getLong("LinkedTranId"));
+			rd.setPostref(rs.getString("Postref"));
+			rd.setPostingId(rs.getString("PostingId"));
+			rd.setFinID(rs.getLong("FinID"));
+			rd.setFinReference(rs.getString("FinReference"));
+			rd.setFinEvent(rs.getString("FinEvent"));
+			rd.setPostDate(JdbcUtil.getDate(rs.getDate("PostDate")));
+			rd.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
+			rd.setTranCode(rs.getString("TranCode"));
+			rd.setTranDesc(rs.getString("TranDesc"));
+			rd.setRevTranCode(rs.getString("RevTranCode"));
+			rd.setDrOrCr(rs.getString("DrOrCr"));
+			rd.setAccount(rs.getString("Account"));
+			rd.setShadowPosting(rs.getBoolean("ShadowPosting"));
+			rd.setPostAmount(rs.getBigDecimal("PostAmount"));
+			rd.setAmountType(rs.getString("AmountType"));
+			rd.setPostStatus(rs.getString("PostStatus"));
+			rd.setErrorId(rs.getString("ErrorId"));
+			rd.setErrorMsg(rs.getString("ErrorMsg"));
+			rd.setAcCcy(rs.getString("AcCcy"));
+			rd.setTranOrderId(rs.getString("TranOrderId"));
+			rd.setTransOrder(rs.getInt("TransOrder"));
+			rd.setPostToSys(rs.getString("PostToSys"));
+			rd.setExchangeRate(rs.getBigDecimal("ExchangeRate"));
+			rd.setPostBranch(rs.getString("PostBranch"));
+			rd.setAppDate(JdbcUtil.getDate(rs.getDate("AppDate")));
+			rd.setAppValueDate(JdbcUtil.getDate(rs.getDate("AppValueDate")));
+			rd.setUserBranch(rs.getString("UserBranch"));
+			rd.setAccountType(rs.getString("AccountType"));
+			rd.setPostAmountLcCcy(rs.getBigDecimal("PostAmountLcCcy"));
+			rd.setCustAppDate(rs.getDate("CustAppDate"));
+
+			return rd;
+		}
+
 	}
 
 	private static List<ReturnDataSet> sortPostingsByDate(List<ReturnDataSet> postings) {
