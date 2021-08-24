@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  OverdueChargeRecoveryDAO.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  11-05-2012    														*
- *                                                                  						*
- * Modified Date    :  11-05-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : OverdueChargeRecoveryDAO.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 11-05-2012 * *
+ * Modified Date : 11-05-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 11-05-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 11-05-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.financemanagement;
 
@@ -55,9 +37,9 @@ public interface OverdueChargeRecoveryDAO {
 
 	OverdueChargeRecovery getNewOverdueChargeRecovery();
 
-	OverdueChargeRecovery getOverdueChargeRecoveryById(String id, Date finSchDate, String finOdFor, String type);
+	OverdueChargeRecovery getOverdueChargeRecoveryById(long finID, Date finSchDate, String finOdFor, String type);
 
-	List<OverdueChargeRecovery> getOverdueChargeRecoveryByRef(final String finRef, Date schdDate, String schdFor);
+	List<OverdueChargeRecovery> getOverdueChargeRecoveryByRef(long finID, Date schdDate, String schdFor);
 
 	void update(OverdueChargeRecovery overdueChargeRecovery, String type);
 
@@ -65,45 +47,24 @@ public interface OverdueChargeRecoveryDAO {
 
 	String save(OverdueChargeRecovery overdueChargeRecovery, String type);
 
-	BigDecimal getPendingODCAmount(String id);
+	BigDecimal getPendingODCAmount(long finID);
 
-	OverdueChargeRecovery getMaxOverdueChargeRecoveryById(String finReference, Date schdDate, String finODFor,
-			String type);
+	OverdueChargeRecovery getMaxOverdueChargeRecoveryById(long finID, Date schdDate, String finODFor, String type);
 
-	List<String> getOverDueFinanceList();
+	List<Long> getOverDueFinanceList();
 
-	void deleteUnpaid(String finReference, Date finODSchdDate, String finODFor, String type);
+	void deleteUnpaid(long finID, Date finODSchdDate, String finODFor, String type);
 
 	void updatePenaltyPaid(OverdueChargeRecovery recovery, String type);
 
 	void updatePenaltyPaid(OverdueChargeRecovery recovery, boolean fullyPaidSchd, String type);
 
-	List<OverdueChargeRecovery> getFinancePenaltysByFinRef(String id, String type);
+	List<OverdueChargeRecovery> getFinancePenaltysByFinRef(long finID, String type);
 
-	BigDecimal getPaidPenaltiesbySchDates(String finReference, List<Date> pastSchDates);
+	OverdueChargeRecovery getPastSchedulePenalty(long finID, Date rpyDate, boolean isCurSchedule, boolean befPriPftPay);
 
-	void saveODDeferHistory(String finReference, List<Date> pastSchDates);
-
-	void deleteODDeferHistory(String finReference, List<Date> pastdueDefDateList);
-
-	OverdueChargeRecovery getPastSchedulePenalty(String finReference, Date rpyDate, boolean isCurSchedule,
-			boolean befPriPftPay);
-
-	void updateRcdCanDel(String finReference, Date rpyDate);
-
-	List<OverdueChargeRecovery> getPastSchedulePenalties(String finReference);
-
-	void updateChargeRecovery(OverdueChargeRecovery overdueChargeRecovery);
-
-	List<OverdueChargeRecovery> getOverdueChargeRecovery(String finReference, Date finODSchdDate);
-
-	void updateRecoveryPayments(OverdueChargeRecovery overdueChargeRecovery);
-
-	OverdueChargeRecovery getChargeRecoveryById(String finReference, Date finSchDate, String finOdFor);
-
-	OverdueChargeRecovery getTotals(String finReference, Date finSchDate, String finOdFor);
+	List<OverdueChargeRecovery> getPastSchedulePenalties(long finID);
 
 	OverdueChargeRecovery getODCRecoveryDetails(OverdueChargeRecovery ocr);
 
-	void deleteByFinRefAndSchdate(String finReferece, Date schdDate, String finODFor, String type);
 }

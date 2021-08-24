@@ -1,67 +1,41 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  OverdueChargeRecoveryDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  11-05-2012    														*
- *                                                                  						*
- * Modified Date    :  11-05-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : OverdueChargeRecoveryDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 11-05-2012 * *
+ * Modified Date : 11-05-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 11-05-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 11-05-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.financemanagement.impl;
 
 import java.math.BigDecimal;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -70,6 +44,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -83,778 +58,495 @@ public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery
 		super();
 	}
 
-	/**
-	 * This method set the Work Flow id based on the module name and return the new OverdueChargeRecovery
-	 * 
-	 * @return OverdueChargeRecovery
-	 */
 	@Override
 	public OverdueChargeRecovery getOverdueChargeRecovery() {
-		logger.debug("Entering");
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("OverdueChargeRecovery");
 		OverdueChargeRecovery overdueChargeRecovery = new OverdueChargeRecovery();
+
 		if (workFlowDetails != null) {
 			overdueChargeRecovery.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
-		logger.debug("Leaving");
 		return overdueChargeRecovery;
 	}
 
-	/**
-	 * This method get the module from method getOverdueChargeRecovery() and set the new record flag as true and return
-	 * OverdueChargeRecovery()
-	 * 
-	 * @return OverdueChargeRecovery
-	 */
 	@Override
 	public OverdueChargeRecovery getNewOverdueChargeRecovery() {
-		logger.debug("Entering");
 		OverdueChargeRecovery overdueChargeRecovery = getOverdueChargeRecovery();
 		overdueChargeRecovery.setNewRecord(true);
-		logger.debug("Leaving");
 		return overdueChargeRecovery;
 	}
 
-	/**
-	 * Fetch the Record Overdue Charge Recovery details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return OverdueChargeRecovery
-	 */
 	@Override
-	public OverdueChargeRecovery getOverdueChargeRecoveryById(final String id, Date finSchDate, String finOdFor,
+	public OverdueChargeRecovery getOverdueChargeRecoveryById(long finID, Date finSchDate, String finOdFor,
 			String type) {
-		logger.debug("Entering");
-		OverdueChargeRecovery overdueChargeRecovery = new OverdueChargeRecovery();
+		StringBuilder sql = new StringBuilder("Select * From (");
+		sql.append(getSelectQuery(type).toString());
+		sql.append(" Where FinID = ? and FinODSchdDate = ? AND FinODFor = ?) T  Where row_num <= 1");
 
-		overdueChargeRecovery.setId(id);
-		overdueChargeRecovery.setFinODSchdDate(finSchDate);
-		overdueChargeRecovery.setFinODFor(finOdFor);
-
-		StringBuilder selectSql = new StringBuilder(
-				"Select  FinReference, FinODSchdDate, FinODFor, MovementDate, SeqNo, ODDays, FinCurODAmt, FinCurODPri, FinCurODPft, PenaltyType,");
-		selectSql.append(
-				"PenaltyCalOn, PenaltyAmtPerc, Penalty, MaxWaiver, WaivedAmt, PenaltyPaid, PenaltyBal, RcdCanDel");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(" ,FinCcy, lovDescCustCIF, lovDescCustShrtName, lovDescFinStartDate,");
-			selectSql.append(" lovDescMaturityDate, lovDescFinAmount, lovDescCurFinAmt");
-			selectSql.append(
-					" , LovDescCurSchPriDue, LovDescCurSchPftDue, LovDescTotOvrDueChrg, LovDescTotOvrDueChrgWaived, LovDescTotOvrDueChrgPaid ");
-		}
-		selectSql.append(" From FinODCRecovery");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(
-				" Where FinReference =:FinReference AND FinODSchdDate = :FinODSchdDate AND FinODFor = :FinODFor)T  where row_num <= 1");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
-		RowMapper<OverdueChargeRecovery> typeRowMapper = BeanPropertyRowMapper.newInstance(OverdueChargeRecovery.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			overdueChargeRecovery = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			OverdueChargeRecoveryRowMapper rowMapper = new OverdueChargeRecoveryRowMapper(type);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, finSchDate, finOdFor);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			overdueChargeRecovery = null;
+			//
 		}
-		logger.debug("Leaving");
-		return overdueChargeRecovery;
+		return null;
 	}
 
-	/**
-	 * Fetch the Record Overdue Charge Recovery details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return OverdueChargeRecovery
-	 */
 	@Override
-	public List<OverdueChargeRecovery> getOverdueChargeRecoveryByRef(final String finRef, Date schdDate,
-			String schdFor) {
-		logger.debug("Entering");
-		OverdueChargeRecovery odcRecovery = new OverdueChargeRecovery();
-		odcRecovery.setFinReference(finRef);
-		odcRecovery.setFinODSchdDate(schdDate);
-		odcRecovery.setFinODFor(schdFor);
+	public List<OverdueChargeRecovery> getOverdueChargeRecoveryByRef(long finID, Date schdDate, String schdFor) {
+		StringBuilder sql = getSelectQuery("");
+		sql.append(" Where FinID = ? and FinODSchdDate = ? AND FinODFor = ?");
 
-		StringBuilder selectSql = new StringBuilder(
-				"Select FinReference, FinODSchdDate, FinODFor, MovementDate, SeqNo,");
-		selectSql.append(" ODDays, FinCurODAmt, FinCurODPri, FinCurODPft, PenaltyType, PenaltyCalOn,");
-		selectSql.append(" PenaltyAmtPerc, Penalty, MaxWaiver, WaivedAmt, PenaltyPaid, PenaltyBal, RcdCanDel");
+		logger.debug(Literal.SQL + sql.toString());
 
-		selectSql.append(" From FinODCRecovery");
-		selectSql.append(
-				" Where FinReference =:FinReference AND FinODSchdDate = :FinODSchdDate AND FinODFor = :FinODFor ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(odcRecovery);
-		RowMapper<OverdueChargeRecovery> typeRowMapper = BeanPropertyRowMapper.newInstance(OverdueChargeRecovery.class);
-
-		List<OverdueChargeRecovery> odcRecoveries = null;
-
-		try {
-			odcRecoveries = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (Exception e) {
-
-		}
-
-		logger.debug("Leaving");
-		return odcRecoveries;
+		OverdueChargeRecoveryRowMapper rowMapper = new OverdueChargeRecoveryRowMapper("");
+		return this.jdbcOperations.query(sql.toString(), rowMapper, finID, schdDate, schdFor);
 	}
 
-	/**
-	 * Fetch the Record Overdue Charge Recovery details by key field
-	 * 
-	 * @param finReference
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return OverdueChargeRecovery
-	 */
 	@Override
-	public OverdueChargeRecovery getMaxOverdueChargeRecoveryById(final String finReference, Date finSchDate,
-			String finOdFor, String type) {
-		logger.debug("Entering");
-		OverdueChargeRecovery overdueChargeRecovery = new OverdueChargeRecovery();
+	public OverdueChargeRecovery getMaxOverdueChargeRecoveryById(long finID, Date finSchDate, String finOdFor,
+			String type) {
 
-		overdueChargeRecovery.setId(finReference);
-		overdueChargeRecovery.setFinODSchdDate(finSchDate);
-		overdueChargeRecovery.setFinODFor(finOdFor);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference, FinODSchdDate, FinODFor, MovementDate, SeqNo");
+		sql.append(", Penalty, WaivedAmt, PenaltyPaid, PenaltyBal, RcdCanDel");
+		sql.append(" From FinODCRecovery");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ? and FinODSchdDate = ? and FinODFor = ?");
 
-		StringBuilder selectSql = new StringBuilder(
-				"Select FinReference, FinODSchdDate, FinODFor, MovementDate,SeqNo,");
-		selectSql.append(" Penalty, WaivedAmt, PenaltyPaid, PenaltyBal, RcdCanDel");
-		selectSql.append(" From FinODCRecovery");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(
-				" Where FinReference =:FinReference AND FinODSchdDate = :FinODSchdDate AND FinODFor = :FinODFor");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
-		RowMapper<OverdueChargeRecovery> typeRowMapper = BeanPropertyRowMapper.newInstance(OverdueChargeRecovery.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			overdueChargeRecovery = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				OverdueChargeRecovery ocr = new OverdueChargeRecovery();
+
+				ocr.setFinID(rs.getLong("FinID"));
+				ocr.setFinReference(rs.getString("FinReference"));
+				ocr.setFinODSchdDate(rs.getDate("FinODSchdDate"));
+				ocr.setFinODFor(rs.getString("FinODFor"));
+				ocr.setMovementDate(rs.getDate("MovementDate"));
+				ocr.setSeqNo(rs.getInt("SeqNo"));
+				ocr.setPenalty(rs.getBigDecimal("Penalty"));
+				ocr.setWaivedAmt(rs.getBigDecimal("WaivedAmt"));
+				ocr.setPenaltyPaid(rs.getBigDecimal("PenaltyPaid"));
+				ocr.setPenaltyBal(rs.getBigDecimal("PenaltyBal"));
+				ocr.setRcdCanDel(rs.getBoolean("RcdCanDel"));
+
+				return ocr;
+
+			}, finID, finSchDate, finOdFor);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			overdueChargeRecovery = null;
+			//
 		}
-		logger.debug("Leaving");
-		return overdueChargeRecovery;
+
+		return null;
 	}
 
-	/**
-	 * This method Deletes the Record from the FinODCRecovery or FinODCRecovery_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Overdue Charge Recovery by key FinReference
-	 * 
-	 * @param Overdue
-	 *            Charge Recovery (overdueChargeRecovery)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void delete(OverdueChargeRecovery overdueChargeRecovery, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
+	public void delete(OverdueChargeRecovery odcr, String type) {
+		StringBuilder sql = new StringBuilder("Delete From FinODCRecovery");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
 
-		StringBuilder deleteSql = new StringBuilder("Delete From FinODCRecovery");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinReference =:FinReference");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			int recordCount = this.jdbcOperations.update(sql.toString(), odcr.getFinID());
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method for Deletion of overdue Recovery Details records if when Overdue will not happen
-	 */
 	@Override
-	public void deleteUnpaid(String finReference, Date finODSchDate, String finODFor, String type) {
-		logger.debug("Entering");
+	public void deleteUnpaid(long finID, Date finODSchDate, String finODFor, String type) {
+		StringBuilder sql = new StringBuilder("Delete From FinODCRecovery");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ? and FinODSchdDate= ? and FinODFor= ? and RcdCanDel = ?");
 
-		OverdueChargeRecovery recovery = new OverdueChargeRecovery();
-		recovery.setFinReference(finReference);
-		recovery.setFinODSchdDate(finODSchDate);
-		recovery.setFinODFor(finODFor);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder deleteSql = new StringBuilder("Delete From FinODCRecovery");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(
-				" Where FinReference =:FinReference AND FinODSchdDate= :FinODSchdDate AND FinODFor= :FinODFor AND RcdCanDel = 1");
-		logger.debug("deleteSql: " + deleteSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(recovery);
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql.toString(), finID, finODSchDate, finODFor, 1);
 	}
 
-	/**
-	 * This method insert new Records into FinODCRecovery or FinODCRecovery_Temp.
-	 * 
-	 * save Overdue Charge Recovery
-	 * 
-	 * @param Overdue
-	 *            Charge Recovery (overdueChargeRecovery)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public String save(OverdueChargeRecovery overdueChargeRecovery, String type) {
-		logger.debug("Entering");
+	public String save(OverdueChargeRecovery odcr, String type) {
+		StringBuilder sql = new StringBuilder("Insert Into FinODCRecovery");
+		sql.append(" (FinID, FinReference, FinODSchdDate, FinODFor, MovementDate, SeqNo, ODDays, FinCurODAmt");
+		sql.append(", FinCurODPri, FinCurODPft, PenaltyType, PenaltyCalOn, PenaltyAmtPerc, Penalty");
+		sql.append(", MaxWaiver, WaivedAmt, PenaltyPaid, PenaltyBal, RcdCanDel)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into FinODCRecovery");
-		insertSql.append(" (FinReference, FinODSchdDate, FinODFor, MovementDate,SeqNo, ODDays, FinCurODAmt,");
-		insertSql.append(" FinCurODPri, FinCurODPft, PenaltyType, PenaltyCalOn, PenaltyAmtPerc, Penalty,");
-		insertSql.append(" MaxWaiver, WaivedAmt, PenaltyPaid, PenaltyBal, RcdCanDel)");
-		insertSql.append(
-				" Values( :FinReference, :FinODSchdDate, :FinODFor, :MovementDate, :SeqNo, :ODDays, :FinCurODAmt,");
-		insertSql.append(" :FinCurODPri, :FinCurODPft, :PenaltyType, :PenaltyCalOn, :PenaltyAmtPerc,");
-		insertSql.append(" :Penalty, :MaxWaiver, :WaivedAmt, :PenaltyPaid, :PenaltyBal, :RcdCanDel)");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("insertSql: " + insertSql.toString());
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return overdueChargeRecovery.getId();
+			ps.setLong(index++, odcr.getFinID());
+			ps.setString(index++, odcr.getFinReference());
+			ps.setDate(index++, JdbcUtil.getDate(odcr.getFinODSchdDate()));
+			ps.setString(index++, odcr.getFinODFor());
+			ps.setDate(index++, JdbcUtil.getDate(odcr.getMovementDate()));
+			ps.setInt(index++, odcr.getSeqNo());
+			ps.setInt(index++, odcr.getODDays());
+			ps.setBigDecimal(index++, odcr.getFinCurODAmt());
+			ps.setBigDecimal(index++, odcr.getFinCurODPri());
+			ps.setBigDecimal(index++, odcr.getFinCurODPft());
+			ps.setString(index++, odcr.getPenaltyType());
+			ps.setString(index++, odcr.getPenaltyCalOn());
+			ps.setBigDecimal(index++, odcr.getPenaltyAmtPerc());
+			ps.setBigDecimal(index++, odcr.getPenalty());
+			ps.setBigDecimal(index++, odcr.getMaxWaiver());
+			ps.setBigDecimal(index++, odcr.getWaivedAmt());
+			ps.setBigDecimal(index++, odcr.getPenaltyPaid());
+			ps.setBigDecimal(index++, odcr.getPenaltyBal());
+			ps.setBoolean(index++, odcr.isRcdCanDel());
+		});
+
+		return odcr.getId();
 	}
 
-	/**
-	 * This method updates the Record FinODCRecovery or FinODCRecovery_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Overdue Charge Recovery by key FinReference and Version
-	 * 
-	 * @param Overdue
-	 *            Charge Recovery (overdueChargeRecovery)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void update(OverdueChargeRecovery overdueChargeRecovery, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update FinODCRecovery");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set SeqNo=:SeqNo, ODDays= :ODDays, FinCurODAmt= :FinCurODAmt, FinCurODPri= :FinCurODPri,");
-		updateSql.append(
-				" FinCurODPft= :FinCurODPft, PenaltyType= :PenaltyType, PenaltyCalOn= :PenaltyCalOn, PenaltyAmtPerc= :PenaltyAmtPerc,");
-		updateSql.append(
-				" Penalty= :Penalty, MaxWaiver= :MaxWaiver, WaivedAmt= :WaivedAmt, PenaltyPaid= :PenaltyPaid, PenaltyBal= :PenaltyBal, RcdCanDel= :RcdCanDel");
-		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate = :FinODSchdDate");
-		updateSql.append(" AND FinODFor = :FinODFor AND MovementDate= :MovementDate");
+	public void update(OverdueChargeRecovery odcr, String type) {
+		StringBuilder sql = new StringBuilder("Update FinODCRecovery");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set SeqNo = ?, ODDays = ?, FinCurODAmt = ?, FinCurODPri = ?");
+		sql.append(", FinCurODPft = ?, PenaltyType = ?, PenaltyCalOn = ?, PenaltyAmtPerc = ?");
+		sql.append(", Penalty= ?, MaxWaiver = ?, WaivedAmt = ?, PenaltyPaid= ?, PenaltyBal= ?, RcdCanDel = ?");
+		sql.append(" Where FinID = ? and FinODSchdDate = ? and FinODFor = ? and MovementDate = ?");
 
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug(Literal.SQL + sql.toString());
+
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setInt(index++, odcr.getSeqNo());
+			ps.setInt(index++, odcr.getODDays());
+			ps.setBigDecimal(index++, odcr.getFinCurODAmt());
+			ps.setBigDecimal(index++, odcr.getFinCurODPri());
+			ps.setBigDecimal(index++, odcr.getFinCurODPft());
+			ps.setString(index++, odcr.getPenaltyType());
+			ps.setString(index++, odcr.getPenaltyCalOn());
+			ps.setBigDecimal(index++, odcr.getPenaltyAmtPerc());
+			ps.setBigDecimal(index++, odcr.getPenalty());
+			ps.setBigDecimal(index++, odcr.getMaxWaiver());
+			ps.setBigDecimal(index++, odcr.getWaivedAmt());
+			ps.setBigDecimal(index++, odcr.getPenaltyPaid());
+			ps.setBigDecimal(index++, odcr.getPenaltyBal());
+			ps.setBoolean(index++, odcr.isRcdCanDel());
+
+			ps.setLong(index++, odcr.getFinID());
+			ps.setDate(index++, JdbcUtil.getDate(odcr.getFinODSchdDate()));
+			ps.setString(index++, odcr.getFinODFor());
+			ps.setDate(index++, JdbcUtil.getDate(odcr.getMovementDate()));
+
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method for Overdue Recovery Details Updation on Postings
-	 */
 	@Override
-	public void updatePenaltyPaid(OverdueChargeRecovery recovery, boolean fullyPaidSchd, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update FinODCRecovery");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set WaivedAmt= :WaivedAmt, PenaltyPaid= (PenaltyPaid + :PenaltyPaid), ");
-		updateSql.append(" PenaltyBal= (PenaltyBal - :PenaltyBal), RcdCanDel= :RcdCanDel");
-		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate = :FinODSchdDate");
-		updateSql.append(" AND FinODFor = :FinODFor ");
+	public void updatePenaltyPaid(OverdueChargeRecovery odcr, boolean fullyPaidSchd, String type) {
+		StringBuilder sql = new StringBuilder("Update FinODCRecovery");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set WaivedAmt = ?, PenaltyPaid = (PenaltyPaid + ?)");
+		sql.append(", PenaltyBal= (PenaltyBal - ?), RcdCanDel = ?");
+		sql.append(" Where FinID = ? and FinODSchdDate = ? and FinODFor = ?");
+
 		if (fullyPaidSchd) {
-			updateSql.append(" AND MovementDate = (SELECT MovementDate FROM FinODCRecovery_ATView ");
-			updateSql.append(" WHERE FinReference =:FinReference AND FinODSchdDate = :FinODSchdDate");
-			updateSql.append(" AND FinODFor = :FinODFor )  AND RcdCanDel =0");
+			sql.append(" and MovementDate = (Select MovementDate From FinODCRecovery_ATView");
+			sql.append(" Where FinID = ? and FinODSchdDate = ? and FinODFor = ?)  and RcdCanDel = 0");
 		} else {
-			updateSql.append(" AND MovementDate= :MovementDate AND RcdCanDel =1");
+			sql.append(" and MovementDate = ? and RcdCanDel = 1");
 		}
 
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(recovery);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug(Literal.SQL + sql.toString());
+
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setBigDecimal(index++, odcr.getWaivedAmt());
+			ps.setBigDecimal(index++, odcr.getPenaltyPaid());
+			ps.setBigDecimal(index++, odcr.getPenaltyBal());
+			ps.setBoolean(index++, odcr.isRcdCanDel());
+
+			ps.setLong(index++, odcr.getFinID());
+			ps.setDate(index++, JdbcUtil.getDate(odcr.getFinODSchdDate()));
+			ps.setString(index++, odcr.getFinODFor());
+
+			if (fullyPaidSchd) {
+				ps.setLong(index++, odcr.getFinID());
+				ps.setDate(index++, JdbcUtil.getDate(odcr.getFinODSchdDate()));
+				ps.setString(index++, odcr.getFinODFor());
+
+				ps.setBoolean(index++, false);
+			} else {
+				ps.setDate(index++, JdbcUtil.getDate(odcr.getMovementDate()));
+				ps.setBoolean(index++, true);
+			}
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method for Overdue Recovery Details Updation on Postings
-	 */
 	@Override
-	public void updatePenaltyPaid(OverdueChargeRecovery recovery, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update FinODCRecovery");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set WaivedAmt= :WaivedAmt, PenaltyPaid= :PenaltyPaid, ");
-		updateSql.append(" PenaltyBal= (PenaltyBal - :PenaltyBal), RcdCanDel= :RcdCanDel");
-		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate = :FinODSchdDate");
-		updateSql.append(" AND FinODFor = :FinODFor AND MovementDate= :MovementDate AND RcdCanDel =1");
+	public void updatePenaltyPaid(OverdueChargeRecovery odcr, String type) {
+		StringBuilder sql = new StringBuilder("Update FinODCRecovery");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set WaivedAmt = ?, PenaltyPaid = ?, PenaltyBal = (PenaltyBal - ?), RcdCanDel= ?");
+		sql.append(" Where FinID = ? and FinODSchdDate = ? and FinODFor = ? and MovementDate = ? and RcdCanDel = ?");
 
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(recovery);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug(Literal.SQL + sql.toString());
+
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setBigDecimal(index++, odcr.getWaivedAmt());
+			ps.setBigDecimal(index++, odcr.getPenaltyPaid());
+			ps.setBigDecimal(index++, odcr.getPenaltyBal());
+			ps.setBoolean(index++, odcr.isRcdCanDel());
+
+			ps.setLong(index++, odcr.getFinID());
+			ps.setDate(index++, JdbcUtil.getDate(odcr.getFinODSchdDate()));
+			ps.setString(index++, odcr.getFinODFor());
+			ps.setDate(index++, JdbcUtil.getDate(odcr.getMovementDate()));
+			ps.setBoolean(index++, true);
+
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method for getting Pending OverDue Amount based on FinReference
-	 */
-	public BigDecimal getPendingODCAmount(final String id) {
-		logger.debug("Entering");
-		OverdueChargeRecovery overdueChargeRecovery = new OverdueChargeRecovery();
+	public BigDecimal getPendingODCAmount(long finID) {
+		String sql = "Select sum(TotPenaltyBal) PendingODC From FinODDetails Where FinID = ?";
 
-		overdueChargeRecovery.setId(id);
-		StringBuilder selectSql = new StringBuilder("SELECT SUM(TotPenaltyBal) As PendingODC ");
-		selectSql.append(" From FinODDetails");
-		selectSql.append(" Where FinReference =:FinReference ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
-		RowMapper<OverdueChargeRecovery> typeRowMapper = BeanPropertyRowMapper.newInstance(OverdueChargeRecovery.class);
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			overdueChargeRecovery = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			overdueChargeRecovery = null;
+			//
 		}
 
-		if (overdueChargeRecovery == null) {
-			return BigDecimal.ZERO;
-		}
-		logger.debug("Leaving");
-		return overdueChargeRecovery.getPendingODC();
+		return BigDecimal.ZERO;
 	}
 
 	@Override
-	public List<String> getOverDueFinanceList() {
-		logger.debug("Entering");
+	public List<Long> getOverDueFinanceList() {
+		String sql = "Select distinct FinID from FinODDetails Where FinCurODDays > GraceDays";
 
-		StringBuilder selectSql = new StringBuilder("Select DISTINCT FinReference from FinODDetails ");
-		selectSql.append(" WHERE FinCurODDays > GraceDays ");
+		logger.debug(Literal.SQL + sql);
 
-		logger.debug("selectSql: " + selectSql.toString());
-		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForList(selectSql.toString(), new BeanPropertySqlParameterSource(""),
-				String.class);
+		return this.jdbcOperations.queryForList(sql.toString(), Long.class);
 	}
 
-	/**
-	 * Method for Paid Penalty Details using Key: FinRefrence
-	 */
 	@Override
-	public List<OverdueChargeRecovery> getFinancePenaltysByFinRef(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
-
+	public List<OverdueChargeRecovery> getFinancePenaltysByFinRef(long finID, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, FinODSchdDate, MovementDate, PenaltyPaid");
-		sql.append(" from FinODCRecovery");
+		sql.append(" FinID, FinReference, FinODSchdDate, MovementDate, PenaltyPaid");
+		sql.append(" From FinODCRecovery");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = ? and PenaltyPaid > ?");
+		sql.append(" Where FinID = ? and PenaltyPaid > ?");
 		sql.append(" order by FinODSchdDate, MovementDate, SeqNo");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-					ps.setInt(index++, 0);
-				}
-			}, new RowMapper<OverdueChargeRecovery>() {
-				@Override
-				public OverdueChargeRecovery mapRow(ResultSet rs, int rowNum) throws SQLException {
-					OverdueChargeRecovery odr = new OverdueChargeRecovery();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, finID);
+			ps.setInt(index++, 0);
+		}, (rs, rowNum) -> {
+			OverdueChargeRecovery odr = new OverdueChargeRecovery();
 
-					odr.setFinReference(rs.getString("FinReference"));
-					odr.setFinODSchdDate(rs.getTimestamp("FinODSchdDate"));
-					odr.setMovementDate(rs.getTimestamp("MovementDate"));
-					odr.setPenaltyPaid(rs.getBigDecimal("PenaltyPaid"));
+			odr.setFinID(rs.getLong("FinID"));
+			odr.setFinReference(rs.getString("FinReference"));
+			odr.setFinODSchdDate(rs.getTimestamp("FinODSchdDate"));
+			odr.setMovementDate(rs.getTimestamp("MovementDate"));
+			odr.setPenaltyPaid(rs.getBigDecimal("PenaltyPaid"));
 
-					return odr;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return odr;
+		});
 	}
 
 	@Override
-	public BigDecimal getPaidPenaltiesbySchDates(String finReference, List<Date> pastSchDates) {
-		logger.debug("Entering");
-
-		Map<String, List<Date>> map = new HashMap<String, List<Date>>();
-		map.put("PastSchDates", pastSchDates);
-
-		StringBuilder selectSql = new StringBuilder("Select ISNULL(SUM(PenaltyPaid),0) ");
-		selectSql.append(" From FinODCRecovery ");
-		selectSql.append(" WITH(NOLOCK)  Where FinReference = '");
-		selectSql.append(finReference);
-		selectSql.append("' AND FinOdSchdDate IN (:PastSchDates) AND RcdCanDel = 0 AND PenaltyPaid > 0 ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), map, BigDecimal.class);
-	}
-
-	/**
-	 * Method for Saving History Details while Processing Past due Deferment Case
-	 */
-	@Override
-	public void saveODDeferHistory(String finReference, List<Date> pastSchDates) {
-		logger.debug("Entering");
-
-		Map<String, List<Date>> map = new HashMap<String, List<Date>>();
-		map.put("PastSchDates", pastSchDates);
-
-		StringBuilder selectSql = new StringBuilder("INSERT INTO FinODCRecovery_PD ");
-		selectSql.append(" Select * From FinODCRecovery ");
-		selectSql.append(" WITH(NOLOCK)  Where FinReference = '");
-		selectSql.append(finReference);
-		selectSql.append("' AND FinOdSchdDate IN (:PastSchDates) ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		this.jdbcTemplate.update(selectSql.toString(), map);
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Method for Delete History Details while Processing Past due Deferment Case
-	 */
-	@Override
-	public void deleteODDeferHistory(String finReference, List<Date> pastSchDates) {
-		logger.debug("Entering");
-
-		Map<String, List<Date>> map = new HashMap<String, List<Date>>();
-		map.put("PastSchDates", pastSchDates);
-
-		StringBuilder deleteSql = new StringBuilder(" Delete From FinODCRecovery ");
-		deleteSql.append("  Where FinReference = '");
-		deleteSql.append(finReference);
-		deleteSql.append("' AND FinOdSchdDate IN (:PastSchDates) ");
-		logger.debug("deleteSql: " + deleteSql.toString());
-		this.jdbcTemplate.update(deleteSql.toString(), map);
-		logger.debug("Leaving");
-	}
-
-	@Override
-	public OverdueChargeRecovery getPastSchedulePenalty(String finReference, Date schDate, boolean isCurSchedule,
+	public OverdueChargeRecovery getPastSchedulePenalty(long finID, Date schDate, boolean isCurSchedule,
 			boolean befPriPftPay) {
-		logger.debug("Entering");
 
-		OverdueChargeRecovery overdueChargeRecovery = new OverdueChargeRecovery();
-		overdueChargeRecovery.setId(finReference);
-		overdueChargeRecovery.setFinODSchdDate(schDate);
-
-		StringBuilder selectSql = new StringBuilder(
-				"Select R.FinReference, R.FinODSchdDate, R.FinODFor, R.MovementDate, ");
-		selectSql.append(" R.PenaltyBal,  R.PenaltyPaid, R.WaivedAmt, R.PenaltyType, D.TotWaived ");
-		selectSql.append(" From FinODCRecovery_AMView R INNER JOIN FInODDetails D ON R.FinReference = D.FinReference ");
-		selectSql.append(" AND R.FinODSchdDate = D.FinODSchdDate AND R.FinODFor = D.FinODFor ");
-		selectSql.append(" Where R.FinReference =:FinReference ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" R.FinID, R.FinReference, R.FinODSchdDate, R.FinODFor, R.MovementDate");
+		sql.append(", R.PenaltyBal, R.PenaltyPaid, R.WaivedAmt, R.PenaltyType, D.TotWaived");
+		sql.append(" From FinODCRecovery_AMView R");
+		sql.append(" Inner Join FinODDetails D ON R.FinID = D.FinID");
+		sql.append(" Where R.FinID = ? and R.FinODSchdDate = D.FinODSchdDate and R.FinODFor = D.FinODFor");
 
 		if (befPriPftPay) {
-			selectSql.append(" AND R.FinODSchdDate = :FinODSchdDate ");
+			sql.append(" and R.FinODSchdDate = ?");
 		} else {
 			if (isCurSchedule) {
-				selectSql.append(" AND R.FinODSchdDate = :FinODSchdDate AND R.PenaltyBal > 0 AND R.RcdCanDel = 0 ");
+				sql.append(" and R.FinODSchdDate = ? and R.PenaltyBal > 0 and R.RcdCanDel = 0 ");
 			} else {
-				selectSql.append(" AND R.FinODSchdDate < :FinODSchdDate AND R.PenaltyBal > 0 AND R.RcdCanDel = 0 ");
+				sql.append(" and R.FinODSchdDate < ? AND R.PenaltyBal > 0 and R.RcdCanDel = 0 ");
 			}
 		}
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
-		RowMapper<OverdueChargeRecovery> typeRowMapper = BeanPropertyRowMapper.newInstance(OverdueChargeRecovery.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			overdueChargeRecovery = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				OverdueChargeRecovery odcr = new OverdueChargeRecovery();
+
+				odcr.setFinID(rs.getLong("FinID"));
+				odcr.setFinReference(rs.getString("FinReference"));
+				odcr.setFinODSchdDate(rs.getDate("FinODSchdDate"));
+				odcr.setFinODFor(rs.getString("FinODFor"));
+				odcr.setMovementDate(rs.getDate("MovementDate"));
+				odcr.setPenaltyBal(rs.getBigDecimal("PenaltyBal"));
+				odcr.setPenaltyPaid(rs.getBigDecimal("PenaltyPaid"));
+				odcr.setWaivedAmt(rs.getBigDecimal("WaivedAmt"));
+				odcr.setPenaltyType(rs.getString("PenaltyType"));
+				odcr.setTotWaived(rs.getBigDecimal("TotWaived"));
+
+				return odcr;
+			}, finID, schDate);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			overdueChargeRecovery = null;
+			//
 		}
-		logger.debug("Leaving");
-		return overdueChargeRecovery;
+
+		return null;
 	}
 
-	/**
-	 * Method for Fetching List of Past Penalties (For Fully Paid Schedules)
-	 */
 	@Override
-	public List<OverdueChargeRecovery> getPastSchedulePenalties(String finReference) {
-		logger.debug("Entering");
+	public List<OverdueChargeRecovery> getPastSchedulePenalties(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" R.FinID, R.FinReference, R.FinODSchdDate, R.FinODFor, R.MovementDate");
+		sql.append(", R.PenaltyBal, R.PenaltyPaid, R.WaivedAmt, R.PenaltyType, D.TotWaived");
+		sql.append(" From FinODCRecovery_AMView R");
+		sql.append(" Inner Join FinODDetails D ON R.FinID = D.FinID");
+		sql.append(" Where R.FinID = ? and R.FinODSchdDate = D.FinODSchdDate and R.FinODFor = D.FinODFor");
+		sql.append(" and R.PenaltyBal > 0 and R.RcdCanDel = 0");
 
-		OverdueChargeRecovery overdueChargeRecovery = new OverdueChargeRecovery();
-		overdueChargeRecovery.setId(finReference);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder(
-				"Select R.FinReference, R.FinODSchdDate, R.FinODFor, R.MovementDate, ");
-		selectSql.append(" R.PenaltyBal,  R.PenaltyPaid, R.WaivedAmt, R.PenaltyType, D.TotWaived ");
-		selectSql.append(" From FinODCRecovery_AMView R INNER JOIN FInODDetails D ON R.FinReference = D.FinReference ");
-		selectSql.append(" AND R.FinODSchdDate = D.FinODSchdDate AND R.FinODFor = D.FinODFor ");
-		selectSql.append(" Where R.FinReference =:FinReference ");
-		selectSql.append(" AND R.PenaltyBal > 0 and R.RcdCanDel = 0 ");
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			OverdueChargeRecovery odcr = new OverdueChargeRecovery();
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
-		RowMapper<OverdueChargeRecovery> typeRowMapper = BeanPropertyRowMapper.newInstance(OverdueChargeRecovery.class);
+			odcr.setFinID(rs.getLong("FinID"));
+			odcr.setFinReference(rs.getString("FinReference"));
+			odcr.setFinODSchdDate(rs.getDate("FinODSchdDate"));
+			odcr.setFinODFor(rs.getString("FinODFor"));
+			odcr.setMovementDate(rs.getDate("MovementDate"));
+			odcr.setPenaltyBal(rs.getBigDecimal("PenaltyBal"));
+			odcr.setPenaltyPaid(rs.getBigDecimal("PenaltyPaid"));
+			odcr.setWaivedAmt(rs.getBigDecimal("WaivedAmt"));
+			odcr.setPenaltyType(rs.getString("PenaltyType"));
+			odcr.setTotWaived(rs.getBigDecimal("TotWaived"));
 
-		List<OverdueChargeRecovery> recList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
-		logger.debug("Leaving");
-		return recList;
+			return odcr;
+		}, finID);
+
 	}
 
-	/**
-	 * Method for Updating Record Deletion Status to avoid deletion on Recalculation
-	 */
-	@Override
-	public void updateRcdCanDel(String finReference, Date schDate) {
-		logger.debug("Entering");
-
-		OverdueChargeRecovery overdueChargeRecovery = new OverdueChargeRecovery();
-		overdueChargeRecovery.setId(finReference);
-		overdueChargeRecovery.setFinODSchdDate(schDate);
-		StringBuilder updateSql = new StringBuilder("Update FinODCRecovery");
-		updateSql.append(" Set RcdCanDel= 0");
-		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate = :FinODSchdDate");
-
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Method for Fetching List of Past Penalties (For Fully Paid Schedules)
-	 */
-	@Override
-	public List<OverdueChargeRecovery> getOverdueChargeRecovery(String finReference, Date finODSchdDate) {
-		logger.debug("Entering");
-
-		OverdueChargeRecovery overdueChargeRecovery = new OverdueChargeRecovery();
-		overdueChargeRecovery.setFinReference(finReference);
-		overdueChargeRecovery.setFinODSchdDate(finODSchdDate);
-
-		StringBuilder selectSql = new StringBuilder("Select * from  FinODCRecovery");
-		selectSql.append(" Where FinReference =:FinReference and  FinODSchdDate=:FinODSchdDate ");
-		selectSql.append(" AND PenaltyBal > 0 order by MovementDate ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
-		RowMapper<OverdueChargeRecovery> typeRowMapper = BeanPropertyRowMapper.newInstance(OverdueChargeRecovery.class);
-
-		List<OverdueChargeRecovery> recList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
-		logger.debug("Leaving");
-		return recList;
-	}
-
-	/**
-	 * Fetch the Record Overdue Charge Recovery details by key field
-	 * 
-	 * @param finReference
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return OverdueChargeRecovery
-	 */
-	@Override
-	public OverdueChargeRecovery getChargeRecoveryById(final String finReference, Date finSchDate, String finOdFor) {
-		logger.debug("Entering");
-		OverdueChargeRecovery recovery = new OverdueChargeRecovery();
-
-		recovery.setId(finReference);
-		recovery.setFinODSchdDate(finSchDate);
-		recovery.setFinODFor(finOdFor);
-		recovery.setRcdCanDel(true);
-
-		StringBuilder selectSql = new StringBuilder("Select * From FinODCRecovery");
-		selectSql.append(
-				" Where FinReference =:FinReference AND FinODSchdDate = :FinODSchdDate AND FinODFor = :FinODFor AND RcdCanDel = :RcdCanDel");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(recovery);
-		RowMapper<OverdueChargeRecovery> typeRowMapper = BeanPropertyRowMapper.newInstance(OverdueChargeRecovery.class);
-
-		try {
-			recovery = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			recovery = null;
-		}
-		logger.debug("Leaving");
-		return recovery;
-	}
-
-	/**
-	 * Fetch the Record Overdue Charge Recovery details by key field
-	 * 
-	 * @param finReference
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return OverdueChargeRecovery
-	 */
-	@Override
-	public OverdueChargeRecovery getTotals(final String finReference, Date finSchDate, String finOdFor) {
-		logger.debug("Entering");
-		OverdueChargeRecovery recovery = new OverdueChargeRecovery();
-
-		recovery.setId(finReference);
-		recovery.setFinODSchdDate(finSchDate);
-		recovery.setFinODFor(finOdFor);
-
-		StringBuilder selectSql = new StringBuilder(
-				"select SUM(Penalty) Penalty, SUM(PenaltyPaid) PenaltyPaid , SUM(WaivedAmt) WaivedAmt from FinODCRecovery");
-		selectSql.append(
-				" Where FinReference =:FinReference AND FinODSchdDate = :FinODSchdDate AND FinODFor = :FinODFor ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(recovery);
-		RowMapper<OverdueChargeRecovery> typeRowMapper = BeanPropertyRowMapper.newInstance(OverdueChargeRecovery.class);
-
-		try {
-			recovery = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			recovery = null;
-		}
-		logger.debug("Leaving");
-		return recovery;
-	}
-
-	/**
-	 * Method for Updating Record Deletion Status to avoid deletion on Recalculation
-	 */
-	@Override
-	public void updateRecoveryPayments(OverdueChargeRecovery overdueChargeRecovery) {
-		logger.debug("Entering");
-
-		StringBuilder updateSql = new StringBuilder("Update FinODCRecovery");
-		updateSql.append(" Set PenaltyPaid = :PenaltyPaid , PenaltyBal = :PenaltyBal ,  RcdCanDel =:RcdCanDel ");
-		updateSql.append(
-				" Where FinReference =:FinReference AND FinODSchdDate = :FinODSchdDate AND RcdCanDel = 1 AND FinODFor = :FinODFor ");
-
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Method for Updating Record Deletion Status to avoid deletion on Recalculation
-	 */
-	@Override
-	public void updateChargeRecovery(OverdueChargeRecovery overdueChargeRecovery) {
-		logger.debug("Entering");
-
-		StringBuilder updateSql = new StringBuilder("Update FinODCRecovery");
-		updateSql.append(
-				" Set ODDays = :ODDays , Penalty = :Penalty , MovementDate = :MovementDate, PenaltyBal = :PenaltyBal, RcdCanDel =:RcdCanDel ");
-		updateSql.append(
-				" Where FinReference =:FinReference AND FinODSchdDate = :FinODSchdDate AND RcdCanDel = 1 AND FinODFor = :FinODFor ");
-
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Method to get Schedule Details based on finrefernce and valuedate for OverDueRecovery
-	 * 
-	 * @param finreference
-	 *            (String)
-	 * @param financeScheduleDetails
-	 */
 	@Override
 	public OverdueChargeRecovery getODCRecoveryDetails(OverdueChargeRecovery ocr) {
-		logger.debug("Entering");
-		OverdueChargeRecovery recovery = new OverdueChargeRecovery();
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(ocr);
-		StringBuilder selectSql = new StringBuilder("Select ");
-		selectSql.append(" (SUM(PrincipalSchd) - SUM (SchdPriPaid)) lovDescCurSchPriDue,");
-		selectSql.append(" (SUM(ProfitSchd) - SUM (SchdPftPaid)) lovDescCurSchPftDue");
-		selectSql.append(" From FinScheduleDetails");
-		selectSql.append(" WHERE FinReference ='" + ocr.getFinReference() + "'");
-		logger.debug("selectSql: " + selectSql.toString());
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" (sum(PrincipalSchd) - sum(SchdPriPaid)) LovDescCurSchPriDue,");
+		sql.append(" (sum(ProfitSchd) - sum(SchdPftPaid)) LovDescCurSchPftDue");
+		sql.append(" From FinScheduleDetails");
+		sql.append(" WHERE FinID = ?");
 
-		RowMapper<OverdueChargeRecovery> typeRowMapper = BeanPropertyRowMapper.newInstance(OverdueChargeRecovery.class);
+		logger.debug(Literal.SQL + sql.toString());
+
 		try {
-			recovery = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-			ocr.setLovDescCurSchPriDue(recovery.getLovDescCurSchPriDue());
-			ocr.setLovDescCurSchPftDue(recovery.getLovDescCurSchPftDue());
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				OverdueChargeRecovery odcr = new OverdueChargeRecovery();
+				odcr.setLovDescCurSchPriDue(rs.getBigDecimal("LovDescCurSchPriDue"));
+				odcr.setLovDescCurSchPftDue(rs.getBigDecimal("LovDescCurSchPftDue"));
+
+				return odcr;
+			}, ocr.getFinID());
+
+		} catch (EmptyResultDataAccessException e) {
+			//
 		}
-		logger.debug("Leaving");
+
 		return ocr;
 	}
 
-	@Override
-	public void deleteByFinRefAndSchdate(String finReferece, Date schdDate, String finODFor, String type) {
-		logger.debug("Entering");
-		OverdueChargeRecovery overdueChargeRecovery = new OverdueChargeRecovery();
-		overdueChargeRecovery.setFinReference(finReferece);
-		overdueChargeRecovery.setFinODSchdDate(schdDate);
-		overdueChargeRecovery.setFinODFor(finODFor);
+	private StringBuilder getSelectQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference, FinODSchdDate, FinODFor, MovementDate, SeqNo, ODDays");
+		sql.append(", FinCurODAmt, FinCurODPri, FinCurODPft, PenaltyType");
+		sql.append(", PenaltyCalOn, PenaltyAmtPerc, Penalty, MaxWaiver, WaivedAmt, PenaltyPaid, PenaltyBal, RcdCanDel");
 
-		StringBuilder deleteSql = new StringBuilder("Delete From FinODCRecovery");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinReference =:FinReference and FinODSchdDate=:FinODSchdDate and FinODFor=:FinODFor");
-		logger.debug("deleteSql: " + deleteSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
-		try {
-			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", FinCcy, lovDescCustCIF, lovDescCustShrtName, lovDescFinStartDate, LovDescMaturityDate");
+			sql.append(", LovDescFinAmount, LovDescCurFinAmt, LovDescCurSchPriDue, LovDescCurSchPftDue");
+			sql.append(", LovDescTotOvrDueChrg, LovDescTotOvrDueChrgWaived, LovDescTotOvrDueChrgPaid");
 		}
-		logger.debug("Leaving");
+
+		sql.append(" From FinODCRecovery");
+		sql.append(StringUtils.trimToEmpty(type));
+
+		return sql;
+	}
+
+	private class OverdueChargeRecoveryRowMapper implements RowMapper<OverdueChargeRecovery> {
+
+		private String type = null;
+
+		private OverdueChargeRecoveryRowMapper(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public OverdueChargeRecovery mapRow(ResultSet rs, int rowNum) throws SQLException {
+			OverdueChargeRecovery ocr = new OverdueChargeRecovery();
+
+			ocr.setFinID(rs.getLong("FinID"));
+			ocr.setFinReference(rs.getString("FinReference"));
+			ocr.setFinODSchdDate(rs.getDate("FinODSchdDate"));
+			ocr.setFinODFor(rs.getString("FinODFor"));
+			ocr.setMovementDate(rs.getDate("MovementDate"));
+			ocr.setSeqNo(rs.getInt("SeqNo"));
+			ocr.setODDays(rs.getInt("ODDays"));
+			ocr.setFinCurODAmt(rs.getBigDecimal("FinCurODAmt"));
+			ocr.setFinCurODPri(rs.getBigDecimal("FinCurODPri"));
+			ocr.setFinCurODPft(rs.getBigDecimal("FinCurODPft"));
+			ocr.setPenaltyType(rs.getString("PenaltyType"));
+			ocr.setPenaltyCalOn(rs.getString("PenaltyCalOn"));
+			ocr.setPenaltyAmtPerc(rs.getBigDecimal("PenaltyAmtPerc"));
+			ocr.setPenalty(rs.getBigDecimal("Penalty"));
+			ocr.setMaxWaiver(rs.getBigDecimal("MaxWaiver"));
+			ocr.setWaivedAmt(rs.getBigDecimal("WaivedAmt"));
+			ocr.setPenaltyPaid(rs.getBigDecimal("PenaltyPaid"));
+			ocr.setPenaltyBal(rs.getBigDecimal("PenaltyBal"));
+			ocr.setRcdCanDel(rs.getBoolean("RcdCanDel"));
+
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				ocr.setFinCcy(rs.getString("FinCcy"));
+				ocr.setLovDescCustCIF(rs.getString("LovDescCustCIF"));
+				ocr.setLovDescCustShrtName(rs.getString("LovDescCustShrtName"));
+				ocr.setLovDescFinStartDate(rs.getDate("LovDescFinStartDate"));
+				ocr.setLovDescMaturityDate(rs.getDate("LovDescMaturityDate"));
+				ocr.setLovDescFinAmount(rs.getBigDecimal("LovDescFinAmount"));
+				ocr.setLovDescCurFinAmt(rs.getBigDecimal("LovDescCurFinAmt"));
+				ocr.setLovDescCurSchPriDue(rs.getBigDecimal("LovDescCurSchPriDue"));
+				ocr.setLovDescCurSchPftDue(rs.getBigDecimal("LovDescCurSchPftDue"));
+				ocr.setLovDescTotOvrDueChrg(rs.getBigDecimal("LovDescTotOvrDueChrg"));
+				ocr.setLovDescTotOvrDueChrgWaived(rs.getBigDecimal("LovDescTotOvrDueChrgWaived"));
+				ocr.setLovDescTotOvrDueChrgPaid(rs.getBigDecimal("LovDescTotOvrDueChrgPaid"));
+			}
+
+			return ocr;
+		}
 	}
 
 }

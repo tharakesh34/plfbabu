@@ -38,9 +38,9 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * 
  */
 public class OverdueChargeRecovery extends AbstractWorkflowEntity {
-
 	private static final long serialVersionUID = 128728346836978541L;
 
+	private long finID;
 	private String finReference;
 	private Date finODSchdDate;
 	private String finODFor;
@@ -100,6 +100,7 @@ public class OverdueChargeRecovery extends AbstractWorkflowEntity {
 
 	public OverdueChargeRecovery copyEntity() {
 		OverdueChargeRecovery entity = new OverdueChargeRecovery();
+		entity.setFinID(this.finID);
 		entity.setFinReference(this.finReference);
 		entity.setFinODSchdDate(this.finODSchdDate);
 		entity.setFinODFor(this.finODFor);
@@ -154,9 +155,13 @@ public class OverdueChargeRecovery extends AbstractWorkflowEntity {
 		return entity;
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
 
 	public String getId() {
 		return finReference;
