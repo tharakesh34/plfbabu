@@ -27,6 +27,7 @@ public class FeeWaiverHeader extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long waiverId = Long.MIN_VALUE;
+	private long finID;
 	@XmlElement
 	private String finReference;
 	private String event;
@@ -75,6 +76,14 @@ public class FeeWaiverHeader extends AbstractWorkflowEntity {
 
 	public void setWaiverId(long waiverId) {
 		this.waiverId = waiverId;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
