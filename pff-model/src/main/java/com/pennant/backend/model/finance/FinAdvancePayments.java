@@ -55,6 +55,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -6234931333270161797L;
 	@XmlElement(name = "disbInstId")
 	private long paymentId = Long.MIN_VALUE;
+	private long finID;
 	@XmlElement
 	private String finReference;
 	private int paymentSeq;
@@ -220,6 +221,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 	public FinAdvancePayments copyEntity() {
 		FinAdvancePayments entity = new FinAdvancePayments();
 		entity.setPaymentId(this.paymentId);
+		entity.setPaymentId(this.finID);
 		entity.setFinReference(this.finReference);
 		entity.setPaymentSeq(this.paymentSeq);
 		entity.setDisbSeq(this.disbSeq);
@@ -1075,6 +1077,14 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 
 	public void setDownloadType(String downloadType) {
 		this.downloadType = downloadType;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 }

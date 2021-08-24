@@ -49,10 +49,6 @@ import com.pennant.backend.model.finance.FinAdvancePayments;
 
 public interface FinAdvancePaymentsDAO {
 
-	FinAdvancePayments getFinAdvancePayments();
-
-	FinAdvancePayments getNewFinAdvancePayments();
-
 	FinAdvancePayments getFinAdvancePaymentsById(FinAdvancePayments finAdvancePayments, String type);
 
 	int getAdvancePaymentsCountByPartnerBank(long partnerBankID, String type);
@@ -65,9 +61,9 @@ public interface FinAdvancePaymentsDAO {
 
 	String save(FinAdvancePayments finAdvancePaymentsDAO, String type);
 
-	List<FinAdvancePayments> getFinAdvancePaymentsByFinRef(String id, String type);
+	List<FinAdvancePayments> getFinAdvancePaymentsByFinRef(long finID, String type);
 
-	void deleteByFinRef(String finReference, String tableType);
+	void deleteByFinRef(long finID, String tableType);
 
 	void updateStatus(FinAdvancePayments finAdvancePayments, String type);
 
@@ -79,21 +75,21 @@ public interface FinAdvancePaymentsDAO {
 
 	int getBankCode(String bankCode, String type);
 
-	int getMaxPaymentSeq(String finReference);
+	int getMaxPaymentSeq(long finID);
 
-	int getFinAdvCountByRef(String finReference, String type);
+	int getFinAdvCountByRef(long finID, String type);
 
 	int getAssignedPartnerBankCount(long partnerBankId, String type);
 
-	int getCountByFinReference(String finReference);
+	int getCountByFinReference(long finID);
 
-	public List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce, Date toDate, String type);
+	public List<FinAdvancePayments> getFinAdvancePaymentByFinRef(long finID, Date toDate, String type);
 
 	void updatePaymentStatus(FinAdvancePayments finAdvancePayments, String type);
 
-	int getCountByPaymentId(String finReference, long paymentId);
+	int getCountByPaymentId(long finID, long paymentId);
 
-	int getFinAdvanceByVasRef(String finReference, String vasReference, String type);
+	int getFinAdvanceByVasRef(long finID, String vasReference, String type);
 
 	void updateLLDate(FinAdvancePayments finAdvancePayments, String type);
 

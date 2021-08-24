@@ -2,6 +2,8 @@ package com.pennanttech.pennapps.core.jdbc;
 
 import java.sql.Date;
 import java.sql.Types;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class JdbcUtil {
 	/**
@@ -40,5 +42,9 @@ public class JdbcUtil {
 
 	public static Long getLong(Object value) {
 		return value == null ? null : Long.valueOf(value.toString());
+	}
+
+	public static String getInCondition(List<?> list) {
+		return list.stream().map(e -> "?").collect(Collectors.joining(","));
 	}
 }
