@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinChangeCustomerDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  20-11-2019     														*
- *                                                                  						*
- * Modified Date    :  20-11-2019     														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinChangeCustomerDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 20-11-2019 * *
+ * Modified Date : 20-11-2019 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- *20-11-2019        PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 20-11-2019 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.finance.impl;
 
 import org.apache.commons.lang.StringUtils;
@@ -48,11 +30,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.FinChangeCustomerDAO;
 import com.pennant.backend.model.finance.FinChangeCustomer;
@@ -75,203 +52,186 @@ public class FinChangeCustomerDAOImpl extends SequenceDao<FinChangeCustomer> imp
 
 	@Override
 	public FinChangeCustomer getFinChangeCustomerById(long id, String type) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, FinID, FinReference, OldCustId, CoApplicantId");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" id,finReference ,OldCustId, CoApplicantId, ");
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (type.contains("_View")) {
-			sql.append(", custCategory , CustCif, jcustCif");
+			sql.append(", CustCategory, CustCif, JcustCif");
 		}
+
 		sql.append(" From FinChangeCustomer");
 		sql.append(type);
-		sql.append("  where Id = :Id");
+		sql.append(" Where Id = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-
-		FinChangeCustomer FinChangeCustomer = new FinChangeCustomer();
-		FinChangeCustomer.setId(id);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(FinChangeCustomer);
-		RowMapper<FinChangeCustomer> rowMapper = BeanPropertyRowMapper.newInstance(FinChangeCustomer.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			FinChangeCustomer = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			FinChangeCustomer = null;
-		}
+			return jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
+				FinChangeCustomer fcc = new FinChangeCustomer();
 
-		logger.debug(Literal.LEAVING);
-		return FinChangeCustomer;
-	}
+				fcc.setId(rs.getLong("Id"));
+				fcc.setFinID(rs.getLong("FinID"));
+				fcc.setFinReference(rs.getString("FinReference"));
+				fcc.setOldCustId(rs.getLong("OldCustId"));
+				fcc.setCoApplicantId(rs.getLong("CoApplicantId"));
+				fcc.setVersion(rs.getInt("Version"));
+				fcc.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				fcc.setLastMntBy(rs.getLong("LastMntBy"));
+				fcc.setRecordStatus(rs.getString("RecordStatus"));
+				fcc.setRoleCode(rs.getString("RoleCode"));
+				fcc.setNextRoleCode(rs.getString("NextRoleCode"));
+				fcc.setTaskId(rs.getString("TaskId"));
+				fcc.setNextTaskId(rs.getString("NextTaskId"));
+				fcc.setRecordType(rs.getString("RecordType"));
+				fcc.setWorkflowId(rs.getLong("WorkflowId"));
 
-	@Override
-	public String save(FinChangeCustomer FinChangeCustomer, TableType tableType) {
-		logger.debug(Literal.ENTERING);
+				if (type.contains("_View")) {
+					fcc.setCustCategory(rs.getString("CustCategory"));
+					fcc.setCustCif(rs.getString("CustCif"));
+					fcc.setJcustCif(rs.getString("JcustCif"));
+				}
 
-		// Get the identity sequence number.
-		if (FinChangeCustomer.getId() <= 0) {
-			FinChangeCustomer.setId(getNextValue("SeqChangeCustomer"));
-		}
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" insert into FinChangeCustomer");
-		sql.append(tableType.getSuffix());
-		sql.append(" (id,finReference ,OldCustId, CoApplicantId, ");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(");
-		sql.append(" :id,:FinReference , :OldCustId, :CoApplicantId, ");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+				return fcc;
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(FinChangeCustomer);
-
-		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
-		} catch (DuplicateKeyException e) {
-			throw new ConcurrencyException(e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return String.valueOf(FinChangeCustomer.getFinReference());
-	}
-
-	@Override
-	public void update(FinChangeCustomer FinChangeCustomer, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("update FinChangeCustomer");
-		sql.append(tableType.getSuffix());
-		sql.append(" set finReference=:finReference, OldCustId = :OldCustId , CoApplicantId = :CoApplicantId, ");
-		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" where id = :id ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(FinChangeCustomer);
-		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
-
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public void delete(FinChangeCustomer FinChangeCustomer, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from FinChangeCustomer");
-		sql.append(tableType.getSuffix());
-		sql.append(" where id = :id ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(FinChangeCustomer);
-		int recordCount = 0;
-
-		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
-		} catch (DataAccessException e) {
-			throw new DependencyFoundException(e);
-		}
-
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public void deleteByReference(String finReference) {
-		StringBuilder sql = new StringBuilder("Delete from FinChangeCustomer");
-		sql.append(" where FinReference = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		jdbcOperations.update(sql.toString(), ps -> {
-			ps.setString(1, finReference);
-		});
-	}
-
-	@Override
-	public boolean isDuplicateKey(long id, String finReference, TableType tableType) {
-
-		/*
-		 * // Prepare the SQL. String sql; String whereClause = "finReference = :finReference and id != :id ";
-		 * 
-		 * switch (tableType) { case MAIN_TAB: sql = QueryUtil.getCountQuery("FinChangeCustomer", whereClause); break;
-		 * case TEMP_TAB: sql = QueryUtil.getCountQuery("FinChangeCustomer_TEMP", whereClause); break; default: sql =
-		 * QueryUtil.getCountQuery(new String[] { "FinChangeCustomer", "FinChangeCustomer_TEMP" }, whereClause); break;
-		 * }
-		 * 
-		 * // Execute the SQL, binding the arguments. logger.trace(Literal.SQL + sql); MapSqlParameterSource paramSource
-		 * = new MapSqlParameterSource(); paramSource.addValue("id", id); paramSource.addValue("finReference",
-		 * finReference);
-		 * 
-		 * Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
-		 * 
-		 * boolean exists = false; if (count > 0) { exists = true; }
-		 */
-		logger.debug(Literal.LEAVING);
-		return false;
-	}
-
-	@Override
-	public boolean isFinReferenceProcess(String finReference, String type) {
-		StringBuilder sql = new StringBuilder("SELECT COUNT(FinReference) FROM FinChangeCustomer");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = :FinReference ");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-
-		int count = 0;
-		try {
-			count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}
 
-		return count > 0 ? true : false;
+		return null;
 	}
 
-	public void updateOldCustId(long OldCustId, long cooapplicantId) {
-		logger.debug(Literal.ENTERING);
+	@Override
+	public String save(FinChangeCustomer fcc, TableType tableType) {
+		if (fcc.getId() <= 0) {
+			fcc.setId(getNextValue("SeqChangeCustomer"));
+		}
+		StringBuilder sql = new StringBuilder("Insert Into FinChangeCustomer");
+		sql.append(tableType.getSuffix());
+		sql.append(" (Id, FinID, FinReference, OldCustId, CoApplicantId");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" values(");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ");
+		sql.append(")");
 
-		StringBuilder sql = new StringBuilder("update FinChangeCustomer");
-		sql.append(" set OldCustId = :OldCustId , CoApplicantId = :CoApplicantId");
-		sql.append(" where FinReference = :FinReference ");
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("OldCustId", cooapplicantId);
-		source.addValue("CoApplicantId", OldCustId);
+		try {
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
 
-		int recordCount = jdbcTemplate.update(sql.toString(), source);
+				ps.setLong(index, fcc.getId());
+				ps.setLong(index, fcc.getFinID());
+				ps.setString(index, fcc.getFinReference());
+				ps.setLong(index, fcc.getOldCustId());
+				ps.setLong(index, fcc.getCoApplicantId());
+				ps.setInt(index++, fcc.getVersion());
+				ps.setLong(index++, fcc.getLastMntBy());
+				ps.setTimestamp(index++, fcc.getLastMntOn());
+				ps.setString(index++, fcc.getRecordStatus());
+				ps.setString(index++, fcc.getRoleCode());
+				ps.setString(index++, fcc.getNextRoleCode());
+				ps.setString(index++, fcc.getTaskId());
+				ps.setString(index++, fcc.getNextTaskId());
+				ps.setString(index++, fcc.getRecordType());
+				ps.setLong(index++, fcc.getWorkflowId());
+			});
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+
+		return String.valueOf(fcc.getFinReference());
+	}
+
+	@Override
+	public void update(FinChangeCustomer fcc, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Update FinChangeCustomer");
+		sql.append(tableType.getSuffix());
+		sql.append(" Set FinID = ?, FinReference = ?, OldCustId = ?, CoApplicantId = ?");
+		sql.append(", LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
+		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
+		sql.append(", RecordType = ?, WorkflowId = ?");
+		sql.append(" Where Id = ? ");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index, fcc.getFinID());
+			ps.setString(index, fcc.getFinReference());
+			ps.setLong(index, fcc.getOldCustId());
+			ps.setLong(index, fcc.getCoApplicantId());
+			ps.setTimestamp(index++, fcc.getLastMntOn());
+			ps.setString(index++, fcc.getRecordStatus());
+			ps.setString(index++, fcc.getRoleCode());
+			ps.setString(index++, fcc.getNextRoleCode());
+			ps.setString(index++, fcc.getTaskId());
+			ps.setString(index++, fcc.getNextTaskId());
+			ps.setString(index++, fcc.getRecordType());
+			ps.setLong(index++, fcc.getWorkflowId());
+			ps.setLong(index, fcc.getId());
+		});
 
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug(Literal.LEAVING);
 	}
+
+	@Override
+	public void delete(FinChangeCustomer fcc, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Delete From FinChangeCustomer");
+		sql.append(tableType.getSuffix());
+		sql.append(" Where Id = ?");
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			int recordCount = jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, fcc.getId()));
+
+			if (recordCount == 0) {
+				throw new ConcurrencyException();
+			}
+
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+	}
+
+	@Override
+	public void deleteByReference(long finID) {
+		String sql = "Delete from FinChangeCustomer Where FinID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		jdbcOperations.update(sql, ps -> ps.setLong(1, finID));
+	}
+
+	@Override
+	public boolean isDuplicateKey(long id, String finReference, TableType tableType) {
+		return false;
+	}
+
+	@Override
+	public boolean isFinReferenceProcess(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Select Count(FinID) From FinChangeCustomer");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID) > 0;
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return false;
+	}
+
 }

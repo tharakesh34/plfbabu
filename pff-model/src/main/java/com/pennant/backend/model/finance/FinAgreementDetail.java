@@ -10,6 +10,7 @@ public class FinAgreementDetail extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -4590527012741917367L;
 
+	private long finID;
 	private String finReference;
 	private long agrId = Long.MIN_VALUE;
 	private String finType;
@@ -34,16 +35,20 @@ public class FinAgreementDetail extends AbstractWorkflowEntity {
 		return new HashSet<String>();
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
 	public String getId() {
 		return finReference;
 	}
 
 	public void setId(String id) {
 		this.finReference = id;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

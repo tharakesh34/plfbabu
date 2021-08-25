@@ -1,53 +1,35 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinCovenantTypeDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-08-2013    														*
- *                                                                  						*
- * Modified Date    :  14-08-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinCovenantTypeDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-08-2013 * *
+ * Modified Date : 14-08-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-08-2013       Pennant	                 0.1                                            * 
- * 16-05-2018       Pennant                  0.2           added the flag alwOtc                                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-08-2013 Pennant 0.1 * 16-05-2018 Pennant 0.2 added the flag alwOtc * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.finance.covenant.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -57,12 +39,8 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.backend.dao.finance.covenant.CovenantsDAO;
 import com.pennant.backend.model.finance.FinCovenantType;
@@ -73,8 +51,8 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
-import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>FinCovenantType model</b> class.<br>
@@ -90,8 +68,6 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 
 	@Override
 	public Covenant getCovenant(long id, String module, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSelectQuery(tableType.getSuffix());
 		sql.append(" Where Id = ? and Module = ?");
 
@@ -100,12 +76,11 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 		CovenantsRowMapper rowMapper = new CovenantsRowMapper(tableType.getSuffix());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id, module }, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, id, module);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
@@ -114,27 +89,22 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 		StringBuilder sql = getSelectQuery(tableType.getSuffix());
 		sql.append(" Where KeyReference = ? And Module = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		CovenantsRowMapper rowMapper = new CovenantsRowMapper(tableType.getSuffix());
 
-		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				int index = 1;
-				ps.setString(index++, finreference);
-				ps.setString(index++, module);
-			}
+			ps.setString(index++, finreference);
+			ps.setString(index++, module);
+
 		}, rowMapper);
 	}
 
 	@Override
 	public List<CovenantDocument> getCovenantDocuments(long covenantId, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("select * from Covenant_Documents");
+		StringBuilder sql = new StringBuilder("Select * From Covenant_Documents");
 		sql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
 		sql.append(" Where CovenantId = :CovenantId");
 
@@ -145,36 +115,23 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 
 		RowMapper<CovenantDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(CovenantDocument.class);
 
-		try {
-			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
 	@Override
 	public String save(Covenant covenant, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-		StringBuilder sql = new StringBuilder();
-
-		sql.append(" Insert Into Covenants");
+		StringBuilder sql = new StringBuilder("Insert Into Covenants");
 		sql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
-		sql.append(" (Id, KeyReference, Module, CovenantTypeId, LOS, MandatoryRole, OTC, PDD, ReceivableDate");
+		sql.append(" (Id, KeyReference, Module, CovenantTypeId, Los, MandatoryRole, Otc, Pdd, ReceivableDate");
 		sql.append(", AllowWaiver, MaxAllowedDays, DocumentReceived, DocumentReceivedDate, AllowPostponement");
 		sql.append(", ExtendedDate, AllowedPaymentModes, Frequency, NextFrequencyDate, GraceDays");
 		sql.append(", GraceDueDate, AlertsRequired, AlertType, AlertToRoles, AlertDays, InternalUse, Remarks");
 		sql.append(", Remarks1, AdditionalField1, AdditionalField2, AdditionalField3, AdditionalField4");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkFlowId)");
-		sql.append(" values(:Id, :KeyReference, :Module , :CovenantTypeId, :Los, :MandatoryRole, :Otc, :Pdd");
-		sql.append(", :ReceivableDate, :AllowWaiver, :MaxAllowedDays, :DocumentReceived, :DocumentReceivedDate");
-		sql.append(", :allowPostPonement, :ExtendedDate, :AllowedPaymentModes, :Frequency, :NextFrequencyDate");
-		sql.append(", :GraceDays, :GraceDueDate, :alertsRequired, :alertType, :AlertToRoles, :AlertDays");
-		sql.append(", :InternalUse, :Remarks, :Remarks1, :AdditionalField1, :AdditionalField2, :AdditionalField3");
-		sql.append(", :AdditionalField4, :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode");
-		sql.append(", :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" Values( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(")");
 
 		if (covenant.getId() == Long.MIN_VALUE) {
 			covenant.setId(getNextValue("SeqCovenants"));
@@ -182,16 +139,58 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(covenant);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
-		logger.debug(Literal.LEAVING);
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, covenant.getId());
+			ps.setString(index++, covenant.getKeyReference());
+			ps.setString(index++, covenant.getModule());
+			ps.setLong(index++, covenant.getCovenantTypeId());
+			ps.setBoolean(index++, covenant.isLos());
+			ps.setString(index++, covenant.getMandatoryRole());
+			ps.setBoolean(index++, covenant.isOtc());
+			ps.setBoolean(index++, covenant.isPdd());
+			ps.setDate(index++, JdbcUtil.getDate(covenant.getReceivableDate()));
+			ps.setBoolean(index++, covenant.isAllowWaiver());
+			ps.setInt(index++, covenant.getMaxAllowedDays());
+			ps.setBoolean(index++, covenant.isDocumentReceived());
+			ps.setDate(index++, JdbcUtil.getDate(covenant.getDocumentReceivedDate()));
+			ps.setBoolean(index++, covenant.isAllowPostPonement());
+			ps.setDate(index++, JdbcUtil.getDate(covenant.getExtendedDate()));
+			ps.setString(index++, covenant.getAllowedPaymentModes());
+			ps.setString(index++, covenant.getFrequency());
+			ps.setDate(index++, JdbcUtil.getDate(covenant.getNextFrequencyDate()));
+			ps.setInt(index++, covenant.getGraceDays());
+			ps.setDate(index++, JdbcUtil.getDate(covenant.getGraceDueDate()));
+			ps.setBoolean(index++, covenant.isAlertsRequired());
+			ps.setString(index++, covenant.getAlertType());
+			ps.setString(index++, covenant.getAlertToRoles());
+			ps.setInt(index++, covenant.getAlertDays());
+			ps.setBoolean(index++, covenant.isInternalUse());
+			ps.setString(index++, covenant.getRemarks());
+			ps.setBytes(index++, covenant.getRemarks1());
+			ps.setString(index++, covenant.getAdditionalField1());
+			ps.setString(index++, covenant.getAdditionalField2());
+			ps.setString(index++, covenant.getAdditionalField3());
+			ps.setString(index++, covenant.getAdditionalField4());
+			ps.setInt(index++, covenant.getVersion());
+			ps.setLong(index++, covenant.getLastMntBy());
+			ps.setTimestamp(index++, covenant.getLastMntOn());
+			ps.setString(index++, covenant.getRecordStatus());
+			ps.setString(index++, covenant.getRoleCode());
+			ps.setString(index++, covenant.getNextRoleCode());
+			ps.setString(index++, covenant.getTaskId());
+			ps.setString(index++, covenant.getNextTaskId());
+			ps.setString(index++, covenant.getRecordType());
+			ps.setLong(index++, covenant.getWorkflowId());
+		});
+
 		return String.valueOf(covenant.getId());
 	}
 
 	@Override
 	public void saveDocuments(List<CovenantDocument> documents, TableType tableType) {
-		StringBuilder sql = new StringBuilder("Insert Into");
-		sql.append(" Covenant_Documents");
+		StringBuilder sql = new StringBuilder("Insert Into Covenant_Documents");
 		sql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
 		sql.append(" (Id, CovenantId, CovenantType, ReceivableDate, FrequencyDate, DocumentReceivedDate");
 		sql.append(", DocumentId, OriginalDocument, Version, LastMntBy, LastMntOn, RecordStatus");
@@ -200,18 +199,17 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		for (CovenantDocument covenantDocument : documents) {
-			if (covenantDocument.getId() == Long.MIN_VALUE) {
-				covenantDocument.setId(getNextValue("SEQCOVENANT_DOCUMENTS"));
-			}
-		}
-
 		try {
 			jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 				@Override
 				public void setValues(PreparedStatement ps, int i) throws SQLException {
 					CovenantDocument cd = documents.get(i);
 					int index = 1;
+
+					if (cd.getId() == Long.MIN_VALUE) {
+						cd.setId(getNextValue("SEQCOVENANT_DOCUMENTS"));
+					}
+
 					ps.setLong(index++, cd.getId());
 					ps.setLong(index++, cd.getCovenantId());
 					ps.setString(index++, cd.getCovenantType());
@@ -243,51 +241,77 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 	}
 
 	@Override
-	public void update(Covenant finCovenantType, TableType tableType) {
-		int recordCount = 0;
-		logger.debug(Literal.ENTERING);
-
+	public void update(Covenant covenant, TableType tableType) {
 		StringBuilder sql = new StringBuilder("Update Covenants");
 		sql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
-
-		sql.append(" set LOS = :Los, MandatoryRole = :MandatoryRole, OTC = :Otc, PDD = :Pdd");
-		sql.append(", ReceivableDate = :ReceivableDate, AllowWaiver = :AllowWaiver, MaxAllowedDays = :MaxAllowedDays");
-		sql.append(", DocumentReceived = :DocumentReceived, DocumentReceivedDate = :DocumentReceivedDate");
-		sql.append(", allowPostPonement = :allowPostPonement, ExtendedDate = :ExtendedDate");
-		sql.append(
-				", AllowedPaymentModes = :AllowedPaymentModes, Frequency = :Frequency, NextFrequencyDate = :NextFrequencyDate");
-		sql.append(", GraceDays = :GraceDays, GraceDueDate = :GraceDueDate, AlertsRequired = :alertsRequired");
-		sql.append(", AlertType = :alertType, AlertToRoles = :AlertToRoles, AlertDays = :AlertDays");
-		sql.append(
-				", InternalUse = :InternalUse, Remarks = :Remarks, Remarks1 = :Remarks1, AdditionalField1 = :AdditionalField1");
-		sql.append(", AdditionalField2 = :AdditionalField2, AdditionalField3 = :AdditionalField3");
-		sql.append(", AdditionalField4 = :AdditionalField4, Version = :Version, LastMntBy = :LastMntBy");
-		sql.append(", LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
-		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
-		sql.append(", RecordType = :RecordType, WorkFlowId = :WorkflowId");
-		sql.append("  Where Id = :Id And Module = :Module ");
-
-		if (!tableType.name().endsWith("_Temp")) {
-			// sql.append(" AND Version= :Version-1");
-		}
+		sql.append(" Set Los = ?, MandatoryRole = ?, Otc = ?, Pdd = ?");
+		sql.append(", ReceivableDate = ?, AllowWaiver = ?, MaxAllowedDays = ?");
+		sql.append(", DocumentReceived = ?, DocumentReceivedDate = ?, AllowPostPonement = ?, ExtendedDate = ?");
+		sql.append(", AllowedPaymentModes = ?, Frequency = ?, NextFrequencyDate = ?, GraceDays = ?");
+		sql.append(", GraceDueDate = ?, AlertsRequired = ?, AlertType = ?, AlertToRoles = ?, AlertDays = ?");
+		sql.append(", InternalUse = ?, Remarks = ?, Remarks1 = ?, AdditionalField1 = ?");
+		sql.append(", AdditionalField2 = ?, AdditionalField3 = ?, AdditionalField4 = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
+		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkFlowId = ?");
+		sql.append("  Where Id = ? And Module = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCovenantType);
-		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setBoolean(index++, covenant.isLos());
+			ps.setString(index++, covenant.getMandatoryRole());
+			ps.setBoolean(index++, covenant.isOtc());
+			ps.setBoolean(index++, covenant.isPdd());
+			ps.setDate(index++, JdbcUtil.getDate(covenant.getReceivableDate()));
+			ps.setBoolean(index++, covenant.isAllowWaiver());
+			ps.setInt(index++, covenant.getMaxAllowedDays());
+			ps.setBoolean(index++, covenant.isDocumentReceived());
+			ps.setDate(index++, JdbcUtil.getDate(covenant.getDocumentReceivedDate()));
+			ps.setBoolean(index++, covenant.isAllowPostPonement());
+			ps.setDate(index++, JdbcUtil.getDate(covenant.getExtendedDate()));
+			ps.setString(index++, covenant.getAllowedPaymentModes());
+			ps.setString(index++, covenant.getFrequency());
+			ps.setDate(index++, JdbcUtil.getDate(covenant.getNextFrequencyDate()));
+			ps.setInt(index++, covenant.getGraceDays());
+			ps.setDate(index++, JdbcUtil.getDate(covenant.getGraceDueDate()));
+			ps.setBoolean(index++, covenant.isAlertsRequired());
+			ps.setString(index++, covenant.getAlertType());
+			ps.setString(index++, covenant.getAlertToRoles());
+			ps.setInt(index++, covenant.getAlertDays());
+			ps.setBoolean(index++, covenant.isInternalUse());
+			ps.setString(index++, covenant.getRemarks());
+			ps.setBytes(index++, covenant.getRemarks1());
+			ps.setString(index++, covenant.getAdditionalField1());
+			ps.setString(index++, covenant.getAdditionalField2());
+			ps.setString(index++, covenant.getAdditionalField3());
+			ps.setString(index++, covenant.getAdditionalField4());
+			ps.setInt(index++, covenant.getVersion());
+			ps.setLong(index++, covenant.getLastMntBy());
+			ps.setTimestamp(index++, covenant.getLastMntOn());
+			ps.setString(index++, covenant.getRecordStatus());
+			ps.setString(index++, covenant.getRoleCode());
+			ps.setString(index++, covenant.getNextRoleCode());
+			ps.setString(index++, covenant.getTaskId());
+			ps.setString(index++, covenant.getNextTaskId());
+			ps.setString(index++, covenant.getRecordType());
+			ps.setLong(index++, covenant.getWorkflowId());
+
+			ps.setLong(index++, covenant.getId());
+			ps.setString(index++, covenant.getModule());
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public void updateDocuments(List<CovenantDocument> documents, TableType tableType) {
 		StringBuilder sql = new StringBuilder("Update Covenant_Documents");
 		sql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
-		sql.append(" Set");
-		sql.append(" ReceivableDate = ?, FrequencyDate = ?, DocumentReceivedDate = ?");
+		sql.append(" Set ReceivableDate = ?, FrequencyDate = ?, DocumentReceivedDate = ?");
 		sql.append(", DocumentId = ?, OriginalDocument= ?, Version = ?, LastMntBy = ?");
 		sql.append(", LastMntOn = ?, RecordStatus = ?, RoleCode = ?, NextRoleCode = ?");
 		sql.append(", TaskId = ?, NextTaskId = ?, RecordType = ?, WorkFlowId = ?");
@@ -302,6 +326,7 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 				public void setValues(PreparedStatement ps, int i) throws SQLException {
 					CovenantDocument cd = documents.get(i);
 					int index = 1;
+
 					ps.setDate(index++, JdbcUtil.getDate(cd.getReceivableDate()));
 					ps.setDate(index++, JdbcUtil.getDate(cd.getFrequencyDate()));
 					ps.setDate(index++, JdbcUtil.getDate(cd.getDocumentReceivedDate()));
@@ -338,211 +363,137 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 	}
 
 	@Override
-	public void deleteByFinRef(String loanReference, String tableType) {
-		logger.debug(Literal.ENTERING);
-		FinCovenantType finCovenantType = new FinCovenantType();
-		finCovenantType.setId(loanReference);
-
-		StringBuilder deleteSql = new StringBuilder("Delete From Covenants");
-		deleteSql.append(StringUtils.trimToEmpty(tableType));
-		deleteSql.append(" Where KeyReference = :KeyReference ");
-		logger.debug("deleteSql: " + deleteSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCovenantType);
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug(Literal.LEAVING);
-
-	}
-
-	@Override
-	public boolean isDuplicateKey(String finReference, String covenantType, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		String sql;
-		String whereClause = "KeyReference = :KeyReference and CovenantTypeId = :CovenantTypeId";
-
-		switch (tableType) {
-		case MAIN_TAB:
-			sql = QueryUtil.getCountQuery("Covenants", whereClause);
-			break;
-		case TEMP_TAB:
-			sql = QueryUtil.getCountQuery("Covenants_Temp", whereClause);
-			break;
-		default:
-			sql = QueryUtil.getCountQuery(new String[] { "Covenants_Temp", "Covenants" }, whereClause);
-			break;
-		}
-
-		logger.trace(Literal.SQL + sql);
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("KeyReference", finReference);
-		paramSource.addValue("CovenantTypeId", covenantType);
-
-		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
-
-		boolean exists = false;
-		if (count > 0) {
-			exists = true;
-		}
-
-		logger.debug(Literal.LEAVING);
-		return exists;
-	}
-
-	@Override
 	public void delete(Covenant covenant, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Delete from Covenants");
 		sql.append(tableType.getSuffix());
-		sql.append(" Where KeyReference = :KeyReference AND CovenantTypeId = :CovenantTypeId And Module = :Module ");
+		sql.append(" Where KeyReference = ? and CovenantTypeId = ? and Module = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(covenant);
-		int recordCount = 0;
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setString(index++, covenant.getKeyReference());
+				ps.setLong(index++, covenant.getCovenantTypeId());
+				ps.setString(index++, covenant.getModule());
+			});
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public void deleteDocuments(Covenant covenant, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("Delete from COVENANT_DOCUMENTS");
-		sql.append(tableType.getSuffix());
-		sql.append(" Where CovenantId = :Id");
-
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(covenant);
-		int recordCount = 0;
-
-		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
-		} catch (DataAccessException e) {
-			throw new DependencyFoundException(e);
-		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public void deleteDocuments(List<CovenantDocument> documents, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("delete from Covenant_Documents");
+		StringBuilder sql = new StringBuilder("Delete from Covenant_Documents");
 		sql.append(tableType.getSuffix());
-		sql.append(" Where Id = :Id");
+		sql.append(" Where Id = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		int[] recordCount;
 		try {
-			recordCount = jdbcTemplate.batchUpdate(sql.toString(),
-					SqlParameterSourceUtils.createBatch(documents.toArray()));
+			int recordCount = jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps, int i) throws SQLException {
+					CovenantDocument cd = documents.get(i);
+
+					int index = 1;
+
+					ps.setLong(index++, cd.getId());
+				}
+
+				@Override
+				public int getBatchSize() {
+					return documents.size();
+				}
+			}).length;
+
+			if (recordCount <= 0) {
+				throw new ConcurrencyException();
+			}
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
-		if (recordCount.length <= 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public boolean isExists(Covenant covenant, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		int count = 0;
-
-		StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM COVENANTS");
+		StringBuilder sql = new StringBuilder("Select Count(KeyReference) From Covenants");
 		sql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
-		sql.append(" Where KeyReference = :KeyReference and CovenantTypeId = :CovenantTypeId And Module = :Module");
+		sql.append(" Where KeyReference = ? and CovenantTypeId = ? and Module = ?");
+
 		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(covenant);
-
 		try {
-			count = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, Integer.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, covenant.getKeyReference(),
+					covenant.getCovenantTypeId(), covenant.getModule()) > 0;
 		} catch (EmptyResultDataAccessException e) {
-			count = 0;
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
-		return count > 0 ? true : false;
-	}
-
-	private StringBuilder getSelectQuery(String type) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, KeyReference, Module, CovenantTypeId, Los, MandatoryRole, Otc, Pdd, ReceivableDate");
-		sql.append(", AllowWaiver, MaxAllowedDays, DocumentReceived, DocumentReceivedDate, AllowPostPonement");
-		sql.append(", ExtendedDate, AllowedPaymentModes, Frequency, NextFrequencyDate, GraceDays, GraceDueDate");
-		sql.append(
-				", AlertsRequired, AlertType, AlertToRoles, AlertDays, InternalUse, Remarks, Remarks1, AdditionalField1");
-		sql.append(", AdditionalField2, AdditionalField3, AdditionalField4");
-		sql.append(", version, LastMntby, LastMnton, RecordStatus, RoleCode");
-		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", Category, CovenantTypeDescription, CovenantType, CovenantTypeCode");
-		}
-
-		sql.append(" from Covenants");
-		sql.append(StringUtils.trimToEmpty(type));
-		return sql;
+		return false;
 	}
 
 	@Override
 	public List<Covenant> getCovenantsAlertList() {
-		StringBuilder sql = new StringBuilder();
-
-		sql.append("select distinct c.Id, c.CovenantTypeId");
-		sql.append(", ut.TemplateCode userTemplateCode, cust.TemplateCode customerTemplateCode");
-		sql.append(", c.alerttoRoles, ct.Code, ct.Description, c.KeyReference, fm.FinType");
-		sql.append(", c.frequency, c.nextfrequencydate, c.alertDays");
-		sql.append(", ct.docType, dt.docTypeDesc docTypeName, ca.alertsentOn");
-		sql.append(" from covenants c");
-		sql.append(" inner join covenant_Types ct on ct.id = c.covenantTypeId");
-		sql.append(" left join bmtdocumenttypes dt on dt.doctypeCode = ct.docType");
-		sql.append(" inner join financemain fm on fm.finreference = c.KeyReference and closingstatus is null");
-		sql.append(" left join covenant_documents cd on cd.covenantid = c.id");
-		sql.append(" left join (select covenantId, max(alertsentOn) alertsentOn");
-		sql.append(" from covenant_alerts group by covenantId) ca on ca.covenantId = c.id");
-		sql.append(" left join Templates ut on ut.TemplateId = ct.userTemplate");
-		sql.append(" left join Templates cust on cust.TemplateId = ct.customertemplate");
-		sql.append(" where nextfrequencydate is not null and ");
-		sql.append(" cd.frequencydate is null or cd.frequencydate != c.nextfrequencydate");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Distinct c.Id, c.CovenantTypeId, ut.TemplateCode, cust.TemplateCode CustTemplateCode");
+		sql.append(", c.AlertToRoles, ct.Code, ct.Description, c.KeyReference, fm.FinType, c.Frequency");
+		sql.append(", c.NextFrequencyDate, c.AlertDays, ct.DocType, dt.DocTypeDesc, ca.AlertsentOn");
+		sql.append(" From Covenants c");
+		sql.append(" Inner Join Covenant_Types ct on ct.Id = c.covenantTypeId");
+		sql.append(" Left Join BmtDocumentTypes dt on dt.doctypeCode = ct.docType");
+		sql.append(" Inner Join Financemain fm on fm.FinReference = c.KeyReference and ClosingStatus is null");
+		sql.append(" Left Join Covenant_Documents cd on cd.Covenantid = c.Id");
+		sql.append(" Left Join (Select CovenantId, max(alertsentOn) AlertSentOn");
+		sql.append(" From Covenant_Alerts group by CovenantId) ca on ca.covenantId = c.Id");
+		sql.append(" Left Join Templates ut on ut.TemplateId = ct.UserTemplate");
+		sql.append(" Left Join Templates cust on cust.TemplateId = ct.CustomerTemplate");
+		sql.append(" Where NextFrequencyDate is not null and ");
+		sql.append(" cd.FrequencyDate is null or cd.FrequencyDate != c.NextFrequencyDate");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
+		return this.jdbcOperations.query(sql.toString(), (rs, num) -> {
+			Covenant c = new Covenant();
 
-		RowMapper<Covenant> typeRowMapper = BeanPropertyRowMapper.newInstance(Covenant.class);
+			c.setId(rs.getLong("Id"));
+			c.setCovenantTypeId(rs.getLong("CovenantTypeId"));
+			c.setUserTemplateCode(rs.getString("TemplateCode"));
+			c.setCustomerTemplateCode(rs.getString("CustTemplateCode"));
+			c.setAlertToRoles(rs.getString("AlertToRoles"));
+			c.setCode(rs.getString("Code"));
+			c.setDescription(rs.getString("Description"));
+			c.setKeyReference(rs.getString("KeyReference"));
+			// c.setFinType(rs.getString("FinType"));
+			c.setFrequency(rs.getString("Frequency"));
+			c.setNextFrequencyDate(rs.getTimestamp("NextFrequencyDate"));
+			c.setAlertDays(rs.getInt("AlertDays"));
+			c.setDocType(rs.getString("DocType"));
+			c.setDocTypeName(rs.getString("DocTypeDesc"));
+			c.setAlertsentOn(rs.getDate("AlertsentOn"));
 
-		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+			return c;
+		});
 
 	}
 
 	@Override
 	public List<Covenant> getCovenants(String finReference) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" c.Frequency, NextFrequencyDate, CovenantTypeCode, CovenantTypeDescription, ct.DocType");
-		sql.append(", DocTypeName, c.id ");
-		sql.append(" from covenants_aview c");
-		sql.append(" inner join COVENANT_TYPES_AVIEW ct on ct.id = c.covenantTypeId");
-		sql.append(" left join COVENANT_DOCUMENTS cd on cd.CovenantId = c.id");
-		sql.append(" where KeyReference = ? and c.NextFrequencyDate is not null and pdd = ?");
-		sql.append(" and cd.frequencydate is null ");
-		sql.append(" order by NextFrequencyDate");
+		sql.append(" c.Frequency, NextFrequencyDate, CovenantTypeCode, CovenantTypeDescription");
+		sql.append(", ct.DocType, DocTypeName, c.Id");
+		sql.append(" From Covenants_Aview c");
+		sql.append(" Inner Join Covenant_Types_Aview ct on ct.Id = c.CovenantTypeId");
+		sql.append(" Left Join Covenant_Documents cd on cd.CovenantId = c.Id");
+		sql.append(" Where KeyReference = ? and c.NextFrequencyDate is not null and Pdd = ?");
+		sql.append(" and cd.Frequencydate is null");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
+		List<Covenant> list = this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setString(index++, finReference);
 			ps.setInt(index++, 1);
@@ -555,30 +506,50 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 			c.setCovenantTypeDescription(rs.getString("CovenantTypeDescription"));
 			c.setDocType(rs.getString("DocType"));
 			c.setDocTypeName(rs.getString("DocTypeName"));
-			c.setId(rs.getLong("id"));
+			c.setId(rs.getLong("Id"));
+
 			return c;
 		});
+
+		return list.stream().sorted((l1, l2) -> DateUtil.compare(l1.getNextFrequencyDate(), l2.getNextFrequencyDate()))
+				.collect(Collectors.toList());
 	}
 
 	@Override
 	public void deleteDocumentByDocumentId(Long documentId, String tableType) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("Delete from COVENANT_DOCUMENTS");
+		StringBuilder sql = new StringBuilder("Delete from Covenant_Documents");
 		sql.append(tableType);
-		sql.append(" Where DocumentId = :DocumentId");
+		sql.append(" Where DocumentId = ?");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("DocumentId", documentId);
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcTemplate.update(sql.toString(), source);
+			jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, documentId));
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		} catch (Exception e) {
+			//
 		}
-		logger.debug(Literal.LEAVING);
+	}
+
+	private StringBuilder getSelectQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, KeyReference, Module, CovenantTypeId, Los, MandatoryRole, Otc, Pdd, ReceivableDate");
+		sql.append(", AllowWaiver, MaxAllowedDays, DocumentReceived, DocumentReceivedDate, AllowPostPonement");
+		sql.append(", ExtendedDate, AllowedPaymentModes, Frequency, NextFrequencyDate, GraceDays, GraceDueDate");
+		sql.append(", AlertsRequired, AlertType, AlertToRoles, AlertDays, InternalUse, Remarks");
+		sql.append(", Remarks1, AdditionalField1, AdditionalField2, AdditionalField3, AdditionalField4");
+		sql.append(", Version, LastMntby, LastMnton, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", Category, CovenantTypeDescription, CovenantType, CovenantTypeCode");
+		}
+
+		sql.append(" From Covenants");
+		sql.append(StringUtils.trimToEmpty(type));
+
+		return sql;
 	}
 
 	private class CovenantsRowMapper implements RowMapper<Covenant> {
@@ -623,6 +594,9 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 			c.setAdditionalField2(rs.getString("AdditionalField2"));
 			c.setAdditionalField3(rs.getString("AdditionalField3"));
 			c.setAdditionalField4(rs.getString("AdditionalField4"));
+			c.setVersion(rs.getInt("Version"));
+			c.setLastMntBy(rs.getLong("LastMntBy"));
+			c.setLastMntOn(rs.getTimestamp("LastMntOn"));
 			c.setRecordStatus(rs.getString("RecordStatus"));
 			c.setRoleCode(rs.getString("RoleCode"));
 			c.setNextRoleCode(rs.getString("NextRoleCode"));
@@ -630,8 +604,6 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 			c.setNextTaskId(rs.getString("NextTaskId"));
 			c.setRecordType(rs.getString("RecordType"));
 			c.setWorkflowId(rs.getLong("WorkflowId"));
-			c.setLastMntBy(rs.getLong("LastMntBy"));
-			c.setLastMntOn(rs.getTimestamp("LastMntOn"));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				c.setCategory(rs.getString("Category"));

@@ -29,13 +29,13 @@ import java.util.List;
 import com.pennant.backend.model.finance.FinCollaterals;
 
 public interface FinCollateralsDAO {
-	FinCollaterals getFinCollateralsById(String finReference, long id, String type);
+	FinCollaterals getFinCollateralsById(long finID, long id, String type);
 
-	List<FinCollaterals> getFinCollateralsByFinRef(String finReference, String type);
+	List<FinCollaterals> getFinCollateralsByFinRef(long finID, String type);
 
 	void update(FinCollaterals finCollaterals, String type);
 
-	void deleteByFinReference(String id, String type);
+	void deleteByFinReference(long finID, String type);
 
 	void delete(FinCollaterals finCollaterals, String type);
 

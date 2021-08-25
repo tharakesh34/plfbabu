@@ -48,6 +48,7 @@ public class FinCollaterals extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 1L;
 
+	private long finID;
 	private String finReference = null;
 	private long collateralSeq = Long.MIN_VALUE;
 
@@ -102,6 +103,14 @@ public class FinCollaterals extends AbstractWorkflowEntity {
 
 	public void setCollateralSeq(long collateralSeq) {
 		this.collateralSeq = collateralSeq;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
