@@ -34,5 +34,13 @@
 	
 	<bean id="sequenceDao" class="com.pennanttech.pennapps.core.jdbc.SequenceDao" abstract="true" parent="basicDao" />
 	<bean id="finExcessAmountDAO" class="com.pennant.backend.dao.receipts.impl.FinExcessAmountDAOImpl" parent="sequenceDao" />
+	<bean id="financeMainDAO" class="com.pennant.backend.dao.finance.impl.FinanceMainDAOImpl" parent="basicDao" />
+	<bean id="financeDisbursementDAO" class="com.pennant.backend.dao.finance.impl.FinanceDisbursementDAOImpl" parent="basicDao" />
+	<bean id="finODDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinODDetailsDAOImpl" parent="basicDao" />
+	<bean id="finODPenaltyRateDAO" class="com.pennant.backend.dao.finance.impl.FinODPenaltyRateDAOImpl" parent="sequenceDao" />
+	<bean id="financeScheduleDetailDAO" class="com.pennant.backend.dao.finance.impl.FinanceScheduleDetailDAOImpl"
+		parent="basicDao" />
+   <bean id="profitDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinanceProfitDetailDAOImpl" parent="basicDao" />
+	
 	
 </beans>

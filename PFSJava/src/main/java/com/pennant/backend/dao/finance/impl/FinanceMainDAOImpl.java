@@ -3534,7 +3534,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, finID);
+			return this.jdbcOperations.queryForObject(sql, Integer.class, finID, active);
 		} catch (EmptyResultDataAccessException dae) {
 			//
 		}
