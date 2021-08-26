@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinFeeReceiptDAO.java                                                * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  1-06-2017    														*
- *                                                                  						*
- * Modified Date    :  1-06-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinFeeReceiptDAO.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 1-06-2017 * * Modified Date
+ * : 1-06-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 1-06-2017       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 1-06-2017 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.finance;
 
 import java.util.Date;
@@ -58,19 +40,19 @@ public interface FinODAmzTaxDetailDAO {
 
 	void updateTaxReceivable(FinTaxReceivable taxReceivable);
 
-	FinTaxReceivable getFinTaxReceivable(String finReference, String type);
+	FinTaxReceivable getFinTaxReceivable(long finID, String type);
 
 	void saveTaxIncome(FinTaxIncomeDetail finTaxIncomeDetail);
 
 	FinTaxIncomeDetail getFinTaxIncomeDetail(long repayID, String type);
 
-	boolean isDueCreatedForDate(String finRef, Date valueDate, String taxFor);
+	boolean isDueCreatedForDate(long finID, Date valueDate, String taxFor);
 
-	List<FinODAmzTaxDetail> getFinODAmzTaxDetail(String finReference);
+	List<FinODAmzTaxDetail> getFinODAmzTaxDetail(long finID);
 
-	List<FinTaxIncomeDetail> getFinTaxIncomeList(String finReference, String type);
+	List<FinTaxIncomeDetail> getFinTaxIncomeList(long finID, String type);
 
-	List<FinODAmzTaxDetail> getODTaxList(String finReference);
+	List<FinODAmzTaxDetail> getODTaxList(long finID);
 
 	void updateODTaxDueList(List<FinODAmzTaxDetail> updateDueList);
 

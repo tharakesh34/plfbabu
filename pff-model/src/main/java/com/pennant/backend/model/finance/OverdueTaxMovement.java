@@ -12,6 +12,7 @@ public class OverdueTaxMovement implements Serializable {
 	private Date valueDate;
 	private Date schDate;
 	private String taxFor;
+	private long finID;
 	private String finReference;
 	private BigDecimal paidAmount = BigDecimal.ZERO;
 	private BigDecimal waivedAmount = BigDecimal.ZERO;
@@ -60,6 +61,14 @@ public class OverdueTaxMovement implements Serializable {
 
 	public void setTaxFor(String taxFor) {
 		this.taxFor = taxFor;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

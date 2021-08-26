@@ -36,6 +36,7 @@ public class FinOCRHeader extends AbstractWorkflowEntity {
 	@XmlElement
 	private BigDecimal totalDemand = BigDecimal.ZERO;
 	private BigDecimal totalReceivable = BigDecimal.ZERO;
+	private long finID;
 	private String finReference;
 	private BigDecimal ocrCprTotReceivble;
 	private BigDecimal ocrTotalDemand;
@@ -120,6 +121,14 @@ public class FinOCRHeader extends AbstractWorkflowEntity {
 
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

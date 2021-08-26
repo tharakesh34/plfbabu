@@ -5,9 +5,7 @@ import java.util.List;
 import com.pennant.backend.model.finance.FinOCRCapture;
 
 public interface FinOCRCaptureDAO {
-	List<FinOCRCapture> getFinOCRCaptureDetailsByRef(String finReference, String type);
-
-	FinOCRCapture getFinOCRCaptureDetailById(long ID, String type);
+	List<FinOCRCapture> getFinOCRCaptureDetailsByRef(long finID, String type);
 
 	void update(FinOCRCapture finOCRDetail, String type);
 
@@ -15,5 +13,5 @@ public interface FinOCRCaptureDAO {
 
 	long save(FinOCRCapture finOCRDetail, String type);
 
-	void deleteList(String finReference, String type);
+	void deleteList(long finID, String type);
 }

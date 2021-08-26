@@ -34,6 +34,7 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 public class FinFeeConfig extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
+	private long finID;
 	private String finReference;
 	private boolean originationFee;
 	private String finEvent;
@@ -80,9 +81,13 @@ public class FinFeeConfig extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
 
 	public String getFinReference() {
 		return finReference;

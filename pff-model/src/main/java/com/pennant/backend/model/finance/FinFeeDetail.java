@@ -52,6 +52,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 
 	private long feeID = Long.MIN_VALUE;
 	private int feeSeq;
+	private long finID;
 	private String finReference;
 	private boolean originationFee;
 	private String finEvent;
@@ -151,6 +152,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 		FinFeeDetail entity = new FinFeeDetail();
 		entity.setFeeID(this.feeID);
 		entity.setFeeSeq(this.feeSeq);
+		entity.setFinID(this.finID);
 		entity.setFinReference(this.finReference);
 		entity.setOriginationFee(this.originationFee);
 		entity.setFinEvent(this.finEvent);
@@ -276,10 +278,14 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 
 		return excludeFields;
 	}
+	
+	public long getFinID() {
+		return finID;
+	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
 
 	public String getFinReference() {
 		return finReference;

@@ -1,14 +1,14 @@
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.FinOCRHeaderDAO;
 import com.pennant.backend.model.finance.FinOCRHeader;
@@ -25,44 +25,18 @@ public class FinOCRHeaderDAOImpl extends SequenceDao<FinOCRHeader> implements Fi
 	}
 
 	@Override
-	public FinOCRHeader getFinOCRHeaderByRef(String reference, String type) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" HeaderID, OcrID, OcrDescription, CustomerPortion, OcrType");
-		sql.append(", TotalDemand, FinReference");
-		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From FinOCRHeader");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = ?");
+	public FinOCRHeader getFinOCRHeaderByRef(long finID, String type) {
+		StringBuilder sql = sqlSelectedQuery(type);
+		sql.append(" Where FinID = ?");
 
-		logger.trace(Literal.SQL + sql);
+		FinOCRHeaderRowMapper rowMapper = new FinOCRHeaderRowMapper();
+
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { reference }, (rs, i) -> {
-				FinOCRHeader ocrh = new FinOCRHeader();
-
-				ocrh.setHeaderID(rs.getLong("HeaderID"));
-				ocrh.setOcrID(rs.getString("OcrID"));
-				ocrh.setOcrDescription(rs.getString("OcrDescription"));
-				ocrh.setCustomerPortion(rs.getBigDecimal("CustomerPortion"));
-				ocrh.setOcrType(rs.getString("OcrType"));
-				ocrh.setTotalDemand(rs.getBigDecimal("TotalDemand"));
-				ocrh.setFinReference(rs.getString("FinReference"));
-				ocrh.setVersion(rs.getInt("Version"));
-				ocrh.setLastMntBy(rs.getLong("LastMntBy"));
-				ocrh.setLastMntOn(rs.getTimestamp("LastMntOn"));
-				ocrh.setRecordStatus(rs.getString("RecordStatus"));
-				ocrh.setRoleCode(rs.getString("RoleCode"));
-				ocrh.setNextRoleCode(rs.getString("NextRoleCode"));
-				ocrh.setTaskId(rs.getString("TaskId"));
-				ocrh.setNextTaskId(rs.getString("NextTaskId"));
-				ocrh.setRecordType(rs.getString("RecordType"));
-				ocrh.setWorkflowId(rs.getLong("WorkflowId"));
-
-				return ocrh;
-			});
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record is not found in FinOCRHeader{} for the specifed FinReference >> {}", type, reference);
+			//
 		}
 
 		return null;
@@ -70,110 +44,166 @@ public class FinOCRHeaderDAOImpl extends SequenceDao<FinOCRHeader> implements Fi
 
 	@Override
 	public FinOCRHeader getFinOCRHeaderById(long headerID, String type) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = sqlSelectedQuery(type);
+		sql.append(" Where HeaderID = ?");
 
-		StringBuilder sql = new StringBuilder();
-		sql.append("Select HeaderID, OcrID, OcrDescription, CustomerPortion, OcrType, TotalDemand,");
-		sql.append("FinReference");
-		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From FinOCRHeader");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where HeaderID= :HeaderID");
+		FinOCRHeaderRowMapper rowMapper = new FinOCRHeaderRowMapper();
 
-		logger.trace(Literal.SQL + sql.toString());
-		FinOCRHeader finOCRHeader = new FinOCRHeader();
-		finOCRHeader.setHeaderID(headerID);
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finOCRHeader);
-		RowMapper<FinOCRHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(FinOCRHeader.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, headerID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
 	@Override
-	public void update(FinOCRHeader finOCRHeader, String type) {
-		logger.debug(Literal.ENTERING);
-		int recordCount = 0;
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("Update FinOCRHeader");
+	public void update(FinOCRHeader ocrh, String type) {
+		StringBuilder sql = new StringBuilder("Update FinOCRHeader");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set OcrID =:OcrID, OcrDescription =:OcrDescription,");
-		sql.append("OcrType =:OcrType ,TotalDemand=:TotalDemand,");
-		sql.append("FinReference =:FinReference, CustomerPortion =:CustomerPortion,");
-		sql.append("Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
-		sql.append("RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
-		sql.append("TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" Where HeaderID = :HeaderID ");
-		logger.trace(Literal.SQL + sql.toString());
+		sql.append(" Set OcrID = ?, OcrDescription = ?, OcrType = ?, TotalDemand = ?");
+		sql.append(", FinID = ?, FinReference = ?, CustomerPortion = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?");
+		sql.append(", RoleCode = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where HeaderID = ?");
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finOCRHeader);
-		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
+		logger.debug(Literal.SQL + sql.toString());
+
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, ocrh.getOcrID());
+			ps.setString(index++, ocrh.getOcrDescription());
+			ps.setString(index++, ocrh.getOcrType());
+			ps.setBigDecimal(index++, ocrh.getTotalDemand());
+			ps.setLong(index++, ocrh.getFinID());
+			ps.setString(index++, ocrh.getFinReference());
+			ps.setBigDecimal(index++, ocrh.getCustomerPortion());
+			ps.setInt(index++, ocrh.getVersion());
+			ps.setLong(index++, ocrh.getLastMntBy());
+			ps.setTimestamp(index++, ocrh.getLastMntOn());
+			ps.setString(index++, ocrh.getRecordStatus());
+			ps.setString(index++, ocrh.getRoleCode());
+			ps.setString(index++, ocrh.getNextRoleCode());
+			ps.setString(index++, ocrh.getTaskId());
+			ps.setString(index++, ocrh.getNextTaskId());
+			ps.setString(index++, ocrh.getRecordType());
+			ps.setLong(index++, ocrh.getWorkflowId());
+			ps.setLong(index++, ocrh.getHeaderID());
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 
-		logger.debug(Literal.LEAVING);
-
 	}
 
 	@Override
-	public void delete(FinOCRHeader finOCRHeader, String type) {
-		logger.debug(Literal.ENTERING);
-		StringBuilder sql = new StringBuilder();
-		sql.append("Delete From FinOCRHeader");
+	public void delete(FinOCRHeader ocrh, String type) {
+		StringBuilder sql = new StringBuilder("Delete From FinOCRHeader");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where HeaderID = :HeaderID");
-		logger.trace(Literal.SQL + sql.toString());
+		sql.append(" Where HeaderID = ?");
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finOCRHeader);
+		logger.debug(Literal.SQL + sql.toString());
+
 		try {
-			this.jdbcTemplate.update(sql.toString(), beanParameters);
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, ocrh.getHeaderID());
+			});
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public long save(FinOCRHeader finOCRHeader, String type) {
-		logger.debug(Literal.ENTERING);
-
-		if (finOCRHeader.getHeaderID() == Long.MIN_VALUE) {
-			finOCRHeader.setHeaderID(getNextValue("SeqFinOCRHeader"));
-			logger.trace("get NextID:" + finOCRHeader.getHeaderID());
+	public long save(FinOCRHeader ocrh, String type) {
+		if (ocrh.getHeaderID() == Long.MIN_VALUE) {
+			ocrh.setHeaderID(getNextValue("SeqFinOCRHeader"));
 		}
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" Insert Into FinOCRHeader");
+		StringBuilder sql = new StringBuilder("Insert Into FinOCRHeader");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append("(HeaderID, OcrID, OcrDescription, CustomerPortion, OcrType, TotalDemand,");
-		sql.append(" FinReference,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append("(HeaderID, OcrID, OcrDescription, CustomerPortion, OcrType, TotalDemand");
+		sql.append(", FinID, FinReference");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		sql.append(" Values( :HeaderID, :OcrID, :OcrDescription, :CustomerPortion, :OcrType, :TotalDemand,");
-		sql.append(" :FinReference,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
-		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finOCRHeader);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		logger.debug(Literal.LEAVING);
+			ps.setLong(index++, ocrh.getHeaderID());
+			ps.setString(index++, ocrh.getOcrID());
+			ps.setString(index++, ocrh.getOcrDescription());
+			ps.setBigDecimal(index++, ocrh.getCustomerPortion());
+			ps.setString(index++, ocrh.getOcrType());
+			ps.setBigDecimal(index++, ocrh.getTotalDemand());
+			ps.setLong(index++, ocrh.getFinID());
+			ps.setString(index++, ocrh.getFinReference());
+			ps.setInt(index++, ocrh.getVersion());
+			ps.setLong(index++, ocrh.getLastMntBy());
+			ps.setTimestamp(index++, ocrh.getLastMntOn());
+			ps.setString(index++, ocrh.getRecordStatus());
+			ps.setString(index++, ocrh.getRoleCode());
+			ps.setString(index++, ocrh.getNextRoleCode());
+			ps.setString(index++, ocrh.getTaskId());
+			ps.setString(index++, ocrh.getNextTaskId());
+			ps.setString(index++, ocrh.getRecordType());
+			ps.setLong(index++, ocrh.getWorkflowId());
+		});
 
-		return finOCRHeader.getHeaderID();
+		return ocrh.getHeaderID();
 	}
 
+	private StringBuilder sqlSelectedQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" HeaderID, OcrID, OcrDescription, CustomerPortion, OcrType");
+		sql.append(", TotalDemand, FinID, FinReference");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From FinOCRHeader");
+		sql.append(StringUtils.trimToEmpty(type));
+
+		return sql;
+	}
+
+	private class FinOCRHeaderRowMapper implements RowMapper<FinOCRHeader> {
+		private FinOCRHeaderRowMapper() {
+			super();
+		}
+
+		@Override
+		public FinOCRHeader mapRow(ResultSet rs, int rowNum) throws SQLException {
+			FinOCRHeader ocrh = new FinOCRHeader();
+
+			ocrh.setHeaderID(rs.getLong("HeaderID"));
+			ocrh.setOcrID(rs.getString("OcrID"));
+			ocrh.setOcrDescription(rs.getString("OcrDescription"));
+			ocrh.setCustomerPortion(rs.getBigDecimal("CustomerPortion"));
+			ocrh.setOcrType(rs.getString("OcrType"));
+			ocrh.setTotalDemand(rs.getBigDecimal("TotalDemand"));
+			ocrh.setFinID(rs.getLong("FinID"));
+			ocrh.setFinReference(rs.getString("FinReference"));
+			ocrh.setVersion(rs.getInt("Version"));
+			ocrh.setLastMntBy(rs.getLong("LastMntBy"));
+			ocrh.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			ocrh.setRecordStatus(rs.getString("RecordStatus"));
+			ocrh.setRoleCode(rs.getString("RoleCode"));
+			ocrh.setNextRoleCode(rs.getString("NextRoleCode"));
+			ocrh.setTaskId(rs.getString("TaskId"));
+			ocrh.setNextTaskId(rs.getString("NextTaskId"));
+			ocrh.setRecordType(rs.getString("RecordType"));
+			ocrh.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return ocrh;
+		}
+	}
 }

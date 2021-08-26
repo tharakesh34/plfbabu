@@ -18,6 +18,7 @@ public class FinanceExposure implements Serializable {
 	private String jointCif;
 	private String guarantorCif;
 	private String custShrtName;
+	private long finID;
 	private String finReference;
 	private Date finStartDate;
 	private Date maturityDate;
@@ -55,6 +56,14 @@ public class FinanceExposure implements Serializable {
 		this.finType = finType;
 	}
 
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
+	
 	public String getFinReference() {
 		return finReference;
 	}

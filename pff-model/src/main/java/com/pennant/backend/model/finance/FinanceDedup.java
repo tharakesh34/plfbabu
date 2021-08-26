@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlElement;
 public class FinanceDedup implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private long custId = Long.MIN_VALUE;
+	private long finID;
 	@XmlElement
 	private String finReference;
 	private String dupReference;
@@ -37,7 +38,7 @@ public class FinanceDedup implements Serializable {
 	private Date custDOB;
 	private boolean newRecord = false;
 
-	//new fields
+	// new fields
 	private String mobileNumber;
 	private String chassisNumber;
 	private String engineNumber;
@@ -61,7 +62,7 @@ public class FinanceDedup implements Serializable {
 	private String lpgNumber;
 	private String drivingLicenceNo;
 
-	//Audit Purpose Fields
+	// Audit Purpose Fields
 	private long lastMntBy;
 	private String roleCode;
 	private String recordStatus;
@@ -131,6 +132,14 @@ public class FinanceDedup implements Serializable {
 		return custId;
 	}
 
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	} 
+	
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}

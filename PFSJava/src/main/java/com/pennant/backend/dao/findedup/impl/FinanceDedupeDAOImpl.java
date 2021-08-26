@@ -1,60 +1,44 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DedupParmDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  23-08-2011    														*
- *                                                                  						*
- * Modified Date    :  23-08-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DedupParmDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 23-08-2011 * * Modified
+ * Date : 23-08-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 23-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
 package com.pennant.backend.dao.findedup.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.backend.dao.findedup.FinanceDedupeDAO;
 import com.pennant.backend.model.finance.FinanceDedup;
@@ -75,63 +59,107 @@ public class FinanceDedupeDAOImpl extends BasicDao<FinanceDedup> implements Fina
 
 	@Override
 	public void saveList(List<FinanceDedup> dedups, String type) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Insert Into FinDedupDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (FinID, FinReference, DupReference, CustCIF, CustCRCPR, CustShrtName");
+		sql.append(", MobileNumber, StartDate, FinanceAmount, FinanceType, ProfitAmount");
+		sql.append(", Stage, DedupeRule, OverrideUser, FinLimitRef)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(")");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into FinDedupDetail");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference ,DupReference, CustCIF , CustCRCPR , CustShrtName , ");
-		insertSql.append(" MobileNumber , StartDate , FinanceAmount ,FinanceType , ");
-		insertSql.append("  ProfitAmount , Stage ,DedupeRule, OverrideUser,FinLimitRef)");
-		insertSql.append(" Values(:FinReference ,:DupReference, :CustCIF , :CustCRCPR , :CustShrtName , ");
-		insertSql.append(" :MobileNumber , :StartDate , :FinanceAmount ,:FinanceType ,  ");
-		insertSql.append(" :ProfitAmount , :Stage , :DedupeRule, :OverrideUser,:FinLimitRef)");
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(dedups.toArray());
-		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("Leaving");
+		this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinanceDedup fd = dedups.get(i);
+
+				int index = 1;
+
+				ps.setLong(index++, fd.getFinID());
+				ps.setString(index++, fd.getFinReference());
+				ps.setString(index++, fd.getDupReference());
+				ps.setString(index++, fd.getCustCIF());
+				ps.setString(index++, fd.getCustCRCPR());
+				ps.setString(index++, fd.getCustShrtName());
+				ps.setString(index++, fd.getMobileNumber());
+				ps.setDate(index++, JdbcUtil.getDate(fd.getStartDate()));
+				ps.setBigDecimal(index++, fd.getFinanceAmount());
+				ps.setString(index++, fd.getFinanceType());
+				ps.setBigDecimal(index++, fd.getProfitAmount());
+				ps.setString(index++, fd.getStage());
+				ps.setString(index++, fd.getDedupeRule());
+				ps.setString(index++, fd.getOverrideUser());
+				ps.setString(index++, fd.getFinLimitRef());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return dedups.size();
+			}
+		});
+
 	}
 
-	/*
-	 * This updated the Finance dedup list
-	 */
 	@Override
 	public void updateList(List<FinanceDedup> dedups) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Update FinDedupDetail");
+		sql.append(" Set CustCIF = ?, CustCRCPR = ?, CustShrtName = ?, MobileNumber = ?");
+		sql.append(", StartDate = ?, FinanceAmount = ?, FinanceType = ?, ProfitAmount= ?");
+		sql.append(", Stage = ?, DedupeRule = ?, OverrideUser = ?, FinLimitRef = ?");
+		sql.append(" Where FinID = ? and DupReference = ?");
 
-		StringBuilder updateSql = new StringBuilder("Update FinDedupDetail");
-		updateSql.append(" Set CustCIF = :CustCIF , CustCRCPR = :CustCRCPR , CustShrtName = :CustShrtName, ");
-		updateSql.append(
-				" MobileNumber = :MobileNumber, StartDate = :StartDate , FinanceAmount = :FinanceAmount ,FinanceType = :FinanceType, ");
-		updateSql.append("  ProfitAmount= :ProfitAmount , Stage = :Stage ,DedupeRule = :DedupeRule,  ");
-		updateSql.append(" OverrideUser = :OverrideUser,FinLimitRef = :FinLimitRef");
-		updateSql.append(" Where FinReference =:FinReference And DupReference=:DupReference ");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("insertSql: " + updateSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(dedups.toArray());
-		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinanceDedup fd = dedups.get(i);
+				int index = 1;
 
+				ps.setString(index++, fd.getCustCIF());
+				ps.setString(index++, fd.getCustCRCPR());
+				ps.setString(index++, fd.getCustShrtName());
+				ps.setString(index++, fd.getMobileNumber());
+				ps.setDate(index++, JdbcUtil.getDate(fd.getStartDate()));
+				ps.setBigDecimal(index++, fd.getFinanceAmount());
+				ps.setString(index++, fd.getFinanceType());
+				ps.setBigDecimal(index++, fd.getProfitAmount());
+				ps.setString(index++, fd.getStage());
+				ps.setString(index++, fd.getDedupeRule());
+				ps.setString(index++, fd.getOverrideUser());
+				ps.setString(index++, fd.getFinLimitRef());
+
+				ps.setLong(index++, fd.getFinID());
+				ps.setString(index++, fd.getDupReference());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return dedups.size();
+			}
+		});
 	}
 
 	@Override
-	public List<FinanceDedup> fetchOverrideDedupData(String finReference, String queryCode) {
+	public List<FinanceDedup> fetchOverrideDedupData(long finID, String queryCode) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" D.FinReference, D.DupReference, D.CustCIF, D.CustCRCPR, D.CustShrtName");
-		sql.append(", D.MobileNumber, D.StartDate, D.FinanceAmount, D.FinanceType, D.ProfitAmount");
-		sql.append(", D.Stage, D.DedupeRule, D.OverrideUser, S.RoleDesc StageDesc, D.FinLimitRef");
-		sql.append(" From FinDedupDetail D");
-		sql.append(" LEFT OUTER JOIN SecRoles S ON S.RoleCd = D.Stage");
-		sql.append(" Where D.FinReference = ? and D.DedupeRule LIKE  ?");
+		sql.append(" d.FinID, d.FinReference, d.DupReference, d.CustCIF, d.CustCRCPR, d.CustShrtName");
+		sql.append(", d.MobileNumber, d.StartDate, d.FinanceAmount, d.FinanceType, d.ProfitAmount");
+		sql.append(", d.Stage, d.DedupeRule, d.OverrideUser, s.RoleDesc StageDesc, d.FinLimitRef");
+		sql.append(" From FinDedupDetail d");
+		sql.append(" Left Outer Join SecRoles s on s.RoleCd = d.Stage");
+		sql.append(" Where d.FinID = ? and d.DedupeRule LIKE  ?");
 
-		logger.trace(Literal.SQL + sql);
+		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, finReference);
-			ps.setString(2, "%,"+queryCode.trim()+",%");
+			ps.setLong(1, finID);
+			ps.setString(2, "%," + queryCode.trim() + ",%");
 		}, (rs, i) -> {
 			FinanceDedup fd = new FinanceDedup();
-			
+
+			fd.setFinID(rs.getLong("FinID"));
 			fd.setFinReference(rs.getString("FinReference"));
 			fd.setDupReference(rs.getString("DupReference"));
 			fd.setCustCIF(rs.getString("CustCIF"));
@@ -153,6 +181,7 @@ public class FinanceDedupeDAOImpl extends BasicDao<FinanceDedup> implements Fina
 
 	}
 
+	// no calling available
 	@Override
 	public void deleteList(String finReference) {
 		logger.debug("Entering");
@@ -170,7 +199,7 @@ public class FinanceDedupeDAOImpl extends BasicDao<FinanceDedup> implements Fina
 
 	@Override
 	public void moveData(String finReference, String suffix) {
-		logger.debug(" Entering ");
+		/* FIXME : change to FinID Pre-approved(_PA) tables need to remove */
 		try {
 			if (StringUtils.isBlank(suffix)) {
 				return;
@@ -191,34 +220,23 @@ public class FinanceDedupeDAOImpl extends BasicDao<FinanceDedup> implements Fina
 			}
 
 		} catch (DataAccessException e) {
-			logger.debug(e);
+			//
 		}
-		logger.debug(" Leaving ");
 	}
 
 	@Override
-	public List<FinanceDedup> fetchFinanceDedup(FinanceDedup financeDedup, String queryCode) {
-		logger.debug(Literal.ENTERING);
-
+	public List<FinanceDedup> fetchFinanceDedup(FinanceDedup dedup, String queryCode) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" CustCIF, FinanceType, FinReference");
+		sql.append(" CustCIF, FinanceType, FinID, FinReference");
 		sql.append(" From FinanceDedup_View");
 		sql.append(queryCode.trim());
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDedup);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedup);
 		RowMapper<FinanceDedup> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceDedup.class);
-		List<FinanceDedup> list = null;
 
-		try {
-			list = this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
-		} catch (DataAccessException e) {
-			logger.debug(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return list;
+		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 
 	}
 

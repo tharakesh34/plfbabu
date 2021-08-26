@@ -4,8 +4,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
@@ -31,7 +29,7 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
@@ -53,53 +51,46 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 				pr.setoDTDSReq(rs.getBoolean("ODTDSReq"));
 
 				return pr;
-			});
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record not found in FinODPenaltyRates{} for the specified FinID >> {}", finID, type);
+			//
 		}
 
 		return null;
 	}
 
-	/**
-	 * Method for Finance Overdue penalty rates Deletion
-	 */
-	public void delete(String finReference, String type) {
-		logger.debug("Entering");
+	public void delete(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Delete From FinODPenaltyRates");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
 
-		FinODPenaltyRate finODPenaltyRate = new FinODPenaltyRate();
-		finODPenaltyRate.setFinReference(finReference);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder deleteSql = new StringBuilder(" Delete From FinODPenaltyRates");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinReference =:FinReference");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODPenaltyRate);
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
+			ps.setLong(index++, finID);
+		});
 	}
 
-	/**
-	 * Method for Finance Overdue penalty rates Insertion
-	 */
 	@Override
 	public String save(FinODPenaltyRate pr, String type) {
-		StringBuilder sql = new StringBuilder("insert into");
+		StringBuilder sql = new StringBuilder("Insert Into");
 		sql.append(" FinODPenaltyRates");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append("(FinReference, FinEffectDate, ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays");
+		sql.append("(FinID, FinReference, FinEffectDate, ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays");
 		sql.append(", ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc, oDRuleCode, ODMinCapAmount");
 		sql.append(", ODTDSReq");
 		sql.append(") values(");
-		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
-		logger.trace(Literal.SQL, sql);
+		logger.debug(Literal.SQL + sql.toString());
 
 		jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
+			ps.setLong(index++, pr.getFinID());
 			ps.setString(index++, pr.getFinReference());
 			ps.setDate(index++, JdbcUtil.getDate(pr.getFinEffectDate()));
 			ps.setBoolean(index++, pr.isApplyODPenalty());
@@ -118,31 +109,29 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		return pr.getFinReference();
 	}
 
-	/**
-	 * Method for Finance Overdue penalty rates Insertion
-	 */
 	@Override
 	public void saveLog(FinODPenaltyRate pr, String type) {
 		if (pr.getLogKey() == 0 || pr.getLogKey() == Long.MIN_VALUE) {
 			pr.setLogKey(getNextValue("SeqFinODPenaltyRates"));
 		}
 
-		StringBuilder sql = new StringBuilder("insert into");
+		StringBuilder sql = new StringBuilder("Insert Into");
 		sql.append(" FinODPenaltyRates");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append("(LogKey, FinReference, FinEffectDate, ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays");
-		sql.append(", ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc, oDRuleCode, ODMinCapAmount");
-		sql.append(", ODTDSReq");
+		sql.append("(LogKey, FinID, FinReference, FinEffectDate, ApplyODPenalty, ODIncGrcDays, ODChargeType");
+		sql.append(", ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc");
+		sql.append(", ODRuleCode, ODMinCapAmount, ODTDSReq");
 		sql.append(") values(");
-		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
-		logger.trace(Literal.SQL, sql);
+		logger.debug(Literal.SQL + sql.toString());
 
 		jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
 			ps.setLong(index++, JdbcUtil.setLong(pr.getLogKey()));
+			ps.setLong(index++, JdbcUtil.setLong(pr.getFinID()));
 			ps.setString(index++, pr.getFinReference());
 			ps.setDate(index++, JdbcUtil.getDate(pr.getFinEffectDate()));
 			ps.setBoolean(index++, pr.isApplyODPenalty());
@@ -159,71 +148,43 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		});
 	}
 
-	/**
-	 * Method for Finance Overdue penalty rates Updation
-	 */
 	@Override
-	public void update(FinODPenaltyRate finODPenaltyRate, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update FinODPenaltyRates");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FinEffectDate = :FinEffectDate, ApplyODPenalty = :ApplyODPenalty,");
-		updateSql.append(" ODIncGrcDays = :ODIncGrcDays, ODChargeType = :ODChargeType, ");
-		updateSql.append(" ODChargeAmtOrPerc = :ODChargeAmtOrPerc, ODGraceDays = :ODGraceDays,  ");
-		updateSql.append(" ODChargeCalOn = :ODChargeCalOn, ODAllowWaiver = :ODAllowWaiver,");
-		updateSql.append(" ODMaxWaiverPerc = :ODMaxWaiverPerc, oDRuleCode = :oDRuleCode,  ");
-		updateSql.append(" ODMinCapAmount = :ODMinCapAmount ,ODTDSReq = :ODTDSReq");
-		updateSql.append(" WHERE  FinReference = :FinReference ");
+	public void update(FinODPenaltyRate odpr, String type) {
+		StringBuilder sql = new StringBuilder("Update FinODPenaltyRates");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set FinEffectDate = ?, ApplyODPenalty = ?, ODIncGrcDays = ?");
+		sql.append(", ODChargeType = ?, ODChargeAmtOrPerc = ?, ODGraceDays = ?");
+		sql.append(", ODChargeCalOn = ?, ODAllowWaiver = ?, ODMaxWaiverPerc = ?");
+		sql.append(", ODRuleCode = ?, ODMinCapAmount = ?, ODTDSReq = ?");
+		sql.append(" Where  FinID = ?");
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODPenaltyRate);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setDate(index++, JdbcUtil.getDate(odpr.getFinEffectDate()));
+			ps.setBoolean(index++, odpr.isApplyODPenalty());
+			ps.setBoolean(index++, odpr.isODIncGrcDays());
+			ps.setString(index++, odpr.getODChargeType());
+			ps.setBigDecimal(index++, odpr.getODChargeAmtOrPerc());
+			ps.setInt(index++, odpr.getODGraceDays());
+			ps.setString(index++, odpr.getODChargeCalOn());
+			ps.setBoolean(index++, odpr.isODAllowWaiver());
+			ps.setBigDecimal(index++, odpr.getODMaxWaiverPerc());
+			ps.setString(index++, odpr.getODRuleCode());
+			ps.setBigDecimal(index++, odpr.getoDMinCapAmount());
+			ps.setBoolean(index++, odpr.isoDTDSReq());
+			ps.setLong(index++, JdbcUtil.setLong(odpr.getFinID()));
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
 	@Override
-	public FinODPenaltyRate getDMFinODPenaltyRateByRef(final String finReference, String type) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, FinEffectDate, ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays");
-		sql.append(", ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc, ODRuleCode");
-		sql.append(", ODMinCapAmount, ODTDSReq");
-		sql.append(" from FinODPenaltyRates");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, (rs, rowNum) -> {
-				FinODPenaltyRate pr = new FinODPenaltyRate();
-
-				pr.setFinReference(rs.getString("FinReference"));
-				pr.setFinEffectDate(rs.getTimestamp("FinEffectDate"));
-				pr.setApplyODPenalty(rs.getBoolean("ApplyODPenalty"));
-				pr.setODIncGrcDays(rs.getBoolean("ODIncGrcDays"));
-				pr.setODChargeType(rs.getString("ODChargeType"));
-				pr.setODGraceDays(rs.getInt("ODGraceDays"));
-				pr.setODChargeCalOn(rs.getString("ODChargeCalOn"));
-				pr.setODChargeAmtOrPerc(rs.getBigDecimal("ODChargeAmtOrPerc"));
-				pr.setODAllowWaiver(rs.getBoolean("ODAllowWaiver"));
-				pr.setODMaxWaiverPerc(rs.getBigDecimal("ODMaxWaiverPerc"));
-				pr.setODRuleCode(rs.getString("ODRuleCode"));
-				pr.setoDMinCapAmount(rs.getBigDecimal("ODMinCapAmount"));
-				pr.setoDTDSReq(rs.getBoolean("ODTDSReq"));
-
-				return pr;
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Records are not found in FinODPenaltyRates{} for the FinReference >> {}", type, finReference);
-		}
-
-		return null;
+	public FinODPenaltyRate getDMFinODPenaltyRateByRef(final long finID, String type) {
+		return getFinODPenaltyRateByRef(finID, type);
 	}
-
 }

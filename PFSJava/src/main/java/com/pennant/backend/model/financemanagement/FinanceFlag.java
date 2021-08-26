@@ -52,6 +52,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceFlag extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
+	private long finID;
 	@XmlElement
 	private String finReference;
 
@@ -121,8 +122,15 @@ public class FinanceFlag extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-	// Getter and Setter methods
 
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
+	
 	public String getFinReference() {
 		return finReference;
 	}

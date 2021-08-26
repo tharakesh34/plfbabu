@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 public class FinTaxReceivable {
 
+	private long finID;
 	private String finReference;
 	private String taxFor;
 	private BigDecimal receivableAmount = BigDecimal.ZERO;
@@ -12,6 +13,14 @@ public class FinTaxReceivable {
 	private BigDecimal UGST = BigDecimal.ZERO;
 	private BigDecimal IGST = BigDecimal.ZERO;
 	private BigDecimal CESS = BigDecimal.ZERO;
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
 
 	public String getFinReference() {
 		return finReference;

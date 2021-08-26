@@ -25,17 +25,17 @@
 
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.GuarantorDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -46,6 +46,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * DAO methods implementation for the <b>GuarantorDetail model</b> class.<br>
@@ -59,303 +60,418 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 		super();
 	}
 
-	/**
-	 * This method set the Work Flow id based on the module name and return the new GuarantorDetail
-	 * 
-	 * @return GuarantorDetail
-	 */
-
 	@Override
 	public GuarantorDetail getGuarantorDetail() {
-		logger.debug("Entering");
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("GuarantorDetail");
+
 		GuarantorDetail guarantorDetail = new GuarantorDetail();
+
 		if (workFlowDetails != null) {
 			guarantorDetail.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
-		logger.debug("Leaving");
+
 		return guarantorDetail;
 	}
-
-	/**
-	 * This method get the module from method getGuarantorDetail() and set the new record flag as true and return
-	 * GuarantorDetail()
-	 * 
-	 * @return GuarantorDetail
-	 */
 
 	@Override
 	public GuarantorDetail getNewGuarantorDetail() {
-		logger.debug("Entering");
 		GuarantorDetail guarantorDetail = getGuarantorDetail();
 		guarantorDetail.setNewRecord(true);
-		logger.debug("Leaving");
+
 		return guarantorDetail;
 	}
 
-	/**
-	 * Fetch the Record Guarantor Details details by key field
-	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return GuarantorDetail
-	 */
 	@Override
 	public GuarantorDetail getGuarantorDetailById(final long id, String type) {
-		logger.debug("Entering");
-		GuarantorDetail guarantorDetail = new GuarantorDetail();
+		StringBuilder sql = sqlSelectQuery(type);
+		sql.append(" Where GuarantorId = ?");
 
-		guarantorDetail.setId(id);
-
-		StringBuilder selectSql = new StringBuilder(
-				"Select GuarantorId, FinReference, BankCustomer, GuarantorCIF, GuarantorIDType, GuarantorIDNumber, GuarantorCIFName, GuranteePercentage, MobileNo, EmailId, GuarantorProof, GuarantorProofName");
-		selectSql.append(
-				", AddrHNbr, FlatNbr, AddrStreet, AddrLine1, AddrLine2, POBox, AddrCity, AddrProvince, AddrCountry, AddrZIP, GuarantorGenderCode");
-		selectSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",GuarantorIDTypeName, custID, CustShrtName, lovCustDob  ");
-		}
-		selectSql.append(" From FinGuarantorsDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where GuarantorId =:GuarantorId");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(guarantorDetail);
-		RowMapper<GuarantorDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(GuarantorDetail.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			guarantorDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new GuarantorDetailRowMapper(type), id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			guarantorDetail = null;
+			//
 		}
-		logger.debug("Leaving");
-		return guarantorDetail;
+
+		return null;
 	}
 
-	/**
-	 * This method Deletes the Record from the FinGuarantorsDetails or FinGuarantorsDetails_Temp. if Record not deleted
-	 * then throws DataAccessException with error 41003. delete Guarantor Details by key GuarantorId
-	 * 
-	 * @param Guarantor
-	 *            Details (guarantorDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void delete(GuarantorDetail guarantorDetail, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
+	public void delete(GuarantorDetail gd, String type) {
+		StringBuilder sql = new StringBuilder("Delete From FinGuarantorsDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where GuarantorId = ?");
 
-		StringBuilder deleteSql = new StringBuilder("Delete From FinGuarantorsDetails");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where GuarantorId =:GuarantorId");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(guarantorDetail);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+				ps.setLong(1, gd.getGuarantorId());
+			});
+
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
+
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * This method insert new Records into FinGuarantorsDetails or FinGuarantorsDetails_Temp. it fetches the available
-	 * Sequence form SeqFinGuarantorsDetails by using getNextidviewDAO().getNextId() method.
-	 * 
-	 * save Guarantor Details
-	 * 
-	 * @param Guarantor
-	 *            Details (guarantorDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-
 	@Override
-	public long save(GuarantorDetail guarantorDetail, String type) {
-		logger.debug("Entering");
-		if (guarantorDetail.getId() == Long.MIN_VALUE) {
-			guarantorDetail.setId(getNextValue("SeqFinGuarantorsDetails"));
-			logger.debug("get NextID:" + guarantorDetail.getId());
-		}
-		if (guarantorDetail.getGuarantorProof() == null) {
-			guarantorDetail.setGuarantorProof(new byte[] { Byte.MIN_VALUE });
+	public long save(GuarantorDetail gd, String type) {
+		if (gd.getId() == Long.MIN_VALUE) {
+			gd.setId(getNextValue("SeqFinGuarantorsDetails"));
 		}
 
-		StringBuilder insertSql = new StringBuilder("Insert Into FinGuarantorsDetails");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(
-				" (GuarantorId, FinReference, BankCustomer, GuarantorCIF, GuarantorIDType, GuarantorIDNumber, GuarantorCIFName, GuranteePercentage, MobileNo, EmailId, GuarantorProof, GuarantorProofName, Remarks ");
-		insertSql.append(
-				", AddrHNbr, FlatNbr, AddrStreet, AddrLine1, AddrLine2, POBox, AddrCity, AddrProvince, AddrCountry, AddrZIP, GuarantorGenderCode");
-		insertSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(
-				" Values(:GuarantorId, :FinReference, :BankCustomer, :GuarantorCIF, :GuarantorIDType, :GuarantorIDNumber, :GuarantorCIFName, :GuranteePercentage, :MobileNo, :EmailId, :GuarantorProof, :GuarantorProofName, :Remarks ");
-		insertSql.append(
-				", :AddrHNbr, :FlatNbr, :AddrStreet, :AddrLine1, :AddrLine2, :POBox, :AddrCity, :AddrProvince, :AddrCountry, :AddrZIP, :GuarantorGenderCode");
-		insertSql.append(
-				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		if (gd.getGuarantorProof() == null) {
+			gd.setGuarantorProof(new byte[] { Byte.MIN_VALUE });
+		}
 
-		logger.debug("insertSql: " + insertSql.toString());
+		StringBuilder sql = new StringBuilder("Insert Into FinGuarantorsDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (GuarantorId, FinID, FinReference, BankCustomer, GuarantorCIF, GuarantorIDType");
+		sql.append(", GuarantorIDNumber, GuarantorCIFName, GuranteePercentage, MobileNo, EmailId");
+		sql.append(", GuarantorProof, GuarantorProofName, Remarks, AddrHNbr, FlatNbr, AddrStreet, AddrLine1");
+		sql.append(", AddrLine2, POBox, AddrCity, AddrProvince, AddrCountry, AddrZIP, GuarantorGenderCode");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(guarantorDetail);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return guarantorDetail.getId();
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, gd.getGuarantorId());
+			ps.setLong(index++, gd.getFinID());
+			ps.setString(index++, gd.getFinReference());
+			ps.setBoolean(index++, gd.isBankCustomer());
+			ps.setString(index++, gd.getGuarantorCIF());
+			ps.setString(index++, gd.getGuarantorIDType());
+			ps.setString(index++, gd.getGuarantorIDNumber());
+			ps.setString(index++, gd.getGuarantorCIFName());
+			ps.setBigDecimal(index++, gd.getGuranteePercentage());
+			ps.setString(index++, gd.getMobileNo());
+			ps.setString(index++, gd.getEmailId());
+			ps.setBytes(index++, gd.getGuarantorProof());
+			ps.setString(index++, gd.getGuarantorProofName());
+			ps.setString(index++, gd.getRemarks());
+			ps.setString(index++, gd.getAddrHNbr());
+			ps.setString(index++, gd.getFlatNbr());
+			ps.setString(index++, gd.getAddrStreet());
+			ps.setString(index++, gd.getAddrLine1());
+			ps.setString(index++, gd.getAddrLine2());
+			ps.setString(index++, gd.getPOBox());
+			ps.setString(index++, gd.getAddrCity());
+			ps.setString(index++, gd.getAddrProvince());
+			ps.setString(index++, gd.getAddrCountry());
+			ps.setString(index++, gd.getAddrZIP());
+			ps.setString(index++, gd.getGuarantorGenderCode());
+			ps.setInt(index++, gd.getVersion());
+			ps.setLong(index++, gd.getLastMntBy());
+			ps.setTimestamp(index++, gd.getLastMntOn());
+			ps.setString(index++, gd.getRecordStatus());
+			ps.setString(index++, gd.getRoleCode());
+			ps.setString(index++, gd.getNextRoleCode());
+			ps.setString(index++, gd.getTaskId());
+			ps.setString(index++, gd.getNextTaskId());
+			ps.setString(index++, gd.getRecordType());
+			ps.setLong(index++, gd.getWorkflowId());
+		});
+
+		return gd.getId();
 	}
 
-	/**
-	 * This method updates the Record FinGuarantorsDetails or FinGuarantorsDetails_Temp. if Record not updated then
-	 * throws DataAccessException with error 41004. update Guarantor Details by key GuarantorId and Version
-	 * 
-	 * @param Guarantor
-	 *            Details (guarantorDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void update(GuarantorDetail guarantorDetail, String type) {
-		int recordCount = 0;
-		StringBuilder updateSql = new StringBuilder("Update FinGuarantorsDetails");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FinReference = :FinReference, ");
-		updateSql.append(" BankCustomer = :BankCustomer, GuarantorCIF = :GuarantorCIF, ");
-		updateSql.append(" GuarantorIDType = :GuarantorIDType, GuarantorIDNumber = :GuarantorIDNumber, ");
-		updateSql.append(" GuarantorCIFName = :GuarantorCIFName, GuranteePercentage = :GuranteePercentage, ");
-		updateSql.append(" MobileNo = :MobileNo, EmailId = :EmailId, GuarantorProofName = :GuarantorProofName,");
-		if (guarantorDetail.getGuarantorProof() != null) {
-			updateSql.append(" GuarantorProof = :GuarantorProof,");
+	public void update(GuarantorDetail gd, String type) {
+		StringBuilder sql = new StringBuilder("Update FinGuarantorsDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set FinID = ?, FinReference = ?, BankCustomer = ?, GuarantorCIF = ?");
+		sql.append(", GuarantorIDType = ?, GuarantorIDNumber = ?, GuarantorCIFName = ?, GuranteePercentage = ?");
+		sql.append(", MobileNo = ?, EmailId = ?, GuarantorProofName = ?");
+
+		if (gd.getGuarantorProof() != null) {
+			sql.append(", GuarantorProof = ?");
 		}
-		updateSql.append(" AddrHNbr=:AddrHNbr, FlatNbr=:FlatNbr, AddrStreet=:AddrStreet, AddrLine1=:AddrLine1, ");
-		updateSql.append(" AddrLine2=:AddrLine2, POBox=:POBox, AddrCity=:AddrCity, AddrProvince=:AddrProvince, ");
-		updateSql.append(" AddrCountry=:AddrCountry, AddrZIP=:AddrZIP, GuarantorGenderCode = :GuarantorGenderCode, ");
-		updateSql.append(" Remarks =:Remarks , Version = :Version , ");
-		updateSql.append(" LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, ");
-		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, ");
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");
-		updateSql.append(" Where GuarantorId = :GuarantorId");
+
+		sql.append(", AddrHNbr = ?, FlatNbr = ?, AddrStreet = ?, AddrLine1 = ?");
+		sql.append(", AddrLine2 = ?, POBox = ?, AddrCity = ?, AddrProvince = ?");
+		sql.append(", AddrCountry = ?, AddrZIP = ?, GuarantorGenderCode = ?, Remarks = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?");
+		sql.append(", RoleCode = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where GuarantorId = ?");
 
 		if (!type.endsWith("_Temp")) {
-			updateSql.append("  AND Version= :Version-1");
+			sql.append("  and Version= ? - 1");
 		}
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(guarantorDetail);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, gd.getFinID());
+			ps.setString(index++, gd.getFinReference());
+			ps.setBoolean(index++, gd.isBankCustomer());
+			ps.setString(index++, gd.getGuarantorCIF());
+			ps.setString(index++, gd.getGuarantorIDType());
+			ps.setString(index++, gd.getGuarantorIDNumber());
+			ps.setString(index++, gd.getGuarantorCIFName());
+			ps.setBigDecimal(index++, gd.getGuranteePercentage());
+			ps.setString(index++, gd.getMobileNo());
+			ps.setString(index++, gd.getEmailId());
+			ps.setString(index++, gd.getGuarantorProofName());
+
+			if (gd.getGuarantorProof() != null) {
+				ps.setBytes(index++, gd.getGuarantorProof());
+
+			}
+
+			ps.setString(index++, gd.getAddrHNbr());
+			ps.setString(index++, gd.getFlatNbr());
+			ps.setString(index++, gd.getAddrStreet());
+			ps.setString(index++, gd.getAddrLine1());
+			ps.setString(index++, gd.getAddrLine2());
+			ps.setString(index++, gd.getPOBox());
+			ps.setString(index++, gd.getAddrCity());
+			ps.setString(index++, gd.getAddrProvince());
+			ps.setString(index++, gd.getAddrCountry());
+			ps.setString(index++, gd.getAddrZIP());
+			ps.setString(index++, gd.getGuarantorGenderCode());
+			ps.setString(index++, gd.getRemarks());
+			ps.setInt(index++, gd.getVersion());
+			ps.setLong(index++, gd.getLastMntBy());
+			ps.setTimestamp(index++, gd.getLastMntOn());
+			ps.setString(index++, gd.getRecordStatus());
+			ps.setString(index++, gd.getRoleCode());
+			ps.setString(index++, gd.getNextRoleCode());
+			ps.setString(index++, gd.getTaskId());
+			ps.setString(index++, gd.getNextTaskId());
+			ps.setString(index++, gd.getRecordType());
+			ps.setLong(index++, gd.getWorkflowId());
+
+			ps.setLong(index++, gd.getGuarantorId());
+
+			if (!type.endsWith("_Temp")) {
+				ps.setInt(index++, gd.getVersion() - 1);
+			}
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
 	@Override
-	public GuarantorDetail getGuarantorDetailByRefId(String finReference, long guarantorId, String type) {
+	public GuarantorDetail getGuarantorDetailByRefId(long finID, long guarantorId, String type) {
+		StringBuilder sql = sqlSelectQuery(type);
+		sql.append(" Where FinID = ? and GuarantorId = ?");
 
-		logger.debug("Entering");
-		GuarantorDetail guarantorDetail = new GuarantorDetail();
-
-		guarantorDetail.setFinReference(finReference);
-		guarantorDetail.setGuarantorId(guarantorId);
-
-		StringBuilder selectSql = new StringBuilder(
-				"Select GuarantorId, FinReference, BankCustomer, GuarantorCIF, GuarantorIDType, GuarantorIDNumber, GuarantorCIFName, GuranteePercentage, MobileNo, EmailId, GuarantorProof, GuarantorProofName, Remarks");
-		selectSql.append(
-				", AddrHNbr, FlatNbr, AddrStreet, AddrLine1, AddrLine2, POBox, AddrCity, AddrProvince, AddrCountry, AddrZIP, GuarantorGenderCode");
-		selectSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",GuarantorIDTypeName, custID, CustShrtName, lovCustDob ");
-		}
-		selectSql.append(" From FinGuarantorsDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference And GuarantorId = :GuarantorId");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(guarantorDetail);
-		RowMapper<GuarantorDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(GuarantorDetail.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			guarantorDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new GuarantorDetailRowMapper(type), finID,
+					guarantorId);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			guarantorDetail = null;
+			//
 		}
-		logger.debug("Leaving");
-		return guarantorDetail;
 
+		return null;
 	}
 
 	@Override
-	public void deleteByFinRef(String finReference, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
-		GuarantorDetail guarantorDetail = new GuarantorDetail();
-		guarantorDetail.setFinReference(finReference);
+	public List<GuarantorDetail> getGuarantorDetailByFinRef(long finID, String type) {
+		StringBuilder sql = sqlSelectQuery(type);
+		sql.append(" Where FinID = ?");
 
-		StringBuilder deleteSql = new StringBuilder("Delete From FinGuarantorsDetails");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinReference =:FinReference");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(guarantorDetail);
-		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-			if (recordCount <= 0) {
-				throw new ConcurrencyException();
-			}
-		} catch (DataAccessException e) {
-			throw new DependencyFoundException(e);
-		}
-		logger.debug("Leaving");
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, finID);
+		}, new GuarantorDetailRowMapper(type));
 	}
 
 	@Override
-	public List<GuarantorDetail> getGuarantorDetailByFinRef(String finReference, String type) {
+	public GuarantorDetail getGuarantorProof(GuarantorDetail gd) {
+		String sql = "Select GuarantorProof From FinGuarantorsDetails_View Where GuarantorId = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.queryForObject(sql, (rs, num) -> {
+			GuarantorDetail g = new GuarantorDetail();
+			g.setGuarantorProof(rs.getBytes("GuarantorProof"));
+
+			return g;
+		}, gd.getGuarantorId());
+	}
+
+	@Override
+	public List<FinanceExposure> getPrimaryExposureList(GuarantorDetail gd) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" GuarantorId, FinReference, BankCustomer, GuarantorCIF, GuarantorIDType");
-		sql.append(", GuarantorIDNumber, GuarantorCIFName, GuranteePercentage, MobileNo, EmailId, GuarantorProofName");
-		sql.append(", AddrHNbr, FlatNbr, AddrStreet, AddrLine1, AddrLine2, POBox");
-		sql.append(", AddrCity, AddrProvince, AddrCountry, AddrZIP, Remarks, Version, LastMntBy, LastMntOn");
-		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(", GuarantorProof, GuarantorGenderCode");
+		sql.append("  T1.FinType, T1.FinID, T1.FinReference, T1.FinStartDate, T1.MaturityDate");
+		sql.append(",  (T1.FinAmount + T3.FeeChargeAmt - T1.DownPayment) FinanceAmt");
+		sql.append(", (T1.FinAmount + T3.FeeChargeAmt - T1.DownPayment - T3.FinRepaymentAmount) CurrentExpoSure");
+		sql.append(", T1.FinCcy, T1.CustCIF, T2.CcyEditField CcyEditField");
+		sql.append(", coalesce((Select sum(FinCurODAmt) From FinODDetails Where FinID = T1.FinID), 0) OverdueAmt");
+		sql.append(", coalesce((Select max(FinCurODDays) From FinODDetails Where FinID = T1.FinID), 0) PastdueDays");
+		sql.append(" From FinPftDetails T1 Inner Join RMTCurrencies T2 ON T2.CcyCode = T1.FinCcy");
+		sql.append(" Inner Join FinanceMain T3 ON T1.FinID = T3.FinID");
+		sql.append(" Where T1.CustCIF = ? and T1.FinIsActive = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		List<FinanceExposure> feList = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, gd.getGuarantorCIF());
+			ps.setInt(index++, 1);
+		}, (rs, num) -> {
+			FinanceExposure fe = new FinanceExposure();
+
+			fe.setFinType(rs.getString("FinType"));
+			fe.setFinID(rs.getLong("FinID"));
+			fe.setFinReference(rs.getString("FinReference"));
+			fe.setFinStartDate(rs.getDate("FinStartDate"));
+			fe.setMaturityDate(rs.getDate("MaturityDate"));
+			fe.setFinanceAmt(rs.getBigDecimal("FinanceAmt"));
+			fe.setCurrentExpoSure(rs.getBigDecimal("CurrentExpoSure"));
+			fe.setFinCCY(rs.getString("FinCcy"));
+			fe.setCustCif(rs.getString("CustCIF"));
+			fe.setCcyEditField(rs.getInt("CcyEditField"));
+			fe.setOverdueAmt(rs.getBigDecimal("OverdueAmt"));
+			fe.setPastdueDays(rs.getString("PastdueDays"));
+
+			return fe;
+		});
+
+		return feList.stream().sorted((f1, f2) -> DateUtil.compare(f1.getFinStartDate(), f2.getFinStartDate()))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<FinanceExposure> getSecondaryExposureList(GuarantorDetail gd) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append("  T1.FinType, T1.FinID, T1.FinReference, T1.FinStartDate, T1.MaturityDate");
+		sql.append(", (T1.FinAmount + T4.FeeChargeAmt - T1.DownPayment) FinanceAmt");
+		sql.append(", (T1.FinAmount + T4.FeeChargeAmt - T1.DownPayment - T4.FinRepaymentAmount) CurrentExpoSure");
+		sql.append(", T1.FinCcy, T1.CustCIF, T2.CcyEditField CcyEditField");
+		sql.append(", coalesce((Select sum(FinCurODAmt) From FinODDetails Where FinID = T1.FinID), 0) OverdueAmt");
+		sql.append(" coalesce((Select max(FinCurODDays) From FinODDetails Where FinID = T1.FinID), 0) PastdueDays");
+		sql.append(" From FinPftDetails T1 Inner Join RMTCurrencies T2 ON T2.CcyCode = T1.FinCcy ");
+		sql.append(" Inner Join FinJointAccountDetails_View T3 on T1.FinID = T3.FinID");
+		sql.append(" Inner Join FinanceMain T4 on T1.FinID = T4.FinID");
+		sql.append(" Where T3.CustCIF = ? and T1.FinIsActive = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		List<FinanceExposure> feList = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, gd.getGuarantorCIF());
+			ps.setInt(index++, 1);
+		}, (rs, num) -> {
+			FinanceExposure fe = new FinanceExposure();
+
+			fe.setFinType(rs.getString("FinType"));
+			fe.setFinID(rs.getLong("FinID"));
+			fe.setFinReference(rs.getString("FinReference"));
+			fe.setFinStartDate(rs.getDate("FinStartDate"));
+			fe.setMaturityDate(rs.getDate("MaturityDate"));
+			fe.setFinanceAmt(rs.getBigDecimal("FinanceAmt"));
+			fe.setCurrentExpoSure(rs.getBigDecimal("CurrentExpoSure"));
+			fe.setFinCCY(rs.getString("FinCcy"));
+			fe.setCustCif(rs.getString("CustCIF"));
+			fe.setCcyEditField(rs.getInt("CcyEditField"));
+			fe.setOverdueAmt(rs.getBigDecimal("OverdueAmt"));
+			fe.setPastdueDays(rs.getString("PastdueDays"));
+
+			return fe;
+		});
+
+		return feList.stream().sorted((f1, f2) -> DateUtil.compare(f1.getFinStartDate(), f2.getFinStartDate()))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<FinanceExposure> getGuarantorExposureList(GuarantorDetail gd) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" T1.FinType, T1.FinID, T1.FinReference, T1.FinStartDate, T1.MaturityDate");
+		sql.append(", (T1.FinAmount + T4.FeeChargeAmt - T1.DownPayment) FinanceAmt");
+		sql.append(", (T1.FinAmount + T4.FeeChargeAmt - T1.DownPayment - T4.FinRepaymentAmount) CurrentExpoSure");
+		sql.append(", T1.FinCcy, T1.CustCIF, T2.CcyEditField CcyEditField,");
+		sql.append(", coalesce((Select sum(FinCurODAmt) From FinODDetails Where FinID = T1.FinID), 0) OverdueAmt");
+		sql.append(", coalesce((Select max(FinCurODDays) From FinODDetails Where FinID = T1.FinID), 0) PastdueDays");
+		sql.append(" From FinPftDetails T1 Inner Join RMTCurrencies T2 ON T2.CcyCode = T1.FinCcy");
+		sql.append(" Inner Join FinGuarantorsDetails_View T3 on T1.FinID = T3.FinID");
+		sql.append(" Inner Join FinanceMain T4 on T1.FinID = T4.FinID");
+		sql.append(" Where T3.GuarantorCIF = ? and T1.FinIsActive = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		List<FinanceExposure> feList = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, gd.getGuarantorCIF());
+			ps.setInt(index++, 1);
+		}, (rs, num) -> {
+			FinanceExposure fe = new FinanceExposure();
+
+			fe.setFinType(rs.getString("FinType"));
+			fe.setFinID(rs.getLong("FinID"));
+			fe.setFinReference(rs.getString("FinReference"));
+			fe.setFinStartDate(rs.getDate("FinStartDate"));
+			fe.setMaturityDate(rs.getDate("MaturityDate"));
+			fe.setFinanceAmt(rs.getBigDecimal("FinanceAmt"));
+			fe.setCurrentExpoSure(rs.getBigDecimal("CurrentExpoSure"));
+			fe.setFinCCY(rs.getString("FinCcy"));
+			fe.setCustCif(rs.getString("CustCIF"));
+			fe.setCcyEditField(rs.getInt("CcyEditField"));
+			fe.setOverdueAmt(rs.getBigDecimal("OverdueAmt"));
+			fe.setPastdueDays(rs.getString("PastdueDays"));
+
+			return fe;
+		});
+
+		return feList.stream().sorted((f1, f2) -> DateUtil.compare(f1.getFinStartDate(), f2.getFinStartDate()))
+				.collect(Collectors.toList());
+	}
+
+	private StringBuilder sqlSelectQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" GuarantorId, FinID, FinReference, BankCustomer, GuarantorCIF, GuarantorIDType, GuarantorIDNumber");
+		sql.append(", GuarantorCIFName, GuranteePercentage, MobileNo, EmailId, GuarantorProof, GuarantorProofName");
+		sql.append(", AddrHNbr, FlatNbr, AddrStreet, AddrLine1, AddrLine2, POBox, AddrCity, AddrProvince");
+		sql.append(", AddrCountry, AddrZIP, GuarantorGenderCode, Remarks");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", GuarantorIDTypeName, CustID, CustShrtName, LovCustDob");
 		}
 
-		sql.append(" from FinGuarantorsDetails");
+		sql.append(" From FinGuarantorsDetails");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		return sql;
+	}
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			int index = 1;
-			ps.setString(index++, finReference);
-		}, (rs, rowNum) -> {
+	private class GuarantorDetailRowMapper implements RowMapper<GuarantorDetail> {
+		private String type;
+
+		private GuarantorDetailRowMapper(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public GuarantorDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
 			GuarantorDetail gd = new GuarantorDetail();
 
 			gd.setGuarantorId(rs.getLong("GuarantorId"));
+			gd.setFinID(rs.getLong("FinID"));
 			gd.setFinReference(rs.getString("FinReference"));
 			gd.setBankCustomer(rs.getBoolean("BankCustomer"));
 			gd.setGuarantorCIF(rs.getString("GuarantorCIF"));
@@ -365,6 +481,7 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 			gd.setGuranteePercentage(rs.getBigDecimal("GuranteePercentage"));
 			gd.setMobileNo(rs.getString("MobileNo"));
 			gd.setEmailId(rs.getString("EmailId"));
+			gd.setGuarantorProof(rs.getBytes("GuarantorProof"));
 			gd.setGuarantorProofName(rs.getString("GuarantorProofName"));
 			gd.setAddrHNbr(rs.getString("AddrHNbr"));
 			gd.setFlatNbr(rs.getString("FlatNbr"));
@@ -376,6 +493,7 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 			gd.setAddrProvince(rs.getString("AddrProvince"));
 			gd.setAddrCountry(rs.getString("AddrCountry"));
 			gd.setAddrZIP(rs.getString("AddrZIP"));
+			gd.setGuarantorGenderCode(rs.getString("GuarantorGenderCode"));
 			gd.setRemarks(rs.getString("Remarks"));
 			gd.setVersion(rs.getInt("Version"));
 			gd.setLastMntBy(rs.getLong("LastMntBy"));
@@ -387,179 +505,15 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 			gd.setNextTaskId(rs.getString("NextTaskId"));
 			gd.setRecordType(rs.getString("RecordType"));
 			gd.setWorkflowId(rs.getLong("WorkflowId"));
-			gd.setGuarantorProof(rs.getBytes("GuarantorProof"));
-			gd.setGuarantorGenderCode(rs.getString("GuarantorGenderCode"));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				gd.setGuarantorIDTypeName(rs.getString("GuarantorIDTypeName"));
 				gd.setCustID(rs.getLong("CustID"));
 				gd.setCustShrtName(rs.getString("CustShrtName"));
-				gd.setLovCustDob(rs.getTimestamp("LovCustDob"));
+				gd.setLovCustDob(rs.getDate("LovCustDob"));
 			}
 
 			return gd;
-		});
-	}
-
-	@Override
-	public GuarantorDetail getGuarantorProof(GuarantorDetail guarantorDetail) {
-		logger.debug("Entering");
-		StringBuilder selectSql = new StringBuilder("Select ");
-		selectSql.append(" GuarantorProof");
-		selectSql.append(" From FinGuarantorsDetails_View");
-		selectSql.append(" Where GuarantorId =:GuarantorId");
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(guarantorDetail);
-		RowMapper<GuarantorDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(GuarantorDetail.class);
-
-		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-	}
-
-	@Override
-	public List<FinanceExposure> getPrimaryExposureList(GuarantorDetail guarantorDetail) {
-		logger.debug("Entering");
-		SqlParameterSource beanParameters = null;
-		RowMapper<FinanceExposure> typeRowMapper = null;
-		StringBuilder query = null;
-
-		query = new StringBuilder();
-		query.append(" SELECT T1.FinType, T1.FinReference, T1.FinStartDate, T1.MaturityDate,");
-		query.append("  (T1.FinAmount + T3.FeeChargeAmt - T1.DownPayment) FinanceAmt,");
-		query.append(" (T1.FinAmount + T3.FeeChargeAmt - T1.DownPayment - T3.FinRepaymentAmount) CurrentExpoSure,");
-		query.append(" T1.FinCcy, T1.CustCIF,T2.ccyEditField ccyEditField,");
-		query.append(
-				" COALESCE((SELECT SUM(FinCurODAmt) from FinODDetails where FinReference=T1.FinReference), 0) OverdueAmt,");
-		query.append(
-				" COALESCE((SELECT MAX(FinCurODDays) from FinODDetails where FinReference=T1.FinReference), 0) PastdueDays");
-		query.append(" FROM FinPftDetails T1 INNER JOIN RMTCurrencies T2 ON T2.CcyCode = T1.FinCcy ");
-		query.append(" INNER JOIN FinanceMain T3 ON T1.FinReference = T3.FinReference ");
-		query.append(" where T1.CustCIF=:GuarantorCIF ");
-		query.append("  AND T1.FinIsActive = 1  ORDER BY T1.FINSTARTDATE ASC ");
-
-		logger.debug("selectSql: " + query.toString());
-		beanParameters = new BeanPropertySqlParameterSource(guarantorDetail);
-		typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
-
-		logger.debug("Leaving");
-		try {
-			return this.jdbcTemplate.query(query.toString(), beanParameters, typeRowMapper);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		} finally {
-			beanParameters = null;
-			typeRowMapper = null;
-			query = null;
 		}
-		return null;
 	}
-
-	@Override
-	public List<FinanceExposure> getSecondaryExposureList(GuarantorDetail guarantorDetail) {
-		logger.debug("Entering");
-		SqlParameterSource beanParameters = null;
-		RowMapper<FinanceExposure> typeRowMapper = null;
-		StringBuilder query = null;
-
-		query = new StringBuilder();
-		query.append(" SELECT T1.FinType, T1.FinReference, T1.FinStartDate, T1.MaturityDate,");
-		query.append(" (T1.FinAmount + T4.FeeChargeAmt - T1.DownPayment) FinanceAmt,");
-		query.append(" (T1.FinAmount + T4.FeeChargeAmt - T1.DownPayment - T4.FinRepaymentAmount) CurrentExpoSure,");
-		query.append(" T1.FinCcy, T1.CustCIF,T2.ccyEditField ccyEditField,");
-		query.append(
-				" COALESCE((SELECT SUM(FinCurODAmt) from FinODDetails where FinReference=T1.FinReference), 0) OverdueAmt,");
-		query.append(
-				" COALESCE((SELECT MAX(FinCurODDays) from FinODDetails where FinReference=T1.FinReference), 0) PastdueDays ");
-		query.append(" FROM FinPftDetails T1 INNER JOIN RMTCurrencies T2 ON T2.CcyCode = T1.FinCcy ");
-		query.append(" INNER JOIN FinJointAccountDetails_View T3 on T1.FinReference=T3.FinReference ");
-		query.append(" INNER JOIN FinanceMain T4 on T1.FinReference=T4.FinReference ");
-		query.append(" where T3.CustCIF=:GuarantorCIF ");
-		query.append("  AND T1.FinIsActive = 1  ORDER BY T1.FINSTARTDATE ASC ");
-
-		logger.debug("selectSql: " + query.toString());
-		beanParameters = new BeanPropertySqlParameterSource(guarantorDetail);
-		typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
-
-		logger.debug("Leaving");
-		try {
-			return this.jdbcTemplate.query(query.toString(), beanParameters, typeRowMapper);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		} finally {
-			beanParameters = null;
-			typeRowMapper = null;
-			query = null;
-		}
-		return null;
-	}
-
-	@Override
-	public List<FinanceExposure> getGuarantorExposureList(GuarantorDetail guarantorDetail) {
-		logger.debug("Entering");
-		SqlParameterSource beanParameters = null;
-		RowMapper<FinanceExposure> typeRowMapper = null;
-		StringBuilder query = null;
-
-		query = new StringBuilder();
-		query.append(" SELECT T1.FinType, T1.FinReference, T1.FinStartDate, T1.MaturityDate,");
-		query.append(" (T1.FinAmount + T4.FeeChargeAmt - T1.DownPayment) FinanceAmt,");
-		query.append(" (T1.FinAmount + T4.FeeChargeAmt - T1.DownPayment - T4.FinRepaymentAmount) CurrentExpoSure,");
-		query.append(" T1.FinCcy, T1.CustCIF,T2.ccyEditField ccyEditField,");
-		query.append(
-				" COALESCE((SELECT SUM(FinCurODAmt) from FinODDetails where FinReference=T1.FinReference), 0) OverdueAmt,");
-		query.append(
-				" COALESCE((SELECT MAX(FinCurODDays) from FinODDetails where FinReference=T1.FinReference), 0) PastdueDays ");
-		query.append(" FROM FinPftDetails T1 INNER JOIN RMTCurrencies T2 ON T2.CcyCode = T1.FinCcy ");
-		query.append(" INNER JOIN FinGuarantorsDetails_View T3 on T1.FinReference=T3.FinReference ");
-		query.append(" INNER JOIN FinanceMain T4 on T1.FinReference=T4.FinReference ");
-		query.append(" where T3.GuarantorCIF=:GuarantorCIF ");
-		query.append("  AND T1.FinIsActive = 1  ORDER BY T1.FINSTARTDATE ASC ");
-
-		logger.debug("selectSql: " + query.toString());
-		beanParameters = new BeanPropertySqlParameterSource(guarantorDetail);
-		typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
-
-		logger.debug("Leaving");
-		try {
-			return this.jdbcTemplate.query(query.toString(), beanParameters, typeRowMapper);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		} finally {
-			beanParameters = null;
-			typeRowMapper = null;
-			query = null;
-		}
-		return null;
-	}
-
-	@Override
-	public FinanceExposure getOverDueDetails(FinanceExposure exposer) {
-		logger.debug("Entering");
-		SqlParameterSource beanParameters = null;
-		RowMapper<FinanceExposure> typeRowMapper = null;
-		StringBuilder query = null;
-
-		query = new StringBuilder();
-		query.append(" SELECT SUM(FinCurODAmt) OverdueAmt, MAX(FinCurODDays) PastdueDays");
-		query.append(" FROM  FinanceMain FM");
-		query.append(" INNER JOIN FinODDetails OD ON OD.FinReference = FM.FinReference");
-		query.append(" WHERE FM.FinReference=:FinReference ");
-
-		logger.debug("selectSql: " + query.toString());
-		beanParameters = new BeanPropertySqlParameterSource(exposer);
-		typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
-
-		logger.debug("Leaving");
-		try {
-			return this.jdbcTemplate.queryForObject(query.toString(), beanParameters, typeRowMapper);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		} finally {
-			beanParameters = null;
-			typeRowMapper = null;
-			query = null;
-		}
-		return null;
-	}
-
 }

@@ -13,6 +13,7 @@ public class FinOption extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
+	private long finID;
 	private String finReference;
 	private String optionType;
 	private String frequency;
@@ -77,6 +78,14 @@ public class FinOption extends AbstractWorkflowEntity {
 
 	}
 
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
+	
 	public String getFinReference() {
 		return finReference;
 	}

@@ -4,7 +4,7 @@ import com.pennant.backend.model.finance.FinOCRHeader;
 
 public interface FinOCRHeaderDAO {
 
-	FinOCRHeader getFinOCRHeaderByRef(String ref, String type);
+	FinOCRHeader getFinOCRHeaderByRef(long finID, String type);
 
 	FinOCRHeader getFinOCRHeaderById(long headerId, String type);
 

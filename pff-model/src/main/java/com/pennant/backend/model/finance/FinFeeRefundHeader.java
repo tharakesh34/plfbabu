@@ -20,6 +20,7 @@ public class FinFeeRefundHeader extends AbstractWorkflowEntity {
 	private String finBranch;
 	private String lovDescCustCIF;
 	private String LovDescCustShrtName;
+	private long finID;
 	private String finReference;
 	private String fintypedesc;
 	private String branchdesc;
@@ -103,6 +104,14 @@ public class FinFeeRefundHeader extends AbstractWorkflowEntity {
 		LovDescCustShrtName = lovDescCustShrtName;
 	}
 
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
+	
 	public String getFinReference() {
 		return finReference;
 	}

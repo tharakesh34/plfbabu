@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinFeeReceiptDAOImpl.java                                            * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  22-12-2019    														*
- *                                                                  						*
- * Modified Date    :  22-12-2019    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinFeeReceiptDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 22-12-2019 * * Modified
+ * Date : 22-12-2019 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 22-12-2019       Ganesh.P	                 0.1                                        * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 22-12-2019 Ganesh.P 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -51,11 +33,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.FinFeeRefundDAO;
 import com.pennant.backend.model.finance.FinFeeRefundDetails;
@@ -81,361 +58,412 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 	}
 
 	@Override
-	public long save(FinFeeRefundHeader finFeeRefundHeader, String type) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("insert into FinFeeRefundHeader");
+	public long save(FinFeeRefundHeader frh, String type) {
+		StringBuilder sql = new StringBuilder("Insert Into FinFeeRefundHeader");
 		sql.append(type);
-
-		sql.append("( HeaderId, FinReference, LinkedTranId, ");
-		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		sql.append(" RecordType, WorkflowId )");
+		sql.append("( HeaderId, FinID, FinReference, LinkedTranId");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId )");
 		sql.append(" Values ");
-		sql.append("( :HeaderId, :FinReference, :LinkedTranId, ");
-		sql.append(" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
-		sql.append(" :RecordType, :WorkflowId)");
+		sql.append("( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		// Get the identity sequence number.
-		if (finFeeRefundHeader.getId() <= 0) {
-			finFeeRefundHeader.setId(getNextValue(("SeqFinFeeRefundHeader")));
+		if (frh.getId() <= 0) {
+			frh.setId(getNextValue(("SeqFinFeeRefundHeader")));
 		}
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finFeeRefundHeader);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, frh.getHeaderId());
+				ps.setLong(index++, frh.getFinID());
+				ps.setString(index++, frh.getFinReference());
+				ps.setLong(index++, frh.getLinkedTranId());
+				ps.setInt(index++, frh.getVersion());
+				ps.setLong(index++, frh.getLastMntBy());
+				ps.setTimestamp(index++, frh.getLastMntOn());
+				ps.setString(index++, frh.getRecordStatus());
+				ps.setString(index++, frh.getRoleCode());
+				ps.setString(index++, frh.getNextRoleCode());
+				ps.setString(index++, frh.getTaskId());
+				ps.setString(index++, frh.getNextTaskId());
+				ps.setString(index++, frh.getRecordType());
+				ps.setLong(index++, frh.getWorkflowId());
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return finFeeRefundHeader.getId();
+		return frh.getId();
 	}
 
 	@Override
-	public void update(FinFeeRefundHeader finFeeRefundHeader, String type) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL, ensure primary key will not be updated.
-		StringBuilder sql = new StringBuilder("update FinFeeRefundHeader");
+	public void update(FinFeeRefundHeader frh, String type) {
+		StringBuilder sql = new StringBuilder("Update FinFeeRefundHeader");
 		sql.append(type);
-		sql.append(" Set HeaderId = :HeaderId, FinReference = :FinReference, LinkedTranId = :LinkedTranId, ");
-		sql.append(" Version = :Version,LastMntBy = :LastMntBy,LastMntOn = :LastMntOn,RecordStatus = :RecordStatus,");
-		sql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" where HeaderId = :HeaderId");
+		sql.append(" Set HeaderId = ?, FinID = ?, FinReference = ?, LinkedTranId = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?");
+		sql.append(", RoleCode = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
+		sql.append(", RecordType = ?, WorkflowId = ?");
+		sql.append(" Where HeaderId = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finFeeRefundHeader);
-		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		logger.debug(Literal.SQL + sql.toString());
 
-		// Check for the concurrency failure.
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, frh.getHeaderId());
+			ps.setLong(index++, frh.getFinID());
+			ps.setString(index++, frh.getFinReference());
+			ps.setLong(index++, frh.getLinkedTranId());
+			ps.setInt(index++, frh.getVersion());
+			ps.setLong(index++, frh.getLastMntBy());
+			ps.setTimestamp(index++, frh.getLastMntOn());
+			ps.setString(index++, frh.getRecordStatus());
+			ps.setString(index++, frh.getRoleCode());
+			ps.setString(index++, frh.getNextRoleCode());
+			ps.setString(index++, frh.getTaskId());
+			ps.setString(index++, frh.getNextTaskId());
+			ps.setString(index++, frh.getRecordType());
+			ps.setLong(index++, frh.getWorkflowId());
+		});
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
 
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public void deleteFinFeeRefundHeader(FinFeeRefundHeader refundHeader, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-		// Prepare the SQL.
+	public void deleteFinFeeRefundHeader(FinFeeRefundHeader frh, TableType tableType) {
 		StringBuilder sql = new StringBuilder("Delete from FinFeeRefundHeader");
 		sql.append(tableType.getSuffix());
-		sql.append(" where HeaderId = :HeaderId");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(refundHeader);
-		int recordCount = 0;
+		sql.append(" Where HeaderId = ?");
+		sql.append(QueryUtil.getConcurrencyClause(tableType));
+
+		logger.debug(Literal.SQL + sql.toString());
+
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+			int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+				ps.setLong(index++, frh.getHeaderId());
+
+				if (tableType == TableType.TEMP_TAB) {
+					ps.setTimestamp(index++, frh.getPrevMntOn());
+				} else {
+					ps.setInt(index++, frh.getVersion() - 1);
+				}
+
+			});
+
+			if (recordCount == 0) {
+				throw new ConcurrencyException();
+			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Fetch the Record FinFeeRefundDetails details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return FinFeeRefund
-	 */
 	@Override
 	public FinFeeRefundHeader getFinFeeRefundHeaderById(long headerId, String type) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" HeaderId, FinID, FinReference, LinkedTranId");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId ");
 
-		FinFeeRefundHeader finFeeRefundHeader = new FinFeeRefundHeader();
-		finFeeRefundHeader.setId(headerId);
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT  HeaderId, finReference, LinkedTranId, ");
-		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		sql.append(" RecordType, WorkflowId ");
 		if (type.contains("View")) {
-			sql.append(
-					" ,Fintype, FinBranch, FinCcy, lovDescCustCIF, LovDescCustShrtName, fintypedesc, branchdesc, custId ");
-			sql.append(" , FinTDSApplicable ");
+			sql.append(" ,Fintype, FinBranch, FinCcy, lovDescCustCIF, LovDescCustShrtName");
+			sql.append(", Fintypedesc, Branchdesc, CustId, FinTDSApplicable");
 		}
-		sql.append(" FROM  FinFeeRefundHeader");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where HeaderId =:HeaderId");
 
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeRefundHeader);
-		RowMapper<FinFeeRefundHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeRefundHeader.class);
+		sql.append(" From  FinFeeRefundHeader");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where HeaderId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
 		try {
-			finFeeRefundHeader = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
+				FinFeeRefundHeader frh = new FinFeeRefundHeader();
+
+				frh.setHeaderId(rs.getLong("HeaderId"));
+				frh.setFinID(rs.getLong("FinID"));
+				frh.setFinReference(rs.getString("FinReference"));
+				frh.setLinkedTranId(rs.getLong("LinkedTranId"));
+				frh.setVersion(rs.getInt("Version"));
+				frh.setLastMntBy(rs.getLong("LastMntBy"));
+				frh.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				frh.setRecordStatus(rs.getString("RecordStatus"));
+				frh.setRoleCode(rs.getString("RoleCode"));
+				frh.setNextRoleCode(rs.getString("NextRoleCode"));
+				frh.setTaskId(rs.getString("TaskId"));
+				frh.setNextTaskId(rs.getString("NextTaskId"));
+				frh.setRecordType(rs.getString("RecordType"));
+				frh.setWorkflowId(rs.getLong("WorkflowId"));
+
+				if (type.contains("View")) {
+					frh.setFinType(rs.getString("FinType"));
+					frh.setFinBranch(rs.getString("FinBranch"));
+					frh.setFinCcy(rs.getString("FinCcy"));
+					frh.setLovDescCustCIF(rs.getString("LovDescCustCIF"));
+					frh.setLovDescCustShrtName(rs.getString("LovDescCustShrtName"));
+					frh.setFintypedesc(rs.getString("Fintypedesc"));
+					frh.setBranchdesc(rs.getString("Branchdesc"));
+					frh.setCustId(rs.getLong("CustId"));
+					frh.setFinTDSApplicable(rs.getBoolean("FinTDSApplicable"));
+				}
+
+				return frh;
+			}, headerId);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			finFeeRefundHeader = null;
+			//
 		}
-		logger.debug(Literal.LEAVING);
-		return finFeeRefundHeader;
+
+		return null;
 	}
 
-	/**
-	 * Fetch the Record FinFeeRefundDetails details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return FinFeeRefund
-	 */
 	@Override
 	public FinFeeRefundDetails getFinFeeRefundDetailsById(long id, String type) {
-		logger.debug(Literal.ENTERING);
-
-		FinFeeRefundDetails FinFeeRefund = new FinFeeRefundDetails();
-		FinFeeRefund.setId(id);
-		StringBuilder sql = new StringBuilder("SELECT ");
+		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, HeaderId, FeeId, RefundAmount, RefundAmtGST, RefundAmtOriginal,");
 		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId ");
-		sql.append(" FROM  FinFeeRefundDetails");
+		sql.append(" From  FinFeeRefundDetails");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where Id =:Id");
+		sql.append(" Where Id = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(FinFeeRefund);
-		RowMapper<FinFeeRefundDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeRefundDetails.class);
+		logger.debug(Literal.SQL + sql.toString());
+
 		try {
-			FinFeeRefund = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
+				FinFeeRefundDetails fr = new FinFeeRefundDetails();
+
+				fr.setId(rs.getLong("Id"));
+				fr.setHeaderId(rs.getLong("HeaderId"));
+				fr.setFeeId(rs.getLong("FeeId"));
+				fr.setRefundAmount(rs.getBigDecimal("RefundAmount"));
+				fr.setRefundAmtGST(rs.getBigDecimal("RefundAmtGST"));
+				fr.setRefundAmtOriginal(rs.getBigDecimal("RefundAmtOriginal"));
+				fr.setVersion(rs.getInt("Version"));
+				fr.setLastMntBy(rs.getLong("LastMntBy"));
+				fr.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				fr.setRecordStatus(rs.getString("RecordStatus"));
+				fr.setRoleCode(rs.getString("RoleCode"));
+				fr.setNextRoleCode(rs.getString("NextRoleCode"));
+				fr.setTaskId(rs.getString("TaskId"));
+				fr.setNextTaskId(rs.getString("NextTaskId"));
+				fr.setRecordType(rs.getString("RecordType"));
+				fr.setWorkflowId(rs.getLong("WorkflowId"));
+
+				return fr;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			//logger.error("Exception: ", e);
-			FinFeeRefund = null;
+			//
 		}
-		logger.debug(Literal.LEAVING);
-		return FinFeeRefund;
+
+		return null;
 	}
 
-	/**
-	 * Fetch the Record FinFeeRefundDetails details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return FinFeeRefund
-	 */
 	@Override
 	public List<FinFeeRefundDetails> getFinFeeRefundDetailsByHeaderId(long headerId, String type) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" Id, HeaderId, FeeId, RefundAmount, RefundAmtGST, RefundAmtOriginal, RefundAmtTds,");
-		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		sql.append(" RecordType, WorkflowId ");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-		}
-		sql.append(" FROM  FinFeeRefundDetails");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, HeaderId, FeeId, RefundAmount, RefundAmtGST, RefundAmtOriginal, RefundAmtTds");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId");
+		sql.append(" From  FinFeeRefundDetails");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where HeaderId =:HeaderId ");
+		sql.append(" Where HeaderId = ? ");
 
-		logger.trace(Literal.SQL + sql.toString());
-		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-		mapSqlParameterSource.addValue("HeaderId", headerId);
-		RowMapper<FinFeeRefundDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeRefundDetails.class);
+		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcTemplate.query(sql.toString(), mapSqlParameterSource, typeRowMapper);
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, headerId);
+		}, (rs, num) -> {
+			FinFeeRefundDetails fr = new FinFeeRefundDetails();
+
+			fr.setId(rs.getLong("Id"));
+			fr.setHeaderId(rs.getLong("HeaderId"));
+			fr.setFeeId(rs.getLong("FeeId"));
+			fr.setRefundAmount(rs.getBigDecimal("RefundAmount"));
+			fr.setRefundAmtGST(rs.getBigDecimal("RefundAmtGST"));
+			fr.setRefundAmtOriginal(rs.getBigDecimal("RefundAmtOriginal"));
+			fr.setRefundAmtTDS(rs.getBigDecimal("RefundAmtTds"));
+			fr.setVersion(rs.getInt("Version"));
+			fr.setLastMntBy(rs.getLong("LastMntBy"));
+			fr.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			fr.setRecordStatus(rs.getString("RecordStatus"));
+			fr.setRoleCode(rs.getString("RoleCode"));
+			fr.setNextRoleCode(rs.getString("NextRoleCode"));
+			fr.setTaskId(rs.getString("TaskId"));
+			fr.setNextTaskId(rs.getString("NextTaskId"));
+			fr.setRecordType(rs.getString("RecordType"));
+			fr.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return fr;
+		});
 	}
 
 	@Override
-	public String save(FinFeeRefundDetails finFeeRefundDetails, String type) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("insert into FinFeeRefundDetails");
+	public String save(FinFeeRefundDetails frd, String type) {
+		StringBuilder sql = new StringBuilder("Insert Into FinFeeRefundDetails");
 		sql.append(type);
-
-		sql.append("(Id, HeaderId, FeeId, RefundAmount, RefundAmtGST, RefundAmtOriginal, RefundAmtTDS,");
-		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		sql.append(" RecordType, WorkflowId )");
+		sql.append("(Id, HeaderId, FeeId, RefundAmount, RefundAmtGST, RefundAmtOriginal, RefundAmtTDS");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId )");
 		sql.append(" Values ");
-		sql.append("(:Id, :HeaderId, :FeeId, :RefundAmount, :RefundAmtGST, :RefundAmtOriginal, :RefundAmtTDS,");
-		sql.append(" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
-		sql.append(" :RecordType, :WorkflowId)");
+		sql.append("(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		// Get the identity sequence number.
-		if (finFeeRefundDetails.getId() <= 0) {
-			finFeeRefundDetails.setId(getNextValue(("SeqFinFeeRefundDetails")));
+		if (frd.getId() <= 0) {
+			frd.setId(getNextValue(("SeqFinFeeRefundDetails")));
 		}
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finFeeRefundDetails);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, frd.getId());
+				ps.setLong(index++, frd.getHeaderId());
+				ps.setLong(index++, frd.getFeeId());
+				ps.setBigDecimal(index++, frd.getRefundAmount());
+				ps.setBigDecimal(index++, frd.getRefundAmtGST());
+				ps.setBigDecimal(index++, frd.getRefundAmtOriginal());
+				ps.setBigDecimal(index++, frd.getRefundAmtTDS());
+				ps.setInt(index++, frd.getVersion());
+				ps.setLong(index++, frd.getLastMntBy());
+				ps.setTimestamp(index++, frd.getLastMntOn());
+				ps.setString(index++, frd.getRecordStatus());
+				ps.setString(index++, frd.getRoleCode());
+				ps.setString(index++, frd.getNextRoleCode());
+				ps.setString(index++, frd.getTaskId());
+				ps.setString(index++, frd.getNextTaskId());
+				ps.setString(index++, frd.getRecordType());
+				ps.setLong(index++, frd.getWorkflowId());
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return String.valueOf(finFeeRefundDetails.getId());
+		return String.valueOf(frd.getId());
 	}
 
 	@Override
-	public void update(FinFeeRefundDetails FinFeeRefund, String type) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL, ensure primary key will not be updated.
-		StringBuilder sql = new StringBuilder("update FinFeeRefundDetails");
+	public void update(FinFeeRefundDetails frd, String type) {
+		StringBuilder sql = new StringBuilder("Update FinFeeRefundDetails");
 		sql.append(type);
-		sql.append(" Set Id = :Id, HeaderId = :HeaderId, FeeId = :FeeId, RefundAmount = :RefundAmount, ");
-		sql.append(" RefundAmtGST = :RefundAmtGST, RefundAmtOriginal = :RefundAmtOriginal,");
-		sql.append(" RefundAmtTDS = :RefundAmtTDS, Version = :Version, LastMntBy = :LastMntBy, ");
-		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode, ");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" where Id = :Id");
+		sql.append(" Set Id = ?, HeaderId = ?, FeeId = ?, RefundAmount = ?");
+		sql.append(", RefundAmtGST = ?, RefundAmtOriginal = ?, RefundAmtTDS = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
+		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where Id = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(FinFeeRefund);
-		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		logger.debug(Literal.SQL + sql.toString());
 
-		// Check for the concurrency failure.
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, frd.getId());
+			ps.setLong(index++, frd.getHeaderId());
+			ps.setLong(index++, frd.getFeeId());
+			ps.setBigDecimal(index++, frd.getRefundAmount());
+			ps.setBigDecimal(index++, frd.getRefundAmtGST());
+			ps.setBigDecimal(index++, frd.getRefundAmtOriginal());
+			ps.setBigDecimal(index++, frd.getRefundAmtTDS());
+			ps.setInt(index++, frd.getVersion());
+			ps.setLong(index++, frd.getLastMntBy());
+			ps.setTimestamp(index++, frd.getLastMntOn());
+			ps.setString(index++, frd.getRecordStatus());
+			ps.setString(index++, frd.getRoleCode());
+			ps.setString(index++, frd.getNextRoleCode());
+			ps.setString(index++, frd.getTaskId());
+			ps.setString(index++, frd.getNextTaskId());
+			ps.setString(index++, frd.getRecordType());
+			ps.setLong(index++, frd.getWorkflowId());
+		});
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public void deleteFinFeeRefundDetailsByID(FinFeeRefundDetails refundDetails, String type) {
-		logger.debug(Literal.ENTERING);
-		// Prepare the SQL.
+	public void deleteFinFeeRefundDetailsByID(FinFeeRefundDetails frd, String type) {
 		StringBuilder sql = new StringBuilder("Delete from FinFeeRefundDetails");
 		sql.append(type);
-		sql.append(" where Id = :Id");
+		sql.append(" Where Id = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(refundDetails);
-		int recordCount = 0;
+		logger.debug(Literal.SQL + sql.toString());
+
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+			int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+				ps.setLong(1, frd.getId());
+			});
+
+			if (recordCount == 0) {
+				throw new ConcurrencyException();
+			}
+
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public void deleteFinFeeRefundDetailsByHeaderID(FinFeeRefundHeader refundHeader, String type) {
-		logger.debug(Literal.ENTERING);
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("Delete from FinFeeRefundDetails");
-		sql.append(type);
-		sql.append(" where HeaderId = :HeaderId");
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(refundHeader);
-		int recordCount = 0;
-		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
-		} catch (DataAccessException e) {
-			throw new DependencyFoundException(e);
-		}
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public PrvsFinFeeRefund getPrvsRefundsByFeeId(long feeID) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Sum(RefundAmount) TotRefundAmount, Sum(RefundAmtGST) TotRefundAmtGST");
+		sql.append(", Sum(RefundAmtOriginal) TotRefundAmtOriginal, Sum(RefundAmtTDS) TotRefundAmtTDS");
+		sql.append(" From FinFeeRefundDetails");
+		sql.append(" Where FeeId = ?");
 
-		PrvsFinFeeRefund prvsFinFeeRefund = new PrvsFinFeeRefund();
-		prvsFinFeeRefund.setFeeId(feeID);
-		StringBuilder sql = new StringBuilder();
-		sql.append(" Select Sum(refundAmount) as TotRefundAmount, ");
-		sql.append(" Sum(refundAmtGST) as TotRefundAmtGST, Sum(refundAmtOriginal) as TotRefundAmtOriginal ,");
-		sql.append(" Sum(refundAmtTDS) as TotRefundAmtTDS");
-		sql.append(" FROM  FinFeeRefundDetails");
-		sql.append(" Where FeeId =:FeeId");
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(prvsFinFeeRefund);
-		RowMapper<PrvsFinFeeRefund> typeRowMapper = BeanPropertyRowMapper.newInstance(PrvsFinFeeRefund.class);
+		logger.debug(Literal.SQL + sql.toString());
+
 		try {
-			prvsFinFeeRefund = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
+				PrvsFinFeeRefund pffr = new PrvsFinFeeRefund();
+
+				pffr.setTotRefundAmount(rs.getBigDecimal("TotRefundAmount"));
+				pffr.setTotRefundAmtGST(rs.getBigDecimal("TotRefundAmtGST"));
+				pffr.setTotRefundAmtOriginal(rs.getBigDecimal("TotRefundAmtOriginal"));
+				pffr.setTotRefundAmtTDS(rs.getBigDecimal("TotRefundAmtTDS"));
+
+				return pffr;
+			}, feeID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			prvsFinFeeRefund = null;
+			//
 		}
-		logger.debug(Literal.LEAVING);
-		return prvsFinFeeRefund;
+
+		return null;
 	}
 
 	@Override
 	public FinFeeRefundDetails getPrvRefundDetails(long headerId, long feeID) {
-		logger.debug(Literal.ENTERING);
-
-		FinFeeRefundDetails finFeeRefundDetails = new FinFeeRefundDetails();
-		finFeeRefundDetails.setFeeId(feeID);
-		finFeeRefundDetails.setHeaderId(headerId);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Sum(RefundAmount) RefundAmount, Sum(RefundAmtGST) RefundAmtGST");
 		sql.append(", Sum(RefundAmtOriginal) RefundAmtOriginal, Sum(RefundAmtTDS) RefundAmtTDS");
 		sql.append(" From FinFeeRefundDetails");
-		sql.append(" Where HeaderId <> :HeaderId and FeeId = :FeeId");
+		sql.append(" Where HeaderId <> ? and FeeId = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeRefundDetails);
-		RowMapper<FinFeeRefundDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeRefundDetails.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			finFeeRefundDetails = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
+				FinFeeRefundDetails feeRefund = new FinFeeRefundDetails();
+
+				feeRefund.setRefundAmount(rs.getBigDecimal("RefundAmount"));
+				feeRefund.setRefundAmtGST(rs.getBigDecimal("refundAmtGST"));
+				feeRefund.setRefundAmtOriginal(rs.getBigDecimal("RefundAmtOriginal"));
+				feeRefund.setRefundAmtTDS(rs.getBigDecimal("RefundAmtTDS"));
+
+				return feeRefund;
+			}, headerId, feeID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			finFeeRefundDetails = null;
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
-		return finFeeRefundDetails;
+		return null;
 	}
 }

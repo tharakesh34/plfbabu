@@ -3,12 +3,7 @@ package com.pennant.backend.dao.finance.impl;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.FinFlagsHeaderDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -16,6 +11,7 @@ import com.pennant.backend.model.financemanagement.FinanceFlag;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinFlagsHeaderDAOImpl extends BasicDao<FinanceFlag> implements FinFlagsHeaderDAO {
 	private static Logger logger = LogManager.getLogger(FinFlagsHeaderDAOImpl.class);
@@ -24,173 +20,177 @@ public class FinFlagsHeaderDAOImpl extends BasicDao<FinanceFlag> implements FinF
 		super();
 	}
 
-	/**
-	 * This method set the Work Flow id based on the module name and return the new FinanceFlags
-	 * 
-	 * @return FinanceFlags
-	 */
-
 	@Override
 	public FinanceFlag getFinanceFlags() {
-
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("");
 
 		FinanceFlag financeFlags = new FinanceFlag();
+
 		if (workFlowDetails != null) {
 			financeFlags.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
-		logger.debug("Leaving");
+
 		return financeFlags;
 
 	}
-
-	/**
-	 * This method get the module from method getFinanceFlags() and set the new record flag as true and return
-	 * FinanceFlags
-	 * 
-	 * @return FinanceFlags
-	 */
 
 	@Override
 	public FinanceFlag getNewFinanceFlags() {
-		logger.debug("Entering");
 		FinanceFlag financeFlags = getFinanceFlags();
 		financeFlags.setNewRecord(true);
-		logger.debug("Leaving");
+
 		return financeFlags;
 	}
 
-	/**
-	 * This method insert new Records into FinFlagsHeader or FinFlagsHeader_Temp.
-	 *
-	 * save FinFlagsHeader
-	 * 
-	 * @param financeFlags
-	 *            (financeFlags)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void save(FinanceFlag financeFlags, String type) {
-		logger.debug("Entering");
+	public void save(FinanceFlag ff, String type) {
+		StringBuilder sql = new StringBuilder("Insert Into FinFlagsHeader");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (FinID, FinReference");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into ");
-		insertSql.append(" FinFlagsHeader");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference,");
-		insertSql.append(
-				" Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId)");
-		insertSql.append(" values (:FinReference,");
-		insertSql.append(" :Version,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
-		insertSql.append(" :NextTaskId,:RecordType,:WorkflowId)");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("insertSql: " + insertSql.toString());
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeFlags);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-
+			ps.setLong(index++, ff.getFinID());
+			ps.setString(index++, ff.getFinReference());
+			ps.setInt(index++, ff.getVersion());
+			ps.setLong(index++, ff.getLastMntBy());
+			ps.setTimestamp(index++, ff.getLastMntOn());
+			ps.setString(index++, ff.getRecordStatus());
+			ps.setString(index++, ff.getRoleCode());
+			ps.setString(index++, ff.getNextRoleCode());
+			ps.setString(index++, ff.getTaskId());
+			ps.setString(index++, ff.getNextTaskId());
+			ps.setString(index++, ff.getRecordType());
+			ps.setLong(index++, ff.getWorkflowId());
+		});
 	}
 
-	/**
-	 * This method updates the Record FinFlagsHeader or FinFlagsHeader_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update FinFlagsHeader by key FinReference and Version
-	 * 
-	 * @param FinanceFlag
-	 *            (FinanceFlags)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void update(FinanceFlag financeFlags, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update FinFlagsHeader");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set Version= :Version , LastMntBy=:LastMntBy,");
-		updateSql.append(" LastMntOn= :LastMntOn, RecordStatus=:RecordStatus, RoleCode=:RoleCode,");
-		updateSql.append(" NextRoleCode= :NextRoleCode, TaskId= :TaskId,");
-		updateSql.append(" NextTaskId= :NextTaskId, RecordType= :RecordType, WorkflowId= :WorkflowId");
-		updateSql.append(" Where FinReference =:FinReference ");
+	public void update(FinanceFlag ff, String type) {
+		StringBuilder sql = new StringBuilder("Update FinFlagsHeader");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
+		sql.append(" NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where FinID = ?");
 
 		if (!type.endsWith("_Temp")) {
-			updateSql.append("  AND Version= :Version-1");
+			sql.append(" and Version = ? - 1");
 		}
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeFlags);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setInt(index++, ff.getVersion());
+			ps.setLong(index++, ff.getLastMntBy());
+			ps.setTimestamp(index++, ff.getLastMntOn());
+			ps.setString(index++, ff.getRecordStatus());
+			ps.setString(index++, ff.getRoleCode());
+			ps.setString(index++, ff.getNextRoleCode());
+			ps.setString(index++, ff.getTaskId());
+			ps.setString(index++, ff.getNextTaskId());
+			ps.setString(index++, ff.getRecordType());
+			ps.setLong(index++, ff.getWorkflowId());
+			ps.setLong(index++, ff.getFinID());
+
+			if (!type.endsWith("_Temp")) {
+				ps.setInt(index++, ff.getVersion() - 1);
+			}
+
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
 	@Override
-	public FinanceFlag getFinFlagsHeaderByRef(String finReference, String type) {
-		logger.debug("Entering");
+	public FinanceFlag getFinFlagsHeaderByRef(long finID, String type) {
+		StringBuilder sql = new StringBuilder(" Select FinID, FinReference");
 
-		FinanceFlag financeFlags = new FinanceFlag();
-		financeFlags.setFinReference(finReference);
-
-		StringBuilder selectSql = new StringBuilder(" Select FinReference, ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(" FinType, FinTypeDesc,FinCategory, ");
-			selectSql.append(" CustCIF,FinBranch,BranchDesc, FinStartDate,NumberOfTerms,GraceTerms, MaturityDate, ");
-			selectSql.append(" FinCcy,FinAmount, FinRepaymentAmount,ScheduleMethod, ");
-			selectSql.append(" FeeChargeAmt, DownPayBank, DownPaySupl, EffectiveRateOfReturn, TotalProfit,  ");
+			sql.append(", FinType, FinTypeDesc, FinCategory, CustCIF, FinBranch");
+			sql.append(", BranchDesc, FinStartDate, NumberOfTerms, GraceTerms, MaturityDate");
+			sql.append(", FinCcy, FinAmount, FinRepaymentAmount, ScheduleMethod");
+			sql.append(", FeeChargeAmt, DownPayBank, DownPaySupl, EffectiveRateOfReturn, TotalProfit");
 		}
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
-		selectSql.append(" NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From FinFlagsHeader");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeFlags);
-		RowMapper<FinanceFlag> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceFlag.class);
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId");
+		sql.append(", NextTaskId, RecordType, WorkflowId");
+		sql.append(" From FinFlagsHeader");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			financeFlags = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
+				FinanceFlag ff = new FinanceFlag();
+
+				ff.setFinID(rs.getLong("FinID"));
+				ff.setFinReference(rs.getString("FinReference"));
+
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					ff.setFinType(rs.getString("FinType"));
+					ff.setFinTypeDesc(rs.getString("FinTypeDesc"));
+					ff.setFinCategory(rs.getString("FinCategory"));
+					ff.setCustCIF(rs.getString("CustCIF"));
+					ff.setFinBranch(rs.getString("FinBranch"));
+					// ff.setBranchDesc(rs.getString("BranchDesc"));
+					ff.setFinStartDate(rs.getDate("FinStartDate"));
+					ff.setNumberOfTerms(rs.getInt("NumberOfTerms"));
+					ff.setGraceTerms(rs.getInt("GraceTerms"));
+					ff.setMaturityDate(rs.getDate("MaturityDate"));
+					ff.setFinCcy(rs.getString("FinCcy"));
+					ff.setFinAmount(rs.getBigDecimal("FinAmount"));
+					ff.setFinRepaymentAmount(rs.getBigDecimal("FinRepaymentAmount"));
+					// ff.setScheduleMethod(rs.getString("ScheduleMethod"));
+					ff.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
+					ff.setDownPayBank(rs.getBigDecimal("DownPayBank"));
+					ff.setDownPaySupl(rs.getBigDecimal("DownPaySupl"));
+					ff.setEffectiveRateOfReturn(rs.getBigDecimal("EffectiveRateOfReturn"));
+					ff.setTotalProfit(rs.getBigDecimal("TotalProfit"));
+				}
+
+				ff.setVersion(rs.getInt("Version"));
+				ff.setLastMntBy(rs.getLong("LastMntBy"));
+				ff.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				ff.setRecordStatus(rs.getString("RecordStatus"));
+				ff.setRoleCode(rs.getString("RoleCode"));
+				ff.setNextRoleCode(rs.getString("NextRoleCode"));
+				ff.setTaskId(rs.getString("TaskId"));
+				ff.setNextTaskId(rs.getString("NextTaskId"));
+				ff.setRecordType(rs.getString("RecordType"));
+				ff.setWorkflowId(rs.getLong("WorkflowId"));
+
+				return ff;
+
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			financeFlags = null;
+			//
+
 		}
-		logger.debug("Leaving");
-		return financeFlags;
+
+		return null;
 	}
 
-	/**
-	 * This method Deletes the Record from the FinFlagsHeader or FinFlagsHeader_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete finance Flags by key FinReference
-	 * 
-	 * @param Finance
-	 *            Flag (FinanceFlag)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	public void delete(FinanceFlag financeFlags, String type) {
-		logger.debug("Entering");
-		StringBuilder deleteSql = new StringBuilder("Delete From ");
-		deleteSql.append(" FinFlagsHeader");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinReference =:FinReference");
-		logger.debug("deleteSql: " + deleteSql.toString());
+	public void delete(FinanceFlag ff, String type) {
+		StringBuilder sql = new StringBuilder("Delete From FinFlagsHeader");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeFlags);
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			ps.setLong(1, ff.getFinID());
+		});
 	}
 
 }

@@ -45,6 +45,7 @@ public class LegalExpenses extends AbstractWorkflowEntity {
 	private String customerId;
 	private Date bookingDate;
 	private BigDecimal amount;
+	private long finID;
 	private String finReference;
 	private String transactionType;
 	private String transactionTypeName;
@@ -82,10 +83,6 @@ public class LegalExpenses extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter ******************//
-	// ******************************************************//
-
 	public Date getBookingDate() {
 		return bookingDate;
 	}
@@ -100,6 +97,14 @@ public class LegalExpenses extends AbstractWorkflowEntity {
 
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
+	}
+	
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

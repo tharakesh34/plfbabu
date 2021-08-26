@@ -7,7 +7,7 @@ public interface FinFlagsHeaderDAO {
 
 	FinanceFlag getNewFinanceFlags();
 
-	FinanceFlag getFinFlagsHeaderByRef(String finReference, String type);
+	FinanceFlag getFinFlagsHeaderByRef(long finID, String type);
 
 	void update(FinanceFlag financeFlag, String type);
 

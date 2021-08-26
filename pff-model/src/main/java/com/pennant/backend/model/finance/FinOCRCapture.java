@@ -22,6 +22,7 @@ public class FinOCRCapture extends AbstractWorkflowEntity implements Comparable<
 	private long id = Long.MIN_VALUE;
 	@XmlElement(name = "receiptSeq")
 	private int disbSeq;
+	private long finID;
 	@XmlElement
 	private String finReference;
 	@XmlElement
@@ -65,6 +66,14 @@ public class FinOCRCapture extends AbstractWorkflowEntity implements Comparable<
 
 	public void setDisbSeq(int disbSeq) {
 		this.disbSeq = disbSeq;
+	}
+	
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

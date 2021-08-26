@@ -5,6 +5,7 @@ import java.util.Date;
 
 public class FeeRule {
 
+	private long finID;
 	private String finReference;
 	private Date schDate;
 	private String feeCode;
@@ -29,10 +30,14 @@ public class FeeRule {
 
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public long getFinID() {
+		return finID;
+	}
 
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
+	
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}

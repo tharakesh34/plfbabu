@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinCovenantTypeDAO.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-08-2013    														*
- *                                                                  						*
- * Modified Date    :  14-08-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinCovenantTypeDAO.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-08-2013 * * Modified
+ * Date : 14-08-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-08-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-08-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.finance;
 
 import java.util.List;
@@ -47,13 +29,8 @@ import java.util.List;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.systemmasters.DocumentType;
-import com.pennanttech.pff.core.TableType;
 
 public interface FinCovenantTypeDAO {
-
-	FinCovenantType getFinCovenantType();
-
-	FinCovenantType getNewFinCovenantType();
 
 	FinCovenantType getFinCovenantTypeById(FinCovenantType finCovenantType, String type);
 
@@ -63,21 +40,13 @@ public interface FinCovenantTypeDAO {
 
 	String save(FinCovenantType finCovenantTypeDAO, String type);
 
-	List<FinCovenantType> getFinCovenantTypeByFinRef(String id, String type, boolean isEnquiry);
+	List<FinCovenantType> getFinCovenantTypeByFinRef(long finID, String type, boolean isEnquiry);
 
-	List<FinCovenantType> getFinCovenantDocTypeByFinRef(String id, String type, boolean isEnquiry);
+	List<FinCovenantType> getFinCovenantDocTypeByFinRef(long finID, String type, boolean isEnquiry);
 
-	void deleteByFinRef(String finReference, String tableType);
+	void deleteByFinRef(long finID, String tableType);
 
-	boolean isDuplicateKey(String finReference, String covenantType, TableType tableType);
-
-	void delete(FinCovenantType finCovenantType, TableType mainTab);
-
-	String save(FinCovenantType aFinCovenantType, TableType tableType);
-
-	void update(FinCovenantType aFinCovenantType, TableType tableType);
-
-	FinCovenantType getCovenantTypeById(String finReference, String covenantType, String type);
+	FinCovenantType getCovenantTypeById(long finID, String covenantType, String type);
 
 	boolean isExists(FinCovenantType finCovenantType, String string);
 
@@ -86,6 +55,4 @@ public interface FinCovenantTypeDAO {
 	SecurityRole isMandRoleExists(String mandRole, String[] allowedRoles);
 
 	List<DocumentType> getPddOtcList();
-
-	SecurityRole isMandRoleExists(String mandRole);
 }

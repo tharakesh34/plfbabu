@@ -9,6 +9,7 @@ public class FinODAmzTaxDetail implements Serializable {
 	private static final long serialVersionUID = -5722811453434523809L;
 
 	private long taxSeqId = 0;
+	private long finID;
 	private String finReference;
 	private Date valueDate;
 	private Date postDate;
@@ -28,16 +29,20 @@ public class FinODAmzTaxDetail implements Serializable {
 
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
 	public long getTaxSeqId() {
 		return taxSeqId;
 	}
 
 	public void setTaxSeqId(long taxSeqId) {
 		this.taxSeqId = taxSeqId;
+	}
+	
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

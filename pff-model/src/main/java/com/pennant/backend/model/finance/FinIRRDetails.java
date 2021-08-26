@@ -39,6 +39,7 @@ public class FinIRRDetails extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long iRRID;
+	private long finID;
 	private String finReference;
 	private String iRRCode;
 	private BigDecimal iRR;
@@ -67,6 +68,14 @@ public class FinIRRDetails extends AbstractWorkflowEntity {
 		return serialVersionUID;
 	}
 
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
+	
 	public String getFinReference() {
 		return finReference;
 	}

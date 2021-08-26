@@ -51,6 +51,7 @@ public class GuarantorDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long guarantorId = Long.MIN_VALUE;
+	private long finID;
 	private String finReference;
 
 	@XmlElement
@@ -181,6 +182,14 @@ public class GuarantorDetail extends AbstractWorkflowEntity {
 		this.guarantorId = guarantorId;
 	}
 
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
+	
 	public String getFinReference() {
 		return finReference;
 	}

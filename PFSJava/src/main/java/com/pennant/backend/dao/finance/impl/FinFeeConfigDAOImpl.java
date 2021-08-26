@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinFeeConfigDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :    														*
- *                                                                  						*
- * Modified Date    :  														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinFeeConfigDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : * * Modified Date : * *
+ * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- *                                   * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.finance.impl;
 
@@ -52,12 +34,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.FinFeeConfigDAO;
 import com.pennant.backend.model.finance.FinFeeConfig;
@@ -80,14 +58,14 @@ public class FinFeeConfigDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	}
 
 	@Override
-	public String save(FinFeeConfig finFeeDetailConfig, TableType tableType) {
+	public String save(FinFeeConfig fc, TableType tableType) {
 		List<FinFeeConfig> list = new ArrayList<>();
 
-		list.add(finFeeDetailConfig);
+		list.add(fc);
 
 		saveList(list, tableType.getSuffix());
 
-		return finFeeDetailConfig.getFinReference();
+		return fc.getFinReference();
 	}
 
 	@Override
@@ -104,6 +82,7 @@ public class FinFeeConfigDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 					FinFeeConfig fc = finFeeDetailConfig.get(i);
 					int index = 1;
 
+					ps.setLong(index++, fc.getFinID());
 					ps.setString(index++, fc.getFinReference());
 					ps.setBoolean(index++, fc.isOriginationFee());
 					ps.setString(index++, fc.getFinEvent());
@@ -141,84 +120,107 @@ public class FinFeeConfigDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	}
 
 	private String getSaveQuery(String type) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("Insert Into FinFeeConfig");
+		StringBuilder sql = new StringBuilder("Insert Into FinFeeConfig");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" (FinReference, OriginationFee, FinEvent, FeeTypeID, FeeOrder");
+		sql.append(" (FinID, FinReference, OriginationFee, FinEvent, FeeTypeID, FeeOrder");
 		sql.append(", FeeScheduleMethod, RuleCode, CalculationType, Amount");
 		sql.append(", Percentage, CalculateOn, AlwDeviation, AlwModifyFeeSchdMthd, AlwModifyFee");
 		sql.append(", MaxWaiverPerc, ModuleId, ReferenceId, FinTypeFeeId, AlwPreIncomization");
 		sql.append(", PercType, PercRule, PercRuleId)");
-		sql.append(" Values(?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?)");
+
 		return sql.toString();
 	}
 
 	@Override
-	public List<FinFeeConfig> getFinFeeConfigList(String finReference, String eventCode, boolean origination,
-			String type) {
-		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-		mapSqlParameterSource.addValue("FinReference", finReference);
-		mapSqlParameterSource.addValue("FinEvent", eventCode);
-		mapSqlParameterSource.addValue("Origination", origination);
+	public List<FinFeeConfig> getFinFeeConfigList(long finID, String eventCode, boolean origination, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinTypeFeeId, FinID, FinReference, OriginationFee, FinEvent, FeeTypeID, FeeOrder");
+		sql.append(", FeeScheduleMethod, CalculationType, RuleCode, Amount, Percentage, CalculateOn, AlwDeviation");
+		sql.append(", MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd, AlwPreIncomization");
+		sql.append(", PercType, PercRule, ReferenceId, PercRuleId");
 
-		StringBuilder selectSql = new StringBuilder(
-				"SELECT FinTypeFeeId, FinReference, OriginationFee, FinEvent, FeeTypeID, FeeOrder,");
-		selectSql.append(
-				" FeeScheduleMethod, CalculationType, RuleCode, Amount, Percentage, CalculateOn, AlwDeviation,");
-		selectSql.append(" MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd,  AlwPreIncomization,");
-		selectSql.append(" PercType, PercRule, ReferenceId, PercRuleId,");
 		if (type.contains("View")) {
-			selectSql.append(" FeeTypeCode, FeeTypeDesc, RuleDesc, TaxApplicable, TaxComponent");
+			sql.append(", FeeTypeCode, FeeTypeDesc, RuleDesc, TaxApplicable, TaxComponent");
 		}
-		selectSql.append(" FROM Finfeeconfig");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference = :FinReference AND FinEvent = :FinEvent ");
-		selectSql.append(" AND OriginationFee = :Origination ");
-		List<FinFeeConfig> finFeeConfigList = new ArrayList<>();
 
-		logger.debug("selectListSql: " + selectSql.toString());
-		RowMapper<FinFeeConfig> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeConfig.class);
-		try {
-			finFeeConfigList = this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			finFeeConfigList = new ArrayList<>();
-		}
-		logger.debug(Literal.LEAVING);
-		return finFeeConfigList;
-	}
+		sql.append(" From Finfeeconfig");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ? and FinEvent = ? and OriginationFee = ?");
 
-	@Override
-	public void update(FinFeeConfig entity, TableType tableType) {
+		logger.debug(Literal.SQL + sql.toString());
 
-	}
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-	@Override
-	public void delete(FinFeeConfig entity, TableType tableType) {
+			ps.setLong(index++, finID);
+			ps.setString(index++, eventCode);
+			ps.setBoolean(index++, origination);
+		}, (rs, rowNum) -> {
+			FinFeeConfig ffc = new FinFeeConfig();
 
+			ffc.setFinTypeFeeId(rs.getLong("FinTypeFeeId"));
+			ffc.setFinID(rs.getLong("FinID"));
+			ffc.setFinReference(rs.getString("FinReference"));
+			ffc.setOriginationFee(rs.getBoolean("OriginationFee"));
+			ffc.setFinEvent(rs.getString("FinEvent"));
+			ffc.setFeeTypeID(rs.getLong("FeeTypeID"));
+			ffc.setFeeOrder(rs.getInt("FeeOrder"));
+			ffc.setFeeScheduleMethod(rs.getString("FeeScheduleMethod"));
+			ffc.setCalculationType(rs.getString("CalculationType"));
+			ffc.setRuleCode(rs.getString("RuleCode"));
+			ffc.setAmount(rs.getBigDecimal("Amount"));
+			ffc.setPercentage(rs.getBigDecimal("Percentage"));
+			ffc.setCalculateOn(rs.getString("CalculateOn"));
+			ffc.setAlwDeviation(rs.getBoolean("AlwDeviation"));
+			ffc.setMaxWaiverPerc(rs.getBigDecimal("MaxWaiverPerc"));
+			ffc.setAlwModifyFee(rs.getBoolean("AlwModifyFee"));
+			ffc.setAlwModifyFeeSchdMthd(rs.getBoolean("AlwModifyFeeSchdMthd"));
+			ffc.setAlwPreIncomization(rs.getBoolean("AlwPreIncomization"));
+			ffc.setPercType(rs.getString("PercType"));
+			ffc.setPercRule(rs.getString("PercRule"));
+			ffc.setReferenceId(rs.getLong("ReferenceId"));
+			ffc.setReferenceId(rs.getLong("PercRuleId"));
+
+			if (type.contains("View")) {
+				ffc.setFeeTypeCode(rs.getString("FeeTypeCode"));
+				ffc.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+				// ffc.setRuleDesc(rs.getString("RuleDesc"));
+				ffc.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+				ffc.setTaxComponent(rs.getString("TaxComponent"));
+			}
+
+			return ffc;
+		});
 	}
 
 	@Override
 	public int getFinFeeConfigCountByRuleCode(String ruleCode, String type) {
-		logger.debug("Entering");
-		FinFeeConfig finFeeConfig = new FinFeeConfig();
-		finFeeConfig.setPercRule(ruleCode);
+		StringBuilder sql = new StringBuilder("Select Count(FinID)");
+		sql.append(" From FinFeeConfig");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where PercRule = ?");
 
-		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
-		selectSql.append(" From FinFeeConfig");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where PercRule =:PercRule");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeConfig);
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, ruleCode);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
 
-		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return 0;
+	}
+
+	@Override
+	public void update(FinFeeConfig entity, TableType tableType) {
+		//
+	}
+
+	@Override
+	public void delete(FinFeeConfig entity, TableType tableType) {
+		//
 	}
 
 }
