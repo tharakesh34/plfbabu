@@ -46,6 +46,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class RepayInstruction extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
+	private long finID;
 	private String finReference = null;
 	@XmlElement
 	private Date repayDate;
@@ -67,6 +68,7 @@ public class RepayInstruction extends AbstractWorkflowEntity {
 
 	public RepayInstruction copyEntity() {
 		RepayInstruction entity = new RepayInstruction();
+		entity.setFinID(this.finID);
 		entity.setFinReference(this.finReference);
 		entity.setRepayDate(this.repayDate);
 		entity.setRepayAmount(this.repayAmount);
@@ -103,6 +105,14 @@ public class RepayInstruction extends AbstractWorkflowEntity {
 
 	public void setId(String id) {
 		this.finReference = id;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

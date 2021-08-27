@@ -10,12 +10,10 @@ public interface FinOptionDAO extends BasicCrudDao<FinOption> {
 
 	FinOption getFinOption(long id, TableType tableType);
 
-	boolean isDuplicateKey(FinOption finOption, TableType tableType);
-
-	public List<FinOption> getFinOptions(String finreference, TableType tableType);
+	public List<FinOption> getFinOptions(long finID, TableType tableType);
 
 	public List<FinOption> getPutCallAlertList();
 
-	public void deleteByFinRef(String loanReference, String tableType);
+	public void deleteByFinRef(long finID, String tableType);
 
 }

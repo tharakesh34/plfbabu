@@ -1,6 +1,7 @@
 package com.pennant.backend.dao.finance.putcall.impl;
 
-import java.util.ArrayList;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -9,16 +10,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.putcall.FinOptionDAO;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -27,214 +25,276 @@ public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptio
 	private static Logger logger = LogManager.getLogger(FinOptionDAOImpl.class);
 
 	@Override
-	public String save(FinOption finoption, TableType tableType) {
-		// Prepare the SQL.
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder();
-
-		sql.append("Insert into FIN_OPTIONS");
+	public String save(FinOption fo, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Insert Into Fin_Options");
 		sql.append(tableType.getSuffix());
-		sql.append("(Id, FinReference, OptionType, currentOptionDate, Frequency, NoticePeriodDays");
+		sql.append("(Id, FinID, FinReference, OptionType, CurrentOptionDate, Frequency, NoticePeriodDays");
 		sql.append(", AlertDays, OptionExercise, NextOptionDate, AlertType, AlertToRoles");
 		sql.append(", UserTemplate, CustomerTemplate, Remarks");
-		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values");
-		sql.append("(:Id, :FinReference, :OptionType, :currentOptionDate, :Frequency, :NoticePeriodDays");
-		sql.append(", :AlertDays, :OptionExercise, :NextOptionDate, :AlertType ");
-		sql.append(", :AlertToRoles, :UserTemplate, :CustomerTemplate, :Remarks");
-		sql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
-		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" Values");
+		sql.append("( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		if (finoption.getId() == Long.MIN_VALUE) {
-			finoption.setId(getNextValue("SEQ_FIN_OPTIONS"));
+		if (fo.getId() == Long.MIN_VALUE) {
+			fo.setId(getNextValue("SEQ_FIN_OPTIONS"));
 		}
 
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finoption);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, fo.getId());
+				ps.setLong(index++, fo.getFinID());
+				ps.setString(index++, fo.getFinReference());
+				ps.setString(index++, fo.getOptionType());
+				ps.setDate(index++, JdbcUtil.getDate(fo.getCurrentOptionDate()));
+				ps.setString(index++, fo.getFrequency());
+				ps.setInt(index++, fo.getNoticePeriodDays());
+				ps.setInt(index++, fo.getAlertDays());
+				ps.setBoolean(index++, fo.isOptionExercise());
+				ps.setDate(index++, JdbcUtil.getDate(fo.getNextOptionDate()));
+				ps.setString(index++, fo.getAlertType());
+				ps.setString(index++, fo.getAlertToRoles());
+				ps.setLong(index++, fo.getUserTemplate());
+				ps.setLong(index++, fo.getCustomerTemplate());
+				ps.setString(index++, fo.getRemarks());
+				ps.setInt(index++, fo.getVersion());
+				ps.setLong(index++, fo.getLastMntBy());
+				ps.setTimestamp(index++, fo.getLastMntOn());
+				ps.setString(index++, fo.getRecordStatus());
+				ps.setString(index++, fo.getRoleCode());
+				ps.setString(index++, fo.getNextRoleCode());
+				ps.setString(index++, fo.getTaskId());
+				ps.setString(index++, fo.getNextTaskId());
+				ps.setString(index++, fo.getRecordType());
+				ps.setLong(index++, fo.getWorkflowId());
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return String.valueOf(finoption.getId());
+		return String.valueOf(fo.getId());
 	}
 
 	@Override
-	public void update(FinOption finoption, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-
-		sql.append("Update FIN_OPTIONS");
+	public void update(FinOption fo, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Update Fin_options");
 		sql.append(tableType.getSuffix());
-		sql.append("  Set currentOptionDate = :currentOptionDate");
-		sql.append(", Frequency = :Frequency, NoticePeriodDays = :NoticePeriodDays, AlertDays = :AlertDays");
-		sql.append(", OptionExercise = :OptionExercise, NextOptionDate = :NextOptionDate, AlertType = :AlertType");
-		sql.append(", AlertToRoles =:AlertToRoles, UserTemplate =:UserTemplate, CustomerTemplate =:CustomerTemplate");
-		sql.append(", Remarks = :Remarks, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
-		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
-		sql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" where Id = :Id ");
+		sql.append(" Set CurrentOptionDate = ?, Frequency = ?, NoticePeriodDays = ?, AlertDays = ?");
+		sql.append(", OptionExercise = ?, NextOptionDate = ?, AlertType = ?, AlertToRoles = ?, UserTemplate = ?");
+		sql.append(", CustomerTemplate = ?, Remarks = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
+		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where Id = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finoption);
-		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setDate(index++, JdbcUtil.getDate(fo.getCurrentOptionDate()));
+			ps.setString(index++, fo.getFrequency());
+			ps.setInt(index++, fo.getNoticePeriodDays());
+			ps.setInt(index++, fo.getAlertDays());
+			ps.setBoolean(index++, fo.isOptionExercise());
+			ps.setDate(index++, JdbcUtil.getDate(fo.getNextOptionDate()));
+			ps.setString(index++, fo.getAlertType());
+			ps.setString(index++, fo.getAlertToRoles());
+			ps.setLong(index++, fo.getUserTemplate());
+			ps.setLong(index++, fo.getCustomerTemplate());
+			ps.setString(index++, fo.getRemarks());
+			ps.setTimestamp(index++, fo.getLastMntOn());
+			ps.setString(index++, fo.getRecordStatus());
+			ps.setString(index++, fo.getRoleCode());
+			ps.setString(index++, fo.getNextRoleCode());
+			ps.setString(index++, fo.getTaskId());
+			ps.setString(index++, fo.getNextTaskId());
+			ps.setString(index++, fo.getRecordType());
+			ps.setLong(index++, fo.getWorkflowId());
+
+			ps.setLong(index++, fo.getId());
+		});
 
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-
-		logger.debug(Literal.LEAVING);
-
 	}
 
 	@Override
-	public void delete(FinOption finoption, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("delete from FIN_OPTIONS");
+	public void delete(FinOption fo, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Delete From Fin_Options");
 		sql.append(tableType.getSuffix());
-		sql.append(" where id = :id ");
+		sql.append(" Where Id = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finoption);
-		int recordCount = 0;
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, fo.getId());
+			});
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public FinOption getFinOption(long id, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSelectQuery(tableType);
-		sql.append(tableType.getSuffix());
-		sql.append(" Where id = :id");
+		sql.append(" Where Id = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		FinOption finOption = new FinOption();
-		finOption.setId(id);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finOption);
-		RowMapper<FinOption> rowMapper = BeanPropertyRowMapper.newInstance(FinOption.class);
+		FinOptionRowMapper rowMapper = new FinOptionRowMapper(tableType);
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
 	@Override
-	public boolean isDuplicateKey(FinOption finOption, TableType tableType) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public List<FinOption> getPutCallAlertList() {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-
-		sql.append("select distinct fo.id, fo.FinReference, fo.CurrentOptionDate, fo.AlertDays");
-		sql.append(", fo.NoticePeriodDays, foa.AlertSentOn");
-		sql.append(", ut.TemplateCode UserTemplateCode, cust.TemplateCode CustomerTemplateCode");
-		sql.append(", fo.AlertToRoles, fo.OptionType");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Distinct fo.Id, fo.FinID, fo.FinReference, fo.CurrentOptionDate, fo.AlertDays");
+		sql.append(", fo.NoticePeriodDays, foa.AlertSentOn, ut.TemplateCode UserTemplateCode");
+		sql.append(", cust.TemplateCode CustomerTemplateCode, fo.AlertToRoles, fo.OptionType");
 		sql.append(", fo.Frequency, fo.NextOptionDate, fo.AlertType, fpd.TotalPriBal, fpd.PenaltyPaid");
-		sql.append(", fpd.pftAmz, fpd.TdSchdPftBal, fpd.PftAccrued, fpd.PenaltyDue,  fpd.PenaltyWaived ");
-		sql.append(" from fin_options fo");
-		sql.append(" inner join finpftdetails fpd on fpd.finreference = fo.finreference");
-		sql.append(" left join (select finOptiontId, max(alertsentOn) alertsentOn from fin_option_alerts");
-		sql.append(" group by finOptiontId) foa on foa.finOptiontId = fo.id");
-		sql.append(" left join Templates ut on ut.TemplateId = fo.UserTemplate");
-		sql.append(" left join Templates cust on cust.TemplateId = fo.CustomerTemplate");
+		sql.append(", fpd.PftAmz, fpd.TdSchdPftBal, fpd.PftAccrued, fpd.PenaltyDue, fpd.PenaltyWaived");
+		sql.append(" From Fin_Options fo");
+		sql.append(" Inner Join FinPftDetails fpd on fpd.FinID = fo.FinID");
+		sql.append(" Left Join (Select FinOptiontId, max(AlertSentOn) AlertSentOn From Fin_Option_Alerts");
+		sql.append(" group by FinOptiontId) foa on foa.FinOptiontId = fo.Id");
+		sql.append(" Left Join Templates ut on ut.TemplateId = fo.UserTemplate");
+		sql.append(" Left Join Templates Cust on Cust.TemplateId = fo.CustomerTemplate");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
+		return this.jdbcOperations.query(sql.toString(), (rs, num) -> {
+			FinOption fp = new FinOption();
 
-		RowMapper<FinOption> typeRowMapper = BeanPropertyRowMapper.newInstance(FinOption.class);
+			fp.setId(rs.getLong("Id"));
+			fp.setFinID(rs.getLong("FinID"));
+			fp.setFinReference(rs.getString("FinReference"));
+			fp.setCurrentOptionDate(rs.getDate("CurrentOptionDate"));
+			fp.setAlertDays(rs.getInt("AlertDays"));
+			fp.setNoticePeriodDays(rs.getInt("NoticePeriodDays"));
+			fp.setAlertsentOn(rs.getDate("AlertSentOn"));
+			fp.setUserTemplateCode(rs.getString("UserTemplateCode"));
+			fp.setCustomerTemplateCode(rs.getString("CustomerTemplateCode"));
+			fp.setAlertToRoles(rs.getString("AlertToRoles"));
+			fp.setOptionType(rs.getString("OptionType"));
+			fp.setFrequency(rs.getString("Frequency"));
+			fp.setNextOptionDate(rs.getDate("NextOptionDate"));
+			fp.setAlertType(rs.getString("AlertType"));
+			fp.setTotalPriBal(rs.getBigDecimal("TotalPriBal"));
+			fp.setPenaltyPaid(rs.getBigDecimal("PenaltyPaid"));
+			fp.setPftAmz(rs.getBigDecimal("PftAmz"));
+			fp.setTdSchdPftBal(rs.getBigDecimal("TdSchdPftBal"));
+			fp.setPftAccrued(rs.getBigDecimal("PftAccrued"));
+			fp.setPenaltyDue(rs.getBigDecimal("PenaltyDue"));
+			fp.setPenaltyWaived(rs.getBigDecimal("PenaltyWaived"));
 
-		try {
-			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return fp;
+		});
 	}
 
 	@Override
-	public List<FinOption> getFinOptions(String finreference, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
+	public List<FinOption> getFinOptions(long finID, TableType tableType) {
 		StringBuilder sql = getSelectQuery(tableType);
-		sql.append(tableType.getSuffix());
-		sql.append(" Where FinReference = :FinReference");
+		sql.append(" Where FinID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finreference);
+		FinOptionRowMapper rowMapper = new FinOptionRowMapper(tableType);
 
-		RowMapper<FinOption> rowMapper = BeanPropertyRowMapper.newInstance(FinOption.class);
+		return jdbcOperations.query(sql.toString(), rowMapper, finID);
+	}
 
-		try {
-			return jdbcTemplate.query(sql.toString(), source, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+	@Override
+	public void deleteByFinRef(long finID, String tableType) {
+		StringBuilder sql = new StringBuilder("Delete From FIN_OPTIONS");
+		sql.append(StringUtils.trimToEmpty(tableType));
+		sql.append(" Where FinID = ?");
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, finID);
+		});
 	}
 
 	private StringBuilder getSelectQuery(TableType tableType) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("Select Id, FinReference, OptionType, CurrentOptionDate, Frequency, NoticePeriodDays");
-		sql.append(", AlertDays, OptionExercise, NextOptionDate, AlertType ");
-		sql.append(", AlertToRoles,  UserTemplate, CustomerTemplate, Remarks");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, FinID, FinReference, OptionType, CurrentOptionDate, Frequency, NoticePeriodDays");
+		sql.append(", AlertDays, OptionExercise, NextOptionDate, AlertType");
+		sql.append(", AlertToRoles, UserTemplate, CustomerTemplate, Remarks");
+
 		if (tableType.getSuffix().contains("View")) {
-			sql.append(", CustomerTemplateCode, UserTemplateCode ");
+			sql.append(", CustomerTemplateCode, UserTemplateCode");
 		}
-		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
+
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From FIN_OPTIONS");
+		sql.append(" From Fin_Options");
+		sql.append(tableType.getSuffix());
+
 		return sql;
 	}
 
-	@Override
-	public void deleteByFinRef(String loanReference, String tableType) {
-		logger.debug("Entering");
-		FinOption finOption = new FinOption();
-		finOption.setFinReference(loanReference);
+	private class FinOptionRowMapper implements RowMapper<FinOption> {
+		private TableType tableType;
 
-		StringBuilder deleteSql = new StringBuilder("Delete From FIN_OPTIONS");
-		deleteSql.append(StringUtils.trimToEmpty(tableType));
-		deleteSql.append(" Where FinReference = :FinReference ");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		private FinOptionRowMapper(TableType tableType) {
+			this.tableType = tableType;
+		}
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finOption);
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		@Override
+		public FinOption mapRow(ResultSet rs, int rowNum) throws SQLException {
+			FinOption fo = new FinOption();
 
+			fo.setId(rs.getLong("Id"));
+			fo.setFinID(rs.getLong("FinID"));
+			fo.setFinReference(rs.getString("FinReference"));
+			fo.setOptionType(rs.getString("OptionType"));
+			fo.setCurrentOptionDate(rs.getDate("CurrentOptionDate"));
+			fo.setFrequency(rs.getString("Frequency"));
+			fo.setNoticePeriodDays(rs.getInt("NoticePeriodDays"));
+			fo.setAlertDays(rs.getInt("AlertDays"));
+			fo.setOptionExercise(rs.getBoolean("OptionExercise"));
+			fo.setNextOptionDate(rs.getDate("NextOptionDate"));
+			fo.setAlertType(rs.getString("AlertType"));
+			fo.setAlertToRoles(rs.getString("AlertToRoles"));
+			fo.setUserTemplate(rs.getLong("UserTemplate"));
+			fo.setCustomerTemplate(rs.getLong("CustomerTemplate"));
+			fo.setRemarks(rs.getString("Remarks"));
+
+			if (tableType.getSuffix().contains("View")) {
+				fo.setCustomerTemplateCode(rs.getString("CustomerTemplateCode"));
+				fo.setUserTemplateCode(rs.getString("UserTemplateCode"));
+			}
+
+			fo.setVersion(rs.getInt("Version"));
+			fo.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			fo.setLastMntBy(rs.getLong("LastMntBy"));
+			fo.setRecordStatus(rs.getString("RecordStatus"));
+			fo.setRoleCode(rs.getString("RoleCode"));
+			fo.setNextRoleCode(rs.getString("NextRoleCode"));
+			fo.setTaskId(rs.getString("TaskId"));
+			fo.setNextTaskId(rs.getString("NextTaskId"));
+			fo.setRecordType(rs.getString("RecordType"));
+			fo.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return fo;
+		}
 	}
-
 }

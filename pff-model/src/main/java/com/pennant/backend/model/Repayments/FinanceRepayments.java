@@ -7,6 +7,7 @@ import java.util.Date;
 public class FinanceRepayments implements Serializable {
 	private static final long serialVersionUID = -2866729395743867717L;
 
+	private long finID;
 	private String finReference;
 	private Date finPostDate;
 	private String finRpyFor;
@@ -51,6 +52,7 @@ public class FinanceRepayments implements Serializable {
 
 	public FinanceRepayments copyEntity() {
 		FinanceRepayments entity = new FinanceRepayments();
+		entity.setFinID(this.finID);
 		entity.setFinReference(this.finReference);
 		entity.setFinPostDate(this.finPostDate);
 		entity.setFinRpyFor(this.finRpyFor);
@@ -94,9 +96,13 @@ public class FinanceRepayments implements Serializable {
 
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
 
 	public String getFinReference() {
 		return finReference;

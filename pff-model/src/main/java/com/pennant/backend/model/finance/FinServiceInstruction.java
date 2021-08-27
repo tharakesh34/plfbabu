@@ -28,6 +28,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	}
 
 	private long serviceSeqId = Long.MIN_VALUE;
+	private long finID;
 	@XmlElement
 	private String finReference;
 	@XmlElement
@@ -303,6 +304,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	public FinServiceInstruction copyEntity() {
 		FinServiceInstruction entity = new FinServiceInstruction();
 		entity.setServiceSeqId(this.serviceSeqId);
+		entity.setFinID(this.finID);
 		entity.setFinReference(this.finReference);
 		entity.setFinEvent(this.finEvent);
 		entity.setExternalReference(this.externalReference);
@@ -477,6 +479,14 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	private String collectionAgency;
 	@XmlElement
 	private String division;
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
 
 	public String getFinReference() {
 		return finReference;

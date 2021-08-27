@@ -1,66 +1,44 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ProvisionMovementDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-05-2012    														*
- *                                                                  						*
- * Modified Date    :  31-05-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ProvisionMovementDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-05-2012 * *
+ * Modified Date : 31-05-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-05-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-05-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.financemanagement.impl;
 
 import java.util.Date;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.financemanagement.ProvisionMovementDAO;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -75,195 +53,165 @@ public class ProvisionMovementDAOImpl extends BasicDao<ProvisionMovement> implem
 		super();
 	}
 
-	/**
-	 * Fetch the Record Provision Movement Detail details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return ProvisionMovement
-	 */
 	@Override
-	public ProvisionMovement getProvisionMovementById(final String id, final Date movementDate, String type) {
-		logger.debug(Literal.ENTERING);
-		ProvisionMovement provisionMovement = new ProvisionMovement();
-
-		provisionMovement.setId(id);
-		provisionMovement.setProvMovementDate(movementDate);
-
-		StringBuilder sql = new StringBuilder("Select FinReference, ProvMovementDate,");
-		sql.append(" ProvMovementSeq, ProvCalDate, ProvisionedAmt, ProvisionAmtCal, ProvisionDue,");
-		sql.append(" ProvisionPostSts, NonFormulaProv, UseNFProv, AutoReleaseNFP, PrincipalDue,");
-		sql.append(" ProfitDue, DueFromDate, LastFullyPaidDate, LinkedTranId, ");
-		sql.append(
-				" AssetCode, AssetStageOrdr, NPA, ManualProvision, ProvChgLinkedTranId, PrvovisionRate, DueDays, PriBal");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append("");
-		}
+	public ProvisionMovement getProvisionMovementById(long finID, final Date movementDate, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference, ProvMovementDate, ProvMovementSeq, ProvCalDate, ProvisionedAmt");
+		sql.append(", ProvisionAmtCal, ProvisionDue, ProvisionPostSts, NonFormulaProv, UseNFProv");
+		sql.append(", AutoReleaseNFP, PrincipalDue, ProfitDue, DueFromDate, LastFullyPaidDate");
+		sql.append(", LinkedTranId, AssetCode, AssetStageOrdr, Npa, ManualProvision");
+		sql.append(", ProvChgLinkedTranId, PrvovisionRate, DueDays, PriBal");
 		sql.append(" From FinProvMovements");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference =:FinReference AND ProvMovementDate =:ProvMovementDate ");
-		sql.append(" and ProvMovementSeq =(SELECT MAX(ProvMovementSeq) FROM FinProvMovements ");
-		sql.append(" Where FinReference =:FinReference AND ProvMovementDate =:ProvMovementDate ) ");
+		sql.append(" Where FinID = ? and ProvMovementDate = ?");
+		sql.append(" and ProvMovementSeq = (Select max(ProvMovementSeq) From FinProvMovements");
+		sql.append(" Where FinID = ? and ProvMovementDate = ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provisionMovement);
-		RowMapper<ProvisionMovement> typeRowMapper = BeanPropertyRowMapper.newInstance(ProvisionMovement.class);
+
 		try {
-			provisionMovement = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
+				ProvisionMovement pm = new ProvisionMovement();
+
+				pm.setFinID(rs.getLong("FinID"));
+				pm.setFinReference(rs.getString("FinReference"));
+				pm.setProvMovementDate(rs.getDate("ProvMovementDate"));
+				pm.setProvMovementSeq(rs.getInt("ProvMovementSeq"));
+				pm.setProvCalDate(rs.getDate("ProvCalDate"));
+				pm.setProvisionedAmt(rs.getBigDecimal("ProvisionedAmt"));
+				pm.setProvisionAmtCal(rs.getBigDecimal("ProvisionAmtCal"));
+				pm.setProvisionDue(rs.getBigDecimal("ProvisionDue"));
+				pm.setProvisionPostSts(rs.getString("ProvisionPostSts"));
+				pm.setNonFormulaProv(rs.getBigDecimal("NonFormulaProv"));
+				pm.setUseNFProv(rs.getBoolean("UseNFProv"));
+				pm.setAutoReleaseNFP(rs.getBoolean("AutoReleaseNFP"));
+				pm.setPrincipalDue(rs.getBigDecimal("PrincipalDue"));
+				pm.setProfitDue(rs.getBigDecimal("ProfitDue"));
+				pm.setDueFromDate(rs.getDate("DueFromDate"));
+				pm.setLastFullyPaidDate(rs.getDate("LastFullyPaidDate"));
+				pm.setLinkedTranId(rs.getLong("LinkedTranId"));
+				pm.setAssetCode(rs.getString("AssetCode"));
+				pm.setAssetStageOrdr(rs.getInt("AssetStageOrdr"));
+				pm.setNpa(rs.getBoolean("NPA"));
+				pm.setManualProvision(rs.getBoolean("ManualProvision"));
+				pm.setProvChgLinkedTranId(rs.getLong("ProvChgLinkedTranId"));
+				pm.setPrvovisionRate(rs.getBigDecimal("PrvovisionRate"));
+				pm.setDueDays(rs.getInt("DueDays"));
+				pm.setPriBal(rs.getBigDecimal("PriBal"));
+
+				return pm;
+			}, finID, movementDate, finID, movementDate);
 		} catch (EmptyResultDataAccessException e) {
-			provisionMovement = null;
+			//
 		}
-		logger.debug(Literal.LEAVING);
-		return provisionMovement;
+
+		return null;
 	}
 
-	/**
-	 * Fetch the Record Provision Movement Detail details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return ProvisionMovement
-	 */
 	@Override
-	public List<ProvisionMovement> getProvisionMovementListById(final String id, String type) {
-		logger.debug(Literal.ENTERING);
-		ProvisionMovement provisionMovement = new ProvisionMovement();
-
-		provisionMovement.setId(id);
-
-		StringBuilder selectSql = new StringBuilder("Select FinReference, ProvMovementDate,");
-		selectSql.append(" ProvMovementSeq, ProvCalDate, ProvisionedAmt, ProvisionAmtCal, ProvisionDue,");
-		selectSql.append(" ProvisionPostSts, NonFormulaProv, UseNFProv, AutoReleaseNFP, PrincipalDue,");
-		selectSql.append(" ProfitDue, DueFromDate, LastFullyPaidDate, LinkedTranId, ");
-		selectSql.append(
-				" AssetCode, AssetStageOrdr, NPA, ManualProvision, ProvChgLinkedTranId, PrvovisionRate, DueDays, PriBal");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append("");
-		}
-		selectSql.append(" From FinProvMovements");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference ");
-
-		logger.debug(Literal.SQL + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provisionMovement);
-		RowMapper<ProvisionMovement> typeRowMapper = BeanPropertyRowMapper.newInstance(ProvisionMovement.class);
-
-		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
-
-	/**
-	 * This method Deletes the Record from the FinProvMovements or FinProvMovements_Temp. if Record not deleted then
-	 * throws DataAccessException with error 41003. delete Provision Movement Detail by key FinReference
-	 * 
-	 * @param Provision
-	 *            Movement Detail (provisionMovement)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	@Override
-	public void delete(ProvisionMovement provisionMovement, String type) {
-		logger.debug(Literal.ENTERING);
-		int recordCount = 0;
-
+	public void delete(ProvisionMovement pm, String type) {
 		StringBuilder sql = new StringBuilder("Delete From FinProvMovements");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference =:FinReference");
+		sql.append(" Where FinID = ?");
+
 		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provisionMovement);
 		try {
-			recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, pm.getFinID());
+			});
+
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * This method insert new Records into FinProvMovements or FinProvMovements_Temp.
-	 *
-	 * save Provision Movement Detail
-	 * 
-	 * @param Provision
-	 *            Movement Detail (provisionMovement)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public String save(ProvisionMovement provisionMovement, String type) {
-		logger.debug(Literal.ENTERING);
-
+	public String save(ProvisionMovement pm, String type) {
 		StringBuilder sql = new StringBuilder("Insert Into FinProvMovements");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" (FinReference, ProvMovementDate, ProvMovementSeq, ProvCalDate, ProvisionedAmt,");
-		sql.append(" ProvisionAmtCal, ProvisionDue, ProvisionPostSts, NonFormulaProv, UseNFProv,");
-		sql.append(" AutoReleaseNFP, PrincipalDue, ProfitDue, DueFromDate, LastFullyPaidDate, LinkedTranId, ");
-		sql.append(
-				" AssetCode, AssetStageOrdr, NPA, ManualProvision, ProvChgLinkedTranId, PrvovisionRate, DueDays, PriBal)");
-		sql.append(" Values(:FinReference, :ProvMovementDate, :ProvMovementSeq, :ProvCalDate,");
-		sql.append(" :ProvisionedAmt, :ProvisionAmtCal, :ProvisionDue, :ProvisionPostSts, :NonFormulaProv,");
-		sql.append(
-				" :UseNFProv, :AutoReleaseNFP, :PrincipalDue, :ProfitDue, :DueFromDate, :LastFullyPaidDate, :LinkedTranId,");
-		sql.append(
-				" :AssetCode, :AssetStageOrdr, :Npa, :ManualProvision, :ProvChgLinkedTranId, :PrvovisionRate, :DueDays, :PriBal)");
+		sql.append(" (FinID, FinReference, ProvMovementDate, ProvMovementSeq, ProvCalDate, ProvisionedAmt");
+		sql.append(", ProvisionAmtCal, ProvisionDue, ProvisionPostSts, NonFormulaProv, UseNFProv");
+		sql.append(", AutoReleaseNFP, PrincipalDue, ProfitDue, DueFromDate, LastFullyPaidDate, LinkedTranId");
+		sql.append(", AssetCode, AssetStageOrdr, Npa, ManualProvision");
+		sql.append(", ProvChgLinkedTranId, PrvovisionRate, DueDays, PriBal)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provisionMovement);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
-		logger.debug(Literal.LEAVING);
-		return provisionMovement.getId();
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, pm.getFinID());
+			ps.setString(index++, pm.getFinReference());
+			ps.setDate(index++, JdbcUtil.getDate(pm.getProvMovementDate()));
+			ps.setInt(index++, pm.getProvMovementSeq());
+			ps.setDate(index++, JdbcUtil.getDate(pm.getProvCalDate()));
+			ps.setBigDecimal(index++, pm.getProvisionedAmt());
+			ps.setBigDecimal(index++, pm.getProvisionAmtCal());
+			ps.setBigDecimal(index++, pm.getProvisionDue());
+			ps.setString(index++, pm.getProvisionPostSts());
+			ps.setBigDecimal(index++, pm.getNonFormulaProv());
+			ps.setBoolean(index++, pm.isUseNFProv());
+			ps.setBoolean(index++, pm.isAutoReleaseNFP());
+			ps.setBigDecimal(index++, pm.getPrincipalDue());
+			ps.setBigDecimal(index++, pm.getProfitDue());
+			ps.setDate(index++, JdbcUtil.getDate(pm.getDueFromDate()));
+			ps.setDate(index++, JdbcUtil.getDate(pm.getLastFullyPaidDate()));
+			ps.setLong(index++, pm.getLinkedTranId());
+			ps.setString(index++, pm.getAssetCode());
+			ps.setInt(index++, pm.getAssetStageOrdr());
+			ps.setBoolean(index++, pm.isNpa());
+			ps.setBoolean(index++, pm.isManualProvision());
+			ps.setLong(index++, pm.getProvChgLinkedTranId());
+			ps.setBigDecimal(index++, pm.getPrvovisionRate());
+			ps.setInt(index++, pm.getDueDays());
+			ps.setBigDecimal(index++, pm.getPriBal());
+		});
+
+		return pm.getId();
 	}
 
-	/**
-	 * This method updates the Record FinProvMovements or FinProvMovements. if Record not updated then throws
-	 * DataAccessException with error 41004. update Provision Movement Detail by key FinReference and Version
-	 * 
-	 * @param Provision
-	 *            Movement Detail (provisionMovement)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void update(ProvisionMovement provisionMovement, String type) {
-		int recordCount = 0;
-		logger.debug(Literal.ENTERING);
+	public void update(ProvisionMovement pm, String type) {
 		StringBuilder sql = new StringBuilder("Update FinProvMovements");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set ProvisionedAmt = :ProvisionedAmt, ProvisionDue = :ProvisionDue, ");
-		sql.append(" ProvisionPostSts = :ProvisionPostSts, LinkedTranId = :LinkedTranId, ");
-		sql.append(
-				" AssetCode = :AssetCode, AssetStageOrdr = :AssetStageOrdr, NPA = :NPA, ManualProvision = :ManualProvision, ");
-		sql.append(
-				" ProvChgLinkedTranId = :ProvChgLinkedTranId, PrvovisionRate = :PrvovisionRate, DueDays = :DueDays, PriBal = :PriBal");
-		sql.append(" Where FinReference =:FinReference AND ProvMovementDate = :ProvMovementDate");
-		sql.append(" AND ProvMovementSeq = :ProvMovementSeq");
+		sql.append(" Set ProvisionedAmt = ?, ProvisionDue = ?, ProvisionPostSts = ?");
+		sql.append(", LinkedTranId = ?, AssetCode = ?, AssetStageOrdr = ?, NPA = ?, ManualProvision = ?");
+		sql.append(", ProvChgLinkedTranId = ?, PrvovisionRate = ?, DueDays = ?, PriBal = ?");
+		sql.append(" Where FinID = ? and ProvMovementDate = ? and ProvMovementSeq = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provisionMovement);
-		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setBigDecimal(index++, pm.getProvisionedAmt());
+			ps.setBigDecimal(index++, pm.getProvisionDue());
+			ps.setString(index++, pm.getProvisionPostSts());
+			ps.setLong(index++, pm.getLinkedTranId());
+			ps.setString(index++, pm.getAssetCode());
+			ps.setInt(index++, pm.getAssetStageOrdr());
+			ps.setBoolean(index++, pm.isNpa());
+			ps.setBoolean(index++, pm.isManualProvision());
+			ps.setLong(index++, pm.getProvChgLinkedTranId());
+			ps.setBigDecimal(index++, pm.getPrvovisionRate());
+			ps.setInt(index++, pm.getDueDays());
+			ps.setBigDecimal(index++, pm.getPriBal());
+
+			ps.setLong(index++, pm.getFinID());
+			ps.setDate(index++, JdbcUtil.getDate(pm.getProvMovementDate()));
+			ps.setInt(index++, pm.getProvMovementSeq());
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug(Literal.LEAVING);
 	}
 }

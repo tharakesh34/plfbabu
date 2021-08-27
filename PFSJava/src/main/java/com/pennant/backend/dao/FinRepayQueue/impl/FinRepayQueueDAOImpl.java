@@ -1,21 +1,19 @@
 package com.pennant.backend.dao.FinRepayQueue.impl;
 
-import java.util.Date;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.backend.dao.FinRepayQueue.FinRepayQueueDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinRepayQueueDAOImpl extends BasicDao<FinRepayQueue> implements FinRepayQueueDAO {
 	private static Logger logger = LogManager.getLogger(FinRepayQueueDAOImpl.class);
@@ -24,136 +22,90 @@ public class FinRepayQueueDAOImpl extends BasicDao<FinRepayQueue> implements Fin
 		super();
 	}
 
-	/**
-	 * Method for Save Finance Repay Queue list
-	 * 
-	 * @param finRepayQueueList
-	 * @param type
-	 */
 	public void saveBatch(List<FinRepayQueue> finRepayQueueList, String type) {
-		logger.debug("Entering");
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append("Insert Into FinRpyQueue");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (RpyDate, FinPriority, FinType, FinReference, FinRpyFor, Branch, CustomerID,");
-		insertSql.append(
-				" SchdPft, SchdPri, SchdPftPaid, SchdPriPaid, SchdPftBal, SchdPriBal, SchdIsPftPaid, SchdIsPriPaid,");
-		insertSql.append(
-				" SchdFee, SchdFeePaid, SchdFeeBal, SchdFeePayNow, PenaltyPayNow, LatePayPftPayNow, SchdRate, ");
-		insertSql.append(" LinkedFinRef ) ");
-		insertSql.append(" Values(:RpyDate, :FinPriority, :FinType, :FinReference, :FinRpyFor, :Branch, :CustomerID, ");
-		insertSql.append(
-				" :SchdPft, :SchdPri, :SchdPftPaid , :SchdPriPaid, :SchdPftBal, :SchdPriBal, :SchdIsPftPaid, :SchdIsPriPaid ,");
-		insertSql.append(
-				" :SchdFee, :SchdFeePaid, :SchdFeeBal, :SchdFeePayNow, :PenaltyPayNow, :LatePayPftPayNow, :SchdRate , ");
-		insertSql.append(" :LinkedFinRef ) ");
+		StringBuilder sql = new StringBuilder("Insert Into FinRpyQueue");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (RpyDate, FinPriority, FinType, FinID, FinReference, FinRpyFor, Branch, CustomerID");
+		sql.append(", SchdPft, SchdPri, SchdPftPaid, SchdPriPaid, SchdPftBal, SchdPriBal");
+		sql.append(", SchdIsPftPaid, SchdIsPriPaid, SchdFee, SchdFeePaid, SchdFeeBal");
+		sql.append(", SchdFeePayNow, PenaltyPayNow, LatePayPftPayNow, SchdRate, LinkedFinRef)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(finRepayQueueList.toArray());
-		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinRepayQueue frq = finRepayQueueList.get(i);
+				int index = 1;
+
+				ps.setDate(index++, JdbcUtil.getDate(frq.getRpyDate()));
+				ps.setInt(index++, frq.getFinPriority());
+				ps.setString(index++, frq.getFinType());
+				ps.setLong(index++, frq.getFinID());
+				ps.setString(index++, frq.getFinReference());
+				ps.setString(index++, frq.getFinRpyFor());
+				ps.setString(index++, frq.getBranch());
+				ps.setLong(index++, frq.getCustomerID());
+				ps.setBigDecimal(index++, frq.getSchdPft());
+				ps.setBigDecimal(index++, frq.getSchdPri());
+				ps.setBigDecimal(index++, frq.getSchdPftPaid());
+				ps.setBigDecimal(index++, frq.getSchdPriPaid());
+				ps.setBigDecimal(index++, frq.getSchdPftBal());
+				ps.setBigDecimal(index++, frq.getSchdPriBal());
+				ps.setBoolean(index++, frq.isSchdIsPftPaid());
+				ps.setBoolean(index++, frq.isSchdIsPriPaid());
+				ps.setBigDecimal(index++, frq.getSchdFee());
+				ps.setBigDecimal(index++, frq.getSchdFeePaid());
+				ps.setBigDecimal(index++, frq.getSchdFeeBal());
+				ps.setBigDecimal(index++, frq.getSchdFeePayNow());
+				ps.setBigDecimal(index++, frq.getPenaltyPayNow());
+				ps.setBigDecimal(index++, frq.getLatePayPftPayNow());
+				ps.setBigDecimal(index++, frq.getSchdRate());
+				ps.setString(index++, frq.getLinkedFinRef());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return finRepayQueueList.size();
+			}
+		});
 	}
 
-	/**
-	 * Method for Save Finance Repay Queue list
-	 * 
-	 * @param repayQueue
-	 * @param type
-	 */
 	@Override
-	public void update(FinRepayQueue repayQueue, String type) {
-		logger.debug("Entering");
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append("Update FinRpyQueue");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(
-				" set  SchdPftPaid=:SchdPftPaid, SchdPriPaid=:SchdPriPaid, SchdIsPftPaid=:SchdIsPftPaid ,SchdIsPriPaid=:SchdIsPriPaid,  ");
-		insertSql.append("   PenaltyPayNow = :PenaltyPayNow, LatePayPftPayNow = :LatePayPftPayNow ");
-		insertSql.append(" where FinReference=:FinReference and FinRpyFor=:FinRpyFor and RpyDate=:RpyDate");
+	public void update(FinRepayQueue frq, String type) {
+		StringBuilder sql = new StringBuilder("Update FinRpyQueue");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set SchdPftPaid = ?, SchdPriPaid = ?, SchdIsPftPaid = ?, SchdIsPriPaid = ?");
+		sql.append(" PenaltyPayNow = ?, LatePayPftPayNow = ?");
+		sql.append(" Where FinID = ? and FinRpyFor= ? and RpyDate = ?");
 
-		//		insertSql.append("  (RpyDate, FinPriority, FinType, FinReference, FinRpyFor, Branch, CustomerID,");
-		//		insertSql.append(" SchdPft, SchdPri, SchdPftPaid, SchdPriPaid, SchdPftBal, SchdPriBal, SchdIsPftPaid, SchdIsPriPaid,");
-		//		insertSql.append(" SchdFee, SchdFeePaid, SchdFeeBal, SchdFeePayNow,");
-		//		insertSql.append(" Values(:RpyDate, :FinPriority, :FinType, :FinReference, :FinRpyFor, :Branch, :CustomerID, ");
-		//		insertSql.append(" :SchdPft, :SchdPri, :SchdPftPaid , :SchdPriPaid, :SchdPftBal, :SchdPriBal, :SchdIsPftPaid, :SchdIsPriPaid ,");
-		//		insertSql.append(" :SchdFee, :SchdFeePaid, :SchdFeeBal, :SchdFeePayNow)");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(repayQueue);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setBigDecimal(index++, frq.getSchdPftPaid());
+			ps.setBigDecimal(index++, frq.getSchdPriPaid());
+			ps.setBoolean(index++, frq.isSchdIsPftPaid());
+			ps.setBoolean(index++, frq.isSchdIsPriPaid());
+			ps.setBigDecimal(index++, frq.getPenaltyPayNow());
+			ps.setBigDecimal(index++, frq.getLatePayPftPayNow());
+
+			ps.setLong(index++, frq.getFinID());
+			ps.setString(index++, frq.getFinRpyFor());
+			ps.setDate(index++, JdbcUtil.getDate(frq.getRpyDate()));
+		});
 	}
 
 	@Override
 	public void setFinRepayQueueRecords(List<FinRepayQueue> finRepayQueueList) {
-		logger.debug("Entering");
-
 		if (finRepayQueueList.size() > 0) {
 			saveBatch(finRepayQueueList, "");
 		}
+
 		finRepayQueueList = null;
-	}
-
-	@Override
-	public void deleteRepayQueue() {
-		logger.debug("Entering");
-		StringBuilder deleteSql = new StringBuilder(" DELETE FROM FinRpyQueue");
-		logger.debug("updateSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new FinRepayQueue());
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
-	}
-
-	@Override
-	public void deleteByCustID(long customerID) {
-		logger.debug("Entering");
-		FinRepayQueue repayQueue = new FinRepayQueue();
-		repayQueue.setCustomerID(customerID);
-		StringBuilder deleteSql = new StringBuilder(" DELETE FROM FinRpyQueue");
-		deleteSql.append(" where CustomerID=:CustomerID");
-		logger.debug("updateSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(repayQueue);
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Get FinRepay Details for Auto Hunting
-	 * 
-	 * @param finReference
-	 * @return
-	 */
-	public FinRepayQueue getFinRePayDetails(String finReference, Date repayDate) {
-		logger.debug("Entering");
-
-		FinRepayQueue finRepayQueue = new FinRepayQueue();
-		finRepayQueue.setFinReference(finReference);
-		finRepayQueue.setRpyDate(repayDate);
-
-		StringBuilder selectSql = new StringBuilder(
-				"SELECT RQ.FinReference, RQ.FinType, RQ.RpyDate, RQ.FinPriority, RQ.Branch, ");
-		selectSql.append(" RQ.CustomerID, RQ.FinRpyFor, RQ.SchdPft, RQ.SchdPri, RQ.SchdPftPaid, RQ.SchdPriPaid, ");
-		selectSql.append(" RQ.SchdPftBal, RQ.SchdPriBal, RQ.SchdIsPftPaid, RQ.SchdIsPriPaid, ");
-		selectSql.append(
-				" (RQ.SchdPftBal+ RQ.SchdPriBal) AS RepayQueueBal, PD.AcrTillLBD, PD.PftAmzSusp, PD.AmzTillLBD,PD.LpiTillLBD,PD.LppTillLBD,");
-		selectSql.append(" RQ.SchdFee, RQ.SchdFeePaid, RQ.SchdFeeBal ");
-		selectSql.append(" FROM FinRpyQueue RQ  INNER JOIN FinPftDetails PD ON PD.FinReference = RQ.FinReference");
-		selectSql.append(
-				" WHERE RQ.RpyDate <= :RpyDate AND (SchdIsPftPaid = 0 OR SchdIsPriPaid = 0) and RQ.FinReference =:FinReference ");
-		selectSql.append(" ORDER BY RQ.RpyDate, RQ.FinPriority, RQ.FinReference, RQ.FinRpyFor ASC ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finRepayQueue);
-		RowMapper<FinRepayQueue> typeRowMapper = BeanPropertyRowMapper.newInstance(FinRepayQueue.class);
-
-		try {
-			finRepayQueue = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			finRepayQueue = null;
-		}
-		logger.debug("Leaving");
-		return finRepayQueue;
 	}
 
 }

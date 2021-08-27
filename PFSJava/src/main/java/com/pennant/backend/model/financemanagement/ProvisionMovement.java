@@ -40,6 +40,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class ProvisionMovement extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
+	private long finID;
 	private String finReference = null;
 	private Date provMovementDate;
 	private int provMovementSeq;
@@ -88,6 +89,14 @@ public class ProvisionMovement extends AbstractWorkflowEntity {
 
 	public void setId(String id) {
 		this.finReference = id;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

@@ -9,6 +9,7 @@ public class LMSServiceLog {
 
 	private long id = Long.MIN_VALUE;
 	private String event;
+	private long finID;
 	private String finReference;
 	private BigDecimal oldRate;
 	private BigDecimal newRate;
@@ -21,6 +22,14 @@ public class LMSServiceLog {
 
 	public void setEvent(String event) {
 		this.event = event;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
@@ -73,7 +82,8 @@ public class LMSServiceLog {
 		customerMap = new HashMap<>();
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
-				//"ct_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
+				// "ct_" Should be in small case only, if we want to change the case we need to update the configuration
+				// fields as well.
 				customerMap.put("rc_" + this.getClass().getDeclaredFields()[i].getName(),
 						this.getClass().getDeclaredFields()[i].get(this));
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {

@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,12 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -34,38 +28,32 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		super();
 	}
 
-	public int saveList(List<FinServiceInstruction> finServiceInstructionList, String type) {
-		for (FinServiceInstruction finSerList : finServiceInstructionList) {
-			if (finSerList.getServiceSeqId() == Long.MIN_VALUE) {
-				finSerList.setServiceSeqId(getNextValue("SeqFinInstruction"));
+	public int saveList(List<FinServiceInstruction> fsiList, String type) {
+		for (FinServiceInstruction fsi : fsiList) {
+			if (fsi.getServiceSeqId() == Long.MIN_VALUE) {
+				fsi.setServiceSeqId(getNextValue("SeqFinInstruction"));
 			}
 		}
 
 		String sql = getInsertQuery(type);
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
-				FinServiceInstruction fsd = finServiceInstructionList.get(i);
-
+				FinServiceInstruction fsd = fsiList.get(i);
 				parameterizedSetter(ps, fsd);
 			}
 
 			@Override
 			public int getBatchSize() {
-				return finServiceInstructionList.size();
+				return fsiList.size();
 			}
 		}).length;
 	}
 
-	/**
-	 * 
-	 * @param finServiceInstruction
-	 * @param type
-	 */
 	public void save(FinServiceInstruction fsd, String type) {
 		if (fsd.getServiceSeqId() == Long.MIN_VALUE) {
 			fsd.setServiceSeqId(getNextValue("SeqFinInstruction"));
@@ -73,30 +61,268 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 
 		String sql = getInsertQuery(type);
 
-		logger.trace(Literal.SQL + sql);
+		logger.debug(Literal.SQL + sql);
 
 		try {
 			jdbcOperations.update(sql.toString(), ps -> {
 				parameterizedSetter(ps, fsd);
 			});
 		} catch (Exception e) {
-			logger.warn("");
 			throw e;
 		}
+	}
+
+	@Override
+	public void deleteList(long finID, String finEvent, String type) {
+		StringBuilder sql = new StringBuilder("Delete From FinServiceInstruction");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, finID);
+		});
+	}
+
+	@Override
+	public List<FinServiceInstruction> getFinServiceInstructions(long finID, String type, String finEvent) {
+		StringBuilder sql = sqlSelectQuery();
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ? and FinEvent = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		FinServiceInstructionRowMapper rowMapper = new FinServiceInstructionRowMapper();
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, finID);
+			ps.setString(index++, finEvent);
+		}, rowMapper);
+	}
+
+	@Override
+	public List<FinServiceInstruction> getFinServiceInstAddDisbDetail(long finID, Date fromDate, String finEvent) {
+		StringBuilder sql = sqlSelectQuery();
+		sql.append(" Where FinID = ? and FromDate = ? and FinEvent = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		FinServiceInstructionRowMapper rowMapper = new FinServiceInstructionRowMapper();
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, finID);
+			ps.setDate(index++, JdbcUtil.getDate(fromDate));
+			ps.setString(index++, finEvent);
+		}, rowMapper);
+	}
+
+	@Override
+	public boolean getFinServInstDetails(String finEvent, String serviceReqNo) {
+		String sql = "Select count(*) From FinServiceInstruction  Where FinEvent = ? and ServiceReqNo = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Integer.class, finEvent, serviceReqNo) > 0;
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return false;
+	}
+
+	@Override
+	public List<FinServiceInstruction> getFinServInstByServiceReqNo(long finID, Date fromDate, String serviceReqNo,
+			String finEvent) {
+		StringBuilder sql = sqlSelectQuery();
+		sql.append(" Where FinID = ? and FromDate = ? and FinEvent = ? and ServiceReqNo = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		FinServiceInstructionRowMapper rowMapper = new FinServiceInstructionRowMapper();
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, finID);
+			ps.setDate(index++, JdbcUtil.getDate(fromDate));
+			ps.setString(index++, finEvent);
+			ps.setString(index++, serviceReqNo);
+		}, rowMapper);
+	}
+
+	@Override
+	public List<LMSServiceLog> getLMSServiceLogList(String notificationFlag) {
+		String sql = "Select Id, Event, FinID, FinReference, OldRate, NewRate, EffectiveDate, NotificationFlag From LMSServiceLog Where NotificationFlag = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.query(sql, ps -> {
+			int index = 1;
+
+			ps.setString(index++, notificationFlag);
+		}, (rs, num) -> {
+			LMSServiceLog lmsLog = new LMSServiceLog();
+
+			lmsLog.setId(rs.getLong("Id"));
+			lmsLog.setEvent(rs.getString("Event"));
+			lmsLog.setFinID(rs.getLong("FinID"));
+			lmsLog.setFinReference(rs.getString("FinReference"));
+			lmsLog.setOldRate(rs.getBigDecimal("OldRate"));
+			lmsLog.setNewRate(rs.getBigDecimal("NewRate"));
+			lmsLog.setEffectiveDate(rs.getDate("EffectiveDate"));
+			lmsLog.setNotificationFlag(rs.getString("NotificationFlag"));
+
+			return lmsLog;
+		});
+	}
+
+	@Override
+	public void updateNotificationFlag(String notificationFlag, long id) {
+		String sql = "Update LMSServiceLog Set NotificationFlag = ? Where Id = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			this.jdbcOperations.update(sql, ps -> {
+				int index = 1;
+
+				ps.setString(index++, notificationFlag);
+				ps.setLong(index++, id);
+			});
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+	@Override
+	public BigDecimal getOldRate(long finID, Date schdate) {
+		String sql = "Select CalculatedRate From FinScheduleDetails Where FinID = ? and Schdate = (Select max(SchDate) From FinScheduleDetails Where FinID = ? and Schdate <= ?)";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID, finID, schdate);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return BigDecimal.ZERO;
+	}
+
+	@Override
+	public BigDecimal getNewRate(long finID, Date schdate) {
+		String sql = "Select CalculatedRate From FinScheduleDetails_Temp Where FinID = ? and Schdate = (Select max(SchDate) From FinScheduleDetails_Temp Where FinID = ? and Schdate <= ?)";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID, finID, schdate);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return BigDecimal.ZERO;
+	}
+
+	@Override
+	public void saveLMSServiceLOGList(List<LMSServiceLog> slList) {
+		StringBuilder sql = new StringBuilder("Insert Into");
+		sql.append(" LMSServiceLog");
+		sql.append("(Event, FinID, FinReference, OldRate, NewRate, EffectiveDate, NotificationFlag");
+		sql.append(") values(");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?");
+		sql.append(")");
+
+		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				LMSServiceLog sl = slList.get(i);
+
+				int index = 1;
+
+				ps.setString(index++, sl.getEvent());
+				ps.setLong(index++, sl.getFinID());
+				ps.setString(index++, sl.getFinReference());
+				ps.setBigDecimal(index++, sl.getOldRate());
+				ps.setBigDecimal(index++, sl.getNewRate());
+				ps.setDate(index++, JdbcUtil.getDate(sl.getEffectiveDate()));
+				ps.setString(index++, sl.getNotificationFlag());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return slList.size();
+			}
+		});
+
+	}
+
+	@Override
+	public List<String> getFinEventByFinRef(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Select FinEvent");
+		sql.append(" From FinServiceInstruction");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.queryForList(sql.toString(), String.class, finID);
+
+	}
+
+	@Override
+	public List<FinServiceInstruction> getOrgFinServiceInstructions(long finID, String type) {
+		StringBuilder sql = sqlSelectQuery();
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ? ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, finID);
+		}, new FinServiceInstructionRowMapper());
+	}
+
+	@Override
+	public boolean isFinServiceInstExists(long finID, String table) {
+		StringBuilder sql = new StringBuilder("Select Count(FinID)");
+		sql.append(" From FinServiceInstruction");
+		sql.append(table);
+		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID) == 0 ? false : true;
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return false;
 	}
 
 	private String getInsertQuery(String type) {
 		StringBuilder sql = new StringBuilder("Insert into");
 		sql.append(" FinServiceInstruction");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" (ServiceSeqId, FinEvent, FinReference, FromDate, ToDate, PftDaysBasis");
+		sql.append(" (ServiceSeqId, FinEvent, FinID, FinReference, FromDate, ToDate, PftDaysBasis");
 		sql.append(", SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate");
 		sql.append(", RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq");
 		sql.append(", NextGrcRepayDate, RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate");
 		sql.append(", RecalToDate, PftIntact, Terms, ServiceReqNo, Remarks, PftChg");
 		sql.append(", InstructionUID, LinkedTranID, LogKey)");
 		sql.append(" values(");
-		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
@@ -108,6 +334,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 
 		ps.setLong(index++, JdbcUtil.setLong(fsd.getServiceSeqId()));
 		ps.setString(index++, fsd.getFinEvent());
+		ps.setLong(index++, fsd.getFinID());
 		ps.setString(index++, fsd.getFinReference());
 		ps.setDate(index++, JdbcUtil.getDate(fsd.getFromDate()));
 		ps.setDate(index++, JdbcUtil.getDate(fsd.getToDate()));
@@ -141,484 +368,62 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		ps.setObject(index++, JdbcUtil.getLong(fsd.getLogKey()));
 	}
 
-	@Override
-	public void deleteList(String finReference, String finEvent, String type) {
-
-		StringBuilder sql = new StringBuilder("Delete From ");
-		sql.append(" FinServiceInstruction");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append("  Where  FinReference = ?");
-		logger.trace(Literal.SQL + sql.toString());
-
-		this.jdbcOperations.update(sql.toString(), ps -> {
-			int index = 1;
-			ps.setString(index++, finReference);
-		});
-	}
-
-	/**
-	 * Fetch the Record Repay Instruction Detail details by key field
-	 * 
-	 * @param id   (String)
-	 * @param type (String) ""/_Temp/_View
-	 * @return RepayInstruction
-	 */
-	@Override
-	public List<FinServiceInstruction> getFinServiceInstructions(final String finReference, String type,
-			String finEvent) {
-		logger.debug(Literal.ENTERING);
-
+	private StringBuilder sqlSelectQuery() {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ServiceSeqId, FinEvent, FinReference, FromDate, ToDate, PftDaysBasis, SchdMethod");
+		sql.append(" ServiceSeqId, FinEvent, FinID, FinReference, FromDate, ToDate, PftDaysBasis, SchdMethod");
 		sql.append(", ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate, NextGrcRepayDate, RepayPftFrq");
 		sql.append(", RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq, RepayFrq, NextRepayDate");
 		sql.append(", Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms, ServiceReqNo");
 		sql.append(", Remarks, PftChg, InstructionUID, LinkedTranID");
-		sql.append(" from FinServiceInstruction");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = ? and FinEvent = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-					ps.setString(index++, finEvent);
-				}
-			}, new RowMapper<FinServiceInstruction>() {
-				@Override
-				public FinServiceInstruction mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinServiceInstruction fsi = new FinServiceInstruction();
-
-					fsi.setServiceSeqId(rs.getLong("ServiceSeqId"));
-					fsi.setFinEvent(rs.getString("FinEvent"));
-					fsi.setFinReference(rs.getString("FinReference"));
-					fsi.setFromDate(rs.getTimestamp("FromDate"));
-					fsi.setToDate(rs.getTimestamp("ToDate"));
-					fsi.setPftDaysBasis(rs.getString("PftDaysBasis"));
-					fsi.setSchdMethod(rs.getString("SchdMethod"));
-					fsi.setActualRate(rs.getBigDecimal("ActualRate"));
-					fsi.setBaseRate(rs.getString("BaseRate"));
-					fsi.setSplRate(rs.getString("SplRate"));
-					fsi.setMargin(rs.getBigDecimal("Margin"));
-					fsi.setGrcPeriodEndDate(rs.getTimestamp("GrcPeriodEndDate"));
-					fsi.setNextGrcRepayDate(rs.getTimestamp("NextGrcRepayDate"));
-					fsi.setRepayPftFrq(rs.getString("RepayPftFrq"));
-					fsi.setRepayRvwFrq(rs.getString("RepayRvwFrq"));
-					fsi.setRepayCpzFrq(rs.getString("RepayCpzFrq"));
-					fsi.setGrcPftFrq(rs.getString("GrcPftFrq"));
-					fsi.setGrcRvwFrq(rs.getString("GrcRvwFrq"));
-					fsi.setGrcCpzFrq(rs.getString("GrcCpzFrq"));
-					fsi.setRepayFrq(rs.getString("RepayFrq"));
-					fsi.setNextRepayDate(rs.getTimestamp("NextRepayDate"));
-					fsi.setAmount(rs.getBigDecimal("Amount"));
-					fsi.setRecalType(rs.getString("RecalType"));
-					fsi.setRecalFromDate(rs.getTimestamp("RecalFromDate"));
-					fsi.setRecalToDate(rs.getTimestamp("RecalToDate"));
-					fsi.setPftIntact(rs.getBoolean("PftIntact"));
-					fsi.setTerms(rs.getInt("Terms"));
-					fsi.setServiceReqNo(rs.getString("ServiceReqNo"));
-					fsi.setRemarks(rs.getString("Remarks"));
-					fsi.setPftChg(rs.getBigDecimal("PftChg"));
-					fsi.setInstructionUID(rs.getLong("InstructionUID"));
-					fsi.setLinkedTranID(rs.getLong("LinkedTranID"));
-
-					return fsi;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
-	}
-
-	@Override
-	public List<FinServiceInstruction> getDMFinServiceInstructions(final String finReference, String type) {
-		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
-		finServiceInstruction.setFinReference(finReference);
-
-		StringBuilder selectSql = new StringBuilder("Select ServiceSeqId, FinEvent, FinReference, FromDate, ToDate, ");
-		selectSql.append("PftDaysBasis, SchdMethod, ActualRate, ");
-		selectSql
-				.append("RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate, RecalToDate, Terms ,ServiceReqNo ");
-		selectSql.append(" From FinServiceInstruction");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference order by ServiceSeqId");
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finServiceInstruction);
-		RowMapper<FinServiceInstruction> typeRowMapper = BeanPropertyRowMapper.newInstance(FinServiceInstruction.class);
-
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
-
-	/**
-	 * Fetch FinServiceInstruction Detail by finReference,fromDate,finEvent
-	 * 
-	 * @param finReference
-	 * 
-	 * @param fromDate
-	 * 
-	 * @param finEvent
-	 * 
-	 * @return List<FinServiceInstruction>
-	 */
-	@Override
-	public List<FinServiceInstruction> getFinServiceInstAddDisbDetail(final String finReference, Date fromDate,
-			String finEvent) {
-		logger.debug("Entering");
-
-		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
-		finServiceInstruction.setFinReference(finReference);
-		finServiceInstruction.setFinEvent(finEvent);
-		finServiceInstruction.setFromDate(fromDate);
-
-		StringBuilder selectSql = new StringBuilder("Select ServiceSeqId, FinEvent, FinReference, FromDate,ToDate");
-		selectSql.append(
-				",PftDaysBasis,SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate,NextGrcRepayDate");
-		selectSql.append(",RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq");
-		selectSql.append(
-				",RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms ,ServiceReqNo,Remarks, PftChg, InstructionUID, LinkedTranID ");
-		selectSql.append(" From FinServiceInstruction");
-		selectSql.append(" Where FinReference =:FinReference AND FromDate =:FromDate AND FinEvent =:FinEvent ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finServiceInstruction);
-		RowMapper<FinServiceInstruction> typeRowMapper = BeanPropertyRowMapper.newInstance(FinServiceInstruction.class);
-
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
-
-	/**
-	 * Fetch List of FinServiceInstruction Detail by finEvent and serviceReqNo
-	 * 
-	 * @param finEvent
-	 * 
-	 * @param serviceReqNo
-	 * 
-	 * @return List<FinServiceInstruction>
-	 */
-
-	@Override
-	public boolean getFinServInstDetails(String finEvent, String serviceReqNo) {
-		logger.debug("Entering");
-		int count = 0;
-		boolean flag = false;
-		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
-		finServiceInstruction.setFinEvent(finEvent);
-		finServiceInstruction.setServiceReqNo(serviceReqNo);
-
-		StringBuilder selectSql = new StringBuilder("Select count(*)");
-		selectSql.append(" From FinServiceInstruction");
-		selectSql.append(" Where FinEvent =:FinEvent and ServiceReqNo=:ServiceReqNo");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finServiceInstruction);
-		count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-
-		if (count > 0) {
-			flag = true;
-		}
-		logger.debug("Leaving");
-		return flag;
-	}
-
-	/**
-	 * Fetch the Record Repay Instruction Detail details by key field
-	 * 
-	 * @param id   (String)
-	 * @param type (String) ""/_Temp/_View
-	 * @return RepayInstruction
-	 */
-	@Override
-	public List<FinServiceInstruction> getFinServInstByServiceReqNo(final String finReference, Date fromDate,
-			String serviceReqNo, String finEvent) {
-		logger.debug("Entering");
-
-		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
-		finServiceInstruction.setFinReference(finReference);
-		finServiceInstruction.setServiceReqNo(serviceReqNo);
-		finServiceInstruction.setFinEvent(finEvent);
-		finServiceInstruction.setFromDate(fromDate);
-
-		StringBuilder selectSql = new StringBuilder("Select ServiceSeqId, FinEvent, FinReference, FromDate,ToDate");
-		selectSql.append(
-				",PftDaysBasis,SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate,NextGrcRepayDate");
-		selectSql.append(",RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq");
-		selectSql.append(
-				",RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms ,ServiceReqNo,Remarks, PftChg, InstructionUID, LinkedTranID ");
-		selectSql.append(" From FinServiceInstruction Where FinReference =:FinReference AND");
-		selectSql.append(" FromDate=:FromDate AND FinEvent =:FinEvent AND ServiceReqNo =:ServiceReqNo ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finServiceInstruction);
-		RowMapper<FinServiceInstruction> typeRowMapper = BeanPropertyRowMapper.newInstance(FinServiceInstruction.class);
-
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
-
-	@Override
-	public List<FinServiceInstruction> getFinServiceInstDetailsByServiceReqNo(String finReference,
-			String serviceReqNo) {
-		logger.debug("Entering");
-		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
-		finServiceInstruction.setFinReference(finReference);
-		finServiceInstruction.setServiceReqNo(serviceReqNo);
-
-		StringBuilder selectSql = new StringBuilder("Select ServiceSeqId, FinEvent, FinReference, FromDate,ToDate");
-		selectSql.append(
-				",PftDaysBasis,SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate,NextGrcRepayDate");
-		selectSql.append(",RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq");
-		selectSql.append(
-				",RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms ,ServiceReqNo,Remarks, PftChg, InstructionUID, LinkedTranID ");
-		selectSql.append(
-				" From FinServiceInstruction Where FinReference =:FinReference AND ServiceReqNo =:ServiceReqNo ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finServiceInstruction);
-		RowMapper<FinServiceInstruction> typeRowMapper = BeanPropertyRowMapper.newInstance(FinServiceInstruction.class);
-
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
-
-	@Override
-	public List<LMSServiceLog> getLMSServiceLogList(String notificationFlag) {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		StringBuilder sql = new StringBuilder("Select Id,Event, FinReference, OldRate, NewRate, EffectiveDate,");
-		sql.append(" NotificationFlag From LMSServiceLog Where  NotificationFlag = :NotificationFlag ");
-		logger.debug(Literal.SQL + sql.toString());
-
-		source.addValue("NotificationFlag", notificationFlag);
-
-		RowMapper<LMSServiceLog> typeRowMapper = BeanPropertyRowMapper.newInstance(LMSServiceLog.class);
-
-		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-	}
-
-	@Override
-	public void updateNotificationFlag(String notificationFlag, long id) {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		StringBuilder updateSql = new StringBuilder("update LMSServiceLog set NotificationFlag = :NotificationFlag");
-		updateSql.append(" Where id =:id");
-		logger.debug(Literal.SQL + updateSql.toString());
-
-		source.addValue("NotificationFlag", notificationFlag);
-		source.addValue("id", id);
-
-		try {
-			this.jdbcTemplate.update(updateSql.toString(), source);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw e;
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public BigDecimal getOldRate(String finReference, Date schdate) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" CalculatedRate");
-		sql.append(" From FinScheduleDetails");
-		sql.append(" Where Finreference = ?");
-		sql.append(" and Schdate = (Select max(schdate) From FinScheduleDetails");
-		sql.append(" Where Finreference = ? and Schdate <= ?) ");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			Object[] object = new Object[] { finReference, finReference, schdate };
-			return this.jdbcOperations.queryForObject(sql.toString(), object, BigDecimal.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(
-					"Rate not found in FinScheduleDetails table for the specified FinReference >> {} and Schdate <= {}",
-					finReference, schdate);
-		}
-
-		return BigDecimal.ZERO;
-	}
-
-	@Override
-	public BigDecimal getNewRate(String finReference, Date schdate) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("select calculatedrate from finscheduledetails_Temp where Finreference = :FinReference ");
-		sql.append("and Schdate = (select max(schdate) from finscheduledetails_Temp ");
-		sql.append("where Finreference = :FinReference and Schdate <= :Schdate) ");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("FinReference", finReference);
-		paramSource.addValue("Schdate", schdate);
-
-		BigDecimal result = BigDecimal.ZERO;
-		try {
-			result = this.jdbcTemplate.queryForObject(sql.toString(), paramSource, BigDecimal.class);
-		} catch (EmptyResultDataAccessException e) {
-		}
-		logger.debug(Literal.LEAVING);
-		return result;
-	}
-
-	@Override
-	public void saveLMSServiceLOGList(List<LMSServiceLog> slList) {
-		StringBuilder sql = new StringBuilder("Insert into");
-		sql.append(" LMSServiceLog");
-		sql.append("(Event, FinReference, OldRate, NewRate, EffectiveDate, NotificationFlag");
-		sql.append(") values(");
-		sql.append("?, ?, ?, ?, ?, ?");
-		sql.append(")");
-
-		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
-
-			@Override
-			public void setValues(PreparedStatement ps, int i) throws SQLException {
-				LMSServiceLog sl = slList.get(i);
-
-				int index = 1;
-
-				ps.setString(index++, sl.getEvent());
-				ps.setString(index++, sl.getFinReference());
-				ps.setBigDecimal(index++, sl.getOldRate());
-				ps.setBigDecimal(index++, sl.getNewRate());
-				ps.setDate(index++, JdbcUtil.getDate(sl.getEffectiveDate()));
-				ps.setString(index++, sl.getNotificationFlag());
-			}
-
-			@Override
-			public int getBatchSize() {
-				return slList.size();
-			}
-		});
-
-	}
-
-	@Override
-	public List<String> getFinEventByFinRef(String finReference, String type) {
-
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("FinReference", finReference);
-
-		StringBuilder sql = new StringBuilder("Select FinEvent");
 		sql.append(" From FinServiceInstruction");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference =:FinReference ");
 
-		logger.trace(Literal.SQL + sql.toString());
-		try {
-			return this.jdbcTemplate.queryForList(sql.toString(), paramSource, String.class);
-		} catch (Exception e) {
-			//
-		}
-
-		return new ArrayList<>();
-
+		return sql;
 	}
 
-	@Override
-	public List<FinServiceInstruction> getOrgFinServiceInstructions(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ServiceSeqId, FinEvent, FinReference, FromDate, ToDate, PftDaysBasis, SchdMethod");
-		sql.append(", ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate, NextGrcRepayDate, RepayPftFrq");
-		sql.append(", RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq, RepayFrq, NextRepayDate");
-		sql.append(", Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms, ServiceReqNo");
-		sql.append(", Remarks, PftChg, InstructionUID, LinkedTranID");
-		sql.append(" from FinServiceInstruction");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = ? ");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-				}
-			}, new RowMapper<FinServiceInstruction>() {
-				@Override
-				public FinServiceInstruction mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinServiceInstruction fsi = new FinServiceInstruction();
-
-					fsi.setServiceSeqId(rs.getLong("ServiceSeqId"));
-					fsi.setFinEvent(rs.getString("FinEvent"));
-					fsi.setFinReference(rs.getString("FinReference"));
-					fsi.setFromDate(rs.getTimestamp("FromDate"));
-					fsi.setToDate(rs.getTimestamp("ToDate"));
-					fsi.setPftDaysBasis(rs.getString("PftDaysBasis"));
-					fsi.setSchdMethod(rs.getString("SchdMethod"));
-					fsi.setActualRate(rs.getBigDecimal("ActualRate"));
-					fsi.setBaseRate(rs.getString("BaseRate"));
-					fsi.setSplRate(rs.getString("SplRate"));
-					fsi.setMargin(rs.getBigDecimal("Margin"));
-					fsi.setGrcPeriodEndDate(rs.getTimestamp("GrcPeriodEndDate"));
-					fsi.setNextGrcRepayDate(rs.getTimestamp("NextGrcRepayDate"));
-					fsi.setRepayPftFrq(rs.getString("RepayPftFrq"));
-					fsi.setRepayRvwFrq(rs.getString("RepayRvwFrq"));
-					fsi.setRepayCpzFrq(rs.getString("RepayCpzFrq"));
-					fsi.setGrcPftFrq(rs.getString("GrcPftFrq"));
-					fsi.setGrcRvwFrq(rs.getString("GrcRvwFrq"));
-					fsi.setGrcCpzFrq(rs.getString("GrcCpzFrq"));
-					fsi.setRepayFrq(rs.getString("RepayFrq"));
-					fsi.setNextRepayDate(rs.getTimestamp("NextRepayDate"));
-					fsi.setAmount(rs.getBigDecimal("Amount"));
-					fsi.setRecalType(rs.getString("RecalType"));
-					fsi.setRecalFromDate(rs.getTimestamp("RecalFromDate"));
-					fsi.setRecalToDate(rs.getTimestamp("RecalToDate"));
-					fsi.setPftIntact(rs.getBoolean("PftIntact"));
-					fsi.setTerms(rs.getInt("Terms"));
-					fsi.setServiceReqNo(rs.getString("ServiceReqNo"));
-					fsi.setRemarks(rs.getString("Remarks"));
-					fsi.setPftChg(rs.getBigDecimal("PftChg"));
-					fsi.setInstructionUID(rs.getLong("InstructionUID"));
-					fsi.setLinkedTranID(rs.getLong("LinkedTranID"));
-
-					return fsi;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+	private class FinServiceInstructionRowMapper implements RowMapper<FinServiceInstruction> {
+		private FinServiceInstructionRowMapper() {
+			super();
 		}
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
-	}
+		@Override
+		public FinServiceInstruction mapRow(ResultSet rs, int rowNum) throws SQLException {
+			FinServiceInstruction fsi = new FinServiceInstruction();
 
-	@Override
-	public boolean isFinServiceInstExists(String finReference, String table) {
-		StringBuilder sql = new StringBuilder(" Select Count(1) ");
-		sql.append(" from FinServiceInstruction");
-		sql.append(table);
-		sql.append(" where Finreference = ?");
+			fsi.setServiceSeqId(rs.getLong("ServiceSeqId"));
+			fsi.setFinEvent(rs.getString("FinEvent"));
+			fsi.setFinID(rs.getLong("FinID"));
+			fsi.setFinReference(rs.getString("FinReference"));
+			fsi.setFromDate(rs.getTimestamp("FromDate"));
+			fsi.setToDate(rs.getTimestamp("ToDate"));
+			fsi.setPftDaysBasis(rs.getString("PftDaysBasis"));
+			fsi.setSchdMethod(rs.getString("SchdMethod"));
+			fsi.setActualRate(rs.getBigDecimal("ActualRate"));
+			fsi.setBaseRate(rs.getString("BaseRate"));
+			fsi.setSplRate(rs.getString("SplRate"));
+			fsi.setMargin(rs.getBigDecimal("Margin"));
+			fsi.setGrcPeriodEndDate(rs.getTimestamp("GrcPeriodEndDate"));
+			fsi.setNextGrcRepayDate(rs.getTimestamp("NextGrcRepayDate"));
+			fsi.setRepayPftFrq(rs.getString("RepayPftFrq"));
+			fsi.setRepayRvwFrq(rs.getString("RepayRvwFrq"));
+			fsi.setRepayCpzFrq(rs.getString("RepayCpzFrq"));
+			fsi.setGrcPftFrq(rs.getString("GrcPftFrq"));
+			fsi.setGrcRvwFrq(rs.getString("GrcRvwFrq"));
+			fsi.setGrcCpzFrq(rs.getString("GrcCpzFrq"));
+			fsi.setRepayFrq(rs.getString("RepayFrq"));
+			fsi.setNextRepayDate(rs.getTimestamp("NextRepayDate"));
+			fsi.setAmount(rs.getBigDecimal("Amount"));
+			fsi.setRecalType(rs.getString("RecalType"));
+			fsi.setRecalFromDate(rs.getTimestamp("RecalFromDate"));
+			fsi.setRecalToDate(rs.getTimestamp("RecalToDate"));
+			fsi.setPftIntact(rs.getBoolean("PftIntact"));
+			fsi.setTerms(rs.getInt("Terms"));
+			fsi.setServiceReqNo(rs.getString("ServiceReqNo"));
+			fsi.setRemarks(rs.getString("Remarks"));
+			fsi.setPftChg(rs.getBigDecimal("PftChg"));
+			fsi.setInstructionUID(rs.getLong("InstructionUID"));
+			fsi.setLinkedTranID(rs.getLong("LinkedTranID"));
 
-		try {
-			Object[] object = new Object[] { finReference };
-			return this.jdbcOperations.queryForObject(sql.toString(), object, Integer.class) == 0 ? false : true;
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record not found in FinServiceInstruction {} table for the specified FinReference >> {}",
-					table, finReference);
+			return fsi;
 		}
-		return false;
 	}
-
 }

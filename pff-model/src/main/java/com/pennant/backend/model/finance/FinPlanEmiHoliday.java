@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinPlanEmiHoliday {
 
+	private long finID;
 	private String finReference;
 	@XmlElement(name = "holidayMonth")
 	private int planEMIHMonth;
@@ -19,6 +20,14 @@ public class FinPlanEmiHoliday {
 
 	public FinPlanEmiHoliday() {
 		super();
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

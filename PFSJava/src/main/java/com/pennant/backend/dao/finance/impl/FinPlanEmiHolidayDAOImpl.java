@@ -1,61 +1,45 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinPlanEmiHolidayDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  13-10-2011    														*
- *                                                                  						*
- * Modified Date    :  13-10-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinPlanEmiHolidayDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 13-10-2011 * *
+ * Modified Date : 13-10-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 13-10-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 13-10-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.backend.dao.finance.FinPlanEmiHolidayDAO;
 import com.pennant.backend.model.finance.FinPlanEmiHoliday;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>FinPlanEmiHoliday model</b> class.<br>
@@ -67,140 +51,121 @@ public class FinPlanEmiHolidayDAOImpl extends BasicDao<FinPlanEmiHoliday> implem
 		super();
 	}
 
-	/**
-	 * Method for Fetching List of Planned EMI Holiday Months
-	 */
 	@Override
-	public List<Integer> getPlanEMIHMonthsByRef(String finReference, String type) {
-		logger.debug("Entering");
+	public List<Integer> getPlanEMIHMonthsByRef(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PlanEMIHMonth From FinPlanEMIHMonths");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT PlanEMIHMonth FROM FinPlanEMIHMonths");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql: " + selectSql.toString());
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-
-		List<Integer> planEMIHMonths = this.jdbcTemplate.queryForList(selectSql.toString(), source, Integer.class);
-
-		logger.debug("Leaving");
-		return planEMIHMonths;
+		return this.jdbcOperations.queryForList(sql.toString(), Integer.class, finID);
 	}
 
-	/**
-	 * Method for fetching lIst of Planned EMI Holiday Dates
-	 */
 	@Override
-	public List<Date> getPlanEMIHDatesByRef(String finReference, String type) {
-		logger.debug("Entering");
+	public List<Date> getPlanEMIHDatesByRef(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PlanEMIHDate From FinPlanEMIHDates");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT PlanEMIHDate FROM FinPlanEMIHDates");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql: " + selectSql.toString());
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-
-		List<Date> planEMIHDates = this.jdbcTemplate.queryForList(selectSql.toString(), source, Date.class);
-
-		logger.debug("Leaving");
-		return planEMIHDates;
+		return this.jdbcOperations.queryForList(sql.toString(), Date.class, finID);
 	}
 
-	/**
-	 * Method for Deletion of Plan EMI Holiday months by Key : Finance Reference
-	 */
 	@Override
-	public void deletePlanEMIHMonths(String finReference, String type) {
-		logger.debug("Entering");
+	public void deletePlanEMIHMonths(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Delete From FinPlanEMIHMonths");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
 
-		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append("Delete From FinPlanEMIHMonths");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinReference =:FinReference");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		this.jdbcTemplate.update(deleteSql.toString(), source);
-
-		logger.debug("Leaving");
+			ps.setLong(index++, finID);
+		});
 	}
 
-	/**
-	 * Method for saving List of Planned EMI Holiday Months by Frequency Method
-	 */
 	@Override
-	public void savePlanEMIHMonths(List<FinPlanEmiHoliday> planEMIHMonths, String type) {
-		logger.debug("Entering");
+	public void savePlanEMIHMonths(List<FinPlanEmiHoliday> emim, String type) {
+		StringBuilder sql = new StringBuilder("Insert Into FinPlanEMIHMonths");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (FinID, FinReference, PlanEMIHMonth)");
+		sql.append(" Values(?, ?, ?)");
 
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append("Insert Into FinPlanEMIHMonths");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference, PlanEMIHMonth)");
-		insertSql.append(" Values(:FinReference, :PlanEMIHMonth)");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(planEMIHMonths.toArray());
 		try {
-			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps, int i) throws SQLException {
+					FinPlanEmiHoliday emih = emim.get(i);
+					int index = 1;
+
+					ps.setLong(index++, emih.getFinID());
+					ps.setString(index++, emih.getFinReference());
+					ps.setInt(index++, emih.getPlanEMIHMonth());
+				}
+
+				@Override
+				public int getBatchSize() {
+					return emim.size();
+				}
+			});
 		} catch (Exception e) {
-			logger.error("Exception", e);
 			throw e;
 		}
-
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method for Deletion of Plan EMI Holiday Dates by Key : Finance Reference
-	 */
 	@Override
-	public void deletePlanEMIHDates(String finReference, String type) {
-		logger.debug("Entering");
+	public void deletePlanEMIHDates(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Delete From FinPlanEMIHDates");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
 
-		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append("Delete From FinPlanEMIHDates");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinReference =:FinReference");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("deleteSql: " + deleteSql.toString());
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		this.jdbcTemplate.update(deleteSql.toString(), source);
-
-		logger.debug("Leaving");
+			ps.setLong(index++, finID);
+		});
 	}
 
-	/**
-	 * Method for Saving list of Planned EMI Holiday Dates by Ad-hoc Method
-	 */
 	@Override
 	public void savePlanEMIHDates(List<FinPlanEmiHoliday> planEMIHDates, String type) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Insert Into FinPlanEMIHDates");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (FinID, FinReference, PlanEMIHDate)");
+		sql.append(" Values(?, ?, ?)");
 
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append("Insert Into FinPlanEMIHDates");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference, PlanEMIHDate)");
-		insertSql.append(" Values(:FinReference, :PlanEMIHDate)");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(planEMIHDates.toArray());
 		try {
-			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps, int i) throws SQLException {
+					FinPlanEmiHoliday emih = planEMIHDates.get(i);
+					int index = 1;
+
+					ps.setLong(index++, emih.getFinID());
+					ps.setString(index++, emih.getFinReference());
+					ps.setDate(index++, JdbcUtil.getDate(emih.getPlanEMIHDate()));
+				}
+
+				@Override
+				public int getBatchSize() {
+					return planEMIHDates.size();
+				}
+			});
 		} catch (Exception e) {
-			logger.error("Exception", e);
 			throw e;
 		}
 
-		logger.debug("Leaving");
 	}
 
 }

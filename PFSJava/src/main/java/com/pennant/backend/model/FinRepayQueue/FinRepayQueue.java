@@ -7,6 +7,7 @@ import com.pennant.backend.model.finance.TaxHeader;
 
 public class FinRepayQueue {
 
+	private long finID;
 	private String finReference;
 	private Date rpyDate;
 	private String finRpyFor;
@@ -61,16 +62,20 @@ public class FinRepayQueue {
 	private BigDecimal latePayPftPayNow = BigDecimal.ZERO;
 	private BigDecimal latePayPftWaivedNow = BigDecimal.ZERO;
 	private BigDecimal latePayPftBal = BigDecimal.ZERO;
-	
+
 	private TaxHeader taxHeader;
 
 	public FinRepayQueue() {
 
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
 
 	public String getFinReference() {
 		return finReference;
