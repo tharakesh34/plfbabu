@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinODDetailsDAO.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  08-05-2012    														*
- *                                                                  						*
- * Modified Date    :  08-05-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinODDetailsDAO.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 08-05-2012 * * Modified Date
+ * : 08-05-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 08-05-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 08-05-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -47,7 +29,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinODDetails;
 
 /**
@@ -60,7 +41,7 @@ public interface FinODDetailsDAO {
 
 	void save(FinODDetails finOdDetails);
 
-	int getPendingOverDuePayment(String finReference);
+	int getPendingOverDuePayment(long finID);
 
 	void updateTotals(FinODDetails detail);
 
@@ -70,74 +51,48 @@ public interface FinODDetailsDAO {
 
 	void resetTotals(FinODDetails detail);
 
-	int getFinODDays(String finReference, String type);
-
-	FinODDetails getFinODSummary(String finReference, int graceDays, boolean crbCheck, String type);
-
-	Long checkCustPastDue(long custID);
+	int getFinODDays(long finID);
 
 	void updateBatch(FinODDetails finOdDetails);
 
-	void saveHoldAccountStatus(List<AccountHoldStatus> returnAcList);
+	int getMaxODDaysOnDeferSchd(long finID, List<Date> pastdueDefDateList);
 
-	void saveODDeferHistory(String finReference, List<Date> pastdueDefDateList);
-
-	void deleteODDeferHistory(String finReference, List<Date> pastdueDefDateList);
-
-	int getMaxODDaysOnDeferSchd(String finReference, List<Date> pastdueDefDateList);
-
-	FinODDetails getMaxDaysFinODDetails(String finReference);
-
-	List<Date> getMismatchODDates(String finReference, List<Date> schDateList);
+	FinODDetails getMaxDaysFinODDetails(long finID);
 
 	void updatePenaltyTotals(FinODDetails detail);
 
-	FinODDetails getTotals(String finReference);
+	FinODDetails getTotals(long finID);
 
-	FinODDetails getFinODSummary(String finReference);
+	FinODDetails getFinODSummary(long finID);
 
-	BigDecimal getTotalPenaltyBal(String finReference, List<Date> presentmentDates);
+	BigDecimal getTotalPenaltyBal(long finID, List<Date> presentmentDates);
 
-	BigDecimal getTotalODPftBal(String finReference, List<Date> presentmentDates);
+	// Receipts
+	List<FinODDetails> getFinODBalByFinRef(long finID);
 
-	//Receipts
-	List<FinODDetails> getFinODBalByFinRef(String finReference);
+	void updateLatePftTotals(long finID, Date odSchDate, BigDecimal paidNow, BigDecimal waivedNow);
 
-	Date getFinDueFromDate(String finReference);
+	void updateReversals(long finID, Date odSchDate, BigDecimal penaltyPaid, BigDecimal latePftPaid);
 
-	void updateLatePftTotals(String finReference, Date odSchDate, BigDecimal paidNow, BigDecimal waivedNow);
+	FinODDetails getFinODDetailsForBatch(long finID, Date schdDate);
 
-	FinODDetails getFinODyFinRefSchDate(String finReference, Date schdate);
-
-	void updateReversals(String finReference, Date odSchDate, BigDecimal penaltyPaid, BigDecimal latePftPaid);
-
-	FinODDetails getFinODDetailsForBatch(String finReference, Date schdDate);
-
-	int getFinCurSchdODDays(String finReference, Date finODSchdDate);
+	int getFinCurSchdODDays(long finID, Date finODSchdDate);
 
 	void updateList(List<FinODDetails> overdues);
 
-	void updateODDetails(List<FinODDetails> overdues);
-
-	//EOD
-	List<FinODDetails> getFinODDByFinRef(String finReference, Date odSchdDate);
-
-	void deleteAfterODDate(String finReference, Date odDate);
+	// EOD
+	List<FinODDetails> getFinODDByFinRef(long finID, Date odSchdDate);
 
 	int saveList(List<FinODDetails> finOdDetails);
 
-	List<FinODDetails> getFinODPenalityByFinRef(String finReference, boolean ispft, boolean isRender);
+	List<FinODDetails> getFinODPenalityByFinRef(long finID, boolean ispft, boolean isRender);
 
-	List<FinODDetails> getFinODDetailsByFinRef(String finReference, String type);
-
-	void updateWaiverAmount(String finReference, Date odDate, BigDecimal waivedAmount, BigDecimal penAmount);
+	void updateWaiverAmount(long finID, Date odDate, BigDecimal waivedAmount, BigDecimal penAmount);
 
 	List<FinODDetails> getCustomerDues(long custId);
 
 	int updateODDetailsBatch(List<FinODDetails> overdues);
 
-	boolean isLppMethodOnMinPenalBalSchdExsts(String finReference);
-
-	FinODDetails getFinODByFinRef(String finReference, Date schDate);
+	FinODDetails getFinODByFinRef(long finID, Date schDate);
 
 }

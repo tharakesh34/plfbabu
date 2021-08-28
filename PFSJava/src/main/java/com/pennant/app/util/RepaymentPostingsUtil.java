@@ -1657,7 +1657,7 @@ public class RepaymentPostingsUtil {
 				if (proceedFurther) {
 
 					// Get Current Over Due Details Days Count after Payment Process
-					int curMaxODDays = finODDetailsDAO.getFinODDays(financeMain.getFinReference(), "");
+					int curMaxODDays = finODDetailsDAO.getFinODDays(financeMain.getFinReference());
 
 					// Status of Suspense from CustStatusCodes based on OD Days when OD Days > 0
 					boolean curFinIsSusp = false;

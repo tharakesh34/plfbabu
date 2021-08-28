@@ -42,9 +42,9 @@ import javax.xml.bind.annotation.XmlType;
 		"oDChargeType" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinODDetails implements Serializable {
-
 	private static final long serialVersionUID = 1L;
 
+	private long finID;
 	private String finReference;
 	@XmlElement(name = "odDate")
 	private Date finODSchdDate;
@@ -115,6 +115,7 @@ public class FinODDetails implements Serializable {
 
 	public FinODDetails copyEntity() {
 		FinODDetails entity = new FinODDetails();
+		entity.setFinID(this.finID);
 		entity.setFinReference(this.finReference);
 		entity.setFinODSchdDate(this.finODSchdDate);
 		entity.setFinODFor(this.finODFor);
@@ -161,16 +162,12 @@ public class FinODDetails implements Serializable {
 		return entity;
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public String getId() {
-		return finReference;
+	public long getFinID() {
+		return finID;
 	}
 
-	public void setId(String id) {
-		this.finReference = id;
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
