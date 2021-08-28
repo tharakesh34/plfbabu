@@ -86,7 +86,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 			ps.setBigDecimal(index++, oatd.getTotalGST());
 			ps.setBigDecimal(index++, oatd.getPaidAmount());
 			ps.setBigDecimal(index++, oatd.getWaivedAmount());
-			ps.setLong(index, JdbcUtil.getLong(oatd.getInvoiceID()));
+			ps.setLong(index++, JdbcUtil.getLong(oatd.getInvoiceID()));
 		});
 
 		return oatd.getTaxSeqId();
@@ -121,7 +121,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinID, FinReference, TaxFor, ReceivableAmount, CGST, IGST, UGST, SGST, CESS");
 		sql.append(" From FinTaxReceivable");
-		sql.append(" Where FinID = ? and TaxFor= ?");
+		sql.append(" Where FinID = ? and TaxFor = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -195,7 +195,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 
 	@Override
 	public FinTaxIncomeDetail getFinTaxIncomeDetail(long repayID, String type) {
-		String sql = "Select RepayID, TaxFor, ReceivedAmount, CGST, IGST, UGST, SGST, CESS From FinTaxIncomeDetail Where  RepayID = ? and TaxFor = ?";
+		String sql = "Select RepayID, TaxFor, ReceivedAmount, CGST, IGST, UGST, SGST, CESS From FinTaxIncomeDetail Where RepayID = ? and TaxFor = ?";
 
 		logger.debug(Literal.SQL + sql);
 
