@@ -1191,8 +1191,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		aeEvent.getDataMap().put("rd_amount", amount);
 
-		long accountsetId = accountingSetDAO.getAccountingSetId(AccountingEvent.RECIP,
-				AccountingEvent.RECIP);
+		long accountsetId = accountingSetDAO.getAccountingSetId(AccountingEvent.RECIP, AccountingEvent.RECIP);
 		aeEvent.getAcSetIDList().add(accountsetId);
 		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 		logger.debug(Literal.LEAVING);
@@ -1614,7 +1613,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				FinRepayHeader rph = financeRepaymentsDAO.getFinRepayHeadersByReceipt(rcd.getReceiptSeqID(), "");
 				rcd.setRepayHeader(rph);
 				if (rph != null) {
-					List<RepayScheduleDetail> rpySchdList = financeRepaymentsDAO.getRpySchdList(rph.getRepayID(), "");
+					List<RepayScheduleDetail> rpySchdList = financeRepaymentsDAO
+							.getRpySchdListByRepayID(rph.getRepayID(), "");
 					rph.setRepayScheduleDetails(rpySchdList);
 				}
 			}
@@ -2644,8 +2644,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
 		if (finReceiptHeader.isNewRecord()) { // for New record or new record into
-										// work
-										// flow
+			// work
+			// flow
 
 			if (!finReceiptHeader.isWorkflow()) {// With out Work flow only new
 				// records
@@ -6115,8 +6115,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		int version = 0;
 		// Receipt upload process
 		if (fsi.isReceiptdetailExits()) {
-			FinReceiptData oldReceiptData = this.getFinReceiptDataById(fsi.getFinReference(),
-					AccountingEvent.REPAY, FinServiceEvent.RECEIPT, FinanceConstants.REALIZATION_MAKER);
+			FinReceiptData oldReceiptData = this.getFinReceiptDataById(fsi.getFinReference(), AccountingEvent.REPAY,
+					FinServiceEvent.RECEIPT, FinanceConstants.REALIZATION_MAKER);
 			receiptData = oldReceiptData;
 
 			receiptData.getReceiptHeader().setRealizationDate(fsi.getRealizationDate());

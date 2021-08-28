@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceRepaymentsDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceRepaymentsDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * *
+ * Modified Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.Repayments.impl;
@@ -59,15 +41,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
@@ -91,33 +68,26 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		super();
 	}
 
-	/**
-	 * Generate Finance Pay Sequence
-	 */
-	public long getFinancePaySeq(FinanceRepayments financeRepayments) {
+	public long getFinancePaySeq(FinanceRepayments rpd) {
+		String sql = "Select coalesce(max(FinPaySeq), 0) From FinRepayDetails Where FinID = ? and  FinSchdDate = ? and FinRpyFor = ?";
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		Object[] objects = new Object[] { rpd.getFinID(), rpd.getFinSchdDate(), rpd.getFinRpyFor() };
+
 		long repaySeq = 0;
 
-		StringBuilder sql = new StringBuilder("Select COALESCE(MAX(FinPaySeq), 0) FROM FinRepayDetails");
-		sql.append(" where FinReference = ? and  FinSchdDate = ? and FinRpyFor = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-
 		try {
-			Object[] object = new Object[] { financeRepayments.getFinReference(), financeRepayments.getFinSchdDate(),
-					financeRepayments.getFinRpyFor() };
-			repaySeq = this.jdbcOperations.queryForObject(sql.toString(), object, Long.class);
+			repaySeq = this.jdbcOperations.queryForObject(sql.toString(), Long.class, objects);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-			repaySeq = 0;
+			//
 		}
-		repaySeq = repaySeq + 1;
-		return repaySeq;
+
+		return repaySeq + 1;
 	}
 
 	@Override
 	public void save(List<FinanceRepayments> list, String type) {
-		logger.debug(Literal.ENTERING);
-
 		String sql = getInsertQuery(type);
 
 		Map<String, Long> repaySeqMap = new HashMap<>();
@@ -125,9 +95,48 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		try {
 			jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
 				@Override
-				public void setValues(PreparedStatement ps, int index) throws SQLException {
-					FinanceRepayments fr = list.get(index);
-					save(fr, ps, repaySeqMap, index);
+				public void setValues(PreparedStatement ps, int seq) throws SQLException {
+					FinanceRepayments fr = list.get(seq);
+
+					int index = 1;
+
+					long finPaySeq = 0;
+					if (fr.getId() == Long.MIN_VALUE || fr.getId() == 0) {
+						String key = fr.getFinID() + DateUtil.formatToShortDate(fr.getFinSchdDate())
+								+ fr.getFinRpyFor();
+						repaySeqMap.computeIfAbsent(key, abc -> getFinancePaySeq(fr));
+
+						finPaySeq = repaySeqMap.get(key);
+						finPaySeq = finPaySeq + seq;
+						fr.setFinPaySeq(finPaySeq);
+
+					}
+
+					ps.setLong(index++, fr.getFinID());
+					ps.setString(index++, fr.getFinReference());
+					ps.setDate(index++, JdbcUtil.getDate(fr.getFinSchdDate()));
+					ps.setString(index++, fr.getFinRpyFor());
+					ps.setLong(index++, fr.getFinPaySeq());
+					ps.setLong(index++, fr.getLinkedTranId());
+					ps.setBigDecimal(index++, fr.getFinRpyAmount());
+					ps.setDate(index++, JdbcUtil.getDate(fr.getFinPostDate()));
+					ps.setDate(index++, JdbcUtil.getDate(fr.getFinValueDate()));
+					ps.setString(index++, fr.getFinBranch());
+					ps.setString(index++, fr.getFinType());
+					ps.setLong(index++, fr.getFinCustID());
+					ps.setBigDecimal(index++, fr.getFinSchdPriPaid());
+					ps.setBigDecimal(index++, fr.getFinSchdPftPaid());
+					ps.setBigDecimal(index++, fr.getFinSchdTdsPaid());
+					ps.setBigDecimal(index++, fr.getSchdFeePaid());
+					ps.setBigDecimal(index++, fr.getFinTotSchdPaid());
+					ps.setBigDecimal(index++, fr.getFinFee());
+					ps.setBigDecimal(index++, fr.getFinWaiver());
+					ps.setBigDecimal(index++, fr.getFinRefund());
+					ps.setBigDecimal(index++, fr.getPenaltyPaid());
+					ps.setBigDecimal(index++, fr.getPenaltyWaived());
+					ps.setLong(index++, fr.getReceiptId());
+					ps.setLong(index++, fr.getWaiverId());
+
 				}
 
 				@Override
@@ -136,116 +145,41 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 				}
 			});
 
-		} catch (Exception e) {
+		} catch (DataAccessException e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public long save(FinanceRepayments fr, String type) {
-		logger.debug(Literal.ENTERING);
+		List<FinanceRepayments> list = new ArrayList<>();
 
-		String sql = getInsertQuery(type);
+		list.add(fr);
 
-		try {
-			jdbcOperations.update(sql, new PreparedStatementSetter() {
+		save(list, type);
 
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					save(fr, ps, null, 0);
-				}
-			});
-		} catch (Exception e) {
-			throw e;
-		}
-
-		logger.debug(Literal.LEAVING);
 		return fr.getId();
 	}
 
-	private void save(FinanceRepayments fr, PreparedStatement ps, Map<String, Long> repaySeqMap, int seq)
-			throws SQLException {
-		int index = 1;
-
-		long finPaySeq = 0;
-		if (fr.getId() == Long.MIN_VALUE || fr.getId() == 0) {
-			if (repaySeqMap == null) {
-				finPaySeq = getFinancePaySeq(fr);
-			} else {
-				String key = fr.getFinReference() + DateUtil.formatToShortDate(fr.getFinSchdDate()) + fr.getFinRpyFor();
-				repaySeqMap.computeIfAbsent(key, abc -> getFinancePaySeq(fr));
-
-				finPaySeq = repaySeqMap.get(key);
-				finPaySeq = finPaySeq + seq;
-			}
-
-			fr.setFinPaySeq(finPaySeq);
-
-		}
-
-		ps.setString(index++, fr.getFinReference());
-		ps.setDate(index++, JdbcUtil.getDate(fr.getFinSchdDate()));
-		ps.setString(index++, fr.getFinRpyFor());
-		ps.setLong(index++, fr.getFinPaySeq());
-		ps.setLong(index++, fr.getLinkedTranId());
-		ps.setBigDecimal(index++, fr.getFinRpyAmount());
-		ps.setDate(index++, JdbcUtil.getDate(fr.getFinPostDate()));
-		ps.setDate(index++, JdbcUtil.getDate(fr.getFinValueDate()));
-		ps.setString(index++, fr.getFinBranch());
-		ps.setString(index++, fr.getFinType());
-		ps.setLong(index++, fr.getFinCustID());
-		ps.setBigDecimal(index++, fr.getFinSchdPriPaid());
-		ps.setBigDecimal(index++, fr.getFinSchdPftPaid());
-		ps.setBigDecimal(index++, fr.getFinSchdTdsPaid());
-		ps.setBigDecimal(index++, fr.getSchdFeePaid());
-		ps.setBigDecimal(index++, fr.getFinTotSchdPaid());
-		ps.setBigDecimal(index++, fr.getFinFee());
-		ps.setBigDecimal(index++, fr.getFinWaiver());
-		ps.setBigDecimal(index++, fr.getFinRefund());
-		ps.setBigDecimal(index++, fr.getPenaltyPaid());
-		ps.setBigDecimal(index++, fr.getPenaltyWaived());
-		ps.setLong(index++, fr.getReceiptId());
-		ps.setLong(index++, fr.getWaiverId());
-	}
-
-	private String getInsertQuery(String type) {
-		StringBuilder sql = new StringBuilder("insert into");
-		sql.append(" FinRepayDetails");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" (FinReference, FinSchdDate, FinRpyFor, FinPaySeq, LinkedTranId, FinRpyAmount, FinPostDate");
-		sql.append(", FinValueDate, FinBranch, FinType, FinCustID, FinSchdPriPaid, FinSchdPftPaid, FinSchdTdsPaid");
-		sql.append(", SchdFeePaid, FinTotSchdPaid, FinFee");
-		sql.append(", FinWaiver, FinRefund, PenaltyPaid, PenaltyWaived, ReceiptId, WaiverId");
-		sql.append(") values(");
-		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(")");
-		return sql.toString();
-	}
-
 	@Override
-	public List<FinanceRepayments> getFinRepayListByFinRef(String finReference, boolean isRpyCancelProc, String type) {
-		logger.debug(Literal.ENTERING);
-
-		List<FinanceRepayments> repaymentList = new ArrayList<FinanceRepayments>();
-
+	public List<FinanceRepayments> getFinRepayListByFinRef(long finID, boolean isRpyCancelProc, String type) {
 		StringBuilder sql = getRepayListQuery(isRpyCancelProc, type);
-		sql.append(" t1 where t1.FinReference = ?");
+		sql.append(" Where FinID = ?");
 		if (isRpyCancelProc) {
-			sql.append(" and t1.LinkedTranId = (Select MAX(t2.LinkedTranId) from FinRepayDetails t2");
-			sql.append(" Where t1.FinReference = t2.FinReference)");
-			sql.append(" and t1.LinkedTranId != ?");
+			sql.append(" and LinkedTranId = (Select max(LinkedTranId) From FinRepayDetails Where FinID = ?)");
+			sql.append(" and LinkedTranId != ?");
 		}
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		FinRepayListRowMapper rowMapper = new FinRepayListRowMapper(isRpyCancelProc);
 
-		repaymentList = this.jdbcOperations.query(sql.toString(), ps -> {
+		List<FinanceRepayments> repaymentList = this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, finReference);
+			ps.setLong(index++, finID);
 
 			if (isRpyCancelProc) {
+				ps.setLong(index++, finID);
 				ps.setInt(index++, 0);
 			}
 
@@ -254,18 +188,22 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		if (CollectionUtils.isEmpty(repaymentList)) {
 			sql = new StringBuilder();
 			sql = getRepayListQuery(isRpyCancelProc, type);
-			sql.append(" t1 where t1.FinReference = ?");
+			sql.append(" Where FinID = ?");
 			if (isRpyCancelProc) {
-				sql.append(" and t1.FinPostDate = (Select MAX(t2.FinPostDate) from FinRepayDetails t2");
-				sql.append(" Where t1.FinReference = t2.FinReference)");
-				sql.append(" and t1.LinkedTranId = 0");
+				sql.append(" and FinPostDate = (Select max(FinPostDate) From FinRepayDetails Where FinID = ?)");
+				sql.append(" and LinkedTranId = ?");
 			}
 
 			logger.debug(Literal.SQL + sql.toString());
 
 			repaymentList = this.jdbcOperations.query(sql.toString(), ps -> {
 				int index = 1;
-				ps.setString(index++, finReference);
+				ps.setLong(index++, finID);
+				if (isRpyCancelProc) {
+					ps.setLong(index++, finID);
+					ps.setInt(index++, 0);
+				}
+
 			}, rowMapper);
 
 		}
@@ -274,53 +212,37 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 				.collect(Collectors.toList());
 	}
 
-	private StringBuilder getRepayListQuery(boolean isRpyCancelProc, String type) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" t1.FinReference, t1.FinPostDate, t1.FinRpyFor, t1.FinPaySeq, t1.FinRpyAmount");
-		sql.append(", t1.FinSchdDate, t1.FinValueDate, t1.FinBranch, t1.FinType, t1.FinCustID");
-		sql.append(", t1.FinSchdPriPaid, t1.FinSchdPftPaid, t1.FinSchdTdsPaid, t1.FinTotSchdPaid");
-		sql.append(", t1.FinFee, t1.FinWaiver, t1.FinRefund, t1.SchdFeePaid, t1.PenaltyPaid");
-		sql.append(", t1.PenaltyWaived");
-
-		if (isRpyCancelProc) {
-			sql.append(", t1.LinkedTranId");
-		}
-
-		sql.append(" from FinRepayDetails");
-		sql.append(StringUtils.trimToEmpty(type));
-		return sql;
-	}
-
 	@Override
-	public List<FinanceRepayments> getByFinRefAndSchdDate(String finReference, Date finSchdDate) {
+	public List<FinanceRepayments> getByFinRefAndSchdDate(long finID, Date finSchdDate) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, FinPostDate, FinSchdDate, FinValueDate, FinSchdPriPaid, FinSchdPftPaid");
+		sql.append(" FinID, FinReference, FinPostDate, FinSchdDate, FinValueDate, FinSchdPriPaid, FinSchdPftPaid");
 		sql.append(", FinSchdTdsPaid, FinTotSchdPaid, PenaltyPaid, PenaltyWaived");
 		sql.append(" From FinRepayDetails");
-		sql.append(" Where FinReference = ? and FinSchdDate = ?");
+		sql.append(" Where FinID = ? and FinSchdDate = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		List<FinanceRepayments> repaymentList = this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, finReference);
+			ps.setLong(index++, finID);
 			ps.setDate(index++, JdbcUtil.getDate(finSchdDate));
 
 		}, (rs, rowNum) -> {
-			FinanceRepayments fr = new FinanceRepayments();
+			FinanceRepayments rpd = new FinanceRepayments();
 
-			fr.setFinReference(rs.getString("FinReference"));
-			fr.setFinPostDate(rs.getTimestamp("FinPostDate"));
-			fr.setFinSchdDate(rs.getTimestamp("FinSchdDate"));
-			fr.setFinValueDate(rs.getTimestamp("FinValueDate"));
-			fr.setFinSchdPriPaid(rs.getBigDecimal("FinSchdPriPaid"));
-			fr.setFinSchdPftPaid(rs.getBigDecimal("FinSchdPftPaid"));
-			fr.setFinSchdTdsPaid(rs.getBigDecimal("FinSchdTdsPaid"));
-			fr.setFinTotSchdPaid(rs.getBigDecimal("FinTotSchdPaid"));
-			fr.setPenaltyPaid(rs.getBigDecimal("PenaltyPaid"));
-			fr.setPenaltyWaived(rs.getBigDecimal("PenaltyWaived"));
+			rpd.setFinID(rs.getLong("FinID"));
+			rpd.setFinReference(rs.getString("FinReference"));
+			rpd.setFinPostDate(rs.getTimestamp("FinPostDate"));
+			rpd.setFinSchdDate(rs.getTimestamp("FinSchdDate"));
+			rpd.setFinValueDate(rs.getTimestamp("FinValueDate"));
+			rpd.setFinSchdPriPaid(rs.getBigDecimal("FinSchdPriPaid"));
+			rpd.setFinSchdPftPaid(rs.getBigDecimal("FinSchdPftPaid"));
+			rpd.setFinSchdTdsPaid(rs.getBigDecimal("FinSchdTdsPaid"));
+			rpd.setFinTotSchdPaid(rs.getBigDecimal("FinTotSchdPaid"));
+			rpd.setPenaltyPaid(rs.getBigDecimal("PenaltyPaid"));
+			rpd.setPenaltyWaived(rs.getBigDecimal("PenaltyWaived"));
 
-			return fr;
+			return rpd;
 
 		});
 
@@ -328,163 +250,166 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 	}
 
 	@Override
-	public void deleteRpyDetailbyLinkedTranId(long linkedTranId, String finReference) {
-		String sql = "Delete From FinRepayDetails where LinkedTranId = ? and FinReference = ?";
+	public void deleteRpyDetailbyLinkedTranId(long linkedTranId, long finID) {
+		String sql = "Delete From FinRepayDetails Where FinID = ? and LinkedTranId = ?";
 
 		logger.debug(Literal.SQL + sql);
 
 		this.jdbcOperations.update(sql, ps -> {
-			ps.setLong(1, linkedTranId);
-			ps.setString(2, finReference);
+			ps.setLong(1, finID);
+			ps.setLong(2, linkedTranId);
 		});
 	}
 
 	@Override
-	public void deleteRpyDetailbyMaxPostDate(Date finPostDate, String finReference) {
-		logger.debug("Entering");
+	public void deleteRpyDetailbyMaxPostDate(Date finPostDate, long finID) {
+		String sql = "Delete From FinRepayDetails Where FinID = ? and FinPostDate = ?";
 
-		FinanceRepayments financeRepayments = new FinanceRepayments();
-		financeRepayments.setFinReference(finReference);
-		financeRepayments.setFinPostDate(finPostDate);
+		logger.debug(Literal.SQL + sql);
 
-		StringBuilder deleteSql = new StringBuilder(" DELETE From FinRepayDetails");
-		deleteSql.append(" where FinPostDate=:FinPostDate AND FinReference=:FinReference ");
-
-		logger.debug("selectSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeRepayments);
-
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setLong(1, finID);
+			ps.setDate(2, JdbcUtil.getDate(finPostDate));
+		});
 	}
 
 	@Override
-	public FinRepayHeader getFinRepayHeader(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
-
+	public FinRepayHeader getFinRepayHeader(long finID, String type) {
 		StringBuilder sql = getFinRepayheaderQuery(type);
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		FinRepayHeaderRowMapper rowMapper = new FinRepayHeaderRowMapper();
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
 	@Override
-	public FinRepayHeader getFinRepayHeader(String finReference, long linkedTranId, String type) {
-		logger.debug(Literal.ENTERING);
-
+	public FinRepayHeader getFinRepayHeader(long finID, long linkedTranId, String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ValueDate, FinEvent");
-		sql.append(" from FinRepayHeader");
+		sql.append(" From FinRepayHeader");
 		sql.append(StringUtils.trim(type));
-		sql.append(" Where FinReference = ? and LinkedTranId = ?");
+		sql.append(" Where FinID = ? and LinkedTranId = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, linkedTranId },
-					new RowMapper<FinRepayHeader>() {
-						@Override
-						public FinRepayHeader mapRow(ResultSet rs, int rowNum) throws SQLException {
-							FinRepayHeader rh = new FinRepayHeader();
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinRepayHeader rh = new FinRepayHeader();
 
-							rh.setValueDate(rs.getTimestamp("ValueDate"));
-							rh.setFinEvent(rs.getString("FinEvent"));
+				rh.setValueDate(rs.getTimestamp("ValueDate"));
+				rh.setFinEvent(rs.getString("FinEvent"));
 
-							return rh;
-						}
-					});
+				return rh;
+
+			}, finID, linkedTranId);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
 	@Override
-	public Long saveFinRepayHeader(FinRepayHeader frh, TableType tableType) {
-		if (frh.getRepayID() == 0 || frh.getRepayID() == Long.MIN_VALUE) {
-			frh.setRepayID(getNextValue("SeqFinRepayHeader"));
+	public Long saveFinRepayHeader(FinRepayHeader rph, TableType tableType) {
+		if (rph.getRepayID() == 0 || rph.getRepayID() == Long.MIN_VALUE) {
+			rph.setRepayID(getNextValue("SeqFinRepayHeader"));
 		}
 
 		StringBuilder sql = new StringBuilder("Insert into");
 		sql.append(" FinRepayHeader").append(StringUtils.trimToEmpty(tableType.getSuffix()));
-		sql.append(" (RepayID, ReceiptSeqID, FinReference, ValueDate, FinEvent, RepayAmount, PriAmount");
+		sql.append(" (RepayID, ReceiptSeqID, FinID, FinReference, ValueDate, FinEvent, RepayAmount, PriAmount");
 		sql.append(", PftAmount, TotalRefund, TotalWaiver, EarlyPayEffMtd");
 		sql.append(", EarlyPayDate, SchdRegenerated, LinkedTranId ");
 		sql.append(", TotalSchdFee, PayApportionment, LatePftAmount, TotalPenalty, RealizeUnAmz, CpzChg");
 		sql.append(", AdviseAmount, FeeAmount, ExcessAmount, RealizeUnLPI, PartialPaidAmount, FutPriAmount");
 		sql.append(", FutPftAmount");
 		sql.append(") values(");
-		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
-		logger.trace(Literal.SQL, sql);
+		logger.debug(Literal.SQL, sql.toString());
 
 		jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, JdbcUtil.setLong(frh.getRepayID()));
-			ps.setLong(index++, JdbcUtil.setLong(frh.getReceiptSeqID()));
-			ps.setString(index++, frh.getFinReference());
-			ps.setDate(index++, JdbcUtil.getDate(frh.getValueDate()));
-			ps.setString(index++, frh.getFinEvent());
-			ps.setBigDecimal(index++, frh.getRepayAmount());
-			ps.setBigDecimal(index++, frh.getPriAmount());
-			ps.setBigDecimal(index++, frh.getPftAmount());
-			ps.setBigDecimal(index++, frh.getTotalRefund());
-			ps.setBigDecimal(index++, frh.getTotalWaiver());
-			ps.setString(index++, frh.getEarlyPayEffMtd());
-			ps.setDate(index++, JdbcUtil.getDate(frh.getEarlyPayDate()));
-			ps.setBoolean(index++, frh.isSchdRegenerated());
-			ps.setLong(index++, JdbcUtil.setLong(frh.getLinkedTranId()));
-			ps.setBigDecimal(index++, frh.getTotalSchdFee());
-			ps.setString(index++, frh.getPayApportionment());
-			ps.setBigDecimal(index++, frh.getLatePftAmount());
-			ps.setBigDecimal(index++, frh.getTotalPenalty());
-			ps.setBigDecimal(index++, frh.getRealizeUnAmz());
-			ps.setBigDecimal(index++, frh.getCpzChg());
-			ps.setBigDecimal(index++, frh.getAdviseAmount());
-			ps.setBigDecimal(index++, frh.getFeeAmount());
-			ps.setBigDecimal(index++, frh.getExcessAmount());
-			ps.setBigDecimal(index++, frh.getRealizeUnLPI());
-			ps.setBigDecimal(index++, frh.getPartialPaidAmount());
-			ps.setBigDecimal(index++, frh.getFutPriAmount());
-			ps.setBigDecimal(index++, frh.getFutPftAmount());
+			ps.setLong(index++, JdbcUtil.setLong(rph.getRepayID()));
+			ps.setLong(index++, JdbcUtil.setLong(rph.getReceiptSeqID()));
+			ps.setLong(index++, rph.getFinID());
+			ps.setString(index++, rph.getFinReference());
+			ps.setDate(index++, JdbcUtil.getDate(rph.getValueDate()));
+			ps.setString(index++, rph.getFinEvent());
+			ps.setBigDecimal(index++, rph.getRepayAmount());
+			ps.setBigDecimal(index++, rph.getPriAmount());
+			ps.setBigDecimal(index++, rph.getPftAmount());
+			ps.setBigDecimal(index++, rph.getTotalRefund());
+			ps.setBigDecimal(index++, rph.getTotalWaiver());
+			ps.setString(index++, rph.getEarlyPayEffMtd());
+			ps.setDate(index++, JdbcUtil.getDate(rph.getEarlyPayDate()));
+			ps.setBoolean(index++, rph.isSchdRegenerated());
+			ps.setLong(index++, JdbcUtil.setLong(rph.getLinkedTranId()));
+			ps.setBigDecimal(index++, rph.getTotalSchdFee());
+			ps.setString(index++, rph.getPayApportionment());
+			ps.setBigDecimal(index++, rph.getLatePftAmount());
+			ps.setBigDecimal(index++, rph.getTotalPenalty());
+			ps.setBigDecimal(index++, rph.getRealizeUnAmz());
+			ps.setBigDecimal(index++, rph.getCpzChg());
+			ps.setBigDecimal(index++, rph.getAdviseAmount());
+			ps.setBigDecimal(index++, rph.getFeeAmount());
+			ps.setBigDecimal(index++, rph.getExcessAmount());
+			ps.setBigDecimal(index++, rph.getRealizeUnLPI());
+			ps.setBigDecimal(index++, rph.getPartialPaidAmount());
+			ps.setBigDecimal(index++, rph.getFutPriAmount());
+			ps.setBigDecimal(index++, rph.getFutPftAmount());
 
 		});
 
-		return frh.getRepayID();
+		return rph.getRepayID();
 	}
 
 	@Override
-	public void updateFinRepayHeader(FinRepayHeader finRepayHeader, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update FinRepayHeader");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set ValueDate=:ValueDate , FinEvent=:FinEvent , RepayAmount=:RepayAmount , ");
-		updateSql.append(" PriAmount=:PriAmount , PftAmount=:PftAmount , TotalRefund=:TotalRefund , ");
-		updateSql.append(" TotalWaiver=:TotalWaiver , EarlyPayEffMtd=:EarlyPayEffMtd , ");
-		updateSql.append(" EarlyPayDate=:EarlyPayDate, SchdRegenerated=:SchdRegenerated , LinkedTranId=:LinkedTranId,");
-		updateSql.append(" RealizeUnAmz=:RealizeUnAmz, CpzChg=:CpzChg,");
-		updateSql.append(
-				" TotalSchdFee=:TotalSchdFee , PayApportionment=:PayApportionment, AdviseAmount= :AdviseAmount,FeeAmount= :FeeAmount, ExcessAmount= :ExcessAmount");
-		updateSql.append(" Where FinReference =:FinReference");
+	public void updateFinRepayHeader(FinRepayHeader rph, String type) {
+		StringBuilder sql = new StringBuilder("Update FinRepayHeader");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set ValueDate = ?, FinEvent = ?, RepayAmount = ?, PriAmount = ?, PftAmount = ?, TotalRefund = ?");
+		sql.append(", TotalWaiver = ?, EarlyPayEffMtd = ?, EarlyPayDate = ?, SchdRegenerated = ?");
+		sql.append(", LinkedTranId = ?, RealizeUnAmz = ?, CpzChg = ?, TotalSchdFee = ?");
+		sql.append(", PayApportionment = ?, AdviseAmount = ?, FeeAmount = ?, ExcessAmount = ?");
+		sql.append(" Where FinID = ?");
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.debug(Literal.SQL, sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finRepayHeader);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setDate(index++, JdbcUtil.getDate(rph.getValueDate()));
+			ps.setString(index++, rph.getFinEvent());
+			ps.setBigDecimal(index++, rph.getRepayAmount());
+			ps.setBigDecimal(index++, rph.getPriAmount());
+			ps.setBigDecimal(index++, rph.getPftAmount());
+			ps.setBigDecimal(index++, rph.getTotalRefund());
+			ps.setBigDecimal(index++, rph.getTotalWaiver());
+			ps.setString(index++, rph.getEarlyPayEffMtd());
+			ps.setDate(index++, JdbcUtil.getDate(rph.getEarlyPayDate()));
+			ps.setBoolean(index++, rph.isSchdRegenerated());
+			ps.setLong(index++, rph.getLinkedTranId());
+			ps.setBigDecimal(index++, rph.getRealizeUnAmz());
+			ps.setBigDecimal(index++, rph.getCpzChg());
+			ps.setBigDecimal(index++, rph.getTotalSchdFee());
+			ps.setString(index++, rph.getPayApportionment());
+			ps.setBigDecimal(index++, rph.getAdviseAmount());
+			ps.setBigDecimal(index++, rph.getFeeAmount());
+			ps.setBigDecimal(index++, rph.getExcessAmount());
+
+			ps.setLong(index++, rph.getFinID());
+
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -494,279 +419,226 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 	}
 
 	@Override
-	public void deleteFinRepayHeader(FinRepayHeader finRepayHeader, String type) {
-		logger.debug("Entering");
+	public void deleteFinRepayHeader(FinRepayHeader rph, String type) {
+		StringBuilder sql = new StringBuilder("Delete From FinRepayHeader");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
 
-		StringBuilder deleteSql = new StringBuilder(" DELETE From FinRepayHeader");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" where FinReference=:FinReference ");
+		logger.debug(Literal.SQL, sql.toString());
 
-		logger.debug("selectSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finRepayHeader);
-
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql.toString(), rph.getFinID());
 	}
 
 	@Override
-	public void deleteFinRepayHeaderByTranId(String finReference, long linkedTranId, String type) {
-		logger.debug("Entering");
+	public void deleteFinRepayHeaderByTranId(long finID, long linkedTranId, String type) {
+		StringBuilder sql = new StringBuilder("Delete From FinRepayHeader");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ? and LinkedTranId = ?");
 
-		FinRepayHeader header = new FinRepayHeader();
-		header.setFinReference(finReference);
-		header.setLinkedTranId(linkedTranId);
-
-		StringBuilder deleteSql = new StringBuilder(" DELETE From FinRepayHeader");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" where FinReference=:FinReference AND LinkedTranId=:LinkedTranId ");
-
-		logger.debug("selectSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
-
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql.toString(), finID, linkedTranId);
 	}
 
 	@Override
-	public List<RepayScheduleDetail> getRpySchdList(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
-
+	public List<RepayScheduleDetail> getRpySchdList(long finID, String type) {
 		StringBuilder sql = getFinRepayScheduleQuery(type);
-		sql.append(" where FinReference = ?");
+		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		FinRepaySchdRowMapper rowMapper = new FinRepaySchdRowMapper();
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, finID);
+		}, rowMapper);
+	}
 
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-				}
-			}, rowMapper);
+	@Override
+	public List<RepayScheduleDetail> getRpySchedulesForDate(long finID, Date schDate) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" rsd.SchDate, rph.ValueDate, rsd.ProfitSchdPayNow, rsd.PrincipalSchdPayNow");
+		sql.append(", rsd.WaivedAmt, rsd.PenaltyPayNow, rsd.LatePftSchdPayNow, rsd.PftSchdWaivedNow");
+		sql.append(", rsd.LatePftSchdWaivedNow, rsd.PriSchdWaivedNow ");
+		sql.append(" From FinRepayScheduleDetail rsd");
+		sql.append(" Inner Join FinRepayHeader rph on rph.RepayID = rsd.RepayID");
+		sql.append(" Inner Join FinReceiptDetail rcd on rcd.ReceiptSeqID = rph.ReceiptSeqID ");
+		sql.append(" Where rsd.FinID = ? and rsd.SchDate = ? and rcd.Status not in (?, ?) ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, finID);
+			ps.setDate(index++, JdbcUtil.getDate(schDate));
+			ps.setString(index++, "C");
+			ps.setString(index++, "B");
+
+		}, (rs, rowNum) -> {
+			RepayScheduleDetail rsd = new RepayScheduleDetail();
+
+			rsd.setSchDate(rs.getDate("SchDate"));
+			rsd.setValueDate(rs.getDate("ValueDate"));
+			rsd.setProfitSchdPayNow(rs.getBigDecimal("ProfitSchdPayNow"));
+			rsd.setPrincipalSchdPayNow(rs.getBigDecimal("PrincipalSchdPayNow"));
+			rsd.setWaivedAmt(rs.getBigDecimal("WaivedAmt"));
+			rsd.setPenaltyPayNow(rs.getBigDecimal("PenaltyPayNow"));
+			rsd.setLatePftSchdPayNow(rs.getBigDecimal("LatePftSchdPayNow"));
+			rsd.setPftSchdWaivedNow(rs.getBigDecimal("PftSchdWaivedNow"));
+			rsd.setLatePftSchdWaivedNow(rs.getBigDecimal("LatePftSchdWaivedNow"));
+			rsd.setPriSchdWaivedNow(rs.getBigDecimal("PriSchdWaivedNow"));
+
+			return rsd;
+		});
+	}
+
+	@Override
+	public void saveRpySchdList(List<RepayScheduleDetail> rsdList, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Insert Into FinRepayScheduleDetail");
+		sql.append(StringUtils.trimToEmpty(tableType.getSuffix())).append("(");
+		sql.append(" RepayID, RepaySchID, FinID, FinReference, SchDate, SchdFor, LinkedTranId, ProfitSchdBal");
+		sql.append(", PrincipalSchdBal, ProfitSchdPayNow, TdsSchdPayNow, PrincipalSchdPayNow, PenaltyAmt");
+		sql.append(", DaysLate, MaxWaiver, AllowRefund, AllowWaiver, ProfitSchd, ProfitSchdPaid");
+		sql.append(", PrincipalSchd, PrincipalSchdPaid, RefundReq, WaivedAmt, RepayBalance, PenaltyPayNow");
+		sql.append(", SchdFee, SchdFeePaid, SchdFeeBal, SchdFeePayNow, LatePftSchd, LatePftSchdPaid, LatePftSchdBal");
+		sql.append(", LatePftSchdPayNow, PftSchdWaivedNow, LatePftSchdWaivedNow, PriSchdWaivedNow, SchdFeeWaivedNow");
+		sql.append(", TaxHeaderId, WaiverId");
+		sql.append(")");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?,  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(" Values(");
+		sql.append(")");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				RepayScheduleDetail rsd = rsdList.get(0);
+				int index = 1;
+
+				ps.setLong(index++, rsd.getRepayID());
+				ps.setLong(index++, rsd.getRepaySchID());
+				ps.setLong(index++, rsd.getFinID());
+				ps.setString(index++, rsd.getFinReference());
+				ps.setDate(index++, JdbcUtil.getDate(rsd.getSchDate()));
+				ps.setString(index++, rsd.getSchdFor());
+				ps.setLong(index++, rsd.getLinkedTranId());
+				ps.setBigDecimal(index++, rsd.getProfitSchdBal());
+				ps.setBigDecimal(index++, rsd.getPrincipalSchdBal());
+				ps.setBigDecimal(index++, rsd.getProfitSchdPayNow());
+				ps.setBigDecimal(index++, rsd.getTdsSchdPayNow());
+				ps.setBigDecimal(index++, rsd.getPrincipalSchdPayNow());
+				ps.setBigDecimal(index++, rsd.getPenaltyAmt());
+				ps.setInt(index++, rsd.getDaysLate());
+				ps.setBigDecimal(index++, rsd.getMaxWaiver());
+				ps.setBoolean(index++, rsd.isAllowRefund());
+				ps.setBoolean(index++, rsd.isAllowWaiver());
+				ps.setBigDecimal(index++, rsd.getProfitSchd());
+				ps.setBigDecimal(index++, rsd.getProfitSchdPaid());
+				ps.setBigDecimal(index++, rsd.getPrincipalSchd());
+				ps.setBigDecimal(index++, rsd.getPrincipalSchdPaid());
+				ps.setBigDecimal(index++, rsd.getRefundReq());
+				ps.setBigDecimal(index++, rsd.getWaivedAmt());
+				ps.setBigDecimal(index++, rsd.getRepayBalance());
+				ps.setBigDecimal(index++, rsd.getPenaltyPayNow());
+				ps.setBigDecimal(index++, rsd.getSchdFee());
+				ps.setBigDecimal(index++, rsd.getSchdFeePaid());
+				ps.setBigDecimal(index++, rsd.getSchdFeeBal());
+				ps.setBigDecimal(index++, rsd.getSchdFeePayNow());
+				ps.setBigDecimal(index++, rsd.getLatePftSchd());
+				ps.setBigDecimal(index++, rsd.getLatePftSchdPaid());
+				ps.setBigDecimal(index++, rsd.getLatePftSchdBal());
+				ps.setBigDecimal(index++, rsd.getLatePftSchdPayNow());
+				ps.setBigDecimal(index++, rsd.getPftSchdWaivedNow());
+				ps.setBigDecimal(index++, rsd.getLatePftSchdWaivedNow());
+				ps.setBigDecimal(index++, rsd.getPriSchdWaivedNow());
+				ps.setBigDecimal(index++, rsd.getSchdFeeWaivedNow());
+				ps.setLong(index++, JdbcUtil.setLong(rsd.getTaxHeaderId()));
+				ps.setLong(index++, rsd.getWaiverId());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return rsdList.size();
+			}
+		});
+
+	}
+
+	@Override
+	public void deleteRpySchdList(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Delete From FinRepayScheduleDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), finID);
+	}
+
+	@Override
+	public void deleteFinRepaySchListByTranId(long finID, long linkedTranId, String type) {
+		StringBuilder sql = new StringBuilder("Delete From FinRepayScheduleDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ? and LinkedTranId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), finID, linkedTranId);
+	}
+
+	@Override
+	public BigDecimal getPaidPft(long finID, Date finPostDate) {
+		String sql = "Select sum(FinSchdPftPaid) From FinRepayDetails Where FinID = ? and FinPostDate < ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID, finPostDate);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
-	}
-
-	/**
-	 * Method for Fetching List of Repayment Schedules
-	 */
-	@Override
-	public List<RepayScheduleDetail> getRpySchedulesForDate(String finReference, Date schDate) {
-		logger.debug("Entering");
-
-		RepayScheduleDetail scheduleDetail = new RepayScheduleDetail();
-		scheduleDetail.setFinReference(finReference);
-		scheduleDetail.setSchDate(schDate);
-
-		StringBuilder selectSql = new StringBuilder(
-				" Select S.SchDate , H.ValueDate, S.ProfitSchdPayNow , S.PrincipalSchdPayNow , ");
-		selectSql.append(
-				" S.WaivedAmt , S.PenaltyPayNow, S.LatePftSchdPayNow,  S.PftSchdWaivedNow , S.LatePftSchdWaivedNow,  S.PriSchdWaivedNow ");
-		selectSql.append(" From FinRepayScheduleDetail S INNER JOIN FinRepayHeader H ON S.RepayID = H.RepayID ");
-		selectSql.append(" INNER JOIN FinReceiptDetail RD ON RD.ReceiptSeqID = H.ReceiptSeqID ");
-		selectSql.append(
-				" WHERE S.FinReference=:FinReference AND S.SchDate = :SchDate AND RD.Status NOT IN ('C', 'B') ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scheduleDetail);
-		RowMapper<RepayScheduleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(RepayScheduleDetail.class);
-
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
-
-	@Override
-	public void saveRpySchdList(List<RepayScheduleDetail> repaySchdList, TableType tableType) {
-		logger.debug("Entering");
-
-		StringBuilder insertSql = new StringBuilder("Insert Into FinRepayScheduleDetail");
-		insertSql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
-		insertSql.append(
-				" (RepayID, RepaySchID, FinReference , SchDate , SchdFor , LinkedTranId, ProfitSchdBal , PrincipalSchdBal , ");
-		insertSql.append(
-				" ProfitSchdPayNow , TdsSchdPayNow, PrincipalSchdPayNow , PenaltyAmt , DaysLate , MaxWaiver , AllowRefund , AllowWaiver , ");
-		insertSql.append(" ProfitSchd , ProfitSchdPaid , PrincipalSchd , PrincipalSchdPaid , ");
-		insertSql.append(
-				" RefundReq , WaivedAmt , RepayBalance, PenaltyPayNow, SchdFee, SchdFeePaid, SchdFeeBal, SchdFeePayNow,");
-		insertSql.append(" LatePftSchd, LatePftSchdPaid, LatePftSchdBal, LatePftSchdPayNow,  ");
-		insertSql.append(" PftSchdWaivedNow , LatePftSchdWaivedNow, ");
-		insertSql.append(" PriSchdWaivedNow, SchdFeeWaivedNow, ");
-		insertSql.append(" TaxHeaderId, WaiverId) ");
-		insertSql.append(
-				" Values(:RepayID,:RepaySchID, :FinReference , :SchDate , :SchdFor , :LinkedTranId , :ProfitSchdBal , :PrincipalSchdBal , ");
-		insertSql.append(
-				" :ProfitSchdPayNow , :TdsSchdPayNow, :PrincipalSchdPayNow , :PenaltyAmt , :DaysLate , :MaxWaiver , :AllowRefund , :AllowWaiver , ");
-		insertSql.append(" :ProfitSchd , :ProfitSchdPaid , :PrincipalSchd , :PrincipalSchdPaid  , ");
-		insertSql.append(
-				" :RefundReq , :WaivedAmt , :RepayBalance, :PenaltyPayNow , :SchdFee, :SchdFeePaid, :SchdFeeBal, :SchdFeePayNow,");
-		insertSql.append(" :LatePftSchd, :LatePftSchdPaid, :LatePftSchdBal, :LatePftSchdPayNow, ");
-		insertSql.append(" :PftSchdWaivedNow , :LatePftSchdWaivedNow, ");
-		insertSql.append(" :PriSchdWaivedNow, :SchdFeeWaivedNow, ");
-		insertSql.append(" :TaxHeaderId, :WaiverId) ");
-
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(repaySchdList.toArray());
-		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-
-	}
-
-	@Override
-	public void deleteRpySchdList(String finReference, String type) {
-		logger.debug("Entering");
-
-		RepayScheduleDetail scheduleDetail = new RepayScheduleDetail();
-		scheduleDetail.setFinReference(finReference);
-
-		StringBuilder deleteSql = new StringBuilder(" DELETE From FinRepayScheduleDetail");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" where FinReference=:FinReference ");
-
-		logger.debug("selectSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scheduleDetail);
-
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
-	}
-
-	@Override
-	public void deleteFinRepaySchListByTranId(String finReference, long linkedTranId, String type) {
-		logger.debug("Entering");
-
-		RepayScheduleDetail scheduleDetail = new RepayScheduleDetail();
-		scheduleDetail.setFinReference(finReference);
-		scheduleDetail.setLinkedTranId(linkedTranId);
-
-		StringBuilder deleteSql = new StringBuilder(" DELETE From FinRepayScheduleDetail");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" where FinReference=:FinReference AND LinkedTranId=:LinkedTranId ");
-
-		logger.debug("selectSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scheduleDetail);
-
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Get Total Repayment Profit Amount till Date
-	 */
-	@Override
-	public BigDecimal getPaidPft(String finReference, Date finPostDate) {
-		logger.debug("Entering");
-
-		FinanceRepayments repayment = new FinanceRepayments();
-		repayment.setFinReference(finReference);
-		repayment.setFinPostDate(finPostDate);
-
-		StringBuilder selectSql = new StringBuilder(" SELECT SUM(FinSchdPftPaid) FROM FinRepayDetails ");
-		selectSql.append(" where FinReference=:FinReference AND  FinPostDate < :FinPostDate ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(repayment);
-		BigDecimal totalPftPaid = BigDecimal.ZERO;
-		try {
-			totalPftPaid = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
-		} catch (Exception e) {
-			logger.warn("Exception: ", e);
-			totalPftPaid = BigDecimal.ZERO;
+			//
 		}
 
-		logger.debug("Leaving");
-		return totalPftPaid;
+		return BigDecimal.ZERO;
 	}
 
 	@Override
-	public List<FinRepayHeader> getFinRepayHeadersByRef(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
-
+	public List<FinRepayHeader> getFinRepayHeadersByRef(long finID, String type) {
 		StringBuilder sql = getFinRepayheaderQuery(type);
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		FinRepayHeaderRowMapper rowMapper = new FinRepayHeaderRowMapper();
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, finID);
+		}, rowMapper);
 	}
 
 	@Override
-	public void deleteByRef(String finReference, TableType tableType) {
-		logger.debug("Entering");
-
-		FinRepayHeader header = new FinRepayHeader();
-		header.setFinReference(finReference);
-
-		StringBuilder deleteSql = new StringBuilder(" DELETE From FinRepayHeader");
-		deleteSql.append(tableType.getSuffix());
-		deleteSql.append(" where FinReference=:FinReference ");
-
-		logger.debug("selectSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
-	}
-
-	@Override
-	public List<RepayScheduleDetail> getDMRpySchdList(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = getFinRepayScheduleQuery(type);
-		sql.append(" where FinReference = ?");
+	public void deleteByRef(long finID, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Delete From FinRepayHeader");
+		sql.append(tableType.getSuffix());
+		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		FinRepaySchdRowMapper rowMapper = new FinRepaySchdRowMapper();
-
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		this.jdbcOperations.update(sql.toString(), finID);
 	}
 
 	@Override
 	public void updateFinReference(String finReference, String extReference, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update FinRepayHeader");
-		updateSql.append(type);
-		updateSql.append(" SET  FinReference=:Reference  ");
-		updateSql.append(" Where FinReference=:ExtReference");
+		StringBuilder sql = new StringBuilder("Update FinRepayHeader");
+		sql.append(type);
+		sql.append(" Set FinReference = ?");
+		sql.append(" Where FinReference = ?");
 
-		logger.debug("updateSql: " + updateSql.toString());
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ExtReference", extReference);
-		source.addValue("Reference", finReference);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
+		logger.debug(Literal.SQL + sql.toString());
+
+		int recordCount = this.jdbcOperations.update(sql.toString(), finReference, extReference);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -776,168 +648,143 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 
 	@Override
 	public FinRepayHeader getFinRepayHeadersByReceipt(long receiptId, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getFinRepayheaderQuery(type);
 		sql.append(" Where ReceiptSeqID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		FinRepayHeaderRowMapper rowMapper = new FinRepayHeaderRowMapper();
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { receiptId }, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, receiptId);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
 	@Override
-	public List<RepayScheduleDetail> getRpySchdList(long repayId, String type) {
-		logger.debug(Literal.ENTERING);
-
+	public List<RepayScheduleDetail> getRpySchdListByRepayID(long repayId, String type) {
 		StringBuilder sql = getFinRepayScheduleQuery(type);
-		sql.append(" where RepayID = ?");
+		sql.append(" Where RepayID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		FinRepaySchdRowMapper rowMapper = new FinRepaySchdRowMapper();
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, repayId);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, repayId);
+		}, rowMapper);
 	}
 
 	@Override
 	public void deleteByReceiptId(long receiptId, TableType tableType) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Delete From FinRepayHeader");
+		sql.append(tableType.getSuffix());
+		sql.append(" Where ReceiptSeqID = ?");
 
-		FinRepayHeader header = new FinRepayHeader();
-		header.setReceiptSeqID(receiptId);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder deleteSql = new StringBuilder(" DELETE From FinRepayHeader");
-		deleteSql.append(tableType.getSuffix());
-		deleteSql.append(" where ReceiptSeqID=:ReceiptSeqID ");
-
-		logger.debug("selectSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql.toString(), receiptId);
 	}
 
 	@Override
-	public List<FinanceRepayments> getInProcessRepaymnets(String finReference, List<Long> receiptList) {
-		logger.debug("Entering");
+	public List<FinanceRepayments> getInProcessRepaymnets(long finID, List<Long> receiptList) {
+		StringBuilder sql = new StringBuilder("Select FinSchdDate");
+		sql.append(", sum(FinSchdPriPaid) FinSchdPriPaid");
+		sql.append(", sum(FinSchdPftPaid) FinSchdPftPaid");
+		sql.append(", sum(FinSchdTdsPaid) FinSchdTdsPaid");
+		sql.append(", sum(FinTotSchdPaid) FinTotSchdPaid");
+		sql.append(", sum(PenaltyPaid) PenaltyPaid");
+		sql.append(" From FinRepayDetails");
+		sql.append(" Where FinID = ? and ReceiptId In (");
+		sql.append(JdbcUtil.getInCondition(receiptList));
+		sql.append(")");
+		sql.append(" group by Finschddate");
 
-		List<FinanceRepayments> repaymentList = new ArrayList<FinanceRepayments>();
+		logger.debug(Literal.SQL + sql.toString());
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, finID);
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("ReceiptList", receiptList);
+			for (Long receiptId : receiptList) {
+				ps.setLong(index++, receiptId);
+			}
 
-		StringBuilder selectSql = new StringBuilder(" Select ");
-		selectSql.append(
-				" Finschddate,SUM(FinSchdPriPaid) FinSchdPriPaid, SUM(FinSchdPftPaid) FinSchdPftPaid, SUM(FinSchdTdsPaid) FinSchdTdsPaid, ");
-		selectSql.append(" SUM(FinTotSchdPaid) FinTotSchdPaid,SUM(PenaltyPaid) PenaltyPaid From FinRepayDetails");
-		selectSql.append("  where FinReference=:FinReference and ReceiptId In (:ReceiptList) group by Finschddate");
+		}, (rs, rowNum) -> {
+			FinanceRepayments rpd = new FinanceRepayments();
 
-		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<FinanceRepayments> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceRepayments.class);
+			rpd.setFinSchdDate(rs.getDate("FinSchdDate"));
+			rpd.setFinSchdPriPaid(rs.getBigDecimal("FinSchdPriPaid"));
+			rpd.setFinSchdPftPaid(rs.getBigDecimal("FinSchdPftPaid"));
+			rpd.setFinSchdTdsPaid(rs.getBigDecimal("FinSchdTdsPaid"));
+			rpd.setFinTotSchdPaid(rs.getBigDecimal("FinTotSchdPaid"));
+			rpd.setPenaltyPaid(rs.getBigDecimal("PenaltyPaid"));
 
-		logger.debug("Leaving");
-		repaymentList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			return rpd;
 
-		return repaymentList;
+		});
 	}
 
 	@Override
-	public List<FinanceRepayments> getFinRepayments(String finReference, List<Long> receiptList) {
-		logger.debug(Literal.ENTERING);
-
+	public List<FinanceRepayments> getFinRepayments(long finID, List<Long> receiptList) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, FinPostDate, FinRpyFor, FinPaySeq, FinRpyAmount, FinSchdDate, FinValueDate");
+		sql.append(" FinID, FinReference, FinPostDate, FinRpyFor, FinPaySeq, FinRpyAmount, FinSchdDate, FinValueDate");
 		sql.append(", FinBranch, FinType, FinCustID, FinSchdPriPaid, FinSchdPftPaid, FinSchdTdsPaid");
 		sql.append(", FinTotSchdPaid, FinFee, FinWaiver, FinRefund, SchdFeePaid ");
-		sql.append(" from FinRepayDetails");
-		sql.append(" where FinReference = ?");
+		sql.append(" From FinRepayDetails");
+		sql.append(" Where FinID = ?");
 
 		if (receiptList != null && receiptList.size() > 0) {
 			sql.append(" and ReceiptId IN (");
-			int i = 0;
-			while (i < receiptList.size()) {
-				sql.append(" ?,");
-				i++;
-			}
-			sql.deleteCharAt(sql.length() - 1);
+
+			sql.append(JdbcUtil.getInCondition(receiptList));
+
 			sql.append(" )");
 		}
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-					if (receiptList != null && receiptList.size() > 0) {
-						for (Long receiptId : receiptList) {
-							ps.setLong(index++, receiptId);
-						}
-					}
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, finID);
+			if (receiptList != null && receiptList.size() > 0) {
+				for (Long receiptId : receiptList) {
+					ps.setLong(index++, receiptId);
 				}
-			}, new RowMapper<FinanceRepayments>() {
-				@Override
-				public FinanceRepayments mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinanceRepayments rd = new FinanceRepayments();
+			}
+		}, (rs, rowNum) -> {
+			FinanceRepayments rd = new FinanceRepayments();
 
-					rd.setFinReference(rs.getString("FinReference"));
-					rd.setFinPostDate(rs.getTimestamp("FinPostDate"));
-					rd.setFinRpyFor(rs.getString("FinRpyFor"));
-					rd.setFinPaySeq(rs.getLong("FinPaySeq"));
-					rd.setFinRpyAmount(rs.getBigDecimal("FinRpyAmount"));
-					rd.setFinSchdDate(rs.getTimestamp("FinSchdDate"));
-					rd.setFinValueDate(rs.getTimestamp("FinValueDate"));
-					rd.setFinBranch(rs.getString("FinBranch"));
-					rd.setFinType(rs.getString("FinType"));
-					rd.setFinCustID(rs.getLong("FinCustID"));
-					rd.setFinSchdPriPaid(rs.getBigDecimal("FinSchdPriPaid"));
-					rd.setFinSchdPftPaid(rs.getBigDecimal("FinSchdPftPaid"));
-					rd.setFinSchdTdsPaid(rs.getBigDecimal("FinSchdTdsPaid"));
-					rd.setFinTotSchdPaid(rs.getBigDecimal("FinTotSchdPaid"));
-					rd.setFinFee(rs.getBigDecimal("FinFee"));
-					rd.setFinWaiver(rs.getBigDecimal("FinWaiver"));
-					rd.setFinRefund(rs.getBigDecimal("FinRefund"));
-					rd.setSchdFeePaid(rs.getBigDecimal("SchdFeePaid"));
+			rd.setFinID(rs.getLong("FinID"));
+			rd.setFinReference(rs.getString("FinReference"));
+			rd.setFinPostDate(rs.getTimestamp("FinPostDate"));
+			rd.setFinRpyFor(rs.getString("FinRpyFor"));
+			rd.setFinPaySeq(rs.getLong("FinPaySeq"));
+			rd.setFinRpyAmount(rs.getBigDecimal("FinRpyAmount"));
+			rd.setFinSchdDate(rs.getTimestamp("FinSchdDate"));
+			rd.setFinValueDate(rs.getTimestamp("FinValueDate"));
+			rd.setFinBranch(rs.getString("FinBranch"));
+			rd.setFinType(rs.getString("FinType"));
+			rd.setFinCustID(rs.getLong("FinCustID"));
+			rd.setFinSchdPriPaid(rs.getBigDecimal("FinSchdPriPaid"));
+			rd.setFinSchdPftPaid(rs.getBigDecimal("FinSchdPftPaid"));
+			rd.setFinSchdTdsPaid(rs.getBigDecimal("FinSchdTdsPaid"));
+			rd.setFinTotSchdPaid(rs.getBigDecimal("FinTotSchdPaid"));
+			rd.setFinFee(rs.getBigDecimal("FinFee"));
+			rd.setFinWaiver(rs.getBigDecimal("FinWaiver"));
+			rd.setFinRefund(rs.getBigDecimal("FinRefund"));
+			rd.setSchdFeePaid(rs.getBigDecimal("SchdFeePaid"));
 
-					return rd;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return rd;
+		});
 	}
 
 	private StringBuilder getFinRepayScheduleQuery(String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" RepayID, RepaySchID, FinReference, SchDate, SchdFor, ProfitSchdBal, PrincipalSchdBal");
+		sql.append(" RepayID, RepaySchID, FinID, FinReference, SchDate, SchdFor, ProfitSchdBal, PrincipalSchdBal");
 		sql.append(", ProfitSchd, ProfitSchdPaid, PrincipalSchd, PrincipalSchdPaid, ProfitSchdPayNow");
 		sql.append(", TdsSchdPayNow, PrincipalSchdPayNow, PenaltyAmt, DaysLate, MaxWaiver, AllowRefund");
 		sql.append(", AllowWaiver, RefundReq, WaivedAmt, RepayBalance, PenaltyPayNow, SchdFee, SchdFeePaid");
@@ -947,22 +794,144 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		sql.append(", SchdFeeWaivedNow");
 		sql.append(", PaidPenaltyCGST, PaidPenaltySGST, PaidPenaltyUGST, PaidPenaltyIGST, PenaltyWaiverCGST");
 		sql.append(", PenaltyWaiverSGST, PenaltyWaiverUGST, PenaltyWaiverIGST, TaxHeaderId, WaiverId");
-		sql.append(" from FinRepayScheduleDetail");
+		sql.append(" From FinRepayScheduleDetail");
 		sql.append(StringUtils.trimToEmpty(type));
 		return sql;
 	}
 
+	/**
+	 * Method for Fetching new RepayID
+	 * 
+	 * @param finRepayHeader
+	 * @return
+	 */
+	@Override
+	public long getNewRepayID() {
+		return getNextValue("SeqFinRepayHeader");
+	}
+
+	public static List<FinanceRepayments> sortByFinValueDate(List<FinanceRepayments> finRepay) {
+		if (finRepay != null && finRepay.size() > 0) {
+			Collections.sort(finRepay, new Comparator<FinanceRepayments>() {
+				@Override
+				public int compare(FinanceRepayments detail1, FinanceRepayments detail2) {
+					return DateUtil.compare(detail1.getFinValueDate(), detail2.getFinValueDate());
+				}
+			});
+		}
+
+		return finRepay;
+	}
+
+	@Override
+	public Long getLinkedTranIdByReceipt(long receiptId, String type) {
+		String sql = "Select LinkedTranId From FinRepayDetails Where ReceiptID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Long.class, receiptId);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+		return null;
+	}
+
+	@Override
+	public Date getMaxValueDate(long finID) {
+		String sql = "Select max(FinValueDate) FinValueDate From FinRepayDetails Where FinID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return jdbcOperations.queryForObject(sql, Date.class, finID);
+	}
+
+	private StringBuilder getRepayListQuery(boolean isRpyCancelProc, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FInID, FinReference, FinPostDate, FinRpyFor, FinPaySeq, FinRpyAmount");
+		sql.append(", FinSchdDate, FinValueDate, FinBranch, FinType, FinCustID");
+		sql.append(", FinSchdPriPaid, FinSchdPftPaid, FinSchdTdsPaid, FinTotSchdPaid");
+		sql.append(", FinFee, FinWaiver, FinRefund, SchdFeePaid, PenaltyPaid");
+		sql.append(", PenaltyWaived");
+
+		if (isRpyCancelProc) {
+			sql.append(", LinkedTranId");
+		}
+
+		sql.append(" From FinRepayDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		return sql;
+	}
+
+	private String getInsertQuery(String type) {
+		StringBuilder sql = new StringBuilder("insert into");
+		sql.append(" FinRepayDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (FinID, FinReference, FinSchdDate, FinRpyFor, FinPaySeq, LinkedTranId, FinRpyAmount, FinPostDate");
+		sql.append(", FinValueDate, FinBranch, FinType, FinCustID, FinSchdPriPaid, FinSchdPftPaid, FinSchdTdsPaid");
+		sql.append(", SchdFeePaid, FinTotSchdPaid, FinFee");
+		sql.append(", FinWaiver, FinRefund, PenaltyPaid, PenaltyWaived, ReceiptId, WaiverId");
+		sql.append(") values(");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(")");
+		return sql.toString();
+	}
+
 	private StringBuilder getFinRepayheaderQuery(String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" RepayID, ReceiptSeqID, FinReference, ValueDate, FinEvent, RepayAmount, PriAmount");
+		sql.append(" RepayID, ReceiptSeqID, FinID, FinReference, ValueDate, FinEvent, RepayAmount, PriAmount");
 		sql.append(", PftAmount, LatePftAmount, TotalPenalty, TotalRefund, TotalWaiver ");
 		sql.append(", EarlyPayEffMtd, EarlyPayDate, SchdRegenerated, LinkedTranId");
 		sql.append(", TotalSchdFee, PayApportionment, RealizeUnAmz");
 		sql.append(", CpzChg, RealizeUnLPI, RealizeUnLPP, RealizeUnLPIGst, RealizeUnLPPGst, CpzChg");
 		sql.append(", AdviseAmount, FeeAmount, ExcessAmount, PartialPaidAmount, FutPriAmount, FutPftAmount");
-		sql.append(" from FinRepayHeader");
+		sql.append(" From FinRepayHeader");
 		sql.append(StringUtils.trim(type));
 		return sql;
+	}
+
+	private class FinRepayHeaderRowMapper implements RowMapper<FinRepayHeader> {
+
+		@Override
+		public FinRepayHeader mapRow(ResultSet rs, int rowNum) throws SQLException {
+			FinRepayHeader rh = new FinRepayHeader();
+
+			rh.setRepayID(rs.getLong("RepayID"));
+			rh.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
+			rh.setFinID(rs.getLong("FinID"));
+			rh.setFinReference(rs.getString("FinReference"));
+			rh.setValueDate(rs.getTimestamp("ValueDate"));
+			rh.setFinEvent(rs.getString("FinEvent"));
+			rh.setRepayAmount(rs.getBigDecimal("RepayAmount"));
+			rh.setPriAmount(rs.getBigDecimal("PriAmount"));
+			rh.setPftAmount(rs.getBigDecimal("PftAmount"));
+			rh.setLatePftAmount(rs.getBigDecimal("LatePftAmount"));
+			rh.setTotalPenalty(rs.getBigDecimal("TotalPenalty"));
+			rh.setTotalRefund(rs.getBigDecimal("TotalRefund"));
+			rh.setTotalWaiver(rs.getBigDecimal("TotalWaiver"));
+			rh.setEarlyPayEffMtd(rs.getString("EarlyPayEffMtd"));
+			rh.setEarlyPayDate(rs.getTimestamp("EarlyPayDate"));
+			rh.setSchdRegenerated(rs.getBoolean("SchdRegenerated"));
+			rh.setLinkedTranId(rs.getLong("LinkedTranId"));
+			rh.setTotalSchdFee(rs.getBigDecimal("TotalSchdFee"));
+			rh.setPayApportionment(rs.getString("PayApportionment"));
+			rh.setRealizeUnAmz(rs.getBigDecimal("RealizeUnAmz"));
+			rh.setCpzChg(rs.getBigDecimal("CpzChg"));
+			rh.setRealizeUnLPI(rs.getBigDecimal("RealizeUnLPI"));
+			/*
+			 * rh.setRealizeUnLPP(rs.getBigDecimal("RealizeUnLPP"));
+			 * rh.setRealizeUnLPIGst(rs.getBigDecimal("RealizeUnLPIGst"));
+			 * rh.setRealizeUnLPPGst(rs.getBigDecimal("RealizeUnLPPGst")); (these columns are not available in bean)
+			 */
+			rh.setAdviseAmount(rs.getBigDecimal("AdviseAmount"));
+			rh.setFeeAmount(rs.getBigDecimal("FeeAmount"));
+			rh.setExcessAmount(rs.getBigDecimal("ExcessAmount"));
+			rh.setPartialPaidAmount(rs.getBigDecimal("PartialPaidAmount"));
+			rh.setFutPriAmount(rs.getBigDecimal("FutPriAmount"));
+			rh.setFutPftAmount(rs.getBigDecimal("FutPftAmount"));
+
+			return rh;
+		}
 	}
 
 	private class FinRepaySchdRowMapper implements RowMapper<RepayScheduleDetail> {
@@ -973,6 +942,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 
 			frs.setRepayID(rs.getLong("RepayID"));
 			frs.setRepaySchID(rs.getInt("RepaySchID"));
+			frs.setFinID(rs.getLong("FinID"));
 			frs.setFinReference(rs.getString("FinReference"));
 			frs.setSchDate(rs.getTimestamp("SchDate"));
 			frs.setSchdFor(rs.getString("SchdFor"));
@@ -1013,50 +983,6 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		}
 	}
 
-	private class FinRepayHeaderRowMapper implements RowMapper<FinRepayHeader> {
-
-		@Override
-		public FinRepayHeader mapRow(ResultSet rs, int rowNum) throws SQLException {
-			FinRepayHeader rh = new FinRepayHeader();
-
-			rh.setRepayID(rs.getLong("RepayID"));
-			rh.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
-			rh.setFinReference(rs.getString("FinReference"));
-			rh.setValueDate(rs.getTimestamp("ValueDate"));
-			rh.setFinEvent(rs.getString("FinEvent"));
-			rh.setRepayAmount(rs.getBigDecimal("RepayAmount"));
-			rh.setPriAmount(rs.getBigDecimal("PriAmount"));
-			rh.setPftAmount(rs.getBigDecimal("PftAmount"));
-			rh.setLatePftAmount(rs.getBigDecimal("LatePftAmount"));
-			rh.setTotalPenalty(rs.getBigDecimal("TotalPenalty"));
-			rh.setTotalRefund(rs.getBigDecimal("TotalRefund"));
-			rh.setTotalWaiver(rs.getBigDecimal("TotalWaiver"));
-			rh.setEarlyPayEffMtd(rs.getString("EarlyPayEffMtd"));
-			rh.setEarlyPayDate(rs.getTimestamp("EarlyPayDate"));
-			rh.setSchdRegenerated(rs.getBoolean("SchdRegenerated"));
-			rh.setLinkedTranId(rs.getLong("LinkedTranId"));
-			rh.setTotalSchdFee(rs.getBigDecimal("TotalSchdFee"));
-			rh.setPayApportionment(rs.getString("PayApportionment"));
-			rh.setRealizeUnAmz(rs.getBigDecimal("RealizeUnAmz"));
-			rh.setCpzChg(rs.getBigDecimal("CpzChg"));
-			rh.setRealizeUnLPI(rs.getBigDecimal("RealizeUnLPI"));
-			/*
-			 * rh.setRealizeUnLPP(rs.getBigDecimal("RealizeUnLPP"));
-			 * rh.setRealizeUnLPIGst(rs.getBigDecimal("RealizeUnLPIGst"));
-			 * rh.setRealizeUnLPPGst(rs.getBigDecimal("RealizeUnLPPGst")); (these columns are not available in bean)
-			 */
-			rh.setAdviseAmount(rs.getBigDecimal("AdviseAmount"));
-			rh.setFeeAmount(rs.getBigDecimal("FeeAmount"));
-			rh.setExcessAmount(rs.getBigDecimal("ExcessAmount"));
-			rh.setPartialPaidAmount(rs.getBigDecimal("PartialPaidAmount"));
-			rh.setFutPriAmount(rs.getBigDecimal("FutPriAmount"));
-			rh.setFutPftAmount(rs.getBigDecimal("FutPftAmount"));
-
-			return rh;
-		}
-
-	}
-
 	private class FinRepayListRowMapper implements RowMapper<FinanceRepayments> {
 		private boolean isRpyCancelProc;
 
@@ -1068,6 +994,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		public FinanceRepayments mapRow(ResultSet rs, int rowNum) throws SQLException {
 			FinanceRepayments rd = new FinanceRepayments();
 
+			rd.setFinID(rs.getLong("FinID"));
 			rd.setFinReference(rs.getString("FinReference"));
 			rd.setFinPostDate(rs.getTimestamp("FinPostDate"));
 			rd.setFinRpyFor(rs.getString("FinRpyFor"));
@@ -1095,56 +1022,5 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 
 			return rd;
 		}
-	}
-
-	/**
-	 * Method for Fetching new RepayID
-	 * 
-	 * @param finRepayHeader
-	 * @return
-	 */
-	@Override
-	public long getNewRepayID() {
-		return getNextValue("SeqFinRepayHeader");
-	}
-
-	public static List<FinanceRepayments> sortByFinValueDate(List<FinanceRepayments> finRepay) {
-		if (finRepay != null && finRepay.size() > 0) {
-			Collections.sort(finRepay, new Comparator<FinanceRepayments>() {
-				@Override
-				public int compare(FinanceRepayments detail1, FinanceRepayments detail2) {
-					return DateUtil.compare(detail1.getFinValueDate(), detail2.getFinValueDate());
-				}
-			});
-		}
-
-		return finRepay;
-	}
-
-	@Override
-	public Long getLinkedTranIdByReceipt(long receiptId, String type) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("Select LinkedTranId from FinRepayDetails");
-		sql.append(" Where ReceiptID = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { receiptId }, Long.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("LinkedTranId not found in FinRepayDetails for the specified ReceiptId >> {}", receiptId);
-		}
-		return null;
-	}
-
-	@Override
-	public Date getMaxValueDate(String finReference) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" max(finvaluedate) FinValueDate from FinRepayDetails");
-		sql.append(" Where FinReference = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		return jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, Date.class);
 	}
 }

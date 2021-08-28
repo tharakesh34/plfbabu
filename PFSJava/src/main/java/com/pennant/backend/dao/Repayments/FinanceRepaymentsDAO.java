@@ -15,12 +15,12 @@ public interface FinanceRepaymentsDAO {
 
 	void save(List<FinanceRepayments> list, String type);
 
-	List<FinanceRepayments> getFinRepayListByFinRef(String finRef, boolean isRpyCancelProc, String type);
+	List<FinanceRepayments> getFinRepayListByFinRef(long finID, boolean isRpyCancelProc, String type);
 
-	void deleteRpyDetailbyLinkedTranId(long linkedTranId, String finReference);
+	void deleteRpyDetailbyLinkedTranId(long linkedTranId, long finID);
 
-	//Manual Repayment Details :  Finance Repay Header Details & Finance Repay Schedule Details
-	FinRepayHeader getFinRepayHeader(String finReference, String type);
+	// Manual Repayment Details : Finance Repay Header Details & Finance Repay Schedule Details
+	FinRepayHeader getFinRepayHeader(long finID, String type);
 
 	Long saveFinRepayHeader(FinRepayHeader finRepayHeader, TableType tableType);
 
@@ -28,48 +28,46 @@ public interface FinanceRepaymentsDAO {
 
 	void deleteFinRepayHeader(FinRepayHeader finRepayHeader, String type);
 
-	List<RepayScheduleDetail> getRpySchdList(String finReference, String type);
+	List<RepayScheduleDetail> getRpySchdList(long finID, String type);
 
-	List<RepayScheduleDetail> getRpySchdList(long repayId, String type);
+	List<RepayScheduleDetail> getRpySchdListByRepayID(long repayId, String type);
 
 	void saveRpySchdList(List<RepayScheduleDetail> repaySchdList, TableType tableType);
 
-	void deleteRpySchdList(String finReference, String type);
+	void deleteRpySchdList(long finID, String type);
 
-	void deleteRpyDetailbyMaxPostDate(Date finPostDate, String finReference);
+	void deleteRpyDetailbyMaxPostDate(Date finPostDate, long finID);
 
-	FinRepayHeader getFinRepayHeader(String finReference, long linkedTranId, String type);
+	FinRepayHeader getFinRepayHeader(long finID, long linkedTranId, String type);
 
-	void deleteFinRepayHeaderByTranId(String finReference, long linkedTranId, String string);
+	void deleteFinRepayHeaderByTranId(long finID, long linkedTranId, String string);
 
-	void deleteFinRepaySchListByTranId(String finReference, long linkedTranId, String string);
+	void deleteFinRepaySchListByTranId(long finID, long linkedTranId, String string);
 
-	BigDecimal getPaidPft(String finReference, Date finPostDate);
+	BigDecimal getPaidPft(long finID, Date finPostDate);
 
-	List<FinanceRepayments> getByFinRefAndSchdDate(String finReference, Date finSchdDate);
+	List<FinanceRepayments> getByFinRefAndSchdDate(long finID, Date finSchdDate);
 
-	List<FinanceRepayments> getFinRepayments(String finReference, List<Long> receiptList);
+	List<FinanceRepayments> getFinRepayments(long finID, List<Long> receiptList);
 
 	// Receipts : Repay Header List & Repayment Schedule Detail list
-	List<FinRepayHeader> getFinRepayHeadersByRef(String finReference, String type);
+	List<FinRepayHeader> getFinRepayHeadersByRef(long finID, String type);
 
 	FinRepayHeader getFinRepayHeadersByReceipt(long receiptId, String type);
 
-	void deleteByRef(String finReference, TableType tableType);
-
-	List<RepayScheduleDetail> getDMRpySchdList(String finReference, String type);
+	void deleteByRef(long finID, TableType tableType);
 
 	void deleteByReceiptId(long receiptId, TableType tableType);
 
-	List<RepayScheduleDetail> getRpySchedulesForDate(String finReference, Date schDate);
+	List<RepayScheduleDetail> getRpySchedulesForDate(long finID, Date schDate);
 
 	void updateFinReference(String finReference, String extReference, String type);
 
-	List<FinanceRepayments> getInProcessRepaymnets(String finReference, List<Long> receiptList);
+	List<FinanceRepayments> getInProcessRepaymnets(long finID, List<Long> receiptList);
 
 	long getNewRepayID();
 
 	Long getLinkedTranIdByReceipt(long receiptId, String type);
 
-	Date getMaxValueDate(String finReference);
+	Date getMaxValueDate(long finID);
 }
