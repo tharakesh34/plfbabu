@@ -27,7 +27,7 @@ public interface FinReceiptDetailDAO {
 
 	BigDecimal getReceiptAmountPerDay(String product, Date receiptDate, String receiptMode, long custID);
 
-	//Cash Management
+	// Cash Management
 	void updateFundingAcByReceiptID(long receiptID, long fundingAc, String type);
 
 	List<FinReceiptDetail> getFinReceiptDetailByReference(String finReference);
@@ -40,29 +40,27 @@ public interface FinReceiptDetailDAO {
 
 	void cancelReceiptDetails(List<Long> receiptID);
 
-	List<FinReceiptDetail> getFinReceiptDetailByFinReference(String finReference);
-
 	List<FinReceiptDetail> getDMFinReceiptDetailByFinRef(String finReference, String type);
 
 	BigDecimal getFinReceiptDetailsByFinRef(String finReference);
 
-	//### 29-10-2018, Ticket id:124998
+	// ### 29-10-2018, Ticket id:124998
 	boolean isFinReceiptDetailExitsByFavourNo(FinReceiptHeader receiptHeader, String purpose);
 
-	//### 29-10-2018, Ticket id:124998
+	// ### 29-10-2018, Ticket id:124998
 	boolean isFinReceiptDetailExitsByTransactionRef(FinReceiptHeader receiptHeader, String purpose);
 
-	//### 29-10-2018, Ticket id:124998
+	// ### 29-10-2018, Ticket id:124998
 	long getReceiptIdByReceiptDetails(FinReceiptHeader receiptHeader, String purpose);
 
-	//### 30-10-2018, Ticket id:124998
+	// ### 30-10-2018, Ticket id:124998
 	void updateReceiptStatusByReceiptId(long receiptId, String status);
 
 	BigDecimal getUtilizedPartPayAmtByDate(FinReceiptHeader receiptHeader, Date startDate, Date endDate);
 
 	Date getMaxReceiptDate(String finReference, String receiptPurpose, TableType tableType);
 
-	//### 17-12-2020, ST#1627
+	// ### 17-12-2020, ST#1627
 	List<FinReceiptDetail> getNonLanReceiptHeader(long receiptID, String type);
 
 	String getReceiptSourceAccType(String receiptSource);
