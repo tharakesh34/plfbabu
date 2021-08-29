@@ -10,12 +10,11 @@ import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinReceiptQueueLog;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.ReceiptAPIRequest;
-import com.pennant.backend.model.finance.ReceiptCancelDetail;
 import com.pennanttech.pff.core.TableType;
 
 public interface FinReceiptHeaderDAO {
 
-	List<FinReceiptHeader> getReceiptHeaderByRef(String finReference, String rcdMaintainSts, String type);
+	List<FinReceiptHeader> getReceiptHeaderByRef(String reference, String rcdMaintainSts, String type);
 
 	long save(FinReceiptHeader receiptHeader, TableType tableType);
 
@@ -31,10 +30,6 @@ public interface FinReceiptHeaderDAO {
 
 	FinReceiptHeader getServicingFinanceHeader(long receiptID, String userRole, String type);
 
-	List<ReceiptCancelDetail> getReceiptCancelDetailList(Date cancelReqDate, String finReference);
-
-	void updateReceiptStatus(long receiptID, String status);
-
 	long generatedReceiptID(FinReceiptHeader receiptHeader);
 
 	void updateDepositProcessByReceiptID(long receiptID, boolean depositProcess, String type); // Cash Management Change
@@ -49,21 +44,21 @@ public interface FinReceiptHeaderDAO {
 
 	List<FinReceiptHeader> getUpFrontReceiptHeaderByID(List<Long> receipts, String type);
 
-	void updateReference(String extReference, String finReference, String type);
+	void updateReference(String extReference, String reference, String type);
 
 	List<FinReceiptHeader> getUpFrontReceiptHeaderByExtRef(String extRef, String type);
 
-	List<Long> fetchReceiptIdList(String finreference);
+	List<Long> fetchReceiptIdList(String reference);
 
-	boolean checkInProcessPresentments(String reference);
+	boolean checkInProcessPresentments(long finID);
 
-	boolean checkInProcessReceipts(String refernce, long receiptId);
+	boolean checkInProcessReceipts(String reference, long receiptId);
 
-	public void cancelReceipts(String finReference);
+	public void cancelReceipts(String reference);
 
-	public boolean isExtRefAssigned(String finReference);
+	public boolean isExtRefAssigned(String reference);
 
-	List<FinReceiptHeader> getReceiptHeadersByRef(String finReference, String type);
+	List<FinReceiptHeader> getReceiptHeadersByRef(String reference, String type);
 
 	boolean isReceiptDetailsExits(String reference, String paytypeCheque, String chequeNo, String favourNumber,
 			String type);
@@ -73,7 +68,7 @@ public interface FinReceiptHeaderDAO {
 
 	List<FinReceiptHeader> getInProcessReceipts(String Reference);
 
-	List<Long> getInProcessReceiptId(String finReference);
+	List<Long> getInProcessReceiptId(String reference);
 
 	void updateLoanInActive(long receiptId);
 
@@ -97,7 +92,7 @@ public interface FinReceiptHeaderDAO {
 
 	boolean isOnlineExists(String reference, String subReceiptMode, String tranRef, String type);
 
-	String getLoanReferenc(String finReference, String receiptFileName);
+	String getLoanReferenc(String reference, String receiptFileName);
 
 	boolean isReceiptsInProcess(String reference, String receiptPurpose, long receiptId, String type);
 
@@ -120,10 +115,10 @@ public interface FinReceiptHeaderDAO {
 
 	List<ReceiptAPIRequest> getCollectionAPILog();
 
-	Date getMaxReceiptDateByRef(String finrefeRence);
+	Date getMaxReceiptDateByRef(String reference);
 
 	List<FinReceiptHeader> getReceiptHeaderByID(String reference, String receiptPurpose, Date startDate, Date endDate,
 			String type);
 
-	boolean checkPresentmentsInQueue(String finReference);
+	boolean checkPresentmentsInQueue(long finID);
 }

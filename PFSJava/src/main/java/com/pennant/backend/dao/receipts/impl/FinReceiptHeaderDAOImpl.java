@@ -40,14 +40,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
@@ -58,7 +54,6 @@ import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinReceiptQueueLog;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.ReceiptAPIRequest;
-import com.pennant.backend.model.finance.ReceiptCancelDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.ReceiptUploadConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -83,8 +78,6 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 	@Override
 	public List<FinReceiptHeader> getReceiptHeaderByRef(String finReference, String rcdMaintainSts, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where Reference = ? and RcdMaintainSts = ?");
 
@@ -92,13 +85,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		FinReceiptHeaderRowMaper rowMapper = new FinReceiptHeaderRowMaper(type);
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new Object[] { finReference, rcdMaintainSts }, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.ENTERING, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcOperations.query(sql.toString(), rowMapper, finReference, rcdMaintainSts);
 	}
 
 	@Override
@@ -126,7 +113,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
@@ -307,41 +294,988 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 	@Override
 	public void deleteByReceiptID(long receiptID, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ReceiptID", receiptID);
-
-		StringBuilder sql = new StringBuilder(" DELETE From FinReceiptHeader");
+		StringBuilder sql = new StringBuilder("Delete From FinReceiptHeader");
 		sql.append(tableType.getSuffix());
-		sql.append(" where ReceiptID=:ReceiptID ");
+		sql.append(" Where ReceiptID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
-		this.jdbcTemplate.update(sql.toString(), source);
-		logger.debug(Literal.LEAVING);
+
+		this.jdbcOperations.update(sql.toString(), receiptID);
 	}
 
-	/**
-	 * Method for Fetching Finance Receipt Header by using Receipt ID
-	 */
 	@Override
 	public FinReceiptHeader getReceiptHeaderByID(long receiptID, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where ReceiptID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		FinReceiptHeaderRowMaper rowMapper = new FinReceiptHeaderRowMaper(type);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { receiptID }, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, receiptID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Records not available for the Receipt ID {}", receiptID);
+			//
 		}
-		logger.debug(Literal.LEAVING);
+
 		return null;
+	}
+
+	@Override
+	public int geFeeReceiptCount(String reference, String receiptPurpose, long receiptId) {
+		StringBuilder sql = new StringBuilder("Select count(ReceiptID) From (");
+		sql.append(" select ReceiptID, Reference,ReceiptPurpose,ReceiptModeStatus From FinReceiptHeader union all ");
+		sql.append(" select ReceiptID, Reference,ReceiptPurpose,ReceiptModeStatus From FinReceiptHeader_Temp) T");
+		sql.append(" Where ReceiptID <> ? and Reference = ?");
+		sql.append(" and ReceiptPurpose = ? and ReceiptModeStatus in(?, ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, receiptId, reference,
+					receiptPurpose, "A", "F");
+		} catch (EmptyResultDataAccessException e) {
+		}
+
+		return 0;
+	}
+
+	@Override
+	public FinReceiptHeader getServicingFinanceHeader(long receiptID, String userRole, String type) {
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where ReceiptID = ? and NextRoleCode = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		FinReceiptHeaderRowMaper rowMapper = new FinReceiptHeaderRowMaper(type);
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, receiptID, userRole);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
+	@Override
+	public long generatedReceiptID(FinReceiptHeader rch) {
+		if (rch.getId() == 0 || rch.getId() == Long.MIN_VALUE) {
+			rch.setId(getNextValue("SeqFinReceiptHeader"));
+		}
+		return rch.getId();
+	}
+
+	@Override
+	public void updateDepositProcessByReceiptID(long receiptID, boolean depositProcess, String type) {
+		StringBuilder sql = new StringBuilder("Update FinReceiptHeader");
+		sql.append(type);
+		sql.append(" Set DepositProcess = ?");
+		sql.append(" Where ReceiptID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			ps.setBoolean(1, depositProcess);
+			ps.setLong(2, receiptID);
+
+		});
+	}
+
+	@Override
+	public void updateDepositBranchByReceiptID(long receiptID, String depositBranch, String type) {
+		StringBuilder sql = new StringBuilder("Update FinReceiptHeader");
+		sql.append(type);
+		sql.append(" Set DepositBranch = ?");
+		sql.append(" Where ReceiptID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			ps.setString(1, depositBranch);
+			ps.setLong(2, receiptID);
+
+		});
+	}
+
+	@Override
+	public BigDecimal getTotalCashReceiptAmount(String depositBranch, String type) {
+		StringBuilder sql = new StringBuilder("Select sum(Amount)");
+		sql.append(" From FinReceiptDetail");
+		sql.append(" Where PaymentType = ? and ReceiptId In (Select ReceiptId From FinReceiptHeader");
+		sql.append(type);
+		sql.append(" Where ReceiptModeStatus = ? and RecordType != ? and DepositBranch = ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		Object[] parameters = new Object[] { RepayConstants.RECEIPTMODE_CASH, RepayConstants.PAYSTATUS_CANCEL,
+				PennantConstants.RECORD_TYPE_NEW, depositBranch };
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, parameters);
+		} catch (DataAccessException e) {
+			//
+		}
+
+		return BigDecimal.ZERO;
+	}
+
+	@Override
+	public boolean isReceiptCancelProcess(String depositBranch, List<String> paymentTypes, String type,
+			long receiptId) {
+
+		StringBuilder sql = new StringBuilder("Select count(ReceiptId)");
+		sql.append(" From FinReceiptDetail");
+		sql.append(" Where PaymentType in (");
+		sql.append(JdbcUtil.getInCondition(paymentTypes));
+		sql.append(")");
+		sql.append(" and ReceiptId In (Select ReceiptId From FinReceiptHeader").append(type);
+		sql.append(" Where ReceiptModeStatus = ? and RecordType != ? and DepositBranch = ? and ReceiptId = ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		Object[] parameters = new Object[paymentTypes.size() + 4];
+
+		int i = 0;
+		for (String paymentType : paymentTypes) {
+			parameters[i++] = paymentType;
+		}
+
+		parameters[i++] = RepayConstants.PAYSTATUS_CANCEL;
+		parameters[i++] = PennantConstants.RECORD_TYPE_NEW;
+		parameters[i++] = depositBranch;
+		parameters[i++] = receiptId;
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, parameters) > 0;
+		} catch (DataAccessException e) {
+			//
+		}
+
+		return false;
+	}
+
+	@Override
+	public List<FinReceiptHeader> getUpFrontReceiptHeaderByID(List<Long> receipts, String type) {
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where ReceiptID IN (");
+		sql.append(JdbcUtil.getInCondition(receipts));
+		sql.append(")  and Reference is null ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		FinReceiptHeaderRowMaper rowMapper = new FinReceiptHeaderRowMaper(type);
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			for (Long receiptId : receipts) {
+				ps.setLong(index++, receiptId);
+			}
+		}, rowMapper);
+	}
+
+	@Override
+	public void updateReference(String extReference, String finReference, String type) {
+		StringBuilder sql = new StringBuilder("Update FinReceiptHeader");
+		sql.append(type);
+		sql.append(" Set Reference = ?");
+		sql.append(" Where ExtReference = ? and Reference is null");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		int recordCount = this.jdbcOperations.update(sql.toString(), finReference, extReference);
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+
+	}
+
+	@Override
+	public List<FinReceiptHeader> getUpFrontReceiptHeaderByExtRef(String extRef, String type) {
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where ExtReference = ? and Reference is null ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		FinReceiptHeaderRowMaper rowMapper = new FinReceiptHeaderRowMaper(type);
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, extRef);
+		}, rowMapper);
+	}
+
+	@Override
+	public Date getMaxReceiptDateByRef(String reference) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select max(ReceiptDate) From FinReceiptHeader");
+		sql.append(" Where Reference = ? and ReceiptModeStatus not in (?, ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.queryForObject(sql.toString(), Date.class, reference, "B", "C");
+	}
+
+	@Override
+	public void cancelReceipts(String reference) {
+		StringBuilder sql = new StringBuilder("Update FinReceiptHeader");
+		sql.append(" Set ReceiptModeStatus = ?  Where Reference = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), "C", reference);
+	}
+
+	@Override
+	public List<Long> fetchReceiptIdList(String reference) {
+		boolean upfrontFeeRevReq = SysParamUtil.isAllowed(SMTParameterConstants.UPFRONT_FEE_REVERSAL_REQ);
+		boolean rpyPostingsRevReq = SysParamUtil
+				.isAllowed(SMTParameterConstants.REPAY_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL);
+
+		StringBuilder sql = new StringBuilder("Select ReceiptID From FinreceiptHeader Where Reference = ?");
+
+		int index = 1;
+		if (!upfrontFeeRevReq) {
+			sql.append(" and ReceiptPurpose != ?");
+			index++;
+		}
+
+		if (!rpyPostingsRevReq) {
+			sql.append(" and ReceiptPurpose != ?");
+			index++;
+		}
+
+		Object[] parameters = new Object[index];
+
+		int i = 0;
+
+		parameters[i++] = reference;
+
+		if (!upfrontFeeRevReq) {
+			parameters[i++] = FinServiceEvent.FEEPAYMENT;
+		}
+
+		if (!rpyPostingsRevReq) {
+			parameters[i++] = FinServiceEvent.SCHDRPY;
+		}
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.queryForList(sql.toString(), Long.class, parameters);
+
+	}
+
+	@Override
+	public boolean isExtRefAssigned(String extReference) {
+		String sql = "Select count(ReceiptID) From FinReceiptHeader Where ExtReference = ? and Reference is not null";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Integer.class, extReference) > 0;
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return false;
+	}
+
+	// FIXME Move to PresentmentDetailDAO
+	@Override
+	public boolean checkInProcessPresentments(long finID) {
+		StringBuilder sql = new StringBuilder("Select count(FinID)");
+		sql.append(" From PresentmentDetails ");
+		sql.append("Where Id in (Select PresentmentId From FinScheduleDetails Where FinID = ? and presentmentId != ?)");
+		sql.append(" and Status in (?) and FinID = ? and Excludereason = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID, 0, "A", finID, 0) > 0;
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return false;
+	}
+
+	// FIXME Move to PresentmentDetailDAO
+	@Override
+	public boolean checkPresentmentsInQueue(long finID) {
+		StringBuilder sql = new StringBuilder("Select count(FinID)");
+		sql.append(" From PresentmentDetails ");
+		sql.append("Where Id in (Select PresentmentId From FinScheduleDetails Where FinID = ? and presentmentId != ?)");
+		sql.append(" and Status in (?, ?) and FinID = ? and Excludereason = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID, 0, "A", "I", finID, 0) > 0;
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return false;
+	}
+
+	@Override
+	public List<FinReceiptHeader> getReceiptHeadersByRef(String reference, String type) {
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where Reference = ?");
+		sql.append(" order by ReceiptDate, ReceiptID");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		FinReceiptHeaderRowMaper rowMapper = new FinReceiptHeaderRowMaper(type);
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, reference);
+		}, rowMapper);
+	}
+
+	@Override
+	public boolean checkInProcessReceipts(String reference, long receiptId) {
+		String sql = "Select count(ReceiptID) From FinReceiptHeader_Temp Where Reference = ? and ReceiptId <> ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		int count = this.jdbcOperations.queryForObject(sql, Integer.class, reference, receiptId);
+
+		if (count == 0) {
+			sql = "Select count(ReceiptID) From FinReceiptHeader Where Reference= ? and ReceiptModeStatus in (?, ?)";
+
+			logger.debug(Literal.SQL + sql);
+
+			count = this.jdbcOperations.queryForObject(sql, Integer.class, reference, "I", "D");
+		}
+		return count > 0;
+	}
+
+	@Override
+	public boolean isReceiptDetailsExits(String reference, String receiptMode, String chequeNo, String favourNumber,
+			String type) {
+
+		StringBuilder sql = new StringBuilder("Select count(ReceiptID)");
+		sql.append(" From FinReceiptHeader").append(type).append(" rch");
+		sql.append(" Inner join FinReceiptDetail").append(type).append(" rcd");
+		sql.append(" on rcd.ReceiptId = rch.ReceiptId");
+		sql.append(" Where Reference = ? and ReceiptMode = ? and rch.FavourNumber = ? and rch.ChequeacNo = ?");
+		sql.append(" and (rch.ReceiptModeStatus in (?) or rch.ReceiptModeStatus is null)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		Object[] parameters = new Object[] { reference, receiptMode, favourNumber, chequeNo, "A" };
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, parameters) > 0;
+		} catch (DataAccessException e) {
+			//
+		}
+
+		return false;
+	}
+
+	@Override
+	public void updateReceiptStatusAndRealizationDate(long receiptID, String status, Date realizationDate) {
+		String sql = "Update FinReceiptHeader Set ReceiptModeStatus = ?, RealizationDate = ? Where ReceiptID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setString(1, status);
+			ps.setDate(2, JdbcUtil.getDate(realizationDate));
+			ps.setLong(3, receiptID);
+		});
+	}
+
+	@Override
+	public List<FinReceiptHeader> getInProcessReceipts(String reference) {
+		String sql = "Select ReceiptID, AllocationType, ReceiptAmount From FinReceiptHeader_Temp Where Reference = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			FinReceiptHeader rch = new FinReceiptHeader();
+
+			rch.setReceiptID(rs.getLong("ReceiptID"));
+			rch.setAllocationType(rs.getString("AllocationType"));
+			rch.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
+
+			return rch;
+
+		}, reference);
+	}
+
+	@Override
+	public String getReceiptModeStatus(long receiptID) {
+		String sql = "Select ReceiptModeStatus From FinReceiptHeader Where ReceiptID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, String.class, receiptID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return "";
+	}
+
+	@Override
+	public List<Long> getInProcessReceiptId(String reference) {
+		String sql = "Select ReceiptID From FinReceiptHeader Where Reference = ? and ReceiptModeStatus = ? and receiptPurpose = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.queryForList(sql, Long.class, reference, "D", "SchdlRepayment");
+	}
+
+	@Override
+	public void updateLoanInActive(long receiptId) {
+		String sql = "Update FinReceiptHeader Set LoanActive= ? Where ReceiptID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		this.jdbcOperations.update(sql, 0, receiptId);
+	}
+
+	@Override
+	public void saveMultiReceipt(FinReceiptHeader rch, FinReceiptDetail rcd, Map<String, String> valueMap) {
+		StringBuilder sql = new StringBuilder("Insert into MultiReceiptApproval");
+		sql.append(" (BatchId, ReceiptModeStatus, BounceDate, RealizationDate, Remarks, CancelReason, ReceiptID");
+		sql.append(", DepositDate, ReceiptDate, FinReference, Stage, DepositNo, FundingAc, BounceId, UploadStatus");
+		sql.append(", Reason, CancelRemarks)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+
+			int index = 1;
+
+			ps.setLong(index++, rch.getBatchId());
+			ps.setString(index++, rch.getReceiptModeStatus());
+			ps.setDate(index++, JdbcUtil.getDate(rch.getBounceDate()));
+			ps.setDate(index++, JdbcUtil.getDate(rch.getRealizationDate()));
+			ps.setString(index++, rch.getRemarks());
+			ps.setString(index++, rch.getCancelReason());
+			ps.setLong(index++, rch.getReceiptID());
+			ps.setDate(index++, JdbcUtil.getDate(rch.getDepositDate()));
+			ps.setDate(index++, JdbcUtil.getDate(rch.getReceiptDate()));
+			ps.setString(index++, rch.getReference());
+
+			if (StringUtils.isNotBlank(rch.getRoleCode()) && rch.getRoleCode().contains("MAKER")) {
+				ps.setString(index++, "M");
+			} else {
+				ps.setString(index++, "C");
+			}
+			ps.setString(index++, rcd.getDepositNo());
+			ps.setLong(index++, rcd.getFundingAc());
+			ps.setLong(index++, rch.getBounceReason());
+			ps.setString(index++, valueMap.get("uploadStatus"));
+			ps.setString(index++, valueMap.get("reason"));
+			ps.setString(index++, rch.getCancelRemarks());
+
+		});
+	}
+
+	// FIXME Move to FinReceiptQueueLogDAO
+	@Override
+	public void saveMultiReceiptLog(List<FinReceiptQueueLog> rqlList) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Insert into FinReceiptQueueLog (UploadId, ReceiptId, FinReference");
+		sql.append(", TransactionDate, ThreadId, Progress, StartTime)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinReceiptQueueLog rql = rqlList.get(i);
+
+				int index = 1;
+
+				ps.setLong(index++, rql.getUploadId());
+				ps.setLong(index++, rql.getReceiptId());
+				ps.setString(index++, rql.getFinReference());
+				ps.setDate(index++, JdbcUtil.getDate(rql.getTransactionDate()));
+				ps.setLong(index++, rql.getThreadId());
+				ps.setInt(index++, rql.getProgress());
+				ps.setString(index++, rql.getStartTime());
+
+			}
+
+			@Override
+			public int getBatchSize() {
+				return rqlList.size();
+			}
+		});
+	}
+
+	// FIXME Move to FinReceiptQueueLogDAO
+	@Override
+	public void updateMultiReceiptLog(FinReceiptQueueLog rql) {
+		List<FinReceiptQueueLog> rqlList = new ArrayList<>();
+
+		rqlList.add(rql);
+
+		batchUpdateMultiReceiptLog(rqlList);
+	}
+
+	// FIXME Move to FinReceiptQueueLogDAO
+	@Override
+	public void batchUpdateMultiReceiptLog(List<FinReceiptQueueLog> rqlList) {
+		String sql = "Update FinReceiptQueueLog Set EndTime = ?, ThreadId = ?, StartTime = ?, ErrorLog = ? , Progress = ? Where UploadId = ? and ReceiptId = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinReceiptQueueLog rql = rqlList.get(i);
+
+				int index = 1;
+
+				ps.setString(index++, rql.getEndTime());
+				ps.setLong(index++, rql.getThreadId());
+				ps.setString(index++, rql.getStartTime());
+				ps.setString(index++, rql.getErrorLog());
+				ps.setInt(index++, rql.getProgress());
+
+				ps.setLong(index++, rql.getUploadId());
+				ps.setLong(index++, rql.getReceiptId());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return rqlList.size();
+			}
+		});
+	}
+
+	// FIXME Move to FinReceiptQueueLogDAO
+	@Override
+	public List<Long> getInProcessMultiReceiptRecord() {
+		String sql = "Select ReceiptId From FinReceiptQueueLog Where Progress = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.queryForList(sql, Long.class, 0);
+	}
+
+	@Override
+	public boolean checkEarlySettlementInitiation(String reference) {
+		return checkReceiptInitiation(reference, "_view", FinServiceEvent.EARLYSETTLE);
+	}
+
+	@Override
+	public boolean checkPartialSettlementInitiation(String reference) {
+		return checkReceiptInitiation(reference, "_Temp", FinServiceEvent.EARLYRPY);
+	}
+
+	private boolean checkReceiptInitiation(String reference, String type, String purpose) {
+		StringBuilder sql = new StringBuilder("Select count(ReceiptId)  From FinReceiptHeader");
+		sql.append(type);
+		sql.append(" Where Reference = ? and Receiptpurpose = ? and ReceiptModeStatus not in (?, ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, reference, purpose, "B", "C") > 0;
+	}
+
+	@Override
+	public boolean isChequeExists(String reference, String paytypeCheque, String bankCode, String favourNumber,
+			String type) {
+		StringBuilder sql = new StringBuilder("Select count(1) From FinReceiptDetail");
+		sql.append(type);
+		sql.append(" Where Reference = ? and PaymentType = ? and FavourNumber = ?");
+		sql.append(" and BankCode = ? and Status not in (?, ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		Object[] parameters = new Object[] { reference, paytypeCheque, favourNumber, bankCode, "B", "C" };
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, parameters) > 0;
+		} catch (DataAccessException e) {
+			//
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean isOnlineExists(String reference, String subReceiptMode, String tranRef, String type) {
+		StringBuilder sql = new StringBuilder("Select count(1) From FinReceiptDetail");
+		sql.append(type);
+		sql.append(" Where Reference = ? and PaymentType = ? and TransactionRef = ? and Status not in (?, ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		Object[] parameters = new Object[] { reference, subReceiptMode, tranRef, "B", "C" };
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, parameters) > 0;
+		} catch (DataAccessException e) {
+			//
+		}
+
+		return false;
+	}
+
+	@Override
+	public String getLoanReferenc(String reference, String receiptFileName) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" distinct Reference From ReceiptUploadDetails");
+		sql.append(" Where UploadHeaderId in (Select UploadHeaderId From ReceiptUploadHeader_View");
+		sql.append(" Where FileName not in (?) and UploadProgress in (?, ?))");
+		sql.append(" and Reference = ? and uploadstatus in (?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		Object[] parameters = new Object[] { receiptFileName, ReceiptUploadConstants.RECEIPT_DEFAULT,
+				ReceiptUploadConstants.RECEIPT_DOWNLOADED, reference, PennantConstants.UPLOAD_STATUS_SUCCESS };
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, parameters);
+		} catch (DataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
+	@Override
+	public boolean isReceiptsInProcess(String reference, String receiptPurpose, long receiptId, String type) {
+		StringBuilder sql = new StringBuilder("Select count(ReceiptId) From FinReceiptHeader" + type);
+		sql.append(" Where Reference = ? and ReceiptPurpose = ? and ReceiptID <> ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		Object[] parameters = new Object[] { reference, receiptPurpose, receiptId };
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, parameters) > 0;
+		} catch (DataAccessException e) {
+			//
+		}
+
+		return false;
+	}
+
+	@Override
+	public FinReceiptHeader getFinTypeByReceiptID(long receiptID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" rch.Fintype, ft.FinTypeDesc, ft.FinCcy, cu.CcyDesc");
+		sql.append(" From FinReceiptHeader rch ");
+		sql.append(" Inner Join RMTFinanceTypes ft on ft.FinType = rsch.FinType");
+		sql.append(" Inner Join RMTCurrencies cu on cu.CcyCode = ft.FinCcy");
+		sql.append(" Where rch.ReceiptID = ? ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinReceiptHeader frh = new FinReceiptHeader();
+				frh.setFinType(rs.getString("Fintype"));
+				frh.setFinTypeDesc(rs.getString("FinTypeDesc"));
+				frh.setFinCcy(rs.getString("FinCcy"));
+				frh.setFinCcyDesc(rs.getString("CcyDesc"));
+				return frh;
+			}, receiptID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
+	@Override
+	public int geFeeReceiptCountByExtReference(String reference, String receiptPurpose, String extReference) {
+		String sql = "Select count(ReceiptID) From FinReceiptHeader Where ReceiptPurpose = ? and ExtReference = ? and Reference !=  ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		Object[] parameters = new Object[] { receiptPurpose, extReference, reference };
+		try {
+			return this.jdbcOperations.queryForObject(sql, Integer.class, parameters);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+		return 0;
+	}
+
+	@Override
+	public boolean isReceiptExists(String reference, String type) {
+		StringBuilder sql = new StringBuilder("Select count(ReceiptID) From FinReceiptHeader");
+		sql.append(StringUtils.trim(type));
+		sql.append(" Where Reference = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, reference) > 0;
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+		return false;
+	}
+
+	public List<Long> isDedupReceiptExists(FinServiceInstruction fsi) {
+		boolean isOnline = StringUtils.isNotBlank(fsi.getTransactionRef());
+		boolean isChequeOrDD = StringUtils.isNotBlank(fsi.getFavourNumber());
+
+		StringBuilder sql = new StringBuilder("Select ReceiptID From FinReceiptHeader");
+		sql.append(" Where Reference = ? and ValueDate = ? and ReceiptModeStatus = ?");
+		sql.append(" and ReceiptAmount = ?");
+
+		if (isOnline || isChequeOrDD) {
+			sql.append(" and TransactionRef = ?");
+		}
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, fsi.getFinReference());
+			ps.setDate(index++, JdbcUtil.getDate(fsi.getValueDate()));
+			ps.setString(index++, RepayConstants.PAYSTATUS_REALIZED);
+			ps.setBigDecimal(index++, fsi.getAmount());
+			if (isOnline) {
+				ps.setString(index++, fsi.getTransactionRef());
+			} else if (isChequeOrDD) {
+				ps.setString(index++, fsi.getFavourNumber());
+			}
+
+		}, (rs, roNum) -> {
+			return rs.getLong(1);
+		});
+	}
+
+	@Override
+	public FinReceiptHeader getNonLanReceiptHeader(long receiptID, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ReceiptID, ReceiptDate, ReceiptType, RecAgainst, Reference, ReceiptPurpose");
+		sql.append(", RcdMaintainSts, DepositDate, ReceiptMode, ExcessAdjustTo, AllocationType, ReceiptAmount");
+		sql.append(", EffectSchdMethod, ReceiptModeStatus, RealizationDate, CancelReason, WaviedAmt");
+		sql.append(", TotFeeAmount, BounceDate, Remarks, GDRAvailable, ReleaseType, ThirdPartyName");
+		sql.append(", ThirdPartyMobileNum, LpiAmount,CashierBranch,InitiateDate,ReceiptSource");
+		sql.append(", LinkedTranId, EntityCode, DepositProcess, DepositBranch, LppAmount, GstLpiAmount, GstLppAmount");
+		sql.append(", subReceiptMode, receiptChannel, receivedFrom, panNumber, collectionAgentId");
+		sql.append(",  Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId, ExtReference, Module, FinDivision, PostBranch");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", CustID, CustCIF, CustShrtName, CancelReasonDesc, ReceiptSourceAcType, ReceiptSourceAcDesc");
+			sql.append(", CancelRemarks, CollectionAgentCode, CollectionAgentDesc, PostBranchDesc");
+			sql.append(", CashierBranchDesc, EntityDesc, TransactionRef");
+		}
+
+		sql.append(" From NonLanFinReceiptHeader");
+		sql.append(StringUtils.trim(type));
+		sql.append(" Where ReceiptID = ? ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
+				FinReceiptHeader frh = new FinReceiptHeader();
+
+				frh.setReceiptID(rs.getLong("ReceiptID"));
+				frh.setReceiptDate(rs.getTimestamp("ReceiptDate"));
+				frh.setReceiptType(rs.getString("ReceiptType"));
+				frh.setRecAgainst(rs.getString("RecAgainst"));
+				frh.setReference(rs.getString("Reference"));
+				frh.setReceiptPurpose(rs.getString("ReceiptPurpose"));
+				frh.setRcdMaintainSts(rs.getString("RcdMaintainSts"));
+				frh.setDepositDate(rs.getTimestamp("DepositDate"));
+				frh.setReceiptMode(rs.getString("ReceiptMode"));
+				frh.setExcessAdjustTo(rs.getString("ExcessAdjustTo"));
+				frh.setAllocationType(rs.getString("AllocationType"));
+				frh.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
+				frh.setEffectSchdMethod(rs.getString("EffectSchdMethod"));
+				frh.setReceiptModeStatus(rs.getString("ReceiptModeStatus"));
+				frh.setRealizationDate(rs.getTimestamp("RealizationDate"));
+				frh.setCancelReason(rs.getString("CancelReason"));
+				frh.setWaviedAmt(rs.getBigDecimal("WaviedAmt"));
+				frh.setTotFeeAmount(rs.getBigDecimal("TotFeeAmount"));
+				frh.setBounceDate(rs.getTimestamp("BounceDate"));
+				frh.setRemarks(rs.getString("Remarks"));
+				frh.setGDRAvailable(rs.getBoolean("GDRAvailable"));
+				frh.setReleaseType(rs.getString("ReleaseType"));
+				frh.setThirdPartyName(rs.getString("ThirdPartyName"));
+				frh.setThirdPartyMobileNum(rs.getString("ThirdPartyMobileNum"));
+				frh.setLpiAmount(rs.getBigDecimal("LpiAmount"));
+				frh.setCashierBranch(rs.getString("CashierBranch"));
+				frh.setInitiateDate(rs.getTimestamp("InitiateDate"));
+				frh.setReceiptSource(rs.getString("ReceiptSource"));
+				frh.setLinkedTranId(rs.getLong("LinkedTranId"));
+				frh.setEntityCode(rs.getString("EntityCode"));
+				frh.setDepositProcess(rs.getBoolean("DepositProcess"));
+				frh.setDepositBranch(rs.getString("DepositBranch"));
+				frh.setLppAmount(rs.getBigDecimal("LppAmount"));
+				frh.setGstLpiAmount(rs.getBigDecimal("GstLpiAmount"));
+				frh.setGstLppAmount(rs.getBigDecimal("GstLppAmount"));
+				frh.setSubReceiptMode(rs.getString("SubReceiptMode"));
+				frh.setReceiptChannel(rs.getString("ReceiptChannel"));
+				frh.setReceivedFrom(rs.getString("ReceivedFrom"));
+				frh.setPanNumber(rs.getString("PanNumber"));
+				frh.setCollectionAgentId(rs.getLong("CollectionAgentId"));
+				frh.setVersion(rs.getInt("Version"));
+				frh.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				frh.setLastMntBy(rs.getLong("LastMntBy"));
+				frh.setRecordStatus(rs.getString("RecordStatus"));
+				frh.setRoleCode(rs.getString("RoleCode"));
+				frh.setNextRoleCode(rs.getString("NextRoleCode"));
+				frh.setTaskId(rs.getString("TaskId"));
+				frh.setNextTaskId(rs.getString("NextTaskId"));
+				frh.setRecordType(rs.getString("RecordType"));
+				frh.setWorkflowId(rs.getLong("WorkflowId"));
+				frh.setExtReference(rs.getString("ExtReference"));
+				frh.setModule(rs.getString("Module"));
+				frh.setFinDivision(rs.getString("FinDivision"));
+				frh.setPostBranch(rs.getString("PostBranch"));
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					frh.setCustID(rs.getLong("CustID"));
+					frh.setCustCIF(rs.getString("CustCIF"));
+					frh.setCustShrtName(rs.getString("CustShrtName"));
+					frh.setCancelReasonDesc(rs.getString("CancelReasonDesc"));
+					frh.setReceiptSourceAcType(rs.getString("ReceiptSourceAcType"));
+					frh.setReceiptSourceAcDesc(rs.getString("ReceiptSourceAcDesc"));
+					frh.setCancelRemarks(rs.getString("CancelRemarks"));
+					frh.setCollectionAgentCode(rs.getString("CollectionAgentCode"));
+					frh.setCollectionAgentDesc(rs.getString("CollectionAgentDesc"));
+					frh.setPostBranchDesc(rs.getString("PostBranchDesc"));
+					frh.setCashierBranchDesc(rs.getString("CashierBranchDesc"));
+					frh.setEntityDesc(rs.getString("EntityDesc"));
+					frh.setTransactionRef(rs.getString("TransactionRef"));
+				}
+
+				return frh;
+			}, receiptID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
+	@Override
+	public long getCollectionAgencyId(String collectionAgency) {
+		String sql = "Select ID From Collection_Agencies Where Code = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Long.class, collectionAgency);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return 0;
+	}
+
+	@Override
+	public void updateCollectionMobAgencyLimit(ReceiptAPIRequest request) {
+		StringBuilder sql = new StringBuilder("Update Collection_Mob_Aagency_Limits");
+		sql.append(" set Status = ?, Response_Code = ?, ReTry_Count = ?, ReTry_On = ?");
+		sql.append(" Where Receipt_Id = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+
+				ps.setString(index++, request.getStatus());
+				ps.setString(index++, request.getResponseCode());
+				ps.setInt(index++, ((request.getRetryCount()) + 1));
+				ps.setDate(index++, JdbcUtil.getDate(request.getRetryOn()));
+				ps.setLong(index++, request.getReceiptId());
+
+			}
+		});
+	}
+
+	@Override
+	public long saveCollectionAPILog(ReceiptAPIRequest request) {
+		StringBuilder sql = new StringBuilder("Insert Into Collection_Mob_Aagency_Limits");
+		sql.append(" (Receipt_Id, Message_Id, Request_Time, Status, Response_Code, ReTry_Count)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		KeyHolder keyHolder = new GeneratedKeyHolder();
+
+		this.jdbcOperations.update(new PreparedStatementCreator() {
+
+			@Override
+			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+				PreparedStatement ps = con.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
+				int index = 1;
+
+				ps.setLong(index++, request.getReceiptId());
+				ps.setLong(index++, request.getMessageId());
+				ps.setDate(index++, JdbcUtil.getDate(request.getRequestTime()));
+				ps.setString(index++, request.getStatus());
+				ps.setString(index++, request.getResponseCode());
+				ps.setInt(index++, request.getRetryCount());
+				return ps;
+
+			}
+		}, keyHolder);
+
+		return (long) (keyHolder.getKeys().get("id"));
+	}
+
+	@Override
+	public List<ReceiptAPIRequest> getCollectionAPILog() {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ID, Receipt_Id, Message_Id, Request_Time, Status, Response_Code, ");
+		sql.append(" Retry_Count, Retry_On From Collection_Mob_Aagency_Limits ");
+		sql.append(" Where Retry_Count < ? and Status = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setInt(1, 10);
+			ps.setString(2, "F");
+
+		}, (rs, i) -> {
+			ReceiptAPIRequest request = new ReceiptAPIRequest();
+
+			request.setID(rs.getLong("ID"));
+			request.setReceiptId(rs.getLong("Receipt_Id"));
+			request.setMessageId(rs.getLong("Message_Id"));
+			request.setRequestTime(rs.getDate("Request_Time"));
+			request.setStatus(rs.getString("Status"));
+			request.setResponseCode(rs.getString("Response_Code"));
+			request.setRetryCount(rs.getInt("Retry_Count"));
+			request.setRetryOn(rs.getDate("Retry_On"));
+			return request;
+		});
+	}
+
+	@Override
+	public List<FinReceiptHeader> getReceiptHeaderByID(String reference, String receiptPurpose, Date startDate,
+			Date endDate, String type) {
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where Reference = ? and ReceiptPurpose = ? and ReceiptDate >= ? and ReceiptDate <= ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		FinReceiptHeaderRowMaper rowMapper = new FinReceiptHeaderRowMaper(type);
+
+		return this.jdbcOperations.query(sql.toString(), rowMapper,
+				new Object[] { reference, receiptPurpose, startDate, endDate });
+
 	}
 
 	private StringBuilder getSqlQuery(String type) {
@@ -353,12 +1287,12 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", CashierBranch, InitiateDate, DepositProcess, DepositBranch, LppAmount, GstLpiAmount");
 		sql.append(", GstLppAmount, subReceiptMode, receiptChannel, receivedFrom, panNumber, collectionAgentId");
 		sql.append(", ExtReference, Module, FinDivision, PostBranch, ActFinReceipt, ReasonCode, CancelRemarks");
-		sql.append(", KnockOffType, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(", RefWaiverAmt, Source, ValueDate, TransactionRef, DepositDate, PartnerBankId");
-		sql.append(
-				", PrvReceiptPurpose, ReceiptSource, RecAppDate, ReceivedDate, ClosureTypeId, SourceofFund, TdsAmount");
+		sql.append(", KnockOffType, PrvReceiptPurpose, ReceiptSource");
+		sql.append(", RecAppDate, ReceivedDate, ClosureTypeId, SourceofFund, TdsAmount");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
 
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FinType, FinCcy, FinBranch, CustCIF, CustShrtName, FinTypeDesc");
 			sql.append(", FinCcyDesc, FinBranchDesc, CancelReasonDesc, FinIsActive, PromotionCode, ProductCategory");
@@ -375,835 +1309,10 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			}
 		}
 
-		sql.append(" from FinReceiptHeader");
-		sql.append(StringUtils.trim(type));
-		return sql;
-	}
-
-	@Override
-	public int geFeeReceiptCount(String reference, String receiptPurpose, long receiptId) {
-		int count = 0;
-
-		StringBuilder sql = new StringBuilder("Select count(*)  from (");
-		sql.append(" select ReceiptID, Reference,ReceiptPurpose,ReceiptModeStatus from FinReceiptHeader union all ");
-		sql.append(" select ReceiptID, Reference,ReceiptPurpose,ReceiptModeStatus from FinReceiptHeader_Temp) T");
-		sql.append(" Where ReceiptID <> :ReceiptID and Reference = :Reference");
-		sql.append(" and ReceiptPurpose = :ReceiptPurpose and ReceiptModeStatus in('A','F')");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Reference", reference);
-		source.addValue("ReceiptPurpose", receiptPurpose);
-		source.addValue("ReceiptID", receiptId);
-
-		try {
-			count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION);
-		}
-
-		return count;
-	}
-
-	@Override
-	public FinReceiptHeader getServicingFinanceHeader(long receiptID, String userRole, String type) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = getSqlQuery(type);
-		sql.append(" Where ReceiptID = ? and NextRoleCode = ?");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		FinReceiptHeaderRowMaper rowMapper = new FinReceiptHeaderRowMaper(type);
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { receiptID, userRole }, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.ENTERING, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return null;
-	}
-
-	@Override
-	public List<ReceiptCancelDetail> getReceiptCancelDetailList(Date cancelReqDate, String finReference) {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Reference", finReference);
-		source.addValue("ReceivedDate", cancelReqDate);
-
-		StringBuilder sql = new StringBuilder(" Select RH.ReceiptID ReceiptId , RH.ReceivedDate ValueDate");
-		sql.append(", (RH.ReceiptAmount + Rh.WaviedAmt ) Amount, Rh.WaviedAmt ");
-		sql.append(" From FinReceiptHeader RH INNER JOIN FinReceiptDetail RD ON RH.ReceiptID = RD.ReceiptID");
-		sql.append(" Where RH.Reference =:Reference AND  RD.ReceivedDate >= :ReceivedDate");
-		sql.append("  AND RH.ReceiptModeStatus NOT IN('C','B') ORDER BY RH.ReceiptID ");
-
-		logger.debug(Literal.SQL + sql.toString());
-		RowMapper<ReceiptCancelDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ReceiptCancelDetail.class);
-		List<ReceiptCancelDetail> rcptCancelDetails = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		logger.debug(Literal.LEAVING);
-		return rcptCancelDetails;
-	}
-
-	@Override
-	public void updateReceiptStatus(long receiptID, String status) {
-		String sql = "Update FinReceiptHeader Set ReceiptModeStatus = ? Where ReceiptID = ?";
-
-		logger.debug(Literal.SQL + sql);
-
-		this.jdbcOperations.update(sql, ps -> {
-			ps.setString(1, status);
-			ps.setLong(2, receiptID);
-		});
-	}
-
-	@Override
-	public long generatedReceiptID(FinReceiptHeader receiptHeader) {
-		if (receiptHeader.getId() == 0 || receiptHeader.getId() == Long.MIN_VALUE) {
-			receiptHeader.setId(getNextValue("SeqFinReceiptHeader"));
-		}
-		return receiptHeader.getId();
-	}
-
-	@Override
-	public void updateDepositProcessByReceiptID(long receiptID, boolean depositProcess, String type) {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ReceiptID", receiptID);
-		source.addValue("DepositProcess", depositProcess);
-
-		StringBuilder sql = new StringBuilder(" Update FinReceiptHeader");
-		sql.append(type);
-		sql.append(" Set DepositProcess = :DepositProcess ");
-		sql.append(" Where ReceiptID = :ReceiptID");
-
-		logger.debug(Literal.SQL + sql.toString());
-		this.jdbcTemplate.update(sql.toString(), source);
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public void updateDepositBranchByReceiptID(long receiptID, String depositBranch, String type) {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ReceiptID", receiptID);
-		source.addValue("DepositBranch", depositBranch);
-
-		StringBuilder sql = new StringBuilder(" Update FinReceiptHeader");
-		sql.append(type);
-		sql.append(" Set DepositBranch = :DepositBranch ");
-		sql.append(" Where ReceiptID = :ReceiptID");
-
-		logger.debug(Literal.SQL + sql.toString());
-		this.jdbcTemplate.update(sql.toString(), source);
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * 
-	 */
-	@Override
-	public BigDecimal getTotalCashReceiptAmount(String depositBranch, String type) {
-		logger.debug(Literal.ENTERING);
-
-		BigDecimal amount = BigDecimal.ZERO;
-
-		StringBuilder sql = new StringBuilder("Select Sum(Amount) from FinReceiptDetail");
-		// selectSql.append(type); //check this case when we are submit the cancel request Details not effected to Temp
-		// table
-		sql.append(" Where PaymentType = :PaymentType And ReceiptId In (SELECT ReceiptId FROM FinReceiptHeader");
-		sql.append(type);
-		sql.append(" Where ReceiptModeStatus = :ReceiptModeStatus And RecordType != :RecordType");
-		sql.append(" And DepositBranch = :DepositBranch)");
-		logger.debug(Literal.SQL + sql.toString());
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("PaymentType", RepayConstants.RECEIPTMODE_CASH);
-		source.addValue("ReceiptModeStatus", RepayConstants.PAYSTATUS_CANCEL);
-		source.addValue("RecordType", PennantConstants.RECORD_TYPE_NEW);
-		source.addValue("DepositBranch", depositBranch);
-
-		try {
-			amount = this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
-		} catch (DataAccessException e) {
-			logger.error(e);
-			amount = BigDecimal.ZERO;
-		} finally {
-			logger.debug(Literal.LEAVING);
-		}
-
-		return amount;
-	}
-
-	/**
-	 * 
-	 */
-	@Override
-	public boolean isReceiptCancelProcess(String depositBranch, List<String> paymentTypes, String type,
-			long receiptId) {
-		logger.debug(Literal.ENTERING);
-
-		int count = 0;
-
-		StringBuilder sql = new StringBuilder("Select Count(ReceiptId) from FinReceiptDetail");
-		// selectSql.append(type); //check this case when we are submit the cancel request Details not effected to Temp
-		// table
-		sql.append(" Where PaymentType In (:PaymentType) And ReceiptId In (");
-		sql.append(" SELECT ReceiptId FROM FinReceiptHeader");
-		sql.append(type);
-		sql.append(" Where ReceiptModeStatus = :ReceiptModeStatus And RecordType != :RecordType");
-		sql.append(" And DepositBranch = :DepositBranch And ReceiptId = :ReceiptId)");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("PaymentType", paymentTypes);
-		source.addValue("ReceiptModeStatus", RepayConstants.PAYSTATUS_CANCEL);
-		source.addValue("RecordType", PennantConstants.RECORD_TYPE_NEW);
-		source.addValue("DepositBranch", depositBranch);
-		source.addValue("ReceiptId", receiptId);
-
-		try {
-			count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.error(e);
-			count = 0;
-		} finally {
-			logger.debug(Literal.LEAVING);
-		}
-
-		if (count > 0) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	@Override
-	public List<FinReceiptHeader> getUpFrontReceiptHeaderByID(List<Long> receipts, String type) {
-
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = getSqlQuery(type);
-		sql.append(" Where ReceiptID IN (");
-		int i = 0;
-		while (i < receipts.size()) {
-			sql.append(" ?,");
-			i++;
-		}
-		sql.deleteCharAt(sql.length() - 1);
-		sql.append(")  and Reference is null ");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		FinReceiptHeaderRowMaper rowMapper = new FinReceiptHeaderRowMaper(type);
-
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					for (Long receiptId : receipts) {
-						ps.setLong(index++, receiptId);
-					}
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.ENTERING, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
-	}
-
-	@Override
-	public void updateReference(String extReference, String finReference, String type) {
-		int recordCount = 0;
-		logger.debug(Literal.ENTERING);
-		StringBuilder sql = new StringBuilder("Update FinReceiptHeader");
-		sql.append(type);
-		sql.append(" SET  Reference=:Reference  ");
-		sql.append(" Where ExtReference=:ExtReference and Reference is null");
-
-		logger.debug(Literal.SQL + sql.toString());
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ExtReference", extReference);
-		source.addValue("Reference", finReference);
-		recordCount = this.jdbcTemplate.update(sql.toString(), source);
-
-		if (recordCount <= 0) {
-			throw new ConcurrencyException();
-		}
-
-	}
-
-	@Override
-	public List<FinReceiptHeader> getUpFrontReceiptHeaderByExtRef(String extRef, String type) {
-
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = getSqlQuery(type);
-		sql.append(" Where ExtReference = ? and Reference is null ");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		FinReceiptHeaderRowMaper rowMapper = new FinReceiptHeaderRowMaper(type);
-
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, extRef);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.ENTERING, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
-	}
-
-	@Override
-	public Date getMaxReceiptDateByRef(String finReference) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append(" Select max(receiptdate) from FinReceiptHeader");
-		sql.append(" Where Reference =:Reference AND RECEIPTMODESTATUS not in ('B','C')");
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Reference", finReference);
-
-		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.queryForObject(sql.toString(), source, Date.class);
-	}
-
-	@Override
-	public void cancelReceipts(String finReference) {
-		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource source = null;
-		StringBuilder sql = new StringBuilder("Update FinReceiptHeader");
-		sql.append(" Set ReceiptModeStatus='C'  Where Reference =:Reference");
-
-		logger.debug("updateSql: " + sql.toString());
-		source = new MapSqlParameterSource();
-		source.addValue("Reference", finReference);
-		this.jdbcTemplate.update(sql.toString(), source);
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public List<Long> fetchReceiptIdList(String finreference) {
-
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder(" Select ReceiptID from FinreceiptHeader where Reference=:Reference");
-
-		if (!SysParamUtil.isAllowed(SMTParameterConstants.UPFRONT_FEE_REVERSAL_REQ)) {
-			sql.append(" and ReceiptPurpose != '" + FinServiceEvent.FEEPAYMENT + "'");
-		}
-
-		if (!SysParamUtil.isAllowed(SMTParameterConstants.REPAY_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL)) {
-			sql.append(" and ReceiptPurpose != '" + FinServiceEvent.SCHDRPY + "'");
-		}
-
-		logger.debug(Literal.SQL + sql.toString());
-		/*
-		 * SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header); RowMapper<FinReceiptHeader>
-		 * typeRowMapper = BeanPropertyRowMapper.newInstance(FinReceiptHeader.class);
-		 */
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Reference", finreference);
-
-		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.queryForList(sql.toString(), source, Long.class);
-
-	}
-
-	@Override
-	public boolean isExtRefAssigned(String extReference) {
-
-		logger.debug(Literal.ENTERING);
-		boolean isAssigned = false;
-		int count = 0;
-		StringBuilder sql = new StringBuilder(" Select COUNT(*)  From FinReceiptHeader");
-		sql.append(" Where ExtReference =:ExtReference  AND Reference is not null");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ExtReference", extReference);
-
-		logger.debug(Literal.LEAVING);
-		count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		if (count > 0) {
-			isAssigned = true;
-		}
-		return isAssigned;
-	}
-
-	@Override
-	public boolean checkInProcessPresentments(String finReference) {
-		StringBuilder sql = new StringBuilder("Select count(*) from PresentmentDetails");
-		sql.append(" where Id In (select PresentmentId from finScheduleDetails");
-		sql.append(" where FinReference = ? and presentmentId != ?)");
-		sql.append(" and status in (?) and FinReference = ? and Excludereason = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(),
-					new Object[] { finReference, 0, "A", finReference, 0 }, Integer.class) > 0;
-		} catch (DataAccessException e) {
-			logger.warn("Presement not found for the Loan Reference {} with status A and Excludereason 0.",
-					finReference);
-		}
-
-		return false;
-	}
-
-	@Override
-	public boolean checkPresentmentsInQueue(String finReference) {
-		StringBuilder sql = new StringBuilder("Select count(FinReference) from PresentmentDetails");
-		sql.append(" where presentmentId In (select PresentmentId from finScheduleDetails");
-		sql.append(" where FinReference = ? and presentmentId != ?)");
-		sql.append(" and status in (?, ?) and FinReference = ? and Excludereason = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(),
-					new Object[] { finReference, 0, "A", "I", finReference, 0 }, Integer.class) > 0;
-		} catch (DataAccessException e) {
-			logger.warn("Presement not found for the Loan Reference {} with status I, A and Excludereason 0.",
-					finReference);
-		}
-		return false;
-	}
-
-	@Override
-	public List<FinReceiptHeader> getReceiptHeadersByRef(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = getSqlQuery(type);
-		sql.append(" Where Reference = ?");
-		sql.append(" order by ReceiptDate, ReceiptID");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		FinReceiptHeaderRowMaper rowMapper = new FinReceiptHeaderRowMaper(type);
-
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.ENTERING, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
-	}
-
-	@Override
-	public boolean checkInProcessReceipts(String reference, long receiptId) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Count(*)");
-		sql.append(" From FinReceiptHeader_Temp");
-		sql.append(" Where Reference = ? and ReceiptId <> ? ");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		int count = 0;
-		count = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { reference, receiptId },
-				(rs, rowNum) -> rs.getInt(1));
-
-		// Check for Schedule pay with Cheque mode.
-		if (count == 0) {
-			sql = new StringBuilder("Select");
-			sql.append(" Count(*)");
-			sql.append(" From FinReceiptHeader");
-			sql.append(" Where Reference= ? and ReceiptModeStatus in (?, ?)");
-
-			logger.debug(Literal.SQL + sql.toString());
-
-			count = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { reference, "I", "D" },
-					(rs, rowNum) -> rs.getInt(1));
-		}
-		return count > 0;
-	}
-
-	/**
-	 * check with below parameters in receipt details and return true if exits or false
-	 * 
-	 * @param reference
-	 * @param receiptMode
-	 * @param chequeNo
-	 * @param favourNumber
-	 */
-	@Override
-	public boolean isReceiptDetailsExits(String reference, String receiptMode, String chequeNo, String favourNumber,
-			String type) {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource source = null;
-		int count = 0;
-
-		StringBuilder sql = new StringBuilder("Select count(*) from finreceiptheader" + type);
-		sql.append(" t inner join finreceiptdetail" + type);
-		sql.append(" t1 on t1.receiptid=t.receiptid where REFERENCE= :REFERENCE and RECEIPTMODE= :RECEIPTMODE");
-		sql.append(" and T1.FAVOURNUMBER= :FAVOURNUMBER and T1.CHEQUEACNO = :CHEQUEACNO ");
-		sql.append(" and (T.RECEIPTMODESTATUS in ('A') or T.RECEIPTMODESTATUS is null)");
-		logger.debug(Literal.SQL + sql.toString());
-
-		source = new MapSqlParameterSource();
-		source.addValue("REFERENCE", reference);
-		source.addValue("RECEIPTMODE", receiptMode);
-		source.addValue("FAVOURNUMBER", favourNumber);
-		source.addValue("CHEQUEACNO", chequeNo);
-
-		try {
-			count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.error(e);
-			count = 0;
-		}
-
-		logger.debug(Literal.LEAVING);
-		if (count > 0) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * 29-10-2018, Ticket id:124998 update receipt mode status and realization date return boolean condition
-	 */
-	@Override
-	public void updateReceiptStatusAndRealizationDate(long receiptID, String status, Date realizationDate) {
-		String sql = "Update FinReceiptHeader Set ReceiptModeStatus = ?, RealizationDate = ? Where ReceiptID = ?";
-
-		logger.debug(Literal.SQL + sql);
-
-		this.jdbcOperations.update(sql, ps -> {
-			ps.setString(1, status);
-			ps.setDate(2, JdbcUtil.getDate(realizationDate));
-			ps.setLong(3, receiptID);
-		});
-	}
-
-	@Override
-	public List<FinReceiptHeader> getInProcessReceipts(String Reference) {
-		StringBuilder sql = new StringBuilder("");
-		sql.append(" Select ReceiptID, AllocationType , ReceiptAmount ");
-		sql.append(" From FinReceiptHeader_Temp");
-		sql.append(" Where Reference =:Reference ");
-		logger.debug(Literal.SQL + sql.toString());
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Reference", Reference);
-
-		RowMapper<FinReceiptHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(FinReceiptHeader.class);
-		List<FinReceiptHeader> rchList = null;
-
-		try {
-			rchList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-
-		}
-
-		return rchList;
-	}
-
-	@Override
-	public String getReceiptModeStatus(long receiptID) {
-		String sql = "Select ReceiptModeStatus from FinReceiptHeader Where ReceiptID = ?";
-
-		logger.debug(Literal.SQL + sql);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql, new Object[] { receiptID }, String.class);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return "";
-	}
-
-	@Override
-	public List<Long> getInProcessReceiptId(String finReference) {
-		StringBuilder sql = new StringBuilder("");
-		sql.append(" Select ReceiptID");
 		sql.append(" From FinReceiptHeader");
-		sql.append(" Where Reference =:Reference and ReceiptModeStatus ='D' and receiptPurpose='SchdlRepayment'");
-		logger.debug(Literal.SQL + sql.toString());
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Reference", finReference);
+		sql.append(StringUtils.trim(type));
 
-		List<Long> receiptList = null;
-
-		try {
-			receiptList = this.jdbcTemplate.queryForList(sql.toString(), source, Long.class);
-		} catch (EmptyResultDataAccessException e) {
-
-		}
-
-		return receiptList;
-	}
-
-	@Override
-	public void updateLoanInActive(long receiptId) {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ReceiptID", receiptId);
-		source.addValue("LoanActive", 0);
-
-		StringBuilder sql = new StringBuilder("Update FinReceiptHeader");
-		sql.append(" Set LoanActive=:LoanActive");
-		sql.append(" Where ReceiptID =:ReceiptID  ");
-
-		logger.debug(Literal.SQL + sql.toString());
-		this.jdbcTemplate.update(sql.toString(), source);
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public void saveMultiReceipt(FinReceiptHeader finReceiptHeader, FinReceiptDetail finReceiptDetail,
-			Map<String, String> valueMap) {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("BatchId", finReceiptHeader.getBatchId());
-		source.addValue("ReceiptID", finReceiptHeader.getReceiptID());
-		source.addValue("ReceiptModeStatus", finReceiptHeader.getReceiptModeStatus());
-		source.addValue("BounceDate", finReceiptHeader.getBounceDate());
-		source.addValue("RealizationDate", finReceiptHeader.getRealizationDate());
-		source.addValue("Remarks", finReceiptHeader.getRemarks());
-		source.addValue("CancelReason", finReceiptHeader.getCancelReason());
-		source.addValue("DepositDate", finReceiptDetail.getDepositDate());
-		source.addValue("ReceiptDate", finReceiptHeader.getReceiptDate());
-		source.addValue("FinReference", finReceiptHeader.getReference());
-		if (StringUtils.isNotBlank(finReceiptHeader.getRoleCode())
-				&& finReceiptHeader.getRoleCode().contains("MAKER")) {
-			source.addValue("Stage", "M");
-		} else {
-			source.addValue("Stage", "C");
-		}
-		source.addValue("DepositNo", finReceiptDetail.getDepositNo());
-		source.addValue("FundingAc", finReceiptDetail.getFundingAc());
-		source.addValue("BounceId", finReceiptHeader.getBounceReason());
-		source.addValue("UploadStatus", valueMap.get("uploadStatus"));
-		source.addValue("Reason", valueMap.get("reason"));
-		source.addValue("CancelRemarks", finReceiptHeader.getCancelRemarks());
-
-		StringBuilder sql = new StringBuilder("Insert into MultiReceiptApproval");
-		sql.append(" (BatchId, ReceiptModeStatus, BounceDate, RealizationDate, Remarks, CancelReason, ReceiptID");
-		sql.append(", DepositDate, ReceiptDate, FinReference, Stage, DepositNo, FundingAc, BounceId, UploadStatus");
-		sql.append(", Reason, CancelRemarks)");
-		sql.append(" values(:BatchId, :ReceiptModeStatus, :BounceDate, :RealizationDate, :Remarks, :CancelReason");
-		sql.append(", :ReceiptID, :DepositDate, :ReceiptDate, :FinReference, :Stage, :DepositNo, :FundingAc");
-		sql.append(", :BounceId, :UploadStatus, :Reason, :CancelRemarks)");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		// SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finReceiptHeader);
-		this.jdbcTemplate.update(sql.toString(), source);
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public void saveMultiReceiptLog(List<FinReceiptQueueLog> finReceiptQueueList) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append(" INSERT INTO FinReceiptQueueLog (UploadId, ReceiptId, FinReference");
-		sql.append(", TransactionDate, ThreadId, Progress, StartTime)");
-		sql.append(" Values( :UploadId, :ReceiptId, :FinReference, :TransactionDate");
-		sql.append(", :ThreadId, :Progress, :StartTime)");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		jdbcTemplate.batchUpdate(sql.toString(), SqlParameterSourceUtils.createBatch(finReceiptQueueList.toArray()));
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public void updateMultiReceiptLog(FinReceiptQueueLog finReceiptQueue) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("Update FinReceiptQueueLog");
-		sql.append(" Set EndTime =:EndTime, ThreadId =:ThreadId, StartTime =:StartTime, ErrorLog =:ErrorLog");
-		sql.append(", Progress =:Progress Where UploadId =:UploadId And ReceiptId =:ReceiptId");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finReceiptQueue);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public void batchUpdateMultiReceiptLog(List<FinReceiptQueueLog> finReceiptQueueList) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("Update FinReceiptQueueLog");
-		sql.append(" Set EndTime =:StartTime, ThreadId =:ThreadId, StartTime =:StartTime, ErrorLog =:ErrorLog");
-		sql.append(", Progress =:Progress Where UploadId =:UploadId And ReceiptId =:ReceiptId");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		jdbcTemplate.batchUpdate(sql.toString(), SqlParameterSourceUtils.createBatch(finReceiptQueueList.toArray()));
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public List<Long> getInProcessMultiReceiptRecord() {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Progress", 0);
-
-		StringBuilder sql = new StringBuilder(" Select ReceiptId From FinReceiptQueueLog");
-		sql.append(" Where Progress =:Progress");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		List<Long> receiptList = this.jdbcTemplate.queryForList(sql.toString(), source, Long.class);
-		logger.debug(Literal.LEAVING);
-		return receiptList;
-	}
-
-	@Override
-	public boolean checkEarlySettlementInitiation(String reference) {
-		return checkReceiptInitiation(reference, "_view", FinServiceEvent.EARLYSETTLE);
-	}
-
-	@Override
-	public boolean checkPartialSettlementInitiation(String reference) {
-		return checkReceiptInitiation(reference, "_Temp", FinServiceEvent.EARLYRPY);
-	}
-
-	private boolean checkReceiptInitiation(String reference, String type, String purpose) {
-		StringBuilder sql = new StringBuilder("Select count(*)  from FinReceiptHeader");
-		sql.append(type);
-		sql.append(" Where Reference = ? and Receiptpurpose = ? and ReceiptModeStatus not in (?,?)");
-
-		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { reference, purpose, "B", "C" },
-				(rs, rowNum) -> rs.getInt(1)) > 0;
-	}
-
-	@Override
-	public boolean isChequeExists(String reference, String paytypeCheque, String bankCode, String favourNumber,
-			String type) {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource source = null;
-		int count = 0;
-
-		StringBuilder sql = new StringBuilder(" Select count(*) from finreceiptdetail");
-		sql.append(type);
-		sql.append(" where REFERENCE= :REFERENCE and PAYMENTTYPE= :RECEIPTMODE and FAVOURNUMBER= :FAVOURNUMBER");
-		sql.append(" and BANKCODE = :BANKCODE AND STATUS NOT IN ('B','C')  ");
-		logger.debug(Literal.SQL + sql.toString());
-
-		source = new MapSqlParameterSource();
-		source.addValue("REFERENCE", reference);
-		source.addValue("RECEIPTMODE", paytypeCheque);
-		source.addValue("FAVOURNUMBER", favourNumber);
-		source.addValue("BANKCODE", bankCode);
-
-		try {
-			count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			//
-		}
-
-		logger.debug(Literal.LEAVING);
-		if (count > 0) {
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public boolean isOnlineExists(String reference, String subReceiptMode, String tranRef, String type) {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource source = null;
-		int count = 0;
-
-		StringBuilder sql = new StringBuilder("Select count(*) from finreceiptdetail");
-		sql.append(type);
-		sql.append(" where REFERENCE= :REFERENCE and PAYMENTTYPE= :RECEIPTMODE and TRANSACTIONREF= :TRANSACTIONREF");
-		sql.append(" And STATUS NOT IN ('B','C')  ");
-		logger.debug(Literal.SQL + sql.toString());
-
-		source = new MapSqlParameterSource();
-		source.addValue("REFERENCE", reference);
-		source.addValue("RECEIPTMODE", subReceiptMode);
-		source.addValue("TRANSACTIONREF", tranRef);
-
-		try {
-			count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.error(e);
-			count = 0;
-		}
-
-		logger.debug(Literal.LEAVING);
-		if (count > 0) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * 
-	 * Get Loan Reference if it is present in Temp table
-	 */
-	@Override
-	public String getLoanReferenc(String finReference, String receiptFileName) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-
-		sql.append(" SELECT DISTINCT REFERENCE FROM RECEIPTUPLOADDETAILS ");
-		sql.append(" WHERE UPLOADHEADERID IN (SELECT UploadHeaderId FROM RECEIPTUPLOADHEADER_view ");
-		sql.append(" where FileName not in ( :FileName) and uploadprogress in ("
-				+ ReceiptUploadConstants.RECEIPT_DEFAULT + "," + ReceiptUploadConstants.RECEIPT_DOWNLOADED + ") )");
-		sql.append(
-				" AND REFERENCE = :Reference and uploadstatus in ('" + PennantConstants.UPLOAD_STATUS_SUCCESS + "')");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Reference", finReference);
-		source.addValue("FileName", receiptFileName);
-
-		String reference = null;
-
-		try {
-			reference = this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
-		} catch (DataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-			reference = null;
-		}
-
-		logger.debug(Literal.LEAVING);
-		return reference;
-
+		return sql;
 	}
 
 	private class FinReceiptHeaderRowMaper implements RowMapper<FinReceiptHeader> {
@@ -1328,377 +1437,6 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 			return rh;
 		}
-
-	}
-
-	@Override
-	public boolean isReceiptsInProcess(String reference, String receiptPurpose, long receiptId, String type) {
-		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource source = null;
-		int count = 0;
-
-		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) FROM FINRECEIPTHEADER" + type);
-		selectSql.append(" WHERE REFERENCE = :REFERENCE AND RECEIPTPURPOSE = :RECEIPTPURPOSE ");
-		selectSql.append(" AND ReceiptID <> :ReceiptID  ");
-		logger.debug(Literal.SQL + selectSql.toString());
-
-		source = new MapSqlParameterSource();
-		source.addValue("REFERENCE", reference);
-		source.addValue("RECEIPTPURPOSE", receiptPurpose);
-		source.addValue("ReceiptID", receiptId);
-
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			count = 0;
-		}
-		logger.debug(Literal.LEAVING);
-		return count > 0 ? true : false;
-	}
-
-	@Override
-	public FinReceiptHeader getFinTypeByReceiptID(long receiptID) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" RH.Fintype, FT.FinTypeDesc, FT.FinCcy, CU.CcyDesc From  FinReceiptHeader RH ");
-		sql.append(" INNER JOIN RMTFinanceTypes FT ON FT.FinType=RH.FinType ");
-		sql.append(" INNER JOIN RMTCurrencies CU on CU.CcyCode=FT.FinCcy ");
-		sql.append(" Where RH.ReceiptID = ? ");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { receiptID },
-					new RowMapper<FinReceiptHeader>() {
-						@Override
-						public FinReceiptHeader mapRow(ResultSet rs, int rowNum) throws SQLException {
-							FinReceiptHeader frh = new FinReceiptHeader();
-							frh.setFinType(rs.getString("Fintype"));
-							frh.setFinTypeDesc(rs.getString("FinTypeDesc"));
-							frh.setFinCcy(rs.getString("FinCcy"));
-							frh.setFinCcyDesc(rs.getString("CcyDesc"));
-							return frh;
-						}
-					});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
-	}
-
-	@Override
-	public int geFeeReceiptCountByExtReference(String reference, String receiptPurpose, String extReference) {
-		int count = 0;
-		StringBuilder sql = new StringBuilder("Select count(*)  from ");
-		sql.append(" FinReceiptHeader where ReceiptPurpose = :ReceiptPurpose And ");
-		sql.append(" EXTREFERENCE = :EXTREFERENCE and Reference !=  :Reference ");
-
-		logger.trace(Literal.SQL + sql.toString());
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ReceiptPurpose", receiptPurpose);
-		source.addValue("Reference", reference);
-		source.addValue("EXTREFERENCE", extReference);
-		try {
-			count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION);
-		}
-		return count;
-	}
-
-	@Override
-	public boolean isReceiptExists(String reference, String type) {
-
-		logger.debug(Literal.ENTERING);
-		boolean isExists = false;
-		int count = 0;
-		StringBuilder sql = new StringBuilder(" Select COUNT(*)  From FinReceiptHeader");
-		sql.append(StringUtils.trim(type));
-		sql.append(" Where Reference = :Reference");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Reference", reference);
-
-		logger.debug(Literal.LEAVING);
-		count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		if (count > 0) {
-			isExists = true;
-		}
-		return isExists;
-	}
-
-	public List<Long> isDedupReceiptExists(FinServiceInstruction fsi) {
-		logger.info("Checking for duplicate receipt...");
-
-		boolean isOnline = StringUtils.isNotBlank(fsi.getTransactionRef());
-		boolean isChequeOrDD = StringUtils.isNotBlank(fsi.getFavourNumber());
-
-		StringBuilder sql = new StringBuilder("Select ReceiptID From FinReceiptHeader");
-		sql.append(" Where Reference = ? and ValueDate = ? and ReceiptModeStatus = ?");
-		sql.append(" and ReceiptAmount = ?");
-
-		if (isOnline || isChequeOrDD) {
-			sql.append(" and TransactionRef = ?");
-		}
-		logger.trace(Literal.SQL + sql);
-
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			int index = 1;
-			ps.setString(index++, fsi.getFinReference());
-			ps.setDate(index++, JdbcUtil.getDate(fsi.getValueDate()));
-			ps.setString(index++, RepayConstants.PAYSTATUS_REALIZED);
-			ps.setBigDecimal(index++, fsi.getAmount());
-			if (isOnline) {
-				ps.setString(index++, fsi.getTransactionRef());
-			} else if (isChequeOrDD) {
-				ps.setString(index++, fsi.getFavourNumber());
-			}
-
-		}, (rs, roNum) -> {
-			return rs.getLong(1);
-		});
-	}
-
-	@Override
-	public FinReceiptHeader getNonLanReceiptHeader(long receiptID, String type) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ReceiptID, ReceiptDate, ReceiptType, RecAgainst, Reference, ReceiptPurpose");
-		sql.append(", RcdMaintainSts, DepositDate, ReceiptMode, ExcessAdjustTo, AllocationType, ReceiptAmount");
-		sql.append(", EffectSchdMethod, ReceiptModeStatus, RealizationDate, CancelReason, WaviedAmt");
-		sql.append(", TotFeeAmount, BounceDate, Remarks, GDRAvailable, ReleaseType, ThirdPartyName");
-		sql.append(", ThirdPartyMobileNum, LpiAmount,CashierBranch,InitiateDate,ReceiptSource");
-		sql.append(", LinkedTranId, EntityCode, DepositProcess, DepositBranch, LppAmount, GstLpiAmount, GstLppAmount");
-		sql.append(", subReceiptMode, receiptChannel, receivedFrom, panNumber, collectionAgentId");
-		sql.append(",  Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", RecordType, WorkflowId, ExtReference, Module, FinDivision, PostBranch");
-
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", CustID, CustCIF, CustShrtName, CancelReasonDesc, ReceiptSourceAcType, ReceiptSourceAcDesc");
-			sql.append(", CancelRemarks, CollectionAgentCode, CollectionAgentDesc, PostBranchDesc");
-			sql.append(", CashierBranchDesc, EntityDesc, TransactionRef");
-		}
-
-		sql.append(" From NonLanFinReceiptHeader");
-		sql.append(StringUtils.trim(type));
-		sql.append(" Where ReceiptID = ? ");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { receiptID }, (rs, i) -> {
-				FinReceiptHeader frh = new FinReceiptHeader();
-
-				frh.setReceiptID(rs.getLong("ReceiptID"));
-				frh.setReceiptDate(rs.getTimestamp("ReceiptDate"));
-				frh.setReceiptType(rs.getString("ReceiptType"));
-				frh.setRecAgainst(rs.getString("RecAgainst"));
-				frh.setReference(rs.getString("Reference"));
-				frh.setReceiptPurpose(rs.getString("ReceiptPurpose"));
-				frh.setRcdMaintainSts(rs.getString("RcdMaintainSts"));
-				frh.setDepositDate(rs.getTimestamp("DepositDate"));
-				frh.setReceiptMode(rs.getString("ReceiptMode"));
-				frh.setExcessAdjustTo(rs.getString("ExcessAdjustTo"));
-				frh.setAllocationType(rs.getString("AllocationType"));
-				frh.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
-				frh.setEffectSchdMethod(rs.getString("EffectSchdMethod"));
-				frh.setReceiptModeStatus(rs.getString("ReceiptModeStatus"));
-				frh.setRealizationDate(rs.getTimestamp("RealizationDate"));
-				frh.setCancelReason(rs.getString("CancelReason"));
-				frh.setWaviedAmt(rs.getBigDecimal("WaviedAmt"));
-				frh.setTotFeeAmount(rs.getBigDecimal("TotFeeAmount"));
-				frh.setBounceDate(rs.getTimestamp("BounceDate"));
-				frh.setRemarks(rs.getString("Remarks"));
-				frh.setGDRAvailable(rs.getBoolean("GDRAvailable"));
-				frh.setReleaseType(rs.getString("ReleaseType"));
-				frh.setThirdPartyName(rs.getString("ThirdPartyName"));
-				frh.setThirdPartyMobileNum(rs.getString("ThirdPartyMobileNum"));
-				frh.setLpiAmount(rs.getBigDecimal("LpiAmount"));
-				frh.setCashierBranch(rs.getString("CashierBranch"));
-				frh.setInitiateDate(rs.getTimestamp("InitiateDate"));
-				frh.setReceiptSource(rs.getString("ReceiptSource"));
-				frh.setLinkedTranId(rs.getLong("LinkedTranId"));
-				frh.setEntityCode(rs.getString("EntityCode"));
-				frh.setDepositProcess(rs.getBoolean("DepositProcess"));
-				frh.setDepositBranch(rs.getString("DepositBranch"));
-				frh.setLppAmount(rs.getBigDecimal("LppAmount"));
-				frh.setGstLpiAmount(rs.getBigDecimal("GstLpiAmount"));
-				frh.setGstLppAmount(rs.getBigDecimal("GstLppAmount"));
-				frh.setSubReceiptMode(rs.getString("SubReceiptMode"));
-				frh.setReceiptChannel(rs.getString("ReceiptChannel"));
-				frh.setReceivedFrom(rs.getString("ReceivedFrom"));
-				frh.setPanNumber(rs.getString("PanNumber"));
-				frh.setCollectionAgentId(rs.getLong("CollectionAgentId"));
-				frh.setVersion(rs.getInt("Version"));
-				frh.setLastMntOn(rs.getTimestamp("LastMntOn"));
-				frh.setLastMntBy(rs.getLong("LastMntBy"));
-				frh.setRecordStatus(rs.getString("RecordStatus"));
-				frh.setRoleCode(rs.getString("RoleCode"));
-				frh.setNextRoleCode(rs.getString("NextRoleCode"));
-				frh.setTaskId(rs.getString("TaskId"));
-				frh.setNextTaskId(rs.getString("NextTaskId"));
-				frh.setRecordType(rs.getString("RecordType"));
-				frh.setWorkflowId(rs.getLong("WorkflowId"));
-				frh.setExtReference(rs.getString("ExtReference"));
-				frh.setModule(rs.getString("Module"));
-				frh.setFinDivision(rs.getString("FinDivision"));
-				frh.setPostBranch(rs.getString("PostBranch"));
-				if (StringUtils.trimToEmpty(type).contains("View")) {
-					frh.setCustID(rs.getLong("CustID"));
-					frh.setCustCIF(rs.getString("CustCIF"));
-					frh.setCustShrtName(rs.getString("CustShrtName"));
-					frh.setCancelReasonDesc(rs.getString("CancelReasonDesc"));
-					frh.setReceiptSourceAcType(rs.getString("ReceiptSourceAcType"));
-					frh.setReceiptSourceAcDesc(rs.getString("ReceiptSourceAcDesc"));
-					frh.setCancelRemarks(rs.getString("CancelRemarks"));
-					frh.setCollectionAgentCode(rs.getString("CollectionAgentCode"));
-					frh.setCollectionAgentDesc(rs.getString("CollectionAgentDesc"));
-					frh.setPostBranchDesc(rs.getString("PostBranchDesc"));
-					frh.setCashierBranchDesc(rs.getString("CashierBranchDesc"));
-					frh.setEntityDesc(rs.getString("EntityDesc"));
-					frh.setTransactionRef(rs.getString("TransactionRef"));
-				}
-
-				return frh;
-			});
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		return null;
-	}
-
-	@Override
-	public long getCollectionAgencyId(String collectionAgency) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ID");
-		sql.append(" from COLLECTION_AGENCIES");
-		sql.append(" where Code = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { collectionAgency }, (rs, i) -> {
-				return rs.getLong("ID");
-			});
-
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record is not found in COLLECTION_AGENCIES table for the specified Code >> {}",
-					collectionAgency);
-		}
-
-		return 0;
-	}
-
-	@Override
-	public void updateCollectionMobAgencyLimit(ReceiptAPIRequest request) {
-		StringBuilder sql = new StringBuilder("Update COLLECTION_MOB_AGENCY_LIMITS");
-		sql.append(" set Status = ?, Response_Code = ?, ReTry_Count = ?, ReTry_On = ?");
-		sql.append(" Where Receipt_Id = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
-
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-
-					ps.setString(index++, request.getStatus());
-					ps.setString(index++, request.getResponseCode());
-					ps.setInt(index++, ((request.getRetryCount()) + 1));
-					ps.setDate(index++, JdbcUtil.getDate(request.getRetryOn()));
-					ps.setLong(index++, request.getReceiptId());
-
-				}
-			});
-		} catch (Exception e) {
-			logger.warn(Literal.ENTERING, e);
-		}
-	}
-
-	@Override
-	public long saveCollectionAPILog(ReceiptAPIRequest request) {
-		StringBuilder sql = new StringBuilder("Insert Into COLLECTION_MOB_AGENCY_LIMITS");
-		sql.append(" (Receipt_Id, Message_Id, Request_Time, Status, Response_Code, ReTry_Count)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?)");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			KeyHolder keyHolder = new GeneratedKeyHolder();
-
-			this.jdbcOperations.update(new PreparedStatementCreator() {
-
-				@Override
-				public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-					PreparedStatement ps = con.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
-					int index = 1;
-
-					ps.setLong(index++, request.getReceiptId());
-					ps.setLong(index++, request.getMessageId());
-					ps.setDate(index++, JdbcUtil.getDate(request.getRequestTime()));
-					ps.setString(index++, request.getStatus());
-					ps.setString(index++, request.getResponseCode());
-					ps.setInt(index++, request.getRetryCount());
-					return ps;
-
-				}
-			}, keyHolder);
-
-			return (long) (keyHolder.getKeys().get("id"));
-
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		return 0;
-	}
-
-	@Override
-	public List<ReceiptAPIRequest> getCollectionAPILog() {
-		StringBuilder sql = new StringBuilder("Select ");
-		sql.append(" ID, Receipt_Id, Message_Id, Request_Time, Status, Response_Code, ");
-		sql.append(" Retry_Count, Retry_On from COLLECTION_MOB_AGENCY_LIMITS ");
-		sql.append(" where Retry_Count < ? And Status = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setInt(1, 10);
-			ps.setString(2, "F");
-
-		}, (rs, i) -> {
-			ReceiptAPIRequest request = new ReceiptAPIRequest();
-
-			request.setID(rs.getLong("ID"));
-			request.setReceiptId(rs.getLong("Receipt_Id"));
-			request.setMessageId(rs.getLong("Message_Id"));
-			request.setRequestTime(rs.getDate("Request_Time"));
-			request.setStatus(rs.getString("Status"));
-			request.setResponseCode(rs.getString("Response_Code"));
-			request.setRetryCount(rs.getInt("Retry_Count"));
-			request.setRetryOn(rs.getDate("Retry_On"));
-			return request;
-		});
-	}
-
-	@Override
-	public List<FinReceiptHeader> getReceiptHeaderByID(String reference, String receiptPurpose, Date startDate,
-			Date endDate, String type) {
-		StringBuilder sql = getSqlQuery(type);
-		sql.append(" Where Reference = ? and ReceiptPurpose = ? and ReceiptDate >= ? and ReceiptDate <= ?");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		FinReceiptHeaderRowMaper rowMapper = new FinReceiptHeaderRowMaper(type);
-
-		return this.jdbcOperations.query(sql.toString(), new Object[] { reference, receiptPurpose, startDate, endDate },
-				rowMapper);
 
 	}
 }

@@ -11,6 +11,7 @@ public class FinRepayHeader implements Serializable {
 
 	private long repayID = 0;
 	private long receiptSeqID = 0;
+	private long finID;
 	private String finReference;
 	private Date valueDate;
 	private String finEvent;
@@ -51,6 +52,7 @@ public class FinRepayHeader implements Serializable {
 		FinRepayHeader entity = new FinRepayHeader();
 		entity.setRepayID(this.repayID);
 		entity.setReceiptSeqID(this.receiptSeqID);
+		entity.setFinID(this.finID);
 		entity.setFinReference(this.finReference);
 		entity.setValueDate(this.valueDate);
 		entity.setFinEvent(this.finEvent);
@@ -98,6 +100,14 @@ public class FinRepayHeader implements Serializable {
 
 	public void setReceiptSeqID(long receiptSeqID) {
 		this.receiptSeqID = receiptSeqID;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

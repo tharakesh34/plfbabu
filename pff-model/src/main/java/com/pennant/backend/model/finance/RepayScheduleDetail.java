@@ -32,6 +32,7 @@ import java.util.Date;
 public class RepayScheduleDetail implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	private long finID;
 	private String finReference = null;
 	private Date schDate;
 	private Date defSchdDate;
@@ -101,6 +102,7 @@ public class RepayScheduleDetail implements Serializable {
 
 	public RepayScheduleDetail copyEntity() {
 		RepayScheduleDetail entity = new RepayScheduleDetail();
+		entity.setFinID(this.finID);
 		entity.setFinReference(this.finReference);
 		entity.setSchDate(this.schDate);
 		entity.setDefSchdDate(this.defSchdDate);
@@ -150,6 +152,14 @@ public class RepayScheduleDetail implements Serializable {
 		entity.setTaxHeaderId(this.taxHeaderId);
 		entity.setTaxHeader(this.taxHeader);
 		return entity;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
