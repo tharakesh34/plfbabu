@@ -6,15 +6,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class LowerTaxDeduction extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -3026443763391506067L;
 
 	private long id = Long.MIN_VALUE;
+	private long finID;
 	private String finReference;
-	private int seqno;
+	private int seqNo;
 	private BigDecimal percentage = BigDecimal.ZERO;
 	private Date startDate;
 	private Date endDate;
@@ -30,14 +30,12 @@ public class LowerTaxDeduction extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-	public void setUserDetails(LoggedInUser userDetails) {
-		// TODO Auto-generated method stub
-
+	public long getFinID() {
+		return finID;
 	}
 
-	public Object getBefImage() {
-		// TODO Auto-generated method stub
-		return null;
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
@@ -48,12 +46,12 @@ public class LowerTaxDeduction extends AbstractWorkflowEntity {
 		this.finReference = finReference;
 	}
 
-	public int getSeqno() {
-		return seqno;
+	public int getSeqNo() {
+		return seqNo;
 	}
 
-	public void setSeqno(int seqno) {
-		this.seqno = seqno;
+	public void setSeqNo(int seqNo) {
+		this.seqNo = seqNo;
 	}
 
 	public BigDecimal getPercentage() {

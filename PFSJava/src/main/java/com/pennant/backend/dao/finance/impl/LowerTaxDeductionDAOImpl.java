@@ -8,12 +8,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.LowerTaxDeductionDAO;
 import com.pennant.backend.model.finance.LowerTaxDeduction;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -25,121 +24,139 @@ public class LowerTaxDeductionDAOImpl extends SequenceDao<LowerTaxDeduction> imp
 	}
 
 	@Override
-	public List<LowerTaxDeduction> getLowerTaxDeductionDetails(String finReference, String type) {
+	public List<LowerTaxDeduction> getLowerTaxDeductionDetails(long finID, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, Seqno, FinMaintainId, StartDate, EndDate, Percentage, LimitAmt");
-
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append("");
-		}
-
-		sql.append(" from LowerTaxDeduction");
+		sql.append(" FinID, FinReference, Seqno, FinMaintainId, StartDate, EndDate, Percentage, LimitAmt");
+		sql.append(" From LowerTaxDeduction");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = ? and Percentage > ?");
-		logger.trace(Literal.SQL + sql.toString());
+		sql.append(" Where FinID = ? and Percentage > ?");
+
+		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, finReference);
+
+			ps.setLong(index++, finID);
 			ps.setBigDecimal(index++, BigDecimal.ZERO);
+
 		}, (rs, rowNum) -> {
-			LowerTaxDeduction td = new LowerTaxDeduction();
+			LowerTaxDeduction ltd = new LowerTaxDeduction();
 
-			td.setFinReference(rs.getString("FinReference"));
-			td.setSeqno(rs.getInt("Seqno"));
-			td.setFinMaintainId(rs.getLong("FinMaintainId"));
-			td.setStartDate(rs.getTimestamp("StartDate"));
-			td.setEndDate(rs.getTimestamp("EndDate"));
-			td.setPercentage(rs.getBigDecimal("Percentage"));
-			td.setLimitAmt(rs.getBigDecimal("LimitAmt"));
+			ltd.setFinID(rs.getLong("FinID"));
+			ltd.setFinReference(rs.getString("FinReference"));
+			ltd.setSeqNo(rs.getInt("Seqno"));
+			ltd.setFinMaintainId(rs.getLong("FinMaintainId"));
+			ltd.setStartDate(rs.getTimestamp("StartDate"));
+			ltd.setEndDate(rs.getTimestamp("EndDate"));
+			ltd.setPercentage(rs.getBigDecimal("Percentage"));
+			ltd.setLimitAmt(rs.getBigDecimal("LimitAmt"));
 
-			return td;
+			return ltd;
 		});
 	}
 
 	@Override
-	public void save(LowerTaxDeduction lowerTaxDeduction, String type) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" Insert into LowerTaxDeduction");
+	public void save(LowerTaxDeduction ltd, String type) {
+		StringBuilder sql = new StringBuilder("Insert into LowerTaxDeduction");
 		sql.append(type);
-		sql.append("(Id, SeqNo, FinReference, FinMaintainId, StartDate, Enddate, Percentage, LimitAmt, Version,");
-		sql.append(" LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		sql.append(" RecordType, WorkflowId)");
+		sql.append("(Id, SeqNo, FinID, FinReference, FinMaintainId, StartDate, EndDate, Percentage, LimitAmt");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(
-				" :Id, :seqno, :finReference, :FinMaintainId, :startDate, :endDate, :percentage, :limitAmt, :version,");
-		sql.append(" :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
-		sql.append(" :RecordType, :WorkflowId)");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(lowerTaxDeduction);
+		logger.debug(Literal.SQL + sql.toString());
 
-		// Get the identity sequence number.
-		if (lowerTaxDeduction.getId() <= 0) {
-			lowerTaxDeduction.setId(getNextValue("SeqLowerTaxDeduction"));
+		if (ltd.getId() <= 0) {
+			ltd.setId(getNextValue("SeqLowerTaxDeduction"));
 		}
-		lowerTaxDeduction.setVersion(1);
+
+		ltd.setVersion(1);
+
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, ltd.getId());
+				ps.setLong(index++, ltd.getSeqNo());
+				ps.setLong(index++, ltd.getFinID());
+				ps.setString(index++, ltd.getFinReference());
+				ps.setLong(index++, ltd.getFinMaintainId());
+				ps.setDate(index++, JdbcUtil.getDate(ltd.getStartDate()));
+				ps.setDate(index++, JdbcUtil.getDate(ltd.getEndDate()));
+				ps.setBigDecimal(index++, ltd.getPercentage());
+				ps.setBigDecimal(index++, ltd.getLimitAmt());
+
+				ps.setInt(index++, ltd.getVersion());
+				ps.setLong(index++, JdbcUtil.setLong(ltd.getLastMntBy()));
+				ps.setTimestamp(index++, ltd.getLastMntOn());
+				ps.setString(index++, ltd.getRecordStatus());
+				ps.setString(index++, ltd.getRoleCode());
+				ps.setString(index++, ltd.getNextRoleCode());
+				ps.setString(index++, ltd.getTaskId());
+				ps.setString(index++, ltd.getNextTaskId());
+				ps.setString(index++, ltd.getRecordType());
+				ps.setLong(index++, JdbcUtil.setLong(ltd.getWorkflowId()));
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public void update(LowerTaxDeduction lowerTaxDeduction, String type) {
-
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("update LowerTaxDeduction");
+	public void update(LowerTaxDeduction ltd, String type) {
+		StringBuilder sql = new StringBuilder("Update LowerTaxDeduction");
 		sql.append(type);
-		sql.append("  set seqNo = :seqno, finReference = :finReference, startDate = :startDate, ");
-		sql.append(" enddate = :endDate, percentage = :percentage, limitAmt = :limitAmt, ");
-		sql.append(" Version = :Version, ");
-		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" where finReference = :finReference ");
+		sql.append(" Set SeqNo = ?, StartDate = ?, EndDate = ?, Percentage = ?, LimitAmt = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
+		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where FinID = ? ");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(lowerTaxDeduction);
-		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		// Check for the concurrency failure.
+			ps.setLong(index++, ltd.getSeqNo());
+			ps.setDate(index++, JdbcUtil.getDate(ltd.getStartDate()));
+			ps.setDate(index++, JdbcUtil.getDate(ltd.getEndDate()));
+			ps.setBigDecimal(index++, ltd.getPercentage());
+			ps.setBigDecimal(index++, ltd.getLimitAmt());
+			ps.setInt(index++, ltd.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(ltd.getLastMntBy()));
+			ps.setTimestamp(index++, ltd.getLastMntOn());
+			ps.setString(index++, ltd.getRecordStatus());
+			ps.setString(index++, ltd.getRoleCode());
+			ps.setString(index++, ltd.getNextRoleCode());
+			ps.setString(index++, ltd.getTaskId());
+			ps.setString(index++, ltd.getNextTaskId());
+			ps.setString(index++, ltd.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(ltd.getWorkflowId()));
+
+			ps.setLong(index++, ltd.getFinID());
+		});
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public void delete(LowerTaxDeduction lowerTaxDeduction, String type) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("Delete from Lowertaxdeduction");
+	public void delete(LowerTaxDeduction ltd, String type) {
+		StringBuilder sql = new StringBuilder("Delete from LowerTaxDeduction");
 		sql.append(type);
-		sql.append(" where finReference = :finReference ");
+		sql.append(" Where FinID = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(lowerTaxDeduction);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				ps.setLong(1, ltd.getFinID());
+			});
 		} catch (DataAccessException e) {
-			logger.debug(Literal.EXCEPTION, e);
+			//
 		}
-		logger.debug(Literal.LEAVING);
-
 	}
 
 }
