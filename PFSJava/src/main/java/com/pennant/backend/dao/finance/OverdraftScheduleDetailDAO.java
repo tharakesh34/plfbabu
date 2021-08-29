@@ -11,8 +11,8 @@ public interface OverdraftScheduleDetailDAO {
 
 	void saveOverdraftMovement(OverdraftMovements overdraftMovements);
 
-	void deleteByFinReference(String id, String type, boolean isWIF);
+	void deleteByFinReference(long finID, String type, boolean isWIF);
 
-	List<OverdraftScheduleDetail> getOverdraftScheduleDetails(String id, String type, boolean isWIF);
+	List<OverdraftScheduleDetail> getOverdraftScheduleDetails(long finID, String type, boolean isWIF);
 
 }

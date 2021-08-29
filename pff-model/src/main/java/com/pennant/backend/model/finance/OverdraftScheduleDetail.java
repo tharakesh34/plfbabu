@@ -22,6 +22,7 @@ public class OverdraftScheduleDetail extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 1L;
 
+	private long finID;
 	@XmlElement
 	private String finReference = null;
 	@XmlElement
@@ -45,6 +46,14 @@ public class OverdraftScheduleDetail extends AbstractWorkflowEntity {
 
 	public OverdraftScheduleDetail() {
 		super();
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

@@ -11,6 +11,7 @@ public class OverdraftMovements extends AbstractWorkflowEntity {
 
 	private long oDSeqID = Long.MIN_VALUE;
 	private Date valueDate;
+	private long finID;
 	private String finReference = null;
 	private Date droplineDate;
 	private int tenor;
@@ -29,6 +30,14 @@ public class OverdraftMovements extends AbstractWorkflowEntity {
 
 	public void setODSeqID(long oDSeqID) {
 		this.oDSeqID = oDSeqID;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
