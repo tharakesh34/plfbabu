@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinFeeDetailService.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-08-2013    														*
- *                                                                  						*
- * Modified Date    :  14-08-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinFeeDetailService.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-08-2013 * * Modified
+ * Date : 14-08-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-08-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-08-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.service.finance;
 
@@ -61,7 +43,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 
 public interface FinFeeDetailService {
-	List<FinFeeDetail> getFinFeeDetailById(String id, boolean isWIF, String type);
+	List<FinFeeDetail> getFinFeeDetailById(long finID, boolean isWIF, String type);
 
 	List<FinFeeDetail> getFinFeeDetailById(String id, boolean isWIF, String type, String eventCodeRef);
 
@@ -76,7 +58,7 @@ public interface FinFeeDetailService {
 	List<AuditDetail> validate(List<FinFeeDetail> finFeeDetails, long workflowId, String method, String auditTranType,
 			String usrLanguage, boolean isWIF);
 
-	List<FinReceiptDetail> getFinReceiptDetais(String finReference, long custId);
+	List<FinReceiptDetail> getFinReceiptDetais(long finID, long custId);
 
 	List<FinFeeReceipt> getFinFeeReceiptsById(List<Long> feeIds, String type);
 
@@ -97,7 +79,7 @@ public interface FinFeeDetailService {
 
 	void updateTaxPercent(UploadTaxPercent taxPercent);
 
-	//GST
+	// GST
 	void processGSTCalForRule(FinFeeDetail finFeeDetail, BigDecimal taxableAmount, FinanceDetail financeDetail,
 			Map<String, BigDecimal> taxPercentages, boolean apiRequest);
 
@@ -122,7 +104,9 @@ public interface FinFeeDetailService {
 
 	Branch getBranchById(String branchCode, String type);
 
-	List<FinFeeDetail> getFinFeeDetailsByReferenceId(long referenceId, String eventCodeRef, String type); //TO get the Servicing Fees
+	List<FinFeeDetail> getFinFeeDetailsByReferenceId(long referenceId, String eventCodeRef, String type); // TO get the
+																											// Servicing
+																											// Fees
 
 	void updateFeesFromUpfront(FinFeeDetail finFeeDetail, String type);
 

@@ -75,8 +75,7 @@ public interface FinanceDetailService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader, boolean isWIF);
 
-	FinanceDetail getOriginationFinance(String financeReference, String nextRoleCode, String procEdtEvent,
-			String userrole);
+	FinanceDetail getOriginationFinance(long finID, String nextRoleCode, String procEdtEvent, String userrole);
 
 	FinanceDetail getServicingFinance(String financeReference, String eventCode, String procEdtEvent, String userrole);
 

@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  GuarantorDetailService.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  10-09-2013    														*
- *                                                                  						*
- * Modified Date    :  10-09-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : GuarantorDetailService.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 10-09-2013 * *
+ * Modified Date : 10-09-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-09-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-09-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.service.finance;
 
@@ -73,7 +55,7 @@ public interface GuarantorDetailService {
 
 	GuarantorDetail getGuarantorProof(GuarantorDetail guarantorDetail);
 
-	List<GuarantorDetail> getGuarantorDetail(String finReference, String tableType);
+	List<GuarantorDetail> getGuarantorDetail(long finID, String tableType);
 
 	List<FinanceExposure> getPrimaryExposureList(GuarantorDetail guarantorDetail);
 
@@ -97,6 +79,6 @@ public interface GuarantorDetailService {
 
 	String getWorstStaus(long custID);
 
-	//10-Jul-2018 BUG FIX related to TktNo:127415
+	// 10-Jul-2018 BUG FIX related to TktNo:127415
 	List<AuditDetail> processingGuarantorsList(List<AuditDetail> auditDetails, String type);
 }

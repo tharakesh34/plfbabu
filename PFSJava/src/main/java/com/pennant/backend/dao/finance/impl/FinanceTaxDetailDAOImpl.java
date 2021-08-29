@@ -1,51 +1,29 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceTaxDetailDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  17-06-2017    														*
- *                                                                  						*
- * Modified Date    :  17-06-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceTaxDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 17-06-2017 * *
+ * Modified Date : 17-06-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 17-06-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 17-06-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.finance.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -54,11 +32,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
@@ -81,9 +54,9 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 	}
 
 	@Override
-	public FinanceTaxDetail getFinanceTaxDetail(String finReference, String type) {
+	public FinanceTaxDetail getFinanceTaxDetail(long finID, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, ApplicableFor, TaxCustId, TaxExempted, TaxNumber, AddrLine1, AddrLine2");
+		sql.append(" FinID, FinReference, ApplicableFor, TaxCustId, TaxExempted, TaxNumber, AddrLine1, AddrLine2");
 		sql.append(", AddrLine3, AddrLine4, Country, Province, City, PinCode, SezCertificateNo, SezValueDate");
 		sql.append(", AddressDetail");
 
@@ -95,14 +68,15 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 		sql.append(", NextTaskId, RecordType, WorkflowId, PinCodeId");
 		sql.append(" from FinTaxDetail");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where finReference = ?");
+		sql.append(" Where FinID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				FinanceTaxDetail td = new FinanceTaxDetail();
 
+				td.setFinID(rs.getLong("FinID"));
 				td.setFinReference(rs.getString("FinReference"));
 				td.setApplicableFor(rs.getString("ApplicableFor"));
 				td.setTaxCustId(rs.getLong("TaxCustId"));
@@ -142,98 +116,119 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 				td.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
 
 				return td;
-			});
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record not found in FinTaxDetail{} table/view for the specified FinReference >> {}", type,
-					finReference);
+			//
 		}
 
 		return null;
 	}
 
 	@Override
-	public String save(FinanceTaxDetail financeTaxDetail, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" insert into FinTaxDetail");
+	public String save(FinanceTaxDetail td, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Insert into FinTaxDetail");
 		sql.append(tableType.getSuffix());
-		sql.append("(finReference, applicableFor,TaxCustId, taxExempted, taxNumber, addrLine1, addrLine2, ");
-		sql.append(
-				"addrLine3, addrLine4, country, province, city, pinCode, sezCertificateNo , sezValueDate , AddressDetail, ");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
-		sql.append(" pinCodeId)");
-		sql.append(" values(");
-		sql.append(" :finReference, :applicableFor,:TaxCustId, :taxExempted, :taxNumber, :addrLine1, :addrLine2, ");
-		sql.append(
-				" :addrLine3, :addrLine4, :country, :province, :city, :pinCode,  :sezCertificateNo , :sezValueDate , :AddressDetail, ");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, ");
-		sql.append(":pinCodeId)");
+		sql.append("(FinID, FinReference, ApplicableFor, TaxCustId, TaxExempted, TaxNumber, AddrLine1, AddrLine2");
+		sql.append(", AddrLine3, AddrLine4, Country, Province, City, PinCodeId, PinCode");
+		sql.append(", SezCertificateNo, SezValueDate, AddressDetail");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values");
+		sql.append(" (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeTaxDetail);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, td.getFinID());
+				ps.setString(index++, td.getFinReference());
+				ps.setString(index++, td.getApplicableFor());
+				ps.setLong(index++, td.getTaxCustId());
+				ps.setBoolean(index++, td.isTaxExempted());
+				ps.setString(index++, td.getTaxNumber());
+				ps.setString(index++, td.getAddrLine1());
+				ps.setString(index++, td.getAddrLine2());
+				ps.setString(index++, td.getAddrLine3());
+				ps.setString(index++, td.getAddrLine4());
+				ps.setString(index++, td.getCountry());
+				ps.setString(index++, td.getProvince());
+				ps.setString(index++, td.getCity());
+				ps.setLong(index++, td.getPinCodeId());
+				ps.setString(index++, td.getPinCode());
+				ps.setString(index++, td.getSezCertificateNo());
+				ps.setDate(index++, JdbcUtil.getDate(td.getSezValueDate()));
+				ps.setString(index++, td.getAddressDetail());
+				ps.setInt(index++, td.getVersion());
+				ps.setLong(index++, JdbcUtil.setLong(td.getLastMntBy()));
+				ps.setTimestamp(index++, td.getLastMntOn());
+				ps.setString(index++, td.getRecordStatus());
+				ps.setString(index++, td.getRoleCode());
+				ps.setString(index++, td.getNextRoleCode());
+				ps.setString(index++, td.getTaskId());
+				ps.setString(index++, td.getNextTaskId());
+				ps.setString(index++, td.getRecordType());
+				ps.setLong(index++, JdbcUtil.setLong(td.getWorkflowId()));
+
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return String.valueOf(financeTaxDetail.getFinReference());
+		return String.valueOf(td.getFinReference());
 	}
 
 	@Override
-	public void update(FinanceTaxDetail ftd, TableType tableType) {
+	public void update(FinanceTaxDetail td, TableType tableType) {
 		StringBuilder sql = new StringBuilder("Update");
 		sql.append(" FinTaxDetail");
 		sql.append(tableType.getSuffix());
-		sql.append(" set applicableFor = ?, TaxCustId= ?, TaxExempted = ?, TaxNumber = ?");
+		sql.append(" Set ApplicableFor = ?, TaxCustId= ?, TaxExempted = ?, TaxNumber = ?");
 		sql.append(", AddrLine1 = ?, AddrLine2 = ?, AddrLine3 = ?, AddrLine4 = ?");
-		sql.append(", Country = ?, Province = ?, City = ?, PinCode = ?, SezCertificateNo = ?");
+		sql.append(", Country = ?, Province = ?, City = ?, PinCodeId = ?, PinCode = ?, SezCertificateNo = ?");
 		sql.append(", SezValueDate = ?, AddressDetail = ?, LastMntOn = ?, RecordStatus = ?");
 		sql.append(", RoleCode = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
-		sql.append(", RecordType = ?, WorkflowId = ?, PinCodeId = ?");
-		sql.append(" Where finReference = ?");
+		sql.append(", RecordType = ?, WorkflowId = ?");
+		sql.append(" Where FinID = ?");
 		sql.append(QueryUtil.getConcurrencyClause(tableType));
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, ftd.getApplicableFor());
-			ps.setLong(index++, ftd.getTaxCustId());
-			ps.setBoolean(index++, ftd.isTaxExempted());
-			ps.setString(index++, ftd.getTaxNumber());
-			ps.setString(index++, ftd.getAddrLine1());
-			ps.setString(index++, ftd.getAddrLine2());
-			ps.setString(index++, ftd.getAddrLine3());
-			ps.setString(index++, ftd.getAddrLine4());
-			ps.setString(index++, ftd.getCountry());
-			ps.setString(index++, ftd.getProvince());
-			ps.setString(index++, ftd.getCity());
-			ps.setString(index++, ftd.getPinCode());
-			ps.setString(index++, ftd.getSezCertificateNo());
-			ps.setDate(index++, JdbcUtil.getDate(ftd.getSezValueDate()));
-			ps.setString(index++, ftd.getAddressDetail());
-			ps.setTimestamp(index++, ftd.getLastMntOn());
-			ps.setString(index++, ftd.getRecordStatus());
-			ps.setString(index++, ftd.getRoleCode());
-			ps.setString(index++, ftd.getNextRoleCode());
-			ps.setString(index++, ftd.getTaskId());
-			ps.setString(index++, ftd.getNextTaskId());
-			ps.setString(index++, ftd.getRecordType());
-			ps.setLong(index++, ftd.getWorkflowId());
-			ps.setObject(index++, JdbcUtil.getLong(ftd.getPinCodeId()));
-			ps.setString(index++, ftd.getFinReference());
+			ps.setString(index++, td.getApplicableFor());
+			ps.setLong(index++, td.getTaxCustId());
+			ps.setBoolean(index++, td.isTaxExempted());
+			ps.setString(index++, td.getTaxNumber());
+			ps.setString(index++, td.getAddrLine1());
+			ps.setString(index++, td.getAddrLine2());
+			ps.setString(index++, td.getAddrLine3());
+			ps.setString(index++, td.getAddrLine4());
+			ps.setString(index++, td.getCountry());
+			ps.setString(index++, td.getProvince());
+			ps.setString(index++, td.getCity());
+			ps.setObject(index++, JdbcUtil.getLong(td.getPinCodeId()));
+			ps.setString(index++, td.getPinCode());
+			ps.setString(index++, td.getSezCertificateNo());
+			ps.setDate(index++, JdbcUtil.getDate(td.getSezValueDate()));
+			ps.setString(index++, td.getAddressDetail());
+			ps.setTimestamp(index++, td.getLastMntOn());
+			ps.setString(index++, td.getRecordStatus());
+			ps.setString(index++, td.getRoleCode());
+			ps.setString(index++, td.getNextRoleCode());
+			ps.setString(index++, td.getTaskId());
+			ps.setString(index++, td.getNextTaskId());
+			ps.setString(index++, td.getRecordType());
+			ps.setLong(index++, td.getWorkflowId());
+
+			ps.setLong(index++, td.getFinID());
 
 			if (tableType == TableType.TEMP_TAB) {
-				ps.setTimestamp(index++, ftd.getPrevMntOn());
+				ps.setTimestamp(index++, td.getPrevMntOn());
 			} else {
-				ps.setInt(index++, ftd.getVersion() - 1);
+				ps.setInt(index++, td.getVersion() - 1);
 			}
 
 		});
@@ -244,175 +239,103 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 	}
 
 	@Override
-	public void delete(FinanceTaxDetail financeTaxDetail, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from FinTaxDetail");
+	public void delete(FinanceTaxDetail td, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Delete From FinTaxDetail");
 		sql.append(tableType.getSuffix());
-		sql.append(" where finReference = :finReference ");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(" where FinID = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeTaxDetail);
-		int recordCount = 0;
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), td.getFinID());
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 
-		// Check for the concurrency failure.
-		/*
-		 * if (recordCount == 0) { throw new ConcurrencyException(); }
-		 */
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public int getGSTNumberCount(long taxCustId, String taxNumber, String type) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select count(TaxNumber) From FinTaxDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where TaxCustId <> ? and TaxNumber = ?");
 
-		MapSqlParameterSource source = null;
-		int count = 0;
-
-		StringBuilder selectSql = new StringBuilder("Select count(TaxNumber) From FinTaxDetail");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where TaxCustId <> :TaxCustId And TaxNumber = :TaxNumber");
-		logger.debug("selectSql: " + selectSql.toString());
-
-		source = new MapSqlParameterSource();
-		source.addValue("TaxCustId", taxCustId);
-		source.addValue("TaxNumber", taxNumber);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, taxCustId, taxNumber);
 		} catch (DataAccessException e) {
-			logger.error(e);
+			//
 		}
 
-		logger.debug("Leaving");
-
-		return count;
+		return 0;
 	}
 
 	@Override
 	public List<FinanceTaxDetail> getGSTNumberAndCustCIF(long taxCustId, String taxNumber, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" TaxCustId, TaxNumber");
 		sql.append(" From FinTaxDetail");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where TaxCustId <> ? And TaxNumber = ?");
-		logger.debug("selectSql: " + sql.toString());
+		sql.append(" Where TaxCustId <> ? and TaxNumber = ?");
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, taxCustId);
-					ps.setString(index++, taxNumber);
-				}
-			}, new RowMapper<FinanceTaxDetail>() {
-				@Override
-				public FinanceTaxDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinanceTaxDetail gd = new FinanceTaxDetail();
+		logger.debug(Literal.SQL + sql.toString());
 
-					gd.setTaxCustId(rs.getLong("TaxCustId"));
-					gd.setTaxNumber(rs.getString("TaxNumber"));
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, taxCustId);
+			ps.setString(index++, taxNumber);
+		}, (rs, rowNum) -> {
+			FinanceTaxDetail gd = new FinanceTaxDetail();
 
-					return gd;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+			gd.setTaxCustId(rs.getLong("TaxCustId"));
+			gd.setTaxNumber(rs.getString("TaxNumber"));
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return gd;
+		});
 	}
 
-	public boolean isReferenceExists(String finReference, String custCif) {
-		logger.debug("Entering");
-		MapSqlParameterSource source = null;
-		StringBuilder sql = null;
+	public boolean isReferenceExists(long finID, String custCif) {
+		String sql = "Select count(TaxNumber) From FinTaxDetail_View Where FinID = ? and  CustCif = ?";
 
-		sql = new StringBuilder();
-		sql.append(" Select COUNT(*) from FinTaxDetail_View ");
-		sql.append(" Where FinReference = :FinReference AND  CustCif = :CustCif ");
-		logger.debug("Sql: " + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("CustCif", custCif);
 		try {
-			if (this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
-				return true;
-			}
-		} catch (Exception e) {
-			logger.error(e);
-		} finally {
-			source = null;
-			sql = null;
-			logger.debug("Leaving");
+			return this.jdbcOperations.queryForObject(sql, Integer.class, finID, custCif) > 0;
+		} catch (DataAccessException e) {
+			//
 		}
 		return false;
 	}
 
 	@Override
-	public void deleteFinTaxDetails(FinanceTaxDetail financeTaxDetail, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from FinTaxDetail");
+	public void deleteFinTaxDetails(FinanceTaxDetail td, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Delete From FinTaxDetail");
 		sql.append(tableType.getSuffix());
-		sql.append(" where finReference = :finReference ");
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeTaxDetail);
-		int recordCount = 0;
+		sql.append(" where FinID = ?");
 
-		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
-		} catch (DataAccessException e) {
-			throw new DependencyFoundException(e);
-		}
+		logger.debug(Literal.SQL + sql.toString());
 
-		// Check for the concurrency failure.
+		int recordCount = jdbcOperations.update(sql.toString(), td.getFinID());
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
 
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public int getFinTaxDetailsCount(String finReference) {
+	public int getFinTaxDetailsCount(long finID) {
+		String sql = "Select count(FinID) FROM fintaxdetail_temp Where FinID = ?";
 
-		logger.debug(Literal.ENTERING);
-
-		int recordCount = 0;
-
-		StringBuilder countQuery = new StringBuilder("SELECT COUNT(*) FROM fintaxdetail_temp ");
-		countQuery.append("WHERE finReference = :finReference");
-		logger.trace(Literal.SQL + countQuery.toString());
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("finReference", finReference);
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			recordCount = jdbcTemplate.queryForObject(countQuery.toString(), paramSource, Integer.class);
+			return jdbcOperations.queryForObject(sql, Integer.class, finID);
 		} catch (DataAccessException e) {
-			logger.error(e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
-
-		return recordCount;
+		return 0;
 	}
 
 }

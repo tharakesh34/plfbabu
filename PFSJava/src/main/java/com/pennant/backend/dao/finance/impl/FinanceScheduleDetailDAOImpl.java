@@ -337,17 +337,15 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	private StringBuilder getUpdateQuery() {
-		StringBuilder sql = new StringBuilder();
-		sql.append("Update FinScheduleDetails set");
+		StringBuilder sql = new StringBuilder("Update FinScheduleDetails Set");
 		sql.append(" SchdPftPaid = ?, SchdPriPaid = ?, SchPftPaid = ?, SchPriPaid = ?, TDSPaid = ?, SchdFeePaid = ?");
 		sql.append(" Where FinID = ? and SchDate = ? and SchSeq = ?");
 		return sql;
 	}
 
 	public int updateForRateReview(List<FinanceScheduleDetail> schedules) {
-		StringBuilder sql = new StringBuilder("Update FinScheduleDetails");
-		sql.append(
-				" Set BalanceForPftCal = ?, BaseRate = ?, SplRate = ?, MrgRate = ?, ActRate = ?, CalculatedRate = ?");
+		StringBuilder sql = new StringBuilder("Update FinScheduleDetails Set");
+		sql.append(" BalanceForPftCal = ?, BaseRate = ?, SplRate = ?, MrgRate = ?, ActRate = ?, CalculatedRate = ?");
 		sql.append(", ProfitCalc = ?, ProfitSchd = ?, PrincipalSchd = ?, RepayAmount = ?, ProfitBalance = ?");
 		sql.append(", CpzAmount = ?, CpzBalance = ?, ClosingBalance = ?, ProfitFraction = ?, PrvRepayAmount = ?");
 		sql.append(", SchPriPaid = ?, SchPftPaid = ?, SchdMethod = ?, TDSAmount = ?, TDSPaid = ?");
