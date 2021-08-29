@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceTypeDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  30-06-2011    														*
- *                                                                  						*
- * Modified Date    :  30-06-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceTypeDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 30-06-2011 * * Modified
+ * Date : 30-06-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 30-06-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 30-06-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -369,17 +351,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		return null;
 	}
 
-	/**
-	 * Fetch the Record Finance Types details by key field
-	 * 
-	 * @param finType (String)
-	 * @param type    (String) ""/_Temp/_View
-	 * @return FinanceType
-	 */
 	@Override
 	public FinanceType getOrgFinanceTypeByID(final String finType, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinType, FinCategory, FinTypeDesc, FinCcy, FinDaysCalType");
 		sql.append(", FinIsGenRef, FinMaxAmount, FinMinAmount, FinIsAlwMD, FinSchdMthd");
@@ -430,212 +403,210 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finType },
-					new RowMapper<FinanceType>() {
-						@Override
-						public FinanceType mapRow(ResultSet rs, int rowNum) throws SQLException {
-							FinanceType ft = new FinanceType();
+			return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<FinanceType>() {
+				@Override
+				public FinanceType mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinanceType ft = new FinanceType();
 
-							ft.setFinType(rs.getString("FinType"));
-							ft.setFinCategory(rs.getString("FinCategory"));
-							ft.setFinTypeDesc(rs.getString("FinTypeDesc"));
-							ft.setFinCcy(rs.getString("FinCcy"));
-							ft.setFinDaysCalType(rs.getString("FinDaysCalType"));
-							ft.setFinIsGenRef(rs.getBoolean("FinIsGenRef"));
-							ft.setFinMaxAmount(rs.getBigDecimal("FinMaxAmount"));
-							ft.setFinMinAmount(rs.getBigDecimal("FinMinAmount"));
-							ft.setFinIsAlwMD(rs.getBoolean("FinIsAlwMD"));
-							ft.setFinSchdMthd(rs.getString("FinSchdMthd"));
-							ft.setFInIsAlwGrace(rs.getBoolean("FInIsAlwGrace"));
-							ft.setEqualRepayment(rs.getBoolean("EqualRepayment"));
-							ft.setSchdOnPMTCal(rs.getBoolean("SchdOnPMTCal"));
-							ft.setFinRateType(rs.getString("FinRateType"));
-							ft.setFinBaseRate(rs.getString("FinBaseRate"));
-							ft.setFinSplRate(rs.getString("FinSplRate"));
-							ft.setFinIntRate(rs.getBigDecimal("FinIntRate"));
-							ft.setFInMinRate(rs.getBigDecimal("FInMinRate"));
-							ft.setFinMaxRate(rs.getBigDecimal("FinMaxRate"));
-							ft.setFinDftIntFrq(rs.getString("FinDftIntFrq"));
-							ft.setFinIsIntCpz(rs.getBoolean("FinIsIntCpz"));
-							ft.setFinCpzFrq(rs.getString("FinCpzFrq"));
-							ft.setFinIsRvwAlw(rs.getBoolean("FinIsRvwAlw"));
-							ft.setFinRvwFrq(rs.getString("FinRvwFrq"));
-							ft.setFinGrcRateType(rs.getString("FinGrcRateType"));
-							ft.setFinGrcBaseRate(rs.getString("FinGrcBaseRate"));
-							ft.setFinGrcSplRate(rs.getString("FinGrcSplRate"));
-							ft.setFinGrcIntRate(rs.getBigDecimal("FinGrcIntRate"));
-							ft.setFInGrcMinRate(rs.getBigDecimal("FInGrcMinRate"));
-							ft.setFinGrcMaxRate(rs.getBigDecimal("FinGrcMaxRate"));
-							ft.setFinGrcDftIntFrq(rs.getString("FinGrcDftIntFrq"));
-							ft.setFinGrcIsIntCpz(rs.getBoolean("FinGrcIsIntCpz"));
-							ft.setFinGrcCpzFrq(rs.getString("FinGrcCpzFrq"));
-							ft.setFinGrcIsRvwAlw(rs.getBoolean("FinGrcIsRvwAlw"));
-							ft.setFinGrcRvwFrq(rs.getString("FinGrcRvwFrq"));
-							ft.setFinMinTerm(rs.getInt("FinMinTerm"));
-							ft.setFinMaxTerm(rs.getInt("FinMaxTerm"));
-							ft.setFinDftTerms(rs.getInt("FinDftTerms"));
-							ft.setFinRpyFrq(rs.getString("FinRpyFrq"));
-							ft.setFinRepayMethod(rs.getString("FinRepayMethod"));
-							ft.setFinIsAlwPartialRpy(rs.getBoolean("FinIsAlwPartialRpy"));
-							ft.setFinIsAlwDifferment(rs.getBoolean("FinIsAlwDifferment"));
-							ft.setFinMaxDifferment(rs.getInt("FinMaxDifferment"));
-							ft.setFinIsActive(rs.getBoolean("FinIsActive"));
-							ft.setStepFinance(rs.getBoolean("StepFinance"));
-							ft.setSteppingMandatory(rs.getBoolean("SteppingMandatory"));
-							ft.setAlwManualSteps(rs.getBoolean("AlwManualSteps"));
-							ft.setAlwdStepPolicies(rs.getString("AlwdStepPolicies"));
-							ft.setDftStepPolicy(rs.getString("DftStepPolicy"));
-							ft.setFinIsDwPayRequired(rs.getBoolean("FinIsDwPayRequired"));
-							ft.setFinRvwRateApplFor(rs.getString("FinRvwRateApplFor"));
-							ft.setFinAlwRateChangeAnyDate(rs.getBoolean("FinAlwRateChangeAnyDate"));
-							ft.setFinIsIntCpzAtGrcEnd(rs.getBoolean("FinIsIntCpzAtGrcEnd"));
-							ft.setFinSchCalCodeOnRvw(rs.getString("FinSchCalCodeOnRvw"));
-							ft.setAlwPlanDeferment(rs.getBoolean("AlwPlanDeferment"));
-							ft.setFinIsRateRvwAtGrcEnd(rs.getBoolean("FinIsRateRvwAtGrcEnd"));
-							ft.setPlanDeferCount(rs.getInt("PlanDeferCount"));
-							ft.setFinIsAlwGrcRepay(rs.getBoolean("FinIsAlwGrcRepay"));
-							ft.setFinGrcSchdMthd(rs.getString("FinGrcSchdMthd"));
-							ft.setFinGrcMargin(rs.getBigDecimal("FinGrcMargin"));
-							ft.setFinMargin(rs.getBigDecimal("FinMargin"));
-							ft.setFinCommitmentReq(rs.getBoolean("FinCommitmentReq"));
-							ft.setFinCollateralReq(rs.getBoolean("FinCollateralReq"));
-							ft.setAllowRIAInvestment(rs.getBoolean("AllowRIAInvestment"));
-							ft.setOverrideLimit(rs.getBoolean("OverrideLimit"));
-							ft.setLimitRequired(rs.getBoolean("LimitRequired"));
-							ft.setFinCommitmentOvrride(rs.getBoolean("FinCommitmentOvrride"));
-							ft.setFinCollateralOvrride(rs.getBoolean("FinCollateralOvrride"));
-							ft.setFinRepayPftOnFrq(rs.getBoolean("FinRepayPftOnFrq"));
-							ft.setFinPftUnChanged(rs.getBoolean("FinPftUnChanged"));
-							ft.setApplyODPenalty(rs.getBoolean("ApplyODPenalty"));
-							ft.setODIncGrcDays(rs.getBoolean("ODIncGrcDays"));
-							ft.setODChargeType(rs.getString("ODChargeType"));
-							ft.setODGraceDays(rs.getInt("ODGraceDays"));
-							ft.setODChargeCalOn(rs.getString("ODChargeCalOn"));
-							ft.setODChargeAmtOrPerc(rs.getBigDecimal("ODChargeAmtOrPerc"));
-							ft.setODAllowWaiver(rs.getBoolean("ODAllowWaiver"));
-							ft.setODMaxWaiverPerc(rs.getBigDecimal("ODMaxWaiverPerc"));
-							ft.setODMinCapAmount(rs.getBigDecimal("ODMinCapAmount"));
-							ft.setFinDivision(rs.getString("FinDivision"));
-							ft.setProduct(rs.getString("Product"));
-							ft.setStartDate(rs.getTimestamp("StartDate"));
-							ft.setEndDate(rs.getTimestamp("EndDate"));
-							ft.setPastduePftCalMthd(rs.getString("PastduePftCalMthd"));
-							ft.setPastduePftMargin(rs.getBigDecimal("PastduePftMargin"));
-							ft.setDownPayRule(rs.getLong("DownPayRule"));
-							ft.setAlwMultiPartyDisb(rs.getBoolean("AlwMultiPartyDisb"));
-							ft.setCollateralType(rs.getString("CollateralType"));
-							ft.setTdsApplicable(rs.getBoolean("TdsApplicable"));
-							ft.setApplyGrcPricing(rs.getBoolean("ApplyGrcPricing"));
-							ft.setApplyRpyPricing(rs.getBoolean("ApplyRpyPricing"));
-							ft.setDroplineOD(rs.getBoolean("DroplineOD"));
-							ft.setDroppingMethod(rs.getString("DroppingMethod"));
-							ft.setRateChgAnyDay(rs.getBoolean("RateChgAnyDay"));
-							ft.setManualSchedule(rs.getBoolean("ManualSchedule"));
-							ft.setAlwBPI(rs.getBoolean("AlwBPI"));
-							ft.setBpiTreatment(rs.getString("BpiTreatment"));
-							ft.setPftDueSchOn(rs.getString("PftDueSchOn"));
-							ft.setPlanEMIHAlw(rs.getBoolean("PlanEMIHAlw"));
-							ft.setalwPlannedEmiInGrc(rs.getBoolean("AlwPlannedEmiInGrc"));
-							ft.setPlanEMIHMethod(rs.getString("PlanEMIHMethod"));
-							ft.setPlanEMIHMaxPerYear(rs.getInt("PlanEMIHMaxPerYear"));
-							ft.setPlanEMIHMax(rs.getInt("PlanEMIHMax"));
-							ft.setPlanEMIHLockPeriod(rs.getInt("PlanEMIHLockPeriod"));
-							ft.setPlanEMICpz(rs.getBoolean("PlanEMICpz"));
-							ft.setUnPlanEMIHLockPeriod(rs.getInt("UnPlanEMIHLockPeriod"));
-							ft.setUnPlanEMICpz(rs.getBoolean("UnPlanEMICpz"));
-							ft.setReAgeCpz(rs.getBoolean("ReAgeCpz"));
-							ft.setFddLockPeriod(rs.getInt("FddLockPeriod"));
-							ft.setAlwdRpyMethods(rs.getString("AlwdRpyMethods"));
-							ft.setMaxUnplannedEmi(rs.getInt("MaxUnplannedEmi"));
-							ft.setMaxReAgeHolidays(rs.getInt("MaxReAgeHolidays"));
-							ft.setRoundingMode(rs.getString("RoundingMode"));
-							ft.setRoundingTarget(rs.getInt("RoundingTarget"));
-							ft.setFrequencyDays(rs.getString("FrequencyDays"));
-							ft.setAlwReage(rs.getBoolean("AlwReage"));
-							ft.setAlwUnPlanEmiHoliday(rs.getBoolean("AlwUnPlanEmiHoliday"));
-							ft.setAlwMaxDisbCheckReq(rs.getBoolean("AlwMaxDisbCheckReq"));
-							ft.setQuickDisb(rs.getBoolean("QuickDisb"));
-							ft.setAutoApprove(rs.getBoolean("AutoApprove"));
-							ft.setProductCategory(rs.getString("ProductCategory"));
-							ft.setDeveloperFinance(rs.getBoolean("DeveloperFinance"));
-							ft.setCostOfFunds(rs.getString("CostOfFunds"));
-							ft.setChequeCaptureReq(rs.getBoolean("ChequeCaptureReq"));
-							ft.setFinLTVCheck(rs.getString("FinLTVCheck"));
-							ft.setPartiallySecured(rs.getBoolean("PartiallySecured"));
-							ft.setBpiPftDaysBasis(rs.getString("BpiPftDaysBasis"));
-							ft.setAlwHybridRate(rs.getBoolean("AlwHybridRate"));
-							ft.setFixedRateTenor(rs.getInt("FixedRateTenor"));
-							ft.setEligibilityMethods(rs.getString("EligibilityMethods"));
-							ft.setODRuleCode(rs.getString("ODRuleCode"));
-							ft.setAlwZeroIntAcc(rs.getBoolean("AlwZeroIntAcc"));
-							ft.setAutoRejectionDays(rs.getInt("AutoRejectionDays"));
-							ft.setTaxNoMand(rs.getBoolean("TaxNoMand"));
-							ft.setPutCallRequired(rs.getBoolean("PutCallRequired"));
-							ft.setGrcAdvIntersetReq(rs.getBoolean("GrcAdvIntersetReq"));
-							ft.setGrcAdvType(rs.getString("GrcAdvType"));
-							ft.setGrcAdvMinTerms(rs.getInt("GrcAdvMinTerms"));
-							ft.setGrcAdvMaxTerms(rs.getInt("GrcAdvMaxTerms"));
-							ft.setGrcAdvDefaultTerms(rs.getInt("GrcAdvDefaultTerms"));
-							ft.setAdvIntersetReq(rs.getBoolean("AdvIntersetReq"));
-							ft.setAdvType(rs.getString("AdvType"));
-							ft.setAdvMinTerms(rs.getInt("AdvMinTerms"));
-							ft.setAdvMaxTerms(rs.getInt("AdvMaxTerms"));
-							ft.setAdvDefaultTerms(rs.getInt("AdvDefaultTerms"));
-							ft.setAdvStage(rs.getString("AdvStage"));
-							ft.setDsfReq(rs.getBoolean("DsfReq"));
-							ft.setCashCollateralReq(rs.getBoolean("CashCollateralReq"));
-							ft.setTdsAllowToModify(rs.getBoolean("TdsAllowToModify"));
-							ft.setTdsApplicableTo(rs.getString("TdsApplicableTo"));
-							ft.setAlwVan(rs.getBoolean("AlwVan"));
-							ft.setVanAllocationMethod(rs.getString("VanAllocationMethod"));
-							ft.setAllowDrawingPower(rs.getBoolean("AllowDrawingPower"));
-							ft.setAllowRevolving(rs.getBoolean("AllowRevolving"));
-							ft.setAlwSanctionAmt(rs.getBoolean("AlwSanctionAmt"));
-							ft.setAlwSanctionAmtOverride(rs.getBoolean("AlwSanctionAmtOverride"));
-							ft.setSanBsdSchdle(rs.getBoolean("SanBsdSchdle"));
-							ft.setDefaultOCR(rs.getString("DefaultOCR"));
-							// HL Merging
-							ft.setOcrRequired(rs.getBoolean("OcrRequired"));
-							ft.setAllowedLoanPurposes(rs.getString("AllowedLoanPurposes"));
-							ft.setAllowedOCRS(rs.getString("AllowedOCRS"));
-							ft.setSpecificLoanPurposes(rs.getString("SpecificLoanPurposes"));
-							ft.setAlwLoanSplit(rs.getBoolean("AlwLoanSplit"));
-							ft.setSplitLoanType(rs.getString("SplitLoanType"));
-							ft.setInstBasedSchd(rs.getBoolean("InstBasedSchd"));
-							ft.setTdsType(rs.getString("TdsType"));
-							ft.setGrcAdjReq(rs.getBoolean("GrcAdjReq"));
-							ft.setGrcPeriodAftrFullDisb(rs.getBoolean("GrcPeriodAftrFullDisb"));
-							ft.setAutoIncrGrcEndDate(rs.getBoolean("AutoIncrGrcEndDate"));
-							ft.setGrcAutoIncrMonths(rs.getInt("GrcAutoIncrMonths"));
-							ft.setMaxAutoIncrAllowed(rs.getInt("MaxAutoIncrAllowed"));
-							ft.setThrldtoMaintainGrcPrd(rs.getInt("ThrldtoMaintainGrcPrd"));
-							ft.setCalcOfSteps(rs.getString("CalcOfSteps"));
-							ft.setStepsAppliedFor(rs.getString("StepsAppliedFor"));
-							ft.setSubventionReq(rs.getBoolean("SubventionReq"));
+					ft.setFinType(rs.getString("FinType"));
+					ft.setFinCategory(rs.getString("FinCategory"));
+					ft.setFinTypeDesc(rs.getString("FinTypeDesc"));
+					ft.setFinCcy(rs.getString("FinCcy"));
+					ft.setFinDaysCalType(rs.getString("FinDaysCalType"));
+					ft.setFinIsGenRef(rs.getBoolean("FinIsGenRef"));
+					ft.setFinMaxAmount(rs.getBigDecimal("FinMaxAmount"));
+					ft.setFinMinAmount(rs.getBigDecimal("FinMinAmount"));
+					ft.setFinIsAlwMD(rs.getBoolean("FinIsAlwMD"));
+					ft.setFinSchdMthd(rs.getString("FinSchdMthd"));
+					ft.setFInIsAlwGrace(rs.getBoolean("FInIsAlwGrace"));
+					ft.setEqualRepayment(rs.getBoolean("EqualRepayment"));
+					ft.setSchdOnPMTCal(rs.getBoolean("SchdOnPMTCal"));
+					ft.setFinRateType(rs.getString("FinRateType"));
+					ft.setFinBaseRate(rs.getString("FinBaseRate"));
+					ft.setFinSplRate(rs.getString("FinSplRate"));
+					ft.setFinIntRate(rs.getBigDecimal("FinIntRate"));
+					ft.setFInMinRate(rs.getBigDecimal("FInMinRate"));
+					ft.setFinMaxRate(rs.getBigDecimal("FinMaxRate"));
+					ft.setFinDftIntFrq(rs.getString("FinDftIntFrq"));
+					ft.setFinIsIntCpz(rs.getBoolean("FinIsIntCpz"));
+					ft.setFinCpzFrq(rs.getString("FinCpzFrq"));
+					ft.setFinIsRvwAlw(rs.getBoolean("FinIsRvwAlw"));
+					ft.setFinRvwFrq(rs.getString("FinRvwFrq"));
+					ft.setFinGrcRateType(rs.getString("FinGrcRateType"));
+					ft.setFinGrcBaseRate(rs.getString("FinGrcBaseRate"));
+					ft.setFinGrcSplRate(rs.getString("FinGrcSplRate"));
+					ft.setFinGrcIntRate(rs.getBigDecimal("FinGrcIntRate"));
+					ft.setFInGrcMinRate(rs.getBigDecimal("FInGrcMinRate"));
+					ft.setFinGrcMaxRate(rs.getBigDecimal("FinGrcMaxRate"));
+					ft.setFinGrcDftIntFrq(rs.getString("FinGrcDftIntFrq"));
+					ft.setFinGrcIsIntCpz(rs.getBoolean("FinGrcIsIntCpz"));
+					ft.setFinGrcCpzFrq(rs.getString("FinGrcCpzFrq"));
+					ft.setFinGrcIsRvwAlw(rs.getBoolean("FinGrcIsRvwAlw"));
+					ft.setFinGrcRvwFrq(rs.getString("FinGrcRvwFrq"));
+					ft.setFinMinTerm(rs.getInt("FinMinTerm"));
+					ft.setFinMaxTerm(rs.getInt("FinMaxTerm"));
+					ft.setFinDftTerms(rs.getInt("FinDftTerms"));
+					ft.setFinRpyFrq(rs.getString("FinRpyFrq"));
+					ft.setFinRepayMethod(rs.getString("FinRepayMethod"));
+					ft.setFinIsAlwPartialRpy(rs.getBoolean("FinIsAlwPartialRpy"));
+					ft.setFinIsAlwDifferment(rs.getBoolean("FinIsAlwDifferment"));
+					ft.setFinMaxDifferment(rs.getInt("FinMaxDifferment"));
+					ft.setFinIsActive(rs.getBoolean("FinIsActive"));
+					ft.setStepFinance(rs.getBoolean("StepFinance"));
+					ft.setSteppingMandatory(rs.getBoolean("SteppingMandatory"));
+					ft.setAlwManualSteps(rs.getBoolean("AlwManualSteps"));
+					ft.setAlwdStepPolicies(rs.getString("AlwdStepPolicies"));
+					ft.setDftStepPolicy(rs.getString("DftStepPolicy"));
+					ft.setFinIsDwPayRequired(rs.getBoolean("FinIsDwPayRequired"));
+					ft.setFinRvwRateApplFor(rs.getString("FinRvwRateApplFor"));
+					ft.setFinAlwRateChangeAnyDate(rs.getBoolean("FinAlwRateChangeAnyDate"));
+					ft.setFinIsIntCpzAtGrcEnd(rs.getBoolean("FinIsIntCpzAtGrcEnd"));
+					ft.setFinSchCalCodeOnRvw(rs.getString("FinSchCalCodeOnRvw"));
+					ft.setAlwPlanDeferment(rs.getBoolean("AlwPlanDeferment"));
+					ft.setFinIsRateRvwAtGrcEnd(rs.getBoolean("FinIsRateRvwAtGrcEnd"));
+					ft.setPlanDeferCount(rs.getInt("PlanDeferCount"));
+					ft.setFinIsAlwGrcRepay(rs.getBoolean("FinIsAlwGrcRepay"));
+					ft.setFinGrcSchdMthd(rs.getString("FinGrcSchdMthd"));
+					ft.setFinGrcMargin(rs.getBigDecimal("FinGrcMargin"));
+					ft.setFinMargin(rs.getBigDecimal("FinMargin"));
+					ft.setFinCommitmentReq(rs.getBoolean("FinCommitmentReq"));
+					ft.setFinCollateralReq(rs.getBoolean("FinCollateralReq"));
+					ft.setAllowRIAInvestment(rs.getBoolean("AllowRIAInvestment"));
+					ft.setOverrideLimit(rs.getBoolean("OverrideLimit"));
+					ft.setLimitRequired(rs.getBoolean("LimitRequired"));
+					ft.setFinCommitmentOvrride(rs.getBoolean("FinCommitmentOvrride"));
+					ft.setFinCollateralOvrride(rs.getBoolean("FinCollateralOvrride"));
+					ft.setFinRepayPftOnFrq(rs.getBoolean("FinRepayPftOnFrq"));
+					ft.setFinPftUnChanged(rs.getBoolean("FinPftUnChanged"));
+					ft.setApplyODPenalty(rs.getBoolean("ApplyODPenalty"));
+					ft.setODIncGrcDays(rs.getBoolean("ODIncGrcDays"));
+					ft.setODChargeType(rs.getString("ODChargeType"));
+					ft.setODGraceDays(rs.getInt("ODGraceDays"));
+					ft.setODChargeCalOn(rs.getString("ODChargeCalOn"));
+					ft.setODChargeAmtOrPerc(rs.getBigDecimal("ODChargeAmtOrPerc"));
+					ft.setODAllowWaiver(rs.getBoolean("ODAllowWaiver"));
+					ft.setODMaxWaiverPerc(rs.getBigDecimal("ODMaxWaiverPerc"));
+					ft.setODMinCapAmount(rs.getBigDecimal("ODMinCapAmount"));
+					ft.setFinDivision(rs.getString("FinDivision"));
+					ft.setProduct(rs.getString("Product"));
+					ft.setStartDate(rs.getTimestamp("StartDate"));
+					ft.setEndDate(rs.getTimestamp("EndDate"));
+					ft.setPastduePftCalMthd(rs.getString("PastduePftCalMthd"));
+					ft.setPastduePftMargin(rs.getBigDecimal("PastduePftMargin"));
+					ft.setDownPayRule(rs.getLong("DownPayRule"));
+					ft.setAlwMultiPartyDisb(rs.getBoolean("AlwMultiPartyDisb"));
+					ft.setCollateralType(rs.getString("CollateralType"));
+					ft.setTdsApplicable(rs.getBoolean("TdsApplicable"));
+					ft.setApplyGrcPricing(rs.getBoolean("ApplyGrcPricing"));
+					ft.setApplyRpyPricing(rs.getBoolean("ApplyRpyPricing"));
+					ft.setDroplineOD(rs.getBoolean("DroplineOD"));
+					ft.setDroppingMethod(rs.getString("DroppingMethod"));
+					ft.setRateChgAnyDay(rs.getBoolean("RateChgAnyDay"));
+					ft.setManualSchedule(rs.getBoolean("ManualSchedule"));
+					ft.setAlwBPI(rs.getBoolean("AlwBPI"));
+					ft.setBpiTreatment(rs.getString("BpiTreatment"));
+					ft.setPftDueSchOn(rs.getString("PftDueSchOn"));
+					ft.setPlanEMIHAlw(rs.getBoolean("PlanEMIHAlw"));
+					ft.setalwPlannedEmiInGrc(rs.getBoolean("AlwPlannedEmiInGrc"));
+					ft.setPlanEMIHMethod(rs.getString("PlanEMIHMethod"));
+					ft.setPlanEMIHMaxPerYear(rs.getInt("PlanEMIHMaxPerYear"));
+					ft.setPlanEMIHMax(rs.getInt("PlanEMIHMax"));
+					ft.setPlanEMIHLockPeriod(rs.getInt("PlanEMIHLockPeriod"));
+					ft.setPlanEMICpz(rs.getBoolean("PlanEMICpz"));
+					ft.setUnPlanEMIHLockPeriod(rs.getInt("UnPlanEMIHLockPeriod"));
+					ft.setUnPlanEMICpz(rs.getBoolean("UnPlanEMICpz"));
+					ft.setReAgeCpz(rs.getBoolean("ReAgeCpz"));
+					ft.setFddLockPeriod(rs.getInt("FddLockPeriod"));
+					ft.setAlwdRpyMethods(rs.getString("AlwdRpyMethods"));
+					ft.setMaxUnplannedEmi(rs.getInt("MaxUnplannedEmi"));
+					ft.setMaxReAgeHolidays(rs.getInt("MaxReAgeHolidays"));
+					ft.setRoundingMode(rs.getString("RoundingMode"));
+					ft.setRoundingTarget(rs.getInt("RoundingTarget"));
+					ft.setFrequencyDays(rs.getString("FrequencyDays"));
+					ft.setAlwReage(rs.getBoolean("AlwReage"));
+					ft.setAlwUnPlanEmiHoliday(rs.getBoolean("AlwUnPlanEmiHoliday"));
+					ft.setAlwMaxDisbCheckReq(rs.getBoolean("AlwMaxDisbCheckReq"));
+					ft.setQuickDisb(rs.getBoolean("QuickDisb"));
+					ft.setAutoApprove(rs.getBoolean("AutoApprove"));
+					ft.setProductCategory(rs.getString("ProductCategory"));
+					ft.setDeveloperFinance(rs.getBoolean("DeveloperFinance"));
+					ft.setCostOfFunds(rs.getString("CostOfFunds"));
+					ft.setChequeCaptureReq(rs.getBoolean("ChequeCaptureReq"));
+					ft.setFinLTVCheck(rs.getString("FinLTVCheck"));
+					ft.setPartiallySecured(rs.getBoolean("PartiallySecured"));
+					ft.setBpiPftDaysBasis(rs.getString("BpiPftDaysBasis"));
+					ft.setAlwHybridRate(rs.getBoolean("AlwHybridRate"));
+					ft.setFixedRateTenor(rs.getInt("FixedRateTenor"));
+					ft.setEligibilityMethods(rs.getString("EligibilityMethods"));
+					ft.setODRuleCode(rs.getString("ODRuleCode"));
+					ft.setAlwZeroIntAcc(rs.getBoolean("AlwZeroIntAcc"));
+					ft.setAutoRejectionDays(rs.getInt("AutoRejectionDays"));
+					ft.setTaxNoMand(rs.getBoolean("TaxNoMand"));
+					ft.setPutCallRequired(rs.getBoolean("PutCallRequired"));
+					ft.setGrcAdvIntersetReq(rs.getBoolean("GrcAdvIntersetReq"));
+					ft.setGrcAdvType(rs.getString("GrcAdvType"));
+					ft.setGrcAdvMinTerms(rs.getInt("GrcAdvMinTerms"));
+					ft.setGrcAdvMaxTerms(rs.getInt("GrcAdvMaxTerms"));
+					ft.setGrcAdvDefaultTerms(rs.getInt("GrcAdvDefaultTerms"));
+					ft.setAdvIntersetReq(rs.getBoolean("AdvIntersetReq"));
+					ft.setAdvType(rs.getString("AdvType"));
+					ft.setAdvMinTerms(rs.getInt("AdvMinTerms"));
+					ft.setAdvMaxTerms(rs.getInt("AdvMaxTerms"));
+					ft.setAdvDefaultTerms(rs.getInt("AdvDefaultTerms"));
+					ft.setAdvStage(rs.getString("AdvStage"));
+					ft.setDsfReq(rs.getBoolean("DsfReq"));
+					ft.setCashCollateralReq(rs.getBoolean("CashCollateralReq"));
+					ft.setTdsAllowToModify(rs.getBoolean("TdsAllowToModify"));
+					ft.setTdsApplicableTo(rs.getString("TdsApplicableTo"));
+					ft.setAlwVan(rs.getBoolean("AlwVan"));
+					ft.setVanAllocationMethod(rs.getString("VanAllocationMethod"));
+					ft.setAllowDrawingPower(rs.getBoolean("AllowDrawingPower"));
+					ft.setAllowRevolving(rs.getBoolean("AllowRevolving"));
+					ft.setAlwSanctionAmt(rs.getBoolean("AlwSanctionAmt"));
+					ft.setAlwSanctionAmtOverride(rs.getBoolean("AlwSanctionAmtOverride"));
+					ft.setSanBsdSchdle(rs.getBoolean("SanBsdSchdle"));
+					ft.setDefaultOCR(rs.getString("DefaultOCR"));
+					// HL Merging
+					ft.setOcrRequired(rs.getBoolean("OcrRequired"));
+					ft.setAllowedLoanPurposes(rs.getString("AllowedLoanPurposes"));
+					ft.setAllowedOCRS(rs.getString("AllowedOCRS"));
+					ft.setSpecificLoanPurposes(rs.getString("SpecificLoanPurposes"));
+					ft.setAlwLoanSplit(rs.getBoolean("AlwLoanSplit"));
+					ft.setSplitLoanType(rs.getString("SplitLoanType"));
+					ft.setInstBasedSchd(rs.getBoolean("InstBasedSchd"));
+					ft.setTdsType(rs.getString("TdsType"));
+					ft.setGrcAdjReq(rs.getBoolean("GrcAdjReq"));
+					ft.setGrcPeriodAftrFullDisb(rs.getBoolean("GrcPeriodAftrFullDisb"));
+					ft.setAutoIncrGrcEndDate(rs.getBoolean("AutoIncrGrcEndDate"));
+					ft.setGrcAutoIncrMonths(rs.getInt("GrcAutoIncrMonths"));
+					ft.setMaxAutoIncrAllowed(rs.getInt("MaxAutoIncrAllowed"));
+					ft.setThrldtoMaintainGrcPrd(rs.getInt("ThrldtoMaintainGrcPrd"));
+					ft.setCalcOfSteps(rs.getString("CalcOfSteps"));
+					ft.setStepsAppliedFor(rs.getString("StepsAppliedFor"));
+					ft.setSubventionReq(rs.getBoolean("SubventionReq"));
 
-							if (StringUtils.trimToEmpty(type).contains("ORGView")) {
-								ft.setDownPayRuleCode(rs.getString("DownPayRuleCode"));
-								ft.setDownPayRuleDesc(rs.getString("DownPayRuleDesc"));
-								ft.setLovDescFinDivisionName(rs.getString("LovDescFinDivisionName"));
-								ft.setLovDescPromoFinTypeDesc(rs.getString("LovDescPromoFinTypeDesc"));
-								ft.setLovDescDftStepPolicyName(rs.getString("LovDescDftStepPolicyName"));
-								ft.setGrcPricingMethodDesc(rs.getString("GrcPricingMethodDesc"));
-								ft.setRpyPricingMethodDesc(rs.getString("RpyPricingMethodDesc"));
-								ft.setDftStepPolicyType(rs.getString("DftStepPolicyType"));
-								ft.setRpyHierarchy(rs.getString("RpyHierarchy"));
-								ft.setLovDescEntityCode(rs.getString("LovDescEntityCode"));
-								ft.setLovDescEntityDesc(rs.getString("LovDescEntityDesc"));
-								ft.setAlwEarlyPayMethods(rs.getString("AlwEarlyPayMethods"));
-							}
+					if (StringUtils.trimToEmpty(type).contains("ORGView")) {
+						ft.setDownPayRuleCode(rs.getString("DownPayRuleCode"));
+						ft.setDownPayRuleDesc(rs.getString("DownPayRuleDesc"));
+						ft.setLovDescFinDivisionName(rs.getString("LovDescFinDivisionName"));
+						ft.setLovDescPromoFinTypeDesc(rs.getString("LovDescPromoFinTypeDesc"));
+						ft.setLovDescDftStepPolicyName(rs.getString("LovDescDftStepPolicyName"));
+						ft.setGrcPricingMethodDesc(rs.getString("GrcPricingMethodDesc"));
+						ft.setRpyPricingMethodDesc(rs.getString("RpyPricingMethodDesc"));
+						ft.setDftStepPolicyType(rs.getString("DftStepPolicyType"));
+						ft.setRpyHierarchy(rs.getString("RpyHierarchy"));
+						ft.setLovDescEntityCode(rs.getString("LovDescEntityCode"));
+						ft.setLovDescEntityDesc(rs.getString("LovDescEntityDesc"));
+						ft.setAlwEarlyPayMethods(rs.getString("AlwEarlyPayMethods"));
+					}
 
-							return ft;
-						}
-					});
+					return ft;
+				}
+			}, finType);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
