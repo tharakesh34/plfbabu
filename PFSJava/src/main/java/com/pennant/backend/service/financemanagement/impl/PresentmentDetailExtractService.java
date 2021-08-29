@@ -139,21 +139,21 @@ public class PresentmentDetailExtractService {
 		ph.setBankCode(rs.getString("BANKCODE"));
 		ph.setEntityCode(rs.getString("ENTITYCODE"));
 		ph.setPartnerBankId(rs.getLong("PARTNERBANKID"));
-		PresentmentDetail pDetail = new PresentmentDetail();
-		pDetail.setBankCode(rs.getString("BANKCODE"));
-		pDetail.setPartnerBankId(rs.getLong("PARTNERBANKID"));
-		pDetail.setEntityCode(rs.getString("ENTITYCODE"));
-		pDetail.setPresentmentAmt(BigDecimal.ZERO);
-		pDetail.setStatus(RepayConstants.PEXC_IMPORT);
-		pDetail.setExcludeReason(RepayConstants.PEXC_EMIINCLUDE);
-		pDetail.setPresentmentRef(getPresentmentRef(rs));
+		PresentmentDetail pd = new PresentmentDetail();
+		pd.setBankCode(rs.getString("BANKCODE"));
+		pd.setPartnerBankId(rs.getLong("PARTNERBANKID"));
+		pd.setEntityCode(rs.getString("ENTITYCODE"));
+		pd.setPresentmentAmt(BigDecimal.ZERO);
+		pd.setStatus(RepayConstants.PEXC_IMPORT);
+		pd.setExcludeReason(RepayConstants.PEXC_EMIINCLUDE);
+		pd.setPresentmentRef(getPresentmentRef(rs));
 
 		// Schedule Setup
-		pDetail.setFinReference(rs.getString("FINREFERENCE"));
-		pDetail.setSchDate(rs.getDate("SCHDATE"));
-		pDetail.setEmiNo(rs.getInt("EMINO"));
-		pDetail.setSchSeq(rs.getInt("SCHSEQ"));
-		pDetail.setDefSchdDate(rs.getDate("DEFSCHDDATE"));
+		pd.setFinReference(rs.getString("FINREFERENCE"));
+		pd.setSchDate(rs.getDate("SCHDATE"));
+		pd.setEmiNo(rs.getInt("EMINO"));
+		pd.setSchSeq(rs.getInt("SCHSEQ"));
+		pd.setDefSchdDate(rs.getDate("DEFSCHDDATE"));
 
 		BigDecimal schAmtDue = rs.getBigDecimal("PROFITSCHD").add(rs.getBigDecimal("PRINCIPALSCHD"))
 				.add(rs.getBigDecimal("FEESCHD")).subtract(rs.getBigDecimal("SCHDPRIPAID"))
@@ -161,45 +161,45 @@ public class PresentmentDetailExtractService {
 				.subtract(rs.getBigDecimal("TDSAMOUNT"));
 
 		if (BigDecimal.ZERO.compareTo(schAmtDue) >= 0) {
-			presentments.add(pDetail);
+			presentments.add(pd);
 			return;
 		}
 
-		pDetail.setSchAmtDue(schAmtDue);
-		pDetail.setSchPriDue(rs.getBigDecimal("PRINCIPALSCHD").subtract(rs.getBigDecimal("SCHDPRIPAID")));
-		pDetail.setSchPftDue(rs.getBigDecimal("PROFITSCHD").subtract(rs.getBigDecimal("SCHDPFTPAID")));
-		pDetail.setSchFeeDue(rs.getBigDecimal("FEESCHD").subtract(rs.getBigDecimal("SCHDFEEPAID")));
-		pDetail.settDSAmount(rs.getBigDecimal("TDSAMOUNT"));
-		pDetail.setSchInsDue(BigDecimal.ZERO);
-		pDetail.setSchPenaltyDue(BigDecimal.ZERO);
-		pDetail.setAdvanceAmt(schAmtDue);
-		pDetail.setAdviseAmt(BigDecimal.ZERO);
-		pDetail.setExcessID(0);
-		pDetail.setReceiptID(0);
+		pd.setSchAmtDue(schAmtDue);
+		pd.setSchPriDue(rs.getBigDecimal("PRINCIPALSCHD").subtract(rs.getBigDecimal("SCHDPRIPAID")));
+		pd.setSchPftDue(rs.getBigDecimal("PROFITSCHD").subtract(rs.getBigDecimal("SCHDPFTPAID")));
+		pd.setSchFeeDue(rs.getBigDecimal("FEESCHD").subtract(rs.getBigDecimal("SCHDFEEPAID")));
+		pd.settDSAmount(rs.getBigDecimal("TDSAMOUNT"));
+		pd.setSchInsDue(BigDecimal.ZERO);
+		pd.setSchPenaltyDue(BigDecimal.ZERO);
+		pd.setAdvanceAmt(schAmtDue);
+		pd.setAdviseAmt(BigDecimal.ZERO);
+		pd.setExcessID(0);
+		pd.setReceiptID(0);
 
 		// Mandate Details
-		pDetail.setMandateId(rs.getLong("MANDATEID"));
-		pDetail.setMandateExpiryDate(rs.getDate("EXPIRYDATE"));
-		pDetail.setMandateStatus(rs.getString("STATUS"));
-		pDetail.setMandateType(rs.getString("MANDATETYPE"));
+		pd.setMandateId(rs.getLong("MANDATEID"));
+		pd.setMandateExpiryDate(rs.getDate("EXPIRYDATE"));
+		pd.setMandateStatus(rs.getString("STATUS"));
+		pd.setMandateType(rs.getString("MANDATETYPE"));
 
-		pDetail.setVersion(0);
-		pDetail.setLastMntBy(ph.getLastMntBy());
-		pDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		pDetail.setWorkflowId(0);
+		pd.setVersion(0);
+		pd.setLastMntBy(ph.getLastMntBy());
+		pd.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		pd.setWorkflowId(0);
 
 		if (StringUtils.equalsIgnoreCase(PennantConstants.PROCESS_PRESENTMENT, ph.getPresentmentType())) {
-			pDetail.setGrcAdvType(rs.getString("GRCADVTYPE"));
-			pDetail.setAdvType(rs.getString("ADVTYPE"));
-			pDetail.setAdvStage(rs.getString("ADVSTAGE"));
-			pDetail.setGrcPeriodEndDate(rs.getDate("GRCPERIODENDDATE"));
-			pDetail.setBpiOrHoliday(rs.getString("BPIORHOLIDAY"));
-			pDetail.setBpiTreatment(rs.getString("BPITREATMENT"));
+			pd.setGrcAdvType(rs.getString("GRCADVTYPE"));
+			pd.setAdvType(rs.getString("ADVTYPE"));
+			pd.setAdvStage(rs.getString("ADVSTAGE"));
+			pd.setGrcPeriodEndDate(rs.getDate("GRCPERIODENDDATE"));
+			pd.setBpiOrHoliday(rs.getString("BPIORHOLIDAY"));
+			pd.setBpiTreatment(rs.getString("BPITREATMENT"));
 		}
 
-		doCalculations(ph, pDetail);
+		doCalculations(ph, pd);
 
-		presentments.add(pDetail);
+		presentments.add(pd);
 
 		if (presentments.size() >= 100) {
 			save(ph);

@@ -16,6 +16,7 @@ public class PresentmentResponseRowmapper implements RowMapper<PresentmentDetail
 		pd.setId(rs.getLong("ID"));
 		pd.setHeaderId(rs.getLong("PRESENTMENTID"));
 		// pd.setResponseId(rs.getLong("RESPONSEID"));
+		pd.setFinID(rs.getLong("FINID"));
 		pd.setFinReference(rs.getString("FINREFERENCE"));
 		pd.setHostReference(rs.getString("HOST_REFERENCE"));
 		pd.setFinType(rs.getString("FINTYPE"));

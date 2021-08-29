@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PresentmentDetailDAO.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  01-05-2017    														*
- *                                                                  						*
- * Modified Date    :  01-05-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PresentmentDetailDAO.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 01-05-2017 * * Modified
+ * Date : 01-05-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 01-05-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 01-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.financemanagement;
@@ -45,7 +27,6 @@ package com.pennant.backend.dao.financemanagement;
 import java.util.Date;
 import java.util.List;
 
-import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
@@ -53,7 +34,7 @@ import com.pennant.backend.service.financemanagement.impl.PresentmentDetailExtra
 import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.model.presentment.Presentment;
 
-public interface PresentmentDetailDAO extends BasicCrudDao<PresentmentHeader> {
+public interface PresentmentDetailDAO {
 
 	PresentmentHeader getPresentmentHeader(long id, String type);
 
@@ -90,7 +71,7 @@ public interface PresentmentDetailDAO extends BasicCrudDao<PresentmentHeader> {
 
 	List<PresentmentDetail> getPresentmensByExcludereason(long presentmentId, int excludeReason);
 
-	PresentmentDetail getPresentmentDetailByFinRefAndPresID(String finReference, long presentmentId, String string);
+	PresentmentDetail getPresentmentDetailByFinRefAndPresID(long finID, long presentmentId, String string);
 
 	boolean searchIncludeList(long presentmentId, int excludereason);
 
@@ -104,7 +85,7 @@ public interface PresentmentDetailDAO extends BasicCrudDao<PresentmentHeader> {
 
 	List<Long> getExcludeList(long id);
 
-	boolean isPresentmentInProcess(String finReference);
+	boolean isPresentmentInProcess(long finID);
 
 	Long getApprovedPresentmentCount(long presentmentId);
 
@@ -124,7 +105,7 @@ public interface PresentmentDetailDAO extends BasicCrudDao<PresentmentHeader> {
 
 	List<PresentmentDetail> getIncludePresentments(List<Long> headerIdList);
 
-	FinanceMain getDefualtPostingDetails(String finReference, Date schDates);
+	FinanceMain getDefualtPostingDetails(long finID, Date schDates);
 
 	void updatePresentmentDetail(long id, String status, String urtNumber);
 
@@ -171,7 +152,7 @@ public interface PresentmentDetailDAO extends BasicCrudDao<PresentmentHeader> {
 
 	List<String> getUnProcessedPrentmntRef(long headerId);
 
-	List<PresentmentDetail> getPresentmentStatusByFinRef(String finreference);
+	List<PresentmentDetail> getPresentmentStatusByFinRef(long finID);
 
 	void deleteByHeaderId(long headerId);
 
