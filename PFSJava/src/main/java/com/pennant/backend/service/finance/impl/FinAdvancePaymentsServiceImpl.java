@@ -162,13 +162,13 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	 */
 
 	@Override
-	public List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce) {
-		return finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(finRefernce, "");
+	public List<FinAdvancePayments> getFinAdvancePaymentByFinRef(long finID) {
+		return finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(finID, "");
 	}
 
 	@Override
-	public List<FinAdvancePayments> getFinAdvancePaymentsById(String id, String type) {
-		return finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(id, type);
+	public List<FinAdvancePayments> getFinAdvancePaymentsById(long finID, String type) {
+		return finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(finID, type);
 	}
 
 	@Override

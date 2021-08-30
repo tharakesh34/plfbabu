@@ -51,7 +51,7 @@ public interface GuarantorDetailService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	List<GuarantorDetail> getGuarantorDetailByFinRef(String finReference, String tableType);
+	List<GuarantorDetail> getGuarantorDetailByFinRef(long finID, String tableType);
 
 	GuarantorDetail getGuarantorProof(GuarantorDetail guarantorDetail);
 

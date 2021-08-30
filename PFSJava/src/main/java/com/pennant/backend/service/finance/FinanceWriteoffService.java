@@ -1,6 +1,5 @@
 package com.pennant.backend.service.finance;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
 
@@ -8,26 +7,22 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceWriteoffHeader;
 import com.pennant.backend.model.finance.ManualAdvise;
-import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.AppException;
 
 public interface FinanceWriteoffService {
 
-	FinanceWriteoffHeader getFinanceWriteoffDetailById(String finReference, String type, String userRole,
-			String procEdtEvent);
+	FinanceWriteoffHeader getFinanceWriteoffDetailById(long finID, String type, String userRole, String procEdtEvent);
 
-	AuditHeader saveOrUpdate(AuditHeader aAuditHeader)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+	AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws AppException;
 
-	AuditHeader doReject(AuditHeader auditHeader)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+	AuditHeader doReject(AuditHeader auditHeader) throws AppException;
 
-	AuditHeader doApprove(AuditHeader aAuditHeader)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+	AuditHeader doApprove(AuditHeader aAuditHeader) throws AppException;
 
-	List<FinanceScheduleDetail> getFinScheduleDetails(String finReference);
+	List<FinanceScheduleDetail> getFinScheduleDetails(long finID);
 
-	List<ManualAdvise> getManualAdviseByRef(String finReference, int manualAdvisePayable, String string);
+	List<ManualAdvise> getManualAdviseByRef(long finID, int manualAdvisePayable, String string);
 
-	int getMaxFinanceWriteoffSeq(String finReference, Date writeoffDate, String string);
+	int getMaxFinanceWriteoffSeq(long finID, Date writeoffDate, String string);
 
 }

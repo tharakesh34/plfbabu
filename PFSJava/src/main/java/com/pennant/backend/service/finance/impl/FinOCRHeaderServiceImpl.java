@@ -53,21 +53,12 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 		super();
 	}
 
-	/**
-	 * getFinOCRHeaderByRef fetch the details by using FinOCRHeaderDAO's getFinOCRHeaderByRef method.
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return FinOCRHeader
-	 */
 	@Override
-	public FinOCRHeader getFinOCRHeaderByRef(String finReference, String type) {
+	public FinOCRHeader getFinOCRHeaderByRef(long finID, String type) {
 		FinOCRHeader finOCRHeader = null;
-		finOCRHeader = finOCRHeaderDAO.getFinOCRHeaderByRef(finReference, type);
+		finOCRHeader = finOCRHeaderDAO.getFinOCRHeaderByRef(finID, type);
 		if (finOCRHeader != null) {
-			//getting the OCR Step Details
+			// getting the OCR Step Details
 			finOCRHeader.setOcrDetailList(finOCRDetailDAO.getFinOCRDetailsByHeaderID(finOCRHeader.getHeaderID(), type));
 			finOCRHeader.setFinOCRCapturesList(finOCRCaptureDAO.getFinOCRCaptureDetailsByRef(finReference, type));
 		}
@@ -78,10 +69,8 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 	/**
 	 * This method is only in servicing option where definition will not be allowed maintain. other than validation
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinOCRHeader
 	 */
 	@Override
@@ -89,7 +78,7 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 		FinOCRHeader finOCRHeader = null;
 		finOCRHeader = finOCRHeaderDAO.getFinOCRHeaderByRef(finReference, type);
 		if (finOCRHeader != null) {
-			//getting the OCR Step Details
+			// getting the OCR Step Details
 			finOCRHeader.setDefinitionApproved(true);
 			finOCRHeader.setOcrDetailList(finOCRDetailDAO.getFinOCRDetailsByHeaderID(finOCRHeader.getHeaderID(), type));
 			finOCRHeader.setFinOCRCapturesList(finOCRCaptureDAO.getFinOCRCaptureDetailsByRef(finReference, type));
@@ -101,10 +90,8 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 	/**
 	 * getApprovedFinOCRHeaderById fetch the details by using FinOCRHeaderDAO's getApprovedFinOCRHeaderById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinOCRHeader
 	 */
 	@Override
@@ -112,7 +99,7 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 		FinOCRHeader finOCRHeader = null;
 		finOCRHeader = finOCRHeaderDAO.getFinOCRHeaderById(headerId, type);
 		if (finOCRHeader != null) {
-			//getting the OCR Step Details
+			// getting the OCR Step Details
 			finOCRHeader.setOcrDetailList(finOCRDetailDAO.getFinOCRDetailsByHeaderID(finOCRHeader.getHeaderID(), type));
 		}
 		return finOCRHeader;
@@ -128,8 +115,7 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 	 * 
 	 * @param financeDetail
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader   (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -250,8 +236,7 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 	 * LMTFinOCRHeader by using FinOCRHeaderDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
 	 * and AdtFinOCRHeader by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -290,8 +275,7 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtLMTFinOCRHeader
 	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -388,8 +372,7 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 	 * workFlow table by using finOCRHeaderDAO.delete with parameters FinOCRHeader,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtFinOCRHeader by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -408,7 +391,7 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinOCRHeader(), finOCRHeader.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				finOCRHeader.getBefImage(), finOCRHeader));
-		//Fin OCR Capture details deletion
+		// Fin OCR Capture details deletion
 		auditDetails.addAll(listDeletion(finOCRHeader, TableType.TEMP_TAB.getSuffix(), auditHeader.getAuditTranType()));
 		finOCRHeaderDAO.delete(finOCRHeader, TableType.TEMP_TAB.getSuffix());
 
@@ -424,8 +407,7 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 	 * for any mismatch conditions Fetch the error details from finOCRHeaderDAO.getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -458,14 +440,14 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 		if (StringUtils.equals(PennantConstants.SEGMENTED_VALUE, finOCRHeader.getOcrType())) {
 			custPortionHeader = finOCRHeader.getCustomerPortion();
 			finPortionHeader = new BigDecimal(100).subtract(custPortionHeader);
-			//checking ocr step details are available or not
+			// checking ocr step details are available or not
 			if (CollectionUtils.isEmpty(finOCRHeader.getOcrDetailList())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = Labels.getLabel("window_FinOCRDialog_title");
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("OCR001", valueParm)));
 				return auditDetail;
 			} else {
-				//checking weather customer, finance portions are equal with header 
+				// checking weather customer, finance portions are equal with header
 				for (FinOCRDetail finOCRDetail : finOCRHeader.getOcrDetailList()) {
 					if (PennantConstants.RCD_DEL.equalsIgnoreCase(finOCRDetail.getRecordType())
 							|| PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(finOCRDetail.getRecordType())) {
@@ -477,20 +459,22 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 
 				String[] valueParm = new String[2];
 				String message = "Total ";
-				//check header customer portion value is equal with total payable by customer step's value
+				// check header customer portion value is equal with total payable by customer step's value
 				if ((custPortionHeader.compareTo(totalCustPortion)) != 0) {
 					valueParm[0] = message.concat(Labels.getLabel("listheader_FinOCRDialog_PayableByCustomer.label"));
 					valueParm[1] = String.valueOf(custPortionHeader);
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
 					return auditDetail;
-				} else if ((finPortionHeader.compareTo(totalFinPortion)) != 0) { //check header customer portion value is equal with total payable by customer step's value
+				} else if ((finPortionHeader.compareTo(totalFinPortion)) != 0) { // check header customer portion value
+																					// is equal with total payable by
+																					// customer step's value
 					valueParm[0] = message.concat(Labels.getLabel("listheader_FinOCRDialog_PayableByFinancer.label"));
 					valueParm[1] = String.valueOf(finPortionHeader);
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
 					return auditDetail;
 				}
 
-				//both cust and financer contributions should equal to 100
+				// both cust and financer contributions should equal to 100
 				BigDecimal total = totalCustPortion.add(totalFinPortion);
 				if (total.compareTo(new BigDecimal(100)) != 0) {
 					valueParm[0] = message.concat(Labels.getLabel("listheader_FinOCRDialog_PayableByCustomer.label")
@@ -501,7 +485,7 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 				}
 			}
 
-			//API check, by passing OCR steps with out split applicable
+			// API check, by passing OCR steps with out split applicable
 		} else {
 			if (!CollectionUtils.isEmpty(finOCRHeader.getOcrDetailList())) {
 				for (FinOCRDetail finOCRDetail : finOCRHeader.getOcrDetailList()) {
@@ -675,13 +659,13 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 			}
 		}
 
-		//FinOCR Step details
+		// FinOCR Step details
 		if (!CollectionUtils.isEmpty(finOCRHeader.getOcrDetailList())) {
 			auditDetailMap.put("FinOCRStepDetails", setFinOCRStepDetailsAuditData(finOCRHeader, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FinOCRStepDetails"));
 		}
 
-		//FinOCR Capture details
+		// FinOCR Capture details
 		if (CollectionUtils.isNotEmpty(finOCRHeader.getFinOCRCapturesList())) {
 			auditDetailMap.put("FinOCRCaptureDetails",
 					setFinOCRCaptureDetailsAuditData(finOCRHeader, auditTranType, method));

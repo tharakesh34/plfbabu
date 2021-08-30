@@ -4874,13 +4874,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	// presentments)
 
 	@Override
-	public boolean isReceiptsPending(String finreference, long receiptId) {
-		boolean isPending = finReceiptHeaderDAO.checkInProcessPresentments(finreference);
+	public boolean isReceiptsPending(long finID, long receiptId) {
+		boolean isPending = finReceiptHeaderDAO.checkInProcessPresentments(finID);
 		if (isPending) {
 			return true;
 		}
 
-		isPending = finReceiptHeaderDAO.checkInProcessReceipts(finreference, receiptId);
+		isPending = finReceiptHeaderDAO.checkInProcessReceipts(finID, receiptId);
 		return isPending;
 	}
 
