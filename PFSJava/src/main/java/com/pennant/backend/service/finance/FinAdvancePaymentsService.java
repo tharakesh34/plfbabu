@@ -38,7 +38,7 @@ import com.pennant.backend.model.finance.PaymentTransaction;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface FinAdvancePaymentsService {
-	List<FinAdvancePayments> getFinAdvancePaymentsById(String id, String type);
+	List<FinAdvancePayments> getFinAdvancePaymentsById(long finID, String type);
 
 	List<AuditDetail> saveOrUpdate(List<FinAdvancePayments> finAdvancePaymentDetails, String tableType,
 			String auditTranType, boolean disbStp);
